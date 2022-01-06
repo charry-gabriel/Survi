@@ -6,6 +6,7 @@ import fr.miuby.survi18.village.VillagerEtat;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
+import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.entity.EnderDragon;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -70,16 +71,17 @@ public class MyListener implements Listener {
         if(event.getDamager().getType() == EntityType.ZOMBIE) {
             if(event.getEntity() instanceof Player) {
                 Player player = (Player) event.getEntity();
-                if(player.getHealth() > 10) {
-                    player.setHealth(10);
+                AttributeInstance maxLife = player.getAttribute(Attribute.GENERIC_MAX_HEALTH);
+                if(maxLife != null && player.getHealth() > maxLife.getValue()*2/3) {
+                    player.setHealth(maxLife.getValue()*2/3);
                 }
             }
         } else if(event.getEntity().getType() == EntityType.VILLAGER) {
             if(event.getDamager() instanceof Player) {
                 Player player = (Player) event.getDamager();
                 if (player.getGameMode() != GameMode.CREATIVE && player.getWorld() == GameManager.getInstance().getVillage().getWorld()) {
-                    GameManager.getInstance().getAlphaPlayers().get(player.getUniqueId()).addCoins(-50);
-                    player.sendMessage("Une amende de 50 AlphaCoins pour avoir frappé un agent de l'État !");
+                    GameManager.getInstance().getAlphaPlayers().get(player.getUniqueId()).addCoins(-500);
+                    player.sendMessage("Une amende de 500 AlphaCoins pour avoir frappé un agent de l'État !");
                     event.setCancelled(true);
                 }
             }
