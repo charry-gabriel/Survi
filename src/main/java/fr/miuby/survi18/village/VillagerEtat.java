@@ -72,6 +72,11 @@ public class VillagerEtat {
                 player.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.JUMP, 2400, 3));
                 player.addCoins(-sous);
                 player.getPlayer().sendMessage("Vous avez acheté une bonne nuit à l'auberge pour " + sous + " AlphaCoins !");
+            }else if(item.getItem().getType().equals(Material.FEATHER)) {
+                player.getPlayer().setAllowFlight(true);
+                player.getPlayer().setFlying(true);
+                player.addCoins(-sous);
+                player.getPlayer().sendMessage("Vous avez acheté un fly pour " + sous + " AlphaCoins !");
             }else if(item.getItemStack().length > 0){
                 for(int loop = 0; loop < item.getItemStack().length; loop++){
                     if(!player.getPlayer().getInventory().contains(item.getItemStack()[loop])){

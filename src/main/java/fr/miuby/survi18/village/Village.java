@@ -200,7 +200,11 @@ public class Village {
         Villager villager = spawnVillager(new Position(15, 70, -46, 290), "Maire", Villager.Type.PLAINS, Villager.Profession.NONE);
 
         LinkedHashMap<Material, ItemEtat> items = new LinkedHashMap<>();
-        items.put(Material.APPLE, new ItemEtat(Material.APPLE, 1, true));
+        ItemStack itemStack = new ItemStack(Material.FEATHER);
+        ItemMeta meta = itemStack.getItemMeta();
+        meta.displayName(Component.text("Vol"));
+        itemStack.setItemMeta(meta);
+        items.put(Material.FEATHER, new ItemEtat(itemStack, 1, true));
 
         VillagerEtat villagerEtat = new VillagerEtat(villager, items);
 
