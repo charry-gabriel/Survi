@@ -4,9 +4,11 @@ import fr.miuby.survi18.Position;
 import net.kyori.adventure.text.Component;
 import org.bukkit.*;
 import org.bukkit.attribute.Attribute;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Villager;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.EnchantmentStorageMeta;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.material.MaterialData;
@@ -94,6 +96,7 @@ public class Village {
         items.put(Material.TOTEM_OF_UNDYING, new ItemEtat(Material.TOTEM_OF_UNDYING, 10000000, true));
         items.put(Material.CANDLE, new ItemEtat(Material.CANDLE, 1000, true));
         items.put(Material.BEACON, new ItemEtat(Material.BEACON, 10000000, true, new ItemStack(Material.NETHER_STAR)));
+        items.put(Material.FIREWORK_ROCKET, new ItemEtat(Material.FIREWORK_ROCKET, 20000, true, new ItemStack(Material.PAPER)));
 
         VillagerEtat villagerEtat = new VillagerEtat(villager, items);
 
@@ -214,8 +217,13 @@ public class Village {
     private void spawnProfesseur() {
         Villager villager = spawnVillager(new Position(16, 70, -46, 290), "Professeur", Villager.Type.PLAINS, Villager.Profession.NONE);
 
+        ItemStack item = new ItemStack(Material.ENCHANTED_BOOK);
+        EnchantmentStorageMeta meta = (EnchantmentStorageMeta) item.getItemMeta();
+        meta.addStoredEnchant(Enchantment.PROTECTION_ENVIRONMENTAL, 5,true);
+        item.setItemMeta(meta);
+
         LinkedHashMap<Material, ItemEtat> items = new LinkedHashMap<>();
-        items.put(Material.APPLE, new ItemEtat(Material.APPLE, 1, true));
+        items.put(Material.ENCHANTED_BOOK, new ItemEtat(item, 1, true));
 
         VillagerEtat villagerEtat = new VillagerEtat(villager, items);
 

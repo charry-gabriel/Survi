@@ -7,6 +7,7 @@ import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.EnderDragon;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -17,6 +18,7 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntitySpawnEvent;
 import org.bukkit.event.inventory.*;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.EnchantmentStorageMeta;
 
 import java.util.Objects;
 
@@ -65,6 +67,21 @@ public class MyListener implements Listener {
             }
         }
     }
+    @EventHandler
+    public void onPrepareAnvil(PrepareAnvilEvent event){
+        if (event.getResult() != null && event.getInventory().getFirstItem() != null && event.getInventory().getSecondItem() != null){
+            ItemStack secondItem = event.getInventory().getSecondItem();
+            if(secondItem.getItemMeta() instanceof EnchantmentStorageMeta){
+                EnchantmentStorageMeta secondMeta = (EnchantmentStorageMeta) secondItem.getItemMeta();
+                if (secondMeta.hasStoredEnchant(Enchantment.PROTECTION_ENVIRONMENTAL) && secondMeta.getStoredEnchantLevel(Enchantment.PROTECTION_ENVIRONMENTAL) == 5){
+                    ItemStack firstItem = event.getInventory().getFirstItem().clone();
+                    firstItem.addUnsafeEnchantment(Enchantment.PROTECTION_ENVIRONMENTAL, 5);
+                    event.setResult(firstItem);
+                }
+            }
+        }
+    }
+
 
     @EventHandler
     public void onEntityDamageByEntity(EntityDamageByEntityEvent event) {
