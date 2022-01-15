@@ -39,8 +39,6 @@ public class Village {
         spawnProfesseur();
         spawnBibliothecaire();
         spawnBanquier();
-        spawnNetherGardian();
-        spawnEndGardian();
     }
 
     public World getWorld() { return world; }
@@ -90,13 +88,13 @@ public class Village {
     }
 
     private void spawnPretre() {
-        Villager villager = spawnVillager(new Position(-19.5, 73, -1.5, 180), "Pretre", Villager.Type.PLAINS, Villager.Profession.CLERIC);
+        Villager villager = spawnVillager(new Position(-13.5, 75, -1.5, 90), "Pretre", Villager.Type.PLAINS, Villager.Profession.CLERIC);
 
         LinkedHashMap<Material, ItemEtat> items = new LinkedHashMap<>();
-        items.put(Material.TOTEM_OF_UNDYING, new ItemEtat(Material.TOTEM_OF_UNDYING, 10000000, true));
+        items.put(Material.TOTEM_OF_UNDYING, new ItemEtat(Material.TOTEM_OF_UNDYING, 1000000, true));
         items.put(Material.CANDLE, new ItemEtat(Material.CANDLE, 1000, true));
         items.put(Material.BEACON, new ItemEtat(Material.BEACON, 10000000, true, new ItemStack(Material.NETHER_STAR)));
-        items.put(Material.FIREWORK_ROCKET, new ItemEtat(Material.FIREWORK_ROCKET, 20000, true, new ItemStack(Material.PAPER)));
+        items.put(Material.FIREWORK_ROCKET, new ItemEtat(Material.FIREWORK_ROCKET, 40000, true, new ItemStack(Material.PAPER)));
 
         VillagerEtat villagerEtat = new VillagerEtat(villager, items);
 
@@ -167,9 +165,9 @@ public class Village {
         rabbit.setItemMeta(rabbitMeta);
 
         LinkedHashMap<Material, ItemEtat> items = new LinkedHashMap<>();
-        items.put(Material.SHIELD, new ItemEtat(shield, 1000000, true));
-        items.put(Material.SUGAR, new ItemEtat(sugar, 1000000, true));
-        items.put(Material.RABBIT_FOOT, new ItemEtat(rabbit, 1000000, true));
+        items.put(Material.SHIELD, new ItemEtat(shield, 250000, true));
+        items.put(Material.SUGAR, new ItemEtat(sugar, 250000, true));
+        items.put(Material.RABBIT_FOOT, new ItemEtat(rabbit, 250000, true));
 
         VillagerEtat villagerEtat = new VillagerEtat(villager, items);
 
@@ -192,7 +190,7 @@ public class Village {
         item.setItemMeta(meta);
 
         LinkedHashMap<Material, ItemEtat> items = new LinkedHashMap<>();
-        items.put(Material.POTION, new ItemEtat(item, 1000000, true));
+        items.put(Material.POTION, new ItemEtat(item, 500000, true));
 
         VillagerEtat villagerEtat = new VillagerEtat(villager, items);
 
@@ -200,14 +198,15 @@ public class Village {
     }
 
     private void spawnMaire() {
-        Villager villager = spawnVillager(new Position(15, 70, -46, 290), "Maire", Villager.Type.PLAINS, Villager.Profession.NONE);
+        Villager villager = spawnVillager(new Position(-10.5, 85.8, -43.5, 90), "Maire", Villager.Type.PLAINS, Villager.Profession.CARTOGRAPHER);
 
         LinkedHashMap<Material, ItemEtat> items = new LinkedHashMap<>();
         ItemStack itemStack = new ItemStack(Material.FEATHER);
         ItemMeta meta = itemStack.getItemMeta();
         meta.displayName(Component.text("Vol"));
         itemStack.setItemMeta(meta);
-        items.put(Material.FEATHER, new ItemEtat(itemStack, 1, true));
+        //items.put(Material.FEATHER, new ItemEtat(itemStack, 1, true));
+        items.put(Material.APPLE, new ItemEtat(Material.APPLE, 10000, true));
 
         VillagerEtat villagerEtat = new VillagerEtat(villager, items);
 
@@ -215,15 +214,10 @@ public class Village {
     }
 
     private void spawnProfesseur() {
-        Villager villager = spawnVillager(new Position(16, 70, -46, 290), "Professeur", Villager.Type.PLAINS, Villager.Profession.NONE);
-
-        ItemStack item = new ItemStack(Material.ENCHANTED_BOOK);
-        EnchantmentStorageMeta meta = (EnchantmentStorageMeta) item.getItemMeta();
-        meta.addStoredEnchant(Enchantment.PROTECTION_ENVIRONMENTAL, 5,true);
-        item.setItemMeta(meta);
+        Villager villager = spawnVillager(new Position(-105.5, 77, 40.5, 315), "Professeur", Villager.Type.PLAINS, Villager.Profession.LIBRARIAN);
 
         LinkedHashMap<Material, ItemEtat> items = new LinkedHashMap<>();
-        items.put(Material.ENCHANTED_BOOK, new ItemEtat(item, 1, true));
+        items.put(Material.APPLE, new ItemEtat(Material.APPLE, 10000, true));
 
         VillagerEtat villagerEtat = new VillagerEtat(villager, items);
 
@@ -231,10 +225,15 @@ public class Village {
     }
 
     private void spawnBibliothecaire() {
-        Villager villager = spawnVillager(new Position(17, 70, -46, 290), "Bibliothécaire", Villager.Type.PLAINS, Villager.Profession.NONE);
+        Villager villager = spawnVillager(new Position(-101.5, 82, 87.5, 180), "Bibliothécaire", Villager.Type.SWAMP, Villager.Profession.LIBRARIAN);
+
+        ItemStack item = new ItemStack(Material.ENCHANTED_BOOK);
+        EnchantmentStorageMeta meta = (EnchantmentStorageMeta) item.getItemMeta();
+        meta.addStoredEnchant(Enchantment.PROTECTION_ENVIRONMENTAL, 5,true);
+        item.setItemMeta(meta);
 
         LinkedHashMap<Material, ItemEtat> items = new LinkedHashMap<>();
-        items.put(Material.APPLE, new ItemEtat(Material.APPLE, 1, true));
+        items.put(Material.ENCHANTED_BOOK, new ItemEtat(item, 15000000, true));
 
         VillagerEtat villagerEtat = new VillagerEtat(villager, items);
 
@@ -242,10 +241,10 @@ public class Village {
     }
 
     private void spawnBanquier() {
-        Villager villager = spawnVillager(new Position(18, 70, -46, 290), "Banquier", Villager.Type.PLAINS, Villager.Profession.NONE);
+        Villager villager = spawnVillager(new Position(-131.5, 68.8, 54.25, 180), "Banquier", Villager.Type.PLAINS, Villager.Profession.NONE);
 
         LinkedHashMap<Material, ItemEtat> items = new LinkedHashMap<>();
-        items.put(Material.APPLE, new ItemEtat(Material.APPLE, 1, true));
+        items.put(Material.APPLE, new ItemEtat(Material.APPLE, 10000, true));
 
         VillagerEtat villagerEtat = new VillagerEtat(villager, items);
 

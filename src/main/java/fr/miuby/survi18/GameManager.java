@@ -20,6 +20,8 @@ public class GameManager {
 
     private DatabaseManager databaseManager;
 
+    private Timer timer;
+
     public static GameManager getInstance(){
         if(instance == null){
             instance = new GameManager();
@@ -34,6 +36,9 @@ public class GameManager {
         databaseManager.createAlphaPlayer();
 
         village = new Village(plugin.getServer().getWorld("village"));
+
+        timer = new Timer();
+        timer.update();
     }
 
     public Map<UUID, AlphaPlayer> getAlphaPlayers(){
@@ -54,6 +59,10 @@ public class GameManager {
 
     public DatabaseManager getDatabaseManager() {
         return databaseManager;
+    }
+
+    public Timer getTimer() {
+        return timer;
     }
 
     public AlphaPlayer getAlphaPlayer(String pseudo) {
