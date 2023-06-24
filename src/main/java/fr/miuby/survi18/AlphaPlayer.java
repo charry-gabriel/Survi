@@ -7,6 +7,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.Statistic;
 import org.bukkit.advancement.Advancement;
 import org.bukkit.advancement.AdvancementProgress;
+import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.*;
 
@@ -25,6 +26,8 @@ public class AlphaPlayer implements Serializable {
     private int mort = 0;
     private int success = 0;
     private int progres = 0;
+
+    private int maxVie = 10;
 
     private Player player;
 
@@ -126,6 +129,7 @@ public class AlphaPlayer implements Serializable {
             if(scoreboard == null) {
                 newScoreboard();
             }
+
             mort = player.getStatistic(Statistic.DEATHS);
             mortScore.setScore(mort);
             player.setScoreboard(scoreboard);
@@ -149,6 +153,8 @@ public class AlphaPlayer implements Serializable {
                     }
                 }
             }
+
+            player.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(maxVie);
         }
     }
 

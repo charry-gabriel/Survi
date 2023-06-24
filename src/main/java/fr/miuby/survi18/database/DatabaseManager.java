@@ -14,7 +14,7 @@ public class DatabaseManager {
     private DbConnection dbConnection;
 
     public DatabaseManager() {
-        this.dbConnection = new DbConnection(new DbCredentials("localhost", "minecraft", "Gaby__11", "minecraft"));
+        this.dbConnection = new DbConnection(new DbCredentials("141.95.159.90", "Miuby", "Gaby__11", "minecraft"));
     }
 
     public void close() {

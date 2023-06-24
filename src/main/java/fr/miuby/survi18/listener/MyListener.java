@@ -47,6 +47,7 @@ public class MyListener implements Listener {
             ItemStack netheriteIngot = new ItemStack(Material.NETHERITE_INGOT, 1);
             ItemStack shulkerBox = new ItemStack(Material.SHULKER_BOX, 1);
             ItemStack beacon = new ItemStack(Material.BEACON, 1);
+
             if (event.getRecipe().getResult().equals(ironHelmet) ||
                     event.getRecipe().getResult().equals(ironChestplate) ||
                     event.getRecipe().getResult().equals(ironLeggings) ||
@@ -85,7 +86,7 @@ public class MyListener implements Listener {
 
     @EventHandler
     public void onEntityDamageByEntity(EntityDamageByEntityEvent event) {
-        if(event.getDamager().getType() == EntityType.ZOMBIE) {
+        /*if(event.getDamager().getType() == EntityType.ZOMBIE) {
             if(event.getEntity() instanceof Player) {
                 Player player = (Player) event.getEntity();
                 AttributeInstance maxLife = player.getAttribute(Attribute.GENERIC_MAX_HEALTH);
@@ -93,7 +94,7 @@ public class MyListener implements Listener {
                     player.setHealth(maxLife.getValue()*2/3);
                 }
             }
-        } else if(event.getEntity().getType() == EntityType.VILLAGER) {
+        } else */if(event.getEntity().getType() == EntityType.VILLAGER) {
             if(event.getDamager() instanceof Player) {
                 Player player = (Player) event.getDamager();
                 if (player.getGameMode() != GameMode.CREATIVE && player.getWorld() == GameManager.getInstance().getVillage().getWorld()) {
@@ -102,6 +103,15 @@ public class MyListener implements Listener {
                     event.setCancelled(true);
                 }
             }
+        }
+
+        //si on tape
+        if(event.getDamager() instanceof Player){
+            event.setDamage(event.getDamage()/5);
+        }
+        //si on se fait taper
+        if(event.getEntity() instanceof Player){
+            event.setDamage(event.getDamage()*5);
         }
     }
 
