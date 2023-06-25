@@ -1,21 +1,15 @@
 package fr.miuby.survi18.village;
 
-import fr.miuby.survi18.Position;
 import net.kyori.adventure.text.Component;
 import org.bukkit.*;
-import org.bukkit.attribute.Attribute;
 import org.bukkit.enchantments.Enchantment;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Villager;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.EnchantmentStorageMeta;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.PotionMeta;
-import org.bukkit.material.MaterialData;
-import org.bukkit.potion.PotionData;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
-import org.bukkit.potion.PotionType;
 
 import java.util.*;
 
@@ -48,7 +42,9 @@ public class Village {
     }
 
     private void spawnForgeron(){
-        Villager villager = spawnVillager(new Position(12, 70, -46, 290), "Forgeron", Villager.Type.PLAINS, Villager.Profession.WEAPONSMITH);
+        VillagerEtat villagerEtat = new VillagerEtat(new Location(world, 12, 70, -46, 290, 0),
+                "Forgeron", Villager.Type.PLAINS, Villager.Profession.WEAPONSMITH);
+        villagers.put("Forgeron", villagerEtat);
 
         LinkedHashMap<Material, ItemEtat> items = new LinkedHashMap<>();
         items.put(Material.COPPER_INGOT, new ItemEtat(Material.COPPER_INGOT, 75, false));
@@ -59,13 +55,13 @@ public class Village {
         items.put(Material.DIAMOND, new ItemEtat(Material.DIAMOND, 55000, false));
         items.put(Material.NETHERITE_SCRAP, new ItemEtat(Material.NETHERITE_SCRAP, 1000000, false));
 
-        VillagerEtat villagerEtat = new VillagerEtat(villager, items);
-
-        villagers.put("Forgeron", villagerEtat);
+        villagerEtat.SetItems(items);
     }
 
     private void spawnArmurier() {
-        Villager villager = spawnVillager(new Position(11.5, 70, -36.2, 250), "Armurier", Villager.Type.PLAINS, Villager.Profession.ARMORER);
+        VillagerEtat villagerEtat = new VillagerEtat(new Location(world, 11.5, 70, -36.2, 250, 0),
+                "Armurier", Villager.Type.PLAINS, Villager.Profession.ARMORER);
+        villagers.put("Armurier", villagerEtat);
 
         LinkedHashMap<Material, ItemEtat> items = new LinkedHashMap<>();
         items.put(Material.IRON_HELMET, new ItemEtat(Material.IRON_HELMET, 5000, true));
@@ -82,13 +78,13 @@ public class Village {
         items.put(Material.DIAMOND_BOOTS, new ItemEtat(Material.DIAMOND_BOOTS, 500000, true));
         items.put(Material.NETHERITE_INGOT, new ItemEtat(Material.NETHERITE_INGOT, 10000000, true));
 
-        VillagerEtat villagerEtat = new VillagerEtat(villager, items);
-
-        villagers.put("Armurier", villagerEtat);
+        villagerEtat.SetItems(items);
     }
 
     private void spawnPretre() {
-        Villager villager = spawnVillager(new Position(-13.5, 75, -1.5, 90), "Pretre", Villager.Type.PLAINS, Villager.Profession.CLERIC);
+        VillagerEtat villagerEtat = new VillagerEtat(new Location(world, -13.5, 75, -1.5, 90, 0),
+                "Pretre", Villager.Type.PLAINS, Villager.Profession.CLERIC);
+        villagers.put("Pretre", villagerEtat);
 
         LinkedHashMap<Material, ItemEtat> items = new LinkedHashMap<>();
         items.put(Material.TOTEM_OF_UNDYING, new ItemEtat(Material.TOTEM_OF_UNDYING, 1000000, true));
@@ -96,13 +92,14 @@ public class Village {
         items.put(Material.BEACON, new ItemEtat(Material.BEACON, 10000000, true, new ItemStack(Material.NETHER_STAR)));
         items.put(Material.FIREWORK_ROCKET, new ItemEtat(Material.FIREWORK_ROCKET, 40000, true, new ItemStack(Material.PAPER)));
 
-        VillagerEtat villagerEtat = new VillagerEtat(villager, items);
+        villagerEtat.SetItems(items);
 
-        villagers.put("Pretre", villagerEtat);
     }
 
     private void spawnMarchant() {
-        Villager villager = spawnVillager(new Position(27, 70, 34.5, 180), "Marchant", Villager.Type.DESERT, Villager.Profession.NONE);
+        VillagerEtat villagerEtat = new VillagerEtat(new Location(world, 27, 70, 34.5, 180, 0),
+                "Marchant", Villager.Type.DESERT, Villager.Profession.NONE);
+        villagers.put("Marchant", villagerEtat);
 
         LinkedHashMap<Material, ItemEtat> items = new LinkedHashMap<>();
         items.put(Material.BAKED_POTATO, new ItemEtat(Material.BAKED_POTATO, 50, false));
@@ -111,13 +108,13 @@ public class Village {
         items.put(Material.SUGAR, new ItemEtat(Material.SUGAR, 3, false));
         items.put(Material.BEETROOT_SOUP, new ItemEtat(Material.BEETROOT_SOUP, 100, false));
 
-        VillagerEtat villagerEtat = new VillagerEtat(villager, items);
-
-        villagers.put("Marchant", villagerEtat);
+        villagerEtat.SetItems(items);
     }
 
     private void spawnMarchand() {
-        Villager villager = spawnVillager(new Position(38, 70, 36.5, 180), "Marchand", Villager.Type.DESERT, Villager.Profession.NONE);
+        VillagerEtat villagerEtat = new VillagerEtat(new Location(world, 38, 70, 36.5, 180, 0),
+                "Marchand", Villager.Type.DESERT, Villager.Profession.NONE);
+        villagers.put("Marchand", villagerEtat);
 
         LinkedHashMap<Material, ItemEtat> items = new LinkedHashMap<>();
         items.put(Material.BAKED_POTATO, new ItemEtat(Material.BAKED_POTATO, 50, false));
@@ -126,13 +123,13 @@ public class Village {
         items.put(Material.SUGAR, new ItemEtat(Material.SUGAR, 3, false));
         items.put(Material.BEETROOT_SOUP, new ItemEtat(Material.BEETROOT_SOUP, 100, false));
 
-        VillagerEtat villagerEtat = new VillagerEtat(villager, items);
-
-        villagers.put("Marchand", villagerEtat);
+        villagerEtat.SetItems(items);
     }
 
     private void spawnMarchande() {
-        Villager villager = spawnVillager(new Position(40.5, 70, 25, 90), "Marchande", Villager.Type.DESERT, Villager.Profession.NITWIT);
+        VillagerEtat villagerEtat = new VillagerEtat(new Location(world, 40.5, 70, 25, 90, 0),
+                "Marchande", Villager.Type.DESERT, Villager.Profession.NITWIT);
+        villagers.put("Marchande", villagerEtat);
 
         LinkedHashMap<Material, ItemEtat> items = new LinkedHashMap<>();
         items.put(Material.BAKED_POTATO, new ItemEtat(Material.BAKED_POTATO, 50, false));
@@ -141,13 +138,13 @@ public class Village {
         items.put(Material.SUGAR, new ItemEtat(Material.SUGAR, 3, false));
         items.put(Material.BEETROOT_SOUP, new ItemEtat(Material.BEETROOT_SOUP, 100, false));
 
-        VillagerEtat villagerEtat = new VillagerEtat(villager, items);
-
-        villagers.put("Marchande", villagerEtat);
+        villagerEtat.SetItems(items);
     }
 
     private void spawnAubergiste() {
-        Villager villager = spawnVillager(new Position(10, 67, 45.5, 0), "Aubergiste", Villager.Type.SWAMP, Villager.Profession.BUTCHER);
+        VillagerEtat villagerEtat = new VillagerEtat(new Location(world, 10, 67, 45.5, 0, 0),
+                "Aubergiste", Villager.Type.SWAMP, Villager.Profession.BUTCHER);
+        villagers.put("Aubergiste", villagerEtat);
 
         ItemStack shield = new ItemStack(Material.SHIELD);
         ItemMeta shieldMeta = (ItemMeta) shield.getItemMeta();
@@ -169,13 +166,13 @@ public class Village {
         items.put(Material.SUGAR, new ItemEtat(sugar, 250000, true));
         items.put(Material.RABBIT_FOOT, new ItemEtat(rabbit, 250000, true));
 
-        VillagerEtat villagerEtat = new VillagerEtat(villager, items);
-
-        villagers.put("Aubergiste", villagerEtat);
+        villagerEtat.SetItems(items);
     }
 
     private void spawnTavernier() {
-        Villager villager = spawnVillager(new Position(68, 71.5, 26.5, 90), "Tavernier", Villager.Type.PLAINS, Villager.Profession.LEATHERWORKER);
+        VillagerEtat villagerEtat = new VillagerEtat(new Location(world, 68, 71.5, 26.5, 90, 0),
+                "Tavernier", Villager.Type.PLAINS, Villager.Profession.LEATHERWORKER);
+        villagers.put("Tavernier", villagerEtat);
 
         ItemStack item = new ItemStack(Material.POTION);
         PotionMeta meta = (PotionMeta) item.getItemMeta();
@@ -192,13 +189,13 @@ public class Village {
         LinkedHashMap<Material, ItemEtat> items = new LinkedHashMap<>();
         items.put(Material.POTION, new ItemEtat(item, 500000, true));
 
-        VillagerEtat villagerEtat = new VillagerEtat(villager, items);
-
-        villagers.put("Tavernier", villagerEtat);
+        villagerEtat.SetItems(items);
     }
 
     private void spawnMaire() {
-        Villager villager = spawnVillager(new Position(-10.5, 85.8, -43.5, 90), "Maire", Villager.Type.PLAINS, Villager.Profession.CARTOGRAPHER);
+        VillagerEtat villagerEtat = new VillagerEtat(new Location(world, -10.5, 85.8, -43.5, 90, 0),
+                "Maire", Villager.Type.PLAINS, Villager.Profession.CARTOGRAPHER);
+        villagers.put("Maire", villagerEtat);
 
         LinkedHashMap<Material, ItemEtat> items = new LinkedHashMap<>();
         ItemStack itemStack = new ItemStack(Material.FEATHER);
@@ -208,24 +205,24 @@ public class Village {
         //items.put(Material.FEATHER, new ItemEtat(itemStack, 1, true));
         items.put(Material.APPLE, new ItemEtat(Material.APPLE, 10000, true));
 
-        VillagerEtat villagerEtat = new VillagerEtat(villager, items);
-
-        villagers.put("Maire", villagerEtat);
+        villagerEtat.SetItems(items);
     }
 
     private void spawnProfesseur() {
-        Villager villager = spawnVillager(new Position(-105.5, 77, 40.5, 315), "Professeur", Villager.Type.PLAINS, Villager.Profession.LIBRARIAN);
+        VillagerEtat villagerEtat = new VillagerEtat(new Location(world, -105.5, 77, 40.5, 315, 0),
+                "Professeur", Villager.Type.PLAINS, Villager.Profession.LIBRARIAN);
+        villagers.put("Professeur", villagerEtat);
 
         LinkedHashMap<Material, ItemEtat> items = new LinkedHashMap<>();
         items.put(Material.APPLE, new ItemEtat(Material.APPLE, 10000, true));
 
-        VillagerEtat villagerEtat = new VillagerEtat(villager, items);
-
-        villagers.put("Professeur", villagerEtat);
+        villagerEtat.SetItems(items);
     }
 
     private void spawnBibliothecaire() {
-        Villager villager = spawnVillager(new Position(-101.5, 82, 87.5, 180), "Bibliothécaire", Villager.Type.SWAMP, Villager.Profession.LIBRARIAN);
+        VillagerEtat villagerEtat = new VillagerEtat(new Location(world, -101.5, 82, 87.5, 180, 0),
+                "Bibliothécaire", Villager.Type.SWAMP, Villager.Profession.LIBRARIAN);
+        villagers.put("Bibliothécaire", villagerEtat);
 
         ItemStack item = new ItemStack(Material.ENCHANTED_BOOK);
         EnchantmentStorageMeta meta = (EnchantmentStorageMeta) item.getItemMeta();
@@ -235,56 +232,40 @@ public class Village {
         LinkedHashMap<Material, ItemEtat> items = new LinkedHashMap<>();
         items.put(Material.ENCHANTED_BOOK, new ItemEtat(item, 15000000, true));
 
-        VillagerEtat villagerEtat = new VillagerEtat(villager, items);
-
-        villagers.put("Bibliothécaire", villagerEtat);
+        villagerEtat.SetItems(items);
     }
 
     private void spawnBanquier() {
-        Villager villager = spawnVillager(new Position(-131.5, 68.8, 54.25, 180), "Banquier", Villager.Type.PLAINS, Villager.Profession.NONE);
+        VillagerEtat villagerEtat = new VillagerEtat(new Location(world, -131.5, 68.8, 54.25, 180, 0),
+                "Banquier", Villager.Type.PLAINS, Villager.Profession.NONE);
+        villagers.put("Banquier", villagerEtat);
 
         LinkedHashMap<Material, ItemEtat> items = new LinkedHashMap<>();
         items.put(Material.APPLE, new ItemEtat(Material.APPLE, 10000, true));
 
-        VillagerEtat villagerEtat = new VillagerEtat(villager, items);
-
-        villagers.put("Banquier", villagerEtat);
+        villagerEtat.SetItems(items);
     }
 
     private void spawnNetherGardian() {
-        Villager villager = spawnVillager(new Position(19, 70, -46, 290), "Gardien du nether", Villager.Type.PLAINS, Villager.Profession.NONE);
+        VillagerEtat villagerEtat = new VillagerEtat(new Location(world,19, 70, -46, 290, 0),
+                "Gardien du nether", Villager.Type.PLAINS, Villager.Profession.NONE);
+        villagers.put("Gardien du nether", villagerEtat);
 
         LinkedHashMap<Material, ItemEtat> items = new LinkedHashMap<>();
         items.put(Material.APPLE, new ItemEtat(Material.APPLE, 1, true));
 
-        VillagerEtat villagerEtat = new VillagerEtat(villager, items);
-
-        villagers.put("Gardien du nether", villagerEtat);
+        villagerEtat.SetItems(items);
     }
 
     private void spawnEndGardian() {
-        Villager villager = spawnVillager(new Position(20, 70, -46, 290), "Gardien de l'end", Villager.Type.PLAINS, Villager.Profession.NONE);
+        VillagerEtat villagerEtat = new VillagerEtat(new Location(world,20, 70, -46, 290, 0),
+                "Gardien de l'end", Villager.Type.PLAINS, Villager.Profession.NONE);
+        villagers.put("Gardien de l'end", villagerEtat);
 
         LinkedHashMap<Material, ItemEtat> items = new LinkedHashMap<>();
         items.put(Material.APPLE, new ItemEtat(Material.APPLE, 1, true));
 
-        VillagerEtat villagerEtat = new VillagerEtat(villager, items);
-
-        villagers.put("Gardien de l'end", villagerEtat);
-    }
-
-    private Villager spawnVillager(Position position, String name, Villager.Type type, Villager.Profession profession) {
-        Location loc = new Location(world, position.x, position.y, position.z);
-        loc.setYaw(position.yaw);
-
-        Villager v = (Villager) world.spawnEntity(loc, EntityType.VILLAGER);
-        v.setCustomName(name);
-        v.setVillagerType(type);
-        v.setProfession(profession);
-        v.setAI(false);
-        v.setCollidable(false);
-
-        return  v;
+        villagerEtat.SetItems(items);
     }
 
     public void DeleteVillagers() {

@@ -3,11 +3,10 @@ package fr.miuby.survi18.village;
 import fr.miuby.survi18.AlphaPlayer;
 import fr.miuby.survi18.GameManager;
 import net.kyori.adventure.text.Component;
-import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Villager;
-import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.potion.PotionEffect;
@@ -15,21 +14,9 @@ import org.bukkit.potion.PotionEffectType;
 
 import java.util.*;
 
-public class VillagerEtat {
-    private Villager villager;
-    private Inventory inventory;
-    private LinkedHashMap<Material, ItemEtat> items;
-
-    public VillagerEtat(Villager villager, LinkedHashMap<Material, ItemEtat> items) {
-        this.villager = villager;
-        this.items = items;
-
-        float size = items.size() / 9f;
-        Inventory inv = Bukkit.createInventory(villager, (int)Math.ceil(size) * 9, villager.getCustomName());
-        for (ItemEtat item : this.items.values()) {
-            inv.addItem(item.getItem());
-        }
-        this.inventory = inv;
+public class VillagerEtat extends AVillager {
+    public VillagerEtat(Location location, String name, Villager.Type type, Villager.Profession profession) {
+        super(location, name, type, profession);
     }
 
     public void Trade(boolean villagerInventory, ItemStack item, Player player){
@@ -37,9 +24,9 @@ public class VillagerEtat {
         if(itemEtat != null){
             AlphaPlayer alphaPlayer = GameManager.getInstance().getAlphaPlayers().get(player.getUniqueId());
             if(villagerInventory && itemEtat.isOnSale()){
-                Sell(itemEtat, alphaPlayer);
+                PnjSellTo(itemEtat, alphaPlayer);
             }else if(!villagerInventory && !itemEtat.isOnSale()){
-                Buy(itemEtat, item.getAmount(), alphaPlayer);
+                PnjBuyTo(itemEtat, item.getAmount(), alphaPlayer);
                 player.getInventory().removeItem(item);
             }else if(villagerInventory && !itemEtat.isOnSale()){
                 player.sendMessage("Cet item n'est pas en vente !");
@@ -51,7 +38,7 @@ public class VillagerEtat {
         }
     }
 
-    private void Sell(ItemEtat item, AlphaPlayer player) {
+    private void PnjSellTo(ItemEtat item, AlphaPlayer player) {
         int sous = item.getPrice();
         if (sous >= player.getCoins()) {
             player.getPlayer().sendMessage("Vous n'avez pas assez d'AlphaCoins pour acheter cet item !");
@@ -108,21 +95,9 @@ public class VillagerEtat {
         }
     }
 
-    private void Buy(ItemEtat item, int nbr, AlphaPlayer player){
+    private void PnjBuyTo(ItemEtat item, int nbr, AlphaPlayer player){
         int sous = item.getPrice();
         player.addCoins(sous * nbr);
         player.getPlayer().sendMessage("Vous avez reçu " + sous * nbr + " AlphaCoins pour votre vente !");
-    }
-
-    public Villager getVillager() {
-        return villager;
-    }
-
-    public Inventory getInventory() {
-        return inventory;
-    }
-
-    public LinkedHashMap<Material, ItemEtat> getItems() {
-        return items;
     }
 }
