@@ -8,10 +8,10 @@ import org.bukkit.inventory.meta.ItemMeta;
 import java.util.*;
 
 public class ItemEtat {
-    private ItemStack item;
-    private int price;
-    private boolean onSale;
-    private ItemStack[] itemStack;
+    private final ItemStack item;
+    private final int price;
+    private final boolean onSale;
+    private final ItemStack[] itemStack;
 
     public ItemEtat(Material material, int price, boolean onSale, ItemStack... itemStack) {
         this.price = price;
@@ -21,11 +21,13 @@ public class ItemEtat {
         ItemStack stack = new ItemStack(material);
         ItemMeta meta = stack.getItemMeta();
         List<Component> lore = new ArrayList<>();
+
         if(price > 0)
             lore.add(Component.text(price + " AlphaCoins"));
-        for(int loop = 0; loop < itemStack.length; loop++) {
-            lore.add(Component.text(itemStack[loop].getAmount() + " " + itemStack[loop].getType().toString()));
-        }
+
+        for (ItemStack value : itemStack)
+            lore.add(Component.text(value.getAmount() + " " + value.getType()));
+
         meta.lore(lore);
         stack.setItemMeta(meta);
         item = stack;
@@ -38,11 +40,13 @@ public class ItemEtat {
 
         ItemMeta meta = item.getItemMeta();
         List<Component> lore = new ArrayList<>();
+
         if(price > 0)
             lore.add(Component.text(price + " AlphaCoins"));
-        for(int loop = 0; loop < itemStack.length; loop++) {
-            lore.add(Component.text(itemStack[loop].getAmount() + " " + itemStack[loop].getType().toString()));
-        }
+
+        for (ItemStack stack : itemStack)
+            lore.add(Component.text(stack.getAmount() + " " + stack.getType()));
+
         meta.lore(lore);
         item.setItemMeta(meta);
         this.item = item;

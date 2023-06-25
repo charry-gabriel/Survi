@@ -14,8 +14,8 @@ import org.bukkit.potion.PotionEffectType;
 import java.util.*;
 
 public class Village {
-    private World world;
-    private Map<String, VillagerEtat> villagers = new HashMap<String, VillagerEtat>();
+    private final World world;
+    private final Map<String, VillagerEtat> villagers = new HashMap<>();
 
     public Village(World world) {
         this.world = world;
@@ -147,17 +147,17 @@ public class Village {
         villagers.put("Aubergiste", villagerEtat);
 
         ItemStack shield = new ItemStack(Material.SHIELD);
-        ItemMeta shieldMeta = (ItemMeta) shield.getItemMeta();
+        ItemMeta shieldMeta = shield.getItemMeta();
         shieldMeta.displayName(Component.text("Nuit régénératrice"));
         shield.setItemMeta(shieldMeta);
 
         ItemStack sugar = new ItemStack(Material.SUGAR);
-        ItemMeta sugarMeta = (ItemMeta) sugar.getItemMeta();
+        ItemMeta sugarMeta = sugar.getItemMeta();
         sugarMeta.displayName(Component.text("Nuit express"));
         sugar.setItemMeta(sugarMeta);
 
         ItemStack rabbit = new ItemStack(Material.RABBIT_FOOT);
-        ItemMeta rabbitMeta = (ItemMeta) rabbit.getItemMeta();
+        ItemMeta rabbitMeta = rabbit.getItemMeta();
         rabbitMeta.displayName(Component.text("Nuit légère"));
         rabbit.setItemMeta(rabbitMeta);
 

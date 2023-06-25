@@ -43,7 +43,6 @@ public class VillagerEtat extends AVillager {
         if (sous >= player.getCoins()) {
             player.getPlayer().sendMessage("Vous n'avez pas assez d'AlphaCoins pour acheter cet item !");
         } else {
-            Component component = item.getItem().getItemMeta().displayName();
             if(item.getItem().getType().equals(Material.SHIELD)) {
                 player.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 4800, 0));
                 player.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, 2400, 0));
