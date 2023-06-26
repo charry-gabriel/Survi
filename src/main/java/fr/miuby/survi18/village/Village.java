@@ -1,26 +1,24 @@
 package fr.miuby.survi18.village;
 
-import net.kyori.adventure.text.Component;
+import fr.miuby.survi18.blessing.Blessing;
+import fr.miuby.survi18.Tribute;
+import fr.miuby.survi18.blessing.MaxHealthEffect;
 import org.bukkit.*;
-import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Villager;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.EnchantmentStorageMeta;
-import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.inventory.meta.PotionMeta;
-import org.bukkit.potion.PotionEffect;
-import org.bukkit.potion.PotionEffectType;
 
 import java.util.*;
 
 public class Village {
     private final World world;
-    private final Map<String, VillagerEtat> villagers = new HashMap<>();
+    private final Map<String, VillagerLevel> villagers = new HashMap<>();
 
     public Village(World world) {
         this.world = world;
 
-        spawnForgeron();
+        SpawnEdward();
+
+        /*spawnForgeron();
         spawnArmurier();
         spawnPretre();
         spawnMarchand();
@@ -32,15 +30,35 @@ public class Village {
         spawnMaire();
         spawnProfesseur();
         spawnBibliothecaire();
-        spawnBanquier();
+        spawnBanquier();*/
     }
 
     public World getWorld() { return world; }
 
-    public Map<String, VillagerEtat> getVillagers() {
+    public Map<String, VillagerLevel> getVillagers() {
         return villagers;
     }
 
+    private void SpawnEdward(){
+        Location location = new Location(world, 12, 70, -46, 290, 0);
+
+        Tribute[] tributes = new Tribute[]{
+                new Tribute(new ItemStack(Material.HAY_BLOCK, 64)),
+                new Tribute(new ItemStack(Material.GOLDEN_CARROT, 128)),
+        };
+
+        Blessing[] blessings = new Blessing[]{
+                new Blessing(new MaxHealthEffect(12)),
+                new Blessing(new MaxHealthEffect(14)),
+        };
+
+        VillagerLevel villager = new VillagerLevel(location,"Edward Jenner", Villager.Type.PLAINS, Villager.Profession.WEAPONSMITH, tributes, blessings);
+        villagers.put("Edward Jenner", villager);
+    }
+
+
+
+/*
     private void spawnForgeron(){
         VillagerEtat villagerEtat = new VillagerEtat(new Location(world, 12, 70, -46, 290, 0),
                 "Forgeron", Villager.Type.PLAINS, Villager.Profession.WEAPONSMITH);
@@ -273,5 +291,5 @@ public class Village {
             villager.getVillager().remove();
         }
         villagers.clear();
-    }
+    }*/
 }

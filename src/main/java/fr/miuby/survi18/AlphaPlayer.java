@@ -1,6 +1,9 @@
 package fr.miuby.survi18;
 
+import fr.miuby.survi18.blessing.Blessing;
+import fr.miuby.survi18.blessing.BlessingEffect;
 import fr.miuby.survi18.database.DbConnection;
+import fr.miuby.survi18.village.VillagerLevel;
 import io.papermc.paper.advancement.AdvancementDisplay;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -17,6 +20,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Iterator;
+import java.util.Objects;
 import java.util.UUID;
 
 public class AlphaPlayer implements Serializable {
@@ -26,8 +30,6 @@ public class AlphaPlayer implements Serializable {
     private int mort = 0;
     private int success = 0;
     private int progres = 0;
-
-    private int maxVie = 10;
 
     private Player player;
 
@@ -154,7 +156,15 @@ public class AlphaPlayer implements Serializable {
                 }
             }
 
-            player.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(maxVie);
+            Objects.requireNonNull(player.getAttribute(Attribute.GENERIC_MAX_HEALTH)).setBaseValue(10);
+
+            for (VillagerLevel villager : GameManager.getInstance().getVillage().getVillagers().values()) {
+                for (Blessing blessing : villager.getCurrentBlessings()) {
+                    for (BlessingEffect effect : blessing.getBlessingEffects()) {
+                        effect.ApplyEffect(this);
+                    }
+                }
+            }
         }
     }
 

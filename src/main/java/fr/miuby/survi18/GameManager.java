@@ -2,7 +2,7 @@ package fr.miuby.survi18;
 
 import fr.miuby.survi18.database.DatabaseManager;
 import fr.miuby.survi18.village.Village;
-import org.bukkit.entity.Player;
+import org.bukkit.World;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -33,12 +33,17 @@ public class GameManager {
         this.plugin = plugin;
 
         databaseManager = new DatabaseManager();
-        databaseManager.createAlphaPlayer();
+        databaseManager.createAlphaPlayers();
 
-        village = new Village(plugin.getServer().getWorld("village"));
+        village = new Village(this.GetWorld("village"));
+        databaseManager.createVillagers(village);
 
         timer = new Timer();
         timer.update();
+    }
+
+    public World GetWorld(String name) {
+        return plugin.getServer().getWorld(name);
     }
 
     public Map<UUID, AlphaPlayer> getAlphaPlayers(){

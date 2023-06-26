@@ -16,6 +16,7 @@ public abstract class AVillager {
     protected Villager villager;
     protected Inventory inventory;
     protected LinkedHashMap<Material, ItemEtat> items;
+    protected String name;
 
     public AVillager(Location location, String name, Villager.Type type, Villager.Profession profession) {
         Villager v = (Villager) location.getWorld().spawnEntity(location, EntityType.VILLAGER);
@@ -26,6 +27,7 @@ public abstract class AVillager {
         v.setCollidable(false);
 
         this.villager = v;
+        this.name = name;
     }
 
     public void SetItems(LinkedHashMap<Material, ItemEtat> items) {
