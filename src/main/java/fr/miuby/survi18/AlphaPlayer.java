@@ -5,6 +5,8 @@ import fr.miuby.survi18.blessing.BlessingEffect;
 import fr.miuby.survi18.database.DbConnection;
 import fr.miuby.survi18.village.VillagerLevel;
 import io.papermc.paper.advancement.AdvancementDisplay;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Statistic;
@@ -24,7 +26,7 @@ import java.util.Objects;
 import java.util.UUID;
 
 public class AlphaPlayer implements Serializable {
-    private UUID uuid;
+    private final UUID uuid;
     private String pseudo;
     private int coins = 0;
     private int mort = 0;
@@ -85,7 +87,7 @@ public class AlphaPlayer implements Serializable {
     public void newScoreboard() {
         scoreboard = Bukkit.getScoreboardManager().getNewScoreboard();
 
-        Objective objectifInfo = scoreboard.registerNewObjective("Info", "dummy");
+        Objective objectifInfo = scoreboard.registerNewObjective("Info", Criteria.DUMMY, Component.text("Info"));
         objectifInfo.setDisplaySlot(DisplaySlot.SIDEBAR);
 
         coinScore = objectifInfo.getScore("AlphaCoins :");
@@ -101,7 +103,7 @@ public class AlphaPlayer implements Serializable {
         mortScore.setScore(mort);
 
 
-        Objective life = scoreboard.registerNewObjective("Vie", Criterias.HEALTH);
+        Objective life = scoreboard.registerNewObjective("Vie", Criteria.HEALTH, Component.text("Vie"));
         life.setDisplaySlot(DisplaySlot.PLAYER_LIST);
         life.setRenderType(RenderType.HEARTS);
 
@@ -110,17 +112,17 @@ public class AlphaPlayer implements Serializable {
 
     public void createTeam(){
         Team village = scoreboard.registerNewTeam("Village");
-        village.setColor(ChatColor.GREEN);
-        village.setPrefix("Village - ");
+        village.color(NamedTextColor.GREEN);
+        village.prefix(Component.text("Village - "));
         Team wilderness = scoreboard.registerNewTeam("Wilderness");
-        wilderness.setColor(ChatColor.GOLD);
-        wilderness.setPrefix("Wilderness - ");
+        wilderness.color(NamedTextColor.GOLD);
+        wilderness.prefix(Component.text("Wilderness - "));
         Team nether = scoreboard.registerNewTeam("Nether");
-        nether.setColor(ChatColor.RED);
-        nether.setPrefix("Nether - ");
+        nether.color(NamedTextColor.RED);
+        nether.prefix(Component.text("Nether - "));
         Team end = scoreboard.registerNewTeam("End");
-        end.setColor(ChatColor.AQUA);
-        end.setPrefix("End - ");
+        end.color(NamedTextColor.AQUA);
+        end.prefix(Component.text("End - "));
     }
 
     public void actualize() {
@@ -141,16 +143,16 @@ public class AlphaPlayer implements Serializable {
                 if(alphaPlayer.getPlayer() != null) {
                     switch (alphaPlayer.getPlayer().getWorld().getName()) {
                         case "village":
-                            this.getScoreboard().getTeam("Village").addEntry(alphaPlayer.getPseudo());
+                            Objects.requireNonNull(this.getScoreboard().getTeam("Village")).addEntry(alphaPlayer.getPseudo());
                             break;
                         case "wilderness":
-                            this.getScoreboard().getTeam("Wilderness").addEntry(alphaPlayer.getPseudo());
+                            Objects.requireNonNull(this.getScoreboard().getTeam("Wilderness")).addEntry(alphaPlayer.getPseudo());
                             break;
                         case "wilderness_nether":
-                            this.getScoreboard().getTeam("Nether").addEntry(alphaPlayer.getPseudo());
+                            Objects.requireNonNull(this.getScoreboard().getTeam("Nether")).addEntry(alphaPlayer.getPseudo());
                             break;
                         case "wilderness_the_end":
-                            this.getScoreboard().getTeam("End").addEntry(alphaPlayer.getPseudo());
+                            Objects.requireNonNull(this.getScoreboard().getTeam("End")).addEntry(alphaPlayer.getPseudo());
                             break;
                     }
                 }

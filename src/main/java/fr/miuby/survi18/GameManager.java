@@ -14,7 +14,7 @@ public class GameManager {
     private Survi18 plugin;
 
     private Village village;
-    private Map<UUID, AlphaPlayer> players = new HashMap<UUID, AlphaPlayer>();
+    private final Map<UUID, AlphaPlayer> players = new HashMap<>();
 
     private final Logger logger = Logger.getLogger("Survi18");
 
@@ -72,7 +72,7 @@ public class GameManager {
 
     public AlphaPlayer getAlphaPlayer(String pseudo) {
         for(AlphaPlayer alphaP : GameManager.getInstance().getAlphaPlayers().values()) {
-            if(alphaP.getPseudo().toLowerCase().equals(pseudo.toLowerCase())) {
+            if(alphaP.getPseudo().equalsIgnoreCase(pseudo)) {
                 return alphaP;
             }
         }
