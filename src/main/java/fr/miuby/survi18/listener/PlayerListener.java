@@ -61,14 +61,14 @@ public class PlayerListener implements Listener {
         AdvancementProgress advancementProgress = player.getAdvancementProgress(advancement);
         AdvancementDisplay advancementDisplay = advancement.getDisplay();
 
-        String categorie = advancement.getKey().getKey().split("/")[0];
+        /*String categorie = advancement.getKey().getKey().split("/")[0];
         if(advancementProgress.isDone() && advancementDisplay != null && !categorie.equals("recipes")) {
             if(advancementDisplay.frame() == AdvancementDisplay.Frame.CHALLENGE) {
                 GameManager.getInstance().getAlphaPlayers().get(player.getUniqueId()).gainOneSuccess(true);
             } else if(advancementDisplay.frame() == AdvancementDisplay.Frame.GOAL || advancementDisplay.frame() == AdvancementDisplay.Frame.TASK) {
                 GameManager.getInstance().getAlphaPlayers().get(player.getUniqueId()).gainOneSuccess(false);
             }
-        }
+        }*/
     }
 
     @EventHandler
@@ -76,8 +76,8 @@ public class PlayerListener implements Listener {
         Player p = event.getPlayer();
         if(event.getRightClicked() instanceof Villager) {
             Villager v = (Villager) event.getRightClicked();
-            VillagerEtat villager = GameManager.getInstance().getVillage().getVillagers().get(v.getCustomName());
-            if(v.getCustomName() != null && villager != null) {
+            VillagerEtat villager = GameManager.getInstance().getVillage().getVillagersEtat().get(v.customName());
+            if(v.customName() != null && villager != null) {
                 p.openInventory(villager.getInventory());
                 event.setCancelled(true);
             }

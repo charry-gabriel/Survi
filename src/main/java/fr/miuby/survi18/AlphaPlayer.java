@@ -8,7 +8,6 @@ import io.papermc.paper.advancement.AdvancementDisplay;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Statistic;
 import org.bukkit.advancement.Advancement;
 import org.bukkit.advancement.AdvancementProgress;
@@ -28,7 +27,6 @@ import java.util.UUID;
 public class AlphaPlayer implements Serializable {
     private final UUID uuid;
     private String pseudo;
-    private int coins = 0;
     private int mort = 0;
     private int success = 0;
     private int progres = 0;
@@ -36,7 +34,6 @@ public class AlphaPlayer implements Serializable {
     private Player player;
 
     private Score mortScore;
-    private Score coinScore;
     private Score progresScore;
     private Score successScore;
     private Scoreboard scoreboard;
@@ -48,12 +45,11 @@ public class AlphaPlayer implements Serializable {
                     final DbConnection dbConnection = GameManager.getInstance().getDatabaseManager().getDbConnection();
                     try {
                         final Connection connection = dbConnection.getConnection();
-                        final PreparedStatement preparedStatement = connection.prepareStatement("SELECT uuid, coins, mort, success, progres, pseudo FROM player WHERE uuid = ?");
+                        final PreparedStatement preparedStatement = connection.prepareStatement("SELECT uuid, mort, success, progres, pseudo FROM player WHERE uuid = ?");
                         preparedStatement.setString(1, uuid.toString());
                         final ResultSet resultSet = preparedStatement.executeQuery();
 
                         if (resultSet.next()) {
-                            coins = resultSet.getInt("coins");
                             mort = resultSet.getInt("mort");
                             success = resultSet.getInt("success");
                             progres = resultSet.getInt("progres");
@@ -87,11 +83,8 @@ public class AlphaPlayer implements Serializable {
     public void newScoreboard() {
         scoreboard = Bukkit.getScoreboardManager().getNewScoreboard();
 
-        Objective objectifInfo = scoreboard.registerNewObjective("Info", Criteria.DUMMY, Component.text("Info"));
+        /*Objective objectifInfo = scoreboard.registerNewObjective("Info", Criteria.DUMMY, Component.text("Info"));
         objectifInfo.setDisplaySlot(DisplaySlot.SIDEBAR);
-
-        coinScore = objectifInfo.getScore("AlphaCoins :");
-        coinScore.setScore(coins);
 
         progresScore = objectifInfo.getScore("Progrès :");
         progresScore.setScore(progres);
@@ -100,7 +93,7 @@ public class AlphaPlayer implements Serializable {
         successScore.setScore(success);
 
         mortScore = objectifInfo.getScore("Mort :");
-        mortScore.setScore(mort);
+        mortScore.setScore(mort);*/
 
 
         Objective life = scoreboard.registerNewObjective("Vie", Criteria.HEALTH, Component.text("Vie"));
@@ -160,7 +153,7 @@ public class AlphaPlayer implements Serializable {
 
             Objects.requireNonNull(player.getAttribute(Attribute.GENERIC_MAX_HEALTH)).setBaseValue(10);
 
-            for (VillagerLevel villager : GameManager.getInstance().getVillage().getVillagers().values()) {
+            for (VillagerLevel villager : GameManager.getInstance().getVillage().getVillagersLevel().values()) {
                 for (Blessing blessing : villager.getCurrentBlessings()) {
                     for (BlessingEffect effect : blessing.getBlessingEffects()) {
                         effect.ApplyEffect(this);
@@ -188,7 +181,6 @@ public class AlphaPlayer implements Serializable {
                 result = progres * progres * 10000;
             setProgres(progres);
         }
-        addCoins(result);
     }
 
     public void gainOldAdvancement(Player player) {
@@ -216,17 +208,8 @@ public class AlphaPlayer implements Serializable {
                 }
             }
         }
-        addCoins(result);
         setProgres(progres);
         setSuccess(success);
-    }
-
-    public void addCoins(int coin) {
-        coins += coin;
-        if(coinScore != null)
-            coinScore.setScore(coins);
-
-        GameManager.getInstance().getDatabaseManager().updatePlayer(uuid, "coins", this.coins);
     }
 
     public void addMort(int mort) {
@@ -259,10 +242,6 @@ public class AlphaPlayer implements Serializable {
 
     public int getMort(){
         return mort;
-    }
-
-    public int getCoins(){
-        return coins;
     }
 
     public int getSuccess(){

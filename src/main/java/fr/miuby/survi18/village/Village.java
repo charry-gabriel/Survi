@@ -11,7 +11,8 @@ import java.util.*;
 
 public class Village {
     private final World world;
-    private final Map<String, VillagerLevel> villagers = new HashMap<>();
+    private final Map<String, VillagerLevel> villagersLevel = new HashMap<>();
+    private final Map<String, VillagerEtat> villagersEtat = new HashMap<>();
 
     public Village(World world) {
         this.world = world;
@@ -35,8 +36,12 @@ public class Village {
 
     public World getWorld() { return world; }
 
-    public Map<String, VillagerLevel> getVillagers() {
-        return villagers;
+    public Map<String, VillagerLevel> getVillagersLevel() {
+        return villagersLevel;
+    }
+
+    public Map<String, VillagerEtat> getVillagersEtat() {
+        return villagersEtat;
     }
 
     private void SpawnEdward(){
@@ -53,7 +58,7 @@ public class Village {
         };
 
         VillagerLevel villager = new VillagerLevel(location,"Edward Jenner", Villager.Type.PLAINS, Villager.Profession.WEAPONSMITH, tributes, blessings);
-        villagers.put("Edward Jenner", villager);
+        villagersLevel.put("Edward Jenner", villager);
     }
 
 
@@ -284,12 +289,17 @@ public class Village {
         items.put(Material.APPLE, new ItemEtat(Material.APPLE, 1, true));
 
         villagerEtat.SetItems(items);
-    }
+    }*/
 
     public void DeleteVillagers() {
-        for(VillagerEtat villager : villagers.values()) {
+        for(VillagerEtat villager : villagersEtat.values()) {
             villager.getVillager().remove();
         }
-        villagers.clear();
-    }*/
+        villagersEtat.clear();
+
+        for(VillagerLevel villager : villagersLevel.values()) {
+            villager.getVillager().remove();
+        }
+        villagersLevel.clear();
+    }
 }

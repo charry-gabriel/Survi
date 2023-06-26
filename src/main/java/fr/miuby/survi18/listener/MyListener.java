@@ -1,26 +1,18 @@
 package fr.miuby.survi18.listener;
 
 import fr.miuby.survi18.*;
-import fr.miuby.survi18.village.ItemEtat;
 import fr.miuby.survi18.village.VillagerEtat;
+import fr.miuby.survi18.village.VillagerLevel;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
-import org.bukkit.attribute.Attribute;
-import org.bukkit.attribute.AttributeInstance;
-import org.bukkit.enchantments.Enchantment;
-import org.bukkit.entity.EnderDragon;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Villager;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.EntitySpawnEvent;
 import org.bukkit.event.inventory.*;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.EnchantmentStorageMeta;
-
-import java.util.Objects;
 
 public class MyListener implements Listener {
     static Survi18 plugin;
@@ -68,38 +60,14 @@ public class MyListener implements Listener {
             }
         }
     }
-    @EventHandler
-    public void onPrepareAnvil(PrepareAnvilEvent event){
-        if (event.getResult() != null && event.getInventory().getFirstItem() != null && event.getInventory().getSecondItem() != null){
-            ItemStack secondItem = event.getInventory().getSecondItem();
-            if(secondItem.getItemMeta() instanceof EnchantmentStorageMeta){
-                EnchantmentStorageMeta secondMeta = (EnchantmentStorageMeta) secondItem.getItemMeta();
-                if (secondMeta.hasStoredEnchant(Enchantment.PROTECTION_ENVIRONMENTAL) && secondMeta.getStoredEnchantLevel(Enchantment.PROTECTION_ENVIRONMENTAL) == 5){
-                    ItemStack firstItem = event.getInventory().getFirstItem().clone();
-                    firstItem.addUnsafeEnchantment(Enchantment.PROTECTION_ENVIRONMENTAL, 5);
-                    event.setResult(firstItem);
-                }
-            }
-        }
-    }
-
 
     @EventHandler
     public void onEntityDamageByEntity(EntityDamageByEntityEvent event) {
-        /*if(event.getDamager().getType() == EntityType.ZOMBIE) {
-            if(event.getEntity() instanceof Player) {
-                Player player = (Player) event.getEntity();
-                AttributeInstance maxLife = player.getAttribute(Attribute.GENERIC_MAX_HEALTH);
-                if(maxLife != null && player.getHealth() > maxLife.getValue()*2/3) {
-                    player.setHealth(maxLife.getValue()*2/3);
-                }
-            }
-        } else */if(event.getEntity().getType() == EntityType.VILLAGER) {
+        //tape pas les pnj
+        if(event.getEntity().getType() == EntityType.VILLAGER) {
             if(event.getDamager() instanceof Player) {
                 Player player = (Player) event.getDamager();
                 if (player.getGameMode() != GameMode.CREATIVE && player.getWorld() == GameManager.getInstance().getVillage().getWorld()) {
-                    GameManager.getInstance().getAlphaPlayers().get(player.getUniqueId()).addCoins(-500);
-                    player.sendMessage("Une amende de 500 AlphaCoins pour avoir frappé un agent de l'État !");
                     event.setCancelled(true);
                 }
             }
@@ -116,31 +84,28 @@ public class MyListener implements Listener {
     }
 
     @EventHandler
-    public void onEntitySpawn(EntitySpawnEvent event){
-        if (event.getEntity() instanceof EnderDragon) {
-            EnderDragon dragon = (EnderDragon) event.getEntity();
-            try {
-                if (dragon.getMaxHealth() >= 2000) {
-                    dragon.setHealth(2000);
-                }
-                Objects.requireNonNull(dragon.getAttribute(Attribute.GENERIC_MAX_HEALTH)).setBaseValue(2000);
-                dragon.setHealth(2000);
-            } catch (Exception exception) {
-                exception.printStackTrace();
-            }
-        }
-    }
-
-    @EventHandler
     public void onInventoryClick(InventoryClickEvent event){
         Player player = (Player)event.getWhoClicked();
         ItemStack item = event.getCurrentItem();
-        if(item != null && item.getType() != Material.AIR && event.getClickedInventory() != null &&
-                (event.getClickedInventory().getHolder() instanceof Villager || event.getClickedInventory().getHolder() instanceof Player && event.getInventory().getHolder() instanceof Villager)) {
-            for (VillagerEtat villager : GameManager.getInstance().getVillage().getVillagers().values()) {
+
+        if(item != null
+            && item.getType() != Material.AIR
+            && event.getClickedInventory() != null
+            && (event.getClickedInventory().getHolder() instanceof Villager || event.getClickedInventory().getHolder() instanceof Player
+            && event.getInventory().getHolder() instanceof Villager))
+        {
+            for (VillagerEtat villager : GameManager.getInstance().getVillage().getVillagersEtat().values()) {
                 boolean villagerInventory = villager.getInventory() == event.getClickedInventory();
                 if (villager.getInventory() == event.getInventory() || villagerInventory) {
                     villager.Trade(villagerInventory, item, player);
+                    event.setCancelled(true);
+                }
+            }
+
+            for (VillagerLevel villager : GameManager.getInstance().getVillage().getVillagersLevel().values()) {
+                boolean villagerInventory = villager.getInventory() == event.getClickedInventory();
+                if (villager.getInventory() == event.getInventory() || villagerInventory) {
+                    villager.GiveItems(villagerInventory, item, player);
                     event.setCancelled(true);
                 }
             }
