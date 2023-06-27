@@ -1,6 +1,7 @@
 package fr.miuby.survi18;
 
 import fr.miuby.survi18.database.DatabaseManager;
+import fr.miuby.survi18.locked_item.LockedItemsManager;
 import fr.miuby.survi18.village.Village;
 import org.bukkit.World;
 
@@ -15,6 +16,8 @@ public class GameManager {
 
     private Village village;
     private final Map<UUID, AlphaPlayer> players = new HashMap<>();
+
+    private LockedItemsManager lockedItemsManager;
 
     private final Logger logger = Logger.getLogger("Survi18");
 
@@ -98,5 +101,9 @@ public class GameManager {
                 }
             }
         }
+    }
+
+    public LockedItemsManager getLockedItemsManager() {
+        return lockedItemsManager;
     }
 }

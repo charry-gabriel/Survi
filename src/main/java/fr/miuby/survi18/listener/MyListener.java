@@ -24,37 +24,7 @@ public class MyListener implements Listener {
     @EventHandler
     public void onPrepareItemCraft(PrepareItemCraftEvent event){
         if(event.getInventory().getResult() != null) {
-            ItemStack ironHelmet = new ItemStack(Material.IRON_HELMET, 1);
-            ItemStack ironChestplate = new ItemStack(Material.IRON_CHESTPLATE, 1);
-            ItemStack ironLeggings = new ItemStack(Material.IRON_LEGGINGS, 1);
-            ItemStack ironBoots = new ItemStack(Material.IRON_BOOTS, 1);
-            ItemStack goldenHelmet = new ItemStack(Material.GOLDEN_HELMET, 1);
-            ItemStack goldenChestplate = new ItemStack(Material.GOLDEN_CHESTPLATE, 1);
-            ItemStack goldlenLeggings = new ItemStack(Material.GOLDEN_LEGGINGS, 1);
-            ItemStack goldenBoots = new ItemStack(Material.GOLDEN_BOOTS, 1);
-            ItemStack diamondHelmet = new ItemStack(Material.DIAMOND_HELMET, 1);
-            ItemStack diamondChestplate = new ItemStack(Material.DIAMOND_CHESTPLATE, 1);
-            ItemStack diamondLeggings = new ItemStack(Material.DIAMOND_LEGGINGS, 1);
-            ItemStack diamondBoots = new ItemStack(Material.DIAMOND_BOOTS, 1);
-            ItemStack netheriteIngot = new ItemStack(Material.NETHERITE_INGOT, 1);
-            ItemStack shulkerBox = new ItemStack(Material.SHULKER_BOX, 1);
-            ItemStack beacon = new ItemStack(Material.BEACON, 1);
-
-            if (event.getRecipe().getResult().equals(ironHelmet) ||
-                    event.getRecipe().getResult().equals(ironChestplate) ||
-                    event.getRecipe().getResult().equals(ironLeggings) ||
-                    event.getRecipe().getResult().equals(ironBoots) ||
-                    event.getRecipe().getResult().equals(goldenHelmet) ||
-                    event.getRecipe().getResult().equals(goldenChestplate) ||
-                    event.getRecipe().getResult().equals(goldlenLeggings) ||
-                    event.getRecipe().getResult().equals(goldenBoots) ||
-                    event.getRecipe().getResult().equals(diamondHelmet) ||
-                    event.getRecipe().getResult().equals(diamondChestplate) ||
-                    event.getRecipe().getResult().equals(diamondLeggings) ||
-                    event.getRecipe().getResult().equals(netheriteIngot) ||
-                    event.getRecipe().getResult().equals(beacon) ||
-                    event.getRecipe().getResult().equals(shulkerBox) ||
-                    event.getRecipe().getResult().equals(diamondBoots)) {
+            if (GameManager.getInstance().getLockedItemsManager().isLocked(event.getInventory().getResult())) {
                 ItemStack air = new ItemStack(Material.AIR);
                 event.getInventory().setResult(air);
             }
@@ -75,11 +45,11 @@ public class MyListener implements Listener {
 
         //si on tape
         if(event.getDamager() instanceof Player){
-            event.setDamage(event.getDamage()/5);
+            event.setDamage(event.getDamage() * GameManager.getInstance().getAlphaPlayers().get(event.getDamager().getUniqueId()).getResistance());
         }
         //si on se fait taper
         if(event.getEntity() instanceof Player){
-            event.setDamage(event.getDamage()*5);
+            event.setDamage(event.getDamage() * GameManager.getInstance().getAlphaPlayers().get(event.getDamager().getUniqueId()).getDamage());
         }
     }
 
