@@ -3,9 +3,9 @@ package fr.miuby.survi18.blessing;
 import fr.miuby.survi18.AlphaPlayer;
 
 public class ResistanceEffect extends BlessingEffect {
-    private final int resistance;
+    private final float resistance;
 
-    public ResistanceEffect(int reduction) {
+    public ResistanceEffect(float reduction) {
         this.resistance = reduction;
     }
 

@@ -38,8 +38,8 @@ public class AlphaPlayer implements Serializable {
     private Score successScore;
     private Scoreboard scoreboard;
 
-    private int resistance;
-    private int damage;
+    private float resistance;
+    private float damage;
 
     public AlphaPlayer(UUID uuid) {
         this.uuid = uuid;
@@ -271,19 +271,19 @@ public class AlphaPlayer implements Serializable {
         player = null;
     }
 
-    public void setResistance(int resistance) {
+    public void setResistance(float resistance) {
         this.resistance = resistance;
     }
 
-    public int getResistance() {
+    public float getResistance() {
         return resistance;
     }
 
-    public int getDamage() {
+    public float getDamage() {
         return damage;
     }
 
-    public void setDamage(int damage) {
+    public void setDamage(float damage) {
         this.damage = damage;
     }
 }

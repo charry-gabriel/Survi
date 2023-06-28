@@ -2,7 +2,9 @@ package fr.miuby.survi18.village;
 
 import fr.miuby.survi18.blessing.Blessing;
 import fr.miuby.survi18.Tribute;
+import fr.miuby.survi18.blessing.DamageEffect;
 import fr.miuby.survi18.blessing.MaxHealthEffect;
+import fr.miuby.survi18.blessing.ResistanceEffect;
 import org.bukkit.*;
 import org.bukkit.entity.Villager;
 import org.bukkit.inventory.ItemStack;
@@ -17,21 +19,12 @@ public class Village {
     public Village(World world) {
         this.world = world;
 
-        SpawnEdward();
+        spawnEdward();
+        spawnNain();
+        spawnMaddox();
+        spawnStuff();
+        spawnTools();
 
-        /*spawnForgeron();
-        spawnArmurier();
-        spawnPretre();
-        spawnMarchand();
-        spawnMarchant();
-        spawnMarchande();
-
-        spawnAubergiste();
-        spawnTavernier();
-        spawnMaire();
-        spawnProfesseur();
-        spawnBibliothecaire();
-        spawnBanquier();*/
     }
 
     public World getWorld() { return world; }
@@ -44,24 +37,132 @@ public class Village {
         return villagersEtat;
     }
 
-    private void SpawnEdward(){
+    private void spawnEdward(){
         Location location = new Location(world, 12, 70, -46, 290, 0);
 
         Tribute[] tributes = new Tribute[]{
                 new Tribute(new ItemStack(Material.HAY_BLOCK, 64)),
                 new Tribute(new ItemStack(Material.GOLDEN_CARROT, 128)),
+                new Tribute(new ItemStack(Material.BAKED_POTATO, 192)),
+                new Tribute(new ItemStack(Material.PUMPKIN_PIE, 256)),
+                new Tribute(new ItemStack(Material.SUGAR, 320)),
+                new Tribute(new ItemStack(Material.MELON, 384)),
+                new Tribute(new ItemStack(Material.GREEN_DYE, 448)),
+                new Tribute(new ItemStack(Material.COOKIE, 4096)),
+                new Tribute(new ItemStack(Material.TROPICAL_FISH, 666)),
+                new Tribute(new ItemStack(Material.NETHER_WART_BLOCK, 100)),
+                new Tribute(new ItemStack(Material.NETHER_STAR, 10)),
         };
 
         Blessing[] blessings = new Blessing[]{
                 new Blessing(new MaxHealthEffect(12)),
                 new Blessing(new MaxHealthEffect(14)),
+                new Blessing(new MaxHealthEffect(16)),
+                new Blessing(new MaxHealthEffect(18)),
+                new Blessing(new MaxHealthEffect(20)),
+                new Blessing(new MaxHealthEffect(24)),
+                new Blessing(new MaxHealthEffect(28)),
+                new Blessing(new MaxHealthEffect(32)),
+                new Blessing(new MaxHealthEffect(36)),
+                new Blessing(new MaxHealthEffect(40)),
         };
 
         VillagerLevel villager = new VillagerLevel(location,"Edward Jenner", Villager.Type.PLAINS, Villager.Profession.WEAPONSMITH, tributes, blessings);
         villagersLevel.put("Edward Jenner", villager);
     }
 
+    private void spawnNain(){
+        Location location = new Location(world, 12, 70, -46, 290, 0);
 
+        Tribute[] tributes = new Tribute[]{
+                new Tribute(new ItemStack(Material.DIORITE_WALL, 64)),
+                new Tribute(new ItemStack(Material.AMETHYST_BLOCK, 128)),
+                new Tribute(new ItemStack(Material.RED_NETHER_BRICKS, 192)),
+                new Tribute(new ItemStack(Material.SCULK_CATALYST, 256)),
+                new Tribute(new ItemStack(Material.SPIRE_ARMOR_TRIM_SMITHING_TEMPLATE, 320)),
+        };
+
+        Blessing[] blessings = new Blessing[]{
+                new Blessing(new ResistanceEffect(0.4f)),
+                new Blessing(new ResistanceEffect(0.6f)),
+                new Blessing(new ResistanceEffect(1f)),
+                new Blessing(new ResistanceEffect(1.2f)),
+                new Blessing(new ResistanceEffect(1.4f)),
+        };
+
+        VillagerLevel villager = new VillagerLevel(location,"Nain", Villager.Type.PLAINS, Villager.Profession.WEAPONSMITH, tributes, blessings);
+        villagersLevel.put("Nain", villager);
+    }
+
+    private void spawnMaddox(){
+        Location location = new Location(world, 12, 70, -46, 290, 0);
+
+        Tribute[] tributes = new Tribute[]{
+                new Tribute(new ItemStack(Material.ARROW, 256)),
+                new Tribute(new ItemStack(Material.TNT, 64)),
+                new Tribute(new ItemStack(Material.FERMENTED_SPIDER_EYE, 300)),
+                new Tribute(new ItemStack(Material.GHAST_TEAR, 64)),
+                new Tribute(new ItemStack(Material.DRAGON_HEAD, 10)),
+        };
+
+        Blessing[] blessings = new Blessing[]{
+                new Blessing(new DamageEffect(0.4f)),
+                new Blessing(new DamageEffect(0.6f)),
+                new Blessing(new DamageEffect(0.8f)),
+                new Blessing(new DamageEffect(1f)),
+                new Blessing(new DamageEffect(1.5f)),
+        };
+
+        VillagerLevel villager = new VillagerLevel(location,"Maddox", Villager.Type.PLAINS, Villager.Profession.WEAPONSMITH, tributes, blessings);
+        villagersLevel.put("Maddox", villager);
+    }
+
+
+    private void spawnStuff(){
+        Location location = new Location(world, 12, 70, -46, 290, 0);
+
+        Tribute[] tributes = new Tribute[]{
+                new Tribute(new ItemStack(Material.SADDLE, 1)),
+                new Tribute(new ItemStack(Material.GOLDEN_APPLE, 64)),
+                new Tribute(new ItemStack(Material.DUNE_ARMOR_TRIM_SMITHING_TEMPLATE, 6)),
+                new Tribute(new ItemStack(Material.REDSTONE_BLOCK, 600)),
+                new Tribute(new ItemStack(Material.SPONGE, 10)),
+        };
+
+        Blessing[] blessings = new Blessing[]{
+                new Blessing(new DamageEffect(2)),
+                new Blessing(new DamageEffect(2)),
+                new Blessing(new DamageEffect(2)),
+                new Blessing(new DamageEffect(2)),
+                new Blessing(new DamageEffect(2)),
+        };
+
+        VillagerLevel villager = new VillagerLevel(location,"Stuff", Villager.Type.PLAINS, Villager.Profession.WEAPONSMITH, tributes, blessings);
+        villagersLevel.put("Stuff", villager);
+    }
+
+    private void spawnTools(){
+        Location location = new Location(world, 12, 70, -46, 290, 0);
+
+        Tribute[] tributes = new Tribute[]{
+                new Tribute(new ItemStack(Material.CRAFTING_TABLE, 64)),
+                new Tribute(new ItemStack(Material.FURNACE, 64)),
+                new Tribute(new ItemStack(Material.ANVIL, 20)),
+                new Tribute(new ItemStack(Material.EMERALD_BLOCK, 1)),
+                new Tribute(new ItemStack(Material.BROWN_CONCRETE, 576), new ItemStack(Material.STRIPPED_CHERRY_LOG, 576), new ItemStack(Material.COBBLED_DEEPSLATE_STAIRS, 576)),
+        };
+
+        Blessing[] blessings = new Blessing[]{
+                new Blessing(new DamageEffect(2)),
+                new Blessing(new DamageEffect(2)),
+                new Blessing(new DamageEffect(2)),
+                new Blessing(new DamageEffect(2)),
+                new Blessing(new DamageEffect(2)),
+        };
+
+        VillagerLevel villager = new VillagerLevel(location,"Outils", Villager.Type.PLAINS, Villager.Profession.WEAPONSMITH, tributes, blessings);
+        villagersLevel.put("Outils", villager);
+    }
 
 /*
     private void spawnForgeron(){

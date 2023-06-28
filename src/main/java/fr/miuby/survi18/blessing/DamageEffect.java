@@ -3,9 +3,9 @@ package fr.miuby.survi18.blessing;
 import fr.miuby.survi18.AlphaPlayer;
 
 public class DamageEffect extends BlessingEffect {
-    private final int damage;
+    private final float damage;
 
-    public DamageEffect(int damage) {
+    public DamageEffect(float damage) {
         this.damage = damage;
     }
 
