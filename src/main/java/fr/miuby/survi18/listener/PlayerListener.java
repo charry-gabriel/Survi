@@ -86,7 +86,7 @@ public class PlayerListener implements Listener {
 
     @EventHandler
     public void onPlayerDeath(PlayerDeathEvent event) {
-        GameManager.getInstance().getAlphaPlayers().get(event.getPlayer().getUniqueId()).addMort(1);
+        //GameManager.getInstance().getAlphaPlayers().get(event.getPlayer().getUniqueId()).addMort(1);
     }
 
     @EventHandler

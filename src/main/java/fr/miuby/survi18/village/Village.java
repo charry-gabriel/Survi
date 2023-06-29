@@ -5,6 +5,8 @@ import fr.miuby.survi18.Tribute;
 import fr.miuby.survi18.blessing.DamageEffect;
 import fr.miuby.survi18.blessing.MaxHealthEffect;
 import fr.miuby.survi18.blessing.ResistanceEffect;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.*;
 import org.bukkit.entity.Villager;
 import org.bukkit.inventory.ItemStack;
@@ -67,7 +69,15 @@ public class Village {
                 new Blessing(new MaxHealthEffect(40)),
         };
 
-        VillagerLevel villager = new VillagerLevel(location,"Edward Jenner", Villager.Type.PLAINS, Villager.Profession.WEAPONSMITH, tributes, blessings);
+        Component[] messages = new Component[]{
+                Component.text(NamedTextColor.GREEN + "Bien joué vous avez 12 de vie en plus"),
+        };
+
+        Component[] names = new Component[]{
+                Component.text(NamedTextColor.GREEN + "Edward Jenner"),
+        };
+
+        VillagerLevel villager = new VillagerLevel(location,"Edward Jenner", Villager.Type.PLAINS, Villager.Profession.WEAPONSMITH, tributes, blessings, messages, names);
         villagersLevel.put("Edward Jenner", villager);
     }
 
@@ -90,7 +100,15 @@ public class Village {
                 new Blessing(new ResistanceEffect(1.4f)),
         };
 
-        VillagerLevel villager = new VillagerLevel(location,"Nain", Villager.Type.PLAINS, Villager.Profession.WEAPONSMITH, tributes, blessings);
+        Component[] messages = new Component[]{
+                Component.text(NamedTextColor.GREEN + "Bien joué vous avez 12 de vie en plus"),
+        };
+
+        Component[] names = new Component[]{
+                Component.text(NamedTextColor.GREEN + "Edward Jenner"),
+        };
+
+        VillagerLevel villager = new VillagerLevel(location,"Nain", Villager.Type.PLAINS, Villager.Profession.WEAPONSMITH, tributes, blessings, messages, names);
         villagersLevel.put("Nain", villager);
     }
 
@@ -113,7 +131,15 @@ public class Village {
                 new Blessing(new DamageEffect(1.5f)),
         };
 
-        VillagerLevel villager = new VillagerLevel(location,"Maddox", Villager.Type.PLAINS, Villager.Profession.WEAPONSMITH, tributes, blessings);
+        Component[] messages = new Component[]{
+                Component.text(NamedTextColor.GREEN + "Bien joué vous avez 12 de vie en plus"),
+        };
+
+        Component[] names = new Component[]{
+                Component.text(NamedTextColor.GREEN + "Edward Jenner"),
+        };
+
+        VillagerLevel villager = new VillagerLevel(location,"Maddox", Villager.Type.PLAINS, Villager.Profession.WEAPONSMITH, tributes, blessings, messages, names);
         villagersLevel.put("Maddox", villager);
     }
 
@@ -137,7 +163,15 @@ public class Village {
                 new Blessing(new DamageEffect(2)),
         };
 
-        VillagerLevel villager = new VillagerLevel(location,"Stuff", Villager.Type.PLAINS, Villager.Profession.WEAPONSMITH, tributes, blessings);
+        Component[] messages = new Component[]{
+                Component.text(NamedTextColor.GREEN + "Bien joué vous avez 12 de vie en plus"),
+        };
+
+        Component[] names = new Component[]{
+                Component.text(NamedTextColor.GREEN + "Edward Jenner"),
+        };
+
+        VillagerLevel villager = new VillagerLevel(location,"Stuff", Villager.Type.PLAINS, Villager.Profession.WEAPONSMITH, tributes, blessings, messages, names);
         villagersLevel.put("Stuff", villager);
     }
 
@@ -160,7 +194,15 @@ public class Village {
                 new Blessing(new DamageEffect(2)),
         };
 
-        VillagerLevel villager = new VillagerLevel(location,"Outils", Villager.Type.PLAINS, Villager.Profession.WEAPONSMITH, tributes, blessings);
+        Component[] messages = new Component[]{
+                Component.text(NamedTextColor.GREEN + "Bien joué vous avez 12 de vie en plus"),
+        };
+
+        Component[] names = new Component[]{
+                Component.text(NamedTextColor.GREEN + "Edward Jenner"),
+        };
+
+        VillagerLevel villager = new VillagerLevel(location,"Outils", Villager.Type.PLAINS, Villager.Profession.WEAPONSMITH, tributes, blessings, messages, names);
         villagersLevel.put("Outils", villager);
     }
 

@@ -20,7 +20,7 @@ public class VillagerEtat extends AVillager {
     }
 
     public void Trade(boolean villagerInventory, ItemStack item, Player player){
-        ItemEtat itemEtat = getItems().get(item.getType());
+        /*ItemEtat itemEtat = getItems().get(item.getType());
         if(itemEtat != null){
             AlphaPlayer alphaPlayer = GameManager.getInstance().getAlphaPlayers().get(player.getUniqueId());
             if(villagerInventory && itemEtat.isOnSale()){
@@ -35,11 +35,11 @@ public class VillagerEtat extends AVillager {
             }
         }else {
             player.sendMessage("Cet item n'est pas a vendre !");
-        }
+        }*/
     }
 
     private void PnjSellTo(ItemEtat item, AlphaPlayer player) {
-        int sous = item.getPrice();
+        /*int sous = item.getPrice();
         if (sous >= player.getCoins()) {
             player.getPlayer().sendMessage("Vous n'avez pas assez d'AlphaCoins pour acheter cet item !");
         } else {
@@ -91,12 +91,12 @@ public class VillagerEtat extends AVillager {
                 player.addCoins(-sous);
                 player.getPlayer().sendMessage("Vous avez acheté un item a l'État pour " + sous + " AlphaCoins !");
             }
-        }
+        }*/
     }
 
     private void PnjBuyTo(ItemEtat item, int nbr, AlphaPlayer player){
-        int sous = item.getPrice();
+        /*int sous = item.getPrice();
         player.addCoins(sous * nbr);
-        player.getPlayer().sendMessage("Vous avez reçu " + sous * nbr + " AlphaCoins pour votre vente !");
+        player.getPlayer().sendMessage("Vous avez reçu " + sous * nbr + " AlphaCoins pour votre vente !");*/
     }
 }

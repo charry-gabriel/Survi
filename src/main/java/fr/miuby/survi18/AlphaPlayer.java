@@ -1,7 +1,5 @@
 package fr.miuby.survi18;
 
-import fr.miuby.survi18.blessing.Blessing;
-import fr.miuby.survi18.blessing.BlessingEffect;
 import fr.miuby.survi18.database.DbConnection;
 import fr.miuby.survi18.village.VillagerLevel;
 import io.papermc.paper.advancement.AdvancementDisplay;
@@ -131,7 +129,7 @@ public class AlphaPlayer implements Serializable {
             }
 
             mort = player.getStatistic(Statistic.DEATHS);
-            mortScore.setScore(mort);
+            //mortScore.setScore(mort);
             player.setScoreboard(scoreboard);
             GameManager.getInstance().switchWorld(player.getWorld().getName(), pseudo);
 
@@ -157,11 +155,7 @@ public class AlphaPlayer implements Serializable {
             Objects.requireNonNull(player.getAttribute(Attribute.GENERIC_MAX_HEALTH)).setBaseValue(10);
 
             for (VillagerLevel villager : GameManager.getInstance().getVillage().getVillagersLevel().values()) {
-                for (Blessing blessing : villager.getCurrentBlessings()) {
-                    for (BlessingEffect effect : blessing.getBlessingEffects()) {
-                        effect.applyEffect(this);
-                    }
-                }
+                villager.ApplyAllCurrentBlessing(this);
             }
         }
     }

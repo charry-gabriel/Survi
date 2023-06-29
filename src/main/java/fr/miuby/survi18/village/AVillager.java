@@ -1,21 +1,14 @@
 package fr.miuby.survi18.village;
 
 import net.kyori.adventure.text.Component;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Villager;
-import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
-
-import java.util.LinkedHashMap;
-import java.util.Objects;
 
 public abstract class AVillager {
     protected Villager villager;
     protected Inventory inventory;
-    protected LinkedHashMap<Material, ItemEtat> items;
     protected String name;
 
     public AVillager(Location location, String name, Villager.Type type, Villager.Profession profession) {
@@ -30,7 +23,7 @@ public abstract class AVillager {
         this.name = name;
     }
 
-    public void SetItems(LinkedHashMap<Material, ItemEtat> items) {
+    /*public void SetItems(LinkedHashMap<Material, ItemEtat> items) {
         this.items = items;
 
         //float size = items.size() / 9f;
@@ -40,7 +33,7 @@ public abstract class AVillager {
             inv.addItem(item.getItem());
         }
         this.inventory = inv;
-    }
+    }*/
 
     public Villager getVillager() {
         return villager;
@@ -50,7 +43,7 @@ public abstract class AVillager {
         return inventory;
     }
 
-    public LinkedHashMap<Material, ItemEtat> getItems() {
+    /*public LinkedHashMap<Material, ItemEtat> getItems() {
         return items;
-    }
+    }*/
 }

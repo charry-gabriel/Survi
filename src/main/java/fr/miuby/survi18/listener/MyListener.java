@@ -64,18 +64,17 @@ public class MyListener implements Listener {
             && (event.getClickedInventory().getHolder() instanceof Villager || event.getClickedInventory().getHolder() instanceof Player
             && event.getInventory().getHolder() instanceof Villager))
         {
-            for (VillagerEtat villager : GameManager.getInstance().getVillage().getVillagersEtat().values()) {
+            /*for (VillagerEtat villager : GameManager.getInstance().getVillage().getVillagersEtat().values()) {
                 boolean villagerInventory = villager.getInventory() == event.getClickedInventory();
                 if (villager.getInventory() == event.getInventory() || villagerInventory) {
                     villager.Trade(villagerInventory, item, player);
                     event.setCancelled(true);
                 }
-            }
+            }*/
 
             for (VillagerLevel villager : GameManager.getInstance().getVillage().getVillagersLevel().values()) {
-                boolean villagerInventory = villager.getInventory() == event.getClickedInventory();
-                if (villager.getInventory() == event.getInventory() || villagerInventory) {
-                    villager.GiveItems(villagerInventory, item, player);
+                if (villager.getInventory() == event.getClickedInventory()) {
+                    villager.GiveItems(item, player);//TODO prendre tout les items
                     event.setCancelled(true);
                 }
             }
