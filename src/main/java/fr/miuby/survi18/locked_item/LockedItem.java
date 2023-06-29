@@ -4,19 +4,23 @@ import org.bukkit.inventory.ItemStack;
 import java.util.List;
 
 public class LockedItem {
-    private final LockedItemType type;
     private final List<ItemStack> items;
 
-    public LockedItem(LockedItemType type, List<ItemStack> items) {
-        this.type = type;
-        this.items = items;
-    }
+    private boolean isLocked;
 
-    public LockedItemType getType() {
-        return type;
+    public LockedItem(List<ItemStack> items) {
+        this.items = items;
     }
 
     public List<ItemStack> getItems() {
         return items;
+    }
+
+    public boolean isLocked() {
+        return isLocked;
+    }
+
+    public void setLocked(boolean locked) {
+        isLocked = locked;
     }
 }

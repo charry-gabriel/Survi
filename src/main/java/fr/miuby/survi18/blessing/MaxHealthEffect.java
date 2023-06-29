@@ -13,7 +13,7 @@ public class MaxHealthEffect extends BlessingEffect {
     }
 
     @Override
-    public void ApplyEffect(AlphaPlayer player) {
+    public void applyEffect(AlphaPlayer player) {
         Objects.requireNonNull(player.getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH)).setBaseValue(maxHealth);
     }
 }

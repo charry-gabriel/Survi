@@ -12,7 +12,7 @@ public class MessageEffect extends BlessingEffect {
     }
 
     @Override
-    public void ApplyEffect(AlphaPlayer player) {
+    public void applyEffect(AlphaPlayer player) {
         Bukkit.broadcast(Component.text(message));
     }
 }

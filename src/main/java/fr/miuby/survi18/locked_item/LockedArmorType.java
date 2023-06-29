@@ -1,12 +1,9 @@
 package fr.miuby.survi18.locked_item;
 
-public enum LockedItemType {
+public enum LockedArmorType {
     LEATHER,
     GOLD,
-    m,
+    CHAINMAIL,
     IRON,
-    DIMAOND,
-    WOOD,
-    STONE
-
+    DIAMOND
 }

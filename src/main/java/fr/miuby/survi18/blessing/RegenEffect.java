@@ -7,7 +7,7 @@ import org.bukkit.GameRule;
 public class RegenEffect extends BlessingEffect {
 
     @Override
-    public void ApplyEffect(AlphaPlayer player) {
+    public void applyEffect(AlphaPlayer player) {
         GameManager.getInstance().GetWorld("wilderness").setGameRule(GameRule.NATURAL_REGENERATION, true);
     }
 }

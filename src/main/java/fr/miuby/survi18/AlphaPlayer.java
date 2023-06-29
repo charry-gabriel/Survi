@@ -159,7 +159,7 @@ public class AlphaPlayer implements Serializable {
             for (VillagerLevel villager : GameManager.getInstance().getVillage().getVillagersLevel().values()) {
                 for (Blessing blessing : villager.getCurrentBlessings()) {
                     for (BlessingEffect effect : blessing.getBlessingEffects()) {
-                        effect.ApplyEffect(this);
+                        effect.applyEffect(this);
                     }
                 }
             }
