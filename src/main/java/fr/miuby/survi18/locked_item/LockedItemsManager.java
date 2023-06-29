@@ -7,8 +7,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class LockedItemsManager {
-    private List<LockedArmorItem> armorItems = new java.util.ArrayList<LockedArmorItem>();
-    private List<LockedToolItem> toolItems = new java.util.ArrayList<LockedToolItem>();
+    private final List<LockedArmorItem> armorItems = new java.util.ArrayList<>();
+    private final List<LockedToolItem> toolItems = new java.util.ArrayList<>();
 
     public LockedItemsManager() {
         List<ItemStack> leatherItems = new ArrayList<>();

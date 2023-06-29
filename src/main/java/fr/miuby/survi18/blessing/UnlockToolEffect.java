@@ -6,7 +6,7 @@ import fr.miuby.survi18.locked_item.LockedToolType;
 
 public class UnlockToolEffect extends BlessingEffect {
 
-    private LockedToolType itemType;
+    private final LockedToolType itemType;
 
     public UnlockToolEffect(LockedToolType itemType) {
         this.itemType = itemType;

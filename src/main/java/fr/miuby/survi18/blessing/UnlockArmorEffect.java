@@ -6,7 +6,7 @@ import fr.miuby.survi18.locked_item.LockedArmorType;
 
 public class UnlockArmorEffect extends BlessingEffect{
 
-    private LockedArmorType itemType;
+    private final LockedArmorType itemType;
     public UnlockArmorEffect(LockedArmorType itemType) {
         this.itemType = itemType;
     }
