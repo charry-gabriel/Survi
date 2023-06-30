@@ -5,6 +5,8 @@ import fr.miuby.survi18.GameManager;
 import fr.miuby.survi18.Survi18;
 import fr.miuby.survi18.village.VillagerLevel;
 import io.papermc.paper.advancement.AdvancementDisplay;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.*;
 import org.bukkit.advancement.Advancement;
 import org.bukkit.advancement.AdvancementProgress;
@@ -49,14 +51,14 @@ public class PlayerListener implements Listener {
             Block block = event.getPlayer().getLocation().getBlock();
             if(block.getX() > 12199 || block.getX() < 11963 || block.getZ() > 1590 || block.getZ() < 1375 || block.getY() < 0) {
                 event.getPlayer().teleport(new Location(GameManager.getInstance().getVillage().getWorld(), 12073, 64, 1463));
-                event.getPlayer().sendMessage(ChatColor.RED + "Ne sort pas des limite du village, c'est dangereux !!");
+                event.getPlayer().sendMessage(Component.text("Ne sort pas des limite du village, c'est dangereux !!").color(NamedTextColor.RED));
             }
         }
         if(event.getPlayer().getLocation().getWorld() == GameManager.getInstance().GetWorld("Wilderness")) {
             Block block = event.getPlayer().getLocation().getBlock();
             if(block.getX() > 2000 || block.getX() < -2000 || block.getZ() > 2000 || block.getZ() < -2000) {
                 event.getPlayer().teleport(new Location(GameManager.getInstance().getVillage().getWorld(), 12073, 64, 1463));
-                event.getPlayer().sendMessage(ChatColor.RED + "Ne sort pas des limite du wilderness, c'est dangereux !! (Parle avec Thomas Pesquet)");
+                event.getPlayer().sendMessage(Component.text("Ne sort pas des limite du wilderness, c'est dangereux !! (Parle avec Thomas Pesquet)").color(NamedTextColor.RED));
             }
         }
     }

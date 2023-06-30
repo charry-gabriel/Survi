@@ -2,7 +2,6 @@ package fr.miuby.survi18.listener;
 
 import fr.miuby.survi18.*;
 import fr.miuby.survi18.village.VillagerLevel;
-import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
