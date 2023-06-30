@@ -11,6 +11,7 @@ import org.bukkit.*;
 import org.bukkit.advancement.Advancement;
 import org.bukkit.advancement.AdvancementProgress;
 import org.bukkit.block.Block;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Villager;
 import org.bukkit.event.EventHandler;
@@ -83,7 +84,7 @@ public class PlayerListener implements Listener {
     @EventHandler
     public void onPlayerInteractEntity(PlayerInteractEntityEvent event) {
         Player p = event.getPlayer();
-        if(event.getRightClicked() instanceof Villager) {
+        if(event.getRightClicked().getType() == EntityType.VILLAGER) {
             Villager v = (Villager) event.getRightClicked();
             VillagerLevel villager = GameManager.getInstance().getVillage().getVillagersLevel().get(v.getMetadata("name").get(0).asString());
             if(v.customName() != null && villager != null) {
