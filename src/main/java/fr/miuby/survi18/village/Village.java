@@ -260,7 +260,7 @@ public class Village {
     }
 
     private void spawnTools(){
-        Location location = new Location((world, 12079, 63, 1427, 0, 0);
+        Location location = new Location(world, 12079, 63, 1427, 0, 0);
 
         Tribute[] tributes = new Tribute[]{
                 new Tribute(new ItemStack(Material.CRAFTING_TABLE, 64)),
