@@ -84,22 +84,26 @@ public class AlphaPlayer implements Serializable {
     public void newScoreboard() {
         scoreboard = Bukkit.getScoreboardManager().getNewScoreboard();
 
-        /*Objective objectifInfo = scoreboard.registerNewObjective("Info", Criteria.DUMMY, Component.text("Info"));
+        Objective objectifInfo = scoreboard.registerNewObjective("Info", Criteria.DUMMY, Component.text("Info"));
         objectifInfo.setDisplaySlot(DisplaySlot.SIDEBAR);
 
-        progresScore = objectifInfo.getScore("Progrès :");
-        progresScore.setScore(progres);
+        /*progresScore = objectifInfo.getScore("Progrès :");
+        progresScore.setScore(progres);*/
 
         successScore = objectifInfo.getScore("Succès :");
         successScore.setScore(success);
 
-        mortScore = objectifInfo.getScore("Mort :");
+        /*mortScore = objectifInfo.getScore("Mort :");
         mortScore.setScore(mort);*/
 
 
         Objective life = scoreboard.registerNewObjective("Vie", Criteria.HEALTH, Component.text("Vie"));
         life.setDisplaySlot(DisplaySlot.PLAYER_LIST);
         life.setRenderType(RenderType.HEARTS);
+
+        Objective death = scoreboard.registerNewObjective("Death", Criteria.DEATH_COUNT, Component.text("Morts"));
+        death.setDisplaySlot(DisplaySlot.BELOW_NAME);
+        death.setRenderType(RenderType.INTEGER);
 
         createTeam();
     }

@@ -36,23 +36,6 @@ public class VillagerLevel extends AVillager {
         this.messages = messages;
         this.names = names;
 
-        Bukkit.getScheduler().runTaskAsynchronously(GameManager.getInstance().getPlugin(), () -> {
-            final DbConnection dbConnection = GameManager.getInstance().getDatabaseManager().getDbConnection();
-            try {
-                final Connection connection = dbConnection.getConnection();
-                final PreparedStatement preparedStatement = connection.prepareStatement("SELECT name, level FROM villager WHERE name = '"+name+"'");
-                final ResultSet resultSet = preparedStatement.executeQuery();
-
-                if (resultSet.next()) {
-                    level = resultSet.getInt("level");
-                }else{
-                    CreateDBVillager(connection);
-                }
-            } catch (SQLException throwables) {
-                throwables.printStackTrace();
-            }
-        });
-
         updateInventory();
     }
 

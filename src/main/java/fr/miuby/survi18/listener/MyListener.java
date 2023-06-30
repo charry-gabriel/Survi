@@ -10,6 +10,7 @@ import org.bukkit.entity.Villager;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.inventory.*;
 import org.bukkit.inventory.ItemStack;
 
@@ -32,23 +33,20 @@ public class MyListener implements Listener {
 
     @EventHandler
     public void onEntityDamageByEntity(EntityDamageByEntityEvent event) {
-        //tape pas les pnj
-        if(event.getEntity().getType() == EntityType.VILLAGER) {
-            if(event.getDamager() instanceof Player) {
-                Player player = (Player) event.getDamager();
-                if (player.getGameMode() != GameMode.CREATIVE && player.getWorld() == GameManager.getInstance().getVillage().getWorld()) {
-                    event.setCancelled(true);
-                }
-            }
-        }
-
         //si on tape
         if(event.getDamager() instanceof Player){
             event.setDamage(event.getDamage() * GameManager.getInstance().getAlphaPlayers().get(event.getDamager().getUniqueId()).getDamage());
         }
-        //si on se fait taper
-        if(event.getEntity() instanceof Player){
+    }
 
+    @EventHandler
+    public void onEntityDamage(EntityDamageEvent event) {
+        if (event.getEntityType() == EntityType.VILLAGER) {
+            event.setCancelled(true);
+        }
+
+        //si on prends des degats
+        if(event.getEntityType() == EntityType.PLAYER) {
             event.setDamage(event.getDamage() / GameManager.getInstance().getAlphaPlayers().get(event.getEntity().getUniqueId()).getResistance());
         }
     }

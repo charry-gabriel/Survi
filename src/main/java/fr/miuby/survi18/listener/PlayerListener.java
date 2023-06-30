@@ -68,14 +68,14 @@ public class PlayerListener implements Listener {
         AdvancementProgress advancementProgress = player.getAdvancementProgress(advancement);
         AdvancementDisplay advancementDisplay = advancement.getDisplay();
 
-        /*String categorie = advancement.getKey().getKey().split("/")[0];
+        String categorie = advancement.getKey().getKey().split("/")[0];
         if(advancementProgress.isDone() && advancementDisplay != null && !categorie.equals("recipes")) {
             if(advancementDisplay.frame() == AdvancementDisplay.Frame.CHALLENGE) {
                 GameManager.getInstance().getAlphaPlayers().get(player.getUniqueId()).gainOneSuccess(true);
             } else if(advancementDisplay.frame() == AdvancementDisplay.Frame.GOAL || advancementDisplay.frame() == AdvancementDisplay.Frame.TASK) {
                 GameManager.getInstance().getAlphaPlayers().get(player.getUniqueId()).gainOneSuccess(false);
             }
-        }*/
+        }
     }
 
     @EventHandler

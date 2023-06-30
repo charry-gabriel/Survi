@@ -10,6 +10,7 @@ public class LockedItem {
 
     public LockedItem(List<ItemStack> items) {
         this.items = items;
+        this.isLocked = true;
     }
 
     public List<ItemStack> getItems() {

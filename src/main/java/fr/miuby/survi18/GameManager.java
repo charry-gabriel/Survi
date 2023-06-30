@@ -90,6 +90,7 @@ public class GameManager {
                 return alphaP;
             }
         }
+        GameManager.getInstance().getLogger().warning("player null :/");
         return null;
     }
 
