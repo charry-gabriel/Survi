@@ -47,7 +47,7 @@ public class PlayerListener implements Listener {
     public void onPlayerMove(PlayerMoveEvent event) {
         if(event.getPlayer().getLocation().getWorld() == GameManager.getInstance().getVillage().getWorld()) {
             Block block = event.getPlayer().getLocation().getBlock();
-            if(block.getX() > 200 || block.getX() < -200 || block.getZ() > 200 || block.getZ() < -200 || block.getY() < 40) {
+            if(block.getX() > 12199 || block.getX() < 11963 || block.getZ() > 1578 || block.getZ() < 1410 || block.getY() < 0) {
                 event.getPlayer().teleport(new Location(GameManager.getInstance().getVillage().getWorld(), 3, 76, 0));
                 event.getPlayer().sendMessage(ChatColor.RED + "Ne sort pas des limite du village, c'est dangereux !!");
             }
