@@ -214,11 +214,11 @@ public class Village {
         Blessing[] blessings = new Blessing[]{
                 new Blessing(new MessageEffect("Niveau I réussi !")),
                 new Blessing(new MessageEffect("Niveau II disponible pour Thomas Pesquet !")),
-                new Blessing(new MessageEffect("Niveau II réussi !")),
+                new Blessing(new NetherEffect(), new MessageEffect("Niveau II réussi !")),
                 new Blessing(new MessageEffect("Niveau III disponible pour Thomas Pesquet !")),
                 new Blessing(new MessageEffect("Niveau III réussi !")),
                 new Blessing(new MessageEffect("Niveau VI disponible pour Thomas Pesquet !")),
-                new Blessing(new MessageEffect("Niveau VI réussi !")),
+                new Blessing(new EndEffect(), new MessageEffect("Niveau VI réussi !")),
                 new Blessing(new MessageEffect("Niveau V disponible pour Thomas Pesquet !")),
                 new Blessing(new MessageEffect("Niveau V réussi !")),
                 new Blessing(new MessageEffect("IMPOSSIBLE")),
