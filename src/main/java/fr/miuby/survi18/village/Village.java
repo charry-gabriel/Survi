@@ -36,8 +36,12 @@ public class Village {
         return villagersLevel;
     }
 
+    public Map<String, VillagerEtat> getVillagersEtat() {
+        return villagersEtat;
+    }
+
     private void spawnEdward(){
-        Location location = new Location(world, 12086, 63, 1426, 290, 0);
+        Location location = new Location(world, 12073, 64, 1509, 180, 0);
 
         Tribute[] tributes = new Tribute[]{
                 new Tribute(new ItemStack(Material.HAY_BLOCK, 64)),
@@ -68,31 +72,31 @@ public class Village {
         };
 
         Component[] messages = new Component[]{
-                Component.text(NamedTextColor.GREEN + "Merci beaucoup pour cette nourriture. Tenez, 1 coeur pour vous !"),
-                Component.text(NamedTextColor.GREEN + "Merci merci. Pourquoi autant ? C'est pas grave. Tenez, 1 coeur de plus pour vous."),
-                Component.text(NamedTextColor.GREEN + "J'adore les patates ! Merci ! Je vous offre ce coeur"),
-                Component.text(NamedTextColor.GREEN + "Merci. Prenez ce coeur, je n'ai pas le temps de vous parler."),
-                Component.text(NamedTextColor.GREEN + "Bravo ! J'avais tellement besoin de ce sucre. Je vous prépare une surprise mais j'ai besoin d'autre ingrédients. Tenez ce coeur, vous en aurez sûrement plus besoin que moi."),
-                Component.text(NamedTextColor.GREEN + "Du melon, c'est parfait, c'est exactement dont ce que j'avais besoin ! Vous voici maintenant avec 2 coeurs supplémentaires."),
-                Component.text(NamedTextColor.GREEN + "C'est uniquement pour la couleur de la soupe que j'ai demandée du cactus, je suppose que vous avez fait ça vite de toute façon. Prenez ces 2 coeurs en plus quand même."),
-                Component.text(NamedTextColor.GREEN + "Félicitation, vous voici maintenant à 32 HP."),
-                Component.text(NamedTextColor.GREEN + "Félicitation, vous voici maintenant à 36 HP. J'ai presque fini la potion magique."),
-                Component.text(NamedTextColor.GREEN + "Bravo, vous avez maintenant 40 HP. Il me manque que quelques étoiles du nether et je suis prêt. Allez me le chercher, vite vite vite !!!!"),
-                Component.text(NamedTextColor.GREEN + "Félicitations, j'ai fini !! Vous pouvez voler, vous pouvez regagner votre vie sans pomme !! AHAHAH !! Je suis le meilleur !!"),
+                Component.text("Merci beaucoup pour cette nourriture. Tenez, 1 coeur pour vous !"),
+                Component.text( "Merci merci. Pourquoi autant ? C'est pas grave. Tenez, 1 coeur de plus pour vous."),
+                Component.text( "J'adore les patates ! Merci ! Je vous offre ce coeur"),
+                Component.text( "Merci. Prenez ce coeur, je n'ai pas le temps de vous parler."),
+                Component.text( "Bravo ! J'avais tellement besoin de ce sucre. Je vous prépare une surprise mais j'ai besoin d'autre ingrédients. Tenez ce coeur, vous en aurez sûrement plus besoin que moi."),
+                Component.text( "Du melon, c'est parfait, c'est exactement dont ce que j'avais besoin ! Vous voici maintenant avec 2 coeurs supplémentaires."),
+                Component.text( "C'est uniquement pour la couleur de la soupe que j'ai demandée du cactus, je suppose que vous avez fait ça vite de toute façon. Prenez ces 2 coeurs en plus quand même."),
+                Component.text( "Félicitation, vous voici maintenant à 32 HP."),
+                Component.text( "Félicitation, vous voici maintenant à 36 HP. J'ai presque fini la potion magique."),
+                Component.text( "Bravo, vous avez maintenant 40 HP. Il me manque que quelques étoiles du nether et je suis prêt. Allez me le chercher, vite vite vite !!!!"),
+                Component.text( "Félicitations, j'ai fini !! Vous pouvez voler, vous pouvez regagner votre vie sans pomme !! AHAHAH !! Je suis le meilleur !!"),
         };
 
         Component[] names = new Component[]{
-                Component.text(NamedTextColor.GREEN + "Edward Jenner I"),
-                Component.text(NamedTextColor.GREEN + "Edward Jenner II"),
-                Component.text(NamedTextColor.GREEN + "Edward Jenner III"),
-                Component.text(NamedTextColor.GREEN + "Edward Jenner IV"),
-                Component.text(NamedTextColor.GREEN + "Edward Jenner V"),
-                Component.text(NamedTextColor.GREEN + "Edward Jenner VI"),
-                Component.text(NamedTextColor.GREEN + "Edward Jenner VII"),
-                Component.text(NamedTextColor.GREEN + "Edward Jenner VIII"),
-                Component.text(NamedTextColor.GREEN + "Edward Jenner IX"),
-                Component.text(NamedTextColor.GREEN + "Edward Jenner X"),
-                Component.text(NamedTextColor.GREEN + "Edward Jenner MAX"),
+                Component.text( "Edward Jenner I"),
+                Component.text( "Edward Jenner II"),
+                Component.text( "Edward Jenner III"),
+                Component.text( "Edward Jenner IV"),
+                Component.text( "Edward Jenner V"),
+                Component.text( "Edward Jenner VI"),
+                Component.text( "Edward Jenner VII"),
+                Component.text( "Edward Jenner VIII"),
+                Component.text( "Edward Jenner IX"),
+                Component.text( "Edward Jenner X"),
+                Component.text( "Edward Jenner MAX"),
         };
 
         VillagerLevel villager = new VillagerLevel(location,"Edward Jenner", Villager.Type.PLAINS, Villager.Profession.WEAPONSMITH, tributes, blessings, messages, names);
@@ -100,7 +104,7 @@ public class Village {
     }
 
     private void spawnNain(){
-        Location location = new Location(world, 12, 70, -46, 290, 0);
+        Location location = new Location(world, 12139, 64, 1463, 90, 0);
 
         Tribute[] tributes = new Tribute[]{
                 new Tribute(new ItemStack(Material.DIORITE_WALL, 64)),
@@ -119,19 +123,19 @@ public class Village {
         };
 
         Component[] messages = new Component[]{
-                Component.text(NamedTextColor.GREEN + "Merci, vouth êteth maintenant pluth résistant face aux ennemith de l'autre monde."),
-                Component.text(NamedTextColor.GREEN + "Bravo, vouth êteth maintenant pluth résistant face aux ennemith de l'autre monde."),
-                Component.text(NamedTextColor.GREEN + "Félicitation, vouth êteth maintenant pluth résistant face aux ennemith de l'autre monde."),
-                Component.text(NamedTextColor.GREEN + "Beau travail, leth ennemith de l'autre monde ne vouth ferronth pluth jamaith de mlin."),
-                Component.text(NamedTextColor.GREEN + "Félicitation, thèth beau travail, je pense que vouth êteth assez résistant, je peux tidndre ma onatraite. Merci à vouth."),
+                Component.text( "Merci, vouth êteth maintenant pluth résistant face aux ennemith de l'autre monde."),
+                Component.text( "Bravo, vouth êteth maintenant pluth résistant face aux ennemith de l'autre monde."),
+                Component.text( "Félicitation, vouth êteth maintenant pluth résistant face aux ennemith de l'autre monde."),
+                Component.text( "Beau travail, leth ennemith de l'autre monde ne vouth ferronth pluth jamaith de mlin."),
+                Component.text( "Félicitation, thèth beau travail, je pense que vouth êteth assez résistant, je peux tidndre ma onatraite. Merci à vouth."),
         };
 
         Component[] names = new Component[]{
-                Component.text(NamedTextColor.GREEN + "Nain Roux I"),
-                Component.text(NamedTextColor.GREEN + "Nain Roux II"),
-                Component.text(NamedTextColor.GREEN + "Nain Roux III"),
-                Component.text(NamedTextColor.GREEN + "Nain Roux IV"),
-                Component.text(NamedTextColor.GREEN + "Nain Roux V"),
+                Component.text( "Nain Roux I"),
+                Component.text( "Nain Roux II"),
+                Component.text( "Nain Roux III"),
+                Component.text( "Nain Roux IV"),
+                Component.text( "Nain Roux V"),
         };
 
         VillagerLevel villager = new VillagerLevel(location,"Nain", Villager.Type.PLAINS, Villager.Profession.WEAPONSMITH, tributes, blessings, messages, names);
@@ -139,7 +143,7 @@ public class Village {
     }
 
     private void spawnMaddox(){
-        Location location = new Location(world, 12, 70, -46, 290, 0);
+        Location location = new Location(world, 12016, 64, 1463, -90, 0);
 
         Tribute[] tributes = new Tribute[]{
                 new Tribute(new ItemStack(Material.ARROW, 256)),
@@ -158,19 +162,19 @@ public class Village {
         };
 
         Component[] messages = new Component[]{
-                Component.text(NamedTextColor.GREEN + "Vous avez tué 3 poulets et vous voulez une récompense ? D'accord.. vous êtes un peu plus fort maintenant mais pas autant que moi quand même."),
-                Component.text(NamedTextColor.GREEN + "Vous voulez une récompense pour 4 creepers en moins sur la map ? N'importe quoi.. vous êtes un peu plus fort maintenant mais pas autant que moi quand même."),
-                Component.text(NamedTextColor.GREEN + "Comment on fait un oeil fermenté ? Avec un oeil... et tu le fermentes."),
-                Component.text(NamedTextColor.GREEN + "Pour les 6 ghasts en moins dans ce monde, je vous offre un peu plus de force."),
-                Component.text(NamedTextColor.GREEN + "C'est bon ? Vous avez fini de voyager ? Enfin... j'aurais été plus vite tout seul. Vous êtes maintenant assez fort. Mais toujours pas autant que moi."),
+                Component.text( "Vous avez tué 3 poulets et vous voulez une récompense ? D'accord.. vous êtes un peu plus fort maintenant mais pas autant que moi quand même."),
+                Component.text( "Vous voulez une récompense pour 4 creepers en moins sur la map ? N'importe quoi.. vous êtes un peu plus fort maintenant mais pas autant que moi quand même."),
+                Component.text( "Comment on fait un oeil fermenté ? Avec un oeil... et tu le fermentes."),
+                Component.text( "Pour les 6 ghasts en moins dans ce monde, je vous offre un peu plus de force."),
+                Component.text( "C'est bon ? Vous avez fini de voyager ? Enfin... j'aurais été plus vite tout seul. Vous êtes maintenant assez fort. Mais toujours pas autant que moi."),
         };
 
         Component[] names = new Component[]{
-                Component.text(NamedTextColor.GREEN + "Maddox I"),
-                Component.text(NamedTextColor.GREEN + "Maddox II"),
-                Component.text(NamedTextColor.GREEN + "Maddox III"),
-                Component.text(NamedTextColor.GREEN + "Maddox VI"),
-                Component.text(NamedTextColor.GREEN + "Maddox V"),
+                Component.text( "Maddox I"),
+                Component.text( "Maddox II"),
+                Component.text( "Maddox III"),
+                Component.text( "Maddox VI"),
+                Component.text( "Maddox V"),
         };
 
         VillagerLevel villager = new VillagerLevel(location,"Maddox", Villager.Type.PLAINS, Villager.Profession.WEAPONSMITH, tributes, blessings, messages, names);
@@ -178,7 +182,7 @@ public class Village {
     }
 
     private void spawnThomas(){
-        Location location = new Location(world, 12, 70, -46, 290, 0);
+        Location location = new Location(world, 12071, 64, 1509, 180, 0);
 
         Tribute[] tributes = new Tribute[]{
                 new Tribute(new ItemStack(Material.ARROW, 256)),
@@ -197,19 +201,19 @@ public class Village {
         };
 
         Component[] messages = new Component[]{
-                Component.text(NamedTextColor.GREEN + "Merci, revenez dans 24h pour la suite."),
-                Component.text(NamedTextColor.GREEN + "Merci, revenez dans 48h pour la suite. Vous pouvez maintenant explorer le nether !"),
-                Component.text(NamedTextColor.GREEN + "Merci, revenez dans 72h pour la suite. Vous pouvez maintenant explorer un peu plus le Village et le Wilderness"),
-                Component.text(NamedTextColor.GREEN + "Merci, revenez dans 100h pour la suite. Vous pouvez maintenant explorer l'end ! "),
-                Component.text(NamedTextColor.GREEN + "Merci pour cet objet unique, pour te récompenser voici un peu de poisson. Vous pouvez maintenant explorer le Wilderness."),
+                Component.text( "Merci, revenez dans 24h pour la suite."),
+                Component.text( "Merci, revenez dans 48h pour la suite. Vous pouvez maintenant explorer le nether !"),
+                Component.text( "Merci, revenez dans 72h pour la suite. Vous pouvez maintenant explorer un peu plus le Village et le Wilderness"),
+                Component.text( "Merci, revenez dans 100h pour la suite. Vous pouvez maintenant explorer l'end ! "),
+                Component.text( "Merci pour cet objet unique, pour te récompenser voici un peu de poisson. Vous pouvez maintenant explorer le Wilderness."),
         };
 
         Component[] names = new Component[]{
-                Component.text(NamedTextColor.GREEN + "Thomas Pesquet I"),
-                Component.text(NamedTextColor.GREEN + "Thomas Pesquet II"),
-                Component.text(NamedTextColor.GREEN + "Thomas Pesquet III"),
-                Component.text(NamedTextColor.GREEN + "Thomas Pesquet VI"),
-                Component.text(NamedTextColor.GREEN + "Thomas Pesquet V"),
+                Component.text( "Thomas Pesquet I"),
+                Component.text( "Thomas Pesquet II"),
+                Component.text( "Thomas Pesquet III"),
+                Component.text( "Thomas Pesquet VI"),
+                Component.text( "Thomas Pesquet V"),
         };
 
         VillagerLevel villager = new VillagerLevel(location,"Maddox", Villager.Type.PLAINS, Villager.Profession.WEAPONSMITH, tributes, blessings, messages, names);
@@ -217,7 +221,7 @@ public class Village {
     }
 
     private void spawnStuff(){
-        Location location = new Location(world, 12, 70, -46, 290, 0);
+        Location location = new Location(world, 12073, 63, 1427, 0, 0);
 
         Tribute[] tributes = new Tribute[]{
                 new Tribute(new ItemStack(Material.SADDLE, 1)),
@@ -236,19 +240,19 @@ public class Village {
         };
 
         Component[] messages = new Component[]{
-                Component.text(NamedTextColor.GREEN + "Vous avez maintenant les capacités de construire vos propres armures en cuir d'une qualité incroyable."),
-                Component.text(NamedTextColor.GREEN + "Vous pouvez maintenant construire la meilleure amure, la plus belle, l'armure en or ! La preuve de votre richesse et de votre force !"),
-                Component.text(NamedTextColor.GREEN + "J'ai créé une armure unique pour vous, essavez avec un peu de lave, vous verrez."),
-                Component.text(NamedTextColor.GREEN + "Vous pouvez maintenant construire une vraie armure grâce à moi."),
-                Component.text(NamedTextColor.GREEN + "La plus belle des armures est maintenant disponible, l'amure en diamant !"),
+                Component.text( "Vous avez maintenant les capacités de construire vos propres armures en cuir d'une qualité incroyable."),
+                Component.text("Vous pouvez maintenant construire la meilleure amure, la plus belle, l'armure en or ! La preuve de votre richesse et de votre force !"),
+                Component.text( "J'ai créé une armure unique pour vous, essavez avec un peu de lave, vous verrez."),
+                Component.text( "Vous pouvez maintenant construire une vraie armure grâce à moi."),
+                Component.text( "La plus belle des armures est maintenant disponible, l'amure en diamant !"),
         };
 
         Component[] names = new Component[]{
-                Component.text(NamedTextColor.GREEN + "Cowboy"),
-                Component.text(NamedTextColor.GREEN + "Goldor"),
-                Component.text(NamedTextColor.GREEN + "Gardien"),
-                Component.text(NamedTextColor.GREEN + "IronMan"),
-                Component.text(NamedTextColor.GREEN + "Blue Moon"),
+                Component.text( "Cowboy"),
+                Component.text( "Goldor"),
+                Component.text( "Gardien"),
+                Component.text( "IronMan"),
+                Component.text( "Blue Moon"),
         };
 
         VillagerLevel villager = new VillagerLevel(location,"Stuff", Villager.Type.PLAINS, Villager.Profession.WEAPONSMITH, tributes, blessings, messages, names);
@@ -256,7 +260,7 @@ public class Village {
     }
 
     private void spawnTools(){
-        Location location = new Location(world, 12, 70, -46, 290, 0);
+        Location location = new Location(world, 12079, 63, 1427, 0, 0);
 
         Tribute[] tributes = new Tribute[]{
                 new Tribute(new ItemStack(Material.CRAFTING_TABLE, 64)),
@@ -275,19 +279,19 @@ public class Village {
         };
 
         Component[] messages = new Component[]{
-                Component.text(NamedTextColor.GREEN + "Les outils en bois sont très bien pour commencer."),
-                Component.text(NamedTextColor.GREEN + "Les outils en pierre sont les meilleurs sur le marché."),
-                Component.text(NamedTextColor.GREEN + "Les outils en fer sont super solide et très efficace."),
-                Component.text(NamedTextColor.GREEN + "Les meilleurs outils sont les outils en or."),
-                Component.text(NamedTextColor.GREEN + "I am a dwarf and I'm digging a hole. Diggy diggy hole, diggy diggy hole. Les outils en diamant sont disponibles !"),
+                Component.text( "Les outils en bois sont très bien pour commencer."),
+                Component.text( "Les outils en pierre sont les meilleurs sur le marché."),
+                Component.text( "Les outils en fer sont super solide et très efficace."),
+                Component.text( "Les meilleurs outils sont les outils en or."),
+                Component.text( "I am a dwarf and I'm digging a hole. Diggy diggy hole, diggy diggy hole. Les outils en diamant sont disponibles !"),
         };
 
         Component[] names = new Component[]{
-                Component.text(NamedTextColor.GREEN + "Janod"),
-                Component.text(NamedTextColor.GREEN + "Pierre"),
-                Component.text(NamedTextColor.GREEN + "Léa"),
-                Component.text(NamedTextColor.GREEN + "Jeff Bezos"),
-                Component.text(NamedTextColor.GREEN + "Diggy Diggy Hole"),
+                Component.text( "Janod"),
+                Component.text( "Pierre"),
+                Component.text( "Léa"),
+                Component.text( "Jeff Bezos"),
+                Component.text( "Diggy Diggy Hole"),
         };
 
         VillagerLevel villager = new VillagerLevel(location,"Outils", Villager.Type.PLAINS, Villager.Profession.WEAPONSMITH, tributes, blessings, messages, names);
