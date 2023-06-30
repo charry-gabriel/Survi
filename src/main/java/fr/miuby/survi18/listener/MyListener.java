@@ -11,6 +11,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.inventory.*;
+import org.bukkit.event.world.PortalCreateEvent;
 import org.bukkit.inventory.ItemStack;
 
 public class MyListener implements Listener {
@@ -67,6 +68,17 @@ public class MyListener implements Listener {
             } else if (event.getClickedInventory() != null && event.getClickedInventory().getHolder() instanceof Villager) {
                 event.setCancelled(true);
             }
+        }
+    }
+
+    @EventHandler
+    public void onPortalCreate(PortalCreateEvent event) {
+        if (event.getReason().equals(PortalCreateEvent.CreateReason.FIRE)) {
+            if (!GameManager.getInstance().hasNetherAccess())
+                event.setCancelled(true);
+        } else {
+            if (!GameManager.getInstance().hasEndAccess())
+                event.setCancelled(true);
         }
     }
 }

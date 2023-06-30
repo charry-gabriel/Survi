@@ -25,6 +25,9 @@ public class GameManager {
 
     private Timer timer;
 
+    private boolean hasNetherAccess = false;
+    private boolean hasEndAccess = false;
+
     public static GameManager getInstance(){
         if(instance == null){
             instance = new GameManager();
@@ -85,8 +88,10 @@ public class GameManager {
     }
 
     public AlphaPlayer getAlphaPlayer(UUID uuid) {
+        GameManager.getInstance().getLogger().info("uuid : " + uuid);
         for(AlphaPlayer alphaP : GameManager.getInstance().getAlphaPlayers().values()) {
-            if(alphaP.getUUID() == uuid) {
+            GameManager.getInstance().getLogger().info("alpha ID : " + alphaP.getUUID());
+            if(alphaP.getUUID().equals(uuid)) {
                 return alphaP;
             }
         }
@@ -117,5 +122,21 @@ public class GameManager {
 
     public LockedItemsManager getLockedItemsManager() {
         return lockedItemsManager;
+    }
+
+    public boolean hasNetherAccess() {
+        return hasNetherAccess;
+    }
+
+    public void setHasNetherAccess(boolean hasNetherAccess) {
+        this.hasNetherAccess = hasNetherAccess;
+    }
+
+    public boolean hasEndAccess() {
+        return hasEndAccess;
+    }
+
+    public void setHasEndAccess(boolean hasEndAccess) {
+        this.hasEndAccess = hasEndAccess;
     }
 }

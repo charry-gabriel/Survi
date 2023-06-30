@@ -45,7 +45,6 @@ public class VillagerLevel extends AVillager {
             villager.customName(getName());
             updateInventory();
             player.closeInventory();
-            player.openInventory(villager.getInventory());
         }
     }
 
@@ -72,7 +71,7 @@ public class VillagerLevel extends AVillager {
         Inventory inv = Bukkit.createInventory(villager, InventoryType.CHEST, Objects.requireNonNull(villager.customName()));//(int) Math.ceil(size) * 9
 
         for (ItemStack item : getTribute().getItemStacks())
-            inv.setItem(inv.firstEmpty(), item);
+            inv.addItem(item);
 
         this.inventory = inv;
     }
@@ -113,7 +112,8 @@ public class VillagerLevel extends AVillager {
     public void applyBlessing() {
         for (Player player : Bukkit.getOnlinePlayers()) {
             for (BlessingEffect effect : getBlessing().getBlessingEffects()) {
-                effect.applyEffect(GameManager.getInstance().getAlphaPlayer(player.getUniqueId()));
+                AlphaPlayer alphaPlayer = GameManager.getInstance().getAlphaPlayer(player.getUniqueId());
+                effect.applyEffect(alphaPlayer);
             }
         }
     }
