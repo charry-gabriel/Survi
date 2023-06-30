@@ -234,8 +234,8 @@ public class Village {
         Blessing[] blessings = new Blessing[]{
                 new Blessing(new UnlockArmorEffect(LockedArmorType.LEATHER)),
                 new Blessing(new UnlockArmorEffect(LockedArmorType.GOLD)),
+                new Blessing(new UnlockArmorEffect(LockedArmorType.CHAINMAIL)),
                 new Blessing(new UnlockArmorEffect(LockedArmorType.IRON)),
-                new Blessing(new UnlockArmorEffect(LockedArmorType.GOLD)),
                 new Blessing(new UnlockArmorEffect(LockedArmorType.DIAMOND)),
         };
 
