@@ -47,9 +47,16 @@ public class PlayerListener implements Listener {
     public void onPlayerMove(PlayerMoveEvent event) {
         if(event.getPlayer().getLocation().getWorld() == GameManager.getInstance().getVillage().getWorld()) {
             Block block = event.getPlayer().getLocation().getBlock();
-            if(block.getX() > 12199 || block.getX() < 11963 || block.getZ() > 1590 || block.getZ() < 1425 || block.getY() < 0) {
+            if(block.getX() > 12199 || block.getX() < 11963 || block.getZ() > 1590 || block.getZ() < 1375 || block.getY() < 0) {
                 event.getPlayer().teleport(new Location(GameManager.getInstance().getVillage().getWorld(), 12073, 64, 1463));
                 event.getPlayer().sendMessage(ChatColor.RED + "Ne sort pas des limite du village, c'est dangereux !!");
+            }
+        }
+        if(event.getPlayer().getLocation().getWorld() == GameManager.getInstance().GetWorld("Wilderness")) {
+            Block block = event.getPlayer().getLocation().getBlock();
+            if(block.getX() > 2000 || block.getX() < -2000 || block.getZ() > 2000 || block.getZ() < -2000) {
+                event.getPlayer().teleport(new Location(GameManager.getInstance().getVillage().getWorld(), 12073, 64, 1463));
+                event.getPlayer().sendMessage(ChatColor.RED + "Ne sort pas des limite du wilderness, c'est dangereux !! (Parle avec Thomas Pesquet)");
             }
         }
     }
