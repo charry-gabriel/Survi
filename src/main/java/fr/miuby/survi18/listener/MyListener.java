@@ -62,6 +62,7 @@ public class MyListener implements Listener {
             if (event.getClickedInventory() != null && event.getClickedInventory().getHolder() instanceof Player) {
                 for (VillagerLevel villager : GameManager.getInstance().getVillage().getVillagersLevel().values()) {
                     if (villager.getInventory() == event.getInventory()) {
+                        GameManager.getInstance().getLogger().info(player.getName() + " a cliqué sur " + villager.getName().toString());
                         villager.GiveItems(item, player);
                         event.setCancelled(true);
                     }

@@ -84,6 +84,15 @@ public class GameManager {
         return null;
     }
 
+    public AlphaPlayer getAlphaPlayer(UUID uuid) {
+        for(AlphaPlayer alphaP : GameManager.getInstance().getAlphaPlayers().values()) {
+            if(alphaP.getUUID() == uuid) {
+                return alphaP;
+            }
+        }
+        return null;
+    }
+
     public void switchWorld(String world, String pseudo){
         for(AlphaPlayer alphaPlayer : players.values()) {
             if(alphaPlayer.getPlayer() != null) {

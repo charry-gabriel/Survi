@@ -30,6 +30,8 @@ public class VillagerLevel extends AVillager {
         this.blessings = blessings;
         this.messages = messages;
         this.names = names;
+
+        updateInventory();
     }
 
     public void GiveItems(ItemStack item, Player player){
@@ -92,19 +94,25 @@ public class VillagerLevel extends AVillager {
     }
 
     public void applyBlessing() {
-        for (AlphaPlayer player : GameManager.getInstance().getAlphaPlayers().values()) {
+        for (Player player : Bukkit.getOnlinePlayers()) {
             for (BlessingEffect effect : getBlessing().getBlessingEffects()) {
-                effect.applyEffect(player);
+                effect.applyEffect(GameManager.getInstance().getAlphaPlayer(player.getUniqueId()));
             }
         }
     }
 
     public void removeTribute(ItemStack item, Player player) {
-        for (ItemStack itemStack : getTribute().getItemStacks()) {
-            if (itemStack == item) {
-                getTribute().getItemStacks().remove(itemStack);
-                player.getInventory().removeItem(itemStack);
-                player.sendMessage(Component.text(item.toString() + " a bien été récupéré !"));
+        for (ItemStack tributeItem : getTribute().getItemStacks()) {
+            if (tributeItem.getType() == item.getType()) {
+                GameManager.getInstance().getLogger().info(name + " recupere " + item.getAmount() + " de " + item.getType().name());
+                if (item.getAmount() < tributeItem.getAmount()) {
+                    tributeItem.setAmount(tributeItem.getAmount() - item.getAmount());
+                    player.getInventory().removeItem(item);
+                } else {
+                    tributeItem.setAmount(0);
+                    item.setAmount(item.getAmount() - tributeItem.getAmount());
+                }
+                return;
             }
         }
     }
