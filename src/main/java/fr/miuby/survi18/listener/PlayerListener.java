@@ -3,7 +3,7 @@ package fr.miuby.survi18.listener;
 import fr.miuby.survi18.AlphaPlayer;
 import fr.miuby.survi18.GameManager;
 import fr.miuby.survi18.Survi18;
-import fr.miuby.survi18.village.VillagerEtat;
+import fr.miuby.survi18.village.VillagerLevel;
 import io.papermc.paper.advancement.AdvancementDisplay;
 import org.bukkit.*;
 import org.bukkit.advancement.Advancement;
@@ -76,7 +76,7 @@ public class PlayerListener implements Listener {
         Player p = event.getPlayer();
         if(event.getRightClicked() instanceof Villager) {
             Villager v = (Villager) event.getRightClicked();
-            VillagerEtat villager = GameManager.getInstance().getVillage().getVillagersEtat().get(v.customName());
+            VillagerLevel villager = GameManager.getInstance().getVillage().getVillagersLevel().get(v.customName());
             if(v.customName() != null && villager != null) {
                 p.openInventory(villager.getInventory());
                 event.setCancelled(true);

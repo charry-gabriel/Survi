@@ -2,14 +2,17 @@ package fr.miuby.survi18;
 
 import org.bukkit.inventory.ItemStack;
 
+import java.util.Arrays;
+import java.util.List;
+
 public class Tribute {
-    private final ItemStack[] itemStacks;
+    private final List<ItemStack> itemStacks;
 
     public Tribute(ItemStack... itemStacks) {
-        this.itemStacks = itemStacks;
+        this.itemStacks = Arrays.asList(itemStacks);
     }
 
-    public ItemStack[] getItemStacks() {
+    public List<ItemStack> getItemStacks() {
         return itemStacks;
     }
 }

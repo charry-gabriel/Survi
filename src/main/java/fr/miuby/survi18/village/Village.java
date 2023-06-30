@@ -36,12 +36,8 @@ public class Village {
         return villagersLevel;
     }
 
-    public Map<String, VillagerEtat> getVillagersEtat() {
-        return villagersEtat;
-    }
-
     private void spawnEdward(){
-        Location location = new Location(world, 12, 70, -46, 290, 0);
+        Location location = new Location(world, 12086, 63, 1426, 290, 0);
 
         Tribute[] tributes = new Tribute[]{
                 new Tribute(new ItemStack(Material.HAY_BLOCK, 64)),

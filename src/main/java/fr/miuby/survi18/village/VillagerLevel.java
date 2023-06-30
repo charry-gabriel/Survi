@@ -33,14 +33,15 @@ public class VillagerLevel extends AVillager {
     }
 
     public void GiveItems(ItemStack item, Player player){
-        //TODO verification
-        player.getInventory().removeItem(item);
+        removeTribute(item, player);
 
-        Bukkit.broadcast(getMessage());
-        applyBlessing();
-        addLevel();
-        villager.customName(getName());
-        updateInventory();
+        if (getTribute().getItemStacks().size() == 0) {
+            Bukkit.broadcast(getMessage());
+            applyBlessing();
+            addLevel();
+            villager.customName(getName());
+            updateInventory();
+        }
     }
 
     public void SetLevel(int level) {
@@ -94,6 +95,16 @@ public class VillagerLevel extends AVillager {
         for (AlphaPlayer player : GameManager.getInstance().getAlphaPlayers().values()) {
             for (BlessingEffect effect : getBlessing().getBlessingEffects()) {
                 effect.applyEffect(player);
+            }
+        }
+    }
+
+    public void removeTribute(ItemStack item, Player player) {
+        for (ItemStack itemStack : getTribute().getItemStacks()) {
+            if (itemStack == item) {
+                getTribute().getItemStacks().remove(itemStack);
+                player.getInventory().removeItem(itemStack);
+                player.sendMessage(Component.text(item.toString() + " a bien été récupéré !"));
             }
         }
     }

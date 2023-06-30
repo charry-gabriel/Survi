@@ -41,6 +41,8 @@ public class GameManager {
         village = new Village(this.GetWorld("village"));
         databaseManager.createVillagers(village);
 
+        lockedItemsManager = new LockedItemsManager();
+
         timer = new Timer();
         timer.update();
     }

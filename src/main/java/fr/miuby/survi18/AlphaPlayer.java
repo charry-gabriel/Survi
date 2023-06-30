@@ -153,6 +153,8 @@ public class AlphaPlayer implements Serializable {
             }
 
             Objects.requireNonNull(player.getAttribute(Attribute.GENERIC_MAX_HEALTH)).setBaseValue(10);
+            resistance = 0.2f;
+            damage = 0.2f;
 
             for (VillagerLevel villager : GameManager.getInstance().getVillage().getVillagersLevel().values()) {
                 villager.ApplyAllCurrentBlessing(this);

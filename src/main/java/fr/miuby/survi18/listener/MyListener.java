@@ -1,7 +1,6 @@
 package fr.miuby.survi18.listener;
 
 import fr.miuby.survi18.*;
-import fr.miuby.survi18.village.VillagerEtat;
 import fr.miuby.survi18.village.VillagerLevel;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
@@ -45,11 +44,12 @@ public class MyListener implements Listener {
 
         //si on tape
         if(event.getDamager() instanceof Player){
-            event.setDamage(event.getDamage() * GameManager.getInstance().getAlphaPlayers().get(event.getDamager().getUniqueId()).getResistance());
+            event.setDamage(event.getDamage() * GameManager.getInstance().getAlphaPlayers().get(event.getDamager().getUniqueId()).getDamage());
         }
         //si on se fait taper
         if(event.getEntity() instanceof Player){
-            event.setDamage(event.getDamage() * GameManager.getInstance().getAlphaPlayers().get(event.getDamager().getUniqueId()).getDamage());
+
+            event.setDamage(event.getDamage() / GameManager.getInstance().getAlphaPlayers().get(event.getEntity().getUniqueId()).getResistance());
         }
     }
 
@@ -58,25 +58,16 @@ public class MyListener implements Listener {
         Player player = (Player)event.getWhoClicked();
         ItemStack item = event.getCurrentItem();
 
-        if(item != null
-            && item.getType() != Material.AIR
-            && event.getClickedInventory() != null
-            && (event.getClickedInventory().getHolder() instanceof Villager || event.getClickedInventory().getHolder() instanceof Player
-            && event.getInventory().getHolder() instanceof Villager))
-        {
-            /*for (VillagerEtat villager : GameManager.getInstance().getVillage().getVillagersEtat().values()) {
-                boolean villagerInventory = villager.getInventory() == event.getClickedInventory();
-                if (villager.getInventory() == event.getInventory() || villagerInventory) {
-                    villager.Trade(villagerInventory, item, player);
-                    event.setCancelled(true);
+        if(item != null && item.getType() != Material.AIR) {
+            if (event.getClickedInventory() != null && event.getClickedInventory().getHolder() instanceof Player) {
+                for (VillagerLevel villager : GameManager.getInstance().getVillage().getVillagersLevel().values()) {
+                    if (villager.getInventory() == event.getInventory()) {
+                        villager.GiveItems(item, player);
+                        event.setCancelled(true);
+                    }
                 }
-            }*/
-
-            for (VillagerLevel villager : GameManager.getInstance().getVillage().getVillagersLevel().values()) {
-                if (villager.getInventory() == event.getClickedInventory()) {
-                    villager.GiveItems(item, player);//TODO prendre tout les items
-                    event.setCancelled(true);
-                }
+            } else if (event.getClickedInventory() != null && event.getClickedInventory().getHolder() instanceof Villager) {
+                event.setCancelled(true);
             }
         }
     }
