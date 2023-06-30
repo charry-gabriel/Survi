@@ -3,6 +3,8 @@ package fr.miuby.survi18.village;
 import com.sun.tools.javac.jvm.Items;
 import fr.miuby.survi18.blessing.*;
 import fr.miuby.survi18.Tribute;
+import fr.miuby.survi18.locked_item.LockedArmorType;
+import fr.miuby.survi18.locked_item.LockedToolType;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.*;
@@ -230,11 +232,11 @@ public class Village {
         };
 
         Blessing[] blessings = new Blessing[]{
-                new Blessing(new UnlockArmorEffect(), new UnlockArmorEffect(), new UnlockArmorEffect(), new UnlockArmorEffect()),
-                new Blessing(new UnlockArmorEffect(), new UnlockArmorEffect(), new UnlockArmorEffect(), new UnlockArmorEffect()),
-                new Blessing(new UnlockArmorEffect(), new UnlockArmorEffect(), new UnlockArmorEffect(), new UnlockArmorEffect()),
-                new Blessing(new UnlockArmorEffect(), new UnlockArmorEffect(), new UnlockArmorEffect(), new UnlockArmorEffect()),
-                new Blessing(new UnlockArmorEffect(), new UnlockArmorEffect(), new UnlockArmorEffect(), new UnlockArmorEffect()),
+                new Blessing(new UnlockArmorEffect(LockedArmorType.LEATHER)),
+                new Blessing(new UnlockArmorEffect(LockedArmorType.GOLD)),
+                new Blessing(new UnlockArmorEffect(LockedArmorType.IRON)),
+                new Blessing(new UnlockArmorEffect(LockedArmorType.GOLD)),
+                new Blessing(new UnlockArmorEffect(LockedArmorType.DIAMOND)),
         };
 
         Component[] messages = new Component[]{
@@ -269,11 +271,11 @@ public class Village {
         };
 
         Blessing[] blessings = new Blessing[]{
-                new Blessing(new UnlockToolEffect(), new UnlockToolEffect(), new UnlockToolEffect(), new UnlockToolEffect(), new UnlockToolEffect()),
-                new Blessing(new UnlockToolEffect(), new UnlockToolEffect(), new UnlockToolEffect(), new UnlockToolEffect(), new UnlockToolEffect()),
-                new Blessing(new UnlockToolEffect(), new UnlockToolEffect(), new UnlockToolEffect(), new UnlockToolEffect(), new UnlockToolEffect()),
-                new Blessing(new UnlockToolEffect(), new UnlockToolEffect(), new UnlockToolEffect(), new UnlockToolEffect(), new UnlockToolEffect()),
-                new Blessing(new UnlockToolEffect(), new UnlockToolEffect(), new UnlockToolEffect(), new UnlockToolEffect(), new UnlockToolEffect()),
+                new Blessing(new UnlockToolEffect(LockedToolType.WOOD)),
+                new Blessing(new UnlockToolEffect(LockedToolType.STONE)),
+                new Blessing(new UnlockToolEffect(LockedToolType.IRON)),
+                new Blessing(new UnlockToolEffect(LockedToolType.GOLD)),
+                new Blessing(new UnlockToolEffect(LockedToolType.DIAMOND)),
         };
 
         Component[] messages = new Component[]{

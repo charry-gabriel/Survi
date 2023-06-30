@@ -4,5 +4,6 @@ public enum LockedToolType {
     WOOD,
     STONE,
     IRON,
+    GOLD,
     DIAMOND
 }
