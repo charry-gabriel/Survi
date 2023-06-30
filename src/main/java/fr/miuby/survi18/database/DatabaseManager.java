@@ -62,7 +62,7 @@ public class DatabaseManager {
     public void createVillagers(Village village) {
         try {
             final Connection connection = dbConnection.getConnection();
-            final PreparedStatement preparedStatement = connection.prepareStatement("SELECT name FROM villager");
+            final PreparedStatement preparedStatement = connection.prepareStatement("SELECT name, level FROM villager");
             final ResultSet resultSet = preparedStatement.executeQuery();
 
             while (resultSet.next()) {
@@ -77,9 +77,8 @@ public class DatabaseManager {
         Bukkit.getScheduler().runTaskAsynchronously(GameManager.getInstance().getPlugin(), () -> {
             final PreparedStatement preparedStatement;
             try {
-                preparedStatement = dbConnection.getConnection().prepareStatement("UPDATE villager SET level = ? WHERE name = ?");
+                preparedStatement = dbConnection.getConnection().prepareStatement("UPDATE villager SET level = ? WHERE name = '"+name+"'");
                 preparedStatement.setInt(1, level);
-                preparedStatement.setString(2, name);
                 preparedStatement.executeUpdate();
             } catch (SQLException throwables) {
                 throwables.printStackTrace();

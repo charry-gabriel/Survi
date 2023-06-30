@@ -5,6 +5,7 @@ import fr.miuby.survi18.GameManager;
 import fr.miuby.survi18.blessing.Blessing;
 import fr.miuby.survi18.Tribute;
 import fr.miuby.survi18.blessing.BlessingEffect;
+import fr.miuby.survi18.database.DbConnection;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -14,6 +15,10 @@ import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.Objects;
 
@@ -31,23 +36,56 @@ public class VillagerLevel extends AVillager {
         this.messages = messages;
         this.names = names;
 
+        Bukkit.getScheduler().runTaskAsynchronously(GameManager.getInstance().getPlugin(), () -> {
+            final DbConnection dbConnection = GameManager.getInstance().getDatabaseManager().getDbConnection();
+            try {
+                final Connection connection = dbConnection.getConnection();
+                final PreparedStatement preparedStatement = connection.prepareStatement("SELECT name, level FROM villager WHERE name = '"+name+"'");
+                final ResultSet resultSet = preparedStatement.executeQuery();
+
+                if (resultSet.next()) {
+                    level = resultSet.getInt("level");
+                }else{
+                    CreateDBVillager(connection);
+                }
+            } catch (SQLException throwables) {
+                throwables.printStackTrace();
+            }
+        });
+
         updateInventory();
     }
 
-    public void GiveItems(ItemStack item, Player player){
-        removeTribute(item, player);
+    public void GiveItems(Inventory inventory, ItemStack item, Player player){
+        removeItemStack(inventory, item, player);
 
-        if (getTribute().getItemStacks().size() == 0) {
+        if (inventory.isEmpty()) {
             Bukkit.broadcast(getMessage());
             applyBlessing();
             addLevel();
             villager.customName(getName());
             updateInventory();
+            player.closeInventory();
+            player.openInventory(villager.getInventory());
+        }
+    }
+
+    public void CreateDBVillager(Connection connection) {
+        final PreparedStatement preparedStatement;
+        try {
+            preparedStatement = connection.prepareStatement("INSERT INTO villager VALUES (?, ?)");
+            preparedStatement.setString(1, name);
+            preparedStatement.setInt(2, level);
+            preparedStatement.executeUpdate();
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
         }
     }
 
     public void SetLevel(int level) {
         this.level = level;
+        villager.customName(getName());
+        updateInventory();
     }
 
     public void updateInventory() {
@@ -55,7 +93,7 @@ public class VillagerLevel extends AVillager {
         Inventory inv = Bukkit.createInventory(villager, InventoryType.CHEST, Objects.requireNonNull(villager.customName()));//(int) Math.ceil(size) * 9
 
         for (ItemStack item : getTribute().getItemStacks())
-            inv.addItem(item);
+            inv.setItem(inv.firstEmpty(), item);
 
         this.inventory = inv;
     }
@@ -101,19 +139,24 @@ public class VillagerLevel extends AVillager {
         }
     }
 
-    public void removeTribute(ItemStack item, Player player) {
-        for (ItemStack tributeItem : getTribute().getItemStacks()) {
-            if (tributeItem.getType() == item.getType()) {
+    public void removeItemStack(Inventory inventory, ItemStack item, Player player) {
+        ItemStack itemToRemove = null;
+
+        for (ItemStack tributeItem : inventory.getContents()) {
+            if (tributeItem != null && tributeItem.getType() == item.getType()) {
                 GameManager.getInstance().getLogger().info(name + " recupere " + item.getAmount() + " de " + item.getType().name());
                 if (item.getAmount() < tributeItem.getAmount()) {
                     tributeItem.setAmount(tributeItem.getAmount() - item.getAmount());
-                    player.getInventory().removeItem(item);
+                    player.getInventory().remove(item);
                 } else {
-                    tributeItem.setAmount(0);
+                    itemToRemove = tributeItem;
                     item.setAmount(item.getAmount() - tributeItem.getAmount());
                 }
-                return;
+                break;
             }
         }
+
+        if (itemToRemove != null)
+            inventory.removeItem(itemToRemove);
     }
 }

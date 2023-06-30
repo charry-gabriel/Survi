@@ -60,7 +60,7 @@ public class AlphaPlayer implements Serializable {
                             player = GameManager.getInstance().getPlugin().getServer().getPlayer(uuid);
                             //noinspection ConstantConditions
                             pseudo = player.getName();
-                            CreatePlayer(connection);
+                            CreateDBPlayer(connection);
                             Bukkit.getScheduler().runTask(GameManager.getInstance().getPlugin(), this::actualize);
                         }
                     } catch (SQLException throwables) {
@@ -69,7 +69,7 @@ public class AlphaPlayer implements Serializable {
                 });
     }
 
-    public void CreatePlayer(Connection connection) {
+    public void CreateDBPlayer(Connection connection) {
         final PreparedStatement preparedStatement;
         try {
             preparedStatement = connection.prepareStatement("INSERT INTO player VALUES (?, 0, 0, 0, 0, ?)");

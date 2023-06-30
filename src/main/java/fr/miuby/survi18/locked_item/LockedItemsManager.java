@@ -89,13 +89,17 @@ public class LockedItemsManager {
 
     public boolean isLocked(ItemStack item) {
         for (LockedItem lockedItem : armorItems) {
-            if (lockedItem.getItems().contains(item)) {
-                return true;
+            for (ItemStack itemStack : lockedItem.getItems()) {
+                if(itemStack.getType() == item.getType()) {
+                    return lockedItem.isLocked();
+                }
             }
         }
         for (LockedItem lockedItem : toolItems) {
-            if (lockedItem.getItems().contains(item)) {
-                return true;
+            for (ItemStack itemStack : lockedItem.getItems()) {
+                if(itemStack.getType() == item.getType()) {
+                    return lockedItem.isLocked();
+                }
             }
         }
         return false;
