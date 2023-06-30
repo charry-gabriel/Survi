@@ -55,6 +55,7 @@ public class Village {
                 new Tribute(new ItemStack(Material.TROPICAL_FISH, 666)),
                 new Tribute(new ItemStack(Material.NETHER_WART_BLOCK, 100)),
                 new Tribute(new ItemStack(Material.NETHER_STAR, 10)),
+                new Tribute(new ItemStack(Material.BEDROCK, 1)),
         };
 
         Blessing[] blessings = new Blessing[]{
@@ -69,6 +70,8 @@ public class Village {
                 new Blessing(new MaxHealthEffect(36)),
                 new Blessing(new MaxHealthEffect(40)),
                 new Blessing(new RegenEffect(), new FlyEffect()),
+                new Blessing(new MessageEffect("IMPOSSIBLE")),
+
         };
 
         Component[] messages = new Component[]{
@@ -83,6 +86,8 @@ public class Village {
                 Component.text( "Félicitation, vous voici maintenant à 36 HP. J'ai presque fini la potion magique."),
                 Component.text( "Bravo, vous avez maintenant 40 HP. Il me manque que quelques étoiles du nether et je suis prêt. Allez me le chercher, vite vite vite !!!!"),
                 Component.text( "Félicitations, j'ai fini !! Vous pouvez voler, vous pouvez regagner votre vie sans pomme !! AHAHAH !! Je suis le meilleur !!"),
+                Component.text( "IMPOSSIBLE"),
+
         };
 
         Component[] names = new Component[]{
@@ -97,9 +102,10 @@ public class Village {
                 Component.text( "Edward Jenner IX"),
                 Component.text( "Edward Jenner X"),
                 Component.text( "Edward Jenner MAX"),
+                Component.text( "Edward Jenner MAX"),
         };
 
-        VillagerLevel villager = new VillagerLevel(location,"Edward Jenner", Villager.Type.PLAINS, Villager.Profession.WEAPONSMITH, tributes, blessings, messages, names);
+        VillagerLevel villager = new VillagerLevel(location,"Edward Jenner I", Villager.Type.SAVANNA, Villager.Profession.FARMER, tributes, blessings, messages, names);
         villagersLevel.put("Edward Jenner", villager);
     }
 
@@ -112,6 +118,7 @@ public class Village {
                 new Tribute(new ItemStack(Material.RED_NETHER_BRICKS, 192)),
                 new Tribute(new ItemStack(Material.SCULK_CATALYST, 256)),
                 new Tribute(new ItemStack(Material.SPIRE_ARMOR_TRIM_SMITHING_TEMPLATE, 320)),
+                new Tribute(new ItemStack(Material.BEDROCK, 1)),
         };
 
         Blessing[] blessings = new Blessing[]{
@@ -120,6 +127,7 @@ public class Village {
                 new Blessing(new ResistanceEffect(1f)),
                 new Blessing(new ResistanceEffect(1.2f)),
                 new Blessing(new ResistanceEffect(1.4f)),
+                new Blessing(new MessageEffect("IMPOSSIBLE")),
         };
 
         Component[] messages = new Component[]{
@@ -128,6 +136,7 @@ public class Village {
                 Component.text( "Félicitation, vouth êteth maintenant pluth résistant face aux ennemith de l'autre monde."),
                 Component.text( "Beau travail, leth ennemith de l'autre monde ne vouth ferronth pluth jamaith de mlin."),
                 Component.text( "Félicitation, thèth beau travail, je pense que vouth êteth assez résistant, je peux tidndre ma onatraite. Merci à vouth."),
+                Component.text( "IMPOSSIBLE"),
         };
 
         Component[] names = new Component[]{
@@ -136,9 +145,10 @@ public class Village {
                 Component.text( "Nain Roux III"),
                 Component.text( "Nain Roux IV"),
                 Component.text( "Nain Roux V"),
+                Component.text( "Nain Roux MAX"),
         };
 
-        VillagerLevel villager = new VillagerLevel(location,"Nain", Villager.Type.PLAINS, Villager.Profession.WEAPONSMITH, tributes, blessings, messages, names);
+        VillagerLevel villager = new VillagerLevel(location,"Nain Roux I", Villager.Type.SWAMP, Villager.Profession.NITWIT, tributes, blessings, messages, names);
         villagersLevel.put("Nain", villager);
     }
 
@@ -151,6 +161,7 @@ public class Village {
                 new Tribute(new ItemStack(Material.FERMENTED_SPIDER_EYE, 300)),
                 new Tribute(new ItemStack(Material.GHAST_TEAR, 64)),
                 new Tribute(new ItemStack(Material.DRAGON_HEAD, 10)),
+                new Tribute(new ItemStack(Material.BEDROCK, 1)),
         };
 
         Blessing[] blessings = new Blessing[]{
@@ -159,6 +170,7 @@ public class Village {
                 new Blessing(new DamageEffect(0.8f)),
                 new Blessing(new DamageEffect(1f)),
                 new Blessing(new DamageEffect(1.5f)),
+                new Blessing(new MessageEffect("IMPOSSIBLE")),
         };
 
         Component[] messages = new Component[]{
@@ -167,6 +179,7 @@ public class Village {
                 Component.text( "Comment on fait un oeil fermenté ? Avec un oeil... et tu le fermentes."),
                 Component.text( "Pour les 6 ghasts en moins dans ce monde, je vous offre un peu plus de force."),
                 Component.text( "C'est bon ? Vous avez fini de voyager ? Enfin... j'aurais été plus vite tout seul. Vous êtes maintenant assez fort. Mais toujours pas autant que moi."),
+                Component.text( "IMPOSSIBLE"),
         };
 
         Component[] names = new Component[]{
@@ -175,9 +188,10 @@ public class Village {
                 Component.text( "Maddox III"),
                 Component.text( "Maddox VI"),
                 Component.text( "Maddox V"),
+                Component.text( "Maddox MAX"),
         };
 
-        VillagerLevel villager = new VillagerLevel(location,"Maddox", Villager.Type.PLAINS, Villager.Profession.WEAPONSMITH, tributes, blessings, messages, names);
+        VillagerLevel villager = new VillagerLevel(location,"Maddox I", Villager.Type.TAIGA, Villager.Profession.BUTCHER, tributes, blessings, messages, names);
         villagersLevel.put("Maddox", villager);
     }
 
@@ -186,38 +200,58 @@ public class Village {
 
         Tribute[] tributes = new Tribute[]{
                 new Tribute(new ItemStack(Material.ARROW, 256)),
+                new Tribute(new ItemStack(Material.BEDROCK, 1)),
                 new Tribute(new ItemStack(Material.TNT, 64)),
+                new Tribute(new ItemStack(Material.BEDROCK, 1)),
                 new Tribute(new ItemStack(Material.FERMENTED_SPIDER_EYE, 300)),
+                new Tribute(new ItemStack(Material.BEDROCK, 1)),
                 new Tribute(new ItemStack(Material.GHAST_TEAR, 64)),
+                new Tribute(new ItemStack(Material.BEDROCK, 1)),
                 new Tribute(new ItemStack(Material.DRAGON_HEAD, 10)),
+                new Tribute(new ItemStack(Material.BEDROCK, 1)),
         };
 
         Blessing[] blessings = new Blessing[]{
-                new Blessing(new DamageEffect(0.4f)),
-                new Blessing(new DamageEffect(0.6f)),
-                new Blessing(new DamageEffect(0.8f)),
-                new Blessing(new DamageEffect(1f)),
-                new Blessing(new DamageEffect(1.5f)),
+                new Blessing(new MessageEffect("Niveau I réussi !")),
+                new Blessing(new MessageEffect("Niveau II disponible pour Thomas Pesquet !")),
+                new Blessing(new MessageEffect("Niveau II réussi !")),
+                new Blessing(new MessageEffect("Niveau III disponible pour Thomas Pesquet !")),
+                new Blessing(new MessageEffect("Niveau III réussi !")),
+                new Blessing(new MessageEffect("Niveau VI disponible pour Thomas Pesquet !")),
+                new Blessing(new MessageEffect("Niveau VI réussi !")),
+                new Blessing(new MessageEffect("Niveau V disponible pour Thomas Pesquet !")),
+                new Blessing(new MessageEffect("Niveau V réussi !")),
+                new Blessing(new MessageEffect("IMPOSSIBLE")),
         };
 
         Component[] messages = new Component[]{
                 Component.text( "Merci, revenez dans 24h pour la suite."),
+                Component.text( "Venez me voir."),
                 Component.text( "Merci, revenez dans 48h pour la suite. Vous pouvez maintenant explorer le nether !"),
+                Component.text( "Venez me voir."),
                 Component.text( "Merci, revenez dans 72h pour la suite. Vous pouvez maintenant explorer un peu plus le Village et le Wilderness"),
+                Component.text( "Venez me voir."),
                 Component.text( "Merci, revenez dans 100h pour la suite. Vous pouvez maintenant explorer l'end ! "),
+                Component.text( "Venez me voir."),
                 Component.text( "Merci pour cet objet unique, pour te récompenser voici un peu de poisson. Vous pouvez maintenant explorer le Wilderness."),
+                Component.text( "IMPOSSIBLE"),
         };
 
         Component[] names = new Component[]{
                 Component.text( "Thomas Pesquet I"),
+                Component.text( "Thomas Pesquet I"),
+                Component.text( "Thomas Pesquet II"),
                 Component.text( "Thomas Pesquet II"),
                 Component.text( "Thomas Pesquet III"),
-                Component.text( "Thomas Pesquet VI"),
+                Component.text( "Thomas Pesquet III"),
+                Component.text( "Thomas Pesquet IV"),
+                Component.text( "Thomas Pesquet IV"),
+                Component.text( "Thomas Pesquet V"),
                 Component.text( "Thomas Pesquet V"),
         };
 
-        VillagerLevel villager = new VillagerLevel(location,"Maddox", Villager.Type.PLAINS, Villager.Profession.WEAPONSMITH, tributes, blessings, messages, names);
-        villagersLevel.put("Maddox", villager);
+        VillagerLevel villager = new VillagerLevel(location,"Thomas Pesquet I", Villager.Type.SNOW, Villager.Profession.FISHERMAN, tributes, blessings, messages, names);
+        villagersLevel.put("Thomas", villager);
     }
 
     private void spawnStuff(){
@@ -229,6 +263,7 @@ public class Village {
                 new Tribute(new ItemStack(Material.DUNE_ARMOR_TRIM_SMITHING_TEMPLATE, 6)),
                 new Tribute(new ItemStack(Material.REDSTONE_BLOCK, 600)),
                 new Tribute(new ItemStack(Material.SPONGE, 10)),
+                new Tribute(new ItemStack(Material.BEDROCK, 1)),
         };
 
         Blessing[] blessings = new Blessing[]{
@@ -237,6 +272,7 @@ public class Village {
                 new Blessing(new UnlockArmorEffect(LockedArmorType.CHAINMAIL)),
                 new Blessing(new UnlockArmorEffect(LockedArmorType.IRON)),
                 new Blessing(new UnlockArmorEffect(LockedArmorType.DIAMOND)),
+                new Blessing(new MessageEffect("IMPOSSIBLE")),
         };
 
         Component[] messages = new Component[]{
@@ -245,6 +281,7 @@ public class Village {
                 Component.text( "J'ai créé une armure unique pour vous, essavez avec un peu de lave, vous verrez."),
                 Component.text( "Vous pouvez maintenant construire une vraie armure grâce à moi."),
                 Component.text( "La plus belle des armures est maintenant disponible, l'amure en diamant !"),
+                Component.text( "IMPOSSIBLE"),
         };
 
         Component[] names = new Component[]{
@@ -253,9 +290,10 @@ public class Village {
                 Component.text( "Gardien"),
                 Component.text( "IronMan"),
                 Component.text( "Blue Moon"),
+                Component.text( "IMPOSSIBLE"),
         };
 
-        VillagerLevel villager = new VillagerLevel(location,"Stuff", Villager.Type.PLAINS, Villager.Profession.WEAPONSMITH, tributes, blessings, messages, names);
+        VillagerLevel villager = new VillagerLevel(location,"Comboy", Villager.Type.JUNGLE, Villager.Profession.ARMORER, tributes, blessings, messages, names);
         villagersLevel.put("Stuff", villager);
     }
 
@@ -268,6 +306,7 @@ public class Village {
                 new Tribute(new ItemStack(Material.ANVIL, 20)),
                 new Tribute(new ItemStack(Material.EMERALD_BLOCK, 1)),
                 new Tribute(new ItemStack(Material.BROWN_CONCRETE, 576), new ItemStack(Material.STRIPPED_CHERRY_LOG, 576), new ItemStack(Material.COBBLED_DEEPSLATE_STAIRS, 576)),
+                new Tribute(new ItemStack(Material.BEDROCK, 1)),
         };
 
         Blessing[] blessings = new Blessing[]{
@@ -276,6 +315,7 @@ public class Village {
                 new Blessing(new UnlockToolEffect(LockedToolType.IRON)),
                 new Blessing(new UnlockToolEffect(LockedToolType.GOLD)),
                 new Blessing(new UnlockToolEffect(LockedToolType.DIAMOND)),
+                new Blessing(new MessageEffect("IMPOSSIBLE")),
         };
 
         Component[] messages = new Component[]{
@@ -284,6 +324,7 @@ public class Village {
                 Component.text( "Les outils en fer sont super solide et très efficace."),
                 Component.text( "Les meilleurs outils sont les outils en or."),
                 Component.text( "I am a dwarf and I'm digging a hole. Diggy diggy hole, diggy diggy hole. Les outils en diamant sont disponibles !"),
+                Component.text( "IMPOSSIBLE"),
         };
 
         Component[] names = new Component[]{
@@ -292,9 +333,10 @@ public class Village {
                 Component.text( "Léa"),
                 Component.text( "Jeff Bezos"),
                 Component.text( "Diggy Diggy Hole"),
+                Component.text( "IMPOSSIBLE"),
         };
 
-        VillagerLevel villager = new VillagerLevel(location,"Outils", Villager.Type.PLAINS, Villager.Profession.WEAPONSMITH, tributes, blessings, messages, names);
+        VillagerLevel villager = new VillagerLevel(location,"Janod", Villager.Type.TAIGA, Villager.Profession.WEAPONSMITH, tributes, blessings, messages, names);
         villagersLevel.put("Outils", villager);
     }
 
