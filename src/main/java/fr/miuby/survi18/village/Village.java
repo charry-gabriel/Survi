@@ -290,7 +290,7 @@ public class Village {
                 Component.text( "Gardien"),
                 Component.text( "IronMan"),
                 Component.text( "Blue Moon"),
-                Component.text( "IMPOSSIBLE"),
+                Component.text( "Blue Moon"),
         };
 
         VillagerLevel villager = new VillagerLevel(location,"Comboy", Villager.Type.JUNGLE, Villager.Profession.ARMORER, tributes, blessings, messages, names);
@@ -298,7 +298,7 @@ public class Village {
     }
 
     private void spawnTools(){
-        Location location = new Location(world, 12079, 63, 1427, 0, 0);
+        Location location = new Location(world, 12080, 63, 1427, 0, 0);
 
         Tribute[] tributes = new Tribute[]{
                 new Tribute(new ItemStack(Material.CRAFTING_TABLE, 64)),
@@ -333,7 +333,7 @@ public class Village {
                 Component.text( "Léa"),
                 Component.text( "Jeff Bezos"),
                 Component.text( "Diggy Diggy Hole"),
-                Component.text( "IMPOSSIBLE"),
+                Component.text( "Diggy Diggy Hole"),
         };
 
         VillagerLevel villager = new VillagerLevel(location,"Janod", Villager.Type.TAIGA, Villager.Profession.WEAPONSMITH, tributes, blessings, messages, names);
