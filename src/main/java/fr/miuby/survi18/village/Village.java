@@ -199,7 +199,7 @@ public class Village {
         Location location = new Location(world, 12071, 64, 1509, 180, 0);
 
         Tribute[] tributes = new Tribute[]{
-                new Tribute(new ItemStack(Material.ARROW, 256)),
+                new Tribute(new ItemStack(Material.DIRT, 1)),
                 new Tribute(new ItemStack(Material.BEDROCK, 1)),
                 new Tribute(new ItemStack(Material.TNT, 64)),
                 new Tribute(new ItemStack(Material.BEDROCK, 1)),
