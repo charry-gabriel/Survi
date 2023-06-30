@@ -106,7 +106,7 @@ public class Village {
         };
 
         VillagerLevel villager = new VillagerLevel(location,"Edward Jenner I", Villager.Type.SAVANNA, Villager.Profession.FARMER, tributes, blessings, messages, names);
-        villagersLevel.put("Edward Jenner", villager);
+        villagersLevel.put("Edward Jenner I", villager);
     }
 
     private void spawnNain(){
@@ -149,7 +149,7 @@ public class Village {
         };
 
         VillagerLevel villager = new VillagerLevel(location,"Nain Roux I", Villager.Type.SWAMP, Villager.Profession.NITWIT, tributes, blessings, messages, names);
-        villagersLevel.put("Nain", villager);
+        villagersLevel.put("Nain Roux I", villager);
     }
 
     private void spawnMaddox(){
@@ -192,7 +192,7 @@ public class Village {
         };
 
         VillagerLevel villager = new VillagerLevel(location,"Maddox I", Villager.Type.TAIGA, Villager.Profession.BUTCHER, tributes, blessings, messages, names);
-        villagersLevel.put("Maddox", villager);
+        villagersLevel.put("Maddox I", villager);
     }
 
     private void spawnThomas(){
@@ -251,7 +251,7 @@ public class Village {
         };
 
         VillagerLevel villager = new VillagerLevel(location,"Thomas Pesquet I", Villager.Type.SNOW, Villager.Profession.FISHERMAN, tributes, blessings, messages, names);
-        villagersLevel.put("Thomas", villager);
+        villagersLevel.put("Thomas Pesquet I", villager);
     }
 
     private void spawnStuff(){
@@ -294,7 +294,7 @@ public class Village {
         };
 
         VillagerLevel villager = new VillagerLevel(location,"Comboy", Villager.Type.JUNGLE, Villager.Profession.ARMORER, tributes, blessings, messages, names);
-        villagersLevel.put("Stuff", villager);
+        villagersLevel.put("Comboy", villager);
     }
 
     private void spawnTools(){
@@ -337,7 +337,7 @@ public class Village {
         };
 
         VillagerLevel villager = new VillagerLevel(location,"Janod", Villager.Type.TAIGA, Villager.Profession.WEAPONSMITH, tributes, blessings, messages, names);
-        villagersLevel.put("Outils", villager);
+        villagersLevel.put("Janod", villager);
     }
 
 /*
