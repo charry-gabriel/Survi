@@ -22,10 +22,14 @@ import java.util.Iterator;
 import java.util.Objects;
 import java.util.UUID;
 
+import static java.lang.Math.min;
+import static org.bukkit.util.NumberConversions.floor;
+
 public class AlphaPlayer implements Serializable {
     private final UUID uuid;
     private String pseudo;
     private int mort = 0;
+    private int malus = 0;
     private int success = 0;
 
     private Player player;
@@ -36,6 +40,7 @@ public class AlphaPlayer implements Serializable {
 
     private float resistance;
     private float damage;
+    private int vieBonus = 0;
 
     public AlphaPlayer(UUID uuid) {
         this.uuid = uuid;
@@ -146,13 +151,14 @@ public class AlphaPlayer implements Serializable {
                 }
             }
 
-            Objects.requireNonNull(player.getAttribute(Attribute.GENERIC_MAX_HEALTH)).setBaseValue(10);
             resistance = 0.2f;
             damage = 0.2f;
 
             for (VillagerLevel villager : GameManager.getInstance().getVillage().getVillagersLevel().values()) {
                 villager.ApplyAllCurrentBlessing(this);
             }
+
+            updateLife();
         }
     }
 
@@ -184,6 +190,7 @@ public class AlphaPlayer implements Serializable {
         if(mortScore != null)
             mortScore.setScore(this.mort);
 
+        updateLife();
         GameManager.getInstance().getDatabaseManager().updatePlayer(uuid, "mort", this.mort);
     }
 
@@ -237,5 +244,15 @@ public class AlphaPlayer implements Serializable {
 
     public void setDamage(float damage) {
         this.damage = damage;
+    }
+
+    public void setVieBonus(int vieBonus) {
+        this.vieBonus = vieBonus;
+    }
+
+    public void updateLife() {
+        malus = floor((double) mort / 10f);
+        int vieEnMoins = min(0, malus - GameManager.getInstance().getDispel());
+        Objects.requireNonNull(player.getAttribute(Attribute.GENERIC_MAX_HEALTH)).setBaseValue(10 + vieBonus - vieEnMoins);
     }
 }
