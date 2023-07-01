@@ -1,12 +1,12 @@
 package fr.miuby.survi18;
 
 import fr.miuby.survi18.database.DbConnection;
+import fr.miuby.survi18.role.Role;
 import fr.miuby.survi18.village.VillagerLevel;
 import io.papermc.paper.advancement.AdvancementDisplay;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
-import org.bukkit.Statistic;
 import org.bukkit.advancement.Advancement;
 import org.bukkit.advancement.AdvancementProgress;
 import org.bukkit.attribute.Attribute;
@@ -41,6 +41,8 @@ public class AlphaPlayer implements Serializable {
     private float resistance;
     private float damage;
     private int vieBonus = 0;
+
+    private Role role;
 
     public AlphaPlayer(UUID uuid) {
         this.uuid = uuid;
@@ -95,27 +97,22 @@ public class AlphaPlayer implements Serializable {
         life.setDisplaySlot(DisplaySlot.PLAYER_LIST);
         life.setRenderType(RenderType.HEARTS);
 
-        Objective death = scoreboard.registerNewObjective("Mort", Criteria.DUMMY, Component.text("Morts"));
-        death.setDisplaySlot(DisplaySlot.BELOW_NAME);
-        mortScore = death.getScore("Mort");
-        mortScore.setScore(mort);
-
         createTeam();
     }
 
     public void createTeam(){
         Team village = scoreboard.registerNewTeam("Village");
         village.color(NamedTextColor.GREEN);
-        village.prefix(Component.text("Village - "));
+        village.prefix(Component.text("Village - ").append(Component.text("[Simplet] ").color(NamedTextColor.GRAY)));
         Team wilderness = scoreboard.registerNewTeam("Wilderness");
         wilderness.color(NamedTextColor.GOLD);
-        wilderness.prefix(Component.text("Wilderness - "));
+        wilderness.prefix(Component.text("Wilderness - ").append(Component.text("[Simplet] ").color(NamedTextColor.GRAY)));
         Team nether = scoreboard.registerNewTeam("Nether");
         nether.color(NamedTextColor.RED);
-        nether.prefix(Component.text("Nether - "));
+        nether.prefix(Component.text("Nether - ").append(Component.text("[Simplet] ").color(NamedTextColor.GRAY)));
         Team end = scoreboard.registerNewTeam("End");
         end.color(NamedTextColor.AQUA);
-        end.prefix(Component.text("End - "));
+        end.prefix(Component.text("End - ").append(Component.text("[Simplet] ").color(NamedTextColor.GRAY)));
     }
 
     public void actualize() {
@@ -187,8 +184,6 @@ public class AlphaPlayer implements Serializable {
 
     public void addMort(int mort) {
         this.mort += mort;
-        if(mortScore != null)
-            mortScore.setScore(this.mort);
 
         updateLife();
         GameManager.getInstance().getDatabaseManager().updatePlayer(uuid, "mort", this.mort);

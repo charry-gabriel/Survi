@@ -82,7 +82,7 @@ public class PlayerListener implements Listener {
     @EventHandler
     public void onPlayerInteractEntity(PlayerInteractEntityEvent event) {
         Player p = event.getPlayer();
-        if(event.getRightClicked().getType() == EntityType.VILLAGER) {
+        if(event.getRightClicked().getType() == EntityType.VILLAGER || event.getRightClicked().getType() == EntityType.WANDERING_TRADER) {
             Villager v = (Villager) event.getRightClicked();
             if (!v.getMetadata("name").isEmpty()) {
                 VillagerLevel villager = GameManager.getInstance().getVillage().getVillagersLevel().get(v.getMetadata("name").get(0).asString());
