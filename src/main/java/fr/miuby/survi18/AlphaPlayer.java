@@ -103,7 +103,7 @@ public class AlphaPlayer implements Serializable {
 
     public void createTeam(){
         Team village = scoreboard.registerNewTeam("Village");
-        village.color(NamedTextColor.GREEN);
+        village.color(NamedTextColor.AQUA);
         village.prefix(Component.text("Village - ").append(Component.text("[Simplet] ").color(NamedTextColor.GRAY)));
         Team wilderness = scoreboard.registerNewTeam("Wilderness");
         wilderness.color(NamedTextColor.GOLD);
@@ -112,7 +112,7 @@ public class AlphaPlayer implements Serializable {
         nether.color(NamedTextColor.RED);
         nether.prefix(Component.text("Nether - ").append(Component.text("[Simplet] ").color(NamedTextColor.GRAY)));
         Team end = scoreboard.registerNewTeam("End");
-        end.color(NamedTextColor.AQUA);
+        end.color(NamedTextColor.YELLOW);
         end.prefix(Component.text("End - ").append(Component.text("[Simplet] ").color(NamedTextColor.GRAY)));
     }
 
