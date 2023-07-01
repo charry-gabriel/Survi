@@ -27,6 +27,7 @@ public class Village {
         spawnThomas();
         spawnStuff();
         spawnTools();
+        spawnFrancois();
 
     }
 
@@ -338,6 +339,69 @@ public class Village {
 
         VillagerLevel villager = new VillagerLevel(location,"Janod", Villager.Type.TAIGA, Villager.Profession.WEAPONSMITH, tributes, blessings, messages, names);
         villagersLevel.put("Janod", villager);
+    }
+
+    private void spawnFrancois(){
+        Location location = new Location(world, 12076.5, 63, 1425.5, 180, 0);
+
+        Tribute[] tributes = new Tribute[]{
+                new Tribute(new ItemStack(Material.BELL, 1)),
+                new Tribute(new ItemStack(Material.CANDLE, 10)),
+                new Tribute(new ItemStack(Material.YELLOW_CANDLE, 100)),
+                new Tribute(new ItemStack(Material.RED_CANDLE, 200)),
+                new Tribute(new ItemStack(Material.ORANGE_CANDLE, 300)),
+                new Tribute(new ItemStack(Material.LIGHT_BLUE_CANDLE, 400)),
+                new Tribute(new ItemStack(Material.GREEN_CANDLE, 400)),
+                new Tribute(new ItemStack(Material.PINK_CANDLE, 500)),
+                new Tribute(new ItemStack(Material.WHITE_CANDLE, 600)),
+                new Tribute(new ItemStack(Material.TOTEM_OF_UNDYING, 27)),
+                new Tribute(new ItemStack(Material.BEDROCK, 27)),
+        };
+
+        Blessing[] blessings = new Blessing[]{
+                new Blessing(new DispelEffect(1)),
+                new Blessing(new DispelEffect(2)),
+                new Blessing(new DispelEffect(3)),
+                new Blessing(new DispelEffect(4)),
+                new Blessing(new DispelEffect(6)),
+                new Blessing(new DispelEffect(7)),
+                new Blessing(new DispelEffect(8)),
+                new Blessing(new DispelEffect(9)),
+                new Blessing(new DispelEffect(100)),
+                new Blessing(new MessageEffect("IMPOSSIBLE")),
+        };
+
+        Component[] messages = new Component[]{
+                Component.text( "Vos 10 dernières morts sont annulées."),
+                Component.text( "Vos 20 dernières morts sont annulées."),
+                Component.text( "Vos 30 dernières morts sont annulées."),
+                Component.text( "Vos 40 dernières morts sont annulées."),
+                Component.text( "Vos 50 dernières morts sont annulées."),
+                Component.text( "Vos 60 dernières morts sont annulées."),
+                Component.text( "Vos 70 dernières morts sont annulées."),
+                Component.text( "Vos 80 dernières morts sont annulées."),
+                Component.text( "Vos 90 dernières morts sont annulées."),
+                Component.text( "Vos 100 dernières morts sont annulées."),
+                Component.text( "IMPOSSIBLE"),
+        };
+
+        Component[] names = new Component[]{
+                Component.text( "Léon XIII"),
+                Component.text( "Pie X"),
+                Component.text( "Benoît XV"),
+                Component.text( "Pie XI"),
+                Component.text( "Jean XXIII"),
+                Component.text( "Paul VI"),
+                Component.text( "Jean Paul I"),
+                Component.text( "Jean Paul II"),
+                Component.text( "Benoît XVI"),
+                Component.text( "François I"),
+                Component.text( "François I"),
+
+        };
+
+        VillagerLevel villager = new VillagerLevel(location,"Léon XIII", Villager.Type.JUNGLE, Villager.Profession.CLERIC, tributes, blessings, messages, names);
+        villagersLevel.put("Léon XIII", villager);
     }
 
 /*
