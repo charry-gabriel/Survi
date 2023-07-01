@@ -75,8 +75,6 @@ public class PlayerListener implements Listener {
         if(advancementProgress.isDone() && advancementDisplay != null && !categorie.equals("recipes")) {
             if(advancementDisplay.frame() == AdvancementDisplay.Frame.CHALLENGE) {
                 GameManager.getInstance().getAlphaPlayers().get(player.getUniqueId()).gainOneSuccess(true);
-            } else if(advancementDisplay.frame() == AdvancementDisplay.Frame.GOAL || advancementDisplay.frame() == AdvancementDisplay.Frame.TASK) {
-                GameManager.getInstance().getAlphaPlayers().get(player.getUniqueId()).gainOneSuccess(false);
             }
         }
     }
@@ -98,7 +96,7 @@ public class PlayerListener implements Listener {
 
     @EventHandler
     public void onPlayerDeath(PlayerDeathEvent event) {
-        //GameManager.getInstance().getAlphaPlayers().get(event.getPlayer().getUniqueId()).addMort(1);
+        GameManager.getInstance().getAlphaPlayers().get(event.getPlayer().getUniqueId()).addMort(1);
     }
 
     @EventHandler

@@ -27,12 +27,10 @@ public class AlphaPlayer implements Serializable {
     private String pseudo;
     private int mort = 0;
     private int success = 0;
-    private int progres = 0;
 
     private Player player;
 
     private Score mortScore;
-    private Score progresScore;
     private Score successScore;
     private Scoreboard scoreboard;
 
@@ -53,7 +51,6 @@ public class AlphaPlayer implements Serializable {
                         if (resultSet.next()) {
                             mort = resultSet.getInt("mort");
                             success = resultSet.getInt("success");
-                            progres = resultSet.getInt("progres");
                             pseudo = resultSet.getString("pseudo");
                             Bukkit.getScheduler().runTask(GameManager.getInstance().getPlugin(), this::actualize);
                         } else {
@@ -84,26 +81,19 @@ public class AlphaPlayer implements Serializable {
     public void newScoreboard() {
         scoreboard = Bukkit.getScoreboardManager().getNewScoreboard();
 
-        Objective objectifInfo = scoreboard.registerNewObjective("Info", Criteria.DUMMY, Component.text("Info"));
+        /*Objective objectifInfo = scoreboard.registerNewObjective("Info", Criteria.DUMMY, Component.text("Info"));
         objectifInfo.setDisplaySlot(DisplaySlot.SIDEBAR);
-
-        /*progresScore = objectifInfo.getScore("Progrès :");
-        progresScore.setScore(progres);*/
-
         successScore = objectifInfo.getScore("Succès :");
-        successScore.setScore(success);
-
-        /*mortScore = objectifInfo.getScore("Mort :");
-        mortScore.setScore(mort);*/
-
+        successScore.setScore(success);*/
 
         Objective life = scoreboard.registerNewObjective("Vie", Criteria.HEALTH, Component.text("Vie"));
         life.setDisplaySlot(DisplaySlot.PLAYER_LIST);
         life.setRenderType(RenderType.HEARTS);
 
-        Objective death = scoreboard.registerNewObjective("Death", Criteria.DEATH_COUNT, Component.text("Morts"));
+        Objective death = scoreboard.registerNewObjective("Mort", Criteria.DUMMY, Component.text("Morts"));
         death.setDisplaySlot(DisplaySlot.BELOW_NAME);
-        death.setRenderType(RenderType.INTEGER);
+        mortScore = death.getScore("Mort");
+        mortScore.setScore(mort);
 
         createTeam();
     }
@@ -132,25 +122,25 @@ public class AlphaPlayer implements Serializable {
                 newScoreboard();
             }
 
-            mort = player.getStatistic(Statistic.DEATHS);
-            //mortScore.setScore(mort);
+            /*mort = player.getStatistic(Statistic.DEATHS);
+            mortScore.setScore(mort);*/
             player.setScoreboard(scoreboard);
             GameManager.getInstance().switchWorld(player.getWorld().getName(), pseudo);
 
             for(AlphaPlayer alphaPlayer : GameManager.getInstance().getAlphaPlayers().values()) {
                 if(alphaPlayer.getPlayer() != null) {
                     switch (alphaPlayer.getPlayer().getWorld().getName()) {
-                        case "village":
-                            Objects.requireNonNull(this.getScoreboard().getTeam("Village")).addEntry(alphaPlayer.getPseudo());
+                        case "Village":
+                            this.getScoreboard().getTeam("Village").addEntry(alphaPlayer.getPseudo());
                             break;
-                        case "wilderness":
-                            Objects.requireNonNull(this.getScoreboard().getTeam("Wilderness")).addEntry(alphaPlayer.getPseudo());
+                        case "Wilderness":
+                            this.getScoreboard().getTeam("Wilderness").addEntry(alphaPlayer.getPseudo());
                             break;
-                        case "wilderness_nether":
-                            Objects.requireNonNull(this.getScoreboard().getTeam("Nether")).addEntry(alphaPlayer.getPseudo());
+                        case "Wilderness_nether":
+                            this.getScoreboard().getTeam("Nether").addEntry(alphaPlayer.getPseudo());
                             break;
-                        case "wilderness_the_end":
-                            Objects.requireNonNull(this.getScoreboard().getTeam("End")).addEntry(alphaPlayer.getPseudo());
+                        case "Wilderness_the_end":
+                            this.getScoreboard().getTeam("End").addEntry(alphaPlayer.getPseudo());
                             break;
                     }
                 }
@@ -167,27 +157,13 @@ public class AlphaPlayer implements Serializable {
     }
 
     public void gainOneSuccess(boolean challenge) {
-        int result;
         if(challenge) {
             success++;
-            result = success * 1500000;
             setSuccess(success);
-        } else {
-            progres++;
-            if(progres <= 20)
-                result = progres * progres * 10;
-            else if(progres <= 40)
-                result = progres * progres * 100;
-            else if(progres <= 70)
-                result = progres * progres * 1000;
-            else
-                result = progres * progres * 10000;
-            setProgres(progres);
         }
     }
 
     public void gainOldAdvancement(Player player) {
-        int result = 0;
         Iterator<Advancement> advancementIterator = Bukkit.advancementIterator();
         while(advancementIterator.hasNext()) {
             Advancement advancement = advancementIterator.next();
@@ -197,21 +173,9 @@ public class AlphaPlayer implements Serializable {
             if(advancementProgress.isDone() && advancementDisplay != null && !categorie.equals("recipes")) {
                 if(advancementDisplay.frame() == AdvancementDisplay.Frame.CHALLENGE) {
                     success++;
-                    result += success * 1500000;
-                } else if(advancementDisplay.frame() == AdvancementDisplay.Frame.GOAL || advancementDisplay.frame() == AdvancementDisplay.Frame.TASK) {
-                    progres++;
-                    if(progres <= 20)
-                        result += progres * progres * 10;
-                    else if(progres <= 40)
-                        result += progres * progres * 100;
-                    else if(progres <= 70)
-                        result += progres * progres * 1000;
-                    else
-                        result += progres * progres * 10000;
                 }
             }
         }
-        setProgres(progres);
         setSuccess(success);
     }
 
@@ -231,14 +195,6 @@ public class AlphaPlayer implements Serializable {
         GameManager.getInstance().getDatabaseManager().updatePlayer(uuid, "success", this.success);
     }
 
-    public void setProgres(int progres) {
-        this.progres = progres;
-        if(progresScore != null)
-            progresScore.setScore(this.progres);
-
-        GameManager.getInstance().getDatabaseManager().updatePlayer(uuid, "progres", this.progres);
-    }
-
     public UUID getUUID(){
         return uuid;
     }
@@ -249,10 +205,6 @@ public class AlphaPlayer implements Serializable {
 
     public int getSuccess(){
         return success;
-    }
-
-    public int getProgres(){
-        return progres;
     }
 
     public String getPseudo(){

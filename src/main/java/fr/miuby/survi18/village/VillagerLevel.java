@@ -140,7 +140,7 @@ public class VillagerLevel extends AVillager {
             player.playSound(myCustomSound);
 
             for (BlessingEffect effect : getBlessing().getBlessingEffects()) {
-                AlphaPlayer alphaPlayer = GameManager.getInstance().getAlphaPlayer(player.getUniqueId());
+                AlphaPlayer alphaPlayer = GameManager.getInstance().getAlphaPlayers().get(player.getUniqueId());
                 effect.applyEffect(alphaPlayer);
             }
         }

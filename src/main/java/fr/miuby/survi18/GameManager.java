@@ -87,31 +87,21 @@ public class GameManager {
         return null;
     }
 
-    public AlphaPlayer getAlphaPlayer(UUID uuid) {
-        for(AlphaPlayer alphaP : GameManager.getInstance().getAlphaPlayers().values()) {
-            GameManager.getInstance().getLogger().info("alpha ID : " + alphaP.getUUID());
-            if(alphaP.getUUID().equals(uuid)) {
-                return alphaP;
-            }
-        }
-        GameManager.getInstance().getLogger().warning("player null :/");
-        return null;
-    }
-
     public void switchWorld(String world, String pseudo){
         for(AlphaPlayer alphaPlayer : players.values()) {
             if(alphaPlayer.getPlayer() != null) {
+                getLogger().info(alphaPlayer.getPlayer().getName() + " has switched to " + world);
                 switch (world) {
-                    case "village":
+                    case "Village":
                         alphaPlayer.getScoreboard().getTeam("Village").addEntry(pseudo);
                         break;
-                    case "wilderness":
+                    case "Wilderness":
                         alphaPlayer.getScoreboard().getTeam("Wilderness").addEntry(pseudo);
                         break;
-                    case "wilderness_nether":
+                    case "Wilderness_nether":
                         alphaPlayer.getScoreboard().getTeam("Nether").addEntry(pseudo);
                         break;
-                    case "wilderness_the_end":
+                    case "Wilderness_the_end":
                         alphaPlayer.getScoreboard().getTeam("End").addEntry(pseudo);
                         break;
                 }

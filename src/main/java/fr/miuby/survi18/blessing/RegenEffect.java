@@ -8,6 +8,6 @@ public class RegenEffect extends BlessingEffect {
 
     @Override
     public void applyEffect(AlphaPlayer player) {
-        GameManager.getInstance().GetWorld("wilderness").setGameRule(GameRule.NATURAL_REGENERATION, true);
+        GameManager.getInstance().GetWorld("Wilderness").setGameRule(GameRule.NATURAL_REGENERATION, true);
     }
 }
