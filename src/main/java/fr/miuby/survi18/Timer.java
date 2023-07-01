@@ -20,13 +20,13 @@ public class Timer {
                 Duration duration = Duration.between(midnight, Instant.now());
                 long seconds = duration.getSeconds();
                 int tick;
-                if (seconds >= 0 && seconds < 21600) {
+                if (seconds >= 0 && seconds < 28800) {
                     tick = 12000 + Math.round(seconds/1.8f);
                 }
                 else {
-                    tick = Math.round(seconds/5.4f) - 4000;
+                    tick = Math.round(seconds/9.6f);
                 }
-                GameManager.getInstance().getVillage().getWorld().setTime(tick+2400);
+                GameManager.getInstance().getVillage().getWorld().setTime(tick);
             }
         }, 0, 20);
     }
