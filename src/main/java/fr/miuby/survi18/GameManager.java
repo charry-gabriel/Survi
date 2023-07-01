@@ -88,7 +88,6 @@ public class GameManager {
     }
 
     public AlphaPlayer getAlphaPlayer(UUID uuid) {
-        GameManager.getInstance().getLogger().info("uuid : " + uuid);
         for(AlphaPlayer alphaP : GameManager.getInstance().getAlphaPlayers().values()) {
             GameManager.getInstance().getLogger().info("alpha ID : " + alphaP.getUUID());
             if(alphaP.getUUID().equals(uuid)) {

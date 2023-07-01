@@ -5,6 +5,9 @@ import fr.miuby.survi18.GameManager;
 import fr.miuby.survi18.blessing.Blessing;
 import fr.miuby.survi18.Tribute;
 import fr.miuby.survi18.blessing.BlessingEffect;
+import fr.miuby.survi18.database.DbConnection;
+import net.kyori.adventure.key.Key;
+import net.kyori.adventure.sound.Sound;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
@@ -15,6 +18,10 @@ import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.Objects;
 
@@ -32,6 +39,23 @@ public class VillagerLevel extends AVillager {
         this.messages = messages;
         this.names = names;
 
+        Bukkit.getScheduler().runTaskAsynchronously(GameManager.getInstance().getPlugin(), () -> {
+            final DbConnection dbConnection = GameManager.getInstance().getDatabaseManager().getDbConnection();
+            try {
+                final Connection connection = dbConnection.getConnection();
+                final PreparedStatement preparedStatement = connection.prepareStatement("SELECT name, level FROM villager WHERE name = '"+name+"'");
+                final ResultSet resultSet = preparedStatement.executeQuery();
+
+                if (resultSet.next()) {
+                    level = resultSet.getInt("level");
+                }else{
+                    CreateDBVillager(connection);
+                }
+            } catch (SQLException throwables) {
+                throwables.printStackTrace();
+            }
+        });
+
         updateInventory();
     }
 
@@ -39,7 +63,7 @@ public class VillagerLevel extends AVillager {
         removeItemStack(inventory, item, player);
 
         if (inventory.isEmpty()) {
-            Bukkit.broadcast(getMessage().color(NamedTextColor.AQUA));
+            Bukkit.broadcast(Component.text("<").color(NamedTextColor.AQUA).append(getName()).append(Component.text("> ").color(NamedTextColor.AQUA)).append(getMessage()));
             applyBlessing();
             addLevel();
             villager.customName(getName());
@@ -48,7 +72,7 @@ public class VillagerLevel extends AVillager {
         }
     }
 
-    /*public void CreateDBVillager(Connection connection) {
+    public void CreateDBVillager(Connection connection) {
         final PreparedStatement preparedStatement;
         try {
             preparedStatement = connection.prepareStatement("INSERT INTO villager VALUES (?, ?)");
@@ -58,7 +82,7 @@ public class VillagerLevel extends AVillager {
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
-    }*/
+    }
 
     public void SetLevel(int level) {
         this.level = level;
@@ -90,11 +114,11 @@ public class VillagerLevel extends AVillager {
     }
 
     public Component getMessage() {
-        return messages[this.level];
+        return messages[this.level].color(NamedTextColor.AQUA);
     }
 
     public Component getName() {
-        return names[this.level];
+        return names[this.level].color(NamedTextColor.AQUA);
     }
 
     public Blessing[] getCurrentBlessings() {
@@ -110,7 +134,11 @@ public class VillagerLevel extends AVillager {
     }
 
     public void applyBlessing() {
+        Sound myCustomSound = Sound.sound(Key.key("ui.toast.challenge_complete"), Sound.Source.AMBIENT, 1f, 1.1f);
+
         for (Player player : Bukkit.getOnlinePlayers()) {
+            player.playSound(myCustomSound);
+
             for (BlessingEffect effect : getBlessing().getBlessingEffects()) {
                 AlphaPlayer alphaPlayer = GameManager.getInstance().getAlphaPlayer(player.getUniqueId());
                 effect.applyEffect(alphaPlayer);

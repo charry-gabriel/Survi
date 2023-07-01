@@ -2,6 +2,7 @@ package fr.miuby.survi18.village;
 
 import fr.miuby.survi18.GameManager;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Villager;
@@ -15,7 +16,7 @@ public abstract class AVillager {
 
     public AVillager(Location location, String nameId, Villager.Type type, Villager.Profession profession) {
         Villager v = (Villager) location.getWorld().spawnEntity(location, EntityType.VILLAGER);
-        v.customName(Component.text(nameId));
+        v.customName(Component.text(nameId).color(NamedTextColor.AQUA));
         v.setVillagerType(type);
         v.setProfession(profession);
         v.setAI(false);

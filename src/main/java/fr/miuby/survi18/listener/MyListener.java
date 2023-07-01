@@ -29,6 +29,69 @@ public class MyListener implements Listener {
                 event.getInventory().setResult(air);
             }
         }
+
+        ItemStack[] matrix = event.getInventory().getMatrix();
+        if((matrix[3] != null && matrix[3].getType() == Material.LAVA_BUCKET
+                && matrix[5] != null && matrix[5].getType() == Material.LAVA_BUCKET
+                && matrix[6] != null && matrix[6].getType() == Material.LAVA_BUCKET
+                && matrix[8] != null && matrix[8].getType() == Material.LAVA_BUCKET
+                && (matrix[0] == null || matrix[0].getType() == Material.AIR)
+                && (matrix[1] == null || matrix[1].getType() == Material.AIR)
+                && (matrix[2] == null || matrix[2].getType() == Material.AIR)
+                && (matrix[4] == null || matrix[4].getType() == Material.AIR)
+                && (matrix[7] == null || matrix[7].getType() == Material.AIR))
+                || (matrix[0] != null && matrix[0].getType() == Material.LAVA_BUCKET
+                && matrix[2] != null && matrix[2].getType() == Material.LAVA_BUCKET
+                && matrix[3] != null && matrix[3].getType() == Material.LAVA_BUCKET
+                && matrix[5] != null && matrix[5].getType() == Material.LAVA_BUCKET)
+                && (matrix[1] == null || matrix[1].getType() == Material.AIR)
+                && (matrix[4] == null || matrix[4].getType() == Material.AIR)
+                && (matrix[6] == null || matrix[6].getType() == Material.AIR)
+                && (matrix[7] == null || matrix[7].getType() == Material.AIR)
+                && (matrix[8] == null || matrix[8].getType() == Material.AIR))
+            event.getInventory().setResult(new ItemStack(Material.CHAINMAIL_BOOTS));
+
+        if((matrix[3] != null && matrix[3].getType() == Material.LAVA_BUCKET
+                && matrix[4] != null && matrix[4].getType() == Material.LAVA_BUCKET
+                && matrix[5] != null && matrix[5].getType() == Material.LAVA_BUCKET
+                && matrix[6] != null && matrix[6].getType() == Material.LAVA_BUCKET
+                && matrix[8] != null && matrix[8].getType() == Material.LAVA_BUCKET
+                && (matrix[0] == null || matrix[0].getType() == Material.AIR)
+                && (matrix[1] == null || matrix[1].getType() == Material.AIR)
+                && (matrix[2] == null || matrix[2].getType() == Material.AIR)
+                && (matrix[7] == null || matrix[7].getType() == Material.AIR))
+                || (matrix[0] != null && matrix[0].getType() == Material.LAVA_BUCKET
+                && matrix[1] != null && matrix[1].getType() == Material.LAVA_BUCKET
+                && matrix[2] != null && matrix[2].getType() == Material.LAVA_BUCKET
+                && matrix[3] != null && matrix[3].getType() == Material.LAVA_BUCKET
+                && matrix[5] != null && matrix[5].getType() == Material.LAVA_BUCKET)
+                && (matrix[4] == null || matrix[4].getType() == Material.AIR)
+                && (matrix[6] == null || matrix[6].getType() == Material.AIR)
+                && (matrix[7] == null || matrix[7].getType() == Material.AIR)
+                && (matrix[8] == null || matrix[8].getType() == Material.AIR))
+            event.getInventory().setResult(new ItemStack(Material.CHAINMAIL_HELMET));
+
+        if(matrix[0] != null && matrix[0].getType() == Material.LAVA_BUCKET
+                && matrix[2] != null && matrix[2].getType() == Material.LAVA_BUCKET
+                && matrix[3] != null && matrix[3].getType() == Material.LAVA_BUCKET
+                && matrix[4] != null && matrix[4].getType() == Material.LAVA_BUCKET
+                && matrix[5] != null && matrix[5].getType() == Material.LAVA_BUCKET
+                && matrix[6] != null && matrix[6].getType() == Material.LAVA_BUCKET
+                && matrix[7] != null && matrix[7].getType() == Material.LAVA_BUCKET
+                && matrix[8] != null && matrix[8].getType() == Material.LAVA_BUCKET
+                && (matrix[1] == null || matrix[1].getType() == Material.AIR))
+            event.getInventory().setResult(new ItemStack(Material.CHAINMAIL_CHESTPLATE));
+
+        if(matrix[0] != null && matrix[0].getType() == Material.LAVA_BUCKET
+                && matrix[1] != null && matrix[1].getType() == Material.LAVA_BUCKET
+                && matrix[2] != null && matrix[2].getType() == Material.LAVA_BUCKET
+                && matrix[3] != null && matrix[3].getType() == Material.LAVA_BUCKET
+                && matrix[5] != null && matrix[5].getType() == Material.LAVA_BUCKET
+                && matrix[6] != null && matrix[6].getType() == Material.LAVA_BUCKET
+                && matrix[8] != null && matrix[8].getType() == Material.LAVA_BUCKET
+                && (matrix[4] == null || matrix[4].getType() == Material.AIR)
+                && (matrix[7] == null || matrix[7].getType() == Material.AIR))
+            event.getInventory().setResult(new ItemStack(Material.CHAINMAIL_LEGGINGS));
     }
 
     @EventHandler

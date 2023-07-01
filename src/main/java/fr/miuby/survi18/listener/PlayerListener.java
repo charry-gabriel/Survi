@@ -86,9 +86,11 @@ public class PlayerListener implements Listener {
         Player p = event.getPlayer();
         if(event.getRightClicked().getType() == EntityType.VILLAGER) {
             Villager v = (Villager) event.getRightClicked();
-            VillagerLevel villager = GameManager.getInstance().getVillage().getVillagersLevel().get(v.getMetadata("name").get(0).asString());
-            if(v.customName() != null && villager != null) {
-                p.openInventory(villager.getInventory());
+            if (!v.getMetadata("name").isEmpty()) {
+                VillagerLevel villager = GameManager.getInstance().getVillage().getVillagersLevel().get(v.getMetadata("name").get(0).asString());
+                if (v.customName() != null && villager != null) {
+                    p.openInventory(villager.getInventory());
+                }
             }
             event.setCancelled(true);
         }
