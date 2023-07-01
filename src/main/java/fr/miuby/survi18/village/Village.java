@@ -404,6 +404,29 @@ public class Village {
         villagersLevel.put("Léon XIII", villager);
     }
 
+    private void spawnHeros(){
+        Location location = new Location(world, 12072, 64, 1511, 180, 0);
+
+        Tribute[] tributes = new Tribute[]{
+                new Tribute(new ItemStack(Material.BEDROCK, 1)),
+        };
+
+        Blessing[] blessings = new Blessing[]{
+                new Blessing(new DispelEffect(1)),
+        };
+
+        Component[] messages = new Component[]{
+                Component.text( "IMPOSSIBLE"),
+        };
+
+        Component[] names = new Component[]{
+                Component.text( "Héros I"),
+
+        };
+
+        VillagerLevel villager = new VillagerLevel(location,"Héros I", Villager.Type.SAVANNA, Villager.Profession.CARTOGRAPHER, tributes, blessings, messages, names);
+        villagersLevel.put("Héros I", villager);
+    }
 /*
     private void spawnForgeron(){
         VillagerEtat villagerEtat = new VillagerEtat(new Location(world, 12, 70, -46, 290, 0),
