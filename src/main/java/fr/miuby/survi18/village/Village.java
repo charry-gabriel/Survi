@@ -28,6 +28,7 @@ public class Village {
         spawnStuff();
         spawnTools();
         spawnFrancois();
+        spawnHeros();
 
     }
 
