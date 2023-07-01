@@ -28,6 +28,8 @@ public class GameManager {
     private boolean hasNetherAccess = false;
     private boolean hasEndAccess = false;
 
+    private int dispel = 0;
+
     public static GameManager getInstance(){
         if(instance == null){
             instance = new GameManager();
@@ -127,5 +129,13 @@ public class GameManager {
 
     public void setHasEndAccess(boolean hasEndAccess) {
         this.hasEndAccess = hasEndAccess;
+    }
+
+    public int getDispel() {
+        return dispel;
+    }
+
+    public void setDispel(int dispel) {
+        this.dispel = dispel;
     }
 }
