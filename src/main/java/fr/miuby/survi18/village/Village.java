@@ -203,13 +203,13 @@ public class Village {
         Tribute[] tributes = new Tribute[]{
                 new Tribute(new ItemStack(Material.DIRT, 1)),
                 new Tribute(new ItemStack(Material.BEDROCK, 1)),
-                new Tribute(new ItemStack(Material.TNT, 64)),
+                new Tribute(new ItemStack(Material.DIAMOND, 32)),
                 new Tribute(new ItemStack(Material.BEDROCK, 1)),
-                new Tribute(new ItemStack(Material.FERMENTED_SPIDER_EYE, 300)),
+                new Tribute(new ItemStack(Material.WITHER_SKELETON_SKULL, 10)),
                 new Tribute(new ItemStack(Material.BEDROCK, 1)),
-                new Tribute(new ItemStack(Material.GHAST_TEAR, 64)),
+                new Tribute(new ItemStack(Material.ENCHANTED_GOLDEN_APPLE, 1)),
                 new Tribute(new ItemStack(Material.BEDROCK, 1)),
-                new Tribute(new ItemStack(Material.DRAGON_HEAD, 10)),
+                new Tribute(new ItemStack(Material.DRAGON_EGG, 1)),
                 new Tribute(new ItemStack(Material.BEDROCK, 1)),
         };
 
