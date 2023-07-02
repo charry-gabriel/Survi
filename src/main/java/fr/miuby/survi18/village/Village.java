@@ -382,7 +382,7 @@ public class Village {
                 Component.text( "Vos 70 dernières morts sont annulées."),
                 Component.text( "Vos 80 dernières morts sont annulées."),
                 Component.text( "Vos 90 dernières morts sont annulées."),
-                Component.text( "Vos 100 dernières morts sont annulées."),
+                Component.text( "Toutes vos morts sont annulées"),
                 Component.text( "IMPOSSIBLE"),
         };
 
