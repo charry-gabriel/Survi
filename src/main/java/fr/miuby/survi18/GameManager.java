@@ -90,9 +90,9 @@ public class GameManager {
     }
 
     public void switchWorld(String world, String pseudo){
+        getLogger().info(pseudo + " has switched to " + world);
         for(AlphaPlayer alphaPlayer : players.values()) {
             if(alphaPlayer.getPlayer() != null) {
-                getLogger().info(alphaPlayer.getPlayer().getName() + " has switched to " + world);
                 switch (world) {
                     case "Village":
                         alphaPlayer.getScoreboard().getTeam("Village").addEntry(pseudo);
