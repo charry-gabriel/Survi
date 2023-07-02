@@ -56,7 +56,7 @@ public class Village {
                 new Tribute(new ItemStack(Material.COOKIE, 4096)),
                 new Tribute(new ItemStack(Material.TROPICAL_FISH, 666)),
                 new Tribute(new ItemStack(Material.NETHER_WART_BLOCK, 100)),
-                new Tribute(new ItemStack(Material.NETHER_STAR, 10)),
+                new Tribute(new ItemStack(Material.NETHER_STAR, 100)),
                 new Tribute(new ItemStack(Material.BEDROCK, 1)),
         };
 
@@ -69,8 +69,8 @@ public class Village {
                 new Blessing(new MaxHealthEffect(24)),
                 new Blessing(new MaxHealthEffect(28)),
                 new Blessing(new MaxHealthEffect(32)),
-                new Blessing(new MaxHealthEffect(36)),
-                new Blessing(new MaxHealthEffect(40)),
+                new Blessing(new MaxHealthEffect(34)),
+                new Blessing(new MaxHealthEffect(35)),
                 new Blessing(new RegenEffect(), new FlyEffect()),
                 new Blessing(new MessageEffect("IMPOSSIBLE")),
 
@@ -85,8 +85,8 @@ public class Village {
                 Component.text( "Du melon, c'est parfait, c'est exactement dont ce que j'avais besoin ! Vous voici maintenant avec 2 coeurs supplémentaires."),
                 Component.text( "C'est uniquement pour la couleur de la soupe que j'ai demandée du cactus, je suppose que vous avez fait ça vite de toute façon. Prenez ces 2 coeurs en plus quand même."),
                 Component.text( "Félicitation, vous voici maintenant à 32 HP."),
-                Component.text( "Félicitation, vous voici maintenant à 36 HP. J'ai presque fini la potion magique."),
-                Component.text( "Bravo, vous avez maintenant 40 HP. Il me manque que quelques étoiles du nether et je suis prêt. Allez me le chercher, vite vite vite !!!!"),
+                Component.text( "Félicitation, vous voici maintenant à 34 HP. J'ai presque fini la potion magique."),
+                Component.text( "Bravo, vous avez maintenant 35 HP. Il me manque que quelques étoiles du nether et je suis prêt. Allez me le chercher, vite vite vite !!!!"),
                 Component.text( "Félicitations, j'ai fini !! Vous pouvez voler, vous pouvez regagner votre vie sans pomme !! AHAHAH !! Je suis le meilleur !!"),
                 Component.text( "IMPOSSIBLE"),
 
