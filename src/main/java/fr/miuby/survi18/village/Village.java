@@ -71,7 +71,7 @@ public class Village {
                 new Blessing(new MaxHealthEffect(32)),
                 new Blessing(new MaxHealthEffect(34)),
                 new Blessing(new MaxHealthEffect(35)),
-                new Blessing(new RegenEffect(), new FlyEffect()),
+                new Blessing(new RegenEffect()),
                 new Blessing(new MessageEffect("IMPOSSIBLE")),
 
         };
@@ -87,7 +87,7 @@ public class Village {
                 Component.text( "Félicitation, vous voici maintenant à 32 HP."),
                 Component.text( "Félicitation, vous voici maintenant à 34 HP. J'ai presque fini la potion magique."),
                 Component.text( "Bravo, vous avez maintenant 35 HP. Il me manque que quelques étoiles du nether et je suis prêt. Allez me le chercher, vite vite vite !!!!"),
-                Component.text( "Félicitations, j'ai fini !! Vous pouvez voler, vous pouvez regagner votre vie sans pomme !! AHAHAH !! Je suis le meilleur !!"),
+                Component.text( "Félicitations, j'ai fini !! Vous pouvez regagner votre vie sans pomme !! AHAHAH !! Je suis le meilleur !!"),
                 Component.text( "IMPOSSIBLE"),
 
         };
