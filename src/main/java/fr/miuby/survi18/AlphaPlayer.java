@@ -22,7 +22,7 @@ import java.util.Iterator;
 import java.util.Objects;
 import java.util.UUID;
 
-import static java.lang.Math.min;
+import static java.lang.Math.max;
 import static org.bukkit.util.NumberConversions.floor;
 
 public class AlphaPlayer implements Serializable {
@@ -40,7 +40,7 @@ public class AlphaPlayer implements Serializable {
 
     private float resistance;
     private float damage;
-    private int vieBonus = 0;
+    private int vieBonus = 10;
     private int vieBonusSuccess = 0;
 
     private Role role;
@@ -250,7 +250,7 @@ public class AlphaPlayer implements Serializable {
 
     public void updateLife() {
         malus = floor((double) mort / 10f);
-        int vieEnMoins = min(0, malus - GameManager.getInstance().getDispel());
-        Objects.requireNonNull(player.getAttribute(Attribute.GENERIC_MAX_HEALTH)).setBaseValue(10 + vieBonus + vieBonusSuccess - vieEnMoins);
+        int vieEnMoins = max(0, malus - GameManager.getInstance().getDispel());
+        Objects.requireNonNull(player.getAttribute(Attribute.GENERIC_MAX_HEALTH)).setBaseValue(vieBonus + vieBonusSuccess - vieEnMoins);
     }
 }
