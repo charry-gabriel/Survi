@@ -240,7 +240,7 @@ public class Village {
                 Component.text( "Venez me voir."),
                 Component.text( "Merci, revenez dans 100h pour la suite. Vous pouvez maintenant explorer l'end ! "),
                 Component.text( "Venez me voir."),
-                Component.text( "Merci pour cet objet unique, pour te récompenser voici un peu de poisson. Vous pouvez maintenant explorer le Wilderness."),
+                Component.text( "Merci pour cet objet unique, pour te récompenser voici un peu de poisson. Vous pouvez maintenant explorer le Wilderness à l'infini."),
                 Component.text( "IMPOSSIBLE"),
         };
 
@@ -268,8 +268,8 @@ public class Village {
                 new Tribute(new ItemStack(Material.SADDLE, 1)),
                 new Tribute(new ItemStack(Material.GOLDEN_APPLE, 64)),
                 new Tribute(new ItemStack(Material.DUNE_ARMOR_TRIM_SMITHING_TEMPLATE, 6)),
-                new Tribute(new ItemStack(Material.REDSTONE_BLOCK, 600)),
-                new Tribute(new ItemStack(Material.SPONGE, 10)),
+                new Tribute(new ItemStack(Material.REDSTONE_BLOCK, 1700)),
+                new Tribute(new ItemStack(Material.SPONGE, 48)),
                 new Tribute(new ItemStack(Material.BEDROCK, 1)),
         };
 
