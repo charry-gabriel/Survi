@@ -29,6 +29,9 @@ public class Village {
         spawnTools();
         spawnFrancois();
         spawnHeros();
+        spawnPecheur1();
+        spawnPecheur2();
+        spawnRiche();
 
     }
 
@@ -205,9 +208,9 @@ public class Village {
                 new Tribute(new ItemStack(Material.BEDROCK, 1)),
                 new Tribute(new ItemStack(Material.DIAMOND, 32)),
                 new Tribute(new ItemStack(Material.BEDROCK, 1)),
-                new Tribute(new ItemStack(Material.WITHER_SKELETON_SKULL, 10)),
+                new Tribute(new ItemStack(Material.WITHER_SKELETON_SKULL, 42)),
                 new Tribute(new ItemStack(Material.BEDROCK, 1)),
-                new Tribute(new ItemStack(Material.ENCHANTED_GOLDEN_APPLE, 1)),
+                new Tribute(new ItemStack(Material.ENCHANTED_GOLDEN_APPLE, 3)),
                 new Tribute(new ItemStack(Material.BEDROCK, 1)),
                 new Tribute(new ItemStack(Material.DRAGON_EGG, 1)),
                 new Tribute(new ItemStack(Material.BEDROCK, 1)),
@@ -428,6 +431,116 @@ public class Village {
         VillagerLevel villager = new VillagerLevel(location,"Héros I", Villager.Type.SAVANNA, Villager.Profession.CARTOGRAPHER, tributes, blessings, messages, names);
         villagersLevel.put("Héros I", villager);
     }
+
+    private void spawnPecheur1(){
+        Location location = new Location(world, 12058.5, 64, 1473.5, -180, 0);
+
+        Tribute[] tributes = new Tribute[]{
+                new Tribute(new ItemStack(Material.BEDROCK, 1)),
+        };
+
+        Blessing[] blessings = new Blessing[]{
+                new Blessing(new MessageEffect("IMPOSSIBLE")),
+        };
+
+        Component[] messages = new Component[]{
+                Component.text( "IMPOSSIBLE"),
+        };
+
+        Component[] names = new Component[]{
+                Component.text( "Bajau"),
+        };
+
+        VillagerLevel villager = new VillagerLevel(location,"Bajau", Villager.Type.SWAMP, Villager.Profession.NITWIT, tributes, blessings, messages, names);
+        villagersLevel.put("Bajau", villager);
+    }
+
+    private void spawnPecheur2(){
+        Location location = new Location(world, 12052.5, 63, 1453.5, -180, 0);
+
+        Tribute[] tributes = new Tribute[]{
+                new Tribute(new ItemStack(Material.BEDROCK, 1)),
+        };
+
+        Blessing[] blessings = new Blessing[]{
+                new Blessing(new MessageEffect("IMPOSSIBLE")),
+        };
+
+        Component[] messages = new Component[]{
+                Component.text( "IMPOSSIBLE"),
+        };
+
+        Component[] names = new Component[]{
+                Component.text( "Sampan"),
+        };
+
+        VillagerLevel villager = new VillagerLevel(location,"Sampan", Villager.Type.SWAMP, Villager.Profession.NITWIT, tributes, blessings, messages, names);
+        villagersLevel.put("Sampan", villager);
+    }
+
+    private void spawnRiche(){
+        Location location = new Location(world, 12072.5, 64, 1483.5, -90, 0);
+
+        Tribute[] tributes = new Tribute[]{
+                new Tribute(new ItemStack(Material.COPPER_BLOCK, 64), new ItemStack(Material.WAXED_COPPER_BLOCK, 64), new ItemStack(Material.EXPOSED_COPPER, 64), new ItemStack(Material.WAXED_EXPOSED_COPPER, 64), new ItemStack(Material.WEATHERED_COPPER, 64), new ItemStack(Material.WAXED_WEATHERED_COPPER, 64), new ItemStack(Material.OXIDIZED_COPPER, 64), new ItemStack(Material.WAXED_OXIDIZED_COPPER, 64), new ItemStack(Material.TORCHFLOWER, 64), new ItemStack(Material.PITCHER_PLANT, 64)),
+                new Tribute(new ItemStack(Material.COAL, 128), new ItemStack(Material.CHARCOAL, 128), new ItemStack(Material.COPPER_INGOT, 128), new ItemStack(Material.IRON_INGOT, 128), new ItemStack(Material.GOLD_INGOT, 128), new ItemStack(Material.REDSTONE, 128), new ItemStack(Material.QUARTZ, 128), new ItemStack(Material.DIAMOND, 128), new ItemStack(Material.EMERALD, 64), new ItemStack(Material.FLINT, 128), new ItemStack(Material.GLOWSTONE_DUST, 128), new ItemStack(Material.NETHERITE_INGOT, 30)),
+                new Tribute(new ItemStack(Material.STRIPPED_OAK_WOOD, 64), new ItemStack(Material.STRIPPED_SPRUCE_WOOD, 64), new ItemStack(Material.STRIPPED_BIRCH_WOOD, 64), new ItemStack(Material.STRIPPED_JUNGLE_WOOD, 64), new ItemStack(Material.STRIPPED_ACACIA_WOOD, 64), new ItemStack(Material.STRIPPED_DARK_OAK_WOOD, 64), new ItemStack(Material.STRIPPED_MANGROVE_WOOD, 64), new ItemStack(Material.STRIPPED_CHERRY_WOOD, 64), new ItemStack(Material.STRIPPED_BAMBOO_BLOCK, 64), new ItemStack(Material.STRIPPED_WARPED_HYPHAE, 64), new ItemStack(Material.STRIPPED_CRIMSON_HYPHAE, 64)),
+                new Tribute(new ItemStack(Material.SPYGLASS, 1), new ItemStack(Material.CLOCK, 1), new ItemStack(Material.SHEARS, 1), new ItemStack(Material.FLINT_AND_STEEL, 1), new ItemStack(Material.BRUSH, 1), new ItemStack(Material.LEAD, 64), new ItemStack(Material.COMPASS, 64), new ItemStack(Material.RECOVERY_COMPASS, 9), new ItemStack(Material.MUSIC_DISC_CAT, 10)),
+                new Tribute(new ItemStack(Material.TURTLE_HELMET, 3), new ItemStack(Material.LEATHER_HORSE_ARMOR, 3), new ItemStack(Material.IRON_HORSE_ARMOR, 3), new ItemStack(Material.GOLDEN_HORSE_ARMOR, 3), new ItemStack(Material.DIAMOND_HORSE_ARMOR, 3), new ItemStack(Material.RESPAWN_ANCHOR, 128)),
+                new Tribute(new ItemStack(Material.NETHER_WART, 640), new ItemStack(Material.NETHERITE_UPGRADE_SMITHING_TEMPLATE, 10), new ItemStack(Material.NETHER_STAR, 10), new ItemStack(Material.NETHERITE_INGOT, 640), new ItemStack(Material.WITHER_ROSE, 3), new ItemStack(Material.WITHER_SKELETON_SKULL, 30)),
+                new Tribute(new ItemStack(Material.BEDROCK, 1)),
+                new Tribute(new ItemStack(Material.BEDROCK, 1)),
+                new Tribute(new ItemStack(Material.BEDROCK, 1)),
+                new Tribute(new ItemStack(Material.BEDROCK, 1)),
+                new Tribute(new ItemStack(Material.BEDROCK, 1)),
+        };
+
+        Blessing[] blessings = new Blessing[]{
+                new Blessing(new MessageEffect("IMPOSSIBLE")),
+                new Blessing(new MessageEffect("IMPOSSIBLE")),
+                new Blessing(new MessageEffect("IMPOSSIBLE")),
+                new Blessing(new MessageEffect("IMPOSSIBLE")),
+                new Blessing(new MessageEffect("IMPOSSIBLE")),
+                new Blessing(new MessageEffect("IMPOSSIBLE")),
+                new Blessing(new MessageEffect("IMPOSSIBLE")),
+                new Blessing(new MessageEffect("IMPOSSIBLE")),
+                new Blessing(new MessageEffect("IMPOSSIBLE")),
+                new Blessing(new MessageEffect("IMPOSSIBLE")),
+                new Blessing(new MessageEffect("IMPOSSIBLE")),
+        };
+
+        Component[] messages = new Component[]{
+                Component.text( "Thomas Pesquet sera plus efficace d'une heure !"),
+                Component.text( "Thomas Pesquet sera plus efficace d'une heure !"),
+                Component.text( "Thomas Pesquet sera plus efficace d'une heure !"),
+                Component.text( "Thomas Pesquet sera plus efficace de deux heures !"),
+                Component.text( "Thomas Pesquet sera plus efficace de deux heures !"),
+                Component.text( "Thomas Pesquet sera plus efficace de deux heures !"),
+                Component.text( "Thomas Pesquet sera plus efficace de trois heures !"),
+                Component.text( "Thomas Pesquet sera plus efficace de trois heures !"),
+                Component.text( "Thomas Pesquet sera plus efficace de trois heures !"),
+                Component.text( "Thomas Pesquet sera plus efficace de dix heures !"),
+                Component.text( "IMPOSSIBLE"),
+        };
+
+        Component[] names = new Component[]{
+                Component.text( "Aricis I"),
+                Component.text( "Cidrouille I"),
+                Component.text( "flyzeur_ I"),
+                Component.text( "Aricis II"),
+                Component.text( "Cidrouille II"),
+                Component.text( "flyzeur_ II"),
+                Component.text( "Aricis III"),
+                Component.text( "Cidrouille III"),
+                Component.text( "flyzeur_ III"),
+                Component.text( "Riche MAX"),
+                Component.text( "IMPOSSIBLE"),
+        };
+
+        VillagerLevel villager = new VillagerLevel(location,"Ariscis I", Villager.Type.TAIGA, Villager.Profession.CLERIC, tributes, blessings, messages, names);
+        villagersLevel.put("Ariscis I", villager);
+    }
+
 /*
     private void spawnForgeron(){
         VillagerEtat villagerEtat = new VillagerEtat(new Location(world, 12, 70, -46, 290, 0),
