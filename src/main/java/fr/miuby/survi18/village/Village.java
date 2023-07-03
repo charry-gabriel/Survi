@@ -31,6 +31,8 @@ public class Village {
         spawnHeros();
         spawnPecheur1();
         spawnPecheur2();
+        spawnFermier1();
+        spawnFermier2();
         spawnRiche();
 
     }
@@ -46,7 +48,7 @@ public class Village {
     }
 
     private void spawnEdward(){
-        Location location = new Location(world, 12073, 64, 1509, 180, 0);
+        Location location = new Location(world, 12012.5, 64, 1465.5, -90, 0);
 
         Tribute[] tributes = new Tribute[]{
                 new Tribute(new ItemStack(Material.HAY_BLOCK, 64)),
@@ -115,7 +117,7 @@ public class Village {
     }
 
     private void spawnNain(){
-        Location location = new Location(world, 12139, 64, 1463, 90, 0);
+        Location location = new Location(world, 12076.5, 64, 1445.5, 90, 0);
 
         Tribute[] tributes = new Tribute[]{
                 new Tribute(new ItemStack(Material.DIORITE_WALL, 64)),
@@ -158,7 +160,7 @@ public class Village {
     }
 
     private void spawnMaddox(){
-        Location location = new Location(world, 12016, 64, 1463, -90, 0);
+        Location location = new Location(world, 12072.5, 64, 1445.5, -90, 0);
 
         Tribute[] tributes = new Tribute[]{
                 new Tribute(new ItemStack(Material.ARROW, 256)),
@@ -201,7 +203,7 @@ public class Village {
     }
 
     private void spawnThomas(){
-        Location location = new Location(world, 12071, 64, 1509, 180, 0);
+        Location location = new Location(world, 12077.5, 63, 1464.5, 90, 0);
 
         Tribute[] tributes = new Tribute[]{
                 new Tribute(new ItemStack(Material.DIRT, 1)),
@@ -409,7 +411,7 @@ public class Village {
     }
 
     private void spawnHeros(){
-        Location location = new Location(world, 12072, 64, 1511, 180, 0);
+        Location location = new Location(world, 12091.5, 75, 1535.5, -180, 0);
 
         Tribute[] tributes = new Tribute[]{
                 new Tribute(new ItemStack(Material.BEDROCK, 1)),
@@ -433,7 +435,7 @@ public class Village {
     }
 
     private void spawnPecheur1(){
-        Location location = new Location(world, 12058.5, 64, 1473.5, -180, 0);
+        Location location = new Location(world, 12059.5, 63, 1469.5, 90, 0);
 
         Tribute[] tributes = new Tribute[]{
                 new Tribute(new ItemStack(Material.BEDROCK, 1)),
@@ -456,7 +458,7 @@ public class Village {
     }
 
     private void spawnPecheur2(){
-        Location location = new Location(world, 12052.5, 63, 1453.5, -180, 0);
+        Location location = new Location(world, 12045, 63, 1454.5, -90, 0);
 
         Tribute[] tributes = new Tribute[]{
                 new Tribute(new ItemStack(Material.BEDROCK, 1)),
@@ -476,6 +478,54 @@ public class Village {
 
         VillagerLevel villager = new VillagerLevel(location,"Sampan", Villager.Type.SWAMP, Villager.Profession.NITWIT, tributes, blessings, messages, names);
         villagersLevel.put("Sampan", villager);
+    }
+
+    private void spawnFermier1(){
+        Location location = new Location(world, 12010.5, 64, 1464.5, 90, 0);
+
+        Tribute[] tributes = new Tribute[]{
+                new Tribute(new ItemStack(Material.BEDROCK, 1)),
+        };
+
+        Blessing[] blessings = new Blessing[]{
+                new Blessing(new MessageEffect("IMPOSSIBLE")),
+        };
+
+        Component[] messages = new Component[]{
+                Component.text( "IMPOSSIBLE"),
+        };
+
+        Component[] names = new Component[]{
+                Component.text( "Fermier 1"),
+        };
+
+        VillagerLevel villager = new VillagerLevel(location,"Fermier 1", Villager.Type.SWAMP, Villager.Profession.NITWIT, tributes, blessings, messages, names);
+        villagersLevel.put("Fermier 1", villager);
+
+    }
+
+    private void spawnFermier2(){
+        Location location = new Location(world, 12010.5, 63, 1466.5, 90, 0);
+
+        Tribute[] tributes = new Tribute[]{
+                new Tribute(new ItemStack(Material.BEDROCK, 1)),
+        };
+
+        Blessing[] blessings = new Blessing[]{
+                new Blessing(new MessageEffect("IMPOSSIBLE")),
+        };
+
+        Component[] messages = new Component[]{
+                Component.text( "Fermier 2"),
+        };
+
+        Component[] names = new Component[]{
+                Component.text( "Fermier 2"),
+        };
+
+        VillagerLevel villager = new VillagerLevel(location,"Fermier 2", Villager.Type.SWAMP, Villager.Profession.NITWIT, tributes, blessings, messages, names);
+        villagersLevel.put("Fermier 2", villager);
+
     }
 
     private void spawnRiche(){
