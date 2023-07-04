@@ -17,6 +17,7 @@ import org.bukkit.entity.Villager;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.metadata.FixedMetadataValue;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -25,19 +26,16 @@ import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.Objects;
 
-public class VillagerLevel extends AVillager {
+public class VillagerLevel extends VillagerBlessing {
     private int level = 0;
     private final Tribute[] tributes;
-    private final Blessing[] blessings;
-    private final Component[] messages;
     private final Component[] names;
 
-    public VillagerLevel(Location location, String name, Villager.Type type, Villager.Profession profession, Tribute[] tributes, Blessing[] blessings, Component[] messages, Component[] names) {
-        super(location, name, type, profession);
+    public VillagerLevel(Location location, String name, Villager.Type type, Villager.Profession profession, Blessing[] blessings, Component[] messages, Tribute[] tributes, Component[] names) {
+        super(location, name, type, profession, blessings, messages);
         this.tributes = tributes;
-        this.blessings = blessings;
-        this.messages = messages;
         this.names = names;
+        villager.setMetadata("level", new FixedMetadataValue(GameManager.getInstance().getPlugin(), 0));
 
         Bukkit.getScheduler().runTaskAsynchronously(GameManager.getInstance().getPlugin(), () -> {
             final DbConnection dbConnection = GameManager.getInstance().getDatabaseManager().getDbConnection();
@@ -91,8 +89,7 @@ public class VillagerLevel extends AVillager {
     }
 
     public void updateInventory() {
-        //float size = items.size() / 9f;
-        Inventory inv = Bukkit.createInventory(villager, InventoryType.CHEST, Objects.requireNonNull(villager.customName()));//(int) Math.ceil(size) * 9
+        Inventory inv = Bukkit.createInventory(villager, InventoryType.CHEST, Objects.requireNonNull(villager.customName()));
 
         for (ItemStack item : getTribute().getItemStacks())
             inv.addItem(item);
@@ -103,26 +100,6 @@ public class VillagerLevel extends AVillager {
     public void addLevel() {
         this.level++;
         GameManager.getInstance().getDatabaseManager().updateVillager(name, level);
-    }
-
-    public Tribute getTribute() {
-        return tributes[this.level];
-    }
-
-    public Blessing getBlessing() {
-        return blessings[this.level];
-    }
-
-    public Component getMessage() {
-        return messages[this.level].color(NamedTextColor.AQUA);
-    }
-
-    public Component getName() {
-        return names[this.level].color(NamedTextColor.AQUA);
-    }
-
-    public Blessing[] getCurrentBlessings() {
-        return Arrays.copyOfRange(blessings, 0, this.level);
     }
 
     public void ApplyAllCurrentBlessing(AlphaPlayer player) {
@@ -165,5 +142,27 @@ public class VillagerLevel extends AVillager {
 
         if (itemToRemove != null)
             inventory.removeItem(itemToRemove);
+    }
+
+
+
+    public Tribute getTribute() {
+        return tributes[this.level];
+    }
+
+    public Blessing getBlessing() {
+        return blessings[this.level];
+    }
+
+    public Component getMessage() {
+        return messages[this.level].color(NamedTextColor.AQUA);
+    }
+
+    public Component getName() {
+        return names[this.level].color(NamedTextColor.AQUA);
+    }
+
+    public Blessing[] getCurrentBlessings() {
+        return Arrays.copyOfRange(blessings, 0, this.level);
     }
 }

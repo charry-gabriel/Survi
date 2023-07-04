@@ -4,6 +4,7 @@ import fr.miuby.survi18.AlphaPlayer;
 import fr.miuby.survi18.GameManager;
 import fr.miuby.survi18.Survi18;
 import fr.miuby.survi18.village.VillagerLevel;
+import fr.miuby.survi18.village.VillagerVendor;
 import io.papermc.paper.advancement.AdvancementDisplay;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -84,10 +85,20 @@ public class PlayerListener implements Listener {
         Player p = event.getPlayer();
         if(event.getRightClicked().getType() == EntityType.VILLAGER || event.getRightClicked().getType() == EntityType.WANDERING_TRADER) {
             Villager v = (Villager) event.getRightClicked();
-            if (!v.getMetadata("name").isEmpty()) {
-                VillagerLevel villager = GameManager.getInstance().getVillage().getVillagersLevel().get(v.getMetadata("name").get(0).asString());
-                if (v.customName() != null && villager != null) {
-                    p.openInventory(villager.getInventory());
+
+            if (!v.getMetadata("name").isEmpty() && v.customName() != null) {
+                if (!v.getMetadata("level").isEmpty()) {
+
+                    VillagerLevel villager = GameManager.getInstance().getVillage().getVillagersLevel().get(v.getMetadata("name").get(0).asString());
+                    if (villager != null) {
+                        p.openInventory(villager.getInventory());
+                    }
+                } else if (!v.getMetadata("vendor").isEmpty()) {
+
+                    VillagerVendor villager = GameManager.getInstance().getVillage().getVillagersVendor().get(v.getMetadata("name").get(0).asString());
+                    if (villager != null) {
+                        p.openInventory(villager.getInventory());
+                    }
                 }
             }
             event.setCancelled(true);

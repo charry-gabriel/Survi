@@ -2,6 +2,7 @@ package fr.miuby.survi18.listener;
 
 import fr.miuby.survi18.*;
 import fr.miuby.survi18.village.VillagerLevel;
+import fr.miuby.survi18.village.VillagerVendor;
 import org.bukkit.Material;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -124,6 +125,12 @@ public class MyListener implements Listener {
                 for (VillagerLevel villager : GameManager.getInstance().getVillage().getVillagersLevel().values()) {
                     if (villager.getInventory() == event.getInventory()) {
                         GameManager.getInstance().getLogger().info(player.getName() + " a cliqué sur " + villager.getName().toString());
+                        villager.GiveItems(villager.getInventory(), item, player);
+                        event.setCancelled(true);
+                    }
+                }
+                for (VillagerVendor villager : GameManager.getInstance().getVillage().getVillagersVendor().values()) {
+                    if (villager.getInventory() == event.getInventory()) {
                         villager.GiveItems(villager.getInventory(), item, player);
                         event.setCancelled(true);
                     }
