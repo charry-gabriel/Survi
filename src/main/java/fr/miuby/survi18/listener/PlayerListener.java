@@ -51,14 +51,14 @@ public class PlayerListener implements Listener {
     public void onPlayerMove(PlayerMoveEvent event) {
         if(event.getPlayer().getLocation().getWorld() == GameManager.getInstance().getVillage().getWorld()) {
             Block block = event.getPlayer().getLocation().getBlock();
-            if(block.getX() > 12199 || block.getX() < 11963 || block.getZ() > 1590 || block.getZ() < 1375 || block.getY() < 0) {
+            if(block.getX() > 12645 || block.getX() < 11649 || block.getZ() > 1965 || block.getZ() < 1227) {
                 event.getPlayer().teleport(new Location(GameManager.getInstance().getVillage().getWorld(), 12073, 64, 1463));
                 event.getPlayer().sendMessage(Component.text("Ne sort pas des limite du village, c'est dangereux !!").color(NamedTextColor.RED));
             }
         }
         if(event.getPlayer().getLocation().getWorld() == GameManager.getInstance().GetWorld("Wilderness")) {
             Block block = event.getPlayer().getLocation().getBlock();
-            if(block.getX() > 2000 || block.getX() < -2000 || block.getZ() > 2000 || block.getZ() < -2000) {
+            if(block.getX() > 10000 || block.getX() < -10000 || block.getZ() > 10000 || block.getZ() < -10000) {
                 event.getPlayer().teleport(new Location(GameManager.getInstance().getVillage().getWorld(), 12073, 64, 1463));
                 event.getPlayer().sendMessage(Component.text("Ne sort pas des limite du wilderness, c'est dangereux !! (Parle avec Thomas Pesquet)").color(NamedTextColor.RED));
             }
