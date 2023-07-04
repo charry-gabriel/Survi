@@ -481,7 +481,7 @@ public class Village {
     }
 
     private void spawnFermier1(){
-        Location location = new Location(world, 12010.5, 64, 1464.5, 90, 0);
+        Location location = new Location(world, 12010.5, 64, 1464.5, -90, 0);
 
         Tribute[] tributes = new Tribute[]{
                 new Tribute(new ItemStack(Material.BEDROCK, 1)),
@@ -505,7 +505,7 @@ public class Village {
     }
 
     private void spawnFermier2(){
-        Location location = new Location(world, 12010.5, 63, 1466.5, 90, 0);
+        Location location = new Location(world, 12010.5, 64, 1466.5, -90, 0);
 
         Tribute[] tributes = new Tribute[]{
                 new Tribute(new ItemStack(Material.BEDROCK, 1)),
