@@ -561,15 +561,15 @@ public class Village {
 
         Component[] messages = new Component[]{
                 Component.text( "Thomas Pesquet sera plus efficace d'une heure !"),
-                Component.text( "Thomas Pesquet sera plus efficace d'une heure !"),
-                Component.text( "Thomas Pesquet sera plus efficace d'une heure !"),
-                Component.text( "Thomas Pesquet sera plus efficace de deux heures !"),
-                Component.text( "Thomas Pesquet sera plus efficace de deux heures !"),
                 Component.text( "Thomas Pesquet sera plus efficace de deux heures !"),
                 Component.text( "Thomas Pesquet sera plus efficace de trois heures !"),
-                Component.text( "Thomas Pesquet sera plus efficace de trois heures !"),
-                Component.text( "Thomas Pesquet sera plus efficace de trois heures !"),
-                Component.text( "Thomas Pesquet sera plus efficace de dix heures !"),
+                Component.text( "Thomas Pesquet sera plus efficace de cinq heures !"),
+                Component.text( "Thomas Pesquet sera plus efficace de sept heures !"),
+                Component.text( "Thomas Pesquet sera plus efficace de neuf heures !"),
+                Component.text( "Thomas Pesquet sera plus efficace de douze heures !"),
+                Component.text( "Thomas Pesquet sera plus efficace de quinze heures !"),
+                Component.text( "Thomas Pesquet sera plus efficace de dix-huit heures !"),
+                Component.text( "Thomas Pesquet sera plus efficace de vingt-huit heures !"),
                 Component.text( "IMPOSSIBLE"),
         };
 
