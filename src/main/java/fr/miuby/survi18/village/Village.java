@@ -210,7 +210,7 @@ public class Village {
                 new Tribute(new ItemStack(Material.BEDROCK, 1)),
                 new Tribute(new ItemStack(Material.DIAMOND, 32)),
                 new Tribute(new ItemStack(Material.BEDROCK, 1)),
-                new Tribute(new ItemStack(Material.WITHER_SKELETON_SKULL, 42)),
+                new Tribute(new ItemStack(Material.WITHER_SKELETON_SKULL, 10)),
                 new Tribute(new ItemStack(Material.BEDROCK, 1)),
                 new Tribute(new ItemStack(Material.ENCHANTED_GOLDEN_APPLE, 3)),
                 new Tribute(new ItemStack(Material.BEDROCK, 1)),
@@ -269,7 +269,7 @@ public class Village {
                 new Tribute(new ItemStack(Material.GOLDEN_APPLE, 64)),
                 new Tribute(new ItemStack(Material.DUNE_ARMOR_TRIM_SMITHING_TEMPLATE, 6)),
                 new Tribute(new ItemStack(Material.REDSTONE_BLOCK, 1700)),
-                new Tribute(new ItemStack(Material.SPONGE, 48)),
+                new Tribute(new ItemStack(Material.SPONGE, 48), new ItemStack(Material.WITHER_SKELETON_SKULL, 32)),
                 new Tribute(new ItemStack(Material.BEDROCK, 1)),
         };
 
