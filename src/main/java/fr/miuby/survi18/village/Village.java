@@ -574,13 +574,13 @@ public class Village {
         };
 
         Component[] names = new Component[]{
-                Component.text( "Aricis I"),
+                Component.text( "Ariscis I"),
                 Component.text( "Cidrouille I"),
                 Component.text( "flyzeur_ I"),
-                Component.text( "Aricis II"),
+                Component.text( "Ariscis II"),
                 Component.text( "Cidrouille II"),
                 Component.text( "flyzeur_ II"),
-                Component.text( "Aricis III"),
+                Component.text( "Ariscis III"),
                 Component.text( "Cidrouille III"),
                 Component.text( "flyzeur_ III"),
                 Component.text( "Riche MAX"),
