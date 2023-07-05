@@ -83,7 +83,7 @@ public class PlayerListener implements Listener {
     @EventHandler
     public void onPlayerInteractEntity(PlayerInteractEntityEvent event) {
         Player p = event.getPlayer();
-        if(event.getRightClicked().getType() == EntityType.VILLAGER || event.getRightClicked().getType() == EntityType.WANDERING_TRADER) {
+        if(event.getRightClicked().getType() == EntityType.VILLAGER) {
             Villager v = (Villager) event.getRightClicked();
 
             if (!v.getMetadata("name").isEmpty() && v.customName() != null) {
@@ -101,6 +101,8 @@ public class PlayerListener implements Listener {
                     }
                 }
             }
+            event.setCancelled(true);
+        } else if(event.getRightClicked().getType() == EntityType.WANDERING_TRADER) {
             event.setCancelled(true);
         }
     }

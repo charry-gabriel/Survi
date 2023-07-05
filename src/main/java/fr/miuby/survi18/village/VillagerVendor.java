@@ -18,7 +18,7 @@ import org.bukkit.metadata.FixedMetadataValue;
 import java.util.Objects;
 
 public class VillagerVendor extends VillagerBlessing {
-    private ItemStack[] itemStacks;
+    private final ItemStack[] itemStacks;
 
     public VillagerVendor(Location location, String name, Villager.Type type, Villager.Profession profession, Blessing[] blessings, Component[] messages, ItemStack[] itemStacks) {
         super(location, name, type, profession, blessings, messages);
