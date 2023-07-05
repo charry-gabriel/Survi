@@ -480,54 +480,6 @@ public class Village {
         villagersLevel.put("Sampan", villager);
     }
 
-    private void spawnFermier1(){
-        Location location = new Location(world, 12010.5, 64, 1464.5, -90, 0);
-
-        Tribute[] tributes = new Tribute[]{
-                new Tribute(new ItemStack(Material.BEDROCK, 1)),
-        };
-
-        Blessing[] blessings = new Blessing[]{
-                new Blessing(new MessageEffect("IMPOSSIBLE")),
-        };
-
-        Component[] messages = new Component[]{
-                Component.text( "IMPOSSIBLE"),
-        };
-
-        Component[] names = new Component[]{
-                Component.text( "Fermier 1"),
-        };
-
-        VillagerLevel villager = new VillagerLevel(location,"Fermier 1", Villager.Type.SWAMP, Villager.Profession.NITWIT, blessings, messages, tributes, names);
-        villagersLevel.put("Fermier 1", villager);
-
-    }
-
-    private void spawnFermier2(){
-        Location location = new Location(world, 12010.5, 64, 1466.5, -90, 0);
-
-        Tribute[] tributes = new Tribute[]{
-                new Tribute(new ItemStack(Material.BEDROCK, 1)),
-        };
-
-        Blessing[] blessings = new Blessing[]{
-                new Blessing(new MessageEffect("IMPOSSIBLE")),
-        };
-
-        Component[] messages = new Component[]{
-                Component.text( "Fermier 2"),
-        };
-
-        Component[] names = new Component[]{
-                Component.text( "Fermier 2"),
-        };
-
-        VillagerLevel villager = new VillagerLevel(location,"Fermier 2", Villager.Type.SWAMP, Villager.Profession.NITWIT, blessings, messages, tributes, names);
-        villagersLevel.put("Fermier 2", villager);
-
-    }
-
     private void spawnRiche(){
         Location location = new Location(world, 12072.5, 64, 1483.5, -90, 0);
 
@@ -591,35 +543,87 @@ public class Village {
         villagersLevel.put("Ariscis I", villager);
     }
 
-    private void spawnVendor(){
-        Location location = new Location(world, 12076, 64, 1491, -90, 0);
+    private void spawnFermier1(){
+        Location location = new Location(world, 12010.5, 64, 1464.5, -90, 0);
 
         ItemStack[] items = new ItemStack[]{
-                new ItemStack(Material.COPPER_INGOT, 1),
-                new ItemStack(Material.GOLD_INGOT, 10),
-                new ItemStack(Material.IRON_INGOT, 1),
-                new ItemStack(Material.DIAMOND, 1),
-                new ItemStack(Material.EMERALD, 1),
+                new ItemStack(Material.DRIED_KELP, 64),
+                new ItemStack(Material.COOKED_BEEF, 64),
+                new ItemStack(Material.COOKED_PORKCHOP, 64),
+                new ItemStack(Material.COOKED_MUTTON, 64),
+                new ItemStack(Material.COOKED_CHICKEN, 64),
+                new ItemStack(Material.COOKED_RABBIT, 64),
+                new ItemStack(Material.RABBIT_FOOT, 64),
+                new ItemStack(Material.LEATHER, 64),
         };
 
         Blessing[] blessings = new Blessing[]{
-                new Blessing(new MaxHealthEffect(1)),
-                new Blessing(new ItemEffect(new ItemStack(Material.EMERALD, 10))),
-                new Blessing(new MaxHealthEffect(6)),
-                new Blessing(new MessageEffect("IMPOSSIBLE")),
-                new Blessing(new MessageEffect("IMPOSSIBLE")),
+                new Blessing(new ItemEffect(new ItemStack(Material.EMERALD, 1))),
+                new Blessing(new ItemEffect(new ItemStack(Material.EMERALD, 1))),
+                new Blessing(new ItemEffect(new ItemStack(Material.EMERALD, 1))),
+                new Blessing(new ItemEffect(new ItemStack(Material.EMERALD, 1))),
+                new Blessing(new ItemEffect(new ItemStack(Material.EMERALD, 1))),
+                new Blessing(new ItemEffect(new ItemStack(Material.EMERALD, 1))),
+                new Blessing(new ItemEffect(new ItemStack(Material.EMERALD, 1))),
+                new Blessing(new ItemEffect(new ItemStack(Material.EMERALD, 1))),
         };
 
         Component[] messages = new Component[]{
-                Component.text( "Thomas Pesquet sera plus efficace d'une heure !"),
-                Component.text( "Thomas Pesquet sera plus efficace d'une heure !"),
-                Component.text( "Thomas Pesquet sera plus efficace d'une heure !"),
-                Component.text( "Thomas Pesquet sera plus efficace de deux heures !"),
-                Component.text( "IMPOSSIBLE"),
+                Component.text( "Merci pour ces algues, voici 1 émeraude."),
+                Component.text( "Merci pour la viande, voici 1 émeraude."),
+                Component.text( "Merci pour la viande, voici 1 émeraude."),
+                Component.text( "Merci pour la viande, voici 1 émeraude."),
+                Component.text( "Merci pour la viande, voici 1 émeraude."),
+                Component.text( "Merci pour la viande, voici 1 émeraude."),
+                Component.text( "Merci pour ces pattes, voici 1 émeraude."),
+                Component.text( "Merci pour ce cuir, voici 1 émeraude."),
         };
 
-        VillagerVendor villager = new VillagerVendor(location,"aze", Villager.Type.TAIGA, Villager.Profession.CLERIC, blessings, messages, items);
-        villagersVendor.put("aze", villager);
+        VillagerVendor villager = new VillagerVendor(location,"Fermier 1", Villager.Type.SWAMP, Villager.Profession.NITWIT, blessings, messages, items);
+        villagersVendor.put("Fermier 1", villager);
+    }
+
+    private void spawnFermier2(){
+        Location location = new Location(world, 12010.5, 64, 1466.5, -90, 0);
+
+        ItemStack[] items = new ItemStack[]{
+                new ItemStack(Material.HAY_BLOCK, 64),
+                new ItemStack(Material.GOLDEN_CARROT, 64),
+                new ItemStack(Material.BAKED_POTATO, 64),
+                new ItemStack(Material.PUMPKIN_PIE, 64),
+                new ItemStack(Material.SUGAR, 64),
+                new ItemStack(Material.MELON, 64),
+                new ItemStack(Material.GREEN_DYE, 64),
+                new ItemStack(Material.COOKIE, 64),
+                new ItemStack(Material.NETHER_WART_BLOCK, 64),
+        };
+
+        Blessing[] blessings = new Blessing[]{
+                new Blessing(new ItemEffect(new ItemStack(Material.EMERALD, 1))),
+                new Blessing(new ItemEffect(new ItemStack(Material.EMERALD, 1))),
+                new Blessing(new ItemEffect(new ItemStack(Material.EMERALD, 1))),
+                new Blessing(new ItemEffect(new ItemStack(Material.EMERALD, 1))),
+                new Blessing(new ItemEffect(new ItemStack(Material.EMERALD, 1))),
+                new Blessing(new ItemEffect(new ItemStack(Material.EMERALD, 1))),
+                new Blessing(new ItemEffect(new ItemStack(Material.EMERALD, 1))),
+                new Blessing(new ItemEffect(new ItemStack(Material.EMERALD, 1))),
+                new Blessing(new ItemEffect(new ItemStack(Material.EMERALD, 1))),
+        };
+
+        Component[] messages = new Component[]{
+                Component.text( "Merci pour ce blé, voici 1 émeraude."),
+                Component.text( "Merci pour ces carottes, voici 1 émeraude."),
+                Component.text( "Merci pour ces patates, voici 1 émeraude."),
+                Component.text( "Merci pour ces tartes, voici 1 émeraude."),
+                Component.text( "Merci pour ce sucre, voici 1 émeraude."),
+                Component.text( "Merci pour ce melon, voici 1 émeraude."),
+                Component.text( "Merci pour ce colorant, voici 1 émeraude."),
+                Component.text( "Merci pour ces cookies, voici 1 émeraude."),
+                Component.text( "Merci pour ces verrues, voici 1 émeraude."),
+        };
+
+        VillagerVendor villager = new VillagerVendor(location,"Fermier 2", Villager.Type.SWAMP, Villager.Profession.NITWIT, blessings, messages, items);
+        villagersVendor.put("Fermier 2", villager);
     }
 
     public void DeleteVillagers() {
