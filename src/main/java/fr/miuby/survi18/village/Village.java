@@ -444,7 +444,10 @@ public class Village {
         };
 
         Blessing[] blessings = new Blessing[]{
-                new Blessing(new MessageEffect("IMPOSSIBLE")),
+                new Blessing(new ItemEffect(new ItemStack(Material.EMERALD, 1))),
+                new Blessing(new ItemEffect(new ItemStack(Material.EMERALD, 1))),
+                new Blessing(new ItemEffect(new ItemStack(Material.EMERALD, 1))),
+                new Blessing(new ItemEffect(new ItemStack(Material.EMERALD, 1))),
         };
 
         Component[] messages = new Component[]{
