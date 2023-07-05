@@ -106,7 +106,10 @@ public class MyListener implements Listener {
     @EventHandler
     public void onEntityDamage(EntityDamageEvent event) {
         if (event.getEntityType() == EntityType.VILLAGER) {
-            event.setCancelled(true);
+            Villager v = (Villager) event.getEntity();
+            if (!v.getMetadata("name").isEmpty() && v.customName() != null) {
+                event.setCancelled(true);
+            }
         }
 
         //si on prends des degats

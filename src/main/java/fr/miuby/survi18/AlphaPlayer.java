@@ -2,6 +2,7 @@ package fr.miuby.survi18;
 
 import fr.miuby.survi18.database.DbConnection;
 import fr.miuby.survi18.role.Role;
+import fr.miuby.survi18.role.SimpletRole;
 import fr.miuby.survi18.village.VillagerLevel;
 import io.papermc.paper.advancement.AdvancementDisplay;
 import net.kyori.adventure.text.Component;
@@ -43,10 +44,11 @@ public class AlphaPlayer implements Serializable {
     private int vieBonus = 10;
     private int vieBonusSuccess = 0;
 
-    private Role role;
+    private final Role role;
 
     public AlphaPlayer(UUID uuid) {
         this.uuid = uuid;
+        this.role = new SimpletRole();
 
         Bukkit.getScheduler().runTaskAsynchronously(GameManager.getInstance().getPlugin(), () -> {
                     final DbConnection dbConnection = GameManager.getInstance().getDatabaseManager().getDbConnection();
@@ -251,6 +253,19 @@ public class AlphaPlayer implements Serializable {
     public void updateLife() {
         malus = floor((double) mort / 10f);
         int vieEnMoins = max(0, malus - GameManager.getInstance().getDispel());
-        Objects.requireNonNull(player.getAttribute(Attribute.GENERIC_MAX_HEALTH)).setBaseValue(vieBonus + vieBonusSuccess - vieEnMoins);
+
+        if (role.getName().equals("MaireRole")) {
+            if (getPlayer().getWorld().getName().equals("Village")) {
+                Objects.requireNonNull(player.getAttribute(Attribute.GENERIC_MAX_HEALTH)).setBaseValue((vieBonus + vieBonusSuccess - vieEnMoins) * 2f);
+            } else {
+                Objects.requireNonNull(player.getAttribute(Attribute.GENERIC_MAX_HEALTH)).setBaseValue((vieBonus + vieBonusSuccess - vieEnMoins) * 0.5f);
+            }
+        } else {
+            Objects.requireNonNull(player.getAttribute(Attribute.GENERIC_MAX_HEALTH)).setBaseValue(vieBonus + vieBonusSuccess - vieEnMoins);
+        }
+    }
+
+    public Role getRole() {
+        return role;
     }
 }

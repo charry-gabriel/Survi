@@ -115,5 +115,6 @@ public class PlayerListener implements Listener {
     @EventHandler
     public void onPlayerChangedWorld(PlayerChangedWorldEvent event) {
         GameManager.getInstance().switchWorld(event.getPlayer().getWorld().getName(), event.getPlayer().getName());
+        GameManager.getInstance().getAlphaPlayers().get(event.getPlayer().getUniqueId()).updateLife();
     }
 }

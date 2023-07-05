@@ -34,7 +34,7 @@ public class VillagerVendor extends VillagerBlessing {
                     player.sendMessage(Component.text("<" + name + "> Tu n'en as pas assez !").color(NamedTextColor.AQUA));
                 } else {
                     GameManager.getInstance().getLogger().info(name + " recupere " + inventoryItem.getAmount() + " de " + item.getType().name());
-                    player.sendMessage(Component.text("<" + name + "> " + getMessage(item)).color(NamedTextColor.AQUA));
+                    player.sendMessage(Component.text("<" + name + "> ").color(NamedTextColor.AQUA).append(getMessage(item)).color(NamedTextColor.AQUA));
                     applyBlessing(player, item);
                     item.setAmount(item.getAmount() - inventoryItem.getAmount());
                 }

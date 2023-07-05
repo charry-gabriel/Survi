@@ -66,6 +66,7 @@ public class DatabaseManager {
             final ResultSet resultSet = preparedStatement.executeQuery();
 
             while (resultSet.next()) {
+                GameManager.getInstance().getLogger().info(resultSet.getString("name") + " : " + resultSet.getInt("level"));
                 village.getVillagersLevel().get(resultSet.getString("name")).SetLevel(resultSet.getInt("level"));
             }
         } catch (SQLException throwables) {
