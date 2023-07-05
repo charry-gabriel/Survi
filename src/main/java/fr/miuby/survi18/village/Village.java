@@ -33,8 +33,7 @@ public class Village {
         spawnFermier1();
         spawnFermier2();
         spawnRiche();
-
-        spawnVendor();
+        spawnGolDRoger();
     }
 
     public World getWorld() { return world; }
@@ -268,7 +267,7 @@ public class Village {
                 new Tribute(new ItemStack(Material.SADDLE, 1)),
                 new Tribute(new ItemStack(Material.GOLDEN_APPLE, 64)),
                 new Tribute(new ItemStack(Material.DUNE_ARMOR_TRIM_SMITHING_TEMPLATE, 6)),
-                new Tribute(new ItemStack(Material.REDSTONE_BLOCK, 1700)),
+                new Tribute(new ItemStack(Material.REDSTONE_BLOCK, 1400)),
                 new Tribute(new ItemStack(Material.SPONGE, 48), new ItemStack(Material.WITHER_SKELETON_SKULL, 32)),
                 new Tribute(new ItemStack(Material.BEDROCK, 1)),
         };
@@ -437,8 +436,11 @@ public class Village {
     private void spawnPecheur1(){
         Location location = new Location(world, 12059.5, 63, 1469.5, 90, 0);
 
-        Tribute[] tributes = new Tribute[]{
-                new Tribute(new ItemStack(Material.BEDROCK, 1)),
+        ItemStack[] items = new ItemStack[]{
+                new ItemStack(Material.COOKED_COD, 64),
+                new ItemStack(Material.COOKED_SALMON, 64),
+                new ItemStack(Material.TROPICAL_FISH, 64),
+                new ItemStack(Material.PUFFERFISH, 64),
         };
 
         Blessing[] blessings = new Blessing[]{
@@ -446,38 +448,55 @@ public class Village {
         };
 
         Component[] messages = new Component[]{
-                Component.text( "IMPOSSIBLE"),
+                Component.text( "Merci pour ce poisson, voici 1 émeraude."),
+                Component.text( "Merci pour ce poisson, voici 1 émeraude."),
+                Component.text( "Merci pour ce poisson, voici 1 émeraude."),
+                Component.text( "Merci pour ce poisson, voici 1 émeraude."),
         };
 
-        Component[] names = new Component[]{
-                Component.text( "Bajau"),
-        };
-
-        VillagerLevel villager = new VillagerLevel(location,"Bajau", Villager.Type.SWAMP, Villager.Profession.NITWIT, blessings, messages, tributes, names);
-        villagersLevel.put("Bajau", villager);
+        VillagerVendor villager = new VillagerVendor(location,"Bajau", Villager.Type.SWAMP, Villager.Profession.NITWIT, blessings, messages, items);
+        villagersVendor.put("Bajau", villager);
     }
 
     private void spawnPecheur2(){
         Location location = new Location(world, 12045, 63, 1454.5, -90, 0);
 
-        Tribute[] tributes = new Tribute[]{
-                new Tribute(new ItemStack(Material.BEDROCK, 1)),
+        ItemStack[] items = new ItemStack[]{
+                new ItemStack(Material.NAUTILUS_SHELL, 64),
+                new ItemStack(Material.NAME_TAG, 64),
         };
 
         Blessing[] blessings = new Blessing[]{
-                new Blessing(new MessageEffect("IMPOSSIBLE")),
+                new Blessing(new ItemEffect(new ItemStack(Material.EMERALD, 1))),
+                new Blessing(new ItemEffect(new ItemStack(Material.EMERALD, 2))),
         };
 
         Component[] messages = new Component[]{
-                Component.text( "IMPOSSIBLE"),
+                Component.text( "Merci pour ces coquillages, voici 1 émeraude."),
+                Component.text( "Merci pour ces names-tags, voici 2 émeraude."),
         };
 
-        Component[] names = new Component[]{
-                Component.text( "Sampan"),
+        VillagerVendor villager = new VillagerVendor(location,"Sampan", Villager.Type.SWAMP, Villager.Profession.NITWIT, blessings, messages, items);
+        villagersVendor.put("Sampan", villager);
+    }
+
+    private void spawnGolDRoger(){
+        Location location = new Location(world, 12099.5, 69, 1474.5, 90, 0);
+
+        ItemStack[] items = new ItemStack[]{
+                new ItemStack(Material.BEDROCK, 64),
         };
 
-        VillagerLevel villager = new VillagerLevel(location,"Sampan", Villager.Type.SWAMP, Villager.Profession.NITWIT, blessings, messages, tributes, names);
-        villagersLevel.put("Sampan", villager);
+        Blessing[] blessings = new Blessing[]{
+                new Blessing(new ItemEffect(new ItemStack(Material.EMERALD, 1))),
+        };
+
+        Component[] messages = new Component[]{
+                Component.text( "Merci pour ces bedrock, voici 1 émeraude."),
+        };
+
+        VillagerVendor villager = new VillagerVendor(location,"Gol D. Roger", Villager.Type.SWAMP, Villager.Profession.NITWIT, blessings, messages, items);
+        villagersVendor.put("Gol D. Roger", villager);
     }
 
     private void spawnRiche(){
