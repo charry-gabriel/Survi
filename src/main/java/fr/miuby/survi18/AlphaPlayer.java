@@ -41,6 +41,8 @@ public class AlphaPlayer implements Serializable {
 
     private float resistance;
     private float damage;
+    private float endResistance = 0.7f;
+    private float endDamage = 0.7f;
     private int vieBonus = 10;
     private int vieBonusSuccess = 0;
 
@@ -238,8 +240,16 @@ public class AlphaPlayer implements Serializable {
         return resistance;
     }
 
+    public float getEndResistance() {
+        return endResistance;
+    }
+
     public float getDamage() {
         return damage;
+    }
+
+    public float getEndDamage() {
+        return endDamage;
     }
 
     public void setDamage(float damage) {
@@ -257,11 +267,17 @@ public class AlphaPlayer implements Serializable {
         if (role.getName().equals("MaireRole")) {
             if (getPlayer().getWorld().getName().equals("Village")) {
                 Objects.requireNonNull(player.getAttribute(Attribute.GENERIC_MAX_HEALTH)).setBaseValue((vieBonus + vieBonusSuccess - vieEnMoins) * 2f);
+            } else if(getPlayer().getWorld().getName().equals("Wilderness_the_end") || getPlayer().getWorld().getName().equals("Wilderness_the_end2")) {
+                Objects.requireNonNull(player.getAttribute(Attribute.GENERIC_MAX_HEALTH)).setBaseValue((vieBonus + vieBonusSuccess - vieEnMoins) * 0.25f);
             } else {
                 Objects.requireNonNull(player.getAttribute(Attribute.GENERIC_MAX_HEALTH)).setBaseValue((vieBonus + vieBonusSuccess - vieEnMoins) * 0.5f);
             }
         } else {
-            Objects.requireNonNull(player.getAttribute(Attribute.GENERIC_MAX_HEALTH)).setBaseValue(vieBonus + vieBonusSuccess - vieEnMoins);
+            if(getPlayer().getWorld().getName().equals("Wilderness_the_end") || getPlayer().getWorld().getName().equals("Wilderness_the_end2")) {
+                Objects.requireNonNull(player.getAttribute(Attribute.GENERIC_MAX_HEALTH)).setBaseValue((vieBonus + vieBonusSuccess - vieEnMoins) * 0.5f);
+            } else {
+                Objects.requireNonNull(player.getAttribute(Attribute.GENERIC_MAX_HEALTH)).setBaseValue(vieBonus + vieBonusSuccess - vieEnMoins);
+            }
         }
     }
 

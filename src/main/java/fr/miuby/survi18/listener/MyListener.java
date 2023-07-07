@@ -4,6 +4,8 @@ import fr.miuby.survi18.*;
 import fr.miuby.survi18.village.VillagerLevel;
 import fr.miuby.survi18.village.VillagerVendor;
 import org.bukkit.Material;
+import org.bukkit.attribute.Attribute;
+import org.bukkit.entity.EnderDragon;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Villager;
@@ -11,9 +13,13 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.EntitySpawnEvent;
 import org.bukkit.event.inventory.*;
 import org.bukkit.event.world.PortalCreateEvent;
 import org.bukkit.inventory.ItemStack;
+
+import java.util.Objects;
+import java.util.UUID;
 
 public class MyListener implements Listener {
     static Survi18 plugin;
@@ -99,7 +105,31 @@ public class MyListener implements Listener {
     public void onEntityDamageByEntity(EntityDamageByEntityEvent event) {
         //si on tape
         if(event.getDamager() instanceof Player){
-            event.setDamage(event.getDamage() * GameManager.getInstance().getAlphaPlayers().get(event.getDamager().getUniqueId()).getDamage());
+
+            double degat = event.getDamage();
+            UUID uuid = event.getDamager().getUniqueId();
+            AlphaPlayer alphaPlayer =  GameManager.getInstance().getAlphaPlayers().get(uuid);
+            float multiplicateurDegat = alphaPlayer.getDamage();
+            float multiplicateurDegatEnd = alphaPlayer.getEndDamage();
+
+            if(alphaPlayer.getPlayer().getWorld().getName().equals("Wilderness_the_end") || alphaPlayer.getPlayer().getWorld().getName().equals("Wilderness_the_end2")) {
+                event.setDamage(degat * multiplicateurDegat * multiplicateurDegatEnd);
+            } else {
+                event.setDamage(degat * multiplicateurDegat);
+            }
+        }
+    }
+
+    @EventHandler
+    public void onEntitySpawn(EntitySpawnEvent event){
+        if (event.getEntity() instanceof EnderDragon) {
+            EnderDragon dragon = (EnderDragon) event.getEntity();
+            try {
+                Objects.requireNonNull(dragon.getAttribute(Attribute.GENERIC_MAX_HEALTH)).setBaseValue(2000);
+                dragon.setHealth(2000);
+            } catch (Exception exception) {
+                exception.printStackTrace();
+            }
         }
     }
 
@@ -114,7 +144,13 @@ public class MyListener implements Listener {
 
         //si on prends des degats
         if(event.getEntityType() == EntityType.PLAYER) {
-            event.setDamage(event.getDamage() / GameManager.getInstance().getAlphaPlayers().get(event.getEntity().getUniqueId()).getResistance());
+            AlphaPlayer alphaPlayer = GameManager.getInstance().getAlphaPlayers().get(event.getEntity().getUniqueId());
+
+            if(alphaPlayer.getPlayer().getWorld().getName().equals("Wilderness_the_end") || alphaPlayer.getPlayer().getWorld().getName().equals("Wilderness_the_end2")) {
+                event.setDamage(event.getDamage() * alphaPlayer.getResistance() * alphaPlayer.getEndResistance());
+            } else {
+                event.setDamage(event.getDamage() * alphaPlayer.getResistance());
+            }
         }
     }
 
