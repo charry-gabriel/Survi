@@ -147,9 +147,9 @@ public class MyListener implements Listener {
             AlphaPlayer alphaPlayer = GameManager.getInstance().getAlphaPlayers().get(event.getEntity().getUniqueId());
 
             if(alphaPlayer.getPlayer().getWorld().getName().equals("Wilderness_the_end") || alphaPlayer.getPlayer().getWorld().getName().equals("Wilderness_the_end2")) {
-                event.setDamage(event.getDamage() * alphaPlayer.getResistance() * alphaPlayer.getEndResistance());
+                event.setDamage(event.getDamage() / (alphaPlayer.getResistance() * alphaPlayer.getEndResistance()));
             } else {
-                event.setDamage(event.getDamage() * alphaPlayer.getResistance());
+                event.setDamage(event.getDamage() / alphaPlayer.getResistance());
             }
         }
     }
