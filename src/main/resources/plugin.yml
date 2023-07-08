@@ -1,43 +1,13 @@
-name: Survi18
+name: Survi
 version: '${project.version}'
-main: fr.miuby.survi18.Survi18
+main: fr.miuby.survi.Survi
 api-version: '1.20'
 authors: [Miuby]
 description: Petite survi TeamAlpha
 commands:
-  alpha-addcoin:
-    description: Donne x AlphaCoin au joueur
-    usage: /<command> [coin] [player]
-  alpha-addmort:
-      description: Donne x mort a y joueur
-      usage: /<command> [mort] [player]
-  givecoin:
-    description: Donne x AlphaCoin au joueur
-    usage: /<command> [coin] [player]
-  alpha-impot:
-    description: Retire x% AlphaCoin a tous les joueurs
-    usage: /<command> [percent]
-  alpha-coins:
-    description: Affiche les AlphaCoins des joueurs
-    usage: /<command>
-  alpha-success:
-    description: Donne les Alphacoins pour les succes débloqué
-    usage: /<command> [player]
-  alpha-debug:
-    description: Commandes de debug
-    usage: /<command>
+  sql:
+    description: Requete sql
+    usage: /<command> [sql]
 permissions:
-  Survi18.alpha-addcoin:
-    default: op
-  Survi18.alpha-addmort:
-    default: op
-  Survi18.givecoin:
-    default: true
-  Survi18.alpha-impot:
-    default: op
-  Survi18.alpha-coins:
-    default: op
-  Survi18.alpha-success:
-    default: op
-  Survi18.alpha-debug:
+  Survi.sql:
     default: op
