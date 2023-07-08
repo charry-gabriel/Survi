@@ -47,7 +47,6 @@ public class SQLite extends Database {
             }
             Class.forName("org.sqlite.JDBC");
             connection = DriverManager.getConnection("jdbc:sqlite:" + dataFolder);
-            GameManager.getInstance().getLogger().log(Level.SEVERE,"jdbc:sqlite:" + dataFolder);
             return connection;
         } catch (SQLException ex) {
             GameManager.getInstance().getLogger().log(Level.SEVERE,"SQLite exception on initialize", ex);

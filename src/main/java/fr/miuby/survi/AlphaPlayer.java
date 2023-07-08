@@ -29,8 +29,8 @@ public class AlphaPlayer implements Serializable {
     private Score successScore;
     private Scoreboard scoreboard;
 
-    private float resistance;
-    private float damage;
+    private float resistance = 0.2f;
+    private float damage = 0.2f;
     private final float endResistance = 0.7f;
     private final float endDamage = 0.7f;
     private int vieBonus = 10;
@@ -83,29 +83,6 @@ public class AlphaPlayer implements Serializable {
 
             player.setScoreboard(scoreboard);
             GameManager.getInstance().switchWorld(player.getWorld().getName(), pseudo);
-
-            for(AlphaPlayer alphaPlayer : GameManager.getInstance().getAlphaPlayers().values()) {
-                if(alphaPlayer.getPlayer() != null) {
-                    switch (alphaPlayer.getPlayer().getWorld().getName()) {
-                        case "Village":
-                            Objects.requireNonNull(this.getScoreboard().getTeam("Village")).addEntry(alphaPlayer.getPseudo());
-                            break;
-                        case "Wilderness":
-                            Objects.requireNonNull(this.getScoreboard().getTeam("Wilderness")).addEntry(alphaPlayer.getPseudo());
-                            break;
-                        case "Wilderness_nether":
-                            Objects.requireNonNull(this.getScoreboard().getTeam("Nether")).addEntry(alphaPlayer.getPseudo());
-                            break;
-                        case "Wilderness_the_end":
-                            Objects.requireNonNull(this.getScoreboard().getTeam("End")).addEntry(alphaPlayer.getPseudo());
-                            break;
-                    }
-                }
-            }
-
-            resistance = 0.2f;
-            damage = 0.2f;
-            vieBonusSuccess = floor((double) success / 3f);
 
             for (VillagerLevel villager : GameManager.getInstance().getVillage().getVillagersLevel().values()) {
                 villager.ApplyAllCurrentBlessing(this);
@@ -193,6 +170,7 @@ public class AlphaPlayer implements Serializable {
     }
 
     public void updateLife() {
+        vieBonusSuccess = floor((double) success / 3f);
         malus = floor((double) mort / 10f);
         int vieEnMoins = max(0, malus - GameManager.getInstance().getDispel());
 

@@ -80,12 +80,12 @@ public abstract class Database {
                 int mort = rs.getInt("mort");
                 int success = rs.getInt("success");
                 String pseudo = rs.getString("pseudo");
-                GameManager.getInstance().getLogger().info(mort+" mort");
-                GameManager.getInstance().getLogger().info(success+" success");
-                GameManager.getInstance().getLogger().info(pseudo+" pseudo");
+                String role = rs.getString("role");
+
                 alphaPlayer.setMort(mort);
                 alphaPlayer.setSuccess(success);
                 alphaPlayer.setPseudo(pseudo);
+                alphaPlayer.setRole(role);
                 Bukkit.getScheduler().runTask(GameManager.getInstance().getPlugin(), alphaPlayer::actualize);
             } else {
                 Player player = GameManager.getInstance().getPlugin().getServer().getPlayer(uuid);
