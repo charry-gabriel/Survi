@@ -6,7 +6,7 @@
 
     <groupId>fr.miuby</groupId>
     <artifactId>survi</artifactId>
-    <version>2.3-SNAPSHOT</version>
+    <version>2.3</version>
     <packaging>jar</packaging>
 
     <name>Survi</name>

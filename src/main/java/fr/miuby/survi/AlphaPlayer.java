@@ -196,7 +196,8 @@ public class AlphaPlayer implements Serializable {
         malus = floor((double) mort / 10f);
         int vieEnMoins = max(0, malus - GameManager.getInstance().getDispel());
 
-        if (role.getName().equals("MaireRole")) {
+        //GameManager.getInstance().getLogger().info(ExceptionUtils.getStackTrace(new Throwable()));
+        if (role.getName().equals("Maire")) {
             if (getPlayer().getWorld().getName().equals("Village")) {
                 Objects.requireNonNull(player.getAttribute(Attribute.GENERIC_MAX_HEALTH)).setBaseValue((vieBonus + vieBonusSuccess - vieEnMoins) * 2f);
             } else if(getPlayer().getWorld().getName().equals("Wilderness_the_end") || getPlayer().getWorld().getName().equals("Wilderness_the_end2")) {
