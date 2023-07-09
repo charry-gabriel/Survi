@@ -1,10 +1,9 @@
-package fr.miuby.survi.village;
+package fr.miuby.survi.villager;
 
 import fr.miuby.survi.AlphaPlayer;
 import fr.miuby.survi.GameManager;
-import fr.miuby.survi.blessing.Blessing;
-import fr.miuby.survi.Tribute;
-import fr.miuby.survi.blessing.BlessingEffect;
+import fr.miuby.survi.villager.blessing.Blessing;
+import fr.miuby.survi.villager.blessing.BlessingEffect;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.sound.Sound;
 import net.kyori.adventure.text.Component;
@@ -16,26 +15,25 @@ import org.bukkit.entity.Villager;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.metadata.FixedMetadataValue;
 
 import java.util.Arrays;
 import java.util.Objects;
 
-public class VillagerLevel extends VillagerBlessing {
-    private int level = 0;
+public class VillagerLevel extends AVillager {
     private final Tribute[] tributes;
     private final Component[] names;
 
-    public VillagerLevel(Location location, String name, Villager.Type type, Villager.Profession profession, Blessing[] blessings, Component[] messages, Tribute[] tributes, Component[] names) {
-        super(location, name, type, profession, blessings, messages);
+    public VillagerLevel(String name, Location location, Villager.Type type, Villager.Profession profession, Blessing[] blessings, Component[] messages, Tribute[] tributes, Component[] names) {
+        super(name, location, type, profession, blessings, messages);
         this.tributes = tributes;
         this.names = names;
-        villager.setMetadata("level", new FixedMetadataValue(GameManager.getInstance().getPlugin(), 0));
 
-        GameManager.getInstance().getDatabase().getVillager(this, name);
+        getVillager().customName(getName());
+        updateInventory();
     }
 
-    public void GiveItems(Inventory inventory, ItemStack item, Player player){
+    @Override
+    public void giveItems(Inventory inventory, ItemStack item, Player player) {
         removeItemStack(inventory, item, player);
 
         if (inventory.isEmpty()) {
@@ -59,7 +57,7 @@ public class VillagerLevel extends VillagerBlessing {
 
     public void addLevel() {
         this.level++;
-        GameManager.getInstance().getDatabase().updateVillager(name, level);
+        GameManager.getInstance().getDatabase().updateVillager(uuid, level);
     }
 
     public void ApplyAllCurrentBlessing(AlphaPlayer player) {
@@ -77,8 +75,7 @@ public class VillagerLevel extends VillagerBlessing {
             player.playSound(myCustomSound);
 
             for (BlessingEffect effect : getBlessing().getBlessingEffects()) {
-                AlphaPlayer alphaPlayer = GameManager.getInstance().getAlphaPlayers().get(player.getUniqueId());
-                effect.applyEffect(alphaPlayer);
+                effect.applyEffect(AlphaPlayer.get(player.getUniqueId()));
             }
         }
     }
@@ -88,7 +85,7 @@ public class VillagerLevel extends VillagerBlessing {
 
         for (ItemStack tributeItem : inventory.getContents()) {
             if (tributeItem != null && tributeItem.getType() == item.getType()) {
-                GameManager.getInstance().getLogger().info(name + " recupere " + item.getAmount() + " de " + item.getType().name());
+                GameManager.getInstance().getLogger().info(getName().toString() + " recupere " + item.getAmount() + " de " + item.getType().name());
                 if (item.getAmount() < tributeItem.getAmount()) {
                     tributeItem.setAmount(tributeItem.getAmount() - item.getAmount());
                     player.getInventory().remove(item);
@@ -117,19 +114,12 @@ public class VillagerLevel extends VillagerBlessing {
         return messages[this.level].color(NamedTextColor.AQUA);
     }
 
+    @Override
     public Component getName() {
         return names[this.level].color(NamedTextColor.AQUA);
     }
 
     public Blessing[] getCurrentBlessings() {
         return Arrays.copyOfRange(blessings, 0, this.level);
-    }
-
-    public void setLevel(int level) {
-        this.level = level;
-    }
-
-    public int getLevel() {
-        return this.level;
     }
 }

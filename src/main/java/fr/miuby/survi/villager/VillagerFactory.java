@@ -1,7 +1,8 @@
-package fr.miuby.survi.village;
+package fr.miuby.survi.villager;
 
-import fr.miuby.survi.blessing.*;
-import fr.miuby.survi.Tribute;
+import fr.miuby.survi.villager.blessing.*;
+import fr.miuby.survi.world.EWorld;
+import fr.miuby.survi.GameManager;
 import fr.miuby.survi.locked_item.LockedArmorType;
 import fr.miuby.survi.locked_item.LockedToolType;
 import net.kyori.adventure.text.Component;
@@ -11,13 +12,12 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.*;
 
-public class Village {
+public class VillagerFactory {
     private final World world;
-    private final Map<String, VillagerLevel> villagersLevel = new HashMap<>();
-    private final Map<String, VillagerVendor> villagersVendor = new HashMap<>();
+    private final Map<UUID, AVillager> villagers = new HashMap<>();
 
-    public Village(World world) {
-        this.world = world;
+    public VillagerFactory() {
+        this.world = GameManager.getInstance().getWorld(EWorld.VILLAGE);
 
         spawnEdward();
         spawnNain();
@@ -35,14 +35,12 @@ public class Village {
         spawnGolDRoger();
     }
 
-    public World getWorld() { return world; }
-
-    public Map<String, VillagerLevel> getVillagersLevel() {
-        return villagersLevel;
+    private void addNewVillager(AVillager villager) {
+        villagers.put(villager.uuid, villager);
     }
 
-    public Map<String, VillagerVendor> getVillagersVendor() {
-        return villagersVendor;
+    public Map<UUID, AVillager> getVillagers() {
+        return villagers;
     }
 
     private void spawnEdward(){
@@ -110,8 +108,7 @@ public class Village {
                 Component.text( "Edward Jenner MAX"),
         };
 
-        VillagerLevel villager = new VillagerLevel(location,"Edward Jenner I", Villager.Type.SAVANNA, Villager.Profession.FARMER, blessings, messages, tributes, names);
-        villagersLevel.put("Edward Jenner I", villager);
+        this.addNewVillager(new VillagerLevel("Edward Jenner I", location, Villager.Type.SAVANNA, Villager.Profession.FARMER, blessings, messages, tributes, names));
     }
 
     private void spawnNain(){
@@ -153,8 +150,7 @@ public class Village {
                 Component.text( "Nain Roux MAX"),
         };
 
-        VillagerLevel villager = new VillagerLevel(location,"Nain Roux I", Villager.Type.SWAMP, Villager.Profession.NITWIT, blessings, messages, tributes, names);
-        villagersLevel.put("Nain Roux I", villager);
+        this.addNewVillager(new VillagerLevel("Nain Roux I", location, Villager.Type.SWAMP, Villager.Profession.NITWIT, blessings, messages, tributes, names));
     }
 
     private void spawnMaddox(){
@@ -196,8 +192,7 @@ public class Village {
                 Component.text( "Maddox MAX"),
         };
 
-        VillagerLevel villager = new VillagerLevel(location,"Maddox I", Villager.Type.TAIGA, Villager.Profession.BUTCHER, blessings, messages, tributes, names);
-        villagersLevel.put("Maddox I", villager);
+        this.addNewVillager(new VillagerLevel("Maddox I", location,Villager.Type.TAIGA, Villager.Profession.BUTCHER, blessings, messages, tributes, names));
     }
 
     private void spawnThomas(){
@@ -255,8 +250,7 @@ public class Village {
                 Component.text( "Thomas Pesquet V"),
         };
 
-        VillagerLevel villager = new VillagerLevel(location,"Thomas Pesquet I", Villager.Type.SNOW, Villager.Profession.FISHERMAN, blessings, messages, tributes, names);
-        villagersLevel.put("Thomas Pesquet I", villager);
+        this.addNewVillager(new VillagerLevel("Thomas Pesquet I", location,Villager.Type.SNOW, Villager.Profession.FISHERMAN, blessings, messages, tributes, names));
     }
 
     private void spawnStuff(){
@@ -298,8 +292,7 @@ public class Village {
                 Component.text( "Blue Moon"),
         };
 
-        VillagerLevel villager = new VillagerLevel(location,"Comboy", Villager.Type.JUNGLE, Villager.Profession.ARMORER, blessings, messages, tributes, names);
-        villagersLevel.put("Comboy", villager);
+        this.addNewVillager(new VillagerLevel("Cowboy", location, Villager.Type.JUNGLE, Villager.Profession.ARMORER, blessings, messages, tributes, names));
     }
 
     private void spawnTools(){
@@ -341,8 +334,7 @@ public class Village {
                 Component.text( "Diggy Diggy Hole"),
         };
 
-        VillagerLevel villager = new VillagerLevel(location,"Janod", Villager.Type.TAIGA, Villager.Profession.WEAPONSMITH, blessings, messages, tributes, names);
-        villagersLevel.put("Janod", villager);
+        this.addNewVillager(new VillagerLevel("Janod", location, Villager.Type.TAIGA, Villager.Profession.WEAPONSMITH, blessings, messages, tributes, names));
     }
 
     private void spawnFrancois(){
@@ -404,8 +396,7 @@ public class Village {
 
         };
 
-        VillagerLevel villager = new VillagerLevel(location,"Léon XIII", Villager.Type.JUNGLE, Villager.Profession.CLERIC, blessings, messages, tributes, names);
-        villagersLevel.put("Léon XIII", villager);
+        this.addNewVillager(new VillagerLevel("Léon XIII", location, Villager.Type.JUNGLE, Villager.Profession.CLERIC, blessings, messages, tributes, names));
     }
 
     private void spawnHeros(){
@@ -428,8 +419,7 @@ public class Village {
 
         };
 
-        VillagerLevel villager = new VillagerLevel(location,"Héros I", Villager.Type.SAVANNA, Villager.Profession.CARTOGRAPHER, blessings, messages, tributes, names);
-        villagersLevel.put("Héros I", villager);
+        this.addNewVillager(new VillagerLevel("Héros I", location, Villager.Type.SAVANNA, Villager.Profession.CARTOGRAPHER, blessings, messages, tributes, names));
     }
 
     private void spawnPecheur1(){
@@ -456,8 +446,7 @@ public class Village {
                 Component.text( "Merci pour ce poisson, voici 1 émeraude."),
         };
 
-        VillagerVendor villager = new VillagerVendor(location,"Bajau", Villager.Type.SWAMP, Villager.Profession.NITWIT, blessings, messages, items);
-        villagersVendor.put("Bajau", villager);
+        this.addNewVillager(new VillagerVendor("Bajau", location,Villager.Type.SWAMP, Villager.Profession.NITWIT, blessings, messages, items));
     }
 
     private void spawnPecheur2(){
@@ -478,8 +467,7 @@ public class Village {
                 Component.text( "Merci pour ces names-tags, voici 2 émeraude."),
         };
 
-        VillagerVendor villager = new VillagerVendor(location,"Sampan", Villager.Type.SWAMP, Villager.Profession.NITWIT, blessings, messages, items);
-        villagersVendor.put("Sampan", villager);
+        this.addNewVillager(new VillagerVendor("Sampan", location,Villager.Type.SWAMP, Villager.Profession.NITWIT, blessings, messages, items));
     }
 
     private void spawnGolDRoger(){
@@ -497,8 +485,7 @@ public class Village {
                 Component.text( "Merci pour ces bedrock, voici 1 émeraude."),
         };
 
-        VillagerVendor villager = new VillagerVendor(location,"Gol D. Roger", Villager.Type.SWAMP, Villager.Profession.NITWIT, blessings, messages, items);
-        villagersVendor.put("Gol D. Roger", villager);
+        this.addNewVillager(new VillagerVendor("Gol D. Roger", location,Villager.Type.SWAMP, Villager.Profession.NITWIT, blessings, messages, items));
     }
 
     private void spawnRiche(){
@@ -560,8 +547,7 @@ public class Village {
                 Component.text( "IMPOSSIBLE"),
         };
 
-        VillagerLevel villager = new VillagerLevel(location,"Ariscis I", Villager.Type.TAIGA, Villager.Profession.CLERIC, blessings, messages, tributes, names);
-        villagersLevel.put("Ariscis I", villager);
+        this.addNewVillager(new VillagerLevel("Ariscis I", location, Villager.Type.TAIGA, Villager.Profession.CLERIC, blessings, messages, tributes, names));
     }
 
     private void spawnFermier1(){
@@ -600,8 +586,7 @@ public class Village {
                 Component.text( "Merci pour ce cuir, voici 1 émeraude."),
         };
 
-        VillagerVendor villager = new VillagerVendor(location,"Fermier 1", Villager.Type.SWAMP, Villager.Profession.NITWIT, blessings, messages, items);
-        villagersVendor.put("Fermier 1", villager);
+        this.addNewVillager(new VillagerVendor("Fermier 1", location, Villager.Type.SWAMP, Villager.Profession.NITWIT, blessings, messages, items));
     }
 
     private void spawnFermier2(){
@@ -643,19 +628,6 @@ public class Village {
                 Component.text( "Merci pour ces verrues, voici 1 émeraude."),
         };
 
-        VillagerVendor villager = new VillagerVendor(location,"Fermier 2", Villager.Type.SWAMP, Villager.Profession.NITWIT, blessings, messages, items);
-        villagersVendor.put("Fermier 2", villager);
-    }
-
-    public void DeleteVillagers() {
-        for(VillagerLevel villager : villagersLevel.values()) {
-            villager.getVillager().remove();
-        }
-        villagersLevel.clear();
-
-        for(VillagerVendor villager : villagersVendor.values()) {
-            villager.getVillager().remove();
-        }
-        villagersVendor.clear();
+        this.addNewVillager(new VillagerVendor("Fermier 2", location, Villager.Type.SWAMP, Villager.Profession.NITWIT, blessings, messages, items));
     }
 }

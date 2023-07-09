@@ -3,7 +3,10 @@ package fr.miuby.survi;
 import fr.miuby.survi.database.Database;
 import fr.miuby.survi.database.SQLite;
 import fr.miuby.survi.locked_item.LockedItemsManager;
-import fr.miuby.survi.village.Village;
+import fr.miuby.survi.villager.VillagerFactory;
+import fr.miuby.survi.world.EWorld;
+import fr.miuby.survi.world.Monde;
+import fr.miuby.survi.world.WorldFactory;
 import org.bukkit.World;
 
 import java.util.HashMap;
@@ -16,7 +19,7 @@ public class GameManager {
     private static GameManager instance = null;
     private Survi plugin;
 
-    private Village village;
+    private VillagerFactory villagerFactory;
     private final Map<UUID, AlphaPlayer> players = new HashMap<>();
 
     private LockedItemsManager lockedItemsManager;
@@ -29,6 +32,7 @@ public class GameManager {
     private boolean hasEndAccess = false;
 
     private int dispel = 0;
+    private WorldFactory worldFactory;
     private Database database;
 
     public static GameManager getInstance(){
@@ -38,14 +42,16 @@ public class GameManager {
         return instance;
     }
 
-    public void Init(Survi plugin){
+    public void init(Survi plugin){
         this.plugin = plugin;
+
+        this.worldFactory = new WorldFactory(this.plugin.getServer());
 
         this.database = new SQLite();
         this.database.load();
         this.database.createAlphaPlayers();
 
-        village = new Village(this.GetWorld("village"));
+        villagerFactory = new VillagerFactory();
 
         lockedItemsManager = new LockedItemsManager();
 
@@ -53,37 +59,11 @@ public class GameManager {
         timer.update();
     }
 
-    public World GetWorld(String name) {
-        return plugin.getServer().getWorld(name);
-    }
-
-    public Map<UUID, AlphaPlayer> getAlphaPlayers(){
-        return players;
-    }
-
-    public Village getVillage() {
-        return village;
-    }
-
-    public Survi getPlugin() {
-        return plugin;
-    }
-
-    public Logger getLogger() {
-        return logger;
-    }
-
-    public Timer getTimer() {
-        return timer;
-    }
-
-    public AlphaPlayer getAlphaPlayer(String pseudo) {
-        for(AlphaPlayer alphaP : GameManager.getInstance().getAlphaPlayers().values()) {
-            if(alphaP.getPseudo().equalsIgnoreCase(pseudo)) {
-                return alphaP;
-            }
-        }
-        return null;
+    public World getWorld(EWorld world) {
+        Monde monde = getMonde(world);
+        if(monde == null)
+            throw new NullPointerException(world.toString() + " Monde doesn't exist !");
+        return monde.getWorld();
     }
 
     public void switchWorld(String world, String pseudo){
@@ -106,6 +86,33 @@ public class GameManager {
                 }
             }
         }
+    }
+
+    public Monde getMonde(EWorld world) {
+        return worldFactory.getMonde(world);
+    }
+
+    public Map<UUID, AlphaPlayer> getAlphaPlayers(){
+        return players;
+    }
+
+    public AlphaPlayer getAlphaPlayer(UUID uuid){
+        AlphaPlayer alphaPlayer = players.get(uuid);
+        if (alphaPlayer == null)
+            throw new NullPointerException(uuid.toString() + " alphaPlayer doesn't exist !");
+        return alphaPlayer;
+    }
+
+    public VillagerFactory getVillagerFactory() {
+        return villagerFactory;
+    }
+
+    public Survi getPlugin() {
+        return plugin;
+    }
+
+    public Logger getLogger() {
+        return logger;
     }
 
     public LockedItemsManager getLockedItemsManager() {

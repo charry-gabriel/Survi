@@ -1,8 +1,9 @@
 package fr.miuby.survi.listener;
 
 import fr.miuby.survi.*;
-import fr.miuby.survi.village.VillagerLevel;
-import fr.miuby.survi.village.VillagerVendor;
+import fr.miuby.survi.villager.AVillager;
+import fr.miuby.survi.world.EWorld;
+import fr.miuby.survi.world.Monde;
 import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.EnderDragon;
@@ -104,18 +105,36 @@ public class MyListener implements Listener {
     @EventHandler
     public void onEntityDamageByEntity(EntityDamageByEntityEvent event) {
         //si on tape
-        if(event.getDamager() instanceof Player){
-
-            double degat = event.getDamage();
+        if(event.getDamager().getType() == EntityType.PLAYER) {
+            double damage = event.getDamage();
             UUID uuid = event.getDamager().getUniqueId();
-            AlphaPlayer alphaPlayer =  GameManager.getInstance().getAlphaPlayers().get(uuid);
-            float multiplicateurDegat = alphaPlayer.getDamage();
-            float multiplicateurDegatEnd = alphaPlayer.getEndDamage();
+            AlphaPlayer alphaPlayer =  AlphaPlayer.get(uuid);
 
-            if(alphaPlayer.getPlayer().getWorld().getName().equals("Wilderness_the_end") || alphaPlayer.getPlayer().getWorld().getName().equals("Wilderness_the_end2")) {
-                event.setDamage(degat * multiplicateurDegat * multiplicateurDegatEnd);
+            if(Monde.isPlayerOnWorld(alphaPlayer.getPlayer(), EWorld.END) || Monde.isPlayerOnWorld(alphaPlayer.getPlayer(), EWorld.END2)) {
+                event.setDamage(damage * alphaPlayer.getDamage() * alphaPlayer.getEndDamage());
             } else {
-                event.setDamage(degat * multiplicateurDegat);
+                event.setDamage(damage * alphaPlayer.getDamage());
+            }
+        }
+    }
+
+    @EventHandler
+    public void onEntityDamage(EntityDamageEvent event) {
+        if (event.getEntityType() == EntityType.VILLAGER) {
+            Villager villager = (Villager) event.getEntity();
+            if (AVillager.contains(villager.getUniqueId())) {
+                event.setCancelled(true);
+            }
+        }
+
+        //si on prends des degats
+        if(event.getEntityType() == EntityType.PLAYER) {
+            AlphaPlayer alphaPlayer = AlphaPlayer.get(event.getEntity().getUniqueId());
+
+            if(Monde.isPlayerOnWorld(alphaPlayer.getPlayer(), EWorld.END) || Monde.isPlayerOnWorld(alphaPlayer.getPlayer(), EWorld.END2)) {
+                event.setDamage(event.getDamage() / (alphaPlayer.getResistance() * alphaPlayer.getEndResistance()));
+            } else {
+                event.setDamage(event.getDamage() / alphaPlayer.getResistance());
             }
         }
     }
@@ -134,49 +153,20 @@ public class MyListener implements Listener {
     }
 
     @EventHandler
-    public void onEntityDamage(EntityDamageEvent event) {
-        if (event.getEntityType() == EntityType.VILLAGER) {
-            Villager v = (Villager) event.getEntity();
-            if (!v.getMetadata("name").isEmpty() && v.customName() != null) {
-                event.setCancelled(true);
-            }
-        }
-
-        //si on prends des degats
-        if(event.getEntityType() == EntityType.PLAYER) {
-            AlphaPlayer alphaPlayer = GameManager.getInstance().getAlphaPlayers().get(event.getEntity().getUniqueId());
-
-            if(alphaPlayer.getPlayer().getWorld().getName().equals("Wilderness_the_end") || alphaPlayer.getPlayer().getWorld().getName().equals("Wilderness_the_end2")) {
-                event.setDamage(event.getDamage() / (alphaPlayer.getResistance() * alphaPlayer.getEndResistance()));
-            } else {
-                event.setDamage(event.getDamage() / alphaPlayer.getResistance());
-            }
-        }
-    }
-
-    @EventHandler
-    public void onInventoryClick(InventoryClickEvent event){
+    public void onInventoryClick(InventoryClickEvent event) {
         Player player = (Player)event.getWhoClicked();
         ItemStack item = event.getCurrentItem();
+        if (event.getClick() == ClickType.RIGHT && event.getClickedInventory() != null && event.getClickedInventory().getHolder() instanceof Player && event.getInventory().getHolder() instanceof Villager) {
+            if (item != null && item.getType() != Material.AIR) {
+                Villager v = (Villager) event.getInventory().getHolder();
+                AVillager villager = AVillager.get(v.getUniqueId());
 
-        if(item != null && item.getType() != Material.AIR) {
-            if (event.getClickedInventory() != null && event.getClickedInventory().getHolder() instanceof Player) {
-                for (VillagerLevel villager : GameManager.getInstance().getVillage().getVillagersLevel().values()) {
-                    if (villager.getInventory() == event.getInventory()) {
-                        GameManager.getInstance().getLogger().info(player.getName() + " a cliqué sur " + villager.getName().toString());
-                        villager.GiveItems(villager.getInventory(), item, player);
-                        event.setCancelled(true);
-                    }
-                }
-                for (VillagerVendor villager : GameManager.getInstance().getVillage().getVillagersVendor().values()) {
-                    if (villager.getInventory() == event.getInventory()) {
-                        villager.GiveItems(villager.getInventory(), item, player);
-                        event.setCancelled(true);
-                    }
-                }
-            } else if (event.getClickedInventory() != null && event.getClickedInventory().getHolder() instanceof Villager) {
-                event.setCancelled(true);
+                villager.giveItems(event.getInventory(), item, player);
             }
+
+            event.setCancelled(true);
+        } else if (event.getClickedInventory() != null && event.getClickedInventory().getHolder() instanceof Villager) {
+            event.setCancelled(true);
         }
     }
 

@@ -1,4 +1,4 @@
-package fr.miuby.survi;
+package fr.miuby.survi.villager;
 
 import org.bukkit.inventory.ItemStack;
 

@@ -1,4 +1,4 @@
-package fr.miuby.survi.blessing;
+package fr.miuby.survi.villager.blessing;
 
 import fr.miuby.survi.AlphaPlayer;
 

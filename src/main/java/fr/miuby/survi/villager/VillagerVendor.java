@@ -1,9 +1,9 @@
-package fr.miuby.survi.village;
+package fr.miuby.survi.villager;
 
 import fr.miuby.survi.AlphaPlayer;
 import fr.miuby.survi.GameManager;
-import fr.miuby.survi.blessing.Blessing;
-import fr.miuby.survi.blessing.BlessingEffect;
+import fr.miuby.survi.villager.blessing.Blessing;
+import fr.miuby.survi.villager.blessing.BlessingEffect;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
@@ -13,21 +13,24 @@ import org.bukkit.entity.Villager;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.metadata.FixedMetadataValue;
 
 import java.util.Objects;
 
-public class VillagerVendor extends VillagerBlessing {
+public class VillagerVendor extends AVillager {
     private final ItemStack[] itemStacks;
+    private final String name;
 
-    public VillagerVendor(Location location, String name, Villager.Type type, Villager.Profession profession, Blessing[] blessings, Component[] messages, ItemStack[] itemStacks) {
-        super(location, name, type, profession, blessings, messages);
+    public VillagerVendor(String name, Location location, Villager.Type type, Villager.Profession profession, Blessing[] blessings, Component[] messages, ItemStack[] itemStacks) {
+        super(name, location, type, profession, blessings, messages);
         this.itemStacks = itemStacks;
-        villager.setMetadata("vendor", new FixedMetadataValue(GameManager.getInstance().getPlugin(), 0));
+        this.name = name;
+
+        getVillager().customName(getName());
         updateInventory();
     }
 
-    public void GiveItems(Inventory inventory, ItemStack item, Player player){
+    @Override
+    public void giveItems(Inventory inventory, ItemStack item, Player player){
         for (ItemStack inventoryItem : inventory.getContents()) {
             if (inventoryItem != null && inventoryItem.getType() == item.getType()) {
                 if (item.getAmount() < inventoryItem.getAmount()) {
@@ -53,24 +56,26 @@ public class VillagerVendor extends VillagerBlessing {
         this.inventory = inv;
     }
 
+    @Override
+    public Component getName() {
+        return Component.text(name).color(NamedTextColor.AQUA);
+    }
+
     public void applyBlessing(Player player, ItemStack itemStack) {
         for (BlessingEffect effect : getBlessing(itemStack).getBlessingEffects()) {
-            AlphaPlayer alphaPlayer = GameManager.getInstance().getAlphaPlayers().get(player.getUniqueId());
-            effect.applyEffect(alphaPlayer);
+            effect.applyEffect(AlphaPlayer.get(player.getUniqueId()));
         }
     }
 
-
-
     public Blessing getBlessing(ItemStack itemStack) {
-        return blessings[getIndex(itemStack)];
+        return blessings[getItemIndex(itemStack)];
     }
 
     public Component getMessage(ItemStack itemStack) {
-        return messages[getIndex(itemStack)].color(NamedTextColor.AQUA);
+        return messages[getItemIndex(itemStack)].color(NamedTextColor.AQUA);
     }
 
-    private int getIndex(ItemStack itemStack) {
+    private int getItemIndex(ItemStack itemStack) {
         for (int i = 0; i < itemStacks.length; i++) {
             if (itemStacks[i].getType() == itemStack.getType())
                 return i;

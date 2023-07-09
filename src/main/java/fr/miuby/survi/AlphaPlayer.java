@@ -1,7 +1,8 @@
 package fr.miuby.survi;
 
 import fr.miuby.survi.role.*;
-import fr.miuby.survi.village.VillagerLevel;
+import fr.miuby.survi.villager.AVillager;
+import fr.miuby.survi.villager.VillagerLevel;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
@@ -40,6 +41,10 @@ public class AlphaPlayer implements Serializable {
 
     public AlphaPlayer(UUID uuid) {
         this.uuid = uuid;
+    }
+
+    public static AlphaPlayer get(UUID uuid) {
+        return GameManager.getInstance().getAlphaPlayer(uuid);
     }
 
     public void newScoreboard() {
@@ -103,8 +108,9 @@ public class AlphaPlayer implements Serializable {
                 }
             }
 
-            for (VillagerLevel villager : GameManager.getInstance().getVillage().getVillagersLevel().values()) {
-                villager.ApplyAllCurrentBlessing(this);
+            for (AVillager villager : GameManager.getInstance().getVillagerFactory().getVillagers().values()) {
+                if (villager instanceof VillagerLevel)
+                    ((VillagerLevel)villager).ApplyAllCurrentBlessing(this);
             }
 
             updateLife();

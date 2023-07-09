@@ -1,16 +1,15 @@
 package fr.miuby.survi.listener;
 
 import fr.miuby.survi.AlphaPlayer;
+import fr.miuby.survi.villager.AVillager;
+import fr.miuby.survi.world.EWorld;
 import fr.miuby.survi.GameManager;
-import fr.miuby.survi.village.VillagerLevel;
-import fr.miuby.survi.village.VillagerVendor;
+import fr.miuby.survi.world.Monde;
 import io.papermc.paper.advancement.AdvancementDisplay;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
-import org.bukkit.*;
 import org.bukkit.advancement.Advancement;
 import org.bukkit.advancement.AdvancementProgress;
-import org.bukkit.block.Block;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Villager;
@@ -37,32 +36,20 @@ public class PlayerListener implements Listener {
             GameManager.getInstance().getAlphaPlayers().put(uuid, alphaPlayer);
             GameManager.getInstance().getDatabase().getAlphaPlayers(alphaPlayer, uuid);
         }else{
-            GameManager.getInstance().getAlphaPlayers().get(uuid).actualize();
+            AlphaPlayer.get(uuid).actualize();
         }
     }
 
     @EventHandler
     public void onPlayerQuit(PlayerQuitEvent event){
-        Player player = event.getPlayer();
-        UUID uuid = player.getUniqueId();
-        GameManager.getInstance().getAlphaPlayers().get(uuid).resetPlayer();
+        AlphaPlayer.get(event.getPlayer().getUniqueId()).resetPlayer();
     }
 
     @EventHandler
     public void onPlayerMove(PlayerMoveEvent event) {
-        if(event.getPlayer().getLocation().getWorld() == GameManager.getInstance().getVillage().getWorld()) {
-            Block block = event.getPlayer().getLocation().getBlock();
-            if(block.getX() > 12645 || block.getX() < 11649 || block.getZ() > 1965 || block.getZ() < 1227) {
-                event.getPlayer().teleport(new Location(GameManager.getInstance().getVillage().getWorld(), 12073, 64, 1463));
-                event.getPlayer().sendMessage(Component.text("Ne sort pas des limite du village, c'est dangereux !!").color(NamedTextColor.RED));
-            }
-        }
-        if(event.getPlayer().getLocation().getWorld() == GameManager.getInstance().GetWorld("Wilderness")) {
-            Block block = event.getPlayer().getLocation().getBlock();
-            if(block.getX() > 10000 || block.getX() < -10000 || block.getZ() > 10000 || block.getZ() < -10000) {
-                event.getPlayer().teleport(new Location(GameManager.getInstance().getVillage().getWorld(), 12073, 64, 1463));
-                event.getPlayer().sendMessage(Component.text("Ne sort pas des limite du wilderness, c'est dangereux !! (Parle avec Thomas Pesquet)").color(NamedTextColor.RED));
-            }
+        if(Monde.isOutOfLimit(event.getPlayer(), EWorld.VILLAGE) || Monde.isOutOfLimit(event.getPlayer(), EWorld.WILDERNESS)) {
+            event.getPlayer().teleport(GameManager.getInstance().getMonde(EWorld.VILLAGE).getSpawnPoint());
+            event.getPlayer().sendMessage(Component.text("Ne sort pas des limite du village, c'est dangereux !!").color(NamedTextColor.RED));
         }
     }
 
@@ -73,35 +60,22 @@ public class PlayerListener implements Listener {
         AdvancementProgress advancementProgress = player.getAdvancementProgress(advancement);
         AdvancementDisplay advancementDisplay = advancement.getDisplay();
 
-        String categorie = advancement.getKey().getKey().split("/")[0];
-        if(advancementProgress.isDone() && advancementDisplay != null && !categorie.equals("recipes")) {
+        String category = advancement.getKey().getKey().split("/")[0];
+        if(advancementProgress.isDone() && advancementDisplay != null && !category.equals("recipes")) {
             if(advancementDisplay.frame() == AdvancementDisplay.Frame.CHALLENGE) {
-                GameManager.getInstance().getAlphaPlayers().get(player.getUniqueId()).gainOneSuccess(true);
+                AlphaPlayer.get(player.getUniqueId()).gainOneSuccess(true);
             }
         }
     }
 
     @EventHandler
     public void onPlayerInteractEntity(PlayerInteractEntityEvent event) {
-        Player p = event.getPlayer();
+        Player player = event.getPlayer();
         if(event.getRightClicked().getType() == EntityType.VILLAGER) {
-            Villager v = (Villager) event.getRightClicked();
+            Villager villager = (Villager) event.getRightClicked();
+            if (AVillager.contains(villager.getUniqueId()))
+                player.openInventory(AVillager.get(villager.getUniqueId()).getInventory());
 
-            if (!v.getMetadata("name").isEmpty() && v.customName() != null) {
-                if (!v.getMetadata("level").isEmpty()) {
-
-                    VillagerLevel villager = GameManager.getInstance().getVillage().getVillagersLevel().get(v.getMetadata("name").get(0).asString());
-                    if (villager != null) {
-                        p.openInventory(villager.getInventory());
-                    }
-                } else if (!v.getMetadata("vendor").isEmpty()) {
-
-                    VillagerVendor villager = GameManager.getInstance().getVillage().getVillagersVendor().get(v.getMetadata("name").get(0).asString());
-                    if (villager != null) {
-                        p.openInventory(villager.getInventory());
-                    }
-                }
-            }
             event.setCancelled(true);
         } else if(event.getRightClicked().getType() == EntityType.WANDERING_TRADER) {
             event.setCancelled(true);
@@ -110,12 +84,12 @@ public class PlayerListener implements Listener {
 
     @EventHandler
     public void onPlayerDeath(PlayerDeathEvent event) {
-        GameManager.getInstance().getAlphaPlayers().get(event.getPlayer().getUniqueId()).addMort(1);
+        AlphaPlayer.get(event.getPlayer().getUniqueId()).addMort(1);
     }
 
     @EventHandler
     public void onPlayerChangedWorld(PlayerChangedWorldEvent event) {
         GameManager.getInstance().switchWorld(event.getPlayer().getWorld().getName(), event.getPlayer().getName());
-        GameManager.getInstance().getAlphaPlayers().get(event.getPlayer().getUniqueId()).updateLife();
+        AlphaPlayer.get(event.getPlayer().getUniqueId()).updateLife();
     }
 }

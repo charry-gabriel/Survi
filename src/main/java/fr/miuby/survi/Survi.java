@@ -26,12 +26,7 @@ public class Survi extends JavaPlugin {
         getConfig().options().copyDefaults(true);
         saveConfig();
 
-        GameManager.getInstance().Init(this);
-    }
-
-    @Override
-    public void onDisable() {
-        GameManager.getInstance().getVillage().DeleteVillagers();
+        GameManager.getInstance().init(this);
     }
 
     @Override

@@ -6,7 +6,7 @@ import java.util.logging.Level;
 
 import fr.miuby.survi.AlphaPlayer;
 import fr.miuby.survi.GameManager;
-import fr.miuby.survi.village.VillagerLevel;
+import fr.miuby.survi.villager.AVillager;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
@@ -201,7 +201,7 @@ public abstract class Database {
     }
 
 
-    public void getVillager(VillagerLevel villagerLevel, String name) {
+    public boolean getVillager(AVillager villager, String name) {
         Connection conn = null;
         PreparedStatement ps = null;
         ResultSet rs;
@@ -212,12 +212,16 @@ public abstract class Database {
             rs = ps.executeQuery();
 
             if (rs.next()) {
-                villagerLevel.setLevel(rs.getInt("level"));
+                villager.setLevel(rs.getInt("level"));
+                UUID uuid = UUID.fromString(rs.getString("uuid"));
+
+                if (villager.setUUID(uuid))
+                    return true;
+                else
+                    DeleteVillager(uuid);
             } else {
-                CreateDBVillager(name, villagerLevel.getLevel());
+                return false;
             }
-            villagerLevel.getVillager().customName(villagerLevel.getName());
-            villagerLevel.updateInventory();
         } catch (SQLException ex) {
             GameManager.getInstance().getLogger().log(Level.SEVERE, Errors.sqlConnectionExecute, ex);
         } finally {
@@ -230,15 +234,16 @@ public abstract class Database {
                 GameManager.getInstance().getLogger().log(Level.SEVERE, Errors.sqlConnectionClose, ex);
             }
         }
+        return false;
     }
 
-    public void CreateDBVillager(String name, int level) {
+    public void CreateDBVillager(String name, UUID uuid) {
         Connection conn = null;
         PreparedStatement ps = null;
         GameManager.getInstance().getLogger().info("CreateDBVillager");
         try {
             conn = getSQLConnection();
-            ps = conn.prepareStatement("INSERT INTO villager VALUES ('"+name+"', '"+level+"')");
+            ps = conn.prepareStatement("INSERT INTO villager VALUES ('"+uuid+"', '0', '"+name+"')");
             ps.executeUpdate();
         } catch (SQLException ex) {
             GameManager.getInstance().getLogger().log(Level.SEVERE, Errors.sqlConnectionExecute, ex);
@@ -254,13 +259,35 @@ public abstract class Database {
         }
     }
 
-    public void updateVillager(String name, int level) {
+    public void DeleteVillager(UUID uuid) {
+        Connection conn = null;
+        PreparedStatement ps = null;
+        GameManager.getInstance().getLogger().info("DeleteVillager");
+        try {
+            conn = getSQLConnection();
+            ps = conn.prepareStatement("DELETE FROM villager WHERE uuid='"+uuid+"'");
+            ps.executeUpdate();
+        } catch (SQLException ex) {
+            GameManager.getInstance().getLogger().log(Level.SEVERE, Errors.sqlConnectionExecute, ex);
+        } finally {
+            try {
+                if (ps != null)
+                    ps.close();
+                if (conn != null)
+                    conn.close();
+            } catch (SQLException ex) {
+                GameManager.getInstance().getLogger().log(Level.SEVERE, Errors.sqlConnectionClose, ex);
+            }
+        }
+    }
+
+    public void updateVillager(UUID uuid, int level) {
         Connection conn = null;
         PreparedStatement ps = null;
         GameManager.getInstance().getLogger().info("updateVillager");
         try {
             conn = getSQLConnection();
-            ps = conn.prepareStatement("UPDATE villager SET level = '"+level+"' WHERE name = '"+name+"'");
+            ps = conn.prepareStatement("UPDATE villager SET level = '"+level+"' WHERE uuid = '"+uuid+"'");
             ps.executeUpdate();
         } catch (SQLException ex) {
             GameManager.getInstance().getLogger().log(Level.SEVERE, Errors.sqlConnectionExecute, ex);
