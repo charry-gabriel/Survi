@@ -216,6 +216,8 @@ public abstract class Database {
             } else {
                 CreateDBVillager(name, villagerLevel.getLevel());
             }
+            villagerLevel.getVillager().customName(villagerLevel.getName());
+            villagerLevel.updateInventory();
         } catch (SQLException ex) {
             GameManager.getInstance().getLogger().log(Level.SEVERE, Errors.sqlConnectionExecute, ex);
         } finally {

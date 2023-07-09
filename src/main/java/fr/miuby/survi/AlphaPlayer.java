@@ -84,6 +84,25 @@ public class AlphaPlayer implements Serializable {
             player.setScoreboard(scoreboard);
             GameManager.getInstance().switchWorld(player.getWorld().getName(), pseudo);
 
+            for(AlphaPlayer alphaPlayer : GameManager.getInstance().getAlphaPlayers().values()) {
+                if(alphaPlayer.getPlayer() != null) {
+                    switch (alphaPlayer.getPlayer().getWorld().getName()) {
+                        case "Village":
+                            Objects.requireNonNull(this.getScoreboard().getTeam("Village")).addEntry(alphaPlayer.getPseudo());
+                            break;
+                        case "Wilderness":
+                            Objects.requireNonNull(this.getScoreboard().getTeam("Wilderness")).addEntry(alphaPlayer.getPseudo());
+                            break;
+                        case "Wilderness_nether":
+                            Objects.requireNonNull(this.getScoreboard().getTeam("Nether")).addEntry(alphaPlayer.getPseudo());
+                            break;
+                        case "Wilderness_the_end":
+                            Objects.requireNonNull(this.getScoreboard().getTeam("End")).addEntry(alphaPlayer.getPseudo());
+                            break;
+                    }
+                }
+            }
+
             for (VillagerLevel villager : GameManager.getInstance().getVillage().getVillagersLevel().values()) {
                 villager.ApplyAllCurrentBlessing(this);
             }

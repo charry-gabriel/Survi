@@ -33,8 +33,6 @@ public class VillagerLevel extends VillagerBlessing {
         villager.setMetadata("level", new FixedMetadataValue(GameManager.getInstance().getPlugin(), 0));
 
         GameManager.getInstance().getDatabase().getVillager(this, name);
-
-        updateInventory();
     }
 
     public void GiveItems(Inventory inventory, ItemStack item, Player player){
