@@ -156,7 +156,7 @@ public class MyListener implements Listener {
     public void onInventoryClick(InventoryClickEvent event) {
         Player player = (Player)event.getWhoClicked();
         ItemStack item = event.getCurrentItem();
-        if (event.getClick() == ClickType.RIGHT && event.getClickedInventory() != null && event.getClickedInventory().getHolder() instanceof Player && event.getInventory().getHolder() instanceof Villager) {
+        if (event.getClickedInventory() != null && event.getClickedInventory().getHolder() instanceof Player && event.getInventory().getHolder() instanceof Villager) {
             if (item != null && item.getType() != Material.AIR) {
                 Villager v = (Villager) event.getInventory().getHolder();
                 AVillager villager = AVillager.get(v.getUniqueId());
