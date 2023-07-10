@@ -659,9 +659,9 @@ public class VillagerFactory {
         ItemStack itemStack = new ItemStack(Material.POTION);
         PotionMeta meta = (PotionMeta) itemStack.getItemMeta();
         meta.addCustomEffect(new PotionEffect(PotionEffectType.HEAL,1,1), false);
-        meta.addCustomEffect(new PotionEffect(PotionEffectType.ABSORPTION,3600,4), false);
-        meta.addCustomEffect(new PotionEffect(PotionEffectType.SPEED,20,20), false);
-        meta.addCustomEffect(new PotionEffect(PotionEffectType.REGENERATION,10,10), false);
+        meta.addCustomEffect(new PotionEffect(PotionEffectType.ABSORPTION,3600*20,4), false);
+        meta.addCustomEffect(new PotionEffect(PotionEffectType.SPEED,20*20,20), false);
+        meta.addCustomEffect(new PotionEffect(PotionEffectType.REGENERATION,10*20,10), false);
         itemStack.setItemMeta(meta);
 
         Blessing[] blessings = new Blessing[]{
@@ -749,11 +749,11 @@ public class VillagerFactory {
         };
 
         Blessing[] blessings = new Blessing[]{
-                new Blessing(new ItemEffect(new ItemStack(Material.EMERALD, 3))),
                 new Blessing(new ItemEffect(new ItemStack(Material.EMERALD, 9))),
                 new Blessing(new ItemEffect(new ItemStack(Material.EMERALD, 9))),
                 new Blessing(new ItemEffect(new ItemStack(Material.EMERALD, 9))),
-                new Blessing(new ItemEffect(new ItemStack(Material.EMERALD, 8))),
+                new Blessing(new ItemEffect(new ItemStack(Material.EMERALD, 9))),
+                new Blessing(new ItemEffect(new ItemStack(Material.EMERALD, 9))),
 
         };
 
