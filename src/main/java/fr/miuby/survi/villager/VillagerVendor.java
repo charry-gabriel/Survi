@@ -77,7 +77,7 @@ public class VillagerVendor extends AVillager {
 
     private int getItemIndex(ItemStack itemStack) {
         for (int i = 0; i < itemStacks.length; i++) {
-            if (itemStacks[i].getType() == itemStack.getType())
+            if (itemStacks[i].equals(itemStack))
                 return i;
         }
         return -1;
