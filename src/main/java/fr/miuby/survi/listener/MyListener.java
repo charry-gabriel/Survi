@@ -1,6 +1,7 @@
 package fr.miuby.survi.listener;
 
 import fr.miuby.survi.*;
+import fr.miuby.survi.role.ERole;
 import fr.miuby.survi.villager.AVillager;
 import fr.miuby.survi.world.EWorld;
 import fr.miuby.survi.world.Monde;
@@ -130,11 +131,23 @@ public class MyListener implements Listener {
         //si on prends des degats
         if(event.getEntityType() == EntityType.PLAYER) {
             AlphaPlayer alphaPlayer = AlphaPlayer.get(event.getEntity().getUniqueId());
+            double damage = event.getDamage();
 
             if(Monde.isPlayerOnWorld(alphaPlayer.getPlayer(), EWorld.END) || Monde.isPlayerOnWorld(alphaPlayer.getPlayer(), EWorld.END2)) {
-                event.setDamage(event.getDamage() / (alphaPlayer.getResistance() * alphaPlayer.getEndResistance()));
+                damage = damage / (alphaPlayer.getResistance() * alphaPlayer.getEndResistance());
             } else {
-                event.setDamage(event.getDamage() / alphaPlayer.getResistance());
+                damage = damage / alphaPlayer.getResistance();
+            }
+
+            if (alphaPlayer.getRole().getType() == ERole.COUPLE) {
+                for (AlphaPlayer alpha : GameManager.getInstance().getAlphaPlayers().values()) {
+                    if (alpha.getRole().getType() == ERole.COUPLE) {
+                        event.setDamage(damage);
+                    }
+                }
+            }
+            else {
+                event.setDamage(damage);
             }
         }
     }
