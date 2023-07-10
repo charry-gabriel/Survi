@@ -7,8 +7,14 @@ import fr.miuby.survi.locked_item.LockedArmorType;
 import fr.miuby.survi.locked_item.LockedToolType;
 import net.kyori.adventure.text.Component;
 import org.bukkit.*;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Villager;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.EnchantmentStorageMeta;
+import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.meta.PotionMeta;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 
 import java.util.*;
 
@@ -33,6 +39,10 @@ public class VillagerFactory {
         spawnFermier2();
         spawnRiche();
         spawnGolDRoger();
+        spawnEnchanteur();
+        spawnPolicier();
+        spawnPharmacien();
+        spawnLibraire();
     }
 
     private void addNewVillager(AVillager villager) {
@@ -192,7 +202,7 @@ public class VillagerFactory {
                 Component.text( "Maddox MAX"),
         };
 
-        this.addNewVillager(new VillagerLevel("Maddox I", location,Villager.Type.TAIGA, Villager.Profession.BUTCHER, blessings, messages, tributes, names));
+        this.addNewVillager(new VillagerLevel("Maddox I", location, Villager.Type.TAIGA, Villager.Profession.BUTCHER, blessings, messages, tributes, names));
     }
 
     private void spawnThomas(){
@@ -233,7 +243,7 @@ public class VillagerFactory {
                 Component.text( "Venez me voir."),
                 Component.text( "Merci, revenez dans 100h pour la suite. Vous pouvez maintenant explorer l'end ! "),
                 Component.text( "Venez me voir."),
-                Component.text( "Merci pour cet objet unique, pour te récompenser voici un peu de poisson. Vous pouvez maintenant explorer le Wilderness à l'infini."),
+                Component.text( "Merci pour cet objet unique. Vous pouvez maintenant explorer le Wilderness à l'infini."),
                 Component.text( "IMPOSSIBLE"),
         };
 
@@ -250,7 +260,7 @@ public class VillagerFactory {
                 Component.text( "Thomas Pesquet V"),
         };
 
-        this.addNewVillager(new VillagerLevel("Thomas Pesquet I", location,Villager.Type.SNOW, Villager.Profession.FISHERMAN, blessings, messages, tributes, names));
+        this.addNewVillager(new VillagerLevel("Thomas Pesquet I", location, Villager.Type.SNOW, Villager.Profession.FISHERMAN, blessings, messages, tributes, names));
     }
 
     private void spawnStuff(){
@@ -292,7 +302,7 @@ public class VillagerFactory {
                 Component.text( "Blue Moon"),
         };
 
-        this.addNewVillager(new VillagerLevel("Cowboy", location, Villager.Type.JUNGLE, Villager.Profession.ARMORER, blessings, messages, tributes, names));
+        this.addNewVillager(new VillagerLevel("Comboy", location, Villager.Type.JUNGLE, Villager.Profession.ARMORER, blessings, messages, tributes, names));
     }
 
     private void spawnTools(){
@@ -334,7 +344,7 @@ public class VillagerFactory {
                 Component.text( "Diggy Diggy Hole"),
         };
 
-        this.addNewVillager(new VillagerLevel("Janod", location, Villager.Type.TAIGA, Villager.Profession.WEAPONSMITH, blessings, messages, tributes, names));
+        this.addNewVillager(new VillagerLevel("Janod",location, Villager.Type.TAIGA, Villager.Profession.WEAPONSMITH, blessings, messages, tributes, names));
     }
 
     private void spawnFrancois(){
@@ -396,7 +406,7 @@ public class VillagerFactory {
 
         };
 
-        this.addNewVillager(new VillagerLevel("Léon XIII", location, Villager.Type.JUNGLE, Villager.Profession.CLERIC, blessings, messages, tributes, names));
+        this.addNewVillager(new VillagerLevel("Léon XIII",location, Villager.Type.JUNGLE, Villager.Profession.CLERIC, blessings, messages, tributes, names));
     }
 
     private void spawnHeros(){
@@ -446,7 +456,7 @@ public class VillagerFactory {
                 Component.text( "Merci pour ce poisson, voici 1 émeraude."),
         };
 
-        this.addNewVillager(new VillagerVendor("Bajau", location,Villager.Type.SWAMP, Villager.Profession.NITWIT, blessings, messages, items));
+        this.addNewVillager(new VillagerVendor("Vendeur Bajau", location, Villager.Type.SWAMP, Villager.Profession.NITWIT, blessings, messages, items));
     }
 
     private void spawnPecheur2(){
@@ -467,25 +477,33 @@ public class VillagerFactory {
                 Component.text( "Merci pour ces names-tags, voici 2 émeraude."),
         };
 
-        this.addNewVillager(new VillagerVendor("Sampan", location,Villager.Type.SWAMP, Villager.Profession.NITWIT, blessings, messages, items));
+        this.addNewVillager(new VillagerVendor("Vendeur Sampan",location, Villager.Type.SWAMP, Villager.Profession.NITWIT, blessings, messages, items));
     }
 
     private void spawnGolDRoger(){
         Location location = new Location(world, 12099.5, 69, 1474.5, 90, 0);
 
         ItemStack[] items = new ItemStack[]{
-                new ItemStack(Material.BEDROCK, 64),
+                new ItemStack(Material.EMERALD_BLOCK, 9),
         };
 
+        ItemStack itemStack = new ItemStack(Material.FISHING_ROD);
+        ItemMeta meta = itemStack.getItemMeta();
+        meta.addEnchant(Enchantment.DURABILITY, 5,true);
+        meta.addEnchant(Enchantment.LURE, 5,true);
+        meta.addEnchant(Enchantment.LUCK, 5,true);
+        meta.addEnchant(Enchantment.VANISHING_CURSE, 1,false);
+        itemStack.setItemMeta(meta);
+
         Blessing[] blessings = new Blessing[]{
-                new Blessing(new ItemEffect(new ItemStack(Material.EMERALD, 1))),
+                new Blessing(new ItemEffect(itemStack)),
         };
 
         Component[] messages = new Component[]{
-                Component.text( "Merci pour ces bedrock, voici 1 émeraude."),
+                Component.text( "Voici une canne à pêche !"),
         };
 
-        this.addNewVillager(new VillagerVendor("Gol D. Roger", location,Villager.Type.SWAMP, Villager.Profession.NITWIT, blessings, messages, items));
+        this.addNewVillager(new VillagerVendor("Gol D. Roger", location, Villager.Type.SAVANNA, Villager.Profession.WEAPONSMITH, blessings, messages, items));
     }
 
     private void spawnRiche(){
@@ -493,7 +511,7 @@ public class VillagerFactory {
 
         Tribute[] tributes = new Tribute[]{
                 new Tribute(new ItemStack(Material.COPPER_BLOCK, 64), new ItemStack(Material.WAXED_COPPER_BLOCK, 64), new ItemStack(Material.EXPOSED_COPPER, 64), new ItemStack(Material.WAXED_EXPOSED_COPPER, 64), new ItemStack(Material.WEATHERED_COPPER, 64), new ItemStack(Material.WAXED_WEATHERED_COPPER, 64), new ItemStack(Material.OXIDIZED_COPPER, 64), new ItemStack(Material.WAXED_OXIDIZED_COPPER, 64), new ItemStack(Material.TORCHFLOWER, 64), new ItemStack(Material.PITCHER_PLANT, 64)),
-                new Tribute(new ItemStack(Material.COAL, 128), new ItemStack(Material.CHARCOAL, 128), new ItemStack(Material.COPPER_INGOT, 128), new ItemStack(Material.IRON_INGOT, 128), new ItemStack(Material.GOLD_INGOT, 128), new ItemStack(Material.REDSTONE, 128), new ItemStack(Material.QUARTZ, 128), new ItemStack(Material.DIAMOND, 128), new ItemStack(Material.EMERALD, 64), new ItemStack(Material.FLINT, 128), new ItemStack(Material.GLOWSTONE_DUST, 128), new ItemStack(Material.NETHERITE_INGOT, 12)),
+                new Tribute(new ItemStack(Material.COAL, 256), new ItemStack(Material.CHARCOAL, 128), new ItemStack(Material.COPPER_INGOT, 256), new ItemStack(Material.IRON_INGOT, 256), new ItemStack(Material.GOLD_INGOT, 256), new ItemStack(Material.REDSTONE, 256), new ItemStack(Material.QUARTZ, 256), new ItemStack(Material.DIAMOND, 64), new ItemStack(Material.EMERALD, 16), new ItemStack(Material.FLINT, 128), new ItemStack(Material.GLOWSTONE_DUST, 128), new ItemStack(Material.NETHERITE_INGOT, 6)),
                 new Tribute(new ItemStack(Material.STRIPPED_OAK_WOOD, 64), new ItemStack(Material.STRIPPED_SPRUCE_WOOD, 64), new ItemStack(Material.STRIPPED_BIRCH_WOOD, 64), new ItemStack(Material.STRIPPED_JUNGLE_WOOD, 64), new ItemStack(Material.STRIPPED_ACACIA_WOOD, 64), new ItemStack(Material.STRIPPED_DARK_OAK_WOOD, 64), new ItemStack(Material.STRIPPED_MANGROVE_WOOD, 64), new ItemStack(Material.STRIPPED_CHERRY_WOOD, 64), new ItemStack(Material.STRIPPED_BAMBOO_BLOCK, 64), new ItemStack(Material.STRIPPED_WARPED_HYPHAE, 64), new ItemStack(Material.STRIPPED_CRIMSON_HYPHAE, 64)),
                 new Tribute(new ItemStack(Material.SPYGLASS, 1), new ItemStack(Material.CLOCK, 1), new ItemStack(Material.SHEARS, 1), new ItemStack(Material.FLINT_AND_STEEL, 1), new ItemStack(Material.BRUSH, 1), new ItemStack(Material.LEAD, 64), new ItemStack(Material.COMPASS, 64), new ItemStack(Material.RECOVERY_COMPASS, 9), new ItemStack(Material.MUSIC_DISC_CAT, 10)),
                 new Tribute(new ItemStack(Material.TURTLE_HELMET, 3), new ItemStack(Material.LEATHER_HORSE_ARMOR, 3), new ItemStack(Material.IRON_HORSE_ARMOR, 3), new ItemStack(Material.GOLDEN_HORSE_ARMOR, 3), new ItemStack(Material.DIAMOND_HORSE_ARMOR, 3), new ItemStack(Material.RESPAWN_ANCHOR, 128)),
@@ -571,7 +589,7 @@ public class VillagerFactory {
                 new Blessing(new ItemEffect(new ItemStack(Material.EMERALD, 1))),
                 new Blessing(new ItemEffect(new ItemStack(Material.EMERALD, 1))),
                 new Blessing(new ItemEffect(new ItemStack(Material.EMERALD, 1))),
-                new Blessing(new ItemEffect(new ItemStack(Material.EMERALD, 1))),
+                new Blessing(new ItemEffect(new ItemStack(Material.EMERALD, 2))),
                 new Blessing(new ItemEffect(new ItemStack(Material.EMERALD, 1))),
         };
 
@@ -582,11 +600,11 @@ public class VillagerFactory {
                 Component.text( "Merci pour la viande, voici 1 émeraude."),
                 Component.text( "Merci pour la viande, voici 1 émeraude."),
                 Component.text( "Merci pour la viande, voici 1 émeraude."),
-                Component.text( "Merci pour ces pattes, voici 1 émeraude."),
+                Component.text( "Merci pour ces pattes, voici 2 émeraude."),
                 Component.text( "Merci pour ce cuir, voici 1 émeraude."),
         };
 
-        this.addNewVillager(new VillagerVendor("Fermier 1", location, Villager.Type.SWAMP, Villager.Profession.NITWIT, blessings, messages, items));
+        this.addNewVillager(new VillagerVendor("Vendeur Santoku", location, Villager.Type.SWAMP, Villager.Profession.NITWIT, blessings, messages, items));
     }
 
     private void spawnFermier2(){
@@ -597,37 +615,156 @@ public class VillagerFactory {
                 new ItemStack(Material.GOLDEN_CARROT, 64),
                 new ItemStack(Material.BAKED_POTATO, 64),
                 new ItemStack(Material.PUMPKIN_PIE, 64),
-                new ItemStack(Material.SUGAR, 64),
                 new ItemStack(Material.MELON, 64),
-                new ItemStack(Material.GREEN_DYE, 64),
                 new ItemStack(Material.COOKIE, 64),
                 new ItemStack(Material.NETHER_WART_BLOCK, 64),
+                new ItemStack(Material.BEETROOT, 64),
+                new ItemStack(Material.GLOW_BERRIES, 64),
         };
 
         Blessing[] blessings = new Blessing[]{
+                new Blessing(new ItemEffect(new ItemStack(Material.EMERALD, 2))),
+                new Blessing(new ItemEffect(new ItemStack(Material.EMERALD, 2))),
                 new Blessing(new ItemEffect(new ItemStack(Material.EMERALD, 1))),
+                new Blessing(new ItemEffect(new ItemStack(Material.EMERALD, 2))),
                 new Blessing(new ItemEffect(new ItemStack(Material.EMERALD, 1))),
-                new Blessing(new ItemEffect(new ItemStack(Material.EMERALD, 1))),
-                new Blessing(new ItemEffect(new ItemStack(Material.EMERALD, 1))),
-                new Blessing(new ItemEffect(new ItemStack(Material.EMERALD, 1))),
-                new Blessing(new ItemEffect(new ItemStack(Material.EMERALD, 1))),
+                new Blessing(new ItemEffect(new ItemStack(Material.EMERALD, 2))),
                 new Blessing(new ItemEffect(new ItemStack(Material.EMERALD, 1))),
                 new Blessing(new ItemEffect(new ItemStack(Material.EMERALD, 1))),
                 new Blessing(new ItemEffect(new ItemStack(Material.EMERALD, 1))),
         };
 
         Component[] messages = new Component[]{
-                Component.text( "Merci pour ce blé, voici 1 émeraude."),
-                Component.text( "Merci pour ces carottes, voici 1 émeraude."),
+                Component.text( "Merci pour ce blé, voici 2 émeraude."),
+                Component.text( "Merci pour ces carottes, voici 2 émeraude."),
                 Component.text( "Merci pour ces patates, voici 1 émeraude."),
-                Component.text( "Merci pour ces tartes, voici 1 émeraude."),
-                Component.text( "Merci pour ce sucre, voici 1 émeraude."),
+                Component.text( "Merci pour ces tartes, voici 2 émeraude."),
                 Component.text( "Merci pour ce melon, voici 1 émeraude."),
-                Component.text( "Merci pour ce colorant, voici 1 émeraude."),
-                Component.text( "Merci pour ces cookies, voici 1 émeraude."),
+                Component.text( "Merci pour ces cookies, voici 2 émeraude."),
                 Component.text( "Merci pour ces verrues, voici 1 émeraude."),
+                Component.text( "Merci pour ces betteraves, voici 1 émeraude."),
+                Component.text( "Merci pour ces baies, voici 1 émeraude."),
         };
 
-        this.addNewVillager(new VillagerVendor("Fermier 2", location, Villager.Type.SWAMP, Villager.Profession.NITWIT, blessings, messages, items));
+        this.addNewVillager(new VillagerVendor("Vendeur Tanaka", location, Villager.Type.SWAMP, Villager.Profession.NITWIT, blessings, messages, items));
+    }
+
+    private void spawnPharmacien(){
+        Location location = new Location(world, 12035.5, 64, 1425.5, 0, 0);
+
+        ItemStack[] items = new ItemStack[]{
+                new ItemStack(Material.EMERALD_BLOCK, 1),
+        };
+
+        ItemStack itemStack = new ItemStack(Material.POTION);
+        PotionMeta meta = (PotionMeta) itemStack.getItemMeta();
+        meta.addCustomEffect(new PotionEffect(PotionEffectType.HEAL,1,1), false);
+        meta.addCustomEffect(new PotionEffect(PotionEffectType.ABSORPTION,3600,4), false);
+        meta.addCustomEffect(new PotionEffect(PotionEffectType.SPEED,20,20), false);
+        meta.addCustomEffect(new PotionEffect(PotionEffectType.REGENERATION,10,10), false);
+        itemStack.setItemMeta(meta);
+
+        Blessing[] blessings = new Blessing[]{
+                new Blessing(new ItemEffect(itemStack)),
+        };
+
+        Component[] messages = new Component[]{
+                Component.text( "Voici un médicament, tu iras mieux avec ça !"),
+        };
+
+        this.addNewVillager(new VillagerVendor("Vendeur Nossos", location, Villager.Type.DESERT, Villager.Profession.CLERIC, blessings, messages, items));
+    }
+
+    private void spawnPolicier(){
+        Location location = new Location(world, 12068.5, 67, 1402.5, 90, 0);
+
+        ItemStack[] items = new ItemStack[]{
+                new ItemStack(Material.EMERALD_BLOCK, 1),
+        };
+
+        Blessing[] blessings = new Blessing[]{
+                new Blessing(new GameModeEffect(GameMode.SURVIVAL)),
+        };
+
+        Component[] messages = new Component[]{
+                Component.text( "Vous êtes libre, mais on vous surveille."),
+        };
+
+        this.addNewVillager(new VillagerVendor("Vendeur Aspis", location, Villager.Type.SNOW, Villager.Profession.FLETCHER, blessings, messages, items));
+    }
+
+    private void spawnEnchanteur(){
+        Location location = new Location(world, 12036.5, 79, 1403.5, -90, 0);
+
+        ItemStack[] items = new ItemStack[]{
+                new ItemStack(Material.EMERALD_BLOCK, 10),
+        };
+
+        ItemStack itemStack = new ItemStack(Material.ENCHANTED_BOOK);
+        EnchantmentStorageMeta meta = (EnchantmentStorageMeta) itemStack.getItemMeta();
+        meta.addStoredEnchant(Enchantment.MENDING, 1,false);
+        itemStack.setItemMeta(meta);
+
+        Blessing[] blessings = new Blessing[]{
+                new Blessing(new ItemEffect(itemStack)),
+        };
+
+        Component[] messages = new Component[]{
+                Component.text( "Voici un livre rare, utilise le intelligemment."),
+        };
+
+        this.addNewVillager(new VillagerVendor("Vendeur Goas", location, Villager.Type.SWAMP, Villager.Profession.LIBRARIAN, blessings, messages, items));
+    }
+
+    private void spawnLibraire(){
+        Location location = new Location(world, 12138.5, 73, 1447.5, -135, 0);
+
+        ItemStack itemStack = new ItemStack(Material.ENCHANTED_BOOK, 1);
+        EnchantmentStorageMeta meta = (EnchantmentStorageMeta) itemStack.getItemMeta();
+        meta.addStoredEnchant(Enchantment.DURABILITY, 3,false);
+        itemStack.setItemMeta(meta);
+
+        ItemStack itemStack2 = new ItemStack(Material.ENCHANTED_BOOK, 1);
+        EnchantmentStorageMeta meta2 = (EnchantmentStorageMeta) itemStack2.getItemMeta();
+        meta2.addStoredEnchant(Enchantment.PROTECTION_ENVIRONMENTAL, 4,false);
+        itemStack2.setItemMeta(meta2);
+
+        ItemStack itemStack3 = new ItemStack(Material.ENCHANTED_BOOK, 1);
+        EnchantmentStorageMeta meta3 = (EnchantmentStorageMeta) itemStack3.getItemMeta();
+        meta3.addStoredEnchant(Enchantment.DIG_SPEED, 5,false);
+        itemStack3.setItemMeta(meta3);
+
+        ItemStack itemStack4 = new ItemStack(Material.ENCHANTED_BOOK, 1);
+        EnchantmentStorageMeta meta4 = (EnchantmentStorageMeta) itemStack4.getItemMeta();
+        meta4.addStoredEnchant(Enchantment.THORNS, 3,false);
+        itemStack4.setItemMeta(meta4);
+
+        ItemStack itemStack5 = new ItemStack(Material.ENCHANTED_BOOK, 1);
+        EnchantmentStorageMeta meta5 = (EnchantmentStorageMeta) itemStack5.getItemMeta();
+        meta5.addStoredEnchant(Enchantment.ARROW_KNOCKBACK, 2,false);
+        itemStack5.setItemMeta(meta5);
+
+        ItemStack[] items = new ItemStack[]{
+                itemStack, itemStack2, itemStack3, itemStack4, itemStack5
+        };
+
+        Blessing[] blessings = new Blessing[]{
+                new Blessing(new ItemEffect(new ItemStack(Material.EMERALD, 3))),
+                new Blessing(new ItemEffect(new ItemStack(Material.EMERALD, 9))),
+                new Blessing(new ItemEffect(new ItemStack(Material.EMERALD, 9))),
+                new Blessing(new ItemEffect(new ItemStack(Material.EMERALD, 9))),
+                new Blessing(new ItemEffect(new ItemStack(Material.EMERALD, 8))),
+
+        };
+
+        Component[] messages = new Component[]{
+                Component.text( "Merci pour ce livre, voici un peu d'émeraude."),
+                Component.text( "Merci pour ce livre, voici un peu d'émeraude."),
+                Component.text( "Merci pour ce livre, voici un peu d'émeraude."),
+                Component.text( "Merci pour ce livre, voici un peu d'émeraude."),
+                Component.text( "Merci pour ce livre, voici un peu d'émeraude."),
+        };
+
+        this.addNewVillager(new VillagerVendor("Junkudo", location, Villager.Type.SAVANNA, Villager.Profession.LIBRARIAN, blessings, messages, items));
     }
 }
