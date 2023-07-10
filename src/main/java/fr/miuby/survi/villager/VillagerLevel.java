@@ -84,7 +84,7 @@ public class VillagerLevel extends AVillager {
         ItemStack itemToRemove = null;
 
         for (ItemStack tributeItem : inventory.getContents()) {
-            if (tributeItem != null && tributeItem.getType() == item.getType()) {
+            if (tributeItem != null && tributeItem.isSimilar(item)) {
                 GameManager.getInstance().getLogger().info(getName().toString() + " recupere " + item.getAmount() + " de " + item.getType().name());
                 if (item.getAmount() < tributeItem.getAmount()) {
                     tributeItem.setAmount(tributeItem.getAmount() - item.getAmount());

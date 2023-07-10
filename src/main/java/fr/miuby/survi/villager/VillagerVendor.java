@@ -32,7 +32,7 @@ public class VillagerVendor extends AVillager {
     @Override
     public void giveItems(Inventory inventory, ItemStack item, Player player){
         for (ItemStack inventoryItem : inventory.getContents()) {
-            if (inventoryItem != null && inventoryItem.getType() == item.getType()) {
+            if (inventoryItem != null && inventoryItem.isSimilar(item)) {
                 if (item.getAmount() < inventoryItem.getAmount()) {
                     player.sendMessage(Component.text("<" + name + "> Tu n'en as pas assez !").color(NamedTextColor.AQUA));
                 } else {
