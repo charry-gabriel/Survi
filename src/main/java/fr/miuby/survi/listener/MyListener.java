@@ -5,6 +5,7 @@ import fr.miuby.survi.role.ERole;
 import fr.miuby.survi.villager.AVillager;
 import fr.miuby.survi.world.EWorld;
 import fr.miuby.survi.world.Monde;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.EnderDragon;
@@ -118,6 +119,7 @@ public class MyListener implements Listener {
             }
         }
     }
+    boolean first = true;
 
     @EventHandler
     public void onEntityDamage(EntityDamageEvent event) {
@@ -130,25 +132,32 @@ public class MyListener implements Listener {
 
         //si on prends des degats
         if(event.getEntityType() == EntityType.PLAYER) {
-            AlphaPlayer alphaPlayer = AlphaPlayer.get(event.getEntity().getUniqueId());
+            AlphaPlayer firstPlayer = AlphaPlayer.get(event.getEntity().getUniqueId());
             double damage = event.getDamage();
+            double modifiedDamage;
 
-            if(Monde.isPlayerOnWorld(alphaPlayer.getPlayer(), EWorld.END) || Monde.isPlayerOnWorld(alphaPlayer.getPlayer(), EWorld.END2)) {
-                damage = damage / (alphaPlayer.getResistance() * alphaPlayer.getEndResistance());
+            if(Monde.isPlayerOnWorld(firstPlayer.getPlayer(), EWorld.END) || Monde.isPlayerOnWorld(firstPlayer.getPlayer(), EWorld.END2)) {
+                modifiedDamage = damage / (firstPlayer.getResistance() * firstPlayer.getEndResistance());
             } else {
-                damage = damage / alphaPlayer.getResistance();
+                modifiedDamage = damage / firstPlayer.getResistance();
             }
 
-            if (alphaPlayer.getRole().getType() == ERole.COUPLE) {
-                for (AlphaPlayer alpha : GameManager.getInstance().getAlphaPlayers().values()) {
-                    if (alpha.getRole().getType() == ERole.COUPLE) {
-                        event.setDamage(damage);
+            if (firstPlayer.getRole().getType() == ERole.COUPLE) {
+                GameManager.getInstance().getLogger().info("tu es un couple");
+                if (first) {
+                    first = false;
+                    for (AlphaPlayer otherPlayer : GameManager.getInstance().getAlphaPlayers().values()) {
+                        if (otherPlayer.getPlayer() != null && otherPlayer.getRole().getType() == ERole.COUPLE) {
+                            if (!otherPlayer.getPseudo().equals(firstPlayer.getPseudo())) {
+                                otherPlayer.getPlayer().damage(damage, firstPlayer.getPlayer());
+                                otherPlayer.getPlayer().sendMessage(Component.text("Ton partenaire a pris des dégats"));
+                            }
+                        }
                     }
                 }
+                first = true;
             }
-            else {
-                event.setDamage(damage);
-            }
+            event.setDamage(modifiedDamage);
         }
     }
 
