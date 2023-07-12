@@ -142,13 +142,13 @@ public class MyListener implements Listener {
                 modifiedDamage = damage / firstPlayer.getResistance();
             }
 
-            if (firstPlayer.getRole().getType() == ERole.COUPLE) {
+            /*if (firstPlayer.getRole().getType() == ERole.COUPLE) {
                 GameManager.getInstance().getLogger().info("tu es un couple");
                 if (first) {
                     first = false;
                     for (AlphaPlayer otherPlayer : GameManager.getInstance().getAlphaPlayers().values()) {
                         if (otherPlayer.getPlayer() != null && otherPlayer.getRole().getType() == ERole.COUPLE) {
-                            if (!otherPlayer.getPseudo().equals(firstPlayer.getPseudo())) {
+                            if (!otherPlayer.getUUID().equals(firstPlayer.getUUID())) {
                                 otherPlayer.getPlayer().damage(damage, firstPlayer.getPlayer());
                                 otherPlayer.getPlayer().sendMessage(Component.text("Ton partenaire a pris des dégats"));
                             }
@@ -156,7 +156,7 @@ public class MyListener implements Listener {
                     }
                 }
                 first = true;
-            }
+            }*/
             event.setDamage(modifiedDamage);
         }
     }
