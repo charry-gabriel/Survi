@@ -202,11 +202,11 @@ public class AlphaPlayer implements Serializable {
         //GameManager.getInstance().getLogger().info(ExceptionUtils.getStackTrace(new Throwable()));
         if (role.getName().equals("Maire")) {
             if (getPlayer().getWorld().getName().equals("Village")) {
-                Objects.requireNonNull(player.getAttribute(Attribute.GENERIC_MAX_HEALTH)).setBaseValue((vieBonus + vieBonusSuccess - vieEnMoins) * 2f);
+                Objects.requireNonNull(player.getAttribute(Attribute.GENERIC_MAX_HEALTH)).setBaseValue((vieBonus + vieBonusSuccess - vieEnMoins) * 1.5f);
             } else if(getPlayer().getWorld().getName().equals("Wilderness_the_end") || getPlayer().getWorld().getName().equals("Wilderness_the_end2")) {
-                Objects.requireNonNull(player.getAttribute(Attribute.GENERIC_MAX_HEALTH)).setBaseValue((vieBonus + vieBonusSuccess - vieEnMoins) * 0.25f);
-            } else {
                 Objects.requireNonNull(player.getAttribute(Attribute.GENERIC_MAX_HEALTH)).setBaseValue((vieBonus + vieBonusSuccess - vieEnMoins) * 0.5f);
+            } else {
+                Objects.requireNonNull(player.getAttribute(Attribute.GENERIC_MAX_HEALTH)).setBaseValue((vieBonus + vieBonusSuccess - vieEnMoins) * 0.75f);
             }
         } else {
             if(getPlayer().getWorld().getName().equals("Wilderness_the_end") || getPlayer().getWorld().getName().equals("Wilderness_the_end2")) {

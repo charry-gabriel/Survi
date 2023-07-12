@@ -18,7 +18,7 @@ public class WorldFactory {
         worlds.put(EWorld.VILLAGE, village);
 
         Monde wilderness = new Monde(server.getWorld("Wilderness"),"Wilderness");
-        wilderness.setLimit(new Rect(-10000, 10000, 10000, -10000));
+        wilderness.setLimit(new Rect(-30000000, 30000000, 30000000, -10000));
         wilderness.setSpawnPoint(new Location(server.getWorld("Wilderness"), 0, 0, 0));
         worlds.put(EWorld.WILDERNESS, wilderness);
 
