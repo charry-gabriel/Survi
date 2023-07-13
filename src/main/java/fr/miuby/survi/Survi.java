@@ -11,7 +11,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
 public class Survi extends JavaPlugin {
-    private final MyListener listener = new MyListener(this);
+    private final MyListener listener = new MyListener();
     private final PlayerListener playerListener = new PlayerListener(this);
     private final ServerListener serverListener = new ServerListener(this);
     private final Commands commands = new Commands(this);

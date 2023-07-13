@@ -5,7 +5,8 @@ import fr.miuby.survi.role.ERole;
 import fr.miuby.survi.villager.AVillager;
 import fr.miuby.survi.world.EWorld;
 import fr.miuby.survi.world.Monde;
-import net.kyori.adventure.text.Component;
+import net.kyori.adventure.key.Key;
+import net.kyori.adventure.sound.Sound;
 import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.EnderDragon;
@@ -24,14 +25,11 @@ import org.bukkit.inventory.ItemStack;
 import java.util.Objects;
 import java.util.UUID;
 
-import static java.lang.Math.round;
+import static java.lang.Math.*;
 
 public class MyListener implements Listener {
-    static Survi plugin;
-
-    public MyListener(Survi instance) {
-        plugin = instance;
-    }
+    boolean firstPlayerHit = true;
+    Sound slimeSound = Sound.sound(Key.key("entity.slime.attack"), Sound.Source.AMBIENT, 1f, 1.1f);
 
     @EventHandler
     public void onPrepareItemCraft(PrepareItemCraftEvent event){
@@ -121,7 +119,6 @@ public class MyListener implements Listener {
             }
         }
     }
-    boolean first = true;
 
     @EventHandler
     public void onEntityDamage(EntityDamageEvent event) {
@@ -138,26 +135,28 @@ public class MyListener implements Listener {
             double modifiedDamage;
 
             if(Monde.isPlayerOnWorld(damagedAlphaPlayer.getPlayer(), EWorld.END) || Monde.isPlayerOnWorld(damagedAlphaPlayer.getPlayer(), EWorld.END2)) {
-                modifiedDamage = damage / (damagedAlphaPlayer.getResistance() * damagedAlphaPlayer.getEndResistance());
+                modifiedDamage = round(damage / (damagedAlphaPlayer.getResistance() * damagedAlphaPlayer.getEndResistance()));
             } else {
-                modifiedDamage = damage / damagedAlphaPlayer.getResistance();
+                modifiedDamage = round(damage / damagedAlphaPlayer.getResistance());
             }
 
             if (damagedAlphaPlayer.getRole().getType() == ERole.COUPLE) {
-                if (first) {
-                    first = false;
+                if (firstPlayerHit) {
+                    firstPlayerHit = false;
                     for (AlphaPlayer otherPlayer : GameManager.getInstance().getAlphaPlayers().values()) {
                         if (otherPlayer.getPlayer() != null && otherPlayer.getRole().getType() == ERole.COUPLE) {
                             if (!otherPlayer.getUUID().equals(damagedAlphaPlayer.getUUID())) {
-                                otherPlayer.getPlayer().damage(damage, damagedAlphaPlayer.getPlayer());
-                                otherPlayer.getPlayer().sendMessage(Component.text(damagedAlphaPlayer.getPseudo() + " a pris des dégats"));
+                                otherPlayer.getPlayer().damage(damage);
+                                otherPlayer.getPlayer().playSound(slimeSound);
                             }
                         }
                     }
+                } else {
+                    modifiedDamage = min(modifiedDamage, damagedAlphaPlayer.getPlayer().getHealth() - 1);
                 }
-                first = true;
+                firstPlayerHit = true;
             }
-            event.setDamage(round(modifiedDamage));
+            event.setDamage(EntityDamageEvent.DamageModifier.BASE, modifiedDamage);
         }
     }
 
