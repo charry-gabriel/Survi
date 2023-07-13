@@ -24,6 +24,8 @@ import org.bukkit.inventory.ItemStack;
 import java.util.Objects;
 import java.util.UUID;
 
+import static java.lang.Math.round;
+
 public class MyListener implements Listener {
     static Survi plugin;
 
@@ -130,34 +132,32 @@ public class MyListener implements Listener {
             }
         }
 
-        //si on prends des degats
         if(event.getEntityType() == EntityType.PLAYER) {
-            AlphaPlayer firstPlayer = AlphaPlayer.get(event.getEntity().getUniqueId());
+            AlphaPlayer damagedAlphaPlayer = AlphaPlayer.get(event.getEntity().getUniqueId());
             double damage = event.getDamage();
             double modifiedDamage;
 
-            if(Monde.isPlayerOnWorld(firstPlayer.getPlayer(), EWorld.END) || Monde.isPlayerOnWorld(firstPlayer.getPlayer(), EWorld.END2)) {
-                modifiedDamage = damage / (firstPlayer.getResistance() * firstPlayer.getEndResistance());
+            if(Monde.isPlayerOnWorld(damagedAlphaPlayer.getPlayer(), EWorld.END) || Monde.isPlayerOnWorld(damagedAlphaPlayer.getPlayer(), EWorld.END2)) {
+                modifiedDamage = damage / (damagedAlphaPlayer.getResistance() * damagedAlphaPlayer.getEndResistance());
             } else {
-                modifiedDamage = damage / firstPlayer.getResistance();
+                modifiedDamage = damage / damagedAlphaPlayer.getResistance();
             }
 
-            /*if (firstPlayer.getRole().getType() == ERole.COUPLE) {
-                GameManager.getInstance().getLogger().info("tu es un couple");
+            if (damagedAlphaPlayer.getRole().getType() == ERole.COUPLE) {
                 if (first) {
                     first = false;
                     for (AlphaPlayer otherPlayer : GameManager.getInstance().getAlphaPlayers().values()) {
                         if (otherPlayer.getPlayer() != null && otherPlayer.getRole().getType() == ERole.COUPLE) {
-                            if (!otherPlayer.getUUID().equals(firstPlayer.getUUID())) {
-                                otherPlayer.getPlayer().damage(damage, firstPlayer.getPlayer());
-                                otherPlayer.getPlayer().sendMessage(Component.text("Ton partenaire a pris des dégats"));
+                            if (!otherPlayer.getUUID().equals(damagedAlphaPlayer.getUUID())) {
+                                otherPlayer.getPlayer().damage(damage, damagedAlphaPlayer.getPlayer());
+                                otherPlayer.getPlayer().sendMessage(Component.text(damagedAlphaPlayer.getPseudo() + " a pris des dégats"));
                             }
                         }
                     }
                 }
                 first = true;
-            }*/
-            event.setDamage(modifiedDamage);
+            }
+            event.setDamage(round(modifiedDamage));
         }
     }
 
