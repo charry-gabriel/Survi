@@ -11,6 +11,6 @@ public class ResistanceEffect extends BlessingEffect {
 
     @Override
     public void applyEffect(AlphaPlayer player) {
-        player.setResistance(resistance);
+        player.setResistanceModifier(resistance);
     }
 }

@@ -4,6 +4,7 @@ import fr.miuby.survi.database.Database;
 import fr.miuby.survi.database.SQLite;
 import fr.miuby.survi.locked_item.LockedItemsFactory;
 import fr.miuby.survi.player.AlphaPlayerFactory;
+import fr.miuby.survi.player.life.LifeFactory;
 import fr.miuby.survi.role.RoleFactory;
 import fr.miuby.survi.villager.VillagerFactory;
 import fr.miuby.survi.world.WorldFactory;
@@ -25,6 +26,7 @@ public class GameManager {
     private Database database;
     private RoleFactory roleFactory;
     private AlphaPlayerFactory alphaPlayerFactory;
+    private LifeFactory lifeFactory;
     //endregion
 
     public static GameManager getInstance(){
@@ -39,6 +41,7 @@ public class GameManager {
 
         this.worldFactory = new WorldFactory(this.plugin.getServer());
         this.roleFactory = new RoleFactory();
+        this.lifeFactory = new LifeFactory();
         this.alphaPlayerFactory = new AlphaPlayerFactory();
 
         this.database = new SQLite();
@@ -80,6 +83,10 @@ public class GameManager {
 
     public AlphaPlayerFactory getAlphaPlayerFactory() {
         return alphaPlayerFactory;
+    }
+
+    public LifeFactory getLifeFactory() {
+        return lifeFactory;
     }
     //endregion
 

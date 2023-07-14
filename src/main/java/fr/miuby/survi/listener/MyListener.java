@@ -114,9 +114,9 @@ public class MyListener implements Listener {
             AlphaPlayer alphaPlayer =  AlphaPlayer.get(uuid);
 
             if(Monde.isPlayerOnWorld(alphaPlayer.getPlayer(), EWorld.END) || Monde.isPlayerOnWorld(alphaPlayer.getPlayer(), EWorld.END2)) {
-                event.setDamage(damage * alphaPlayer.getDamage() * alphaPlayer.getEndDamage());
+                event.setDamage(damage * alphaPlayer.getDamageModifer() * alphaPlayer.getEndDamageModifier());
             } else {
-                event.setDamage(damage * alphaPlayer.getDamage());
+                event.setDamage(damage * alphaPlayer.getDamageModifer());
             }
         }
     }
@@ -136,9 +136,9 @@ public class MyListener implements Listener {
             double modifiedDamage;
 
             if(Monde.isPlayerOnWorld(damagedAlphaPlayer.getPlayer(), EWorld.END) || Monde.isPlayerOnWorld(damagedAlphaPlayer.getPlayer(), EWorld.END2)) {
-                modifiedDamage = round(damage / (damagedAlphaPlayer.getResistance() * damagedAlphaPlayer.getEndResistance()));
+                modifiedDamage = round(damage / (damagedAlphaPlayer.getResistanceModifier() * damagedAlphaPlayer.getEndResistanceModifier()));
             } else {
-                modifiedDamage = round(damage / damagedAlphaPlayer.getResistance());
+                modifiedDamage = round(damage / damagedAlphaPlayer.getResistanceModifier());
             }
 
             if (damagedAlphaPlayer.getRole().getType() == ERole.COUPLE) {

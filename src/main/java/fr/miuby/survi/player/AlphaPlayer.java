@@ -1,43 +1,37 @@
 package fr.miuby.survi.player;
 
 import fr.miuby.survi.GameManager;
+import fr.miuby.survi.player.life.AlphaLife;
 import fr.miuby.survi.role.*;
 import fr.miuby.survi.world.EWorld;
 import fr.miuby.survi.world.Monde;
-import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Player;
 
 import java.io.Serializable;
-import java.util.Objects;
 import java.util.UUID;
-
-import static java.lang.Math.max;
-import static org.bukkit.util.NumberConversions.floor;
 
 public class AlphaPlayer implements Serializable {
     private final UUID uuid;
     private String pseudo;
-    private int mort = 0;
-    private int malus = 0;
-    private int success = 0;
-
     private Player player;
-
-    private float resistance = 0.2f;
-    private float damage = 0.2f;
-    private final float endResistance = 0.7f;
-    private final float endDamage = 0.7f;
-    private int vieBonus = 10;
-    private int vieBonusSuccess = 0;
-
     private Role role;
-
+    private final AlphaLife alphaLife;
     private final AlphaScoreboard scoreboard;
     private Monde world;
+    private int mort = 0;
+    private int success = 0;
+
+    //region Modifier
+    private float resistanceModifier = 0.2f;
+    private float damageModifier = 0.2f;
+    private final float endResistanceModifier = 0.7f;
+    private final float endDamageModifier = 0.7f;
+    //endregion
 
     public AlphaPlayer(UUID uuid) {
         this.uuid = uuid;
         scoreboard = new AlphaScoreboard();
+        alphaLife = new AlphaLife(this);
     }
 
     public static AlphaPlayer get(UUID uuid) {
@@ -65,44 +59,22 @@ public class AlphaPlayer implements Serializable {
 
     public void addMort(int mort) {
         this.mort += mort;
+        this.alphaLife.setDeath(this.mort);
 
-        updateLife();
         GameManager.getInstance().getDatabase().updatePlayer(uuid, "mort", this.mort);
     }
 
     public void addSuccess(int success) {
         this.success = success;
-        vieBonusSuccess = floor((double) success / 3f);
+        this.alphaLife.setSuccess(success);
 
         GameManager.getInstance().getDatabase().updatePlayer(uuid, "success", this.success);
-    }
-
-    public void updateLife() {
-        vieBonusSuccess = floor((double) success / 3f);
-        malus = floor((double) mort / 10f);
-        int vieEnMoins = max(0, malus - GameManager.getInstance().getDispel());
-
-        if (role.getType() == ERole.MAIRE) {
-            if (getWorld() == EWorld.VILLAGE) {
-                Objects.requireNonNull(player.getAttribute(Attribute.GENERIC_MAX_HEALTH)).setBaseValue((vieBonus + vieBonusSuccess - vieEnMoins) * 1.5f);
-            } else if(getWorld() == EWorld.END || getWorld() == EWorld.END2) {
-                Objects.requireNonNull(player.getAttribute(Attribute.GENERIC_MAX_HEALTH)).setBaseValue((vieBonus + vieBonusSuccess - vieEnMoins) * 0.5f);
-            } else {
-                Objects.requireNonNull(player.getAttribute(Attribute.GENERIC_MAX_HEALTH)).setBaseValue((vieBonus + vieBonusSuccess - vieEnMoins) * 0.75f);
-            }
-        } else {
-            if(getWorld() == EWorld.END || getWorld() == EWorld.END2) {
-                Objects.requireNonNull(player.getAttribute(Attribute.GENERIC_MAX_HEALTH)).setBaseValue((vieBonus + vieBonusSuccess - vieEnMoins) * 0.5f);
-            } else {
-                Objects.requireNonNull(player.getAttribute(Attribute.GENERIC_MAX_HEALTH)).setBaseValue(vieBonus + vieBonusSuccess - vieEnMoins);
-            }
-        }
     }
 
     public void switchWorld() {
         this.world = Monde.get(getPlayer().getWorld().getUID());
         GameManager.getInstance().getAlphaPlayerFactory().sendToPlayers(this);
-        updateLife();
+        alphaLife.actualize();
     }
 
     public void teleport(Monde monde) {
@@ -111,7 +83,7 @@ public class AlphaPlayer implements Serializable {
 
     //region Getters Setters
     public AlphaScoreboard getScoreboard() {
-        return scoreboard;
+        return this.scoreboard;
     }
 
     public EWorld getWorld() {
@@ -119,59 +91,55 @@ public class AlphaPlayer implements Serializable {
     }
 
     public UUID getUUID(){
-        return uuid;
+        return this.uuid;
     }
 
     public int getMort(){
-        return mort;
+        return this.mort;
     }
 
     public int getSuccess(){
-        return success;
+        return this.success;
     }
 
     public String getPseudo(){
-        return pseudo;
+        return this.pseudo;
     }
 
     public Player getPlayer(){
-        return player;
+        return this.player;
     }
 
     public void resetPlayer(){
-        player = null;
+        this.player = null;
     }
 
-    public void setResistance(float resistance) {
-        this.resistance = resistance;
+    public void setResistanceModifier(float modifier) {
+        this.resistanceModifier = modifier;
     }
 
-    public float getResistance() {
-        return resistance;
+    public float getResistanceModifier() {
+        return this.resistanceModifier;
     }
 
-    public float getEndResistance() {
-        return endResistance;
+    public float getEndResistanceModifier() {
+        return this.endResistanceModifier;
     }
 
-    public float getDamage() {
-        return damage;
+    public float getDamageModifer() {
+        return this.damageModifier;
     }
 
-    public float getEndDamage() {
-        return endDamage;
+    public float getEndDamageModifier() {
+        return this.endDamageModifier;
     }
 
-    public void setDamage(float damage) {
-        this.damage = damage;
-    }
-
-    public void setVieBonus(int vieBonus) {
-        this.vieBonus = vieBonus;
+    public void setDamageModifier(float modifier) {
+        this.damageModifier = modifier;
     }
 
     public Role getRole() {
-        return role;
+        return this.role;
     }
 
     public void setMort(int mort) {
@@ -191,7 +159,11 @@ public class AlphaPlayer implements Serializable {
     }
 
     public void setRole(String roleName) {
-        role = Role.get(roleName);
+        this.role = Role.get(roleName);
+    }
+
+    public AlphaLife getAlphaLife() {
+        return this.alphaLife;
     }
     //endregion
 }

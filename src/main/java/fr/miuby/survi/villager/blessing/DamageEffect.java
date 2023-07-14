@@ -11,6 +11,6 @@ public class DamageEffect extends BlessingEffect {
 
     @Override
     public void applyEffect(AlphaPlayer player) {
-        player.setDamage(damage);
+        player.setDamageModifier(damage);
     }
 }

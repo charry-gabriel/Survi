@@ -11,7 +11,6 @@ public class MaxHealthEffect extends BlessingEffect {
 
     @Override
     public void applyEffect(AlphaPlayer player) {
-        player.setVieBonus(maxHealth);
-        player.updateLife();
+        player.getAlphaLife().setMaxHealthBonus(maxHealth);
     }
 }
