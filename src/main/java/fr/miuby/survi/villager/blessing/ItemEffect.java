@@ -1,6 +1,6 @@
 package fr.miuby.survi.villager.blessing;
 
-import fr.miuby.survi.AlphaPlayer;
+import fr.miuby.survi.player.AlphaPlayer;
 import org.bukkit.inventory.ItemStack;
 
 public class ItemEffect extends BlessingEffect{

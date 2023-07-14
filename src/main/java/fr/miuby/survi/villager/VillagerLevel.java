@@ -1,6 +1,6 @@
 package fr.miuby.survi.villager;
 
-import fr.miuby.survi.AlphaPlayer;
+import fr.miuby.survi.player.AlphaPlayer;
 import fr.miuby.survi.GameManager;
 import fr.miuby.survi.villager.blessing.Blessing;
 import fr.miuby.survi.villager.blessing.BlessingEffect;
@@ -60,7 +60,7 @@ public class VillagerLevel extends AVillager {
         GameManager.getInstance().getDatabase().updateVillager(uuid, level);
     }
 
-    public void ApplyAllCurrentBlessing(AlphaPlayer player) {
+    public void applyAllCurrentBlessing(AlphaPlayer player) {
         for (Blessing blessing : getCurrentBlessings()) {
             for (BlessingEffect effect : blessing.getBlessingEffects()) {
                 effect.applyEffect(player);

@@ -2,8 +2,9 @@ package fr.miuby.survi.villager;
 
 import fr.miuby.survi.GameManager;
 import fr.miuby.survi.villager.blessing.Blessing;
+import fr.miuby.survi.world.EWorld;
+import fr.miuby.survi.world.Monde;
 import net.kyori.adventure.text.Component;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -11,7 +12,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.entity.Villager;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-
 import java.util.UUID;
 
 public abstract class AVillager {
@@ -21,13 +21,23 @@ public abstract class AVillager {
     protected final Blessing[] blessings;
     protected final Component[] messages;
     protected int level = 0;
+    protected String baseName;
+
+    private final Location location;
+    private final Villager.Type type;
+    private final Villager.Profession profession;
 
     public AVillager(String name, Location location, Villager.Type type, Villager.Profession profession, Blessing[] blessings, Component[] messages) {
         this.blessings = blessings;
         this.messages = messages;
+        this.location = location;
+        this.type = type;
+        this.profession = profession;
+        this.baseName = name;
 
         if (!GameManager.getInstance().getDatabase().getVillager(this, name)) {
-            this.villager = CreateWorldVillager(location, type, profession);
+            GameManager.getInstance().getLogger().info(name + " doesn't exist");
+            this.villager = CreateRealVillager(location, type, profession);
             this.uuid = this.villager.getUniqueId();
             GameManager.getInstance().getDatabase().CreateDBVillager(name, this.uuid);
         }
@@ -44,7 +54,8 @@ public abstract class AVillager {
         return GameManager.getInstance().getVillagerFactory().getVillagers().containsKey(uuid);
     }
 
-    private Villager CreateWorldVillager(Location location, Villager.Type type, Villager.Profession profession) {
+    private Villager CreateRealVillager(Location location, Villager.Type type, Villager.Profession profession) {
+        GameManager.getInstance().getLogger().info("Creating Villager");
         Villager villager = (Villager) location.getWorld().spawnEntity(location, EntityType.VILLAGER);
         villager.setVillagerType(type);
         villager.setProfession(profession);
@@ -67,14 +78,27 @@ public abstract class AVillager {
         return inventory;
     }
 
-    public boolean setUUID(UUID uuid) {
-        Entity entity = Bukkit.getEntity(uuid);
-        if (!(entity instanceof Villager))
-            return false;
+    public void setRealVillager(UUID uuid) {
+        Villager realVillager = findRealVillager(uuid);
 
-        this.uuid = uuid;
-        this.villager = (Villager) entity;
-        return true;
+        if (realVillager != null) {
+            this.villager = realVillager;
+            this.uuid = uuid;
+        } else {
+            GameManager.getInstance().getLogger().info("Didn't find villager uuid");
+            this.villager = CreateRealVillager(location, type, profession);
+            this.uuid = this.villager.getUniqueId();
+            GameManager.getInstance().getDatabase().updateVillagerUUID(this.uuid, baseName);
+        }
+    }
+
+    private Villager findRealVillager(UUID uuid) {
+        Entity entity = Monde.get(EWorld.VILLAGE).getWorld().getEntity(uuid);
+
+        if (entity != null && entity.getType() == EntityType.VILLAGER) {
+            return (Villager)entity;
+        }
+        return null;
     }
 
     public void setLevel(int level) {

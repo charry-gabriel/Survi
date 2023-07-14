@@ -1,6 +1,6 @@
 package fr.miuby.survi.listener;
 
-import fr.miuby.survi.AlphaPlayer;
+import fr.miuby.survi.player.AlphaPlayer;
 import fr.miuby.survi.villager.AVillager;
 import fr.miuby.survi.world.EWorld;
 import fr.miuby.survi.GameManager;
@@ -18,8 +18,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.*;
 
-import java.util.UUID;
-
 public class PlayerListener implements Listener {
     static fr.miuby.survi.Survi plugin;
 
@@ -30,14 +28,7 @@ public class PlayerListener implements Listener {
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event){
         Player player = event.getPlayer();
-        UUID uuid = player.getUniqueId();
-        if(!GameManager.getInstance().getAlphaPlayers().containsKey(uuid)) {
-            AlphaPlayer alphaPlayer = new AlphaPlayer(uuid);
-            GameManager.getInstance().getAlphaPlayers().put(uuid, alphaPlayer);
-            GameManager.getInstance().getDatabase().getAlphaPlayers(alphaPlayer, uuid);
-        }else{
-            AlphaPlayer.get(uuid).actualize();
-        }
+        GameManager.getInstance().getAlphaPlayerFactory().playerJoin(player.getUniqueId());
     }
 
     @EventHandler
@@ -48,7 +39,7 @@ public class PlayerListener implements Listener {
     @EventHandler
     public void onPlayerMove(PlayerMoveEvent event) {
         if(Monde.isOutOfLimit(event.getPlayer(), EWorld.VILLAGE) || Monde.isOutOfLimit(event.getPlayer(), EWorld.WILDERNESS)) {
-            event.getPlayer().teleport(GameManager.getInstance().getMonde(EWorld.VILLAGE).getSpawnPoint());
+            AlphaPlayer.get(event.getPlayer().getUniqueId()).teleport(Monde.get(EWorld.VILLAGE));
             event.getPlayer().sendMessage(Component.text("Ne sort pas des limite du village, c'est dangereux !!").color(NamedTextColor.RED));
         }
     }
@@ -89,7 +80,6 @@ public class PlayerListener implements Listener {
 
     @EventHandler
     public void onPlayerChangedWorld(PlayerChangedWorldEvent event) {
-        GameManager.getInstance().switchWorld(event.getPlayer().getWorld().getName(), event.getPlayer().getName());
-        AlphaPlayer.get(event.getPlayer().getUniqueId()).updateLife();
+        AlphaPlayer.get(event.getPlayer().getUniqueId()).switchWorld();
     }
 }

@@ -1,6 +1,6 @@
 package fr.miuby.survi.villager.blessing;
 
-import fr.miuby.survi.AlphaPlayer;
+import fr.miuby.survi.player.AlphaPlayer;
 import fr.miuby.survi.GameManager;
 
 public class DispelEffect extends BlessingEffect{

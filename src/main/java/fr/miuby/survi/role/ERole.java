@@ -4,6 +4,6 @@ public enum ERole {
     MAIRE,
     COUPLE,
     SIMPLET,
-    DOCTOR,
+    JUMP,
     RICHE
 }

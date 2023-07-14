@@ -4,7 +4,7 @@ import java.sql.*;
 import java.util.UUID;
 import java.util.logging.Level;
 
-import fr.miuby.survi.AlphaPlayer;
+import fr.miuby.survi.player.AlphaPlayer;
 import fr.miuby.survi.GameManager;
 import fr.miuby.survi.villager.AVillager;
 import org.bukkit.Bukkit;
@@ -29,7 +29,7 @@ public abstract class Database {
         }
     }
 
-
+    //region Player
     public void createAlphaPlayers() {
         Connection conn = null;
         PreparedStatement ps = null;
@@ -44,13 +44,13 @@ public abstract class Database {
 
                 UUID uuid = UUID.fromString(rs.getString("uuid"));
                 AlphaPlayer alphaPlayer = new AlphaPlayer(uuid);
-                GameManager.getInstance().getAlphaPlayers().put(uuid, alphaPlayer);
+                GameManager.getInstance().getAlphaPlayerFactory().getAlphaPlayers().put(uuid, alphaPlayer);
 
                 alphaPlayer.setMort(rs.getInt("mort"));
                 alphaPlayer.setSuccess(rs.getInt("success"));
                 alphaPlayer.setPseudo(rs.getString("pseudo"));
                 alphaPlayer.setRole(rs.getString("role"));
-                Bukkit.getScheduler().runTask(GameManager.getInstance().getPlugin(), alphaPlayer::actualize);
+                Bukkit.getScheduler().runTask(GameManager.getInstance().getPlugin(), alphaPlayer::joinServer);
             }
         } catch (SQLException ex) {
             GameManager.getInstance().getLogger().log(Level.SEVERE, Errors.sqlConnectionExecute, ex);
@@ -66,11 +66,11 @@ public abstract class Database {
         }
     }
 
-    public void getAlphaPlayers(AlphaPlayer alphaPlayer, UUID uuid) {
+    public void getAlphaPlayer(AlphaPlayer alphaPlayer, UUID uuid) {
         Connection conn = null;
         PreparedStatement ps = null;
         ResultSet rs;
-        GameManager.getInstance().getLogger().info("getAlphaPlayers");
+        GameManager.getInstance().getLogger().info("getAlphaPlayer");
         try {
             conn = getSQLConnection();
             ps = conn.prepareStatement("SELECT * FROM player WHERE uuid = '"+uuid+"'");
@@ -86,7 +86,7 @@ public abstract class Database {
                 alphaPlayer.setSuccess(success);
                 alphaPlayer.setPseudo(pseudo);
                 alphaPlayer.setRole(role);
-                Bukkit.getScheduler().runTask(GameManager.getInstance().getPlugin(), alphaPlayer::actualize);
+                Bukkit.getScheduler().runTask(GameManager.getInstance().getPlugin(), alphaPlayer::joinServer);
             } else {
                 Player player = GameManager.getInstance().getPlugin().getServer().getPlayer(uuid);
 
@@ -97,7 +97,7 @@ public abstract class Database {
                     alphaPlayer.setPseudo(player.getName());
                     CreateDBPlayer(player.getUniqueId(), player.getName());
                 }
-                Bukkit.getScheduler().runTask(GameManager.getInstance().getPlugin(), alphaPlayer::actualize);
+                Bukkit.getScheduler().runTask(GameManager.getInstance().getPlugin(), alphaPlayer::joinServer);
             }
         } catch (SQLException ex) {
             GameManager.getInstance().getLogger().log(Level.SEVERE, Errors.sqlConnectionExecute, ex);
@@ -157,6 +157,106 @@ public abstract class Database {
             }
         }
     }
+    //endregion
+
+    //region Villager
+    public boolean getVillager(AVillager villager, String name) {
+        Connection conn = null;
+        PreparedStatement ps = null;
+        ResultSet rs;
+        GameManager.getInstance().getLogger().info("getVillager");
+        try {
+            conn = getSQLConnection();
+            ps = conn.prepareStatement("SELECT * FROM villager WHERE name = '"+name+"'");
+            rs = ps.executeQuery();
+
+            if (rs.next()) {
+                villager.setLevel(rs.getInt("level"));
+                UUID uuid = UUID.fromString(rs.getString("uuid"));
+                villager.setRealVillager(uuid);
+                return true;
+            }
+        } catch (SQLException ex) {
+            GameManager.getInstance().getLogger().log(Level.SEVERE, Errors.sqlConnectionExecute, ex);
+        } finally {
+            try {
+                if (ps != null)
+                    ps.close();
+                if (conn != null)
+                    conn.close();
+            } catch (SQLException ex) {
+                GameManager.getInstance().getLogger().log(Level.SEVERE, Errors.sqlConnectionClose, ex);
+            }
+        }
+        return false;
+    }
+
+    public void CreateDBVillager(String name, UUID uuid) {
+        Connection conn = null;
+        PreparedStatement ps = null;
+        GameManager.getInstance().getLogger().info("CreateDBVillager");
+        try {
+            conn = getSQLConnection();
+            ps = conn.prepareStatement("INSERT INTO villager VALUES ('"+uuid+"', '0', '"+name+"')");
+            ps.executeUpdate();
+        } catch (SQLException ex) {
+            GameManager.getInstance().getLogger().log(Level.SEVERE, Errors.sqlConnectionExecute, ex);
+        } finally {
+            try {
+                if (ps != null)
+                    ps.close();
+                if (conn != null)
+                    conn.close();
+            } catch (SQLException ex) {
+                GameManager.getInstance().getLogger().log(Level.SEVERE, Errors.sqlConnectionClose, ex);
+            }
+        }
+    }
+
+    public void updateVillager(UUID uuid, int level) {
+        Connection conn = null;
+        PreparedStatement ps = null;
+        GameManager.getInstance().getLogger().info("updateVillager");
+        try {
+            conn = getSQLConnection();
+            ps = conn.prepareStatement("UPDATE villager SET level = '"+level+"' WHERE uuid = '"+uuid+"'");
+            ps.executeUpdate();
+        } catch (SQLException ex) {
+            GameManager.getInstance().getLogger().log(Level.SEVERE, Errors.sqlConnectionExecute, ex);
+        } finally {
+            try {
+                if (ps != null)
+                    ps.close();
+                if (conn != null)
+                    conn.close();
+            } catch (SQLException ex) {
+                GameManager.getInstance().getLogger().log(Level.SEVERE, Errors.sqlConnectionClose, ex);
+            }
+        }
+    }
+
+    public void updateVillagerUUID(UUID uuid, String name) {
+        Connection conn = null;
+        PreparedStatement ps = null;
+        GameManager.getInstance().getLogger().info("updateVillager " + uuid + " " + name);
+        try {
+            conn = getSQLConnection();
+            ps = conn.prepareStatement("UPDATE villager SET uuid = '"+uuid+"' WHERE name = '"+name+"'");
+            ps.executeUpdate();
+        } catch (SQLException ex) {
+            GameManager.getInstance().getLogger().log(Level.SEVERE, Errors.sqlConnectionExecute, ex);
+        } finally {
+            try {
+                if (ps != null)
+                    ps.close();
+                if (conn != null)
+                    conn.close();
+            } catch (SQLException ex) {
+                GameManager.getInstance().getLogger().log(Level.SEVERE, Errors.sqlConnectionClose, ex);
+            }
+        }
+    }
+    //endregion
 
     public String Request(String sql) {
         Connection conn = null;
@@ -199,110 +299,6 @@ public abstract class Database {
         }
         return "error";
     }
-
-
-    public boolean getVillager(AVillager villager, String name) {
-        Connection conn = null;
-        PreparedStatement ps = null;
-        ResultSet rs;
-        GameManager.getInstance().getLogger().info("getVillager");
-        try {
-            conn = getSQLConnection();
-            ps = conn.prepareStatement("SELECT * FROM villager WHERE name = '"+name+"'");
-            rs = ps.executeQuery();
-
-            if (rs.next()) {
-                villager.setLevel(rs.getInt("level"));
-                UUID uuid = UUID.fromString(rs.getString("uuid"));
-
-                if (villager.setUUID(uuid))
-                    return true;
-                else
-                    DeleteVillager(uuid);
-            } else {
-                return false;
-            }
-        } catch (SQLException ex) {
-            GameManager.getInstance().getLogger().log(Level.SEVERE, Errors.sqlConnectionExecute, ex);
-        } finally {
-            try {
-                if (ps != null)
-                    ps.close();
-                if (conn != null)
-                    conn.close();
-            } catch (SQLException ex) {
-                GameManager.getInstance().getLogger().log(Level.SEVERE, Errors.sqlConnectionClose, ex);
-            }
-        }
-        return false;
-    }
-
-    public void CreateDBVillager(String name, UUID uuid) {
-        Connection conn = null;
-        PreparedStatement ps = null;
-        GameManager.getInstance().getLogger().info("CreateDBVillager");
-        try {
-            conn = getSQLConnection();
-            ps = conn.prepareStatement("INSERT INTO villager VALUES ('"+uuid+"', '0', '"+name+"')");
-            ps.executeUpdate();
-        } catch (SQLException ex) {
-            GameManager.getInstance().getLogger().log(Level.SEVERE, Errors.sqlConnectionExecute, ex);
-        } finally {
-            try {
-                if (ps != null)
-                    ps.close();
-                if (conn != null)
-                    conn.close();
-            } catch (SQLException ex) {
-                GameManager.getInstance().getLogger().log(Level.SEVERE, Errors.sqlConnectionClose, ex);
-            }
-        }
-    }
-
-    public void DeleteVillager(UUID uuid) {
-        Connection conn = null;
-        PreparedStatement ps = null;
-        GameManager.getInstance().getLogger().info("DeleteVillager");
-        try {
-            conn = getSQLConnection();
-            ps = conn.prepareStatement("DELETE FROM villager WHERE uuid='"+uuid+"'");
-            ps.executeUpdate();
-        } catch (SQLException ex) {
-            GameManager.getInstance().getLogger().log(Level.SEVERE, Errors.sqlConnectionExecute, ex);
-        } finally {
-            try {
-                if (ps != null)
-                    ps.close();
-                if (conn != null)
-                    conn.close();
-            } catch (SQLException ex) {
-                GameManager.getInstance().getLogger().log(Level.SEVERE, Errors.sqlConnectionClose, ex);
-            }
-        }
-    }
-
-    public void updateVillager(UUID uuid, int level) {
-        Connection conn = null;
-        PreparedStatement ps = null;
-        GameManager.getInstance().getLogger().info("updateVillager");
-        try {
-            conn = getSQLConnection();
-            ps = conn.prepareStatement("UPDATE villager SET level = '"+level+"' WHERE uuid = '"+uuid+"'");
-            ps.executeUpdate();
-        } catch (SQLException ex) {
-            GameManager.getInstance().getLogger().log(Level.SEVERE, Errors.sqlConnectionExecute, ex);
-        } finally {
-            try {
-                if (ps != null)
-                    ps.close();
-                if (conn != null)
-                    conn.close();
-            } catch (SQLException ex) {
-                GameManager.getInstance().getLogger().log(Level.SEVERE, Errors.sqlConnectionClose, ex);
-            }
-        }
-    }
-
 
     public void close(PreparedStatement ps,ResultSet rs){
         try {

@@ -6,11 +6,11 @@ import org.bukkit.inventory.ItemStack;
 import java.util.ArrayList;
 import java.util.List;
 
-public class LockedItemsManager {
+public class LockedItemsFactory {
     private final List<LockedArmorItem> armorItems = new java.util.ArrayList<>();
     private final List<LockedToolItem> toolItems = new java.util.ArrayList<>();
 
-    public LockedItemsManager() {
+    public LockedItemsFactory() {
         List<ItemStack> leatherItems = new ArrayList<>();
         leatherItems.add(new ItemStack(Material.LEATHER_HELMET));
         leatherItems.add(new ItemStack(Material.LEATHER_CHESTPLATE));

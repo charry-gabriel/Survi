@@ -1,6 +1,7 @@
 package fr.miuby.survi;
 
 import fr.miuby.survi.world.EWorld;
+import fr.miuby.survi.world.Monde;
 import org.bukkit.Bukkit;
 import org.bukkit.scheduler.BukkitScheduler;
 
@@ -25,7 +26,7 @@ public class Timer {
             else {
                 tick = Math.round(seconds/9.6f);
             }
-            GameManager.getInstance().getWorld(EWorld.VILLAGE).setTime(tick);
+            Monde.get(EWorld.VILLAGE).getWorld().setTime(tick);
         }, 0, 20);
     }
 }

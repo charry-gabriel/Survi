@@ -1,6 +1,7 @@
 package fr.miuby.survi.listener;
 
 import fr.miuby.survi.*;
+import fr.miuby.survi.player.AlphaPlayer;
 import fr.miuby.survi.role.ERole;
 import fr.miuby.survi.villager.AVillager;
 import fr.miuby.survi.world.EWorld;
@@ -34,7 +35,7 @@ public class MyListener implements Listener {
     @EventHandler
     public void onPrepareItemCraft(PrepareItemCraftEvent event){
         if(event.getInventory().getResult() != null) {
-            if (GameManager.getInstance().getLockedItemsManager().isLocked(event.getInventory().getResult())) {
+            if (GameManager.getInstance().getLockedItemsFactory().isLocked(event.getInventory().getResult())) {
                 ItemStack air = new ItemStack(Material.AIR);
                 event.getInventory().setResult(air);
             }
@@ -143,7 +144,7 @@ public class MyListener implements Listener {
             if (damagedAlphaPlayer.getRole().getType() == ERole.COUPLE) {
                 if (firstPlayerHit) {
                     firstPlayerHit = false;
-                    for (AlphaPlayer otherPlayer : GameManager.getInstance().getAlphaPlayers().values()) {
+                    for (AlphaPlayer otherPlayer : GameManager.getInstance().getAlphaPlayerFactory().getAlphaPlayers().values()) {
                         if (otherPlayer.getPlayer() != null && otherPlayer.getRole().getType() == ERole.COUPLE) {
                             if (!otherPlayer.getUUID().equals(damagedAlphaPlayer.getUUID())) {
                                 otherPlayer.getPlayer().damage(damage);
@@ -156,7 +157,7 @@ public class MyListener implements Listener {
                 }
                 firstPlayerHit = true;
             }
-            event.setDamage(EntityDamageEvent.DamageModifier.BASE, modifiedDamage);
+            event.setDamage(modifiedDamage);
         }
     }
 
@@ -194,10 +195,10 @@ public class MyListener implements Listener {
     @EventHandler
     public void onPortalCreate(PortalCreateEvent event) {
         if (event.getReason().equals(PortalCreateEvent.CreateReason.FIRE)) {
-            if (!GameManager.getInstance().hasNetherAccess())
+            if (!Monde.get(EWorld.NETHER).isLocked())
                 event.setCancelled(true);
         } else {
-            if (!GameManager.getInstance().hasEndAccess())
+            if (!Monde.get(EWorld.END).isLocked())
                 event.setCancelled(true);
         }
     }

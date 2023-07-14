@@ -1,10 +1,11 @@
 package fr.miuby.survi.villager;
 
+import fr.miuby.survi.player.AlphaPlayer;
 import fr.miuby.survi.villager.blessing.*;
 import fr.miuby.survi.world.EWorld;
-import fr.miuby.survi.GameManager;
 import fr.miuby.survi.locked_item.LockedArmorType;
 import fr.miuby.survi.locked_item.LockedToolType;
+import fr.miuby.survi.world.Monde;
 import net.kyori.adventure.text.Component;
 import org.bukkit.*;
 import org.bukkit.enchantments.Enchantment;
@@ -23,7 +24,7 @@ public class VillagerFactory {
     private final Map<UUID, AVillager> villagers = new HashMap<>();
 
     public VillagerFactory() {
-        this.world = GameManager.getInstance().getWorld(EWorld.VILLAGE);
+        this.world = Monde.get(EWorld.VILLAGE).getWorld();
 
         spawnEdward();
         spawnNain();
@@ -53,6 +54,14 @@ public class VillagerFactory {
         return villagers;
     }
 
+    public void applyAllCurrentBlessing(AlphaPlayer player) {
+        for (AVillager villager : villagers.values()) {
+            if (villager instanceof VillagerLevel)
+                ((VillagerLevel) villager).applyAllCurrentBlessing(player);
+        }
+    }
+
+    //region Villagers
     private void spawnEdward(){
         Location location = new Location(world, 12012.5, 64, 1465.5, -90, 0);
 
@@ -224,11 +233,11 @@ public class VillagerFactory {
         Blessing[] blessings = new Blessing[]{
                 new Blessing(new MessageEffect("Niveau I réussi !")),
                 new Blessing(new MessageEffect("Niveau II disponible pour Thomas Pesquet !")),
-                new Blessing(new NetherEffect(), new MessageEffect("Niveau II réussi !")),
+                new Blessing(new LockWorldEffect(EWorld.NETHER), new MessageEffect("Niveau II réussi !")),
                 new Blessing(new MessageEffect("Niveau III disponible pour Thomas Pesquet !")),
                 new Blessing(new MessageEffect("Niveau III réussi !")),
                 new Blessing(new MessageEffect("Niveau VI disponible pour Thomas Pesquet !")),
-                new Blessing(new EndEffect(), new MessageEffect("Niveau VI réussi !")),
+                new Blessing(new LockWorldEffect(EWorld.END), new MessageEffect("Niveau VI réussi !")),
                 new Blessing(new MessageEffect("Niveau V disponible pour Thomas Pesquet !")),
                 new Blessing(new MessageEffect("Niveau V réussi !")),
                 new Blessing(new MessageEffect("IMPOSSIBLE")),
@@ -764,4 +773,5 @@ public class VillagerFactory {
 
         this.addNewVillager(new VillagerVendor("Junkudo", location, Villager.Type.SAVANNA, Villager.Profession.LIBRARIAN, blessings, messages, items));
     }
+    //endregion
 }
