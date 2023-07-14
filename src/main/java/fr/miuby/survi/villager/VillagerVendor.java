@@ -35,6 +35,8 @@ public class VillagerVendor extends AVillager {
             if (inventoryItem != null && inventoryItem.isSimilar(item)) {
                 if (item.getAmount() < inventoryItem.getAmount()) {
                     player.sendMessage(Component.text("<" + name + "> Tu n'en as pas assez !").color(NamedTextColor.AQUA));
+                } else if(player.getInventory().firstEmpty() == -1) {
+                    player.sendMessage(Component.text("<" + name + "> Tu es full !").color(NamedTextColor.AQUA));
                 } else {
                     GameManager.getInstance().getLogger().info(name + " recupere " + inventoryItem.getAmount() + " de " + item.getType().name());
                     player.sendMessage(Component.text("<" + name + "> ").color(NamedTextColor.AQUA).append(getMessage(item)).color(NamedTextColor.AQUA));
