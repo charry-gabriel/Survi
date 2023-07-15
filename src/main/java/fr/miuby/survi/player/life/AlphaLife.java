@@ -14,17 +14,19 @@ public class AlphaLife {
     private int maxHealthEffectLife = 10;
     private int successLife = 0;
     private int deathLife = 0;
+    private float worldRoleModifier;
+    private int maxLife;
 
     public AlphaLife(AlphaPlayer alphaPlayer) {
         this.alphaPlayer = alphaPlayer;
     }
 
     public void actualize() {
-        int deathWithDispel = max(0, deathLife - GameManager.getInstance().getDispel());
-        double baseLife = maxHealthEffectLife + successLife - deathWithDispel;
-        float modifier = GameManager.getInstance().getLifeFactory().getLifeModifier(alphaPlayer.getWorld(), alphaPlayer.getRole().getType());
+        int deathWithDispel = max(0, this.deathLife - GameManager.getInstance().getDispel());
+        double baseLife = this.maxHealthEffectLife + this.successLife - deathWithDispel;
+        this.maxLife = (int) Math.round(baseLife * this.worldRoleModifier);
 
-        Objects.requireNonNull(alphaPlayer.getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH)).setBaseValue(baseLife * modifier);
+        Objects.requireNonNull(this.alphaPlayer.getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH)).setBaseValue(this.maxLife);
     }
 
     public void setSuccess(int success) {
@@ -40,5 +42,15 @@ public class AlphaLife {
     public void setMaxHealthBonus(int maxHealthBonus) {
         this.maxHealthEffectLife = maxHealthBonus;
         actualize();
+    }
+
+    public void setWorldRole() {
+        double missingLife = this.maxLife - this.alphaPlayer.getPlayer().getHealth();
+
+        this.worldRoleModifier = GameManager.getInstance().getLifeFactory().getLifeModifier(this.alphaPlayer.getWorld(), this.alphaPlayer.getRole().getType());
+        actualize();
+
+        if (missingLife > 0)
+            this.alphaPlayer.getPlayer().setHealth(max(1, this.maxLife - missingLife));
     }
 }

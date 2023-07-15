@@ -74,11 +74,16 @@ public class AlphaPlayer implements Serializable {
     public void switchWorld() {
         this.world = Monde.get(getPlayer().getWorld().getUID());
         GameManager.getInstance().getAlphaPlayerFactory().sendToPlayers(this);
-        alphaLife.actualize();
+        alphaLife.setWorldRole();
     }
 
     public void teleport(Monde monde) {
         getPlayer().teleport(monde.getSpawnPoint());
+    }
+
+    public void switchRole() {
+        GameManager.getInstance().getAlphaPlayerFactory().sendToPlayers(this);
+        alphaLife.setWorldRole();
     }
 
     //region Getters Setters
