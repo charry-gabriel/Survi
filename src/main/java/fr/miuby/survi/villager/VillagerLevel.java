@@ -29,7 +29,7 @@ public class VillagerLevel extends AVillager {
         this.names = names;
 
         getVillager().customName(getName());
-        updateInventory();
+        createInventory();
     }
 
     @Override
@@ -46,13 +46,20 @@ public class VillagerLevel extends AVillager {
         }
     }
 
-    public void updateInventory() {
+    public void createInventory() {
         Inventory inv = Bukkit.createInventory(villager, InventoryType.CHEST, Objects.requireNonNull(villager.customName()));
 
         for (ItemStack item : getTribute().getItemStacks())
             inv.addItem(item);
 
         this.inventory = inv;
+    }
+
+    public void updateInventory() {
+        this.inventory.clear();
+
+        for (ItemStack item : getTribute().getItemStacks())
+            this.inventory.addItem(item);
     }
 
     public void addLevel() {

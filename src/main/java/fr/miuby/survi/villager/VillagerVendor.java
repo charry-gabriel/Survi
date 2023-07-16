@@ -26,7 +26,7 @@ public class VillagerVendor extends AVillager {
         this.name = name;
 
         getVillager().customName(getName());
-        updateInventory();
+        createInventory();
     }
 
     @Override
@@ -49,7 +49,7 @@ public class VillagerVendor extends AVillager {
         player.sendMessage(Component.text("<" + name + "> Je ne veux pas de cet item !").color(NamedTextColor.AQUA));
     }
 
-    public void updateInventory() {
+    public void createInventory() {
         Inventory inv = Bukkit.createInventory(villager, InventoryType.CHEST, Objects.requireNonNull(villager.customName()));
 
         for (ItemStack item : itemStacks)

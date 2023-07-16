@@ -66,7 +66,7 @@ public abstract class AVillager {
 
     public abstract void giveItems(Inventory inventory, ItemStack item, Player player);
 
-    public abstract void updateInventory();
+    public abstract void createInventory();
 
     public abstract Component getName();
 
