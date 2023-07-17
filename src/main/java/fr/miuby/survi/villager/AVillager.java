@@ -4,7 +4,7 @@ import fr.miuby.survi.GameManager;
 import fr.miuby.survi.villager.blessing.Blessing;
 import fr.miuby.survi.world.EWorld;
 import fr.miuby.survi.world.Monde;
-import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -19,7 +19,7 @@ public abstract class AVillager {
     protected Inventory inventory;
     protected UUID uuid;
     protected final Blessing[] blessings;
-    protected final Component[] messages;
+    protected final TextComponent[] messages;
     protected int level = 0;
     protected String baseName;
 
@@ -27,7 +27,7 @@ public abstract class AVillager {
     private final Villager.Type type;
     private final Villager.Profession profession;
 
-    public AVillager(String name, Location location, Villager.Type type, Villager.Profession profession, Blessing[] blessings, Component[] messages) {
+    public AVillager(String name, Location location, Villager.Type type, Villager.Profession profession, Blessing[] blessings, TextComponent[] messages) {
         this.blessings = blessings;
         this.messages = messages;
         this.location = location;
@@ -68,7 +68,7 @@ public abstract class AVillager {
 
     public abstract void createInventory();
 
-    public abstract Component getName();
+    public abstract TextComponent getName();
 
     public Villager getVillager() {
         return villager;

@@ -7,6 +7,7 @@ import fr.miuby.survi.locked_item.LockedArmorType;
 import fr.miuby.survi.locked_item.LockedToolType;
 import fr.miuby.survi.world.Monde;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
 import org.bukkit.*;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Villager;
@@ -96,7 +97,7 @@ public class VillagerFactory {
 
         };
 
-        Component[] messages = new Component[]{
+        TextComponent[] messages = new TextComponent[]{
                 Component.text("Merci beaucoup pour cette nourriture. Tenez, 1 coeur pour vous !"),
                 Component.text( "Merci merci. Pourquoi autant ? C'est pas grave. Tenez, 1 coeur de plus pour vous."),
                 Component.text( "J'adore les patates ! Merci ! Je vous offre ce coeur"),
@@ -112,7 +113,7 @@ public class VillagerFactory {
 
         };
 
-        Component[] names = new Component[]{
+        TextComponent[] names = new TextComponent[]{
                 Component.text( "Edward Jenner I"),
                 Component.text( "Edward Jenner II"),
                 Component.text( "Edward Jenner III"),
@@ -151,7 +152,7 @@ public class VillagerFactory {
                 new Blessing(new MessageEffect("IMPOSSIBLE")),
         };
 
-        Component[] messages = new Component[]{
+        TextComponent[] messages = new TextComponent[]{
                 Component.text( "Merci, vouth êteth maintenant pluth résistant face aux ennemith de l'autre monde."),
                 Component.text( "Bravo, vouth êteth maintenant pluth résistant face aux ennemith de l'autre monde."),
                 Component.text( "Félicitation, vouth êteth maintenant pluth résistant face aux ennemith de l'autre monde."),
@@ -160,7 +161,7 @@ public class VillagerFactory {
                 Component.text( "IMPOSSIBLE"),
         };
 
-        Component[] names = new Component[]{
+        TextComponent[] names = new TextComponent[]{
                 Component.text( "Nain Roux I"),
                 Component.text( "Nain Roux II"),
                 Component.text( "Nain Roux III"),
@@ -193,7 +194,7 @@ public class VillagerFactory {
                 new Blessing(new MessageEffect("IMPOSSIBLE")),
         };
 
-        Component[] messages = new Component[]{
+        TextComponent[] messages = new TextComponent[]{
                 Component.text( "Vous avez tué 3 poulets et vous voulez une récompense ? D'accord.. vous êtes un peu plus fort maintenant mais pas autant que moi quand même."),
                 Component.text( "Vous voulez une récompense pour 4 creepers en moins sur la map ? N'importe quoi.. vous êtes un peu plus fort maintenant mais pas autant que moi quand même."),
                 Component.text( "Comment on fait un oeil fermenté ? Avec un oeil... et tu le fermentes."),
@@ -202,7 +203,7 @@ public class VillagerFactory {
                 Component.text( "IMPOSSIBLE"),
         };
 
-        Component[] names = new Component[]{
+        TextComponent[] names = new TextComponent[]{
                 Component.text( "Maddox I"),
                 Component.text( "Maddox II"),
                 Component.text( "Maddox III"),
@@ -243,7 +244,7 @@ public class VillagerFactory {
                 new Blessing(new MessageEffect("IMPOSSIBLE")),
         };
 
-        Component[] messages = new Component[]{
+        TextComponent[] messages = new TextComponent[]{
                 Component.text( "Merci, revenez dans 24h pour la suite."),
                 Component.text( "Venez me voir."),
                 Component.text( "Merci, revenez dans 48h pour la suite. Vous pouvez maintenant explorer le nether !"),
@@ -256,7 +257,7 @@ public class VillagerFactory {
                 Component.text( "IMPOSSIBLE"),
         };
 
-        Component[] names = new Component[]{
+        TextComponent[] names = new TextComponent[]{
                 Component.text( "Thomas Pesquet I"),
                 Component.text( "Thomas Pesquet I"),
                 Component.text( "Thomas Pesquet II"),
@@ -293,7 +294,7 @@ public class VillagerFactory {
                 new Blessing(new MessageEffect("IMPOSSIBLE")),
         };
 
-        Component[] messages = new Component[]{
+        TextComponent[] messages = new TextComponent[]{
                 Component.text( "Vous avez maintenant les capacités de construire vos propres armures en cuir d'une qualité incroyable."),
                 Component.text("Vous pouvez maintenant construire la meilleure amure, la plus belle, l'armure en or ! La preuve de votre richesse et de votre force !"),
                 Component.text( "J'ai créé une armure unique pour vous, essavez avec un peu de lave, vous verrez."),
@@ -302,7 +303,7 @@ public class VillagerFactory {
                 Component.text( "IMPOSSIBLE"),
         };
 
-        Component[] names = new Component[]{
+        TextComponent[] names = new TextComponent[]{
                 Component.text( "Cowboy"),
                 Component.text( "Goldor"),
                 Component.text( "Gardien"),
@@ -335,7 +336,7 @@ public class VillagerFactory {
                 new Blessing(new MessageEffect("IMPOSSIBLE")),
         };
 
-        Component[] messages = new Component[]{
+        TextComponent[] messages = new TextComponent[]{
                 Component.text( "Les outils en bois sont très bien pour commencer."),
                 Component.text( "Les outils en pierre sont les meilleurs sur le marché."),
                 Component.text( "Les outils en fer sont super solide et très efficace."),
@@ -344,7 +345,7 @@ public class VillagerFactory {
                 Component.text( "IMPOSSIBLE"),
         };
 
-        Component[] names = new Component[]{
+        TextComponent[] names = new TextComponent[]{
                 Component.text( "Janod"),
                 Component.text( "Pierre"),
                 Component.text( "Léa"),
@@ -386,7 +387,7 @@ public class VillagerFactory {
                 new Blessing(new MessageEffect("IMPOSSIBLE")),
         };
 
-        Component[] messages = new Component[]{
+        TextComponent[] messages = new TextComponent[]{
                 Component.text( "Vos 10 dernières morts sont annulées."),
                 Component.text( "Vos 20 dernières morts sont annulées."),
                 Component.text( "Vos 30 dernières morts sont annulées."),
@@ -400,7 +401,7 @@ public class VillagerFactory {
                 Component.text( "IMPOSSIBLE"),
         };
 
-        Component[] names = new Component[]{
+        TextComponent[] names = new TextComponent[]{
                 Component.text( "Léon XIII"),
                 Component.text( "Pie X"),
                 Component.text( "Benoît XV"),
@@ -429,11 +430,11 @@ public class VillagerFactory {
                 new Blessing(new DispelEffect(1)),
         };
 
-        Component[] messages = new Component[]{
+        TextComponent[] messages = new TextComponent[]{
                 Component.text( "IMPOSSIBLE"),
         };
 
-        Component[] names = new Component[]{
+        TextComponent[] names = new TextComponent[]{
                 Component.text( "Héros I"),
 
         };
@@ -458,7 +459,7 @@ public class VillagerFactory {
                 new Blessing(new ItemEffect(new ItemStack(Material.EMERALD, 1))),
         };
 
-        Component[] messages = new Component[]{
+        TextComponent[] messages = new TextComponent[]{
                 Component.text( "Merci pour ce poisson, voici 1 émeraude."),
                 Component.text( "Merci pour ce poisson, voici 1 émeraude."),
                 Component.text( "Merci pour ce poisson, voici 1 émeraude."),
@@ -481,7 +482,7 @@ public class VillagerFactory {
                 new Blessing(new ItemEffect(new ItemStack(Material.EMERALD, 2))),
         };
 
-        Component[] messages = new Component[]{
+        TextComponent[] messages = new TextComponent[]{
                 Component.text( "Merci pour ces coquillages, voici 1 émeraude."),
                 Component.text( "Merci pour ces names-tags, voici 2 émeraude."),
         };
@@ -508,7 +509,7 @@ public class VillagerFactory {
                 new Blessing(new ItemEffect(itemStack)),
         };
 
-        Component[] messages = new Component[]{
+        TextComponent[] messages = new TextComponent[]{
                 Component.text( "Voici une canne à pêche !"),
         };
 
@@ -546,7 +547,7 @@ public class VillagerFactory {
                 new Blessing(new MessageEffect("IMPOSSIBLE")),
         };
 
-        Component[] messages = new Component[]{
+        TextComponent[] messages = new TextComponent[]{
                 Component.text( "Thomas Pesquet sera plus efficace d'une heure !"),
                 Component.text( "Thomas Pesquet sera plus efficace de deux heures !"),
                 Component.text( "Thomas Pesquet sera plus efficace de trois heures !"),
@@ -560,7 +561,7 @@ public class VillagerFactory {
                 Component.text( "IMPOSSIBLE"),
         };
 
-        Component[] names = new Component[]{
+        TextComponent[] names = new TextComponent[]{
                 Component.text( "Ariscis I"),
                 Component.text( "Cidrouille I"),
                 Component.text( "flyzeur_ I"),
@@ -602,7 +603,7 @@ public class VillagerFactory {
                 new Blessing(new ItemEffect(new ItemStack(Material.EMERALD, 1))),
         };
 
-        Component[] messages = new Component[]{
+        TextComponent[] messages = new TextComponent[]{
                 Component.text( "Merci pour ces algues, voici 1 émeraude."),
                 Component.text( "Merci pour la viande, voici 1 émeraude."),
                 Component.text( "Merci pour la viande, voici 1 émeraude."),
@@ -641,7 +642,7 @@ public class VillagerFactory {
                 new Blessing(new ItemEffect(new ItemStack(Material.EMERALD, 1))),
         };
 
-        Component[] messages = new Component[]{
+        TextComponent[] messages = new TextComponent[]{
                 Component.text( "Merci pour ce blé, voici 2 émeraude."),
                 Component.text( "Merci pour ces carottes, voici 2 émeraude."),
                 Component.text( "Merci pour ces patates, voici 1 émeraude."),
@@ -674,7 +675,7 @@ public class VillagerFactory {
                 new Blessing(new ItemEffect(itemStack)),
         };
 
-        Component[] messages = new Component[]{
+        TextComponent[] messages = new TextComponent[]{
                 Component.text( "Voici un médicament, tu iras mieux avec ça !"),
         };
 
@@ -692,7 +693,7 @@ public class VillagerFactory {
                 new Blessing(new GameModeEffect(GameMode.SURVIVAL)),
         };
 
-        Component[] messages = new Component[]{
+        TextComponent[] messages = new TextComponent[]{
                 Component.text( "Vous êtes libre, mais on vous surveille."),
         };
 
@@ -715,7 +716,7 @@ public class VillagerFactory {
                 new Blessing(new ItemEffect(itemStack)),
         };
 
-        Component[] messages = new Component[]{
+        TextComponent[] messages = new TextComponent[]{
                 Component.text( "Voici un livre rare, utilise le intelligemment."),
         };
 
@@ -763,7 +764,7 @@ public class VillagerFactory {
 
         };
 
-        Component[] messages = new Component[]{
+        TextComponent[] messages = new TextComponent[]{
                 Component.text( "Merci pour ce livre, voici un peu d'émeraude."),
                 Component.text( "Merci pour ce livre, voici un peu d'émeraude."),
                 Component.text( "Merci pour ce livre, voici un peu d'émeraude."),

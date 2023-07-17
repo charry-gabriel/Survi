@@ -5,6 +5,7 @@ import fr.miuby.survi.GameManager;
 import fr.miuby.survi.villager.blessing.Blessing;
 import fr.miuby.survi.villager.blessing.BlessingEffect;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -20,7 +21,7 @@ public class VillagerVendor extends AVillager {
     private final ItemStack[] itemStacks;
     private final String name;
 
-    public VillagerVendor(String name, Location location, Villager.Type type, Villager.Profession profession, Blessing[] blessings, Component[] messages, ItemStack[] itemStacks) {
+    public VillagerVendor(String name, Location location, Villager.Type type, Villager.Profession profession, Blessing[] blessings, TextComponent[] messages, ItemStack[] itemStacks) {
         super(name, location, type, profession, blessings, messages);
         this.itemStacks = itemStacks;
         this.name = name;
@@ -59,7 +60,7 @@ public class VillagerVendor extends AVillager {
     }
 
     @Override
-    public Component getName() {
+    public TextComponent getName() {
         return Component.text(name).color(NamedTextColor.AQUA);
     }
 
@@ -73,7 +74,7 @@ public class VillagerVendor extends AVillager {
         return blessings[getItemIndex(itemStack)];
     }
 
-    public Component getMessage(ItemStack itemStack) {
+    public TextComponent getMessage(ItemStack itemStack) {
         return messages[getItemIndex(itemStack)].color(NamedTextColor.AQUA);
     }
 

@@ -7,6 +7,7 @@ import fr.miuby.survi.villager.blessing.BlessingEffect;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.sound.Sound;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -21,9 +22,9 @@ import java.util.Objects;
 
 public class VillagerLevel extends AVillager {
     private final Tribute[] tributes;
-    private final Component[] names;
+    private final TextComponent[] names;
 
-    public VillagerLevel(String name, Location location, Villager.Type type, Villager.Profession profession, Blessing[] blessings, Component[] messages, Tribute[] tributes, Component[] names) {
+    public VillagerLevel(String name, Location location, Villager.Type type, Villager.Profession profession, Blessing[] blessings, TextComponent[] messages, Tribute[] tributes, TextComponent[] names) {
         super(name, location, type, profession, blessings, messages);
         this.tributes = tributes;
         this.names = names;
@@ -92,7 +93,7 @@ public class VillagerLevel extends AVillager {
 
         for (ItemStack tributeItem : inventory.getContents()) {
             if (tributeItem != null && tributeItem.isSimilar(item)) {
-                GameManager.getInstance().getLogger().info(getName().toString() + " recupere " + item.getAmount() + " de " + item.getType().name());
+                GameManager.getInstance().getLogger().info(getName().content() + " recupere " + item.getAmount() + " de " + item.getType().name());
                 if (item.getAmount() < tributeItem.getAmount()) {
                     tributeItem.setAmount(tributeItem.getAmount() - item.getAmount());
                     player.getInventory().remove(item);
@@ -117,12 +118,12 @@ public class VillagerLevel extends AVillager {
         return blessings[this.level];
     }
 
-    public Component getMessage() {
+    public TextComponent getMessage() {
         return messages[this.level].color(NamedTextColor.AQUA);
     }
 
     @Override
-    public Component getName() {
+    public TextComponent getName() {
         return names[this.level].color(NamedTextColor.AQUA);
     }
 
