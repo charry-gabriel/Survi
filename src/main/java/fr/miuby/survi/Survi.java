@@ -1,8 +1,6 @@
 package fr.miuby.survi;
 
-import fr.miuby.survi.listener.MyListener;
-import fr.miuby.survi.listener.PlayerListener;
-import fr.miuby.survi.listener.ServerListener;
+import fr.miuby.survi.listener.*;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -11,17 +9,16 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
 public class Survi extends JavaPlugin {
-    private final MyListener listener = new MyListener();
-    private final PlayerListener playerListener = new PlayerListener(this);
-    private final ServerListener serverListener = new ServerListener(this);
     private final Commands commands = new Commands(this);
 
     @Override
     public void onEnable() {
         PluginManager pluginManager = this.getServer().getPluginManager();
-        pluginManager.registerEvents(listener, this);
-        pluginManager.registerEvents(playerListener, this);
-        pluginManager.registerEvents(serverListener, this);
+        pluginManager.registerEvents(new MandatoryPlayerListener(), this);
+        pluginManager.registerEvents(new PlayerListener(), this);
+        pluginManager.registerEvents(new EntityListener(), this);
+        pluginManager.registerEvents(new WorldListener(), this);
+        pluginManager.registerEvents(new ItemListener(), this);
 
         getConfig().options().copyDefaults(true);
         saveConfig();

@@ -1,9 +1,11 @@
 package fr.miuby.survi.listener;
 
+import com.destroystokyo.paper.event.player.PlayerArmorChangeEvent;
+import fr.miuby.survi.GameManager;
 import fr.miuby.survi.player.AlphaPlayer;
+import fr.miuby.survi.role.ERole;
 import fr.miuby.survi.villager.AVillager;
 import fr.miuby.survi.world.EWorld;
-import fr.miuby.survi.GameManager;
 import fr.miuby.survi.world.Monde;
 import io.papermc.paper.advancement.AdvancementDisplay;
 import net.kyori.adventure.text.Component;
@@ -19,26 +21,10 @@ import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.*;
 
 public class PlayerListener implements Listener {
-    static fr.miuby.survi.Survi plugin;
-
-    public PlayerListener(fr.miuby.survi.Survi instance) {
-        plugin = instance;
-    }
-
-    @EventHandler
-    public void onPlayerJoin(PlayerJoinEvent event){
-        Player player = event.getPlayer();
-        GameManager.getInstance().getAlphaPlayerFactory().playerJoin(player.getUniqueId());
-    }
-
-    @EventHandler
-    public void onPlayerQuit(PlayerQuitEvent event){
-        AlphaPlayer.get(event.getPlayer().getUniqueId()).resetPlayer();
-    }
 
     @EventHandler
     public void onPlayerMove(PlayerMoveEvent event) {
-        if(Monde.isOutOfLimit(event.getPlayer(), EWorld.VILLAGE) || Monde.isOutOfLimit(event.getPlayer(), EWorld.WILDERNESS)) {
+        if (Monde.isOutOfLimit(event.getPlayer(), EWorld.VILLAGE) || Monde.isOutOfLimit(event.getPlayer(), EWorld.WILDERNESS)) {
             AlphaPlayer.get(event.getPlayer().getUniqueId()).teleport(Monde.get(EWorld.VILLAGE));
             event.getPlayer().sendMessage(Component.text("Ne sort pas des limite du village, c'est dangereux !!").color(NamedTextColor.RED));
         }
@@ -52,8 +38,8 @@ public class PlayerListener implements Listener {
         AdvancementDisplay advancementDisplay = advancement.getDisplay();
 
         String category = advancement.getKey().getKey().split("/")[0];
-        if(advancementProgress.isDone() && advancementDisplay != null && !category.equals("recipes")) {
-            if(advancementDisplay.frame() == AdvancementDisplay.Frame.CHALLENGE) {
+        if (advancementProgress.isDone() && advancementDisplay != null && !category.equals("recipes")) {
+            if (advancementDisplay.frame() == AdvancementDisplay.Frame.CHALLENGE) {
                 AlphaPlayer.get(player.getUniqueId()).gainOneSuccess(true);
             }
         }
@@ -62,13 +48,13 @@ public class PlayerListener implements Listener {
     @EventHandler
     public void onPlayerInteractEntity(PlayerInteractEntityEvent event) {
         Player player = event.getPlayer();
-        if(event.getRightClicked().getType() == EntityType.VILLAGER) {
+        if (event.getRightClicked().getType() == EntityType.VILLAGER) {
             Villager villager = (Villager) event.getRightClicked();
             if (AVillager.contains(villager.getUniqueId()))
                 player.openInventory(AVillager.get(villager.getUniqueId()).getInventory());
 
             event.setCancelled(true);
-        } else if(event.getRightClicked().getType() == EntityType.WANDERING_TRADER) {
+        } else if (event.getRightClicked().getType() == EntityType.WANDERING_TRADER) {
             event.setCancelled(true);
         }
     }
