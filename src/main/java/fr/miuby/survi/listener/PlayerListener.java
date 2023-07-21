@@ -17,7 +17,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.entity.Villager;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.*;
 
 public class PlayerListener implements Listener {
@@ -60,12 +59,17 @@ public class PlayerListener implements Listener {
     }
 
     @EventHandler
-    public void onPlayerDeath(PlayerDeathEvent event) {
-        AlphaPlayer.get(event.getPlayer().getUniqueId()).addMort(1);
+    public void onPlayerArmorChange(PlayerArmorChangeEvent event) {
+        if (AlphaPlayer.get(event.getPlayer().getUniqueId()).getRole().getType() == ERole.JUMP
+                && GameManager.getInstance().isNight()) {
+            
+        }
     }
 
-    @EventHandler
-    public void onPlayerChangedWorld(PlayerChangedWorldEvent event) {
-        AlphaPlayer.get(event.getPlayer().getUniqueId()).switchWorld();
-    }
+    /*@EventHandler
+    public void onPlayerBedEnter(PlayerBedEnterEvent event) {
+        if (event.getBedEnterResult().equals(PlayerBedEnterEvent.BedEnterResult.OK)) {
+            event.getPlayer().chat("zzz");
+        }
+    }*/
 }

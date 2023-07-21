@@ -1,9 +1,11 @@
 package fr.miuby.survi.listener;
 
+import fr.miuby.survi.player.AlphaPlayer;
 import fr.miuby.survi.world.EWorld;
 import fr.miuby.survi.world.Monde;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.world.PortalCreateEvent;
 
 public class WorldListener implements Listener {
@@ -16,5 +18,10 @@ public class WorldListener implements Listener {
             if (!Monde.get(EWorld.END).isLocked())
                 event.setCancelled(true);
         }
+    }
+
+    @EventHandler
+    public void onPlayerChangedWorld(PlayerChangedWorldEvent event) {
+        AlphaPlayer.get(event.getPlayer().getUniqueId()).switchWorld();
     }
 }

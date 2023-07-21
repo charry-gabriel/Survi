@@ -14,9 +14,9 @@ public class Survi extends JavaPlugin {
     @Override
     public void onEnable() {
         PluginManager pluginManager = this.getServer().getPluginManager();
-        pluginManager.registerEvents(new MandatoryPlayerListener(), this);
+        pluginManager.registerEvents(new ServerListener(), this);
         pluginManager.registerEvents(new PlayerListener(), this);
-        pluginManager.registerEvents(new EntityListener(), this);
+        pluginManager.registerEvents(new DamageListener(), this);
         pluginManager.registerEvents(new WorldListener(), this);
         pluginManager.registerEvents(new ItemListener(), this);
 

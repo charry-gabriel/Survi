@@ -8,23 +8,18 @@ import fr.miuby.survi.world.EWorld;
 import fr.miuby.survi.world.Monde;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.sound.Sound;
-import org.bukkit.attribute.Attribute;
-import org.bukkit.entity.EnderDragon;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Villager;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
-import org.bukkit.event.entity.EntitySpawnEvent;
-
-import java.util.Objects;
+import org.bukkit.event.entity.PlayerDeathEvent;
 import java.util.UUID;
-
 import static java.lang.Math.min;
 import static java.lang.Math.round;
 
-public class EntityListener implements Listener {
+public class DamageListener implements Listener {
     boolean firstPlayerHit = true;
     Sound slimeSound = Sound.sound(Key.key("entity.slime.attack"), Sound.Source.AMBIENT, 1f, 1.1f);
 
@@ -85,16 +80,7 @@ public class EntityListener implements Listener {
     }
 
     @EventHandler
-    public void onEntitySpawn(EntitySpawnEvent event){
-        if (event.getEntity() instanceof EnderDragon) {
-            EnderDragon dragon = (EnderDragon) event.getEntity();
-            try {
-                Objects.requireNonNull(dragon.getAttribute(Attribute.GENERIC_MAX_HEALTH)).setBaseValue(2000);
-                dragon.setHealth(2000);
-            } catch (Exception exception) {
-                exception.printStackTrace();
-            }
-        }
+    public void onPlayerDeath(PlayerDeathEvent event) {
+        AlphaPlayer.get(event.getPlayer().getUniqueId()).addMort(1);
     }
-
 }
