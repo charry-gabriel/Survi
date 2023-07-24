@@ -11,7 +11,7 @@ public class RoleFactory {
 
     public RoleFactory() {
         roles.put(ERole.SIMPLET, new Role("Simplet", ERole.SIMPLET, NamedTextColor.GRAY));
-        roles.put(ERole.MAIRE, new Role("Maire", ERole.MAIRE, NamedTextColor.RED));
+        roles.put(ERole.MAIRE, new Role("Maire", ERole.MAIRE, NamedTextColor.DARK_BLUE));
         roles.put(ERole.COUPLE, new Role("Couple", ERole.COUPLE, NamedTextColor.LIGHT_PURPLE));
         roles.put(ERole.JUMP, new Role("Jump", ERole.JUMP, NamedTextColor.BLACK));
         //roles.put(ERole.RICHE, new Role("Riche", ERole.RICHE));
