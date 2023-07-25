@@ -22,9 +22,11 @@ public class Timer {
             int tick;
             if (seconds >= 0 && seconds < 28800) {
                 tick = 12000 + Math.round(seconds/1.8f);
+                GameManager.getInstance().setNight(false);
             }
             else {
                 tick = Math.round(seconds/9.6f);
+                GameManager.getInstance().setNight(true);
             }
             Monde.get(EWorld.VILLAGE).getWorld().setTime(tick);
         }, 0, 20);

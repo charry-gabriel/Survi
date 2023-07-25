@@ -18,6 +18,7 @@ public class GameManager {
     private Timer timer;
 
     private int dispel = 0;
+    private boolean isNight;
 
     //region Factory
     private VillagerFactory villagerFactory;
@@ -62,6 +63,14 @@ public class GameManager {
 
     public void setDispel(int dispel) {
         this.dispel = dispel;
+    }
+
+    public boolean isNight() {
+        return isNight;
+    }
+
+    public void setNight(boolean night) {
+        isNight = night;
     }
 
     //region Factory
