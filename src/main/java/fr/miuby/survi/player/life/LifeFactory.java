@@ -12,7 +12,6 @@ public class LifeFactory {
         this.lifeModifiers.add(new LifeModifier(EWorld.VILLAGE, ERole.MAIRE, 1.5f));
         this.lifeModifiers.add(new LifeModifier(EWorld.WILDERNESS, ERole.MAIRE, 0.75f));
         this.lifeModifiers.add(new LifeModifier(EWorld.END, null, 0.5f));
-        this.lifeModifiers.add(new LifeModifier(EWorld.END2, null, 0.5f));
     }
 
     public float getLifeModifier(EWorld world, ERole role) {

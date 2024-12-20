@@ -4,6 +4,5 @@ public enum EWorld {
     VILLAGE,
     WILDERNESS,
     NETHER,
-    END,
-    END2
+    END
 }

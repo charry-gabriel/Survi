@@ -31,7 +31,7 @@ public class DamageListener implements Listener {
             UUID uuid = event.getDamager().getUniqueId();
             AlphaPlayer alphaPlayer =  AlphaPlayer.get(uuid);
 
-            if(Monde.isPlayerOnWorld(alphaPlayer.getPlayer(), EWorld.END) || Monde.isPlayerOnWorld(alphaPlayer.getPlayer(), EWorld.END2)) {
+            if(Monde.isPlayerOnWorld(alphaPlayer.getPlayer(), EWorld.END)) {
                 event.setDamage(damage * alphaPlayer.getDamageModifer() * alphaPlayer.getEndDamageModifier());
             } else {
                 event.setDamage(damage * alphaPlayer.getDamageModifer());
@@ -53,7 +53,7 @@ public class DamageListener implements Listener {
             double damage = event.getDamage();
             double modifiedDamage;
 
-            if(Monde.isPlayerOnWorld(damagedAlphaPlayer.getPlayer(), EWorld.END) || Monde.isPlayerOnWorld(damagedAlphaPlayer.getPlayer(), EWorld.END2)) {
+            if(Monde.isPlayerOnWorld(damagedAlphaPlayer.getPlayer(), EWorld.END)) {
                 modifiedDamage = round(damage / (damagedAlphaPlayer.getResistanceModifier() * damagedAlphaPlayer.getEndResistanceModifier()));
             } else {
                 modifiedDamage = round(damage / damagedAlphaPlayer.getResistanceModifier());
