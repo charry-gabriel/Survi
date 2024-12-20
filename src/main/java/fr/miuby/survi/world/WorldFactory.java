@@ -15,12 +15,13 @@ public class WorldFactory {
         worlds = new HashMap<>();
 
         Monde village = new Monde(server.getWorld("Village"),"Village", NamedTextColor.AQUA, EWorld.VILLAGE);
-        village.setLimit(new Rect(11649, 12645, 1965, 1227));
-        village.setSpawnPoint(new Location(village.getWorld(), 12073, 64, 1463));
+        village.setLimit(new Rect(512,-512,512,50,512,-512));
+        village.setSpawnPoint(new Location(village.getWorld(), -24, 158, -30));
         worlds.put(EWorld.VILLAGE, village);
 
         Monde wilderness = new Monde(server.getWorld("Wilderness"),"Wilderness", NamedTextColor.GOLD, EWorld.WILDERNESS);
-        wilderness.setSpawnPoint(new Location(wilderness.getWorld(), 0, 65, 0));
+        wilderness.setLimit(new Rect(2000,-2000, Integer.MAX_VALUE, Integer.MIN_VALUE,2000,-2000));
+        wilderness.setSpawnPoint(new Location(wilderness.getWorld(), 3, 78, -12));
         worlds.put(EWorld.WILDERNESS, wilderness);
 
         Monde nether = new Monde(server.getWorld("Wilderness_nether"),"Nether", NamedTextColor.RED, EWorld.NETHER);
@@ -30,8 +31,6 @@ public class WorldFactory {
         Monde end = new Monde(server.getWorld("Wilderness_the_end"),"End", NamedTextColor.YELLOW, EWorld.END);
         end.setLock(true);
         worlds.put(EWorld.END, end);
-
-        worlds.put(EWorld.END2, new Monde(server.getWorld("Wilderness_the_end2"),"End", NamedTextColor.YELLOW, EWorld.END));
     }
 
     public Monde getWorld(EWorld world) {

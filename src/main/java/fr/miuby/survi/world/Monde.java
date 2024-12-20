@@ -46,7 +46,7 @@ public class Monde {
     public static boolean isOutOfLimit(Player player, EWorld world) {
         Block block = player.getLocation().getBlock();
         Monde monde = get(world);
-        return isPlayerOnWorld(player, monde) && monde.getLimit() != null && monde.getLimit().isOut(block.getX(), block.getZ());
+        return isPlayerOnWorld(player, monde) && monde.getLimit() != null && monde.getLimit().isOut(block.getX(), block.getY(), block.getZ());
     }
     //endregion
 
