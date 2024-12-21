@@ -9,6 +9,7 @@ public class DispelEffect extends BlessingEffect{
     public DispelEffect(int dispelLevel) {
         dispel = dispelLevel;
     }
+
     @Override
     public void applyEffect(AlphaPlayer player) {
         GameManager.getInstance().setDispel(dispel);

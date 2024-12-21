@@ -35,7 +35,7 @@ public abstract class AVillager {
         this.profession = profession;
         this.baseName = name;
 
-        if (!GameManager.getInstance().getDatabase().getVillager(this, name)) {
+        if (GameManager.getInstance().getDatabase().IsLoaded() && !GameManager.getInstance().getDatabase().getVillager(this, name)) {
             GameManager.getInstance().getLogger().info(name + " doesn't exist");
             this.villager = CreateRealVillager(location, type, profession);
             this.uuid = this.villager.getUniqueId();
@@ -86,9 +86,12 @@ public abstract class AVillager {
             this.uuid = uuid;
         } else {
             GameManager.getInstance().getLogger().info("Didn't find villager uuid");
-            this.villager = CreateRealVillager(location, type, profession);
-            this.uuid = this.villager.getUniqueId();
-            GameManager.getInstance().getDatabase().updateVillagerUUID(this.uuid, baseName);
+
+            if (GameManager.getInstance().getDatabase().IsLoaded()) {
+                this.villager = CreateRealVillager(location, type, profession);
+                this.uuid = this.villager.getUniqueId();
+                GameManager.getInstance().getDatabase().updateVillagerUUID(this.uuid, baseName);
+            }
         }
     }
 

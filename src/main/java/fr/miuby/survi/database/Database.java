@@ -11,7 +11,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 public abstract class Database {
-    Connection connection;
+    protected Connection connection;
+    private boolean isLoaded = false;
 
     public abstract Connection getSQLConnection();
 
@@ -23,6 +24,7 @@ public abstract class Database {
             PreparedStatement ps = connection.prepareStatement("SELECT * FROM player WHERE pseudo = 'Miuby'");
             ResultSet rs = ps.executeQuery();
             close(ps,rs);
+            isLoaded = true;
             GameManager.getInstance().getLogger().log(Level.INFO, "Database connexion succeeded !");
         } catch (SQLException ex) {
             GameManager.getInstance().getLogger().log(Level.SEVERE, Errors.noSQLConnection, ex);
@@ -309,5 +311,9 @@ public abstract class Database {
         } catch (SQLException ex) {
             Error.close(ex);
         }
+    }
+
+    public boolean IsLoaded() {
+        return isLoaded;
     }
 }
