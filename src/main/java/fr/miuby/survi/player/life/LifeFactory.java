@@ -11,12 +11,12 @@ public class LifeFactory {
     public LifeFactory() {
         this.lifeModifiers.add(new LifeModifier(EWorld.VILLAGE, ERole.MAIRE, 1.5f));
         this.lifeModifiers.add(new LifeModifier(EWorld.WILDERNESS, ERole.MAIRE, 0.75f));
-        this.lifeModifiers.add(new LifeModifier(EWorld.END, null, 0.5f));
+        this.lifeModifiers.add(new LifeModifier(EWorld.END, ERole.ALL, 0.5f));
     }
 
     public float getLifeModifier(EWorld world, ERole role) {
         for (LifeModifier lifeModifier : lifeModifiers) {
-            if (world == lifeModifier.getWorld() && (lifeModifier.getRole() == null || role == lifeModifier.getRole())) {
+            if (world == lifeModifier.getWorld() && (lifeModifier.getRole() == ERole.ALL || role == lifeModifier.getRole())) {
                 return lifeModifier.getLifeModifier();
             }
         }

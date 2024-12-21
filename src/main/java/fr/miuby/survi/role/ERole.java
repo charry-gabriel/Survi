@@ -5,5 +5,6 @@ public enum ERole {
     COUPLE,
     SIMPLET,
     JUMP,
-    RICHE
+    RICHE,
+    ALL
 }
