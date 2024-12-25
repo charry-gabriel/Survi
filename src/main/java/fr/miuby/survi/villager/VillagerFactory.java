@@ -499,9 +499,9 @@ public class VillagerFactory {
 
         ItemStack itemStack = new ItemStack(Material.FISHING_ROD);
         ItemMeta meta = itemStack.getItemMeta();
-        meta.addEnchant(Enchantment.DURABILITY, 5,true);
+        meta.addEnchant(Enchantment.UNBREAKING, 5,true);
         meta.addEnchant(Enchantment.LURE, 5,true);
-        meta.addEnchant(Enchantment.LUCK, 5,true);
+        meta.addEnchant(Enchantment.LUCK_OF_THE_SEA, 5,true);
         meta.addEnchant(Enchantment.VANISHING_CURSE, 1,false);
         itemStack.setItemMeta(meta);
 
@@ -665,7 +665,7 @@ public class VillagerFactory {
 
         ItemStack itemStack = new ItemStack(Material.POTION);
         PotionMeta meta = (PotionMeta) itemStack.getItemMeta();
-        meta.addCustomEffect(new PotionEffect(PotionEffectType.HEAL,1,1), false);
+        meta.addCustomEffect(new PotionEffect(PotionEffectType.INSTANT_HEALTH,1,1), false);
         meta.addCustomEffect(new PotionEffect(PotionEffectType.ABSORPTION,3600*20,4), false);
         meta.addCustomEffect(new PotionEffect(PotionEffectType.SPEED,20*20,20), false);
         meta.addCustomEffect(new PotionEffect(PotionEffectType.REGENERATION,10*20,10), false);
@@ -728,17 +728,17 @@ public class VillagerFactory {
 
         ItemStack itemStack = new ItemStack(Material.ENCHANTED_BOOK, 1);
         EnchantmentStorageMeta meta = (EnchantmentStorageMeta) itemStack.getItemMeta();
-        meta.addStoredEnchant(Enchantment.DURABILITY, 3,false);
+        meta.addStoredEnchant(Enchantment.UNBREAKING, 3,false);
         itemStack.setItemMeta(meta);
 
         ItemStack itemStack2 = new ItemStack(Material.ENCHANTED_BOOK, 1);
         EnchantmentStorageMeta meta2 = (EnchantmentStorageMeta) itemStack2.getItemMeta();
-        meta2.addStoredEnchant(Enchantment.PROTECTION_ENVIRONMENTAL, 4,false);
+        meta2.addStoredEnchant(Enchantment.PROTECTION, 4,false);
         itemStack2.setItemMeta(meta2);
 
         ItemStack itemStack3 = new ItemStack(Material.ENCHANTED_BOOK, 1);
         EnchantmentStorageMeta meta3 = (EnchantmentStorageMeta) itemStack3.getItemMeta();
-        meta3.addStoredEnchant(Enchantment.DIG_SPEED, 5,false);
+        meta3.addStoredEnchant(Enchantment.EFFICIENCY, 5,false);
         itemStack3.setItemMeta(meta3);
 
         ItemStack itemStack4 = new ItemStack(Material.ENCHANTED_BOOK, 1);
@@ -748,7 +748,7 @@ public class VillagerFactory {
 
         ItemStack itemStack5 = new ItemStack(Material.ENCHANTED_BOOK, 1);
         EnchantmentStorageMeta meta5 = (EnchantmentStorageMeta) itemStack5.getItemMeta();
-        meta5.addStoredEnchant(Enchantment.ARROW_KNOCKBACK, 2,false);
+        meta5.addStoredEnchant(Enchantment.PUNCH, 2,false);
         itemStack5.setItemMeta(meta5);
 
         ItemStack[] items = new ItemStack[]{

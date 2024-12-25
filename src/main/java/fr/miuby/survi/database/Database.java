@@ -7,7 +7,6 @@ import java.util.logging.Level;
 import fr.miuby.survi.player.AlphaPlayer;
 import fr.miuby.survi.GameManager;
 import fr.miuby.survi.villager.AVillager;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 public abstract class Database {
@@ -52,7 +51,7 @@ public abstract class Database {
                 alphaPlayer.setSuccess(rs.getInt("success"));
                 alphaPlayer.setPseudo(rs.getString("pseudo"));
                 alphaPlayer.setRole(rs.getString("role"));
-                Bukkit.getScheduler().runTask(GameManager.getInstance().getPlugin(), alphaPlayer::joinServer);
+                GameManager.getInstance().getScheduler().runTask(GameManager.getInstance().getPlugin(), alphaPlayer::joinServer);
             }
         } catch (SQLException ex) {
             GameManager.getInstance().getLogger().log(Level.SEVERE, Errors.sqlConnectionExecute, ex);
@@ -88,7 +87,7 @@ public abstract class Database {
                 alphaPlayer.setSuccess(success);
                 alphaPlayer.setPseudo(pseudo);
                 alphaPlayer.setRole(role);
-                Bukkit.getScheduler().runTask(GameManager.getInstance().getPlugin(), alphaPlayer::joinServer);
+                GameManager.getInstance().getScheduler().runTask(GameManager.getInstance().getPlugin(), alphaPlayer::joinServer);
             } else {
                 Player player = GameManager.getInstance().getPlugin().getServer().getPlayer(uuid);
 
@@ -99,7 +98,7 @@ public abstract class Database {
                     alphaPlayer.setPseudo(player.getName());
                     CreateDBPlayer(player.getUniqueId(), player.getName());
                 }
-                Bukkit.getScheduler().runTask(GameManager.getInstance().getPlugin(), alphaPlayer::joinServer);
+                GameManager.getInstance().getScheduler().runTask(GameManager.getInstance().getPlugin(), alphaPlayer::joinServer);
             }
         } catch (SQLException ex) {
             GameManager.getInstance().getLogger().log(Level.SEVERE, Errors.sqlConnectionExecute, ex);

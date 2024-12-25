@@ -26,7 +26,7 @@ public class AlphaLife {
         double baseLife = this.maxHealthEffectLife + this.successLife - deathWithDispel;
         this.maxLife = (int) Math.round(baseLife * this.worldRoleModifier);
 
-        Objects.requireNonNull(this.alphaPlayer.getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH)).setBaseValue(this.maxLife);
+        Objects.requireNonNull(this.alphaPlayer.getPlayer().getAttribute(Attribute.MAX_HEALTH)).setBaseValue(this.maxLife);
     }
 
     public void setSuccess(int success) {

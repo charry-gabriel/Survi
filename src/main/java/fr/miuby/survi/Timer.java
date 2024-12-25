@@ -2,8 +2,6 @@ package fr.miuby.survi;
 
 import fr.miuby.survi.world.EWorld;
 import fr.miuby.survi.world.Monde;
-import org.bukkit.Bukkit;
-import org.bukkit.scheduler.BukkitScheduler;
 
 import java.time.Duration;
 import java.time.Instant;
@@ -12,8 +10,7 @@ import java.time.ZonedDateTime;
 public class Timer {
 
     public void update() {
-        BukkitScheduler scheduler = Bukkit.getServer().getScheduler();
-        scheduler.scheduleSyncRepeatingTask(GameManager.getInstance().getPlugin(), () -> {
+        GameManager.getInstance().getScheduler().scheduleSyncRepeatingTask(GameManager.getInstance().getPlugin(), () -> {
 
             ZonedDateTime nowZoned = ZonedDateTime.now();
             Instant midnight = nowZoned.toLocalDate().atStartOfDay(nowZoned.getZone()).toInstant();
