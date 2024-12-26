@@ -12,7 +12,6 @@ import java.util.UUID;
 
 public class AlphaPlayer implements Serializable {
     private final UUID uuid;
-    private String pseudo;
     private Player player;
     private Role role;
     private final AlphaLife alphaLife;
@@ -107,10 +106,6 @@ public class AlphaPlayer implements Serializable {
         return this.success;
     }
 
-    public String getPseudo(){
-        return this.pseudo;
-    }
-
     public Player getPlayer(){
         return this.player;
     }
@@ -131,7 +126,7 @@ public class AlphaPlayer implements Serializable {
         return this.endResistanceModifier;
     }
 
-    public float getDamageModifer() {
+    public float getDamageModifier() {
         return this.damageModifier;
     }
 
@@ -149,10 +144,6 @@ public class AlphaPlayer implements Serializable {
 
     public void setMort(int mort) {
         this.mort = mort;
-    }
-
-    public void setPseudo(String pseudo) {
-        this.pseudo = pseudo;
     }
 
     public void setPlayer(Player player) {

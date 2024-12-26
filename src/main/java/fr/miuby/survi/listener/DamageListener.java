@@ -32,9 +32,9 @@ public class DamageListener implements Listener {
             AlphaPlayer alphaPlayer =  AlphaPlayer.get(uuid);
 
             if(Monde.isPlayerOnWorld(alphaPlayer.getPlayer(), EWorld.END)) {
-                event.setDamage(damage * alphaPlayer.getDamageModifer() * alphaPlayer.getEndDamageModifier());
+                event.setDamage(damage * alphaPlayer.getDamageModifier() * alphaPlayer.getEndDamageModifier());
             } else {
-                event.setDamage(damage * alphaPlayer.getDamageModifer());
+                event.setDamage(damage * alphaPlayer.getDamageModifier());
             }
         }
     }

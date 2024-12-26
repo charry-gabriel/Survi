@@ -49,7 +49,6 @@ public abstract class Database {
 
                 alphaPlayer.setMort(rs.getInt("mort"));
                 alphaPlayer.setSuccess(rs.getInt("success"));
-                alphaPlayer.setPseudo(rs.getString("pseudo"));
                 alphaPlayer.setRole(rs.getString("role"));
                 GameManager.getInstance().getScheduler().runTask(GameManager.getInstance().getPlugin(), alphaPlayer::joinServer);
             }
@@ -80,12 +79,10 @@ public abstract class Database {
             if (rs.next()) {
                 int mort = rs.getInt("mort");
                 int success = rs.getInt("success");
-                String pseudo = rs.getString("pseudo");
                 String role = rs.getString("role");
 
                 alphaPlayer.setMort(mort);
                 alphaPlayer.setSuccess(success);
-                alphaPlayer.setPseudo(pseudo);
                 alphaPlayer.setRole(role);
                 GameManager.getInstance().getScheduler().runTask(GameManager.getInstance().getPlugin(), alphaPlayer::joinServer);
             } else {
@@ -95,7 +92,6 @@ public abstract class Database {
                 if (player != null) {
                     GameManager.getInstance().getLogger().info("player "+player.getName());
                     alphaPlayer.setPlayer(player);
-                    alphaPlayer.setPseudo(player.getName());
                     CreateDBPlayer(player.getUniqueId(), player.getName());
                 }
                 GameManager.getInstance().getScheduler().runTask(GameManager.getInstance().getPlugin(), alphaPlayer::joinServer);
@@ -256,6 +252,34 @@ public abstract class Database {
                 GameManager.getInstance().getLogger().log(Level.SEVERE, Errors.sqlConnectionClose, ex);
             }
         }
+    }
+
+    public boolean isVillagerUUIDExist(UUID uuid) {
+        Connection conn = null;
+        PreparedStatement ps = null;
+        ResultSet rs;
+        GameManager.getInstance().getLogger().info("isVillagerUUIDExist");
+        try {
+            conn = getSQLConnection();
+            ps = conn.prepareStatement("SELECT * FROM villager WHERE uuid = '"+uuid+"'");
+            rs = ps.executeQuery();
+
+            if (rs.next()) {
+                return true;
+            }
+        } catch (SQLException ex) {
+            GameManager.getInstance().getLogger().log(Level.SEVERE, Errors.sqlConnectionExecute, ex);
+        } finally {
+            try {
+                if (ps != null)
+                    ps.close();
+                if (conn != null)
+                    conn.close();
+            } catch (SQLException ex) {
+                GameManager.getInstance().getLogger().log(Level.SEVERE, Errors.sqlConnectionClose, ex);
+            }
+        }
+        return false;
     }
     //endregion
 

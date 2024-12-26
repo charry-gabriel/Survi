@@ -35,7 +35,7 @@ public class AlphaTeam {
         return world.getType();
     }
 
-    public void addPlayer(String pseudo) {
-        this.team.addEntry(pseudo);
+    public void addPlayer(AlphaPlayer player) {
+        this.team.addEntry(player.getPlayer().getName());
     }
 }
