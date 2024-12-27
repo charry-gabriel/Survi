@@ -12,7 +12,7 @@ import static org.bukkit.util.NumberConversions.floor;
 
 public class AlphaLife {
     private final AlphaPlayer alphaPlayer;
-    private int maxHealthEffectLife = 10;
+    private int maxHealthEffectLife = 2;
     private int successLife = 0;
     private int deathLife = 0;
     private List<AttributeModifier> worldRoleModifiers;
