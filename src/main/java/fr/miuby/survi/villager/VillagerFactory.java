@@ -27,15 +27,12 @@ public class VillagerFactory {
     public VillagerFactory() {
         this.world = Monde.get(EWorld.VILLAGE).getWorld();
 
-        spawnEdward();
+        spawnSurvivant();
         spawnNain();
         spawnMaddox();
         spawnThomas();
-        spawnStuff();
-        spawnTools();
         spawnFrancois();
-        spawnHeros();
-        spawnPecheur1();
+        /*spawnPecheur1();
         spawnPecheur2();
         spawnFermier1();
         spawnFermier2();
@@ -44,7 +41,7 @@ public class VillagerFactory {
         spawnEnchanteur();
         spawnPolicier();
         spawnPharmacien();
-        spawnLibraire();
+        spawnLibraire();*/
     }
 
     private void addNewVillager(AVillager villager) {
@@ -63,76 +60,56 @@ public class VillagerFactory {
     }
 
     //region Villagers
-    private void spawnEdward(){
-        Location location = new Location(world, 12012.5, 64, 1465.5, -90, 0);
+    private void spawnSurvivant(){
+        Location location = new Location(world, -23.5, 157, -13.5, 180, 0);
 
         Tribute[] tributes = new Tribute[]{
-                new Tribute(new ItemStack(Material.HAY_BLOCK, 64)),
-                new Tribute(new ItemStack(Material.GOLDEN_CARROT, 128)),
-                new Tribute(new ItemStack(Material.BAKED_POTATO, 192)),
-                new Tribute(new ItemStack(Material.PUMPKIN_PIE, 256)),
-                new Tribute(new ItemStack(Material.SUGAR, 320)),
-                new Tribute(new ItemStack(Material.MELON, 384)),
-                new Tribute(new ItemStack(Material.GREEN_DYE, 448)),
-                new Tribute(new ItemStack(Material.COOKIE, 4096)),
-                new Tribute(new ItemStack(Material.TROPICAL_FISH, 666)),
-                new Tribute(new ItemStack(Material.NETHER_WART_BLOCK, 100)),
-                new Tribute(new ItemStack(Material.NETHER_STAR, 100)),
+                new Tribute(new ItemStack(Material.OAK_SAPLING, 32)),
+                new Tribute(new ItemStack(Material.OAK_LOG, 640), new ItemStack(Material.APPLE, 64)),
+                new Tribute(new ItemStack(Material.IRON_BLOCK, 320), new ItemStack(Material.REDSTONE_BLOCK, 64), new ItemStack(Material.LAPIS_BLOCK, 64)),
+                new Tribute(new ItemStack(Material.HAY_BLOCK, 32), new ItemStack(Material.BAKED_POTATO, 32), new ItemStack(Material.GOLDEN_CARROT, 128)),
+                new Tribute(new ItemStack(Material.ENDER_PEARL, 16), new ItemStack(Material.FERMENTED_SPIDER_EYE, 64), new ItemStack(Material.PHANTOM_MEMBRANE, 64), new ItemStack(Material.GUNPOWDER, 64)),
+                new Tribute(new ItemStack(Material.ARMADILLO_SCUTE, 64), new ItemStack(Material.PALE_OAK_LOG, 64), new ItemStack(Material.CREAKING_HEART, 64), new ItemStack(Material.RESIN_BLOCK, 64)),
                 new Tribute(new ItemStack(Material.BEDROCK, 1)),
         };
 
         Blessing[] blessings = new Blessing[]{
-                new Blessing(new MaxHealthEffect(12)),
-                new Blessing(new MaxHealthEffect(14)),
-                new Blessing(new MaxHealthEffect(16)),
-                new Blessing(new MaxHealthEffect(18)),
-                new Blessing(new MaxHealthEffect(20)),
-                new Blessing(new MaxHealthEffect(24)),
-                new Blessing(new MaxHealthEffect(28)),
-                new Blessing(new MaxHealthEffect(32)),
-                new Blessing(new MaxHealthEffect(34)),
-                new Blessing(new MaxHealthEffect(35)),
-                new Blessing(new RegenEffect()),
+                new Blessing(new MaxHealthEffect(4),new UnlockToolEffect(LockedToolType.WOOD)),
+                new Blessing(new MaxHealthEffect(6),new UnlockArmorEffect(LockedArmorType.LEATHER), new UnlockToolEffect(LockedToolType.STONE)),
+                new Blessing(new MaxHealthEffect(8),new UnlockArmorEffect(LockedArmorType.CHAINMAIL), new UnlockToolEffect(LockedToolType.IRON)),
+                new Blessing(new MaxHealthEffect(10),new UnlockArmorEffect(LockedArmorType.IRON)),
+                new Blessing(new MaxHealthEffect(12),new UnlockArmorEffect(LockedArmorType.GOLD), new UnlockToolEffect(LockedToolType.GOLD)),
+                new Blessing(new MaxHealthEffect(14),new UnlockArmorEffect(LockedArmorType.DIAMOND), new UnlockToolEffect(LockedToolType.DIAMOND)),
                 new Blessing(new MessageEffect("IMPOSSIBLE")),
-
         };
 
         TextComponent[] messages = new TextComponent[]{
-                Component.text("Merci beaucoup pour cette nourriture. Tenez, 1 coeur pour vous !"),
-                Component.text( "Merci merci. Pourquoi autant ? C'est pas grave. Tenez, 1 coeur de plus pour vous."),
-                Component.text( "J'adore les patates ! Merci ! Je vous offre ce coeur"),
-                Component.text( "Merci. Prenez ce coeur, je n'ai pas le temps de vous parler."),
-                Component.text( "Bravo ! J'avais tellement besoin de ce sucre. Je vous prépare une surprise mais j'ai besoin d'autre ingrédients. Tenez ce coeur, vous en aurez sûrement plus besoin que moi."),
-                Component.text( "Du melon, c'est parfait, c'est exactement dont ce que j'avais besoin ! Vous voici maintenant avec 2 coeurs supplémentaires."),
-                Component.text( "C'est uniquement pour la couleur de la soupe que j'ai demandée du cactus, je suppose que vous avez fait ça vite de toute façon. Prenez ces 2 coeurs en plus quand même."),
-                Component.text( "Félicitation, vous voici maintenant à 32 HP."),
-                Component.text( "Félicitation, vous voici maintenant à 34 HP. J'ai presque fini la potion magique."),
-                Component.text( "Bravo, vous avez maintenant 35 HP. Il me manque que quelques étoiles du nether et je suis prêt. Allez me le chercher, vite vite vite !!!!"),
-                Component.text( "Félicitations, j'ai fini !! Vous pouvez regagner votre vie sans pomme !! AHAHAH !! Je suis le meilleur !!"),
+                Component.text("Vous pouvez maintenant avoir des outils en bois !"),
+                Component.text( "Vous pouvez maintenant avoir des outils en pierre et une armure en cuir !"),
+                Component.text( "Vous pouvez maintenant avoir des outils en fer et une armure en maille !"),
+                Component.text( "Vous pouvez maintenant avoir une armure en fer !"),
+                Component.text( "Vous pouvez maintenant avoir des outils en or et une armure en or !"),
+                Component.text( "Vous pouvez maintenant avoir des outils en diamant et une armure en diamant !"),
                 Component.text( "IMPOSSIBLE"),
 
         };
 
         TextComponent[] names = new TextComponent[]{
-                Component.text( "Edward Jenner I"),
-                Component.text( "Edward Jenner II"),
-                Component.text( "Edward Jenner III"),
-                Component.text( "Edward Jenner IV"),
-                Component.text( "Edward Jenner V"),
-                Component.text( "Edward Jenner VI"),
-                Component.text( "Edward Jenner VII"),
-                Component.text( "Edward Jenner VIII"),
-                Component.text( "Edward Jenner IX"),
-                Component.text( "Edward Jenner X"),
+                Component.text( "Survivant I"),
+                Component.text( "Survivant II"),
+                Component.text( "Survivant III"),
+                Component.text( "Survivant IV"),
+                Component.text( "Survivant V"),
+                Component.text( "Survivant VI"),
                 Component.text( "Edward Jenner MAX"),
                 Component.text( "Edward Jenner MAX"),
         };
 
-        this.addNewVillager(new VillagerLevel("Edward Jenner I", location, Villager.Type.SAVANNA, Villager.Profession.FARMER, blessings, messages, tributes, names));
+        this.addNewVillager(new VillagerLevel("Survivant", location, Villager.Type.SAVANNA, Villager.Profession.FARMER, blessings, messages, tributes, names));
     }
 
     private void spawnNain(){
-        Location location = new Location(world, 12076.5, 64, 1445.5, 90, 0);
+        Location location = new Location(world, -25.5, 157, -15.5, -90, 0);
 
         Tribute[] tributes = new Tribute[]{
                 new Tribute(new ItemStack(Material.DIORITE_WALL, 64)),
@@ -170,11 +147,11 @@ public class VillagerFactory {
                 Component.text( "Nain Roux MAX"),
         };
 
-        this.addNewVillager(new VillagerLevel("Nain Roux I", location, Villager.Type.SWAMP, Villager.Profession.NITWIT, blessings, messages, tributes, names));
+        this.addNewVillager(new VillagerLevel("Nain Roux", location, Villager.Type.SWAMP, Villager.Profession.NITWIT, blessings, messages, tributes, names));
     }
 
     private void spawnMaddox(){
-        Location location = new Location(world, 12072.5, 64, 1445.5, -90, 0);
+        Location location = new Location(world, -21.5, 157, -15.5, 90, 0);
 
         Tribute[] tributes = new Tribute[]{
                 new Tribute(new ItemStack(Material.ARROW, 256)),
@@ -212,14 +189,14 @@ public class VillagerFactory {
                 Component.text( "Maddox MAX"),
         };
 
-        this.addNewVillager(new VillagerLevel("Maddox I", location, Villager.Type.TAIGA, Villager.Profession.BUTCHER, blessings, messages, tributes, names));
+        this.addNewVillager(new VillagerLevel("Maddox", location, Villager.Type.TAIGA, Villager.Profession.BUTCHER, blessings, messages, tributes, names));
     }
 
     private void spawnThomas(){
-        Location location = new Location(world, 12077.5, 63, 1464.5, 90, 0);
+        Location location = new Location(world, -23.5, 166, -15.5, 180, 0);
 
         Tribute[] tributes = new Tribute[]{
-                new Tribute(new ItemStack(Material.DIRT, 1)),
+                new Tribute(new ItemStack(Material.DIRT, 640)),
                 new Tribute(new ItemStack(Material.BEDROCK, 1)),
                 new Tribute(new ItemStack(Material.DIAMOND, 32)),
                 new Tribute(new ItemStack(Material.BEDROCK, 1)),
@@ -270,95 +247,12 @@ public class VillagerFactory {
                 Component.text( "Thomas Pesquet V"),
         };
 
-        this.addNewVillager(new VillagerLevel("Thomas Pesquet I", location, Villager.Type.SNOW, Villager.Profession.FISHERMAN, blessings, messages, tributes, names));
+        this.addNewVillager(new VillagerLevel("Thomas Pesquet", location, Villager.Type.SNOW, Villager.Profession.FISHERMAN, blessings, messages, tributes, names));
     }
 
-    private void spawnStuff(){
-        Location location = new Location(world, 12073, 63, 1427, 0, 0);
-
-        Tribute[] tributes = new Tribute[]{
-                new Tribute(new ItemStack(Material.SADDLE, 1)),
-                new Tribute(new ItemStack(Material.GOLDEN_APPLE, 64)),
-                new Tribute(new ItemStack(Material.DUNE_ARMOR_TRIM_SMITHING_TEMPLATE, 6)),
-                new Tribute(new ItemStack(Material.REDSTONE_BLOCK, 1400)),
-                new Tribute(new ItemStack(Material.SPONGE, 48), new ItemStack(Material.WITHER_SKELETON_SKULL, 32)),
-                new Tribute(new ItemStack(Material.BEDROCK, 1)),
-        };
-
-        Blessing[] blessings = new Blessing[]{
-                new Blessing(new UnlockArmorEffect(LockedArmorType.LEATHER)),
-                new Blessing(new UnlockArmorEffect(LockedArmorType.GOLD)),
-                new Blessing(new UnlockArmorEffect(LockedArmorType.CHAINMAIL)),
-                new Blessing(new UnlockArmorEffect(LockedArmorType.IRON)),
-                new Blessing(new UnlockArmorEffect(LockedArmorType.DIAMOND)),
-                new Blessing(new MessageEffect("IMPOSSIBLE")),
-        };
-
-        TextComponent[] messages = new TextComponent[]{
-                Component.text( "Vous avez maintenant les capacités de construire vos propres armures en cuir d'une qualité incroyable."),
-                Component.text("Vous pouvez maintenant construire la meilleure amure, la plus belle, l'armure en or ! La preuve de votre richesse et de votre force !"),
-                Component.text( "J'ai créé une armure unique pour vous, essavez avec un peu de lave, vous verrez."),
-                Component.text( "Vous pouvez maintenant construire une vraie armure grâce à moi."),
-                Component.text( "La plus belle des armures est maintenant disponible, l'amure en diamant !"),
-                Component.text( "IMPOSSIBLE"),
-        };
-
-        TextComponent[] names = new TextComponent[]{
-                Component.text( "Cowboy"),
-                Component.text( "Goldor"),
-                Component.text( "Gardien"),
-                Component.text( "IronMan"),
-                Component.text( "Blue Moon"),
-                Component.text( "Blue Moon"),
-        };
-
-        this.addNewVillager(new VillagerLevel("Comboy", location, Villager.Type.JUNGLE, Villager.Profession.ARMORER, blessings, messages, tributes, names));
-    }
-
-    private void spawnTools(){
-        Location location = new Location(world, 12184.5, 66, 1477.5, -90, 0);
-
-        Tribute[] tributes = new Tribute[]{
-                new Tribute(new ItemStack(Material.CRAFTING_TABLE, 64)),
-                new Tribute(new ItemStack(Material.FURNACE, 64)),
-                new Tribute(new ItemStack(Material.ANVIL, 20)),
-                new Tribute(new ItemStack(Material.EMERALD_BLOCK, 1)),
-                new Tribute(new ItemStack(Material.BROWN_CONCRETE, 576), new ItemStack(Material.STRIPPED_CHERRY_LOG, 576), new ItemStack(Material.COBBLED_DEEPSLATE_STAIRS, 576)),
-                new Tribute(new ItemStack(Material.BEDROCK, 1)),
-        };
-
-        Blessing[] blessings = new Blessing[]{
-                new Blessing(new UnlockToolEffect(LockedToolType.WOOD)),
-                new Blessing(new UnlockToolEffect(LockedToolType.STONE)),
-                new Blessing(new UnlockToolEffect(LockedToolType.IRON)),
-                new Blessing(new UnlockToolEffect(LockedToolType.GOLD)),
-                new Blessing(new UnlockToolEffect(LockedToolType.DIAMOND)),
-                new Blessing(new MessageEffect("IMPOSSIBLE")),
-        };
-
-        TextComponent[] messages = new TextComponent[]{
-                Component.text( "Les outils en bois sont très bien pour commencer."),
-                Component.text( "Les outils en pierre sont les meilleurs sur le marché."),
-                Component.text( "Les outils en fer sont super solide et très efficace."),
-                Component.text( "Les meilleurs outils sont les outils en or."),
-                Component.text( "I am a dwarf and I'm digging a hole. Diggy diggy hole, diggy diggy hole. Les outils en diamant sont disponibles !"),
-                Component.text( "IMPOSSIBLE"),
-        };
-
-        TextComponent[] names = new TextComponent[]{
-                Component.text( "Janod"),
-                Component.text( "Pierre"),
-                Component.text( "Léa"),
-                Component.text( "Jeff Bezos"),
-                Component.text( "Diggy Diggy Hole"),
-                Component.text( "Diggy Diggy Hole"),
-        };
-
-        this.addNewVillager(new VillagerLevel("Janod",location, Villager.Type.TAIGA, Villager.Profession.WEAPONSMITH, blessings, messages, tributes, names));
-    }
 
     private void spawnFrancois(){
-        Location location = new Location(world, 12076.5, 64, 1483.5, 90, 0);
+        Location location = new Location(world, -24.5, 158, -0.5, 0, 0);
 
         Tribute[] tributes = new Tribute[]{
                 new Tribute(new ItemStack(Material.BELL, 1)),
@@ -402,45 +296,23 @@ public class VillagerFactory {
         };
 
         TextComponent[] names = new TextComponent[]{
-                Component.text( "Léon XIII"),
-                Component.text( "Pie X"),
-                Component.text( "Benoît XV"),
-                Component.text( "Pie XI"),
-                Component.text( "Jean XXIII"),
-                Component.text( "Paul VI"),
-                Component.text( "Jean Paul I"),
-                Component.text( "Jean Paul II"),
-                Component.text( "Benoît XVI"),
                 Component.text( "François I"),
-                Component.text( "François I"),
+                Component.text( "François II"),
+                Component.text( "François IIi"),
+                Component.text( "François Iv"),
+                Component.text( "François v"),
+                Component.text( "François VI"),
+                Component.text( "François Paul VII"),
+                Component.text( "François Paul VIII"),
+                Component.text( "François IX"),
+                Component.text( "François X"),
+                Component.text( "François X"),
 
         };
 
-        this.addNewVillager(new VillagerLevel("Léon XIII",location, Villager.Type.JUNGLE, Villager.Profession.CLERIC, blessings, messages, tributes, names));
+        this.addNewVillager(new VillagerLevel("François",location, Villager.Type.JUNGLE, Villager.Profession.CLERIC, blessings, messages, tributes, names));
     }
 
-    private void spawnHeros(){
-        Location location = new Location(world, 12091.5, 75, 1535.5, -180, 0);
-
-        Tribute[] tributes = new Tribute[]{
-                new Tribute(new ItemStack(Material.BEDROCK, 1)),
-        };
-
-        Blessing[] blessings = new Blessing[]{
-                new Blessing(new DispelEffect(1)),
-        };
-
-        TextComponent[] messages = new TextComponent[]{
-                Component.text( "IMPOSSIBLE"),
-        };
-
-        TextComponent[] names = new TextComponent[]{
-                Component.text( "Héros I"),
-
-        };
-
-        this.addNewVillager(new VillagerLevel("Héros I", location, Villager.Type.SAVANNA, Villager.Profession.CARTOGRAPHER, blessings, messages, tributes, names));
-    }
 
     private void spawnPecheur1(){
         Location location = new Location(world, 12059.5, 63, 1469.5, 90, 0);
