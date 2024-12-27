@@ -14,13 +14,6 @@ import org.bukkit.inventory.ItemStack;
 public class ItemListener implements Listener {
     @EventHandler
     public void onPrepareItemCraft(PrepareItemCraftEvent event){
-        if(event.getInventory().getResult() != null) {
-            if (GameManager.getInstance().getLockedItemsFactory().isLocked(event.getInventory().getResult())) {
-                ItemStack air = new ItemStack(Material.AIR);
-                event.getInventory().setResult(air);
-            }
-        }
-
         ItemStack[] matrix = event.getInventory().getMatrix();
 
         //region chainmail_armor
@@ -242,6 +235,13 @@ public class ItemListener implements Listener {
                 && (matrix[7] == null || matrix[7].getType() == Material.AIR))
             event.getInventory().setResult(new ItemStack(Material.DIAMOND_LEGGINGS));
         //endregion
+
+        if(event.getInventory().getResult() != null) {
+            if (GameManager.getInstance().getLockedItemsFactory().isLocked(event.getInventory().getResult())) {
+                ItemStack air = new ItemStack(Material.AIR);
+                event.getInventory().setResult(air);
+            }
+        }
     }
 
     @EventHandler
