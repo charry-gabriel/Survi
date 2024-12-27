@@ -4,6 +4,7 @@ import fr.miuby.survi.GameManager;
 import fr.miuby.survi.player.AlphaPlayer;
 import org.bukkit.attribute.Attribute;
 
+import java.util.List;
 import java.util.Objects;
 
 import static java.lang.Math.max;
@@ -14,7 +15,7 @@ public class AlphaLife {
     private int maxHealthEffectLife = 10;
     private int successLife = 0;
     private int deathLife = 0;
-    private AttributeModifier worldRoleModifier;
+    private List<AttributeModifier> worldRoleModifiers;
     private int maxLife;
 
     public AlphaLife(AlphaPlayer alphaPlayer) {
@@ -22,17 +23,21 @@ public class AlphaLife {
     }
 
     public void actualize() {
-        if (this.worldRoleModifier == null)
+        if (this.worldRoleModifiers.isEmpty())
             return;
 
-        if (this.worldRoleModifier.getAttributeType() == Attribute.MAX_HEALTH) {
-            int deathWithDispel = max(0, this.deathLife - GameManager.getInstance().getDispel());
-            double baseLife = this.maxHealthEffectLife + this.successLife - deathWithDispel;
-            this.maxLife = (int) Math.round(baseLife * this.worldRoleModifier.getAttributeModifier());
+        for(AttributeModifier attributeModifier : worldRoleModifiers) {
+            GameManager.getInstance().getLogger().info(attributeModifier.getAttributeType().toString());
+            if (attributeModifier.getAttributeType() == Attribute.MAX_HEALTH) {
+                int deathWithDispel = max(0, this.deathLife - GameManager.getInstance().getDispel());
+                double baseLife = this.maxHealthEffectLife + this.successLife - deathWithDispel;
+                this.maxLife = (int) Math.round(baseLife * attributeModifier.getAttributeModifier());
+                GameManager.getInstance().getLogger().info(this.alphaPlayer.getPlayer().getName() + " " + maxLife);
 
-            Objects.requireNonNull(this.alphaPlayer.getPlayer().getAttribute(Attribute.MAX_HEALTH)).setBaseValue(this.maxLife);
-        } else {
-            Objects.requireNonNull(this.alphaPlayer.getPlayer().getAttribute(this.worldRoleModifier.getAttributeType())).setBaseValue(this.worldRoleModifier.getAttributeModifier());
+                Objects.requireNonNull(this.alphaPlayer.getPlayer().getAttribute(Attribute.MAX_HEALTH)).setBaseValue(this.maxLife);
+            } else {
+                Objects.requireNonNull(this.alphaPlayer.getPlayer().getAttribute(attributeModifier.getAttributeType())).setBaseValue(attributeModifier.getAttributeModifier());
+            }
         }
     }
 
@@ -54,7 +59,7 @@ public class AlphaLife {
     public void setWorldRole() {
         double missingLife = this.maxLife - this.alphaPlayer.getPlayer().getHealth();
 
-        this.worldRoleModifier = GameManager.getInstance().getLifeFactory().getAttributeModifier(this.alphaPlayer.getWorld(), this.alphaPlayer.getRole().getType());
+        this.worldRoleModifiers = GameManager.getInstance().getLifeFactory().getAttributeModifier(this.alphaPlayer.getWorld(), this.alphaPlayer.getRole().getType());
         actualize();
 
         if (missingLife > 0)

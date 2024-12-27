@@ -91,12 +91,13 @@ public class AttributeFactory {
         //endregion
     }
 
-    public AttributeModifier getAttributeModifier(EWorld world, ERole role) {
+    public List<AttributeModifier> getAttributeModifier(EWorld world, ERole role) {
+        List<AttributeModifier> returnedModifiers = new ArrayList<>();
         for (AttributeModifier attributeModifier : attributeModifiers) {
             if ((world == attributeModifier.getWorld() || attributeModifier.getWorld() == EWorld.ALL) && (attributeModifier.getRole() == ERole.ALL || role == attributeModifier.getRole())) {
-                return attributeModifier;
+                returnedModifiers.add(attributeModifier);
             }
         }
-        return null;
+        return returnedModifiers;
     }
 }
