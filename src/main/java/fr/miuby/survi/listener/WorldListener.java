@@ -12,10 +12,10 @@ public class WorldListener implements Listener {
     @EventHandler
     public void onPortalCreate(PortalCreateEvent event) {
         if (event.getReason().equals(PortalCreateEvent.CreateReason.FIRE)) {
-            if (!Monde.get(EWorld.NETHER).isLocked())
+            if (Monde.get(EWorld.NETHER).isLocked())
                 event.setCancelled(true);
         } else {
-            if (!Monde.get(EWorld.END).isLocked())
+            if (Monde.get(EWorld.END).isLocked())
                 event.setCancelled(true);
         }
     }
