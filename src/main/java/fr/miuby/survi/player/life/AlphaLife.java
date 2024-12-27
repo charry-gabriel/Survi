@@ -27,12 +27,10 @@ public class AlphaLife {
             return;
 
         for(AttributeModifier attributeModifier : worldRoleModifiers) {
-            GameManager.getInstance().getLogger().info(attributeModifier.getAttributeType().toString());
             if (attributeModifier.getAttributeType() == Attribute.MAX_HEALTH) {
                 int deathWithDispel = max(0, this.deathLife - GameManager.getInstance().getDispel());
                 double baseLife = this.maxHealthEffectLife + this.successLife - deathWithDispel;
                 this.maxLife = (int) Math.round(baseLife * attributeModifier.getAttributeModifier());
-                GameManager.getInstance().getLogger().info(this.alphaPlayer.getPlayer().getName() + " " + maxLife);
 
                 Objects.requireNonNull(this.alphaPlayer.getPlayer().getAttribute(Attribute.MAX_HEALTH)).setBaseValue(this.maxLife);
             } else {
