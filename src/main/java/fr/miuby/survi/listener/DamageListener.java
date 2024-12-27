@@ -59,11 +59,11 @@ public class DamageListener implements Listener {
                 modifiedDamage = round(damage / damagedAlphaPlayer.getResistanceModifier());
             }
 
-            if (damagedAlphaPlayer.getRole().getType() == ERole.COUPLE) {
+            if (damagedAlphaPlayer.getRole().getType() == ERole.PILOTE) {
                 if (firstPlayerHit) {
                     firstPlayerHit = false;
                     for (AlphaPlayer otherPlayer : GameManager.getInstance().getAlphaPlayerFactory().getAlphaPlayers().values()) {
-                        if (otherPlayer.getPlayer() != null && otherPlayer.getRole().getType() == ERole.COUPLE) {
+                        if (otherPlayer.getPlayer() != null && otherPlayer.getRole().getType() == ERole.PILOTE) {
                             if (!otherPlayer.getUUID().equals(damagedAlphaPlayer.getUUID())) {
                                 otherPlayer.getPlayer().damage(damage);
                                 otherPlayer.getPlayer().playSound(slimeSound);

@@ -117,7 +117,7 @@ public abstract class Database {
         GameManager.getInstance().getLogger().info("CreateDBPlayer");
         try {
             conn = getSQLConnection();
-            ps = conn.prepareStatement("INSERT INTO player VALUES ('"+uuid+"', 0, 0, '"+pseudo+"', 'Simplet')");
+            ps = conn.prepareStatement("INSERT INTO player VALUES ('"+uuid+"', 0, 0, '"+pseudo+"', 'Voyageur')");
             ps.executeUpdate();
         } catch (SQLException ex) {
             GameManager.getInstance().getLogger().log(Level.SEVERE, Errors.sqlConnectionExecute, ex);

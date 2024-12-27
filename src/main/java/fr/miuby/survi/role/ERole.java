@@ -1,9 +1,9 @@
 package fr.miuby.survi.role;
 
 public enum ERole {
-    MAIRE,
-    COUPLE,
-    SIMPLET,
+    CAPITAINE,
+    PILOTE,
+    VOYAGEUR,
     JUMP,
     RICHE,
     ALL
