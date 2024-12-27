@@ -14,7 +14,7 @@ public class AlphaLife {
     private int maxHealthEffectLife = 10;
     private int successLife = 0;
     private int deathLife = 0;
-    private float worldRoleModifier;
+    private AttributeModifier worldRoleModifier;
     private int maxLife;
 
     public AlphaLife(AlphaPlayer alphaPlayer) {
@@ -22,11 +22,18 @@ public class AlphaLife {
     }
 
     public void actualize() {
-        int deathWithDispel = max(0, this.deathLife - GameManager.getInstance().getDispel());
-        double baseLife = this.maxHealthEffectLife + this.successLife - deathWithDispel;
-        this.maxLife = (int) Math.round(baseLife * this.worldRoleModifier);
+        if (this.worldRoleModifier == null)
+            return;
 
-        Objects.requireNonNull(this.alphaPlayer.getPlayer().getAttribute(Attribute.MAX_HEALTH)).setBaseValue(this.maxLife);
+        if (this.worldRoleModifier.getAttributeType() == Attribute.MAX_HEALTH) {
+            int deathWithDispel = max(0, this.deathLife - GameManager.getInstance().getDispel());
+            double baseLife = this.maxHealthEffectLife + this.successLife - deathWithDispel;
+            this.maxLife = (int) Math.round(baseLife * this.worldRoleModifier.getAttributeModifier());
+
+            Objects.requireNonNull(this.alphaPlayer.getPlayer().getAttribute(Attribute.MAX_HEALTH)).setBaseValue(this.maxLife);
+        } else {
+            Objects.requireNonNull(this.alphaPlayer.getPlayer().getAttribute(this.worldRoleModifier.getAttributeType())).setBaseValue(this.worldRoleModifier.getAttributeModifier());
+        }
     }
 
     public void setSuccess(int success) {
@@ -47,7 +54,7 @@ public class AlphaLife {
     public void setWorldRole() {
         double missingLife = this.maxLife - this.alphaPlayer.getPlayer().getHealth();
 
-        this.worldRoleModifier = GameManager.getInstance().getLifeFactory().getLifeModifier(this.alphaPlayer.getWorld(), this.alphaPlayer.getRole().getType());
+        this.worldRoleModifier = GameManager.getInstance().getLifeFactory().getAttributeModifier(this.alphaPlayer.getWorld(), this.alphaPlayer.getRole().getType());
         actualize();
 
         if (missingLife > 0)
