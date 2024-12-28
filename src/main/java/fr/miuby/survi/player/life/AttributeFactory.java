@@ -16,12 +16,14 @@ public class AttributeFactory {
         this.attributeModifiers.add(new AttributeModifier(EWorld.VILLAGE, ERole.CAPITAINE, Attribute.ARMOR, 30f));
         this.attributeModifiers.add(new AttributeModifier(EWorld.VILLAGE, ERole.CAPITAINE, Attribute.ATTACK_DAMAGE, 4f));
         this.attributeModifiers.add(new AttributeModifier(EWorld.VILLAGE, ERole.CAPITAINE, Attribute.BLOCK_BREAK_SPEED, 1.5f));
+        this.attributeModifiers.add(new AttributeModifier(EWorld.VILLAGE, ERole.CAPITAINE, Attribute.SCALE, 1.1f));
 
         this.attributeModifiers.add(new AttributeModifier(EWorld.WILDERNESS, ERole.CAPITAINE, Attribute.MOVEMENT_SPEED, 0.1f));
         this.attributeModifiers.add(new AttributeModifier(EWorld.WILDERNESS, ERole.CAPITAINE, Attribute.MAX_HEALTH, 1.5f));
         this.attributeModifiers.add(new AttributeModifier(EWorld.WILDERNESS, ERole.CAPITAINE, Attribute.ARMOR, 8f));
         this.attributeModifiers.add(new AttributeModifier(EWorld.WILDERNESS, ERole.CAPITAINE, Attribute.ATTACK_DAMAGE, 3f));
         this.attributeModifiers.add(new AttributeModifier(EWorld.WILDERNESS, ERole.CAPITAINE, Attribute.BLOCK_BREAK_SPEED, 1.1f));
+        this.attributeModifiers.add(new AttributeModifier(EWorld.WILDERNESS, ERole.CAPITAINE, Attribute.SCALE, 1f));
 
         this.attributeModifiers.add(new AttributeModifier(EWorld.NETHER, ERole.CAPITAINE, Attribute.MOVEMENT_SPEED, 0.1f));
         this.attributeModifiers.add(new AttributeModifier(EWorld.NETHER, ERole.CAPITAINE, Attribute.MAX_HEALTH, 1f));
@@ -29,12 +31,14 @@ public class AttributeFactory {
         this.attributeModifiers.add(new AttributeModifier(EWorld.NETHER, ERole.CAPITAINE, Attribute.ATTACK_DAMAGE, 1f));
         this.attributeModifiers.add(new AttributeModifier(EWorld.NETHER, ERole.CAPITAINE, Attribute.BLOCK_BREAK_SPEED, 1.1f));
         this.attributeModifiers.add(new AttributeModifier(EWorld.NETHER, ERole.CAPITAINE, Attribute.FALL_DAMAGE_MULTIPLIER, 0.1f));
+        this.attributeModifiers.add(new AttributeModifier(EWorld.NETHER, ERole.CAPITAINE, Attribute.SCALE, 0.5f));
 
         this.attributeModifiers.add(new AttributeModifier(EWorld.END, ERole.CAPITAINE, Attribute.MOVEMENT_SPEED, 0.11f));
         this.attributeModifiers.add(new AttributeModifier(EWorld.END, ERole.CAPITAINE, Attribute.MAX_HEALTH, 1.1f));
         this.attributeModifiers.add(new AttributeModifier(EWorld.END, ERole.CAPITAINE, Attribute.ARMOR, 2f));
         this.attributeModifiers.add(new AttributeModifier(EWorld.END, ERole.CAPITAINE, Attribute.ATTACK_DAMAGE, 1f));
         this.attributeModifiers.add(new AttributeModifier(EWorld.END, ERole.CAPITAINE, Attribute.BLOCK_BREAK_SPEED, 1.1f));
+        this.attributeModifiers.add(new AttributeModifier(EWorld.END, ERole.CAPITAINE, Attribute.SCALE, 2f));
         //endregion
 
         //region pilote
@@ -43,12 +47,14 @@ public class AttributeFactory {
         this.attributeModifiers.add(new AttributeModifier(EWorld.VILLAGE, ERole.PILOTE, Attribute.ARMOR, 15f));
         this.attributeModifiers.add(new AttributeModifier(EWorld.VILLAGE, ERole.PILOTE, Attribute.ATTACK_DAMAGE, 1f));
         this.attributeModifiers.add(new AttributeModifier(EWorld.VILLAGE, ERole.PILOTE, Attribute.BLOCK_BREAK_SPEED, 2f));
+        this.attributeModifiers.add(new AttributeModifier(EWorld.VILLAGE, ERole.PILOTE, Attribute.SCALE, 0.9f));
 
         this.attributeModifiers.add(new AttributeModifier(EWorld.WILDERNESS, ERole.PILOTE, Attribute.MOVEMENT_SPEED, 0.08f));
         this.attributeModifiers.add(new AttributeModifier(EWorld.WILDERNESS, ERole.PILOTE, Attribute.MAX_HEALTH, 3f));
         this.attributeModifiers.add(new AttributeModifier(EWorld.WILDERNESS, ERole.PILOTE, Attribute.ARMOR, 8f));
         this.attributeModifiers.add(new AttributeModifier(EWorld.WILDERNESS, ERole.PILOTE, Attribute.ATTACK_DAMAGE, 1f));
         this.attributeModifiers.add(new AttributeModifier(EWorld.WILDERNESS, ERole.PILOTE, Attribute.BLOCK_BREAK_SPEED, 1.3f));
+        this.attributeModifiers.add(new AttributeModifier(EWorld.WILDERNESS, ERole.PILOTE, Attribute.SCALE, 0.8f));
 
         this.attributeModifiers.add(new AttributeModifier(EWorld.NETHER, ERole.PILOTE, Attribute.MOVEMENT_SPEED, 0.07f));
         this.attributeModifiers.add(new AttributeModifier(EWorld.NETHER, ERole.PILOTE, Attribute.MAX_HEALTH, 3f));
@@ -56,12 +62,14 @@ public class AttributeFactory {
         this.attributeModifiers.add(new AttributeModifier(EWorld.NETHER, ERole.PILOTE, Attribute.ATTACK_DAMAGE, 1f));
         this.attributeModifiers.add(new AttributeModifier(EWorld.NETHER, ERole.PILOTE, Attribute.BLOCK_BREAK_SPEED, 1.3f));
         this.attributeModifiers.add(new AttributeModifier(EWorld.NETHER, ERole.PILOTE, Attribute.FALL_DAMAGE_MULTIPLIER, 0.9f));
+        this.attributeModifiers.add(new AttributeModifier(EWorld.NETHER, ERole.PILOTE, Attribute.SCALE, 1.3f));
 
         this.attributeModifiers.add(new AttributeModifier(EWorld.END, ERole.PILOTE, Attribute.MOVEMENT_SPEED, 0.05f));
         this.attributeModifiers.add(new AttributeModifier(EWorld.END, ERole.PILOTE, Attribute.MAX_HEALTH, 3f));
         this.attributeModifiers.add(new AttributeModifier(EWorld.END, ERole.PILOTE, Attribute.ARMOR, 8f));
         this.attributeModifiers.add(new AttributeModifier(EWorld.END, ERole.PILOTE, Attribute.ATTACK_DAMAGE, 1f));
         this.attributeModifiers.add(new AttributeModifier(EWorld.END, ERole.PILOTE, Attribute.BLOCK_BREAK_SPEED, 1.3f));
+        this.attributeModifiers.add(new AttributeModifier(EWorld.END, ERole.PILOTE, Attribute.SCALE, 1.75f));
         //endregion
 
         //region voyageur
@@ -70,24 +78,28 @@ public class AttributeFactory {
         this.attributeModifiers.add(new AttributeModifier(EWorld.VILLAGE, ERole.VOYAGEUR, Attribute.ARMOR, 0f));
         this.attributeModifiers.add(new AttributeModifier(EWorld.VILLAGE, ERole.VOYAGEUR, Attribute.ATTACK_DAMAGE, 1f));
         this.attributeModifiers.add(new AttributeModifier(EWorld.VILLAGE, ERole.VOYAGEUR, Attribute.BLOCK_BREAK_SPEED, 1f));
+        this.attributeModifiers.add(new AttributeModifier(EWorld.VILLAGE, ERole.VOYAGEUR, Attribute.SCALE, 1f));
 
         this.attributeModifiers.add(new AttributeModifier(EWorld.WILDERNESS, ERole.VOYAGEUR, Attribute.MOVEMENT_SPEED, 0.1f));
         this.attributeModifiers.add(new AttributeModifier(EWorld.WILDERNESS, ERole.VOYAGEUR, Attribute.MAX_HEALTH, 1f));
         this.attributeModifiers.add(new AttributeModifier(EWorld.WILDERNESS, ERole.VOYAGEUR, Attribute.ARMOR, 0f));
         this.attributeModifiers.add(new AttributeModifier(EWorld.WILDERNESS, ERole.VOYAGEUR, Attribute.ATTACK_DAMAGE, 1f));
         this.attributeModifiers.add(new AttributeModifier(EWorld.WILDERNESS, ERole.VOYAGEUR, Attribute.BLOCK_BREAK_SPEED, 1f));
+        this.attributeModifiers.add(new AttributeModifier(EWorld.WILDERNESS, ERole.VOYAGEUR, Attribute.SCALE, 0.9f));
 
         this.attributeModifiers.add(new AttributeModifier(EWorld.NETHER, ERole.VOYAGEUR, Attribute.MOVEMENT_SPEED, 0.1f));
         this.attributeModifiers.add(new AttributeModifier(EWorld.NETHER, ERole.VOYAGEUR, Attribute.MAX_HEALTH, 1f));
         this.attributeModifiers.add(new AttributeModifier(EWorld.NETHER, ERole.VOYAGEUR, Attribute.ARMOR, 0f));
         this.attributeModifiers.add(new AttributeModifier(EWorld.NETHER, ERole.VOYAGEUR, Attribute.ATTACK_DAMAGE, 2f));
         this.attributeModifiers.add(new AttributeModifier(EWorld.NETHER, ERole.VOYAGEUR, Attribute.BLOCK_BREAK_SPEED, 1f));
+        this.attributeModifiers.add(new AttributeModifier(EWorld.NETHER, ERole.VOYAGEUR, Attribute.SCALE, 0.85f));
 
         this.attributeModifiers.add(new AttributeModifier(EWorld.END, ERole.VOYAGEUR, Attribute.MOVEMENT_SPEED, 0.08f));
         this.attributeModifiers.add(new AttributeModifier(EWorld.END, ERole.VOYAGEUR, Attribute.MAX_HEALTH, 1.1f));
         this.attributeModifiers.add(new AttributeModifier(EWorld.END, ERole.VOYAGEUR, Attribute.ARMOR, 0f));
         this.attributeModifiers.add(new AttributeModifier(EWorld.END, ERole.VOYAGEUR, Attribute.ATTACK_DAMAGE, 1f));
         this.attributeModifiers.add(new AttributeModifier(EWorld.END, ERole.VOYAGEUR, Attribute.BLOCK_BREAK_SPEED, 3f));
+        this.attributeModifiers.add(new AttributeModifier(EWorld.END, ERole.VOYAGEUR, Attribute.SCALE, 1.5f));
         //endregion
     }
 
