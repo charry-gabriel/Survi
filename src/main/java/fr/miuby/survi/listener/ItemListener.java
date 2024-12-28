@@ -16,6 +16,10 @@ public class ItemListener implements Listener {
     public void onPrepareItemCraft(PrepareItemCraftEvent event){
         ItemStack[] matrix = event.getInventory().getMatrix();
 
+        if (matrix.length < 9)
+            return;
+
+        //block ancien craft
         if (event.getInventory().getResult() != null
                 && (event.getInventory().getResult().getType() == Material.IRON_BOOTS
                 || event.getInventory().getResult().getType() == Material.IRON_HELMET
@@ -253,6 +257,7 @@ public class ItemListener implements Listener {
             event.getInventory().setResult(new ItemStack(Material.DIAMOND_LEGGINGS));
         //endregion
 
+        //block par les pnj
         if(event.getInventory().getResult() != null) {
             if (GameManager.getInstance().getLockedItemsFactory().isLocked(event.getInventory().getResult())) {
                 ItemStack air = new ItemStack(Material.AIR);
