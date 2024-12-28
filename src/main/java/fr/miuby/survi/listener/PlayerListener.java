@@ -23,7 +23,7 @@ public class PlayerListener implements Listener {
 
     @EventHandler
     public void onPlayerMove(PlayerMoveEvent event) {
-        if (Monde.isOutOfLimit(event.getPlayer(), EWorld.VILLAGE) || Monde.isOutOfLimit(event.getPlayer(), EWorld.WILDERNESS)) {
+        if ((Monde.isOutOfLimit(event.getPlayer(), EWorld.VILLAGE) || Monde.isOutOfLimit(event.getPlayer(), EWorld.WILDERNESS)) && !event.getPlayer().isOp()) {
             AlphaPlayer.get(event.getPlayer().getUniqueId()).teleport(Monde.get(EWorld.VILLAGE));
             event.getPlayer().sendMessage(Component.text("Ne sort pas des limite du village, c'est dangereux !!").color(NamedTextColor.RED));
         }
