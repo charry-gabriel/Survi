@@ -7,6 +7,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.entity.Villager;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.CrafterCraftEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.PrepareItemCraftEvent;
 import org.bukkit.inventory.ItemStack;
@@ -263,6 +264,26 @@ public class ItemListener implements Listener {
                 ItemStack air = new ItemStack(Material.AIR);
                 event.getInventory().setResult(air);
             }
+        }
+    }
+
+    @EventHandler
+    public void onCrafterCraft(CrafterCraftEvent event) {
+        //block ancien craft
+        if (event.getResult().getType() == Material.IRON_BOOTS
+                || event.getResult().getType() == Material.IRON_CHESTPLATE
+                || event.getResult().getType() == Material.IRON_LEGGINGS
+                || event.getResult().getType() == Material.GOLDEN_BOOTS
+                || event.getResult().getType() == Material.GOLDEN_HELMET
+                || event.getResult().getType() == Material.IRON_HELMET
+                || event.getResult().getType() == Material.GOLDEN_CHESTPLATE
+                || event.getResult().getType() == Material.GOLDEN_LEGGINGS
+                || event.getResult().getType() == Material.DIAMOND_BOOTS
+                || event.getResult().getType() == Material.DIAMOND_CHESTPLATE
+                || event.getResult().getType() == Material.DIAMOND_HELMET
+                || event.getResult().getType() == Material.DIAMOND_LEGGINGS) {
+            ItemStack air = new ItemStack(Material.AIR);
+            event.setResult(air);
         }
     }
 
