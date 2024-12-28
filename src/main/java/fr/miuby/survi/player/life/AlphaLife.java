@@ -36,7 +36,7 @@ public class AlphaLife {
         }
 
         if (alphaPlayer.hasArmorMalus())
-            Objects.requireNonNull(this.alphaPlayer.getPlayer().getAttribute(Attribute.ARMOR)).setBaseValue(0);
+            Objects.requireNonNull(this.alphaPlayer.getPlayer().getAttribute(Attribute.MAX_HEALTH)).setBaseValue(1);
     }
 
     public void setSuccess(int success) {
