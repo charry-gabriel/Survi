@@ -16,6 +16,23 @@ public class ItemListener implements Listener {
     public void onPrepareItemCraft(PrepareItemCraftEvent event){
         ItemStack[] matrix = event.getInventory().getMatrix();
 
+        if (event.getInventory().getResult() != null
+                && (event.getInventory().getResult().getType() == Material.IRON_BOOTS
+                || event.getInventory().getResult().getType() == Material.IRON_HELMET
+                || event.getInventory().getResult().getType() == Material.IRON_CHESTPLATE
+                || event.getInventory().getResult().getType() == Material.IRON_LEGGINGS
+                || event.getInventory().getResult().getType() == Material.GOLDEN_BOOTS
+                || event.getInventory().getResult().getType() == Material.GOLDEN_HELMET
+                || event.getInventory().getResult().getType() == Material.GOLDEN_CHESTPLATE
+                || event.getInventory().getResult().getType() == Material.GOLDEN_LEGGINGS
+                || event.getInventory().getResult().getType() == Material.DIAMOND_BOOTS
+                || event.getInventory().getResult().getType() == Material.DIAMOND_CHESTPLATE
+                || event.getInventory().getResult().getType() == Material.DIAMOND_HELMET
+                || event.getInventory().getResult().getType() == Material.DIAMOND_LEGGINGS)) {
+            ItemStack air = new ItemStack(Material.AIR);
+            event.getInventory().setResult(air);
+        }
+
         //region chainmail_armor
         if((matrix[3] != null && matrix[3].getType() == Material.LAVA_BUCKET
                 && matrix[5] != null && matrix[5].getType() == Material.LAVA_BUCKET
