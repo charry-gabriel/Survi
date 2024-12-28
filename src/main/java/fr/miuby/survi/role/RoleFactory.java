@@ -13,6 +13,7 @@ public class RoleFactory {
         roles.put(ERole.VOYAGEUR, new Role("Voyageur", ERole.VOYAGEUR, NamedTextColor.GRAY));
         roles.put(ERole.CAPITAINE, new Role("Capitaine", ERole.CAPITAINE, NamedTextColor.DARK_RED));
         roles.put(ERole.PILOTE, new Role("Pilote", ERole.PILOTE, NamedTextColor.BLUE));
+        roles.put(ERole.TEST, new Role("Test", ERole.TEST, NamedTextColor.BLACK));
     }
 
     public Role getRole(ERole role) {

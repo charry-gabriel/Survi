@@ -19,6 +19,7 @@ public class AlphaPlayer implements Serializable {
     private Monde world;
     private int mort = 0;
     private int success = 0;
+    private boolean isTakingNoDamage;
 
     //region Modifier
     private float resistanceModifier = 0.2f;
@@ -160,6 +161,14 @@ public class AlphaPlayer implements Serializable {
 
     public AlphaLife getAlphaLife() {
         return this.alphaLife;
+    }
+
+    public boolean isTakingNoDamage() {
+        return isTakingNoDamage;
+    }
+
+    public void setTakingNoDamage(boolean takeNoDamage) {
+        this.isTakingNoDamage = takeNoDamage;
     }
     //endregion
 }

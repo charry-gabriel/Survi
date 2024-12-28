@@ -6,5 +6,6 @@ public enum ERole {
     VOYAGEUR,
     JUMP,
     RICHE,
+    TEST,
     ALL
 }

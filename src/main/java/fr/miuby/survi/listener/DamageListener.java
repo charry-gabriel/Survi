@@ -20,7 +20,6 @@ import static java.lang.Math.min;
 import static java.lang.Math.round;
 
 public class DamageListener implements Listener {
-    boolean firstPlayerHit = true;
     Sound slimeSound = Sound.sound(Key.key("entity.slime.attack"), Sound.Source.AMBIENT, 1f, 1.1f);
 
     @EventHandler
@@ -59,12 +58,12 @@ public class DamageListener implements Listener {
                 modifiedDamage = round(damage / damagedAlphaPlayer.getResistanceModifier());
             }
 
-            if (damagedAlphaPlayer.getRole().getType() == ERole.PILOTE) {
-                if (firstPlayerHit) {
-                    firstPlayerHit = false;
+            if (damagedAlphaPlayer.getRole().getType() == ERole.TEST) {
+                if (!damagedAlphaPlayer.isTakingNoDamage()) {
                     for (AlphaPlayer otherPlayer : GameManager.getInstance().getAlphaPlayerFactory().getAlphaPlayers().values()) {
-                        if (otherPlayer.getPlayer() != null && otherPlayer.getRole().getType() == ERole.PILOTE) {
+                        if (otherPlayer.getPlayer() != null && otherPlayer.getRole().getType() == ERole.TEST) {
                             if (!otherPlayer.getUUID().equals(damagedAlphaPlayer.getUUID())) {
+                                otherPlayer.setTakingNoDamage(true);
                                 otherPlayer.getPlayer().damage(damage);
                                 otherPlayer.getPlayer().playSound(slimeSound);
                             }
@@ -72,8 +71,8 @@ public class DamageListener implements Listener {
                     }
                 } else {
                     modifiedDamage = min(modifiedDamage, damagedAlphaPlayer.getPlayer().getHealth() - 1);
+                    damagedAlphaPlayer.setTakingNoDamage(false);
                 }
-                firstPlayerHit = true;
             }
             event.setDamage(modifiedDamage);
         }
