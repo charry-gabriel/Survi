@@ -67,7 +67,7 @@ public class PlayerListener implements Listener {
 
         boolean malus = false;
         for (ItemStack item : event.getPlayer().getInventory().getArmorContents()) {
-            if (GameManager.getInstance().getLockedItemsFactory().isLocked(item)) {
+            if (item != null && GameManager.getInstance().getLockedItemsFactory().isLocked(item)) {
                 malus = true;
             }
         }
