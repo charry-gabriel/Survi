@@ -184,7 +184,7 @@ public class VillagerFactory {
                 Component.text( "Maddox I"),
                 Component.text( "Maddox II"),
                 Component.text( "Maddox III"),
-                Component.text( "Maddox VI"),
+                Component.text( "Maddox IV"),
                 Component.text( "Maddox V"),
                 Component.text( "Maddox MAX"),
         };
@@ -298,9 +298,9 @@ public class VillagerFactory {
         TextComponent[] names = new TextComponent[]{
                 Component.text( "François I"),
                 Component.text( "François II"),
-                Component.text( "François IIi"),
-                Component.text( "François Iv"),
-                Component.text( "François v"),
+                Component.text( "François III"),
+                Component.text( "François IV"),
+                Component.text( "François V"),
                 Component.text( "François VI"),
                 Component.text( "François Paul VII"),
                 Component.text( "François Paul VIII"),
