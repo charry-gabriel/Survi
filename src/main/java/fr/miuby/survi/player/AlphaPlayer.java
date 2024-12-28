@@ -20,6 +20,7 @@ public class AlphaPlayer implements Serializable {
     private int mort = 0;
     private int success = 0;
     private boolean isTakingNoDamage;
+    private boolean hasArmorMalus;
 
     //region Modifier
     private float resistanceModifier = 0.2f;
@@ -169,6 +170,14 @@ public class AlphaPlayer implements Serializable {
 
     public void setTakingNoDamage(boolean takeNoDamage) {
         this.isTakingNoDamage = takeNoDamage;
+    }
+
+    public boolean hasArmorMalus() {
+        return hasArmorMalus;
+    }
+
+    public void setArmorMalus(boolean hasArmorMalus) {
+        this.hasArmorMalus = hasArmorMalus;
     }
     //endregion
 }

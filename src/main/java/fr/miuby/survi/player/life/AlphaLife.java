@@ -23,9 +23,6 @@ public class AlphaLife {
     }
 
     public void actualize() {
-        if (this.worldRoleModifiers.isEmpty())
-            return;
-
         for(AttributeModifier attributeModifier : worldRoleModifiers) {
             if (attributeModifier.getAttributeType() == Attribute.MAX_HEALTH) {
                 int deathWithDispel = max(0, this.deathLife - GameManager.getInstance().getDispel());
@@ -37,6 +34,9 @@ public class AlphaLife {
                 Objects.requireNonNull(this.alphaPlayer.getPlayer().getAttribute(attributeModifier.getAttributeType())).setBaseValue(attributeModifier.getAttributeModifier());
             }
         }
+
+        if (alphaPlayer.hasArmorMalus())
+            Objects.requireNonNull(this.alphaPlayer.getPlayer().getAttribute(Attribute.ARMOR)).setBaseValue(0);
     }
 
     public void setSuccess(int success) {

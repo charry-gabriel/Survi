@@ -3,7 +3,6 @@ package fr.miuby.survi.listener;
 import com.destroystokyo.paper.event.player.PlayerArmorChangeEvent;
 import fr.miuby.survi.GameManager;
 import fr.miuby.survi.player.AlphaPlayer;
-import fr.miuby.survi.role.ERole;
 import fr.miuby.survi.villager.AVillager;
 import fr.miuby.survi.world.EWorld;
 import fr.miuby.survi.world.Monde;
@@ -18,6 +17,7 @@ import org.bukkit.entity.Villager;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.*;
+import org.bukkit.inventory.ItemStack;
 
 public class PlayerListener implements Listener {
 
@@ -60,10 +60,20 @@ public class PlayerListener implements Listener {
 
     @EventHandler
     public void onPlayerArmorChange(PlayerArmorChangeEvent event) {
-        if (AlphaPlayer.get(event.getPlayer().getUniqueId()).getRole().getType() == ERole.JUMP
+        /*if (AlphaPlayer.get(event.getPlayer().getUniqueId()).getRole().getType() == ERole.JUMP
                 && GameManager.getInstance().isNight()) {
-            
+
+        }*/
+
+        boolean malus = false;
+        for (ItemStack item : event.getPlayer().getInventory().getArmorContents()) {
+            if (GameManager.getInstance().getLockedItemsFactory().isLocked(item)) {
+                malus = true;
+            }
         }
+        AlphaPlayer player = AlphaPlayer.get(event.getPlayer().getUniqueId());
+        player.setArmorMalus(malus);
+        player.getAlphaLife().actualize();
     }
 
     /*@EventHandler
