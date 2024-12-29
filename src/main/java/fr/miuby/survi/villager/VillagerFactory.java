@@ -1,6 +1,7 @@
 package fr.miuby.survi.villager;
 
 import fr.miuby.survi.player.AlphaPlayer;
+import fr.miuby.survi.utils.Rect;
 import fr.miuby.survi.villager.blessing.*;
 import fr.miuby.survi.world.EWorld;
 import fr.miuby.survi.locked_item.LockedArmorType;
@@ -213,11 +214,11 @@ public class VillagerFactory {
                 new Blessing(new MessageEffect("Niveau II disponible pour Thomas Pesquet !")),
                 new Blessing(new LockWorldEffect(EWorld.NETHER), new MessageEffect("Niveau II réussi !")),
                 new Blessing(new MessageEffect("Niveau III disponible pour Thomas Pesquet !")),
-                new Blessing(new MessageEffect("Niveau III réussi !")),
+                new Blessing(new LimitWorldEffect(EWorld.WILDERNESS, new Rect(10000,-10000, Integer.MAX_VALUE, Integer.MIN_VALUE,10000,-10000))),
                 new Blessing(new MessageEffect("Niveau VI disponible pour Thomas Pesquet !")),
                 new Blessing(new LockWorldEffect(EWorld.END), new MessageEffect("Niveau VI réussi !")),
                 new Blessing(new MessageEffect("Niveau V disponible pour Thomas Pesquet !")),
-                new Blessing(new MessageEffect("Niveau V réussi !")),
+                new Blessing(new LimitWorldEffect(EWorld.WILDERNESS, new Rect(Integer.MAX_VALUE,Integer.MIN_VALUE, Integer.MAX_VALUE, Integer.MIN_VALUE,Integer.MAX_VALUE,Integer.MIN_VALUE))),
                 new Blessing(new MessageEffect("IMPOSSIBLE")),
         };
 
@@ -226,7 +227,7 @@ public class VillagerFactory {
                 Component.text( "Venez me voir."),
                 Component.text( "Merci, revenez dans 48h pour la suite. Vous pouvez maintenant explorer le nether !"),
                 Component.text( "Venez me voir."),
-                Component.text( "Merci, revenez dans 72h pour la suite. Vous pouvez maintenant explorer un peu plus le Village et le Wilderness"),
+                Component.text( "Merci, revenez dans 72h pour la suite. Vous pouvez maintenant explorer un peu plus le Wilderness"),
                 Component.text( "Venez me voir."),
                 Component.text( "Merci, revenez dans 100h pour la suite. Vous pouvez maintenant explorer l'end ! "),
                 Component.text( "Venez me voir."),
