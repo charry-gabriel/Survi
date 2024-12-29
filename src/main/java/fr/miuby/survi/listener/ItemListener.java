@@ -270,7 +270,8 @@ public class ItemListener implements Listener {
     @EventHandler
     public void onCrafterCraft(CrafterCraftEvent event) {
         //block ancien craft
-        if (event.getResult().getType() == Material.IRON_BOOTS
+        if (GameManager.getInstance().getLockedItemsFactory().isLocked(event.getResult())
+                || event.getResult().getType() == Material.IRON_BOOTS
                 || event.getResult().getType() == Material.IRON_CHESTPLATE
                 || event.getResult().getType() == Material.IRON_LEGGINGS
                 || event.getResult().getType() == Material.GOLDEN_BOOTS
