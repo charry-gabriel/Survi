@@ -16,6 +16,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.entity.Villager;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.*;
 import org.bukkit.inventory.ItemStack;
 
@@ -74,6 +75,23 @@ public class PlayerListener implements Listener {
         AlphaPlayer player = AlphaPlayer.get(event.getPlayer().getUniqueId());
         player.setArmorMalus(malus);
         player.getAlphaLife().actualize();
+    }
+
+    @EventHandler
+    public void onPlayerDeath(PlayerDeathEvent event) {
+        final Player player = event.getEntity();
+
+        final ItemStack[] armor = player.getInventory().getArmorContents();
+        GameManager.getInstance().getScheduler().scheduleSyncDelayedTask(GameManager.getInstance().getPlugin(), new Runnable() {
+            @Override
+            public void run() {
+                player.getInventory().setArmorContents(armor);
+            }
+        });
+
+        for (ItemStack is : armor) {
+            event.getDrops().remove(is);
+        }
     }
 
     /*@EventHandler
