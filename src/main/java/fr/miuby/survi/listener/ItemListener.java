@@ -258,6 +258,19 @@ public class ItemListener implements Listener {
             event.getInventory().setResult(new ItemStack(Material.DIAMOND_LEGGINGS));
         //endregion
 
+        //region oeuf_de_poule
+        if(matrix[0] != null && matrix[0].getType() == Material.END_CRYSTAL
+                && matrix[1] != null && matrix[1].getType() == Material.TORCHFLOWER
+                && matrix[2] != null && matrix[2].getType() == Material.END_CRYSTAL
+                && matrix[3] != null && matrix[3].getType() == Material.RED_NETHER_BRICK_SLAB
+                && matrix[4] != null && matrix[4].getType() == Material.BOOKSHELF
+                && matrix[5] != null && matrix[5].getType() == Material.RED_NETHER_BRICK_SLAB
+                && matrix[6] != null && matrix[6].getType() == Material.STRIPPED_MANGROVE_WOOD
+                && matrix[7] != null && matrix[7].getType() == Material.NETHERITE_INGOT
+                && matrix[8] != null && matrix[8].getType() == Material.STRIPPED_PALE_OAK_WOOD)
+            event.getInventory().setResult(new ItemStack(Material.CHICKEN_SPAWN_EGG));
+        //endregion
+
         //block par les pnj
         if(event.getInventory().getResult() != null) {
             if (GameManager.getInstance().getLockedItemsFactory().isLocked(event.getInventory().getResult())) {

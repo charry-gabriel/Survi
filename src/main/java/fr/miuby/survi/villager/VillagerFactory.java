@@ -37,10 +37,10 @@ public class VillagerFactory {
         spawnPecheur2();
         spawnFermier1();
         spawnFermier2();
-        spawnRiche();
+        spawnRiche();*/
         spawnGolDRoger();
         spawnEnchanteur();
-        spawnPolicier();
+        /*spawnPolicier();
         spawnPharmacien();
         spawnLibraire();*/
     }
@@ -65,12 +65,17 @@ public class VillagerFactory {
         Location location = new Location(world, -23.5, 157, -13.5, 180, 0);
 
         Tribute[] tributes = new Tribute[]{
-                new Tribute(new ItemStack(Material.OAK_SAPLING, 32)),
-                new Tribute(new ItemStack(Material.OAK_LOG, 640), new ItemStack(Material.APPLE, 64)),
-                new Tribute(new ItemStack(Material.IRON_BLOCK, 320), new ItemStack(Material.REDSTONE_BLOCK, 64), new ItemStack(Material.LAPIS_BLOCK, 64)),
-                new Tribute(new ItemStack(Material.HAY_BLOCK, 32), new ItemStack(Material.BAKED_POTATO, 32), new ItemStack(Material.GOLDEN_CARROT, 128)),
-                new Tribute(new ItemStack(Material.ENDER_PEARL, 16), new ItemStack(Material.FERMENTED_SPIDER_EYE, 64), new ItemStack(Material.PHANTOM_MEMBRANE, 64), new ItemStack(Material.GUNPOWDER, 64)),
-                new Tribute(new ItemStack(Material.ARMADILLO_SCUTE, 64), new ItemStack(Material.PALE_OAK_LOG, 64), new ItemStack(Material.CREAKING_HEART, 64), new ItemStack(Material.RESIN_BLOCK, 64)),
+                new Tribute(new ItemStack(Material.WHEAT_SEEDS, 32)),
+                new Tribute(new ItemStack(Material.OAK_LOG, 640), new ItemStack(Material.APPLE, 32), new ItemStack(Material.SUGAR_CANE, 64)),
+                new Tribute(new ItemStack(Material.IRON_BLOCK, 160), new ItemStack(Material.COAL_BLOCK, 64), new ItemStack(Material.LAPIS_BLOCK, 64), new ItemStack(Material.WAXED_COPPER_BLOCK, 16), new ItemStack(Material.WAXED_EXPOSED_COPPER, 16), new ItemStack(Material.WAXED_WEATHERED_COPPER, 16), new ItemStack(Material.WAXED_OXIDIZED_COPPER, 16)),
+                new Tribute(new ItemStack(Material.HAY_BLOCK, 32), new ItemStack(Material.BAKED_POTATO, 32), new ItemStack(Material.GOLDEN_CARROT, 128), new ItemStack(Material.PUFFERFISH, 32), new ItemStack(Material.PUMPKIN_PIE, 64)),
+                new Tribute(new ItemStack(Material.ENDER_PEARL, 16), new ItemStack(Material.FERMENTED_SPIDER_EYE, 64), new ItemStack(Material.PHANTOM_MEMBRANE, 32), new ItemStack(Material.GUNPOWDER, 64), new ItemStack(Material.BONE, 64), new ItemStack(Material.ROTTEN_FLESH, 64)),
+                new Tribute(new ItemStack(Material.ARMADILLO_SCUTE, 10), new ItemStack(Material.PALE_OAK_LOG, 64), new ItemStack(Material.CREAKING_HEART, 64), new ItemStack(Material.RESIN_BLOCK, 64)),
+                new Tribute(new ItemStack(Material.OAK_SAPLING, 64), new ItemStack(Material.OAK_LOG, 64), new ItemStack(Material.STRIPPED_OAK_LOG, 64),new ItemStack(Material.SPRUCE_SAPLING, 64), new ItemStack(Material.SPRUCE_LOG, 64), new ItemStack(Material.STRIPPED_SPRUCE_LOG, 64),new ItemStack(Material.BIRCH_SAPLING, 64), new ItemStack(Material.BIRCH_LOG, 64), new ItemStack(Material.STRIPPED_BIRCH_LOG, 64)),
+                new Tribute(new ItemStack(Material.JUNGLE_SAPLING, 64), new ItemStack(Material.JUNGLE_LOG, 64), new ItemStack(Material.STRIPPED_JUNGLE_LOG, 64),new ItemStack(Material.ACACIA_SAPLING, 64), new ItemStack(Material.ACACIA_LOG, 64), new ItemStack(Material.STRIPPED_ACACIA_LOG, 64),new ItemStack(Material.DARK_OAK_SAPLING, 64), new ItemStack(Material.DARK_OAK_LOG, 64), new ItemStack(Material.STRIPPED_DARK_OAK_LOG, 64)),
+                new Tribute(new ItemStack(Material.MANGROVE_PROPAGULE, 64), new ItemStack(Material.MANGROVE_LOG, 64), new ItemStack(Material.STRIPPED_MANGROVE_LOG, 64),new ItemStack(Material.CHERRY_SAPLING, 64), new ItemStack(Material.CHERRY_LOG, 64), new ItemStack(Material.STRIPPED_CHERRY_LOG, 64),new ItemStack(Material.PALE_OAK_SAPLING, 64), new ItemStack(Material.PALE_OAK_LOG, 64), new ItemStack(Material.STRIPPED_PALE_OAK_LOG, 64)),
+                new Tribute(new ItemStack(Material.CHORUS_FRUIT, 64),new ItemStack(Material.GOLDEN_APPLE, 64),new ItemStack(Material.TROPICAL_FISH, 64),new ItemStack(Material.COOKIE, 64),new ItemStack(Material.CAKE, 1)),
+                new Tribute(new ItemStack(Material.IRON_BLOCK, 256),new ItemStack(Material.LAPIS_BLOCK, 128),new ItemStack(Material.REDSTONE_BLOCK, 128),new ItemStack(Material.COPPER_BLOCK, 128),new ItemStack(Material.COAL_BLOCK, 128),new ItemStack(Material.GOLD_BLOCK, 64),new ItemStack(Material.DIAMOND_BLOCK, 32),new ItemStack(Material.EMERALD_BLOCK, 16),new ItemStack(Material.NETHERITE_BLOCK, 8)),
                 new Tribute(new ItemStack(Material.BEDROCK, 1)),
         };
 
@@ -81,6 +86,11 @@ public class VillagerFactory {
                 new Blessing(new MaxHealthEffect(10),new UnlockArmorEffect(LockedArmorType.IRON)),
                 new Blessing(new MaxHealthEffect(12),new UnlockArmorEffect(LockedArmorType.GOLD), new UnlockToolEffect(LockedToolType.GOLD)),
                 new Blessing(new MaxHealthEffect(14),new UnlockArmorEffect(LockedArmorType.DIAMOND), new UnlockToolEffect(LockedToolType.DIAMOND)),
+                new Blessing(new MaxHealthEffect(15)),
+                new Blessing(new MaxHealthEffect(16)),
+                new Blessing(new MaxHealthEffect(17)),
+                new Blessing(new MaxHealthEffect(18)),
+                new Blessing(new MaxHealthEffect(20)),
                 new Blessing(new MessageEffect("IMPOSSIBLE")),
         };
 
@@ -91,6 +101,11 @@ public class VillagerFactory {
                 Component.text( "Vous pouvez maintenant avoir une armure en fer !"),
                 Component.text( "Vous pouvez maintenant avoir des outils en or et une armure en or !"),
                 Component.text( "Vous pouvez maintenant avoir des outils en diamant et une armure en diamant !"),
+                Component.text( "Un peu de vie pour vous !"),
+                Component.text( "Un peu de vie pour vous !"),
+                Component.text( "Un peu de vie pour vous !"),
+                Component.text( "Un peu de vie pour vous !"),
+                Component.text( "La quête était si simple en vrai.. fin bref, voici un coeur pour vous."),
                 Component.text( "IMPOSSIBLE"),
 
         };
@@ -102,6 +117,11 @@ public class VillagerFactory {
                 Component.text( "Survivant IV"),
                 Component.text( "Survivant V"),
                 Component.text( "Survivant VI"),
+                Component.text( "Survivant VII"),
+                Component.text( "Survivant VIII"),
+                Component.text( "Survivant IX"),
+                Component.text( "Survivant X"),
+                Component.text( "Survivant XI"),
                 Component.text( "Edward Jenner MAX"),
                 Component.text( "Edward Jenner MAX"),
         };
@@ -117,7 +137,7 @@ public class VillagerFactory {
                 new Tribute(new ItemStack(Material.AMETHYST_BLOCK, 128)),
                 new Tribute(new ItemStack(Material.RED_NETHER_BRICKS, 192)),
                 new Tribute(new ItemStack(Material.SCULK_CATALYST, 256)),
-                new Tribute(new ItemStack(Material.SPIRE_ARMOR_TRIM_SMITHING_TEMPLATE, 320)),
+                new Tribute(new ItemStack(Material.SPIRE_ARMOR_TRIM_SMITHING_TEMPLATE, 64),new ItemStack(Material.RESIN_BRICK_STAIRS, 32),new ItemStack(Material.DRAGON_BREATH, 1),new ItemStack(Material.WOLF_ARMOR, 1),new ItemStack(Material.RECOVERY_COMPASS, 1),new ItemStack(Material.VERDANT_FROGLIGHT, 20),new ItemStack(Material.OCHRE_FROGLIGHT, 20),new ItemStack(Material.PEARLESCENT_FROGLIGHT, 20)),
                 new Tribute(new ItemStack(Material.BEDROCK, 1)),
         };
 
@@ -364,7 +384,7 @@ public class VillagerFactory {
     }
 
     private void spawnGolDRoger(){
-        Location location = new Location(world, 12099.5, 69, 1474.5, 90, 0);
+        Location location = new Location(world, 4, 159, -18, 0, 0);
 
         ItemStack[] items = new ItemStack[]{
                 new ItemStack(Material.EMERALD_BLOCK, 9),
@@ -574,10 +594,10 @@ public class VillagerFactory {
     }
 
     private void spawnEnchanteur(){
-        Location location = new Location(world, 12036.5, 79, 1403.5, -90, 0);
+        Location location = new Location(world, 6, 160, -100, 90, 0);
 
         ItemStack[] items = new ItemStack[]{
-                new ItemStack(Material.EMERALD_BLOCK, 10),
+                new ItemStack(Material.CHICKEN_SPAWN_EGG, 1),
         };
 
         ItemStack itemStack = new ItemStack(Material.ENCHANTED_BOOK);
@@ -593,7 +613,7 @@ public class VillagerFactory {
                 Component.text( "Voici un livre rare, utilise le intelligemment."),
         };
 
-        this.addNewVillager(new VillagerVendor("Vendeur Goas", location, Villager.Type.SWAMP, Villager.Profession.LIBRARIAN, blessings, messages, items));
+        this.addNewVillager(new VillagerVendor("Los Pollos Hermanos", location, Villager.Type.SWAMP, Villager.Profession.LIBRARIAN, blessings, messages, items));
     }
 
     private void spawnLibraire(){
