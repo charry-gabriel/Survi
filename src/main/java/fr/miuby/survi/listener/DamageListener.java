@@ -58,10 +58,10 @@ public class DamageListener implements Listener {
                 modifiedDamage = round(damage / damagedAlphaPlayer.getResistanceModifier());
             }
 
-            if (damagedAlphaPlayer.getRole().getType() == ERole.PILOTE) {
+            if (damagedAlphaPlayer.getRole().getType() == ERole.FEE) {
                 if (!damagedAlphaPlayer.isTakingNoDamage()) {
                     for (AlphaPlayer otherPlayer : GameManager.getInstance().getAlphaPlayerFactory().getAlphaPlayers().values()) {
-                        if (otherPlayer.getPlayer() != null && otherPlayer.getRole().getType() == ERole.PILOTE) {
+                        if (otherPlayer.getPlayer() != null && otherPlayer.getRole().getType() == ERole.FEE) {
                             if (!otherPlayer.getUUID().equals(damagedAlphaPlayer.getUUID())) {
                                 otherPlayer.setTakingNoDamage(true);
                                 otherPlayer.getPlayer().damage(damage);

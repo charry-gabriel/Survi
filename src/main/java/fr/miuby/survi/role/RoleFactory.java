@@ -10,6 +10,13 @@ public class RoleFactory {
     private final Map<ERole, Role> roles = new HashMap<>();
 
     public RoleFactory() {
+        roles.put(ERole.DRAGON, new Role("Dragon", ERole.DRAGON, NamedTextColor.GOLD));
+        roles.put(ERole.LOUP_GAROU, new Role("Loup Garou", ERole.LOUP_GAROU, NamedTextColor.DARK_RED));
+        roles.put(ERole.FEE, new Role("Fee", ERole.FEE, NamedTextColor.LIGHT_PURPLE));
+        roles.put(ERole.NAIN, new Role("Nain", ERole.NAIN, NamedTextColor.GREEN));
+        roles.put(ERole.GEANT, new Role("Geant", ERole.GEANT, NamedTextColor.DARK_GREEN));
+
+
         roles.put(ERole.VOYAGEUR, new Role("Voyageur", ERole.VOYAGEUR, NamedTextColor.GRAY));
         roles.put(ERole.CAPITAINE, new Role("Capitaine", ERole.CAPITAINE, NamedTextColor.DARK_RED));
         roles.put(ERole.PILOTE, new Role("Pilote", ERole.PILOTE, NamedTextColor.BLUE));
