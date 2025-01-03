@@ -2,7 +2,9 @@ package fr.miuby.survi;
 
 import fr.miuby.survi.database.Database;
 import fr.miuby.survi.database.SQLite;
-import fr.miuby.survi.locked_item.LockedItemsFactory;
+import fr.miuby.survi.item.CustomItemFactory;
+import fr.miuby.survi.item.CustomRecipe;
+import fr.miuby.survi.item.locked_item.LockedItemsFactory;
 import fr.miuby.survi.player.AlphaPlayerFactory;
 import fr.miuby.survi.player.life.AttributeFactory;
 import fr.miuby.survi.role.RoleFactory;
@@ -24,6 +26,7 @@ public class GameManager {
     //region Factory
     private VillagerFactory villagerFactory;
     private LockedItemsFactory lockedItemsFactory;
+    private CustomItemFactory customItemFactory;
     private WorldFactory worldFactory;
     private Database database;
     private RoleFactory roleFactory;
@@ -55,6 +58,8 @@ public class GameManager {
         villagerFactory = new VillagerFactory();
 
         lockedItemsFactory = new LockedItemsFactory();
+        customItemFactory = new CustomItemFactory();
+        CustomRecipe.registerRecipes();
 
         Timer timer = new Timer();
         timer.update();
@@ -83,6 +88,10 @@ public class GameManager {
 
     public LockedItemsFactory getLockedItemsFactory() {
         return lockedItemsFactory;
+    }
+
+    public CustomItemFactory getCustomItemFactory() {
+        return customItemFactory;
     }
 
     public RoleFactory getRoleFactory() {

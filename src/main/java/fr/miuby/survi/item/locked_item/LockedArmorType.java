@@ -1,4 +1,4 @@
-package fr.miuby.survi.locked_item;
+package fr.miuby.survi.item.locked_item;
 
 public enum LockedArmorType {
     LEATHER,
