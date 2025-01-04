@@ -14,7 +14,7 @@ public class WorldListener implements Listener {
         if (event.getReason().equals(PortalCreateEvent.CreateReason.FIRE)) {
             if (Monde.get(EWorld.NETHER).isLocked())
                 event.setCancelled(true);
-        } else {
+        } else if (event.getReason().equals(PortalCreateEvent.CreateReason.END_PLATFORM)) {
             if (Monde.get(EWorld.END).isLocked())
                 event.setCancelled(true);
         }
