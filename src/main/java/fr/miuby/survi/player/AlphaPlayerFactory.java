@@ -24,7 +24,7 @@ public class AlphaPlayerFactory {
         for(AlphaPlayer alphaPlayer : players.values()) {
             if(alphaPlayer.getPlayer() != null) {
                 scoreboard.getTeam(alphaPlayer.getWorld(), alphaPlayer.getRole().getType()).addPlayer(alphaPlayer);
-                GameManager.getInstance().getLogger().info(alphaPlayer.getPlayer().getName() + " est ajouté a mon scoreboard !");
+                //GameManager.getInstance().getLogger().info(alphaPlayer.getPlayer().getName() + " est ajouté a mon scoreboard !");
             }
         }
     }

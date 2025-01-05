@@ -61,6 +61,6 @@ public class AlphaLife {
         this.worldRoleModifiers = GameManager.getInstance().getLifeFactory().getAttributeModifier(this.alphaPlayer.getWorld(), this.alphaPlayer.getRole().getType());
         actualize();
 
-        this.alphaPlayer.getPlayer().setHealth(max(1, (oldHealth * this.maxLife) / oldMaxHealth));
+        this.alphaPlayer.getPlayer().setHealth(this.maxLife);
     }
 }
