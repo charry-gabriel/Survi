@@ -5,6 +5,7 @@ import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.ShapedRecipe;
+import org.bukkit.inventory.recipe.CraftingBookCategory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,10 +15,10 @@ public class CustomRecipe {
     public static List<CustomRecipe> recipes = new ArrayList<>();
 
     private final ItemStack result;
-    private final List<ItemStack> ingredients;
+    private final List<Material> ingredients;
     private final ShapedRecipe recipe;
 
-    public CustomRecipe(NamespacedKey nsKey, ItemStack result, List<ItemStack> ingredients) {
+    public CustomRecipe(NamespacedKey nsKey, CraftingBookCategory category, ItemStack result, List<Material> ingredients) {
 
         this.ingredients = ingredients;
         this.result = result;
@@ -27,15 +28,16 @@ public class CustomRecipe {
         recipe.shape("abc", "def", "ghi");
 
         for (int i = 0; i < 9; i++) {
-            if (ingredients.get(i) == null || ingredients.get(i).getType() == Material.AIR)
+            if (ingredients.get(i) == Material.AIR)
                 continue;
-            recipe.setIngredient((char)(i+'a'), ingredients.get(i).getType());
+            recipe.setIngredient((char)(i+'a'), ingredients.get(i));
         }
+        recipe.setCategory(category);
 
         recipes.add(this);
     }
 
-    public List<ItemStack> getIngredients() {
+    public List<Material> getIngredients() {
         return ingredients;
     }
 

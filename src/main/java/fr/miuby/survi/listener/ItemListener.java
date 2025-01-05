@@ -35,9 +35,9 @@ public class ItemListener implements Listener {
         boolean flag = true;
         for (int i = 0; i < 9 && flag; i++) {
             if (event.getInventory().getItem(i + 1) == null || event.getInventory().getItem(i + 1).getType() == Material.AIR)
-                flag = customRecipe.getIngredients().get(i).getType() == Material.AIR;
+                flag = customRecipe.getIngredients().get(i) == Material.AIR;
             else
-                flag = customRecipe.getIngredients().get(i).isSimilar(event.getInventory().getItem(i + 1));
+                flag = customRecipe.getIngredients().get(i) == event.getInventory().getItem(i + 1).getType();
         }
 
         if (!flag)

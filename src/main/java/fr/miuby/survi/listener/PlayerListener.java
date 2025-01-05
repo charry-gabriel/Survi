@@ -9,6 +9,7 @@ import fr.miuby.survi.world.Monde;
 import io.papermc.paper.advancement.AdvancementDisplay;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import org.bukkit.NamespacedKey;
 import org.bukkit.advancement.Advancement;
 import org.bukkit.advancement.AdvancementProgress;
 import org.bukkit.entity.EntityType;
@@ -82,15 +83,18 @@ public class PlayerListener implements Listener {
         final Player player = event.getEntity();
 
         final ItemStack[] armor = player.getInventory().getArmorContents();
-        GameManager.getInstance().getScheduler().scheduleSyncDelayedTask(GameManager.getInstance().getPlugin(), new Runnable() {
-            @Override
-            public void run() {
-                player.getInventory().setArmorContents(armor);
-            }
-        });
+        GameManager.getInstance().getScheduler().scheduleSyncDelayedTask(GameManager.getInstance().getPlugin(), () -> player.getInventory().setArmorContents(armor));
 
         for (ItemStack is : armor) {
             event.getDrops().remove(is);
+        }
+    }
+
+    @EventHandler
+    public void onPlayerRecipeDiscover(PlayerRecipeDiscoverEvent event) {
+        for (NamespacedKey nsKey : GameManager.getInstance().getCustomItemFactory().getOldRecipes()) {
+            if (nsKey.toString().equals(event.getRecipe().toString()))
+                event.setCancelled(true);
         }
     }
 
