@@ -94,7 +94,7 @@ public abstract class Database {
                     alphaPlayer.setPlayer(player);
                     alphaPlayer.setMort(0);
                     alphaPlayer.setSuccess(0);
-                    alphaPlayer.setRole("Voyageur");
+                    alphaPlayer.setRole("Nain");
                     CreateDBPlayer(player.getUniqueId(), player.getName());
                 }
                 GameManager.getInstance().getScheduler().runTask(GameManager.getInstance().getPlugin(), alphaPlayer::joinServer);
