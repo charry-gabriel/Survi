@@ -36,7 +36,6 @@ public abstract class Database {
         Connection conn = null;
         PreparedStatement ps = null;
         ResultSet rs;
-        GameManager.getInstance().getLogger().info("createAlphaPlayers");
         try {
             conn = getSQLConnection();
             ps = conn.prepareStatement("SELECT * FROM player");
@@ -72,7 +71,6 @@ public abstract class Database {
         Connection conn = null;
         PreparedStatement ps = null;
         ResultSet rs;
-        GameManager.getInstance().getLogger().info("getAlphaPlayer");
         try {
             conn = getSQLConnection();
             ps = conn.prepareStatement("SELECT * FROM player WHERE uuid = '"+uuid+"'");
@@ -122,7 +120,6 @@ public abstract class Database {
     public void CreateDBPlayer(UUID uuid, String pseudo) {
         Connection conn = null;
         PreparedStatement ps = null;
-        GameManager.getInstance().getLogger().info("CreateDBPlayer");
         try {
             conn = getSQLConnection();
             ps = conn.prepareStatement("INSERT INTO player VALUES ('"+uuid+"', 0, 0, '"+pseudo+"', '"+GameManager.getInstance().getRoleFactory().getDefaultRole().getType().toString()+"')");
@@ -144,7 +141,6 @@ public abstract class Database {
     public void updatePlayer(UUID uuid, String column, String value) {
         Connection conn = null;
         PreparedStatement ps = null;
-        GameManager.getInstance().getLogger().info("updatePlayer");
         try {
             conn = getSQLConnection();
             ps = conn.prepareStatement("UPDATE player SET "+column+" = '"+value+"' WHERE uuid = '"+uuid+"'");
@@ -169,7 +165,6 @@ public abstract class Database {
         Connection conn = null;
         PreparedStatement ps = null;
         ResultSet rs;
-        GameManager.getInstance().getLogger().info("getVillager");
         try {
             conn = getSQLConnection();
             ps = conn.prepareStatement("SELECT * FROM villager WHERE name = '"+name+"'");
@@ -199,7 +194,6 @@ public abstract class Database {
     public void CreateDBVillager(String name, UUID uuid) {
         Connection conn = null;
         PreparedStatement ps = null;
-        GameManager.getInstance().getLogger().info("CreateDBVillager");
         try {
             conn = getSQLConnection();
             ps = conn.prepareStatement("INSERT INTO villager VALUES ('"+uuid+"', '0', '"+name+"')");
@@ -221,7 +215,6 @@ public abstract class Database {
     public void updateVillager(UUID uuid, int level) {
         Connection conn = null;
         PreparedStatement ps = null;
-        GameManager.getInstance().getLogger().info("updateVillager");
         try {
             conn = getSQLConnection();
             ps = conn.prepareStatement("UPDATE villager SET level = '"+level+"' WHERE uuid = '"+uuid+"'");
@@ -266,7 +259,6 @@ public abstract class Database {
         Connection conn = null;
         PreparedStatement ps = null;
         ResultSet rs;
-        GameManager.getInstance().getLogger().info("isVillagerUUIDExist");
         try {
             conn = getSQLConnection();
             ps = conn.prepareStatement("SELECT * FROM villager WHERE uuid = '"+uuid+"'");
