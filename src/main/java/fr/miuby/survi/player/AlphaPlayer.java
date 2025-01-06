@@ -21,6 +21,7 @@ public class AlphaPlayer implements Serializable {
     private int success = 0;
     private boolean isTakingNoDamage;
     private boolean hasArmorMalus;
+    private String pseudo;
 
     //region Modifier
     private float resistanceModifier = 0.2f;
@@ -66,14 +67,14 @@ public class AlphaPlayer implements Serializable {
         this.mort += mort;
         this.alphaLife.setDeath(this.mort);
 
-        GameManager.getInstance().getDatabase().updatePlayer(uuid, "mort", this.mort);
+        GameManager.getInstance().getDatabase().updatePlayer(uuid, "mort", String.valueOf(this.mort));
     }
 
     public void addSuccess(int success) {
         this.success = success;
         this.alphaLife.setSuccess(success);
 
-        GameManager.getInstance().getDatabase().updatePlayer(uuid, "success", this.success);
+        GameManager.getInstance().getDatabase().updatePlayer(uuid, "success", String.valueOf(this.success));
     }
 
     public void switchWorld() {
@@ -160,8 +161,8 @@ public class AlphaPlayer implements Serializable {
         this.success = success;
     }
 
-    public void setRole(String roleName) {
-        this.role = Role.get(roleName);
+    public void setRole(Role role) {
+        this.role = role;
     }
 
     public AlphaLife getAlphaLife() {
@@ -182,6 +183,14 @@ public class AlphaPlayer implements Serializable {
 
     public void setArmorMalus(boolean hasArmorMalus) {
         this.hasArmorMalus = hasArmorMalus;
+    }
+
+    public String getPseudo() {
+        return pseudo;
+    }
+
+    public void setPseudo(String pseudo) {
+        this.pseudo = pseudo;
     }
     //endregion
 }

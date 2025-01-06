@@ -8,6 +8,9 @@ commands:
   sql:
     description: Requete sql
     usage: /<command> [sql]
+  role:
+    description: Change le role d'un joueur
+    usage: /<command> [player] [role]
 permissions:
   Survi.sql:
     default: op

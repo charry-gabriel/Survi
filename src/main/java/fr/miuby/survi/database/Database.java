@@ -6,6 +6,7 @@ import java.util.logging.Level;
 
 import fr.miuby.survi.player.AlphaPlayer;
 import fr.miuby.survi.GameManager;
+import fr.miuby.survi.role.Role;
 import fr.miuby.survi.villager.AVillager;
 import org.bukkit.entity.Player;
 
@@ -49,7 +50,8 @@ public abstract class Database {
 
                 alphaPlayer.setMort(rs.getInt("mort"));
                 alphaPlayer.setSuccess(rs.getInt("success"));
-                alphaPlayer.setRole(rs.getString("role"));
+                alphaPlayer.setRole(Role.get(rs.getString("role")));
+                alphaPlayer.setPseudo(rs.getString("pseudo"));
                 GameManager.getInstance().getScheduler().runTask(GameManager.getInstance().getPlugin(), alphaPlayer::joinServer);
             }
         } catch (SQLException ex) {
@@ -80,10 +82,12 @@ public abstract class Database {
                 int mort = rs.getInt("mort");
                 int success = rs.getInt("success");
                 String role = rs.getString("role");
+                String pseudo = rs.getString("pseudo");
 
                 alphaPlayer.setMort(mort);
                 alphaPlayer.setSuccess(success);
-                alphaPlayer.setRole(role);
+                alphaPlayer.setRole(Role.get(role));
+                alphaPlayer.setPseudo(pseudo);
                 GameManager.getInstance().getScheduler().runTask(GameManager.getInstance().getPlugin(), alphaPlayer::joinServer);
             } else {
                 Player player = GameManager.getInstance().getPlugin().getServer().getPlayer(uuid);
@@ -94,7 +98,8 @@ public abstract class Database {
                     alphaPlayer.setPlayer(player);
                     alphaPlayer.setMort(0);
                     alphaPlayer.setSuccess(0);
-                    alphaPlayer.setRole("Nain");
+                    alphaPlayer.setRole(GameManager.getInstance().getRoleFactory().getDefaultRole());
+                    alphaPlayer.setPseudo(player.getName());
                     CreateDBPlayer(player.getUniqueId(), player.getName());
                 }
                 GameManager.getInstance().getScheduler().runTask(GameManager.getInstance().getPlugin(), alphaPlayer::joinServer);
@@ -120,7 +125,7 @@ public abstract class Database {
         GameManager.getInstance().getLogger().info("CreateDBPlayer");
         try {
             conn = getSQLConnection();
-            ps = conn.prepareStatement("INSERT INTO player VALUES ('"+uuid+"', 0, 0, '"+pseudo+"', 'Voyageur')");
+            ps = conn.prepareStatement("INSERT INTO player VALUES ('"+uuid+"', 0, 0, '"+pseudo+"', '"+GameManager.getInstance().getRoleFactory().getDefaultRole().getType().toString()+"')");
             ps.executeUpdate();
         } catch (SQLException ex) {
             GameManager.getInstance().getLogger().log(Level.SEVERE, Errors.sqlConnectionExecute, ex);
@@ -136,7 +141,7 @@ public abstract class Database {
         }
     }
 
-    public void updatePlayer(UUID uuid, String column, int value) {
+    public void updatePlayer(UUID uuid, String column, String value) {
         Connection conn = null;
         PreparedStatement ps = null;
         GameManager.getInstance().getLogger().info("updatePlayer");

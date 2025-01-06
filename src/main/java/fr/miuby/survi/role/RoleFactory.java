@@ -12,9 +12,9 @@ public class RoleFactory {
     public RoleFactory() {
         roles.put(ERole.DRAGON, new Role("Dragon", ERole.DRAGON, NamedTextColor.GOLD));
         roles.put(ERole.LOUP_GAROU, new Role("Loup Garou", ERole.LOUP_GAROU, NamedTextColor.DARK_RED));
-        roles.put(ERole.FEE, new Role("Fee", ERole.FEE, NamedTextColor.LIGHT_PURPLE));
+        roles.put(ERole.FEE, new Role("Fée", ERole.FEE, NamedTextColor.LIGHT_PURPLE));
         roles.put(ERole.NAIN, new Role("Nain", ERole.NAIN, NamedTextColor.GREEN));
-        roles.put(ERole.GEANT, new Role("Geant", ERole.GEANT, NamedTextColor.DARK_GREEN));
+        roles.put(ERole.GEANT, new Role("Géant", ERole.GEANT, NamedTextColor.DARK_GREEN));
 
 
         roles.put(ERole.VOYAGEUR, new Role("Voyageur", ERole.VOYAGEUR, NamedTextColor.GRAY));
@@ -29,5 +29,9 @@ public class RoleFactory {
 
     public Collection<Role> getRoles() {
         return roles.values();
+    }
+
+    public Role getDefaultRole() {
+        return roles.get(ERole.NAIN);
     }
 }

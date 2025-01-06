@@ -19,13 +19,13 @@ public class Role {
         return GameManager.getInstance().getRoleFactory().getRole(roleType);
     }
 
-    public static Role get(String roleName) {
+    public static Role get(String roleType) {
         for (Role role : GameManager.getInstance().getRoleFactory().getRoles()) {
-            if (role.getName().equals(roleName)) {
+            if (role.getType().toString().equals(roleType)) {
                 return role;
             }
         }
-        throw new NullPointerException(roleName + " role not found !");
+        throw new NullPointerException(roleType + " role not found !");
     }
 
     public String getName() {
