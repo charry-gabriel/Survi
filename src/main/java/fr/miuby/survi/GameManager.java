@@ -6,7 +6,7 @@ import fr.miuby.survi.item.CustomItemFactory;
 import fr.miuby.survi.item.CustomRecipe;
 import fr.miuby.survi.item.locked_item.LockedItemsFactory;
 import fr.miuby.survi.player.AlphaPlayerFactory;
-import fr.miuby.survi.player.life.AttributeFactory;
+import fr.miuby.survi.player.attribute.AttributeFactory;
 import fr.miuby.survi.role.RoleFactory;
 import fr.miuby.survi.villager.VillagerFactory;
 import fr.miuby.survi.world.WorldFactory;

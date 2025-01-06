@@ -1,4 +1,4 @@
-package fr.miuby.survi.player.life;
+package fr.miuby.survi.player.attribute;
 
 import fr.miuby.survi.GameManager;
 import fr.miuby.survi.player.AlphaPlayer;
@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Objects;
 
 import static java.lang.Math.max;
+import static java.lang.Math.min;
 import static org.bukkit.util.NumberConversions.floor;
 
 public class AlphaLife {
@@ -61,6 +62,6 @@ public class AlphaLife {
         this.worldRoleModifiers = GameManager.getInstance().getLifeFactory().getAttributeModifier(this.alphaPlayer.getWorld(), this.alphaPlayer.getRole().getType());
         actualize();
 
-        this.alphaPlayer.getPlayer().setHealth(this.maxLife);
+        this.alphaPlayer.getPlayer().setHealth(min(max(1, (oldHealth * this.maxLife) / oldMaxHealth), this.maxLife));
     }
 }

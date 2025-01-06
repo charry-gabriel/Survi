@@ -1,4 +1,4 @@
-package fr.miuby.survi.player.life;
+package fr.miuby.survi.player.attribute;
 
 import fr.miuby.survi.role.ERole;
 import fr.miuby.survi.world.EWorld;
