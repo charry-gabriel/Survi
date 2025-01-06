@@ -11,13 +11,11 @@ import fr.miuby.survi.world.Monde;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
-import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.*;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Villager;
-import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.EquipmentSlotGroup;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
@@ -25,8 +23,6 @@ import org.bukkit.inventory.meta.*;
 import org.bukkit.inventory.meta.trim.ArmorTrim;
 import org.bukkit.inventory.meta.trim.TrimMaterial;
 import org.bukkit.inventory.meta.trim.TrimPattern;
-import org.bukkit.potion.PotionEffect;
-import org.bukkit.potion.PotionEffectType;
 
 import java.util.*;
 
@@ -50,6 +46,7 @@ public class VillagerFactory {
         spawnGolDRoger();
         spawnEnchanteur();
         spawnSpeedBoots();
+        spawnMiningHelmet();
         /*spawnPolicier();
         spawnPharmacien();
         spawnLibraire();*/
@@ -681,6 +678,58 @@ public class VillagerFactory {
         TextComponent openMessage = Component.text( "Les Air Force 1, les chaussures qui courent vite.");
 
         this.addNewVillager(new VillagerVendor("Nike_49", location, Villager.Type.PLAINS, Villager.Profession.LEATHERWORKER, blessings, messages, items, openMessage));
+    }
+
+    private void spawnMiningHelmet(){
+        Location location = new Location(world, 64.5, 164, -62.5, 90, 0);
+
+        ItemStack[] items = new ItemStack[]{
+                new ItemStack(Material.CHICKEN_SPAWN_EGG, 1),
+        };
+
+        ItemStack itemStack = new ItemStack(Material.LEATHER_HELMET);
+
+        ArmorMeta armorMeta = (ArmorMeta) itemStack.getItemMeta();
+        armorMeta.setTrim(new ArmorTrim(TrimMaterial.GOLD, TrimPattern.FLOW));
+        itemStack.setItemMeta(armorMeta);
+
+        LeatherArmorMeta leatherArmorMeta = (LeatherArmorMeta) itemStack.getItemMeta();
+        leatherArmorMeta.setColor(Color.fromRGB(13061821));
+        itemStack.setItemMeta(leatherArmorMeta);
+
+        ItemMeta meta = itemStack.getItemMeta();
+        meta.addAttributeModifier(Attribute.MINING_EFFICIENCY,
+                new AttributeModifier(new NamespacedKey(GameManager.getInstance().getPlugin(), "CasqueDeMineurMining"),
+                        10f,
+                        AttributeModifier.Operation.ADD_NUMBER,
+                        EquipmentSlotGroup.HEAD));
+        meta.addAttributeModifier(Attribute.MOVEMENT_SPEED,
+                new AttributeModifier(new NamespacedKey(GameManager.getInstance().getPlugin(), "CasqueDeMineurSpeed"),
+                        -0.02f,
+                        AttributeModifier.Operation.ADD_NUMBER,
+                        EquipmentSlotGroup.HEAD));
+        meta.addAttributeModifier(Attribute.ARMOR,
+                new AttributeModifier(new NamespacedKey(GameManager.getInstance().getPlugin(), "CasqueDeMineurArmor"),
+                        -0.8f,
+                        AttributeModifier.Operation.ADD_SCALAR,
+                        EquipmentSlotGroup.HEAD));
+        meta.setUnbreakable(true);
+        meta.customName(Component.text("Casque de Mineur").color(NamedTextColor.YELLOW));
+        meta.addItemFlags(ItemFlag.HIDE_DYE);
+        meta.addItemFlags(ItemFlag.HIDE_ARMOR_TRIM);
+        itemStack.setItemMeta(meta);
+
+        Blessing[] blessings = new Blessing[]{
+                new Blessing(new ItemEffect(itemStack)),
+        };
+
+        TextComponent[] messages = new TextComponent[]{
+                Component.text( "Voici un Casque de Mineur"),
+        };
+
+        TextComponent openMessage = Component.text( "Le Casque de Mineur, le casque qui mine vite.");
+
+        this.addNewVillager(new VillagerVendor("Indiana", location, Villager.Type.SNOW, Villager.Profession.CARTOGRAPHER, blessings, messages, items, openMessage));
     }
 
     /*private void spawnLibraire(){
