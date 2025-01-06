@@ -1,5 +1,6 @@
 package fr.miuby.survi.villager;
 
+import fr.miuby.survi.GameManager;
 import fr.miuby.survi.player.AlphaPlayer;
 import fr.miuby.survi.utils.Rect;
 import fr.miuby.survi.villager.blessing.*;
@@ -9,13 +10,21 @@ import fr.miuby.survi.item.locked_item.LockedToolType;
 import fr.miuby.survi.world.Monde;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.*;
+import org.bukkit.attribute.Attribute;
+import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Villager;
+import org.bukkit.inventory.EquipmentSlot;
+import org.bukkit.inventory.EquipmentSlotGroup;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.EnchantmentStorageMeta;
-import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.inventory.meta.PotionMeta;
+import org.bukkit.inventory.meta.*;
+import org.bukkit.inventory.meta.trim.ArmorTrim;
+import org.bukkit.inventory.meta.trim.TrimMaterial;
+import org.bukkit.inventory.meta.trim.TrimPattern;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
@@ -40,6 +49,7 @@ public class VillagerFactory {
         spawnRiche();*/
         spawnGolDRoger();
         spawnEnchanteur();
+        spawnSpeedBoots();
         /*spawnPolicier();
         spawnPharmacien();
         spawnLibraire();*/
@@ -406,7 +416,7 @@ public class VillagerFactory {
                 Component.text("Voici une canne à pêche !"),
         };
 
-        TextComponent openMessage = Component.text("Veux tu une canne à pêche ?");
+        TextComponent openMessage = Component.text("Veux-tu une belle canne à pêche ?");
 
         this.addNewVillager(new VillagerVendor("Gol D. Roger", location, Villager.Type.SAVANNA, Villager.Profession.WEAPONSMITH, blessings, messages, items, openMessage));
     }
@@ -615,9 +625,62 @@ public class VillagerFactory {
                 Component.text( "Voici un livre rare, utilise le intelligemment."),
         };
 
-        TextComponent openMessage = Component.text( "Veux tu un livre mending ?");
+        TextComponent openMessage = Component.text( "J'adore le poulet. Je ne vends aucune drogue.");
 
         this.addNewVillager(new VillagerVendor("Los Pollos Hermanos", location, Villager.Type.SWAMP, Villager.Profession.LIBRARIAN, blessings, messages, items, openMessage));
+    }
+
+
+    private void spawnSpeedBoots(){
+        Location location = new Location(world, -110.5, 157, -46.5, -90, 0);
+
+        ItemStack[] items = new ItemStack[]{
+                new ItemStack(Material.CHICKEN_SPAWN_EGG, 1),
+        };
+
+        ItemStack itemStack = new ItemStack(Material.LEATHER_BOOTS);
+
+        ArmorMeta armorMeta = (ArmorMeta) itemStack.getItemMeta();
+        armorMeta.setTrim(new ArmorTrim(TrimMaterial.NETHERITE, TrimPattern.SILENCE));
+        itemStack.setItemMeta(armorMeta);
+
+        LeatherArmorMeta leatherArmorMeta = (LeatherArmorMeta) itemStack.getItemMeta();
+        leatherArmorMeta.setColor(Color.fromRGB(16383998));
+        itemStack.setItemMeta(leatherArmorMeta);
+
+        ItemMeta meta = itemStack.getItemMeta();
+        meta.addAttributeModifier(Attribute.MOVEMENT_SPEED,
+                new AttributeModifier(new NamespacedKey(GameManager.getInstance().getPlugin(), "AirForceSpeed"),
+                        0.1f,
+                        AttributeModifier.Operation.ADD_NUMBER,
+                        EquipmentSlotGroup.FEET));
+        meta.addAttributeModifier(Attribute.BLOCK_BREAK_SPEED,
+                new AttributeModifier(new NamespacedKey(GameManager.getInstance().getPlugin(), "AirForceBlockBreakSpeed"),
+                        -0.8f,
+                        AttributeModifier.Operation.ADD_SCALAR,
+                        EquipmentSlotGroup.FEET));
+        meta.addAttributeModifier(Attribute.ARMOR,
+                new AttributeModifier(new NamespacedKey(GameManager.getInstance().getPlugin(), "AirForceArmor"),
+                        -0.8f,
+                        AttributeModifier.Operation.ADD_SCALAR,
+                        EquipmentSlotGroup.FEET));
+        meta.setUnbreakable(true);
+        meta.customName(Component.text("Air Force 1").color(NamedTextColor.YELLOW));
+        meta.addItemFlags(ItemFlag.HIDE_DYE);
+        meta.addItemFlags(ItemFlag.HIDE_ARMOR_TRIM);
+        itemStack.setItemMeta(meta);
+
+        Blessing[] blessings = new Blessing[]{
+                new Blessing(new ItemEffect(itemStack)),
+        };
+
+        TextComponent[] messages = new TextComponent[]{
+                Component.text( "Voici une paire d'Air Force 1."),
+        };
+
+        TextComponent openMessage = Component.text( "Les Air Force 1, les chaussures qui courent vite.");
+
+        this.addNewVillager(new VillagerVendor("Nike_49", location, Villager.Type.PLAINS, Villager.Profession.LEATHERWORKER, blessings, messages, items, openMessage));
     }
 
     /*private void spawnLibraire(){
