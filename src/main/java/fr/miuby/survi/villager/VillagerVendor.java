@@ -20,11 +20,13 @@ import java.util.Objects;
 public class VillagerVendor extends AVillager {
     private final ItemStack[] itemStacks;
     private final String name;
+    private final TextComponent openMessage;
 
-    public VillagerVendor(String name, Location location, Villager.Type type, Villager.Profession profession, Blessing[] blessings, TextComponent[] messages, ItemStack[] itemStacks) {
+    public VillagerVendor(String name, Location location, Villager.Type type, Villager.Profession profession, Blessing[] blessings, TextComponent[] messages, ItemStack[] itemStacks, TextComponent openMessage) {
         super(name, location, type, profession, blessings, messages);
         this.itemStacks = itemStacks;
         this.name = name;
+        this.openMessage = openMessage;
 
         getVillager().customName(getName());
         createInventory();
@@ -76,6 +78,10 @@ public class VillagerVendor extends AVillager {
 
     public TextComponent getMessage(ItemStack itemStack) {
         return messages[getItemIndex(itemStack)].color(NamedTextColor.AQUA);
+    }
+
+    public TextComponent getOpenMessage() {
+        return openMessage;
     }
 
     private int getItemIndex(ItemStack itemStack) {

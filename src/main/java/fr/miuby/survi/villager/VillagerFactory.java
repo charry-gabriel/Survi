@@ -335,7 +335,7 @@ public class VillagerFactory {
     }
 
 
-    private void spawnPecheur1(){
+    /*private void spawnPecheur1(){
         Location location = new Location(world, 12059.5, 63, 1469.5, 90, 0);
 
         ItemStack[] items = new ItemStack[]{
@@ -381,7 +381,7 @@ public class VillagerFactory {
         };
 
         this.addNewVillager(new VillagerVendor("Vendeur Sampan",location, Villager.Type.SWAMP, Villager.Profession.NITWIT, blessings, messages, items));
-    }
+    }*/
 
     private void spawnGolDRoger(){
         Location location = new Location(world, 4, 159, -18, 0, 0);
@@ -403,13 +403,15 @@ public class VillagerFactory {
         };
 
         TextComponent[] messages = new TextComponent[]{
-                Component.text( "Voici une canne à pêche !"),
+                Component.text("Voici une canne à pêche !"),
         };
 
-        this.addNewVillager(new VillagerVendor("Gol D. Roger", location, Villager.Type.SAVANNA, Villager.Profession.WEAPONSMITH, blessings, messages, items));
+        TextComponent openMessage = Component.text("Veux tu une canne à pêche ?");
+
+        this.addNewVillager(new VillagerVendor("Gol D. Roger", location, Villager.Type.SAVANNA, Villager.Profession.WEAPONSMITH, blessings, messages, items, openMessage));
     }
 
-    private void spawnRiche(){
+    /*private void spawnRiche(){
         Location location = new Location(world, 12072.5, 64, 1483.5, -90, 0);
 
         Tribute[] tributes = new Tribute[]{
@@ -591,7 +593,7 @@ public class VillagerFactory {
         };
 
         this.addNewVillager(new VillagerVendor("Vendeur Aspis", location, Villager.Type.SNOW, Villager.Profession.FLETCHER, blessings, messages, items));
-    }
+    }*/
 
     private void spawnEnchanteur(){
         Location location = new Location(world, 6, 160, -100, 90, 0);
@@ -613,10 +615,12 @@ public class VillagerFactory {
                 Component.text( "Voici un livre rare, utilise le intelligemment."),
         };
 
-        this.addNewVillager(new VillagerVendor("Los Pollos Hermanos", location, Villager.Type.SWAMP, Villager.Profession.LIBRARIAN, blessings, messages, items));
+        TextComponent openMessage = Component.text( "Veux tu un livre mending ?");
+
+        this.addNewVillager(new VillagerVendor("Los Pollos Hermanos", location, Villager.Type.SWAMP, Villager.Profession.LIBRARIAN, blessings, messages, items, openMessage));
     }
 
-    private void spawnLibraire(){
+    /*private void spawnLibraire(){
         Location location = new Location(world, 12138.5, 73, 1447.5, -135, 0);
 
         ItemStack itemStack = new ItemStack(Material.ENCHANTED_BOOK, 1);
@@ -666,6 +670,6 @@ public class VillagerFactory {
         };
 
         this.addNewVillager(new VillagerVendor("Junkudo", location, Villager.Type.SAVANNA, Villager.Profession.LIBRARIAN, blessings, messages, items));
-    }
+    }*/
     //endregion
 }

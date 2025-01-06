@@ -4,6 +4,7 @@ import com.destroystokyo.paper.event.player.PlayerArmorChangeEvent;
 import fr.miuby.survi.GameManager;
 import fr.miuby.survi.player.AlphaPlayer;
 import fr.miuby.survi.villager.AVillager;
+import fr.miuby.survi.villager.VillagerVendor;
 import fr.miuby.survi.world.EWorld;
 import fr.miuby.survi.world.Monde;
 import io.papermc.paper.advancement.AdvancementDisplay;
@@ -51,8 +52,12 @@ public class PlayerListener implements Listener {
         Player player = event.getPlayer();
         if (event.getRightClicked().getType() == EntityType.VILLAGER) {
             Villager villager = (Villager) event.getRightClicked();
-            if (AVillager.contains(villager.getUniqueId()))
+            if (AVillager.contains(villager.getUniqueId())) {
                 player.openInventory(AVillager.get(villager.getUniqueId()).getInventory());
+                if (villager instanceof VillagerVendor vendor) {
+                    player.sendMessage(vendor.getOpenMessage());
+                }
+            }
 
             event.setCancelled(true);
         } else if (event.getRightClicked().getType() == EntityType.WANDERING_TRADER) {
