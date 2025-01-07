@@ -53,8 +53,9 @@ public class PlayerListener implements Listener {
         if (event.getRightClicked().getType() == EntityType.VILLAGER) {
             Villager villager = (Villager) event.getRightClicked();
             if (AVillager.contains(villager.getUniqueId())) {
-                player.openInventory(AVillager.get(villager.getUniqueId()).getInventory());
-                if (villager instanceof VillagerVendor vendor) {
+                AVillager aVillager = AVillager.get(villager.getUniqueId());
+                player.openInventory(aVillager.getInventory());
+                if (aVillager instanceof VillagerVendor vendor) {
                     player.sendMessage(vendor.getOpenMessage());
                 }
             }
