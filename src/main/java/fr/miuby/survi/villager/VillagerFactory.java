@@ -413,7 +413,7 @@ public class VillagerFactory {
                 Component.text("Voici une canne à pêche !"),
         };
 
-        TextComponent openMessage = Component.text("Veux-tu une belle canne à pêche ?");
+        TextComponent openMessage = Component.text("Veux-tu une belle canne à pêche ?").color(NamedTextColor.AQUA);
 
         this.addNewVillager(new VillagerVendor("Gol D. Roger", location, Villager.Type.SAVANNA, Villager.Profession.WEAPONSMITH, blessings, messages, items, openMessage));
     }
@@ -622,7 +622,7 @@ public class VillagerFactory {
                 Component.text( "Voici un livre rare, utilise le intelligemment."),
         };
 
-        TextComponent openMessage = Component.text( "J'adore le poulet. Je ne vends aucune drogue.");
+        TextComponent openMessage = Component.text( "J'adore le poulet. Je ne vends aucune drogue.").color(NamedTextColor.AQUA);
 
         this.addNewVillager(new VillagerVendor("Los Pollos Hermanos", location, Villager.Type.SWAMP, Villager.Profession.LIBRARIAN, blessings, messages, items, openMessage));
     }
@@ -675,7 +675,7 @@ public class VillagerFactory {
                 Component.text( "Voici une paire d'Air Force 1."),
         };
 
-        TextComponent openMessage = Component.text( "Les Air Force 1, les chaussures qui courent vite.");
+        TextComponent openMessage = Component.text( "Les Air Force 1, les chaussures qui courent vite.").color(NamedTextColor.AQUA);
 
         this.addNewVillager(new VillagerVendor("Nike_49", location, Villager.Type.PLAINS, Villager.Profession.LEATHERWORKER, blessings, messages, items, openMessage));
     }
@@ -727,7 +727,7 @@ public class VillagerFactory {
                 Component.text( "Voici un Casque de Mineur"),
         };
 
-        TextComponent openMessage = Component.text( "Le Casque de Mineur, le casque qui mine vite.");
+        TextComponent openMessage = Component.text( "Le Casque de Mineur, le casque qui mine vite.").color(NamedTextColor.AQUA);
 
         this.addNewVillager(new VillagerVendor("Indiana", location, Villager.Type.SNOW, Villager.Profession.CARTOGRAPHER, blessings, messages, items, openMessage));
     }
