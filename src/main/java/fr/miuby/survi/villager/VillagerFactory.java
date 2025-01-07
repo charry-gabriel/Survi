@@ -278,7 +278,6 @@ public class VillagerFactory {
         this.addNewVillager(new VillagerLevel("Thomas Pesquet", location, Villager.Type.SNOW, Villager.Profession.FISHERMAN, blessings, messages, tributes, names));
     }
 
-
     private void spawnFrancois(){
         Location location = new Location(world, -24.5, 158, -0.5, 0, 0);
 
@@ -341,7 +340,6 @@ public class VillagerFactory {
         this.addNewVillager(new VillagerLevel("François",location, Villager.Type.JUNGLE, Villager.Profession.CLERIC, blessings, messages, tributes, names));
     }
 
-
     /*private void spawnPecheur1(){
         Location location = new Location(world, 12059.5, 63, 1469.5, 90, 0);
 
@@ -388,37 +386,9 @@ public class VillagerFactory {
         };
 
         this.addNewVillager(new VillagerVendor("Vendeur Sampan",location, Villager.Type.SWAMP, Villager.Profession.NITWIT, blessings, messages, items));
-    }*/
-
-    private void spawnGolDRoger(){
-        Location location = new Location(world, 4, 159, -18, 0, 0);
-
-        ItemStack[] items = new ItemStack[]{
-                new ItemStack(Material.EMERALD_BLOCK, 9),
-        };
-
-        ItemStack itemStack = new ItemStack(Material.FISHING_ROD);
-        ItemMeta meta = itemStack.getItemMeta();
-        meta.addEnchant(Enchantment.UNBREAKING, 5,true);
-        meta.addEnchant(Enchantment.LURE, 5,true);
-        meta.addEnchant(Enchantment.LUCK_OF_THE_SEA, 5,true);
-        meta.addEnchant(Enchantment.VANISHING_CURSE, 1,false);
-        itemStack.setItemMeta(meta);
-
-        Blessing[] blessings = new Blessing[]{
-                new Blessing(new ItemEffect(itemStack)),
-        };
-
-        TextComponent[] messages = new TextComponent[]{
-                Component.text("Voici une canne à pêche !"),
-        };
-
-        TextComponent openMessage = Component.text("Veux-tu une belle canne à pêche ?").color(NamedTextColor.AQUA);
-
-        this.addNewVillager(new VillagerVendor("Gol D. Roger", location, Villager.Type.SAVANNA, Villager.Profession.WEAPONSMITH, blessings, messages, items, openMessage));
     }
 
-    /*private void spawnRiche(){
+    private void spawnRiche(){
         Location location = new Location(world, 12072.5, 64, 1483.5, -90, 0);
 
         Tribute[] tributes = new Tribute[]{
@@ -602,6 +572,34 @@ public class VillagerFactory {
         this.addNewVillager(new VillagerVendor("Vendeur Aspis", location, Villager.Type.SNOW, Villager.Profession.FLETCHER, blessings, messages, items));
     }*/
 
+    private void spawnGolDRoger(){
+        Location location = new Location(world, 4, 159, -18, 0, 0);
+
+        ItemStack[] items = new ItemStack[]{
+                new ItemStack(Material.EMERALD_BLOCK, 9),
+        };
+
+        ItemStack itemStack = new ItemStack(Material.FISHING_ROD);
+        ItemMeta meta = itemStack.getItemMeta();
+        meta.addEnchant(Enchantment.UNBREAKING, 5,true);
+        meta.addEnchant(Enchantment.LURE, 5,true);
+        meta.addEnchant(Enchantment.LUCK_OF_THE_SEA, 5,true);
+        meta.addEnchant(Enchantment.VANISHING_CURSE, 1,false);
+        itemStack.setItemMeta(meta);
+
+        Blessing[] blessings = new Blessing[]{
+                new Blessing(new ItemEffect(itemStack)),
+        };
+
+        TextComponent[] messages = new TextComponent[]{
+                Component.text("Voici une canne à pêche !"),
+        };
+
+        TextComponent openMessage = Component.text("Veux-tu une belle canne à pêche ?");
+
+        this.addNewVillager(new VillagerVendor("Gol D. Roger", location, Villager.Type.SAVANNA, Villager.Profession.WEAPONSMITH, blessings, messages, items, openMessage));
+    }
+
     private void spawnEnchanteur(){
         Location location = new Location(world, 6, 160, -100, 90, 0);
 
@@ -622,11 +620,10 @@ public class VillagerFactory {
                 Component.text( "Voici un livre rare, utilise le intelligemment."),
         };
 
-        TextComponent openMessage = Component.text( "J'adore le poulet. Je ne vends aucune drogue.").color(NamedTextColor.AQUA);
+        TextComponent openMessage = Component.text("J'adore le poulet. Je ne vends aucune drogue.");
 
         this.addNewVillager(new VillagerVendor("Los Pollos Hermanos", location, Villager.Type.SWAMP, Villager.Profession.LIBRARIAN, blessings, messages, items, openMessage));
     }
-
 
     private void spawnSpeedBoots(){
         Location location = new Location(world, -110.5, 157, -46.5, -90, 0);
@@ -672,10 +669,10 @@ public class VillagerFactory {
         };
 
         TextComponent[] messages = new TextComponent[]{
-                Component.text( "Voici une paire d'Air Force 1."),
+                Component.text("Voici une paire d'Air Force 1."),
         };
 
-        TextComponent openMessage = Component.text( "Les Air Force 1, les chaussures qui courent vite.").color(NamedTextColor.AQUA);
+        TextComponent openMessage = Component.text("Les Air Force 1, les chaussures qui courent vite.");
 
         this.addNewVillager(new VillagerVendor("Nike_49", location, Villager.Type.PLAINS, Villager.Profession.LEATHERWORKER, blessings, messages, items, openMessage));
     }
@@ -724,10 +721,10 @@ public class VillagerFactory {
         };
 
         TextComponent[] messages = new TextComponent[]{
-                Component.text( "Voici un Casque de Mineur"),
+                Component.text("Voici un Casque de Mineur"),
         };
 
-        TextComponent openMessage = Component.text( "Le Casque de Mineur, le casque qui mine vite.").color(NamedTextColor.AQUA);
+        TextComponent openMessage = Component.text("Le Casque de Mineur, le casque qui mine vite.");
 
         this.addNewVillager(new VillagerVendor("Indiana", location, Villager.Type.SNOW, Villager.Profession.CARTOGRAPHER, blessings, messages, items, openMessage));
     }
