@@ -1,7 +1,6 @@
 package fr.miuby.survi.player;
 
 import fr.miuby.survi.GameManager;
-import fr.miuby.survi.player.attribute.AlphaLife;
 import fr.miuby.survi.role.*;
 import fr.miuby.survi.world.EWorld;
 import fr.miuby.survi.world.Monde;

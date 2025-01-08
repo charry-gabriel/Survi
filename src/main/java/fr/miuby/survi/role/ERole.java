@@ -5,13 +5,5 @@ public enum ERole {
     LOUP_GAROU,
     FEE,
     NAIN,
-    GEANT,
-
-    CAPITAINE,
-    PILOTE,
-    VOYAGEUR,
-    JUMP,
-    RICHE,
-    TEST,
-    ALL
+    GEANT
 }

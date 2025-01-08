@@ -1,6 +1,7 @@
 package fr.miuby.survi;
 
 import fr.miuby.survi.player.AlphaPlayer;
+import fr.miuby.survi.role.ERole;
 import fr.miuby.survi.role.Role;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
@@ -28,8 +29,8 @@ public class Commands {
 
                 AlphaPlayer alphaPlayer = GameManager.getInstance().getAlphaPlayerFactory().getAlphaPlayer(player.getUniqueId());
 
-                Role roleFound = Role.get(args[1]);
-                GameManager.getInstance().getDatabase().updatePlayer(alphaPlayer.getUUID(), "role", roleFound.getType().toString());
+                Role roleFound = GameManager.getInstance().getRoleFactory().getRole(ERole.valueOf(args[1]));
+                GameManager.getInstance().getDatabase().updatePlayer(alphaPlayer.getUUID(), "role", roleFound.type().toString());
                 alphaPlayer.setRole(roleFound);
 
                 alphaPlayer.switchRole();

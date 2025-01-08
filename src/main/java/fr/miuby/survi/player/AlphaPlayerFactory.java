@@ -23,7 +23,7 @@ public class AlphaPlayerFactory {
     public void setPlayersToTeam(AlphaScoreboard scoreboard) {
         for(AlphaPlayer alphaPlayer : players.values()) {
             if(alphaPlayer.getPlayer() != null) {
-                scoreboard.getTeam(alphaPlayer.getWorld(), alphaPlayer.getRole().getType()).addPlayer(alphaPlayer);
+                scoreboard.getTeam(alphaPlayer.getWorld(), alphaPlayer.getRole().type()).addPlayer(alphaPlayer);
                 //GameManager.getInstance().getLogger().info(alphaPlayer.getPlayer().getName() + " est ajouté a mon scoreboard !");
             }
         }
@@ -32,7 +32,7 @@ public class AlphaPlayerFactory {
     public void sendToPlayers(AlphaPlayer player) {
         for(AlphaPlayer alphaPlayer : players.values()) {
             if(alphaPlayer.getPlayer() != null) {
-                alphaPlayer.getScoreboard().getTeam(player.getWorld(), player.getRole().getType()).addPlayer(player);
+                alphaPlayer.getScoreboard().getTeam(player.getWorld(), player.getRole().type()).addPlayer(player);
             }
         }
     }

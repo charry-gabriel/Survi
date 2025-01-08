@@ -1,42 +1,7 @@
 package fr.miuby.survi.role;
 
-import fr.miuby.survi.GameManager;
-import net.kyori.adventure.text.format.NamedTextColor;
-import net.kyori.adventure.text.format.TextColor;
+import net.kyori.adventure.text.TextComponent;
 
-public class Role {
-    private final String name;
-    private final ERole type;
-    private final NamedTextColor color;
+import java.util.List;
 
-    public Role(String name, ERole type, NamedTextColor color) {
-        this.name = name;
-        this.type = type;
-        this.color = color;
-    }
-
-    public static Role get(ERole roleType) {
-        return GameManager.getInstance().getRoleFactory().getRole(roleType);
-    }
-
-    public static Role get(String roleType) {
-        for (Role role : GameManager.getInstance().getRoleFactory().getRoles()) {
-            if (role.getType().toString().equals(roleType)) {
-                return role;
-            }
-        }
-        throw new NullPointerException(roleType + " role not found !");
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public ERole getType() {
-        return type;
-    }
-
-    public TextColor getColor() {
-        return color;
-    }
-}
+public record Role(ERole type, TextComponent displayName, List<RoleAttribute> attributes) { }

@@ -1,5 +1,6 @@
 package fr.miuby.survi.player;
 
+import fr.miuby.survi.GameManager;
 import fr.miuby.survi.role.ERole;
 import fr.miuby.survi.role.Role;
 import fr.miuby.survi.world.EWorld;
@@ -17,18 +18,18 @@ public class AlphaTeam {
 
     public AlphaTeam(Scoreboard scoreboard, EWorld worldType, ERole roleType) {
         this.world = Monde.get(worldType);
-        this.role = Role.get(roleType);
+        this.role = GameManager.getInstance().getRoleFactory().getRole(roleType);
 
         this.name = worldType.toString() + roleType.toString();
         this.scoreboard = scoreboard;
         this.team = this.scoreboard.registerNewTeam(name);
 
         this.team.color(this.world.getColor());
-        this.team.prefix(Component.text(world.getName() + " - ").append(Component.text("[" + role.getName() + "] ").color(role.getColor())));
+        this.team.prefix(Component.text(world.getName() + " - ").append(role.displayName()).append(Component.text(" ")));
     }
 
     public ERole getRole() {
-        return role.getType();
+        return role.type();
     }
 
     public EWorld getWorld() {

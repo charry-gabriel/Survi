@@ -6,7 +6,7 @@ import java.util.logging.Level;
 
 import fr.miuby.survi.player.AlphaPlayer;
 import fr.miuby.survi.GameManager;
-import fr.miuby.survi.role.Role;
+import fr.miuby.survi.role.ERole;
 import fr.miuby.survi.villager.AVillager;
 import org.bukkit.entity.Player;
 
@@ -49,7 +49,7 @@ public abstract class Database {
 
                 alphaPlayer.setMort(rs.getInt("mort"));
                 alphaPlayer.setSuccess(rs.getInt("success"));
-                alphaPlayer.setRole(Role.get(rs.getString("role")));
+                alphaPlayer.setRole(GameManager.getInstance().getRoleFactory().getRole(ERole.valueOf(rs.getString("role"))));
                 alphaPlayer.setPseudo(rs.getString("pseudo"));
                 GameManager.getInstance().getScheduler().runTask(GameManager.getInstance().getPlugin(), alphaPlayer::joinServer);
             }
@@ -84,7 +84,7 @@ public abstract class Database {
 
                 alphaPlayer.setMort(mort);
                 alphaPlayer.setSuccess(success);
-                alphaPlayer.setRole(Role.get(role));
+                alphaPlayer.setRole(GameManager.getInstance().getRoleFactory().getRole(ERole.valueOf(role)));
                 alphaPlayer.setPseudo(pseudo);
                 GameManager.getInstance().getScheduler().runTask(GameManager.getInstance().getPlugin(), alphaPlayer::joinServer);
             } else {
@@ -122,7 +122,7 @@ public abstract class Database {
         PreparedStatement ps = null;
         try {
             conn = getSQLConnection();
-            ps = conn.prepareStatement("INSERT INTO player VALUES ('"+uuid+"', 0, 0, '"+pseudo+"', '"+GameManager.getInstance().getRoleFactory().getDefaultRole().getType().toString()+"')");
+            ps = conn.prepareStatement("INSERT INTO player VALUES ('"+uuid+"', 0, 0, '"+pseudo+"', '"+GameManager.getInstance().getRoleFactory().getDefaultRole().type().toString()+"')");
             ps.executeUpdate();
         } catch (SQLException ex) {
             GameManager.getInstance().getLogger().log(Level.SEVERE, Errors.sqlConnectionExecute, ex);

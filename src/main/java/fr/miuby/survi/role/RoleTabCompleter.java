@@ -22,7 +22,7 @@ public class RoleTabCompleter implements TabCompleter {
                         new ArrayList<>());
             } else if (args.length == 2) {
                 return StringUtil.copyPartialMatches(args[1],
-                        GameManager.getInstance().getRoleFactory().getRoles().stream().map(role -> role.getType().toString()).toList(),
+                        GameManager.getInstance().getRoleFactory().getRoles().stream().map(role -> role.type().toString()).toList(),
                         new ArrayList<>());
             }
         }
