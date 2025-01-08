@@ -76,7 +76,7 @@ public class PlayerListener implements Listener {
         }
         AlphaPlayer player = AlphaPlayer.get(event.getPlayer().getUniqueId());
         player.setArmorMalus(malus);
-        player.getAlphaLife().actualize();
+        player.actualizeAttribute();
     }
 
     @EventHandler

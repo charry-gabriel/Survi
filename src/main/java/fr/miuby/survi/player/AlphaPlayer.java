@@ -4,9 +4,13 @@ import fr.miuby.survi.GameManager;
 import fr.miuby.survi.role.*;
 import fr.miuby.survi.world.EWorld;
 import fr.miuby.survi.world.Monde;
+import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Player;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 public class AlphaPlayer implements Serializable {
@@ -27,6 +31,7 @@ public class AlphaPlayer implements Serializable {
     private float damageModifier = 0.2f;
     private final float endResistanceModifier = 0.7f;
     private final float endDamageModifier = 0.7f;
+    private List<RoleAttribute> worldRoleAttribute;
     //endregion
 
     public AlphaPlayer(UUID uuid) {
@@ -65,6 +70,7 @@ public class AlphaPlayer implements Serializable {
     public void addMort(int mort) {
         this.mort += mort;
         this.alphaLife.setDeath(this.mort);
+        this.actualizeAttribute();
 
         GameManager.getInstance().getDatabase().updatePlayer(uuid, "mort", String.valueOf(this.mort));
     }
@@ -72,6 +78,7 @@ public class AlphaPlayer implements Serializable {
     public void addSuccess(int success) {
         this.success = success;
         this.alphaLife.setSuccess(success);
+        this.actualizeAttribute();
 
         GameManager.getInstance().getDatabase().updatePlayer(uuid, "success", String.valueOf(this.success));
     }
@@ -79,7 +86,7 @@ public class AlphaPlayer implements Serializable {
     public void switchWorld() {
         this.world = Monde.get(getPlayer().getWorld().getUID());
         GameManager.getInstance().getAlphaPlayerFactory().sendToPlayers(this);
-        alphaLife.setWorldRole();
+        this.setWorldRole();
     }
 
     public void teleport(Monde monde) {
@@ -88,7 +95,29 @@ public class AlphaPlayer implements Serializable {
 
     public void switchRole() {
         GameManager.getInstance().getAlphaPlayerFactory().sendToPlayers(this);
-        alphaLife.setWorldRole();
+        this.setWorldRole();
+    }
+
+    public void setWorldRole() {
+        List<RoleAttribute> foundAttributes = new ArrayList<>();
+        for (RoleAttribute attribute : this.getRole().attributes()) {
+            if ((this.getWorld() == attribute.world() || attribute.world() == EWorld.ALL))
+                foundAttributes.add(attribute);
+        }
+        this.worldRoleAttribute = foundAttributes;
+        actualizeAttribute();
+    }
+
+    public void actualizeAttribute() {
+        for(RoleAttribute roleAttribute : worldRoleAttribute) {
+            if (roleAttribute.attributeType() == Attribute.MAX_HEALTH)
+                this.alphaLife.actualize(roleAttribute.attributeValue());
+            else
+                Objects.requireNonNull(this.getPlayer().getAttribute(roleAttribute.attributeType())).setBaseValue(roleAttribute.attributeValue());
+        }
+
+        if (hasArmorMalus())
+            Objects.requireNonNull(this.getPlayer().getAttribute(Attribute.MAX_HEALTH)).setBaseValue(1);
     }
 
     //region Getters Setters
