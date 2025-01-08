@@ -28,7 +28,7 @@ public class PlayerListener implements Listener {
     public void onPlayerMove(PlayerMoveEvent event) {
         if ((Monde.isOutOfLimit(event.getPlayer(), EWorld.VILLAGE) || Monde.isOutOfLimit(event.getPlayer(), EWorld.WILDERNESS)) && !event.getPlayer().isOp()) {
             AlphaPlayer.get(event.getPlayer().getUniqueId()).teleport(Monde.get(EWorld.VILLAGE));
-            event.getPlayer().sendMessage(Component.text("Ne sort pas des limite du village, c'est dangereux !!").color(NamedTextColor.RED));
+            event.getPlayer().sendMessage(Component.text("Ne sort pas des limite du village, c'est dangereux !!", NamedTextColor.RED));
         }
     }
 
@@ -56,7 +56,7 @@ public class PlayerListener implements Listener {
                 AVillager aVillager = AVillager.get(villager.getUniqueId());
                 player.openInventory(aVillager.getInventory());
                 if (aVillager instanceof VillagerVendor vendor) {
-                    player.sendMessage(Component.text("<").color(NamedTextColor.AQUA).append(vendor.getName()).append(Component.text("> ").color(NamedTextColor.AQUA)).append(vendor.getOpenMessage()));
+                    player.sendMessage(Component.text("<", NamedTextColor.AQUA).append(vendor.getName()).append(Component.text("> ", NamedTextColor.AQUA)).append(vendor.getOpenMessage()));
                 }
             }
 

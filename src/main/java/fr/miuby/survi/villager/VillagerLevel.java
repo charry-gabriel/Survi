@@ -37,7 +37,7 @@ public class VillagerLevel extends AVillager {
         removeItemStack(inventory, item, player);
 
         if (inventory.isEmpty()) {
-            Bukkit.broadcast(Component.text("<").color(NamedTextColor.AQUA).append(getName()).append(Component.text("> ").color(NamedTextColor.AQUA)).append(getMessage()));
+            Bukkit.broadcast(Component.text("<", NamedTextColor.AQUA).append(getName()).append(Component.text("> ", NamedTextColor.AQUA)).append(getMessage()));
             applyBlessing();
             addLevel();
             villager.customName(getName());

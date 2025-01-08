@@ -669,7 +669,7 @@ public class VillagerFactory {
                         AttributeModifier.Operation.ADD_SCALAR,
                         EquipmentSlotGroup.FEET));
         meta.setUnbreakable(true);
-        meta.customName(Component.text("Air Force 1").color(NamedTextColor.YELLOW));
+        meta.customName(Component.text("Air Force 1", NamedTextColor.YELLOW));
         meta.addItemFlags(ItemFlag.HIDE_DYE);
         meta.addItemFlags(ItemFlag.HIDE_ARMOR_TRIM);
         itemStack.setItemMeta(meta);
@@ -721,7 +721,7 @@ public class VillagerFactory {
                         AttributeModifier.Operation.ADD_SCALAR,
                         EquipmentSlotGroup.HEAD));
         meta.setUnbreakable(true);
-        meta.customName(Component.text("Casque de Mineur").color(NamedTextColor.YELLOW));
+        meta.customName(Component.text("Casque de Mineur", NamedTextColor.YELLOW));
         meta.addItemFlags(ItemFlag.HIDE_DYE);
         meta.addItemFlags(ItemFlag.HIDE_ARMOR_TRIM);
         itemStack.setItemMeta(meta);
