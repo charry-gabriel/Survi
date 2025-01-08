@@ -10,7 +10,6 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
-import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Villager;
 import org.bukkit.event.inventory.InventoryType;
@@ -24,8 +23,8 @@ public class VillagerLevel extends AVillager {
     private final Tribute[] tributes;
     private final TextComponent[] names;
 
-    public VillagerLevel(String name, Location location, Villager.Type type, Villager.Profession profession, Blessing[] blessings, TextComponent[] messages, Tribute[] tributes, TextComponent[] names) {
-        super(name, location, type, profession, blessings, messages);
+    public VillagerLevel(String name, Villager.Type type, Villager.Profession profession, Blessing[] blessings, TextComponent[] messages, Tribute[] tributes, TextComponent[] names) {
+        super(name, type, profession, blessings, messages);
         this.tributes = tributes;
         this.names = names;
 
@@ -44,6 +43,9 @@ public class VillagerLevel extends AVillager {
             villager.customName(getName());
             updateInventory();
             player.closeInventory();
+
+            this.givenItems.clear();
+            GameManager.getInstance().getDatabase().updateVillagerGivenItem(this.uuid, this.givenItems);
         }
     }
 
@@ -52,6 +54,10 @@ public class VillagerLevel extends AVillager {
 
         for (ItemStack item : getTribute().getItemStacks())
             inv.addItem(item);
+
+        for (ItemStack item : givenItems) {
+            createItemStack(inv, item);
+        }
 
         this.inventory = inv;
     }
@@ -65,7 +71,7 @@ public class VillagerLevel extends AVillager {
 
     public void addLevel() {
         this.level++;
-        GameManager.getInstance().getDatabase().updateVillager(uuid, level);
+        GameManager.getInstance().getDatabase().updateVillagerLevel(uuid, level);
     }
 
     public void applyAllCurrentBlessing(AlphaPlayer player) {
@@ -88,12 +94,36 @@ public class VillagerLevel extends AVillager {
         }
     }
 
+    private void createItemStack(Inventory inventory, ItemStack item) {
+        ItemStack itemToRemove = null;
+
+        for (ItemStack tributeItem : inventory.getContents()) {
+            if (tributeItem != null && tributeItem.isSimilar(item)) {
+                GameManager.getInstance().getLogger().info(getName().content() + " recupere " + item.getAmount() + " de " + item.getType().name());
+
+                if (item.getAmount() < tributeItem.getAmount()) {
+                    tributeItem.setAmount(tributeItem.getAmount() - item.getAmount());
+                } else {
+                    itemToRemove = tributeItem;
+                    item.setAmount(item.getAmount() - tributeItem.getAmount());
+                }
+                break;
+            }
+        }
+
+        if (itemToRemove != null)
+            inventory.removeItem(itemToRemove);
+    }
+
     public void removeItemStack(Inventory inventory, ItemStack item, Player player) {
         ItemStack itemToRemove = null;
 
         for (ItemStack tributeItem : inventory.getContents()) {
             if (tributeItem != null && tributeItem.isSimilar(item)) {
                 GameManager.getInstance().getLogger().info(getName().content() + " recupere " + item.getAmount() + " de " + item.getType().name());
+                this.givenItems.add(item);
+                GameManager.getInstance().getDatabase().updateVillagerGivenItem(this.uuid, this.givenItems);
+
                 if (item.getAmount() < tributeItem.getAmount()) {
                     tributeItem.setAmount(tributeItem.getAmount() - item.getAmount());
                     player.getInventory().remove(item);

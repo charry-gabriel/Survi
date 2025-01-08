@@ -24,6 +24,7 @@ import org.bukkit.inventory.meta.trim.ArmorTrim;
 import org.bukkit.inventory.meta.trim.TrimMaterial;
 import org.bukkit.inventory.meta.trim.TrimPattern;
 
+import javax.annotation.Nullable;
 import java.util.*;
 
 public class VillagerFactory {
@@ -58,6 +59,15 @@ public class VillagerFactory {
 
     public Map<UUID, AVillager> getVillagers() {
         return villagers;
+    }
+
+    @Nullable
+    public AVillager getVillager(String name) {
+        for (AVillager villager : villagers.values()) {
+            if (name.equals(villager.nameId))
+                return villager;
+        }
+        return null;
     }
 
     public void applyAllCurrentBlessing(AlphaPlayer player) {
@@ -133,7 +143,7 @@ public class VillagerFactory {
                 Component.text( "Edward Jenner MAX"),
         };
 
-        this.addNewVillager(new VillagerLevel("Survivant", location, Villager.Type.SAVANNA, Villager.Profession.FARMER, blessings, messages, tributes, names));
+        this.addNewVillager(new VillagerLevel("Survivant", Villager.Type.SAVANNA, Villager.Profession.FARMER, blessings, messages, tributes, names));
     }
 
     private void spawnNain(){
@@ -175,7 +185,7 @@ public class VillagerFactory {
                 Component.text( "Nain Roux MAX"),
         };
 
-        this.addNewVillager(new VillagerLevel("Nain Roux", location, Villager.Type.SWAMP, Villager.Profession.NITWIT, blessings, messages, tributes, names));
+        this.addNewVillager(new VillagerLevel("Nain Roux", Villager.Type.SWAMP, Villager.Profession.NITWIT, blessings, messages, tributes, names));
     }
 
     private void spawnMaddox(){
@@ -217,7 +227,7 @@ public class VillagerFactory {
                 Component.text( "Maddox MAX"),
         };
 
-        this.addNewVillager(new VillagerLevel("Maddox", location, Villager.Type.TAIGA, Villager.Profession.BUTCHER, blessings, messages, tributes, names));
+        this.addNewVillager(new VillagerLevel("Maddox", Villager.Type.TAIGA, Villager.Profession.BUTCHER, blessings, messages, tributes, names));
     }
 
     private void spawnThomas(){
@@ -275,7 +285,7 @@ public class VillagerFactory {
                 Component.text( "Thomas Pesquet V"),
         };
 
-        this.addNewVillager(new VillagerLevel("Thomas Pesquet", location, Villager.Type.SNOW, Villager.Profession.FISHERMAN, blessings, messages, tributes, names));
+        this.addNewVillager(new VillagerLevel("Thomas Pesquet", Villager.Type.SNOW, Villager.Profession.FISHERMAN, blessings, messages, tributes, names));
     }
 
     private void spawnFrancois(){
@@ -337,7 +347,7 @@ public class VillagerFactory {
 
         };
 
-        this.addNewVillager(new VillagerLevel("François",location, Villager.Type.JUNGLE, Villager.Profession.CLERIC, blessings, messages, tributes, names));
+        this.addNewVillager(new VillagerLevel("François", Villager.Type.JUNGLE, Villager.Profession.CLERIC, blessings, messages, tributes, names));
     }
 
     /*private void spawnPecheur1(){
@@ -597,7 +607,7 @@ public class VillagerFactory {
 
         TextComponent openMessage = Component.text("Veux-tu une belle canne à pêche ?");
 
-        this.addNewVillager(new VillagerVendor("Gol D. Roger", location, Villager.Type.SAVANNA, Villager.Profession.WEAPONSMITH, blessings, messages, items, openMessage));
+        this.addNewVillager(new VillagerVendor("Gol D. Roger", Villager.Type.SAVANNA, Villager.Profession.WEAPONSMITH, blessings, messages, items, openMessage));
     }
 
     private void spawnEnchanteur(){
@@ -622,7 +632,7 @@ public class VillagerFactory {
 
         TextComponent openMessage = Component.text("J'adore le poulet. Je ne vends aucune drogue.");
 
-        this.addNewVillager(new VillagerVendor("Los Pollos Hermanos", location, Villager.Type.SWAMP, Villager.Profession.LIBRARIAN, blessings, messages, items, openMessage));
+        this.addNewVillager(new VillagerVendor("Los Pollos Hermanos", Villager.Type.SWAMP, Villager.Profession.LIBRARIAN, blessings, messages, items, openMessage));
     }
 
     private void spawnSpeedBoots(){
@@ -674,7 +684,7 @@ public class VillagerFactory {
 
         TextComponent openMessage = Component.text("Les Air Force 1, les chaussures qui courent vite.");
 
-        this.addNewVillager(new VillagerVendor("Nike_49", location, Villager.Type.PLAINS, Villager.Profession.LEATHERWORKER, blessings, messages, items, openMessage));
+        this.addNewVillager(new VillagerVendor("Nike_49", Villager.Type.PLAINS, Villager.Profession.LEATHERWORKER, blessings, messages, items, openMessage));
     }
 
     private void spawnMiningHelmet(){
@@ -726,7 +736,7 @@ public class VillagerFactory {
 
         TextComponent openMessage = Component.text("Le Casque de Mineur, le casque qui mine vite.");
 
-        this.addNewVillager(new VillagerVendor("Indiana", location, Villager.Type.SNOW, Villager.Profession.CARTOGRAPHER, blessings, messages, items, openMessage));
+        this.addNewVillager(new VillagerVendor("Indiana", Villager.Type.SNOW, Villager.Profession.CARTOGRAPHER, blessings, messages, items, openMessage));
     }
 
     /*private void spawnLibraire(){

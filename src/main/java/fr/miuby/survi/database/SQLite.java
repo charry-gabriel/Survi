@@ -10,6 +10,8 @@ import java.util.logging.Level;
 
 import fr.miuby.survi.GameManager;
 
+import javax.annotation.Nullable;
+
 public class SQLite extends Database {
     private final String dbname;
 
@@ -27,11 +29,19 @@ public class SQLite extends Database {
             ");";
 
     public final String SQLiteCreateVillagerTable = "CREATE TABLE IF NOT EXISTS villager (" +
+            "`uuid` varchar(255) NOT NULL," +
+	        "`level` int(11) NOT NULL," +
             "`name` varchar(255) NOT NULL," +
-            "`level` int(11) NOT NULL," +
-            "PRIMARY KEY (`name`)" +
+	        "`givenItems` varchar(255)," +
+	        "`locationX` FLOAT NOT NULL," +
+            "`locationY` FLOAT NOT NULL," +
+            "`locationZ` FLOAT NOT NULL," +
+            "`locationYaw` FLOAT NOT NULL," +
+            "`locationPitch` FLOAT NOT NULL," +
+            "PRIMARY KEY (`uuid`)" +
             ");";
 
+    @Nullable
     public Connection getSQLConnection() {
         File dataFolder = new File(GameManager.getInstance().getPlugin().getDataFolder(), dbname+".db");
         if (!dataFolder.exists()){
@@ -64,7 +74,7 @@ public class SQLite extends Database {
             s.executeUpdate(SQLiteCreateVillagerTable);
             s.close();
         } catch (SQLException e) {
-            e.printStackTrace();
+            GameManager.getInstance().getLogger().severe(e.getMessage());
         }
         initialize();
     }

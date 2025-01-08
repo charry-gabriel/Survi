@@ -7,6 +7,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.ShapedRecipe;
 import org.bukkit.inventory.recipe.CraftingBookCategory;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -55,6 +56,7 @@ public class CustomRecipe {
         }
     }
 
+     @Nullable
     public static CustomRecipe getCustomRecipe(ItemStack result) {
         for (CustomRecipe cr : recipes) {
             if (cr.getResult().isSimilar(result))

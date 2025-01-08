@@ -8,7 +8,6 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
-import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Villager;
 import org.bukkit.event.inventory.InventoryType;
@@ -22,8 +21,8 @@ public class VillagerVendor extends AVillager {
     private final String name;
     private final TextComponent openMessage;
 
-    public VillagerVendor(String name, Location location, Villager.Type type, Villager.Profession profession, Blessing[] blessings, TextComponent[] messages, ItemStack[] itemStacks, TextComponent openMessage) {
-        super(name, location, type, profession, blessings, messages);
+    public VillagerVendor(String name, Villager.Type type, Villager.Profession profession, Blessing[] blessings, TextComponent[] messages, ItemStack[] itemStacks, TextComponent openMessage) {
+        super(name, type, profession, blessings, messages);
         this.itemStacks = itemStacks;
         this.name = name;
         this.openMessage = openMessage;

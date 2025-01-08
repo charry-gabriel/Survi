@@ -12,6 +12,10 @@ import org.bukkit.entity.Player;
 import org.bukkit.entity.Villager;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+
+import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 public abstract class AVillager {
@@ -21,22 +25,22 @@ public abstract class AVillager {
     protected final Blessing[] blessings;
     protected final TextComponent[] messages;
     protected int level = 0;
-    protected String baseName;
+    protected String nameId;
+    protected Location location;
+    protected List<ItemStack> givenItems = new ArrayList<>();
 
-    private final Location location;
     private final Villager.Type type;
     private final Villager.Profession profession;
 
-    public AVillager(String name, Location location, Villager.Type type, Villager.Profession profession, Blessing[] blessings, TextComponent[] messages) {
+    public AVillager(String name, Villager.Type type, Villager.Profession profession, Blessing[] blessings, TextComponent[] messages) {
         this.blessings = blessings;
         this.messages = messages;
-        this.location = location;
         this.type = type;
         this.profession = profession;
-        this.baseName = name;
+        this.nameId = name;
 
-        if (GameManager.getInstance().getDatabase().IsLoaded() && !GameManager.getInstance().getDatabase().getVillager(this, name)) {
-            GameManager.getInstance().getLogger().info(name + " doesn't exist");
+        if (GameManager.getInstance().getDatabase().IsLoaded() && !GameManager.getInstance().getDatabase().initVillager(this, name)) {
+            GameManager.getInstance().getLogger().warning(name + " doesn't exist");
             this.villager = CreateRealVillager(location, type, profession);
             this.uuid = this.villager.getUniqueId();
             GameManager.getInstance().getDatabase().CreateDBVillager(name, this.uuid);
@@ -90,11 +94,12 @@ public abstract class AVillager {
             if (GameManager.getInstance().getDatabase().IsLoaded()) {
                 this.villager = CreateRealVillager(location, type, profession);
                 this.uuid = this.villager.getUniqueId();
-                GameManager.getInstance().getDatabase().updateVillagerUUID(this.uuid, baseName);
+                GameManager.getInstance().getDatabase().updateVillagerUUID(this.uuid, nameId);
             }
         }
     }
 
+    @Nullable
     private Villager findRealVillager(UUID uuid) {
         Entity entity = Monde.get(EWorld.VILLAGE).getWorld().getEntity(uuid);
 
@@ -106,5 +111,13 @@ public abstract class AVillager {
 
     public void setLevel(int level) {
         this.level = level;
+    }
+
+    public void setLocation(Location location) {
+        this.location = location;
+    }
+
+    public void setGivenItems(ItemStack[] givenItems) {
+        this.givenItems = new ArrayList<>(List.of(givenItems));
     }
 }

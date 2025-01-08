@@ -3,6 +3,7 @@ package fr.miuby.survi;
 import fr.miuby.survi.player.AlphaPlayer;
 import fr.miuby.survi.role.ERole;
 import fr.miuby.survi.role.Role;
+import fr.miuby.survi.villager.AVillager;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -37,7 +38,18 @@ public class Commands {
                 return true;
             }
             else if (commandName.equals("villager") && args.length == 2) {
-                //if (args[0].equals("teleport"))
+                if (args[0].equals("teleport")) {
+                    AVillager villager = GameManager.getInstance().getVillagerFactory().getVillager(args[1]);
+
+                    if (villager == null) {
+                        sender.sendMessage(Component.text("Villager introuvable !"));
+                        return false;
+                    }
+
+                    GameManager.getInstance().getDatabase().updateVillagerLocation(villager.getVillager().getUniqueId(), sender.getLocation());
+                    villager.getVillager().teleport(sender.getLocation());
+                    return true;
+                }
             }
         }
         return false;
