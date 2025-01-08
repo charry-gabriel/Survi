@@ -14,6 +14,6 @@ public class UnlockToolEffect extends BlessingEffect {
 
     @Override
     public void applyEffect(AlphaPlayer player) {
-        GameManager.getInstance().getLockedItemsFactory().unlockToolItem(itemType);
+        GameManager.getInstance().getLockedItemsFactory().unlockToolItem(player, itemType);
     }
 }

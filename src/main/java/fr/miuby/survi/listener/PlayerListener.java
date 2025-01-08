@@ -68,14 +68,9 @@ public class PlayerListener implements Listener {
 
     @EventHandler
     public void onPlayerArmorChange(PlayerArmorChangeEvent event) {
-        /*if (AlphaPlayer.get(event.getPlayer().getUniqueId()).getRole().getType() == ERole.JUMP
-                && GameManager.getInstance().isNight()) {
-
-        }*/
-
         boolean malus = false;
         for (ItemStack item : event.getPlayer().getInventory().getArmorContents()) {
-            if (item != null && GameManager.getInstance().getLockedItemsFactory().isLocked(item)) {
+            if (item != null && GameManager.getInstance().getLockedItemsFactory().isLocked(item.getType().getKey())) {
                 malus = true;
             }
         }
@@ -102,6 +97,9 @@ public class PlayerListener implements Listener {
             if (nsKey.toString().equals(event.getRecipe().toString()))
                 event.setCancelled(true);
         }
+
+        if (GameManager.getInstance().getLockedItemsFactory().isLocked(event.getRecipe()))
+            event.setCancelled(true);
     }
 
     /*@EventHandler

@@ -49,7 +49,7 @@ public class AlphaPlayer implements Serializable {
             switchWorld();
             GameManager.getInstance().getVillagerFactory().applyAllCurrentBlessing(this);
             GameManager.getInstance().getAlphaPlayerFactory().setPlayersToTeam(scoreboard);
-            //a mettre au déblocage des items locked
+
             player.discoverRecipes(GameManager.getInstance().getCustomItemFactory().getNewRecipes().keySet());
             //retroaction, pas besoin sur un nouveau serveur
             player.undiscoverRecipes(GameManager.getInstance().getCustomItemFactory().getOldRecipes());

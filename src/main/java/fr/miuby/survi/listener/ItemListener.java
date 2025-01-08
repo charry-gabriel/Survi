@@ -21,7 +21,7 @@ public class ItemListener implements Listener {
 
         //block par les pnj
         if(event.getInventory().getResult() != null) {
-            if (GameManager.getInstance().getLockedItemsFactory().isLocked(event.getInventory().getResult())) {
+            if (GameManager.getInstance().getLockedItemsFactory().isLocked(event.getInventory().getResult().getType().getKey())) {
                 ItemStack air = new ItemStack(Material.AIR);
                 event.getInventory().setResult(air);
             }
@@ -47,7 +47,7 @@ public class ItemListener implements Listener {
     @EventHandler
     public void onCrafterCraft(CrafterCraftEvent event) {
         //block ancien craft
-        if (GameManager.getInstance().getLockedItemsFactory().isLocked(event.getResult())
+        if (GameManager.getInstance().getLockedItemsFactory().isLocked(event.getResult().getType().getKey())
                 || event.getResult().getType() == Material.IRON_BOOTS
                 || event.getResult().getType() == Material.IRON_CHESTPLATE
                 || event.getResult().getType() == Material.IRON_LEGGINGS

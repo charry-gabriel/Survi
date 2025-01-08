@@ -92,7 +92,7 @@ public class VillagerFactory {
                 new Blessing(new MaxHealthEffect(8),new UnlockArmorEffect(LockedArmorType.CHAINMAIL), new UnlockToolEffect(LockedToolType.IRON)),
                 new Blessing(new MaxHealthEffect(10),new UnlockArmorEffect(LockedArmorType.IRON)),
                 new Blessing(new MaxHealthEffect(12),new UnlockArmorEffect(LockedArmorType.GOLD), new UnlockToolEffect(LockedToolType.GOLD)),
-                new Blessing(new MaxHealthEffect(14),new UnlockArmorEffect(LockedArmorType.DIAMOND), new UnlockToolEffect(LockedToolType.DIAMOND)),
+                new Blessing(new MaxHealthEffect(14),new UnlockArmorEffect(LockedArmorType.DIAMOND), new UnlockToolEffect(LockedToolType.DIAMOND), new UnlockArmorEffect(LockedArmorType.NETHERITE)),
                 new Blessing(new MaxHealthEffect(15)),
                 new Blessing(new MaxHealthEffect(16)),
                 new Blessing(new MaxHealthEffect(17)),

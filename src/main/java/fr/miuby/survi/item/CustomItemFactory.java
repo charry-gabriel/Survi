@@ -262,4 +262,12 @@ public class CustomItemFactory {
     public List<NamespacedKey> getOldRecipes() {
         return oldRecipes;
     }
+
+    public NamespacedKey getOldNamespaceKeyOrDefault(NamespacedKey newNsKey) {
+        for (Map.Entry<NamespacedKey, CustomRecipe> custom : newRecipes.entrySet()) {
+            if (custom.getKey().toString().equals(newNsKey.toString()))
+                return custom.getValue().getResult().getType().getKey();
+        }
+        return newNsKey;
+    }
 }

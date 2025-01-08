@@ -1,7 +1,9 @@
 package fr.miuby.survi.item.locked_item;
 
+import fr.miuby.survi.GameManager;
+import fr.miuby.survi.player.AlphaPlayer;
 import org.bukkit.Material;
-import org.bukkit.inventory.ItemStack;
+import org.bukkit.NamespacedKey;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,113 +13,126 @@ public class LockedItemsFactory {
     private final List<LockedToolItem> toolItems = new java.util.ArrayList<>();
 
     public LockedItemsFactory() {
-        List<ItemStack> leatherItems = new ArrayList<>();
-        leatherItems.add(new ItemStack(Material.LEATHER_HELMET));
-        leatherItems.add(new ItemStack(Material.LEATHER_CHESTPLATE));
-        leatherItems.add(new ItemStack(Material.LEATHER_LEGGINGS));
-        leatherItems.add(new ItemStack(Material.LEATHER_BOOTS));
+        List<NamespacedKey> leatherItems = new ArrayList<>();
+        leatherItems.add(Material.LEATHER_HELMET.getKey());
+        leatherItems.add(Material.LEATHER_CHESTPLATE.getKey());
+        leatherItems.add(Material.LEATHER_LEGGINGS.getKey());
+        leatherItems.add(Material.LEATHER_BOOTS.getKey());
         armorItems.add(new LockedArmorItem(leatherItems, LockedArmorType.LEATHER));
 
-        List<ItemStack> goldItems = new ArrayList<>();
-        goldItems.add(new ItemStack(Material.GOLDEN_HELMET));
-        goldItems.add(new ItemStack(Material.GOLDEN_CHESTPLATE));
-        goldItems.add(new ItemStack(Material.GOLDEN_LEGGINGS));
-        goldItems.add(new ItemStack(Material.GOLDEN_BOOTS));
+        List<NamespacedKey> goldItems = new ArrayList<>();
+        goldItems.add(Material.GOLDEN_HELMET.getKey());
+        goldItems.add(Material.GOLDEN_CHESTPLATE.getKey());
+        goldItems.add(Material.GOLDEN_LEGGINGS.getKey());
+        goldItems.add(Material.GOLDEN_BOOTS.getKey());
         armorItems.add(new LockedArmorItem(goldItems, LockedArmorType.GOLD));
 
-        List<ItemStack> mailleItems = new ArrayList<>();
-        mailleItems.add(new ItemStack(Material.CHAINMAIL_HELMET));
-        mailleItems.add(new ItemStack(Material.CHAINMAIL_CHESTPLATE));
-        mailleItems.add(new ItemStack(Material.CHAINMAIL_LEGGINGS));
-        mailleItems.add(new ItemStack(Material.CHAINMAIL_BOOTS));
+        List<NamespacedKey> mailleItems = new ArrayList<>();
+        mailleItems.add(Material.CHAINMAIL_HELMET.getKey());
+        mailleItems.add(Material.CHAINMAIL_CHESTPLATE.getKey());
+        mailleItems.add(Material.CHAINMAIL_LEGGINGS.getKey());
+        mailleItems.add(Material.CHAINMAIL_BOOTS.getKey());
         armorItems.add(new LockedArmorItem(mailleItems, LockedArmorType.CHAINMAIL));
 
-        List<ItemStack> ironItems = new ArrayList<>();
-        ironItems.add(new ItemStack(Material.IRON_HELMET));
-        ironItems.add(new ItemStack(Material.IRON_CHESTPLATE));
-        ironItems.add(new ItemStack(Material.IRON_LEGGINGS));
-        ironItems.add(new ItemStack(Material.IRON_BOOTS));
+        List<NamespacedKey> ironItems = new ArrayList<>();
+        ironItems.add(Material.IRON_HELMET.getKey());
+        ironItems.add(Material.IRON_CHESTPLATE.getKey());
+        ironItems.add(Material.IRON_LEGGINGS.getKey());
+        ironItems.add(Material.IRON_BOOTS.getKey());
         armorItems.add(new LockedArmorItem(ironItems, LockedArmorType.IRON));
 
-        List<ItemStack> diamondItems = new ArrayList<>();
-        diamondItems.add(new ItemStack(Material.DIAMOND_HELMET));
-        diamondItems.add(new ItemStack(Material.DIAMOND_CHESTPLATE));
-        diamondItems.add(new ItemStack(Material.DIAMOND_LEGGINGS));
-        diamondItems.add(new ItemStack(Material.DIAMOND_BOOTS));
+        List<NamespacedKey> diamondItems = new ArrayList<>();
+        diamondItems.add(Material.DIAMOND_HELMET.getKey());
+        diamondItems.add(Material.DIAMOND_CHESTPLATE.getKey());
+        diamondItems.add(Material.DIAMOND_LEGGINGS.getKey());
+        diamondItems.add(Material.DIAMOND_BOOTS.getKey());
         armorItems.add(new LockedArmorItem(diamondItems, LockedArmorType.DIAMOND));
 
-        List<ItemStack> woodToolItems = new ArrayList<>();
-        woodToolItems.add(new ItemStack(Material.WOODEN_AXE));
-        woodToolItems.add(new ItemStack(Material.WOODEN_HOE));
-        woodToolItems.add(new ItemStack(Material.WOODEN_PICKAXE));
-        woodToolItems.add(new ItemStack(Material.WOODEN_SHOVEL));
-        woodToolItems.add(new ItemStack(Material.WOODEN_SWORD));
+        List<NamespacedKey> netheriteItems = new ArrayList<>();
+        netheriteItems.add(Material.NETHERITE_HELMET.getKey());
+        netheriteItems.add(Material.NETHERITE_CHESTPLATE.getKey());
+        netheriteItems.add(Material.NETHERITE_LEGGINGS.getKey());
+        netheriteItems.add(Material.NETHERITE_BOOTS.getKey());
+        armorItems.add(new LockedArmorItem(netheriteItems, LockedArmorType.NETHERITE));
+
+        List<NamespacedKey> woodToolItems = new ArrayList<>();
+        woodToolItems.add(Material.WOODEN_AXE.getKey());
+        woodToolItems.add(Material.WOODEN_HOE.getKey());
+        woodToolItems.add(Material.WOODEN_PICKAXE.getKey());
+        woodToolItems.add(Material.WOODEN_SHOVEL.getKey());
+        woodToolItems.add(Material.WOODEN_SWORD.getKey());
         toolItems.add(new LockedToolItem(woodToolItems, LockedToolType.WOOD));
 
-        List<ItemStack> stoneToolItems = new ArrayList<>();
-        stoneToolItems.add(new ItemStack(Material.STONE_AXE));
-        stoneToolItems.add(new ItemStack(Material.STONE_HOE));
-        stoneToolItems.add(new ItemStack(Material.STONE_PICKAXE));
-        stoneToolItems.add(new ItemStack(Material.STONE_SHOVEL));
-        stoneToolItems.add(new ItemStack(Material.STONE_SWORD));
+        List<NamespacedKey> stoneToolItems = new ArrayList<>();
+        stoneToolItems.add(Material.STONE_AXE.getKey());
+        stoneToolItems.add(Material.STONE_HOE.getKey());
+        stoneToolItems.add(Material.STONE_PICKAXE.getKey());
+        stoneToolItems.add(Material.STONE_SHOVEL.getKey());
+        stoneToolItems.add(Material.STONE_SWORD.getKey());
         toolItems.add(new LockedToolItem(stoneToolItems, LockedToolType.STONE));
 
-        List<ItemStack> ironToolItems = new ArrayList<>();
-        ironToolItems.add(new ItemStack(Material.IRON_AXE));
-        ironToolItems.add(new ItemStack(Material.IRON_HOE));
-        ironToolItems.add(new ItemStack(Material.IRON_PICKAXE));
-        ironToolItems.add(new ItemStack(Material.IRON_SHOVEL));
-        ironToolItems.add(new ItemStack(Material.IRON_SWORD));
+        List<NamespacedKey> ironToolItems = new ArrayList<>();
+        ironToolItems.add(Material.IRON_AXE.getKey());
+        ironToolItems.add(Material.IRON_HOE.getKey());
+        ironToolItems.add(Material.IRON_PICKAXE.getKey());
+        ironToolItems.add(Material.IRON_SHOVEL.getKey());
+        ironToolItems.add(Material.IRON_SWORD.getKey());
         toolItems.add(new LockedToolItem(ironToolItems, LockedToolType.IRON));
 
-        List<ItemStack> goldToolItems = new ArrayList<>();
-        goldToolItems.add(new ItemStack(Material.GOLDEN_AXE));
-        goldToolItems.add(new ItemStack(Material.GOLDEN_HOE));
-        goldToolItems.add(new ItemStack(Material.GOLDEN_PICKAXE));
-        goldToolItems.add(new ItemStack(Material.GOLDEN_SHOVEL));
-        goldToolItems.add(new ItemStack(Material.GOLDEN_SWORD));
+        List<NamespacedKey> goldToolItems = new ArrayList<>();
+        goldToolItems.add(Material.GOLDEN_AXE.getKey());
+        goldToolItems.add(Material.GOLDEN_HOE.getKey());
+        goldToolItems.add(Material.GOLDEN_PICKAXE.getKey());
+        goldToolItems.add(Material.GOLDEN_SHOVEL.getKey());
+        goldToolItems.add(Material.GOLDEN_SWORD.getKey());
         toolItems.add(new LockedToolItem(goldToolItems, LockedToolType.GOLD));
 
-        List<ItemStack> diamondToolItems = new ArrayList<>();
-        diamondToolItems.add(new ItemStack(Material.DIAMOND_AXE));
-        diamondToolItems.add(new ItemStack(Material.DIAMOND_HOE));
-        diamondToolItems.add(new ItemStack(Material.DIAMOND_PICKAXE));
-        diamondToolItems.add(new ItemStack(Material.DIAMOND_SHOVEL));
-        diamondToolItems.add(new ItemStack(Material.DIAMOND_SWORD));
+        List<NamespacedKey> diamondToolItems = new ArrayList<>();
+        diamondToolItems.add(Material.DIAMOND_AXE.getKey());
+        diamondToolItems.add(Material.DIAMOND_HOE.getKey());
+        diamondToolItems.add(Material.DIAMOND_PICKAXE.getKey());
+        diamondToolItems.add(Material.DIAMOND_SHOVEL.getKey());
+        diamondToolItems.add(Material.DIAMOND_SWORD.getKey());
         toolItems.add(new LockedToolItem(diamondToolItems, LockedToolType.DIAMOND));
     }
 
-    public boolean isLocked(ItemStack item) {
+    public boolean isLocked(NamespacedKey item) {
         for (LockedItem lockedItem : armorItems) {
-            for (ItemStack itemStack : lockedItem.getItems()) {
-                if(itemStack.getType() == item.getType()) {
+            for (NamespacedKey lockedNsKey : lockedItem.getItems()) {
+                if (lockedNsKey.toString().equals(GameManager.getInstance().getCustomItemFactory().getOldNamespaceKeyOrDefault(item).toString()))
                     return lockedItem.isLocked();
-                }
             }
         }
         for (LockedItem lockedItem : toolItems) {
-            for (ItemStack itemStack : lockedItem.getItems()) {
-                if(itemStack.getType() == item.getType()) {
+            for (NamespacedKey lockedNsKey : lockedItem.getItems()) {
+                if (lockedNsKey.toString().equals(GameManager.getInstance().getCustomItemFactory().getOldNamespaceKeyOrDefault(item).toString()))
                     return lockedItem.isLocked();
-                }
             }
         }
         return false;
     }
 
-    public void unlockArmorItem(LockedArmorType itemType) {
+    public void unlockArmorItem(AlphaPlayer player, LockedArmorType itemType) {
         for (LockedArmorItem lockedItem : armorItems) {
             if (lockedItem.getType() == itemType) {
-                lockedItem.setLocked(false);
+                lockedItem.unlock();
+
+                player.getPlayer().discoverRecipes(lockedItem.getItems());
             }
         }
+
+        player.getPlayer().discoverRecipes(GameManager.getInstance().getCustomItemFactory().getNewRecipes().keySet());
     }
 
-    public void unlockToolItem(LockedToolType itemType) {
+    public void unlockToolItem(AlphaPlayer player, LockedToolType itemType) {
         for (LockedToolItem lockedItem : toolItems) {
             if (lockedItem.getType() == itemType) {
-                lockedItem.setLocked(false);
+                lockedItem.unlock();
+
+                player.getPlayer().discoverRecipes(lockedItem.getItems());
             }
         }
+
+        player.getPlayer().discoverRecipes(GameManager.getInstance().getCustomItemFactory().getNewRecipes().keySet());
     }
 }

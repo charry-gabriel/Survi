@@ -5,5 +5,6 @@ public enum LockedArmorType {
     GOLD,
     CHAINMAIL,
     IRON,
-    DIAMOND
+    DIAMOND,
+    NETHERITE
 }
