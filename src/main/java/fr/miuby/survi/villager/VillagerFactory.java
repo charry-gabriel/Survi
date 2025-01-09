@@ -64,10 +64,16 @@ public class VillagerFactory {
     }
 
     public void applyAllCurrentBlessing(AlphaPlayer player) {
+        player.getPlayer().sendMessage(Component.text("-------------------- Récapitulatif --------------------", NamedTextColor.AQUA));
         for (AVillager villager : villagers.values()) {
-            if (villager instanceof VillagerLevel)
-                ((VillagerLevel) villager).applyAllCurrentBlessing(player);
+            if (villager instanceof VillagerLevel villagerLevel) {
+                villagerLevel.applyAllCurrentBlessing(player);
+                TextComponent text = villagerLevel.getRecapMessage();
+                if (!text.content().isEmpty())
+                    player.getPlayer().sendMessage(text);
+            }
         }
+        player.getPlayer().sendMessage(Component.text("----------------------------------------------------", NamedTextColor.AQUA));
     }
 
     //region Villagers
@@ -116,6 +122,22 @@ public class VillagerFactory {
 
         };
 
+        TextComponent[] recap = new TextComponent[]{
+                Component.text( ""),
+                Component.text("Outils en bois débloqué !"),
+                Component.text( "Outils en bois et armure en cuir débloqué !"),
+                Component.text( "Outils en fer et armure en maille débloqué !"),
+                Component.text( "Outils en fer et armure en fer débloqué !"),
+                Component.text( "Outils en or et armure en or débloqué !"),
+                Component.text( "Outils en diamant et armure en diamant débloqué !"),
+                Component.text( "Outils en diamant, armure en diamant et vie en plus débloqué !"),
+                Component.text( "Outils en diamant, armure en diamant et vie en plus  débloqué !"),
+                Component.text( "Outils en diamant, armure en diamant et vie en plus  débloqué !"),
+                Component.text( "Outils en diamant, armure en diamant et vie en plus  débloqué !"),
+                Component.text( "Outils en diamant, armure en diamant et vie en plus  débloqué !"),
+
+        };
+
         TextComponent[] names = new TextComponent[]{
                 Component.text( "Survivant I"),
                 Component.text( "Survivant II"),
@@ -131,7 +153,7 @@ public class VillagerFactory {
                 Component.text( "Edward Jenner MAX"),
         };
 
-        this.addNewVillager(new VillagerLevel("Survivant", Villager.Type.SAVANNA, Villager.Profession.FARMER, blessings, messages, tributes, names));
+        this.addNewVillager(new VillagerLevel("Survivant", Villager.Type.SAVANNA, Villager.Profession.FARMER, blessings, messages, tributes, names, recap));
     }
 
     private void spawnNain(){
@@ -160,6 +182,15 @@ public class VillagerFactory {
                 Component.text( "C'est fini y a plus rien !"),
         };
 
+        TextComponent[] recap = new TextComponent[]{
+                Component.text( ""),
+                Component.text( "Résistance I débloqué !"),
+                Component.text( "Résistance II débloqué !"),
+                Component.text( "Résistance III débloqué !"),
+                Component.text( "Résistance IV débloqué !"),
+                Component.text( "Résistance V débloqué !"),
+        };
+
         TextComponent[] names = new TextComponent[]{
                 Component.text( "Nain Roux I"),
                 Component.text( "Nain Roux II"),
@@ -169,7 +200,7 @@ public class VillagerFactory {
                 Component.text( "Nain Roux MAX"),
         };
 
-        this.addNewVillager(new VillagerLevel("Nain", Villager.Type.SWAMP, Villager.Profession.NITWIT, blessings, messages, tributes, names));
+        this.addNewVillager(new VillagerLevel("Nain", Villager.Type.SWAMP, Villager.Profession.NITWIT, blessings, messages, tributes, names, recap));
     }
 
     private void spawnMaddox(){
@@ -198,6 +229,15 @@ public class VillagerFactory {
                 Component.text( "C'est fini, tu tape trop fort maintenant !"),
         };
 
+        TextComponent[] recap = new TextComponent[]{
+                Component.text( ""),
+                Component.text( "Force I débloqué !"),
+                Component.text( "Force II débloqué !"),
+                Component.text( "Force III débloqué !"),
+                Component.text( "Force IV débloqué !"),
+                Component.text( "Force V débloqué !"),
+        };
+
         TextComponent[] names = new TextComponent[]{
                 Component.text( "Maddox I"),
                 Component.text( "Maddox II"),
@@ -207,7 +247,7 @@ public class VillagerFactory {
                 Component.text( "Maddox MAX"),
         };
 
-        this.addNewVillager(new VillagerLevel("Maddox", Villager.Type.TAIGA, Villager.Profession.BUTCHER, blessings, messages, tributes, names));
+        this.addNewVillager(new VillagerLevel("Maddox", Villager.Type.TAIGA, Villager.Profession.BUTCHER, blessings, messages, tributes, names, recap));
     }
 
     private void spawnThomas(){
@@ -248,6 +288,19 @@ public class VillagerFactory {
                 Component.text( "C'est fini y a plus rien !"),
         };
 
+        TextComponent[] recap = new TextComponent[]{
+                Component.text( ""),
+                Component.text( ""),
+                Component.text( ""),
+                Component.text( "Nether débloqué !"),
+                Component.text( "Nether débloqué !"),
+                Component.text( "Nether débloqué et limite Wilderness augmenté !"),
+                Component.text( "Nether débloqué et limite Wilderness augmenté !"),
+                Component.text( "End débloqué et limite Wilderness augmenté !"),
+                Component.text( "End débloqué et limite Wilderness augmenté !"),
+                Component.text( "End débloqué et limite Wilderness infinie !"),
+        };
+
         TextComponent[] names = new TextComponent[]{
                 Component.text( "Thomas Pesquet I"),
                 Component.text( "Thomas Pesquet I"),
@@ -261,7 +314,7 @@ public class VillagerFactory {
                 Component.text( "Thomas Pesquet MAX"),
         };
 
-        this.addNewVillager(new VillagerLevel("Thomas", Villager.Type.SNOW, Villager.Profession.FISHERMAN, blessings, messages, tributes, names));
+        this.addNewVillager(new VillagerLevel("Thomas", Villager.Type.SNOW, Villager.Profession.FISHERMAN, blessings, messages, tributes, names, recap));
     }
 
     private void spawnFrancois(){
@@ -305,6 +358,20 @@ public class VillagerFactory {
                 Component.text( "C'est fini y a plus rien !"),
         };
 
+        TextComponent[] recap = new TextComponent[]{
+                Component.text( ""),
+                Component.text( "Les 10 dernières morts sont annulées !"),
+                Component.text( "Les 20 dernières morts sont annulées !"),
+                Component.text( "Les 30 dernières morts sont annulées !"),
+                Component.text( "Les 40 dernières morts sont annulées !"),
+                Component.text( "Les 50 dernières morts sont annulées !"),
+                Component.text( "Les 60 dernières morts sont annulées !"),
+                Component.text( "Les 70 dernières morts sont annulées !"),
+                Component.text( "Les 80 dernières morts sont annulées !"),
+                Component.text( "Les 90 dernières morts sont annulées !"),
+                Component.text( "Toutes les morts sont annulées !"),
+        };
+
         TextComponent[] names = new TextComponent[]{
                 Component.text( "François I"),
                 Component.text( "François II"),
@@ -320,7 +387,7 @@ public class VillagerFactory {
 
         };
 
-        this.addNewVillager(new VillagerLevel("François", Villager.Type.JUNGLE, Villager.Profession.CLERIC, blessings, messages, tributes, names));
+        this.addNewVillager(new VillagerLevel("François", Villager.Type.JUNGLE, Villager.Profession.CLERIC, blessings, messages, tributes, names, recap));
     }
 
     /*private void spawnPecheur1(){

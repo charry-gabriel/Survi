@@ -22,11 +22,13 @@ import java.util.Objects;
 public class VillagerLevel extends AVillager {
     private final Tribute[] tributes;
     private final TextComponent[] names;
+    private final TextComponent[] recapMessages;
 
-    public VillagerLevel(String nameId, Villager.Type type, Villager.Profession profession, Blessing[] blessings, TextComponent[] messages, Tribute[] tributes, TextComponent[] names) {
+    public VillagerLevel(String nameId, Villager.Type type, Villager.Profession profession, Blessing[] blessings, TextComponent[] messages, Tribute[] tributes, TextComponent[] names, TextComponent[] recap) {
         super(nameId, type, profession, blessings, messages);
         this.tributes = tributes;
         this.names = names;
+        this.recapMessages = recap;
 
         getVillager().customName(getDisplayName());
         createInventory();
@@ -169,5 +171,9 @@ public class VillagerLevel extends AVillager {
 
     public Blessing[] getCurrentBlessings() {
         return Arrays.copyOfRange(blessings, 0, this.level);
+    }
+
+    public TextComponent getRecapMessage() {
+        return recapMessages[this.level].color(NamedTextColor.AQUA);
     }
 }
