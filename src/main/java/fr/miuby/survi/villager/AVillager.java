@@ -41,7 +41,7 @@ public abstract class AVillager {
 
         if (GameManager.getInstance().getDatabase().IsLoaded() && !GameManager.getInstance().getDatabase().initVillager(this, this.nameId)) {
             GameManager.getInstance().getLogger().warning(this.nameId + " doesn't exist");
-            this.villager = CreateRealVillager(location, type, profession);
+            this.villager = CreateRealVillager(new Location(GameManager.getInstance().getWorldFactory().getWorld(EWorld.VILLAGE).getWorld(), 0, 700, 0), type, profession);
             this.uuid = this.villager.getUniqueId();
             GameManager.getInstance().getDatabase().CreateDBVillager(this.nameId, this.uuid);
         }
