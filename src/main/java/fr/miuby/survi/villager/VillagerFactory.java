@@ -588,7 +588,9 @@ public class VillagerFactory {
 
         TextComponent openMessage = Component.text("Veux-tu une belle canne à pêche ?");
 
-        this.addNewVillager(new VillagerVendor("GoldRoger", Component.text("Gol D. Roger"), Villager.Type.SAVANNA, Villager.Profession.WEAPONSMITH, blessings, messages, items, openMessage));
+        AVillager villager = new VillagerVendor("GoldRoger", Component.text("Gol D. Roger"), Villager.Type.SAVANNA, Villager.Profession.WEAPONSMITH, blessings, messages, items, openMessage);
+        villager.getVillager().getEquipment().setItemInMainHand(new ItemStack(Material.FISHING_ROD));
+        this.addNewVillager(villager);
     }
 
     private void spawnHermanos(){
