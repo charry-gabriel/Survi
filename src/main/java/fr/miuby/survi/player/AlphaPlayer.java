@@ -100,17 +100,24 @@ public class AlphaPlayer implements Serializable {
     }
 
     public void setWorldRole() {
+        List<String> uniqueId = new ArrayList<>();
         List<RoleAttribute> foundAttributes = new ArrayList<>(GameManager.getInstance().getRoleFactory().defaultAttributes());
 
         for (RoleAttribute attribute : this.getRole().attributes()) {
             if ((this.getWorld() == attribute.world() || attribute.world() == EWorld.ALL))
                 foundAttributes.add(attribute);
         }
+        uniqueId.add(this.getRole().roleId());
+
         for (Role role : this.getSubRoles()) {
+            if (uniqueId.contains(role.roleId()))
+                continue;
+
             for (RoleAttribute attribute : role.attributes()) {
                 if ((this.getWorld() == attribute.world() || attribute.world() == EWorld.ALL))
                     foundAttributes.add(attribute);
             }
+            uniqueId.add(role.roleId());
         }
         this.worldRoleAttribute = foundAttributes;
         actualizeAttribute();
