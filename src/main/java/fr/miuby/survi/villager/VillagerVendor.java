@@ -37,19 +37,19 @@ public class VillagerVendor extends AVillager {
         for (ItemStack inventoryItem : inventory.getContents()) {
             if (inventoryItem != null && inventoryItem.isSimilar(item)) {
                 if (item.getAmount() < inventoryItem.getAmount()) {
-                    player.sendMessage(Component.text("<" + this.displayName + "> Tu n'en as pas assez !", NamedTextColor.AQUA));
+                    player.sendMessage(Component.text("<", NamedTextColor.AQUA).append(this.displayName).color(NamedTextColor.AQUA).append(Component.text("> Tu n'en as pas assez !", NamedTextColor.AQUA)));
                 } else if(player.getInventory().firstEmpty() == -1) {
-                    player.sendMessage(Component.text("<" + this.displayName + "> Tu es full !", NamedTextColor.AQUA));
+                    player.sendMessage(Component.text("<", NamedTextColor.AQUA).append(this.displayName).color(NamedTextColor.AQUA).append(Component.text("> Tu es full !", NamedTextColor.AQUA)));
                 } else {
                     GameManager.getInstance().getLogger().info(this.nameId + " recupere " + inventoryItem.getAmount() + " de " + item.getType().name());
-                    player.sendMessage(Component.text("<" + this.displayName + "> ", NamedTextColor.AQUA).append(getMessage(item)).color(NamedTextColor.AQUA));
+                    player.sendMessage(Component.text("<", NamedTextColor.AQUA).append(this.displayName).color(NamedTextColor.AQUA).append(Component.text("> ", NamedTextColor.AQUA).append(getMessage(item)).color(NamedTextColor.AQUA)));
                     applyBlessing(player, item);
                     item.setAmount(item.getAmount() - inventoryItem.getAmount());
                 }
                 return;
             }
         }
-        player.sendMessage(Component.text("<" + this.displayName + "> Je ne veux pas de cet item !", NamedTextColor.AQUA));
+        player.sendMessage(Component.text("<", NamedTextColor.AQUA).append(this.displayName).color(NamedTextColor.AQUA).append(Component.text("> Je ne veux pas de cet item !", NamedTextColor.AQUA)));
     }
 
     public void createInventory() {

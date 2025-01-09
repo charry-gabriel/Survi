@@ -29,7 +29,9 @@ public class AlphaLife {
         this.maxLife = (int) Math.round(baseLife * attributeValue);
 
         Objects.requireNonNull(this.alphaPlayer.getPlayer().getAttribute(Attribute.MAX_HEALTH)).setBaseValue(this.maxLife);
-        this.alphaPlayer.getPlayer().setHealth(min(max(1, (oldHealth * this.maxLife) / oldMaxHealth), this.maxLife));
+
+        if (!alphaPlayer.getPlayer().isDead())
+            this.alphaPlayer.getPlayer().setHealth(min(max(1, (oldHealth * this.maxLife) / oldMaxHealth), this.maxLife));
     }
 
     public void setSuccess(int success) {

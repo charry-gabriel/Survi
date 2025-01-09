@@ -71,7 +71,6 @@ public class AlphaPlayer implements Serializable {
     public void addMort(int mort) {
         this.mort += mort;
         this.alphaLife.setDeath(this.mort);
-        this.actualizeAttribute();
 
         GameManager.getInstance().getDatabase().updatePlayer(uuid, "mort", String.valueOf(this.mort));
     }
@@ -100,24 +99,18 @@ public class AlphaPlayer implements Serializable {
     }
 
     public void setWorldRole() {
-        List<String> uniqueId = new ArrayList<>();
         List<RoleAttribute> foundAttributes = new ArrayList<>(GameManager.getInstance().getRoleFactory().defaultAttributes());
 
         for (RoleAttribute attribute : this.getRole().attributes()) {
             if ((this.getWorld() == attribute.world() || attribute.world() == EWorld.ALL))
                 foundAttributes.add(attribute);
         }
-        uniqueId.add(this.getRole().roleId());
 
         for (Role role : this.getSubRoles()) {
-            if (uniqueId.contains(role.roleId()))
-                continue;
-
             for (RoleAttribute attribute : role.attributes()) {
                 if ((this.getWorld() == attribute.world() || attribute.world() == EWorld.ALL))
                     foundAttributes.add(attribute);
             }
-            uniqueId.add(role.roleId());
         }
         this.worldRoleAttribute = foundAttributes;
         actualizeAttribute();
@@ -241,6 +234,12 @@ public class AlphaPlayer implements Serializable {
     }
 
     public void addSubRole(Role role) {
+        Role removeRole = null;
+        for (Role subRole : subRoles) {
+            if (subRole.roleId().equals(role.roleId()))
+                removeRole = subRole;
+        }
+        subRoles.remove(removeRole);
         subRoles.add(role);
     }
 

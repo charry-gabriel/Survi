@@ -108,6 +108,12 @@ public class PlayerListener implements Listener {
     }
 
     @EventHandler
+    public void onPlayerRespawn(PlayerRespawnEvent event) {
+        AlphaPlayer player = AlphaPlayer.get(event.getPlayer().getUniqueId());
+        player.actualizeAttribute();
+    }
+
+    @EventHandler
     public void onPlayerRecipeDiscover(PlayerRecipeDiscoverEvent event) {
         for (NamespacedKey nsKey : GameManager.getInstance().getCustomItemFactory().getOldRecipes()) {
             if (nsKey.toString().equals(event.getRecipe().toString()))
