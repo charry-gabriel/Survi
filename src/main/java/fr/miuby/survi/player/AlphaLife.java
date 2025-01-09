@@ -33,7 +33,7 @@ public class AlphaLife {
     }
 
     public void setSuccess(int success) {
-        this.successLife = floor((double) success / 3f);
+        this.successLife = floor((double) success);
     }
 
     public void setDeath(int death) {
