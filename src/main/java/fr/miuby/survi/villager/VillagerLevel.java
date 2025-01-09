@@ -23,12 +23,12 @@ public class VillagerLevel extends AVillager {
     private final Tribute[] tributes;
     private final TextComponent[] names;
 
-    public VillagerLevel(String name, Villager.Type type, Villager.Profession profession, Blessing[] blessings, TextComponent[] messages, Tribute[] tributes, TextComponent[] names) {
-        super(name, type, profession, blessings, messages);
+    public VillagerLevel(String nameId, Villager.Type type, Villager.Profession profession, Blessing[] blessings, TextComponent[] messages, Tribute[] tributes, TextComponent[] names) {
+        super(nameId, type, profession, blessings, messages);
         this.tributes = tributes;
         this.names = names;
 
-        getVillager().customName(getName());
+        getVillager().customName(getDisplayName());
         createInventory();
     }
 
@@ -37,10 +37,10 @@ public class VillagerLevel extends AVillager {
         removeItemStack(inventory, item, player);
 
         if (inventory.isEmpty()) {
-            Bukkit.broadcast(Component.text("<", NamedTextColor.AQUA).append(getName()).append(Component.text("> ", NamedTextColor.AQUA)).append(getMessage()));
+            Bukkit.broadcast(Component.text("<", NamedTextColor.AQUA).append(getDisplayName()).append(Component.text("> ", NamedTextColor.AQUA)).append(getMessage()));
             applyBlessing();
             addLevel();
-            villager.customName(getName());
+            villager.customName(getDisplayName());
             updateInventory();
             player.closeInventory();
 
@@ -99,7 +99,7 @@ public class VillagerLevel extends AVillager {
 
         for (ItemStack tributeItem : inventory.getContents()) {
             if (tributeItem != null && tributeItem.isSimilar(item)) {
-                GameManager.getInstance().getLogger().info(getName().content() + " recupere " + item.getAmount() + " de " + item.getType().name());
+                GameManager.getInstance().getLogger().info(this.nameId + " recupere " + item.getAmount() + " de " + item.getType().name());
 
                 if (item.getAmount() < tributeItem.getAmount()) {
                     tributeItem.setAmount(tributeItem.getAmount() - item.getAmount());
@@ -120,7 +120,7 @@ public class VillagerLevel extends AVillager {
 
         for (ItemStack tributeItem : inventory.getContents()) {
             if (tributeItem != null && tributeItem.isSimilar(item)) {
-                GameManager.getInstance().getLogger().info(getName().content() + " recupere " + item.getAmount() + " de " + item.getType().name());
+                GameManager.getInstance().getLogger().info(this.nameId + " recupere " + item.getAmount() + " de " + item.getType().name());
                 this.givenItems.add(new ItemStack(item));
                 GameManager.getInstance().getDatabase().updateVillagerGivenItem(this.uuid, this.givenItems);
 
@@ -153,7 +153,7 @@ public class VillagerLevel extends AVillager {
     }
 
     @Override
-    public TextComponent getName() {
+    public TextComponent getDisplayName() {
         return names[this.level].color(NamedTextColor.AQUA);
     }
 

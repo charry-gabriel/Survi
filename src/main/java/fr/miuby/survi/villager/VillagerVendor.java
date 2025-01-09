@@ -18,16 +18,17 @@ import java.util.Objects;
 
 public class VillagerVendor extends AVillager {
     private final ItemStack[] itemStacks;
-    private final String name;
+    private final TextComponent displayName;
     private final TextComponent openMessage;
 
-    public VillagerVendor(String name, Villager.Type type, Villager.Profession profession, Blessing[] blessings, TextComponent[] messages, ItemStack[] itemStacks, TextComponent openMessage) {
-        super(name, type, profession, blessings, messages);
+    public VillagerVendor(String nameId, TextComponent displayName, Villager.Type type, Villager.Profession profession, Blessing[] blessings, TextComponent[] messages, ItemStack[] itemStacks, TextComponent openMessage) {
+        super(nameId, type, profession, blessings, messages);
         this.itemStacks = itemStacks;
-        this.name = name;
+        this.nameId = nameId;
+        this.displayName = displayName;
         this.openMessage = openMessage;
 
-        getVillager().customName(getName());
+        getVillager().customName(getDisplayName());
         createInventory();
     }
 
@@ -36,19 +37,19 @@ public class VillagerVendor extends AVillager {
         for (ItemStack inventoryItem : inventory.getContents()) {
             if (inventoryItem != null && inventoryItem.isSimilar(item)) {
                 if (item.getAmount() < inventoryItem.getAmount()) {
-                    player.sendMessage(Component.text("<" + name + "> Tu n'en as pas assez !", NamedTextColor.AQUA));
+                    player.sendMessage(Component.text("<" + this.displayName + "> Tu n'en as pas assez !", NamedTextColor.AQUA));
                 } else if(player.getInventory().firstEmpty() == -1) {
-                    player.sendMessage(Component.text("<" + name + "> Tu es full !", NamedTextColor.AQUA));
+                    player.sendMessage(Component.text("<" + this.displayName + "> Tu es full !", NamedTextColor.AQUA));
                 } else {
-                    GameManager.getInstance().getLogger().info(name + " recupere " + inventoryItem.getAmount() + " de " + item.getType().name());
-                    player.sendMessage(Component.text("<" + name + "> ", NamedTextColor.AQUA).append(getMessage(item)).color(NamedTextColor.AQUA));
+                    GameManager.getInstance().getLogger().info(this.nameId + " recupere " + inventoryItem.getAmount() + " de " + item.getType().name());
+                    player.sendMessage(Component.text("<" + this.displayName + "> ", NamedTextColor.AQUA).append(getMessage(item)).color(NamedTextColor.AQUA));
                     applyBlessing(player, item);
                     item.setAmount(item.getAmount() - inventoryItem.getAmount());
                 }
                 return;
             }
         }
-        player.sendMessage(Component.text("<" + name + "> Je ne veux pas de cet item !", NamedTextColor.AQUA));
+        player.sendMessage(Component.text("<" + this.displayName + "> Je ne veux pas de cet item !", NamedTextColor.AQUA));
     }
 
     public void createInventory() {
@@ -61,8 +62,8 @@ public class VillagerVendor extends AVillager {
     }
 
     @Override
-    public TextComponent getName() {
-        return Component.text(name, NamedTextColor.AQUA);
+    public TextComponent getDisplayName() {
+        return displayName.color(NamedTextColor.AQUA);
     }
 
     public void applyBlessing(Player player, ItemStack itemStack) {

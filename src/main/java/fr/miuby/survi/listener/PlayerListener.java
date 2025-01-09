@@ -56,7 +56,7 @@ public class PlayerListener implements Listener {
                 AVillager aVillager = AVillager.get(villager.getUniqueId());
                 player.openInventory(aVillager.getInventory());
                 if (aVillager instanceof VillagerVendor vendor) {
-                    player.sendMessage(Component.text("<", NamedTextColor.AQUA).append(vendor.getName()).append(Component.text("> ", NamedTextColor.AQUA)).append(vendor.getOpenMessage()));
+                    player.sendMessage(Component.text("<", NamedTextColor.AQUA).append(vendor.getDisplayName()).append(Component.text("> ", NamedTextColor.AQUA)).append(vendor.getOpenMessage()));
                 }
             }
 

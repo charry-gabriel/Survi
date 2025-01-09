@@ -32,18 +32,18 @@ public abstract class AVillager {
     private final Villager.Type type;
     private final Villager.Profession profession;
 
-    public AVillager(String name, Villager.Type type, Villager.Profession profession, Blessing[] blessings, TextComponent[] messages) {
+    public AVillager(String nameId, Villager.Type type, Villager.Profession profession, Blessing[] blessings, TextComponent[] messages) {
         this.blessings = blessings;
         this.messages = messages;
         this.type = type;
         this.profession = profession;
-        this.nameId = name;
+        this.nameId = nameId;
 
-        if (GameManager.getInstance().getDatabase().IsLoaded() && !GameManager.getInstance().getDatabase().initVillager(this, name)) {
-            GameManager.getInstance().getLogger().warning(name + " doesn't exist");
+        if (GameManager.getInstance().getDatabase().IsLoaded() && !GameManager.getInstance().getDatabase().initVillager(this, this.nameId)) {
+            GameManager.getInstance().getLogger().warning(this.nameId + " doesn't exist");
             this.villager = CreateRealVillager(location, type, profession);
             this.uuid = this.villager.getUniqueId();
-            GameManager.getInstance().getDatabase().CreateDBVillager(name, this.uuid);
+            GameManager.getInstance().getDatabase().CreateDBVillager(this.nameId, this.uuid);
         }
     }
 
@@ -72,7 +72,7 @@ public abstract class AVillager {
 
     public abstract void createInventory();
 
-    public abstract TextComponent getName();
+    public abstract TextComponent getDisplayName();
 
     public Villager getVillager() {
         return villager;

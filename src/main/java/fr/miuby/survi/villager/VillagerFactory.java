@@ -39,18 +39,11 @@ public class VillagerFactory {
         spawnMaddox();
         spawnThomas();
         spawnFrancois();
-        /*spawnPecheur1();
-        spawnPecheur2();
-        spawnFermier1();
-        spawnFermier2();
-        spawnRiche();*/
+
         spawnGolDRoger();
-        spawnEnchanteur();
+        spawnHermanos();
         spawnSpeedBoots();
-        spawnMiningHelmet();
-        /*spawnPolicier();
-        spawnPharmacien();
-        spawnLibraire();*/
+        spawnIndiana();
     }
 
     private void addNewVillager(AVillager villager) {
@@ -79,8 +72,6 @@ public class VillagerFactory {
 
     //region Villagers
     private void spawnSurvivant(){
-        Location location = new Location(world, -23.5, 157, -13.5, 180, 0);
-
         Tribute[] tributes = new Tribute[]{
                 new Tribute(new ItemStack(Material.WHEAT_SEEDS, 32)),
                 new Tribute(new ItemStack(Material.OAK_LOG, 640), new ItemStack(Material.APPLE, 32), new ItemStack(Material.SUGAR_CANE, 64)),
@@ -147,8 +138,6 @@ public class VillagerFactory {
     }
 
     private void spawnNain(){
-        Location location = new Location(world, -25.5, 157, -15.5, -90, 0);
-
         Tribute[] tributes = new Tribute[]{
                 new Tribute(new ItemStack(Material.DIORITE_WALL, 64)),
                 new Tribute(new ItemStack(Material.AMETHYST_BLOCK, 128)),
@@ -185,12 +174,10 @@ public class VillagerFactory {
                 Component.text( "Nain Roux MAX"),
         };
 
-        this.addNewVillager(new VillagerLevel("Nain Roux", Villager.Type.SWAMP, Villager.Profession.NITWIT, blessings, messages, tributes, names));
+        this.addNewVillager(new VillagerLevel("Nain", Villager.Type.SWAMP, Villager.Profession.NITWIT, blessings, messages, tributes, names));
     }
 
     private void spawnMaddox(){
-        Location location = new Location(world, -21.5, 157, -15.5, 90, 0);
-
         Tribute[] tributes = new Tribute[]{
                 new Tribute(new ItemStack(Material.ARROW, 256)),
                 new Tribute(new ItemStack(Material.TNT, 64)),
@@ -231,8 +218,6 @@ public class VillagerFactory {
     }
 
     private void spawnThomas(){
-        Location location = new Location(world, -23.5, 166, -15.5, 180, 0);
-
         Tribute[] tributes = new Tribute[]{
                 new Tribute(new ItemStack(Material.DIRT, 640)),
                 new Tribute(new ItemStack(Material.BEDROCK, 1)),
@@ -285,12 +270,10 @@ public class VillagerFactory {
                 Component.text( "Thomas Pesquet V"),
         };
 
-        this.addNewVillager(new VillagerLevel("Thomas Pesquet", Villager.Type.SNOW, Villager.Profession.FISHERMAN, blessings, messages, tributes, names));
+        this.addNewVillager(new VillagerLevel("Thomas", Villager.Type.SNOW, Villager.Profession.FISHERMAN, blessings, messages, tributes, names));
     }
 
     private void spawnFrancois(){
-        Location location = new Location(world, -24.5, 158, -0.5, 0, 0);
-
         Tribute[] tributes = new Tribute[]{
                 new Tribute(new ItemStack(Material.BELL, 1)),
                 new Tribute(new ItemStack(Material.CANDLE, 10)),
@@ -583,8 +566,6 @@ public class VillagerFactory {
     }*/
 
     private void spawnGolDRoger(){
-        Location location = new Location(world, 4, 159, -18, 0, 0);
-
         ItemStack[] items = new ItemStack[]{
                 new ItemStack(Material.EMERALD_BLOCK, 9),
         };
@@ -607,12 +588,10 @@ public class VillagerFactory {
 
         TextComponent openMessage = Component.text("Veux-tu une belle canne à pêche ?");
 
-        this.addNewVillager(new VillagerVendor("Gol D. Roger", Villager.Type.SAVANNA, Villager.Profession.WEAPONSMITH, blessings, messages, items, openMessage));
+        this.addNewVillager(new VillagerVendor("GoldRoger", Component.text("Gol D. Roger"), Villager.Type.SAVANNA, Villager.Profession.WEAPONSMITH, blessings, messages, items, openMessage));
     }
 
-    private void spawnEnchanteur(){
-        Location location = new Location(world, 6, 160, -100, 90, 0);
-
+    private void spawnHermanos(){
         ItemStack[] items = new ItemStack[]{
                 new ItemStack(Material.CHICKEN_SPAWN_EGG, 1),
         };
@@ -632,12 +611,10 @@ public class VillagerFactory {
 
         TextComponent openMessage = Component.text("J'adore le poulet. Je ne vends aucune drogue.");
 
-        this.addNewVillager(new VillagerVendor("Los Pollos Hermanos", Villager.Type.SWAMP, Villager.Profession.LIBRARIAN, blessings, messages, items, openMessage));
+        this.addNewVillager(new VillagerVendor("Hermanos", Component.text("Los Pollos Hermanos"), Villager.Type.SWAMP, Villager.Profession.LIBRARIAN, blessings, messages, items, openMessage));
     }
 
     private void spawnSpeedBoots(){
-        Location location = new Location(world, -110.5, 157, -46.5, -90, 0);
-
         ItemStack[] items = new ItemStack[]{
                 new ItemStack(Material.CHICKEN_SPAWN_EGG, 1),
         };
@@ -684,12 +661,10 @@ public class VillagerFactory {
 
         TextComponent openMessage = Component.text("Les Air Force 1, les chaussures qui courent vite.");
 
-        this.addNewVillager(new VillagerVendor("Nike_49", Villager.Type.PLAINS, Villager.Profession.LEATHERWORKER, blessings, messages, items, openMessage));
+        this.addNewVillager(new VillagerVendor("Nike_49", Component.text("Nike_49"), Villager.Type.PLAINS, Villager.Profession.LEATHERWORKER, blessings, messages, items, openMessage));
     }
 
-    private void spawnMiningHelmet(){
-        Location location = new Location(world, 64.5, 164, -62.5, 90, 0);
-
+    private void spawnIndiana(){
         ItemStack[] items = new ItemStack[]{
                 new ItemStack(Material.CHICKEN_SPAWN_EGG, 1),
         };
@@ -736,7 +711,7 @@ public class VillagerFactory {
 
         TextComponent openMessage = Component.text("Le Casque de Mineur, le casque qui mine vite.");
 
-        this.addNewVillager(new VillagerVendor("Indiana", Villager.Type.SNOW, Villager.Profession.CARTOGRAPHER, blessings, messages, items, openMessage));
+        this.addNewVillager(new VillagerVendor("Indiana", Component.text("Indiana"), Villager.Type.SNOW, Villager.Profession.CARTOGRAPHER, blessings, messages, items, openMessage));
     }
 
     /*private void spawnLibraire(){
