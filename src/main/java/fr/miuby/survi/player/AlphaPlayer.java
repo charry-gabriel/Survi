@@ -17,6 +17,7 @@ public class AlphaPlayer implements Serializable {
     private final UUID uuid;
     private Player player;
     private Role role;
+    private final List<Role> subRoles = new ArrayList<>();
     private final AlphaLife alphaLife;
     private final AlphaScoreboard scoreboard;
     private Monde world;
@@ -103,6 +104,12 @@ public class AlphaPlayer implements Serializable {
         for (RoleAttribute attribute : this.getRole().attributes()) {
             if ((this.getWorld() == attribute.world() || attribute.world() == EWorld.ALL))
                 foundAttributes.add(attribute);
+        }
+        for (Role role : this.getSubRoles()) {
+            for (RoleAttribute attribute : role.attributes()) {
+                if ((this.getWorld() == attribute.world() || attribute.world() == EWorld.ALL))
+                    foundAttributes.add(attribute);
+            }
         }
         this.worldRoleAttribute = foundAttributes;
         actualizeAttribute();
@@ -219,6 +226,18 @@ public class AlphaPlayer implements Serializable {
 
     public void setPseudo(String pseudo) {
         this.pseudo = pseudo;
+    }
+
+    public List<Role> getSubRoles() {
+        return subRoles;
+    }
+
+    public void addSubRole(Role role) {
+        subRoles.add(role);
+    }
+
+    public void removeSubRole(Role role) {
+        subRoles.remove(role);
     }
     //endregion
 }

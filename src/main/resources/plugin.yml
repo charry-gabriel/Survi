@@ -14,6 +14,9 @@ commands:
   villager:
     description: Commande pour les villagers
     usage: /<command> <subcommand> [villager]
+  subrole:
+    description: Change les sous-role d'un joueur
+    usage: /<command> <add/remove> [player] [role]
 permissions:
   Survi.sql:
     default: op

@@ -41,7 +41,7 @@ public class AlphaPlayerFactory {
         if(!players.containsKey(uuid)) {
             AlphaPlayer alphaPlayer = new AlphaPlayer(uuid);
             players.put(uuid, alphaPlayer);
-            GameManager.getInstance().getDatabase().getAlphaPlayer(alphaPlayer, uuid);
+            GameManager.getInstance().getDatabase().initAlphaPlayer(alphaPlayer, uuid);
         }else{
             AlphaPlayer.get(uuid).joinServer();
         }

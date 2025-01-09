@@ -37,6 +37,26 @@ public class Commands {
                 alphaPlayer.switchRole();
                 return true;
             }
+            else if (commandName.equals("subrole") && args.length == 3) {
+                Player player = Bukkit.getPlayer(args[1]);
+                if (player == null) {
+                    sender.sendMessage(Component.text("Joueur introuvable !"));
+                    return false;
+                }
+
+                AlphaPlayer alphaPlayer = GameManager.getInstance().getAlphaPlayerFactory().getAlphaPlayer(player.getUniqueId());
+                Role roleFound = GameManager.getInstance().getRoleFactory().getRole(ERole.valueOf(args[2]));
+
+                if (args[0].equals("add")) {
+                    alphaPlayer.addSubRole(roleFound);
+                } else if (args[0].equals("remove")) {
+                    alphaPlayer.removeSubRole(roleFound);
+                }
+                GameManager.getInstance().getDatabase().updatePlayer(alphaPlayer.getUUID(), "subroles", String.join(",", alphaPlayer.getSubRoles().stream().map(role -> role.type().toString()).toList()));
+
+                alphaPlayer.switchRole();
+                return true;
+            }
             else if (commandName.equals("villager") && args.length == 2) {
                 if (args[0].equals("teleport")) {
                     AVillager villager = GameManager.getInstance().getVillagerFactory().getVillager(args[1]);

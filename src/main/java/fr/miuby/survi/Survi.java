@@ -2,6 +2,7 @@ package fr.miuby.survi;
 
 import fr.miuby.survi.listener.*;
 import fr.miuby.survi.role.RoleTabCompleter;
+import fr.miuby.survi.role.SubRoleTabCompleter;
 import fr.miuby.survi.villager.VillagerTabCompleter;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -28,6 +29,7 @@ public class Survi extends JavaPlugin {
         saveConfig();
 
         Objects.requireNonNull(getCommand("role")).setTabCompleter(new RoleTabCompleter());
+        Objects.requireNonNull(getCommand("subrole")).setTabCompleter(new SubRoleTabCompleter());
         Objects.requireNonNull(getCommand("villager")).setTabCompleter(new VillagerTabCompleter());
 
         GameManager.getInstance().init(this);

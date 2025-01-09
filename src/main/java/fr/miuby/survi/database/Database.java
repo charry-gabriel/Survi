@@ -53,6 +53,13 @@ public abstract class Database {
                 alphaPlayer.setMort(rs.getInt("mort"));
                 alphaPlayer.setSuccess(rs.getInt("success"));
                 alphaPlayer.setRole(GameManager.getInstance().getRoleFactory().getRole(ERole.valueOf(rs.getString("role"))));
+
+                String subRoles = rs.getString("subroles");
+                if (subRoles != null && !subRoles.isEmpty()) {
+                    for (String subRole : subRoles.split(","))
+                        alphaPlayer.addSubRole(GameManager.getInstance().getRoleFactory().getRole(ERole.valueOf(subRole)));
+                }
+
                 alphaPlayer.setPseudo(rs.getString("pseudo"));
                 GameManager.getInstance().getScheduler().runTask(GameManager.getInstance().getPlugin(), alphaPlayer::joinServer);
             }
@@ -70,7 +77,7 @@ public abstract class Database {
         }
     }
 
-    public void getAlphaPlayer(AlphaPlayer alphaPlayer, UUID uuid) {
+    public void initAlphaPlayer(AlphaPlayer alphaPlayer, UUID uuid) {
         Connection conn = null;
         PreparedStatement ps = null;
         ResultSet rs;
@@ -88,6 +95,13 @@ public abstract class Database {
                 alphaPlayer.setMort(mort);
                 alphaPlayer.setSuccess(success);
                 alphaPlayer.setRole(GameManager.getInstance().getRoleFactory().getRole(ERole.valueOf(role)));
+
+                String subRoles = rs.getString("subroles");
+                if (subRoles != null && !subRoles.isEmpty()) {
+                    for (String subRole : subRoles.split(","))
+                        alphaPlayer.addSubRole(GameManager.getInstance().getRoleFactory().getRole(ERole.valueOf(subRole)));
+                }
+
                 alphaPlayer.setPseudo(pseudo);
                 GameManager.getInstance().getScheduler().runTask(GameManager.getInstance().getPlugin(), alphaPlayer::joinServer);
             } else {
@@ -125,7 +139,7 @@ public abstract class Database {
         PreparedStatement ps = null;
         try {
             conn = getSQLConnection();
-            ps = conn.prepareStatement("INSERT INTO player VALUES ('"+uuid+"', 0, 0, '"+pseudo+"', '"+GameManager.getInstance().getRoleFactory().getDefaultRole().type().toString()+"')");
+            ps = conn.prepareStatement("INSERT INTO player VALUES ('"+uuid+"', 0, 0, '"+pseudo+"', '"+GameManager.getInstance().getRoleFactory().getDefaultRole().type().toString()+"', NULL)");
             ps.executeUpdate();
         } catch (SQLException ex) {
             GameManager.getInstance().getLogger().log(Level.SEVERE, Errors.sqlConnectionExecute, ex);
