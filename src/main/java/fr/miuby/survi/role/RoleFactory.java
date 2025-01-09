@@ -1,5 +1,6 @@
 package fr.miuby.survi.role;
 
+import fr.miuby.survi.GameManager;
 import fr.miuby.survi.world.EWorld;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -247,5 +248,13 @@ public class RoleFactory {
 
     public Role getDefaultRole() {
         return roles.get(ERole.NAIN);
+    }
+
+    public Role getRole(String roleType) {
+        for (String role : GameManager.getInstance().getRoleFactory().getRoles().stream().map(role -> role.type().toString()).toList()) {
+            if (roleType.equals(role))
+                return GameManager.getInstance().getRoleFactory().getRole(ERole.valueOf(role));
+        }
+        return null;
     }
 }

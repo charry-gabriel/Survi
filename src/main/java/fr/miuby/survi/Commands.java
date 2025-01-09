@@ -27,12 +27,16 @@ public class Commands {
                     sender.sendMessage(Component.text("Joueur introuvable !"));
                     return false;
                 }
-
                 AlphaPlayer alphaPlayer = GameManager.getInstance().getAlphaPlayerFactory().getAlphaPlayer(player.getUniqueId());
 
-                Role roleFound = GameManager.getInstance().getRoleFactory().getRole(ERole.valueOf(args[1]));
-                GameManager.getInstance().getDatabase().updatePlayer(alphaPlayer.getUUID(), "role", roleFound.type().toString());
-                alphaPlayer.setRole(roleFound);
+                Role role = GameManager.getInstance().getRoleFactory().getRole(args[1]);
+                if (role == null) {
+                    sender.sendMessage(Component.text("Role introuvable !"));
+                    return false;
+                }
+
+                GameManager.getInstance().getDatabase().updatePlayer(alphaPlayer.getUUID(), "role", role.type().toString());
+                alphaPlayer.setRole(role);
 
                 alphaPlayer.switchRole();
                 return true;
@@ -43,14 +47,18 @@ public class Commands {
                     sender.sendMessage(Component.text("Joueur introuvable !"));
                     return false;
                 }
-
                 AlphaPlayer alphaPlayer = GameManager.getInstance().getAlphaPlayerFactory().getAlphaPlayer(player.getUniqueId());
-                Role roleFound = GameManager.getInstance().getRoleFactory().getRole(ERole.valueOf(args[2]));
+
+                Role role = GameManager.getInstance().getRoleFactory().getRole(args[2]);
+                if (role == null) {
+                    sender.sendMessage(Component.text("Role introuvable !"));
+                    return false;
+                }
 
                 if (args[0].equals("add")) {
-                    alphaPlayer.addSubRole(roleFound);
+                    alphaPlayer.addSubRole(role);
                 } else if (args[0].equals("remove")) {
-                    alphaPlayer.removeSubRole(roleFound);
+                    alphaPlayer.removeSubRole(role);
                 }
                 GameManager.getInstance().getDatabase().updatePlayer(alphaPlayer.getUUID(), "subroles", String.join(",", alphaPlayer.getSubRoles().stream().map(role -> role.type().toString()).toList()));
 
