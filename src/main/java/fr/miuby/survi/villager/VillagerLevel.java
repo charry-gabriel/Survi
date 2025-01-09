@@ -56,7 +56,7 @@ public class VillagerLevel extends AVillager {
             inv.addItem(item);
 
         for (ItemStack item : givenItems) {
-            createItemStack(inv, item);
+            createItemStack(inv, new ItemStack(item));
         }
 
         this.inventory = inv;
@@ -121,7 +121,7 @@ public class VillagerLevel extends AVillager {
         for (ItemStack tributeItem : inventory.getContents()) {
             if (tributeItem != null && tributeItem.isSimilar(item)) {
                 GameManager.getInstance().getLogger().info(getName().content() + " recupere " + item.getAmount() + " de " + item.getType().name());
-                this.givenItems.add(item);
+                this.givenItems.add(new ItemStack(item));
                 GameManager.getInstance().getDatabase().updateVillagerGivenItem(this.uuid, this.givenItems);
 
                 if (item.getAmount() < tributeItem.getAmount()) {
