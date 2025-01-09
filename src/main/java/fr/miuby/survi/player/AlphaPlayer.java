@@ -71,7 +71,6 @@ public class AlphaPlayer implements Serializable {
     public void addMort(int mort) {
         this.mort += mort;
         this.alphaLife.setDeath(this.mort);
-        this.actualizeAttribute();
 
         GameManager.getInstance().getDatabase().updatePlayer(uuid, "mort", String.valueOf(this.mort));
     }
