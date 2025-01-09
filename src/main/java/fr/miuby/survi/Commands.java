@@ -60,7 +60,7 @@ public class Commands {
                 } else if (args[0].equals("remove")) {
                     alphaPlayer.removeSubRole(role);
                 }
-                GameManager.getInstance().getDatabase().updatePlayer(alphaPlayer.getUUID(), "subroles", String.join(",", alphaPlayer.getSubRoles().stream().map(role -> role.type().toString()).toList()));
+                GameManager.getInstance().getDatabase().updatePlayer(alphaPlayer.getUUID(), "subroles", String.join(",", alphaPlayer.getSubRoles().stream().map(subrole -> subrole.type().toString()).toList()));
 
                 alphaPlayer.switchRole();
                 return true;

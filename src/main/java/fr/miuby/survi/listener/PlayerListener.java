@@ -4,6 +4,7 @@ import com.destroystokyo.paper.event.player.PlayerArmorChangeEvent;
 import fr.miuby.survi.GameManager;
 import fr.miuby.survi.player.AlphaPlayer;
 import fr.miuby.survi.villager.AVillager;
+import fr.miuby.survi.villager.VillagerLevel;
 import fr.miuby.survi.villager.VillagerVendor;
 import fr.miuby.survi.world.EWorld;
 import fr.miuby.survi.world.Monde;
@@ -50,18 +51,33 @@ public class PlayerListener implements Listener {
     @EventHandler
     public void onPlayerInteractEntity(PlayerInteractEntityEvent event) {
         Player player = event.getPlayer();
-        if (event.getRightClicked().getType() == EntityType.VILLAGER) {
+
+        if (event.getRightClicked().getType() == EntityType.VILLAGER)
+        {
             Villager villager = (Villager) event.getRightClicked();
-            if (AVillager.contains(villager.getUniqueId())) {
+            if (AVillager.contains(villager.getUniqueId()))
+            {
                 AVillager aVillager = AVillager.get(villager.getUniqueId());
-                player.openInventory(aVillager.getInventory());
-                if (aVillager instanceof VillagerVendor vendor) {
+
+                if (aVillager instanceof VillagerVendor vendor)
+                {
+                    player.openInventory(aVillager.getInventory());
                     player.sendMessage(Component.text("<", NamedTextColor.AQUA).append(vendor.getDisplayName()).append(Component.text("> ", NamedTextColor.AQUA)).append(vendor.getOpenMessage()));
+                }
+                else if (aVillager instanceof VillagerLevel level && level.getTribute() == null)
+                {
+                    player.sendMessage(Component.text("<", NamedTextColor.AQUA).append(level.getDisplayName()).append(Component.text("> ", NamedTextColor.AQUA)).append(level.getMessage()));
+                }
+                else
+                {
+                    player.openInventory(aVillager.getInventory());
                 }
             }
 
             event.setCancelled(true);
-        } else if (event.getRightClicked().getType() == EntityType.WANDERING_TRADER) {
+        }
+        else if (event.getRightClicked().getType() == EntityType.WANDERING_TRADER)
+        {
             event.setCancelled(true);
         }
     }

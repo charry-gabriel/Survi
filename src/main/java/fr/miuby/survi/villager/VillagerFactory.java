@@ -84,7 +84,6 @@ public class VillagerFactory {
                 new Tribute(new ItemStack(Material.MANGROVE_PROPAGULE, 64), new ItemStack(Material.MANGROVE_LOG, 64), new ItemStack(Material.STRIPPED_MANGROVE_LOG, 64),new ItemStack(Material.CHERRY_SAPLING, 64), new ItemStack(Material.CHERRY_LOG, 64), new ItemStack(Material.STRIPPED_CHERRY_LOG, 64),new ItemStack(Material.PALE_OAK_SAPLING, 64), new ItemStack(Material.PALE_OAK_LOG, 64), new ItemStack(Material.STRIPPED_PALE_OAK_LOG, 64)),
                 new Tribute(new ItemStack(Material.CHORUS_FRUIT, 64),new ItemStack(Material.GOLDEN_APPLE, 64),new ItemStack(Material.TROPICAL_FISH, 64),new ItemStack(Material.COOKIE, 64),new ItemStack(Material.CAKE, 1)),
                 new Tribute(new ItemStack(Material.IRON_BLOCK, 256),new ItemStack(Material.LAPIS_BLOCK, 128),new ItemStack(Material.REDSTONE_BLOCK, 128),new ItemStack(Material.COPPER_BLOCK, 128),new ItemStack(Material.COAL_BLOCK, 128),new ItemStack(Material.GOLD_BLOCK, 64),new ItemStack(Material.DIAMOND_BLOCK, 32),new ItemStack(Material.EMERALD_BLOCK, 16),new ItemStack(Material.NETHERITE_BLOCK, 8)),
-                new Tribute(new ItemStack(Material.BEDROCK, 1)),
         };
 
         Blessing[] blessings = new Blessing[]{
@@ -99,7 +98,6 @@ public class VillagerFactory {
                 new Blessing(new MaxHealthEffect(17)),
                 new Blessing(new MaxHealthEffect(18)),
                 new Blessing(new MaxHealthEffect(20)),
-                new Blessing(new MessageEffect("IMPOSSIBLE")),
         };
 
         TextComponent[] messages = new TextComponent[]{
@@ -114,7 +112,7 @@ public class VillagerFactory {
                 Component.text( "Un peu de vie pour vous !"),
                 Component.text( "Un peu de vie pour vous !"),
                 Component.text( "La quête était si simple en vrai.. fin bref, voici un coeur pour vous."),
-                Component.text( "IMPOSSIBLE"),
+                Component.text( "C'est fini y a plus rien !"),
 
         };
 
@@ -131,7 +129,6 @@ public class VillagerFactory {
                 Component.text( "Survivant X"),
                 Component.text( "Survivant XI"),
                 Component.text( "Edward Jenner MAX"),
-                Component.text( "Edward Jenner MAX"),
         };
 
         this.addNewVillager(new VillagerLevel("Survivant", Villager.Type.SAVANNA, Villager.Profession.FARMER, blessings, messages, tributes, names));
@@ -144,7 +141,6 @@ public class VillagerFactory {
                 new Tribute(new ItemStack(Material.RED_NETHER_BRICKS, 192)),
                 new Tribute(new ItemStack(Material.SCULK_CATALYST, 256)),
                 new Tribute(new ItemStack(Material.SPIRE_ARMOR_TRIM_SMITHING_TEMPLATE, 64),new ItemStack(Material.RESIN_BRICK_STAIRS, 32),new ItemStack(Material.DRAGON_BREATH, 1),new ItemStack(Material.WOLF_ARMOR, 1),new ItemStack(Material.RECOVERY_COMPASS, 1),new ItemStack(Material.VERDANT_FROGLIGHT, 20),new ItemStack(Material.OCHRE_FROGLIGHT, 20),new ItemStack(Material.PEARLESCENT_FROGLIGHT, 20)),
-                new Tribute(new ItemStack(Material.BEDROCK, 1)),
         };
 
         Blessing[] blessings = new Blessing[]{
@@ -153,7 +149,6 @@ public class VillagerFactory {
                 new Blessing(new ResistanceEffect(1f)),
                 new Blessing(new ResistanceEffect(1.2f)),
                 new Blessing(new ResistanceEffect(1.4f)),
-                new Blessing(new MessageEffect("IMPOSSIBLE")),
         };
 
         TextComponent[] messages = new TextComponent[]{
@@ -162,7 +157,7 @@ public class VillagerFactory {
                 Component.text( "Félicitation, vouth êteth maintenant pluth résistant face aux ennemith de l'autre monde."),
                 Component.text( "Beau travail, leth ennemith de l'autre monde ne vouth ferronth pluth jamaith de mlin."),
                 Component.text( "Félicitation, thèth beau travail, je pense que vouth êteth assez résistant, je peux tidndre ma onatraite. Merci à vouth."),
-                Component.text( "IMPOSSIBLE"),
+                Component.text( "C'est fini y a plus rien !"),
         };
 
         TextComponent[] names = new TextComponent[]{
@@ -184,7 +179,6 @@ public class VillagerFactory {
                 new Tribute(new ItemStack(Material.FERMENTED_SPIDER_EYE, 300)),
                 new Tribute(new ItemStack(Material.GHAST_TEAR, 64)),
                 new Tribute(new ItemStack(Material.DRAGON_HEAD, 10)),
-                new Tribute(new ItemStack(Material.BEDROCK, 1)),
         };
 
         Blessing[] blessings = new Blessing[]{
@@ -193,7 +187,6 @@ public class VillagerFactory {
                 new Blessing(new DamageEffect(0.8f)),
                 new Blessing(new DamageEffect(1f)),
                 new Blessing(new DamageEffect(1.5f)),
-                new Blessing(new MessageEffect("IMPOSSIBLE")),
         };
 
         TextComponent[] messages = new TextComponent[]{
@@ -202,7 +195,7 @@ public class VillagerFactory {
                 Component.text( "Comment on fait un oeil fermenté ? Avec un oeil... et tu le fermentes."),
                 Component.text( "Pour les 6 ghasts en moins dans ce monde, je vous offre un peu plus de force."),
                 Component.text( "C'est bon ? Vous avez fini de voyager ? Enfin... j'aurais été plus vite tout seul. Vous êtes maintenant assez fort. Mais toujours pas autant que moi."),
-                Component.text( "IMPOSSIBLE"),
+                Component.text( "C'est fini, tu tape trop fort maintenant !"),
         };
 
         TextComponent[] names = new TextComponent[]{
@@ -228,7 +221,6 @@ public class VillagerFactory {
                 new Tribute(new ItemStack(Material.ENCHANTED_GOLDEN_APPLE, 3)),
                 new Tribute(new ItemStack(Material.BEDROCK, 1)),
                 new Tribute(new ItemStack(Material.DRAGON_EGG, 1)),
-                new Tribute(new ItemStack(Material.BEDROCK, 1)),
         };
 
         Blessing[] blessings = new Blessing[]{
@@ -241,7 +233,6 @@ public class VillagerFactory {
                 new Blessing(new LockWorldEffect(EWorld.END), new MessageEffect("Niveau VI réussi !")),
                 new Blessing(new MessageEffect("Niveau V disponible pour Thomas Pesquet !")),
                 new Blessing(new LimitWorldEffect(EWorld.WILDERNESS, new Rect(Integer.MAX_VALUE,Integer.MIN_VALUE, Integer.MAX_VALUE, Integer.MIN_VALUE,Integer.MAX_VALUE,Integer.MIN_VALUE))),
-                new Blessing(new MessageEffect("IMPOSSIBLE")),
         };
 
         TextComponent[] messages = new TextComponent[]{
@@ -254,7 +245,7 @@ public class VillagerFactory {
                 Component.text( "Merci, revenez dans 100h pour la suite. Vous pouvez maintenant explorer l'end ! "),
                 Component.text( "Venez me voir."),
                 Component.text( "Merci pour cet objet unique. Vous pouvez maintenant explorer le Wilderness à l'infini."),
-                Component.text( "IMPOSSIBLE"),
+                Component.text( "C'est fini y a plus rien !"),
         };
 
         TextComponent[] names = new TextComponent[]{
@@ -267,7 +258,7 @@ public class VillagerFactory {
                 Component.text( "Thomas Pesquet IV"),
                 Component.text( "Thomas Pesquet IV"),
                 Component.text( "Thomas Pesquet V"),
-                Component.text( "Thomas Pesquet V"),
+                Component.text( "Thomas Pesquet MAX"),
         };
 
         this.addNewVillager(new VillagerLevel("Thomas", Villager.Type.SNOW, Villager.Profession.FISHERMAN, blessings, messages, tributes, names));
@@ -285,7 +276,6 @@ public class VillagerFactory {
                 new Tribute(new ItemStack(Material.PINK_CANDLE, 500)),
                 new Tribute(new ItemStack(Material.WHITE_CANDLE, 600)),
                 new Tribute(new ItemStack(Material.TOTEM_OF_UNDYING, 27)),
-                new Tribute(new ItemStack(Material.BEDROCK, 27)),
         };
 
         Blessing[] blessings = new Blessing[]{
@@ -293,12 +283,12 @@ public class VillagerFactory {
                 new Blessing(new DispelEffect(2)),
                 new Blessing(new DispelEffect(3)),
                 new Blessing(new DispelEffect(4)),
+                new Blessing(new DispelEffect(5)),
                 new Blessing(new DispelEffect(6)),
                 new Blessing(new DispelEffect(7)),
                 new Blessing(new DispelEffect(8)),
                 new Blessing(new DispelEffect(9)),
                 new Blessing(new DispelEffect(100)),
-                new Blessing(new MessageEffect("IMPOSSIBLE")),
         };
 
         TextComponent[] messages = new TextComponent[]{
@@ -312,7 +302,7 @@ public class VillagerFactory {
                 Component.text( "Vos 80 dernières morts sont annulées."),
                 Component.text( "Vos 90 dernières morts sont annulées."),
                 Component.text( "Toutes vos morts sont annulées"),
-                Component.text( "IMPOSSIBLE"),
+                Component.text( "C'est fini y a plus rien !"),
         };
 
         TextComponent[] names = new TextComponent[]{
@@ -326,7 +316,7 @@ public class VillagerFactory {
                 Component.text( "François Paul VIII"),
                 Component.text( "François IX"),
                 Component.text( "François X"),
-                Component.text( "François X"),
+                Component.text( "François MAX"),
 
         };
 

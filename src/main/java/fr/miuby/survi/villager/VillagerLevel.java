@@ -52,7 +52,11 @@ public class VillagerLevel extends AVillager {
     public void createInventory() {
         Inventory inv = Bukkit.createInventory(villager, InventoryType.CHEST, Objects.requireNonNull(villager.customName()));
 
-        for (ItemStack item : getTribute().getItemStacks())
+        Tribute tribute = getTribute();
+        if (tribute == null)
+            return;
+
+        for (ItemStack item : tribute.getItemStacks())
             inv.addItem(item);
 
         for (ItemStack item : givenItems) {
@@ -65,8 +69,11 @@ public class VillagerLevel extends AVillager {
     public void updateInventory() {
         this.inventory.clear();
 
-        for (ItemStack item : getTribute().getItemStacks())
-            this.inventory.addItem(item);
+        Tribute tribute = getTribute();
+        if (tribute != null) {
+            for (ItemStack item : tribute.getItemStacks())
+                this.inventory.addItem(item);
+        }
     }
 
     public void addLevel() {
@@ -141,6 +148,9 @@ public class VillagerLevel extends AVillager {
 
 
     public Tribute getTribute() {
+        if (this.level >= this.tributes.length)
+            return null;
+
         return tributes[this.level];
     }
 
