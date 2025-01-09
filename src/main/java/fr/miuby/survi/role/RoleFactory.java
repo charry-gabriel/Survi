@@ -257,4 +257,27 @@ public class RoleFactory {
         }
         return null;
     }
+
+    public List<RoleAttribute> defaultAttributes() {
+        List<RoleAttribute> roleAttributes = new ArrayList<>();
+        roleAttributes.add(new RoleAttribute(EWorld.ALL, Attribute.MAX_HEALTH, 1f));
+        roleAttributes.add(new RoleAttribute(EWorld.ALL, Attribute.ARMOR, 0f));
+        roleAttributes.add(new RoleAttribute(EWorld.ALL, Attribute.ARMOR_TOUGHNESS, 0f));
+        roleAttributes.add(new RoleAttribute(EWorld.ALL, Attribute.ATTACK_DAMAGE, 1f));
+        roleAttributes.add(new RoleAttribute(EWorld.ALL, Attribute.ATTACK_KNOCKBACK, 0f));
+        roleAttributes.add(new RoleAttribute(EWorld.ALL, Attribute.ATTACK_SPEED, 4f));
+        roleAttributes.add(new RoleAttribute(EWorld.ALL, Attribute.LUCK, 0f));
+        roleAttributes.add(new RoleAttribute(EWorld.ALL, Attribute.MOVEMENT_SPEED, 0.1f));
+        roleAttributes.add(new RoleAttribute(EWorld.ALL, Attribute.STEP_HEIGHT, 0.6f));
+        roleAttributes.add(new RoleAttribute(EWorld.ALL, Attribute.SCALE, 1f));
+        roleAttributes.add(new RoleAttribute(EWorld.ALL, Attribute.BLOCK_BREAK_SPEED, 1f));
+        roleAttributes.add(new RoleAttribute(EWorld.ALL, Attribute.SAFE_FALL_DISTANCE, 3f));
+        roleAttributes.add(new RoleAttribute(EWorld.ALL, Attribute.KNOCKBACK_RESISTANCE, 0f));
+        roleAttributes.add(new RoleAttribute(EWorld.ALL, Attribute.ENTITY_INTERACTION_RANGE, 3f));
+        roleAttributes.add(new RoleAttribute(EWorld.ALL, Attribute.BLOCK_INTERACTION_RANGE, 4.5f));
+        roleAttributes.add(new RoleAttribute(EWorld.ALL, Attribute.OXYGEN_BONUS, 0f));
+        roleAttributes.add(new RoleAttribute(EWorld.ALL, Attribute.WATER_MOVEMENT_EFFICIENCY, 0f));
+        roleAttributes.add(new RoleAttribute(EWorld.ALL, Attribute.GRAVITY, 0.08f));
+        return roleAttributes;
+    }
 }
