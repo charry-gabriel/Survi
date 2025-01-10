@@ -22,12 +22,7 @@ public class Commands {
                 return true;
             }
             else if (commandName.equals("role") && args.length == 2) {
-                Player player = Bukkit.getPlayer(args[0]);
-                if (player == null) {
-                    sender.sendMessage(Component.text("Joueur introuvable !"));
-                    return false;
-                }
-                AlphaPlayer alphaPlayer = GameManager.getInstance().getAlphaPlayerFactory().getAlphaPlayer(player.getUniqueId());
+                AlphaPlayer alphaPlayer = GameManager.getInstance().getAlphaPlayerFactory().getAlphaPlayer(args[0]);
 
                 Role role = GameManager.getInstance().getRoleFactory().getRole(args[1]);
                 if (role == null) {
@@ -42,12 +37,7 @@ public class Commands {
                 return true;
             }
             else if (commandName.equals("subrole") && args.length == 3) {
-                Player player = Bukkit.getPlayer(args[1]);
-                if (player == null) {
-                    sender.sendMessage(Component.text("Joueur introuvable !"));
-                    return false;
-                }
-                AlphaPlayer alphaPlayer = GameManager.getInstance().getAlphaPlayerFactory().getAlphaPlayer(player.getUniqueId());
+                AlphaPlayer alphaPlayer = GameManager.getInstance().getAlphaPlayerFactory().getAlphaPlayer(args[0]);
 
                 Role role = GameManager.getInstance().getRoleFactory().getRole(args[2]);
                 if (role == null) {
