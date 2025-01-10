@@ -23,6 +23,8 @@ import org.bukkit.inventory.meta.*;
 import org.bukkit.inventory.meta.trim.ArmorTrim;
 import org.bukkit.inventory.meta.trim.TrimMaterial;
 import org.bukkit.inventory.meta.trim.TrimPattern;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 
 import javax.annotation.Nullable;
 import java.util.*;
@@ -44,6 +46,9 @@ public class VillagerFactory {
         spawnHermanos();
         spawnSpeedBoots();
         spawnIndiana();
+        spawnBarman();
+        spawnReceptionniste();
+        spawnConcierge();
     }
 
     private void addNewVillager(AVillager villager) {
@@ -150,7 +155,7 @@ public class VillagerFactory {
                 Component.text( "Survivant IX"),
                 Component.text( "Survivant X"),
                 Component.text( "Survivant XI"),
-                Component.text( "Edward Jenner MAX"),
+                Component.text( "Survivant MAX"),
         };
 
         this.addNewVillager(new VillagerLevel("Survivant", Villager.Type.SAVANNA, Villager.Profession.FARMER, blessings, messages, tributes, names, recap));
@@ -179,7 +184,7 @@ public class VillagerFactory {
                 Component.text( "Félicitation, vouth êteth maintenant pluth résistant face aux ennemith de l'autre monde."),
                 Component.text( "Beau travail, leth ennemith de l'autre monde ne vouth ferronth pluth jamaith de mlin."),
                 Component.text( "Félicitation, thèth beau travail, je pense que vouth êteth assez résistant, je peux tidndre ma onatraite. Merci à vouth."),
-                Component.text( "C'est fini y a plus rien !"),
+                Component.text( "Félicitation, thèth beau travail, je pense que vouth êteth assez résistant, je peux tidndre ma onatraite. Merci à vouth."),
         };
 
         TextComponent[] recap = new TextComponent[]{
@@ -226,7 +231,7 @@ public class VillagerFactory {
                 Component.text( "Comment on fait un oeil fermenté ? Avec un oeil... et tu le fermentes."),
                 Component.text( "Pour les 6 ghasts en moins dans ce monde, je vous offre un peu plus de force."),
                 Component.text( "C'est bon ? Vous avez fini de voyager ? Enfin... j'aurais été plus vite tout seul. Vous êtes maintenant assez fort. Mais toujours pas autant que moi."),
-                Component.text( "C'est fini, tu tape trop fort maintenant !"),
+                Component.text( "C'est fini, tu tapes beaucoup trop fort maintenant !"),
         };
 
         TextComponent[] recap = new TextComponent[]{
@@ -325,9 +330,9 @@ public class VillagerFactory {
                 new Tribute(new ItemStack(Material.RED_CANDLE, 200)),
                 new Tribute(new ItemStack(Material.ORANGE_CANDLE, 300)),
                 new Tribute(new ItemStack(Material.LIGHT_BLUE_CANDLE, 400)),
-                new Tribute(new ItemStack(Material.GREEN_CANDLE, 400)),
-                new Tribute(new ItemStack(Material.PINK_CANDLE, 500)),
-                new Tribute(new ItemStack(Material.WHITE_CANDLE, 600)),
+                new Tribute(new ItemStack(Material.GREEN_CANDLE, 500)),
+                new Tribute(new ItemStack(Material.PINK_CANDLE, 600)),
+                new Tribute(new ItemStack(Material.WHITE_CANDLE, 700)),
                 new Tribute(new ItemStack(Material.TOTEM_OF_UNDYING, 27)),
         };
 
@@ -355,7 +360,7 @@ public class VillagerFactory {
                 Component.text( "Vos 80 dernières morts sont annulées."),
                 Component.text( "Vos 90 dernières morts sont annulées."),
                 Component.text( "Toutes vos morts sont annulées"),
-                Component.text( "C'est fini y a plus rien !"),
+                Component.text( "Toutes vos morts sont annulées"),
         };
 
         TextComponent[] recap = new TextComponent[]{
@@ -379,8 +384,8 @@ public class VillagerFactory {
                 Component.text( "François IV"),
                 Component.text( "François V"),
                 Component.text( "François VI"),
-                Component.text( "François Paul VII"),
-                Component.text( "François Paul VIII"),
+                Component.text( "François VII"),
+                Component.text( "François VIII"),
                 Component.text( "François IX"),
                 Component.text( "François X"),
                 Component.text( "François MAX"),
@@ -772,6 +777,112 @@ public class VillagerFactory {
 
         this.addNewVillager(new VillagerVendor("Indiana", Component.text("Indiana"), Villager.Type.SNOW, Villager.Profession.CARTOGRAPHER, blessings, messages, items, openMessage));
     }
+
+    private void spawnBarman(){
+        ItemStack[] items = new ItemStack[]{
+                new ItemStack(Material.DIAMOND, 3),
+                new ItemStack(Material.GOLD_INGOT, 6),
+                new ItemStack(Material.GOLD_BLOCK, 6),
+                new ItemStack(Material.EMERALD, 1),
+        };
+
+        ItemStack itemStack = new ItemStack(Material.POTION);
+        PotionMeta meta = (PotionMeta) itemStack.getItemMeta();
+        meta.addCustomEffect(new PotionEffect(PotionEffectType.SPEED,900*20,4), false);
+        meta.addCustomEffect(new PotionEffect(PotionEffectType.JUMP_BOOST,900*20,1), false);
+        itemStack.setItemMeta(meta);
+
+        ItemStack itemStack2 = new ItemStack(Material.POTION);
+        PotionMeta meta2 = (PotionMeta) itemStack2.getItemMeta();
+        meta2.addCustomEffect(new PotionEffect(PotionEffectType.INSTANT_HEALTH,1,3), false);
+        meta2.addCustomEffect(new PotionEffect(PotionEffectType.REGENERATION,120*20,1), false);
+        itemStack2.setItemMeta(meta2);
+
+        ItemStack itemStack3 = new ItemStack(Material.POTION);
+        PotionMeta meta3 = (PotionMeta) itemStack3.getItemMeta();
+        meta3.addCustomEffect(new PotionEffect(PotionEffectType.STRENGTH,300*20,2), false);
+        meta3.addCustomEffect(new PotionEffect(PotionEffectType.WATER_BREATHING,300*20,1), false);
+        itemStack3.setItemMeta(meta3);
+
+        ItemStack itemStack4 = new ItemStack(Material.NAME_TAG);
+
+        Blessing[] blessings = new Blessing[]{
+                new Blessing(new ItemEffect(itemStack)),
+                new Blessing(new ItemEffect(itemStack2)),
+                new Blessing(new ItemEffect(itemStack3)),
+                new Blessing(new ItemEffect(itemStack4)),
+        };
+
+        TextComponent[] messages = new TextComponent[]{
+                Component.text("Très bon choix! Rendez-vous à minuit au casino au premier étage pour y admirer ces délicieuses peintures. Les dés sont lancés, puisse le sort et votre rencontre vous être favorables: votre regard sur votre voisin de la chambre 32, ou votre impression sur votre voisine du 2ième risque d’être chamboulés …"),
+                Component.text("Très bon choix! Rendez-vous à minuit au casino au premier étage pour y admirer ces délicieuses peintures. Les dés sont lancés, puisse le sort et votre rencontre vous être favorables: votre regard sur votre voisin de la chambre 32, ou votre impression sur votre voisine du 2ième risque d’être chamboulés …"),
+                Component.text("Très bon choix! Rendez-vous à minuit au casino au premier étage pour y admirer ces délicieuses peintures. Les dés sont lancés, puisse le sort et votre rencontre vous être favorables: votre regard sur votre voisin de la chambre 32, ou votre impression sur votre voisine du 2ième risque d’être chamboulés …"),
+                Component.text("Très bon choix! Rendez-vous à minuit au casino au premier étage pour y admirer ces délicieuses peintures. Les dés sont lancés, puisse le sort et votre rencontre vous être favorables: votre regard sur votre voisin de la chambre 32, ou votre impression sur votre voisine du 2ième risque d’être chamboulés …"),
+        };
+
+        TextComponent openMessage = Component.text("Bonjour, bienvenue au bar du Merveilleux Royal Bling-Bling Sexy-Baka Palace-Hôtel. A la carte, nous proposons différents cocktails élaborés avec amour, tendresse et voluptuosité: le Sex On the Beach, le Porn Star Martini, et notre fameux Shooter Orgasm. D’autre part, je peux aussi proposer un Spicy Sweet Dreams Ticket si vous le désirez !");
+
+        AVillager villager = new VillagerVendor("Barman", Component.text("Fruity Délice"), Villager.Type.SAVANNA, Villager.Profession.FLETCHER, blessings, messages, items, openMessage);
+        villager.getVillager().getEquipment().setItemInMainHand(new ItemStack(Material.POTION));
+        this.addNewVillager(villager);
+    }
+
+    private void spawnReceptionniste(){
+        ItemStack[] items = new ItemStack[]{
+                new ItemStack(Material.BEDROCK, 9),
+        };
+
+        ItemStack itemStack = new ItemStack(Material.FISHING_ROD);
+        ItemMeta meta = itemStack.getItemMeta();
+        meta.addEnchant(Enchantment.UNBREAKING, 5,true);
+        meta.addEnchant(Enchantment.LURE, 5,true);
+        meta.addEnchant(Enchantment.LUCK_OF_THE_SEA, 5,true);
+        meta.addEnchant(Enchantment.VANISHING_CURSE, 1,false);
+        itemStack.setItemMeta(meta);
+
+        Blessing[] blessings = new Blessing[]{
+                new Blessing(new ItemEffect(itemStack)),
+        };
+
+        TextComponent[] messages = new TextComponent[]{
+                Component.text("Merci pour votre confiance. Vous ne regretterez pas votre séjour dans notre hôtel au concept inédit."),
+        };
+
+        TextComponent openMessage = Component.text("La réception, c’est ma vocation. Bienvenue au Merveilleux Royal Bling-Bling Sexy-Baka Palace-Hôtel. Je vous accueille à bras ouverts dans notre somptueux manoir du 19ième, où le service 5 étoiles fourni par nos employés sauront ravir toutes vos exigences. Le discrétion c’est notre crédo… profitez de votre séjour et explorez à votre rythme chaque recoin de notre manoir qui abrite bien plus de secrets que vous ne pouvez l’imaginer. \n" +
+                "Si vous souhaitez siroter une délicieux cocktail aphrodisiaque, notre barman Fruity Delice saura vous contenter. En cas de demande particulière, veuillez-vous référez à Jean Touchatouille… mais on ne sait jamais où il traine celui-ci, il sait se faire discret. Jacques Black, notre croupier, est au premier étage si une envie de jouer vous vient.De toute manière, ici tous les jeux sont gagnants! ");
+
+        AVillager villager = new VillagerVendor("Receptionniste", Component.text("Alainse Lapince"), Villager.Type.JUNGLE, Villager.Profession.CARTOGRAPHER, blessings, messages, items, openMessage);
+        this.addNewVillager(villager);
+    }
+
+    private void spawnConcierge(){
+        ItemStack[] items = new ItemStack[]{
+                new ItemStack(Material.BEDROCK, 9),
+        };
+
+        ItemStack itemStack = new ItemStack(Material.FISHING_ROD);
+        ItemMeta meta = itemStack.getItemMeta();
+        meta.addEnchant(Enchantment.UNBREAKING, 5,true);
+        meta.addEnchant(Enchantment.LURE, 5,true);
+        meta.addEnchant(Enchantment.LUCK_OF_THE_SEA, 5,true);
+        meta.addEnchant(Enchantment.VANISHING_CURSE, 1,false);
+        itemStack.setItemMeta(meta);
+
+        Blessing[] blessings = new Blessing[]{
+                new Blessing(new ItemEffect(itemStack)),
+        };
+
+        TextComponent[] messages = new TextComponent[]{
+                Component.text("Allez, dégagez maintenant, je dois terminer mon nettoyage !"),
+        };
+
+        TextComponent openMessage = Component.text("Quoi… Que… Que… vous m’avez repéré… ce n’est pas ce que vous croyez, je… je faisais le ménage! En tout cas j’ai pu être spectateur d’une performance honorable de votre part. Le shooter Orgasme de notre barman Fruity Delice a réussi son effet! Eum Eum… \n" + "\n" +
+                "Ecoutez, je pense qu’on peut s’arranger, je ne voudrais pas que de fausses rumeurs de répandent… que diriez-vous d’un arrangement? On est presque ami maintenant. Confirmez-moi que vous êtes bien client de l’hôtel, fournissez-moi vos clefs, et je vous fournirai une récompense en échange de votre aimable discrétion et de votre départ précipité.");
+
+        AVillager villager = new VillagerVendor("Concierge", Component.text("Jean Touchatouille"), Villager.Type.TAIGA, Villager.Profession.ARMORER, blessings, messages, items, openMessage);
+        this.addNewVillager(villager);
+    }
+
 
     /*private void spawnLibraire(){
         Location location = new Location(world, 12138.5, 73, 1447.5, -135, 0);
