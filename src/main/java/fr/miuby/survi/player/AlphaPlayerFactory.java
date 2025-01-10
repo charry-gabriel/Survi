@@ -20,6 +20,14 @@ public class AlphaPlayerFactory {
         return alphaPlayer;
     }
 
+    public AlphaPlayer getAlphaPlayer(String pseudo) {
+        for (AlphaPlayer player : players.values()) {
+            if (player.getPseudo().equals(pseudo))
+                return player;
+        }
+        throw new NullPointerException(pseudo + " alphaPlayer doesn't exist !");
+    }
+
     public void setPlayersToTeam(AlphaScoreboard scoreboard) {
         for(AlphaPlayer alphaPlayer : players.values()) {
             if(alphaPlayer.getPlayer() != null)

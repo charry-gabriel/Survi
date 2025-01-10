@@ -33,12 +33,7 @@ public class SubRoleTabCompleter implements TabCompleter {
                         GameManager.getInstance().getAlphaPlayerFactory().getAlphaPlayers().values().stream().map(AlphaPlayer::getPseudo).toList(),
                         new ArrayList<>());
             } else if (args.length == 3) {
-                Player player = Bukkit.getPlayer(args[1]);
-                if (player == null) {
-                    sender.sendMessage(Component.text("Joueur introuvable !"));
-                    return null;
-                }
-                AlphaPlayer alphaPlayer = GameManager.getInstance().getAlphaPlayerFactory().getAlphaPlayer(player.getUniqueId());
+                AlphaPlayer alphaPlayer = GameManager.getInstance().getAlphaPlayerFactory().getAlphaPlayer(args[1]);
 
                 List<String> roles = new ArrayList<>();
                 if (args[0].equals("add")) {
