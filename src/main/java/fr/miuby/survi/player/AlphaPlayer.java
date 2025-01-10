@@ -187,6 +187,7 @@ public class AlphaPlayer implements Serializable {
 
     public void setMort(int mort) {
         this.mort = mort;
+        this.alphaLife.setDeath(mort);
     }
 
     public void setPlayer(Player player) {
@@ -195,6 +196,7 @@ public class AlphaPlayer implements Serializable {
 
     public void setSuccess(int success) {
         this.success = success;
+        this.alphaLife.setSuccess(success);
     }
 
     public void setRole(Role role) {
