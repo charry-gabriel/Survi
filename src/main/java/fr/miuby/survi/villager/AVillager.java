@@ -65,6 +65,7 @@ public abstract class AVillager {
         villager.setProfession(profession);
         villager.setAI(false);
         villager.setCollidable(false);
+        villager.setSilent(true);
         return villager;
     }
 
