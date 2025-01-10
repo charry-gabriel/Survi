@@ -8,10 +8,7 @@ import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Player;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 
 public class AlphaPlayer implements Serializable {
     private final UUID uuid;
@@ -99,20 +96,23 @@ public class AlphaPlayer implements Serializable {
     }
 
     public void setWorldRole() {
-        List<RoleAttribute> foundAttributes = new ArrayList<>(GameManager.getInstance().getRoleFactory().defaultAttributes());
+        Map<Attribute, RoleAttribute> foundAttributes = new HashMap<>();
+        for (RoleAttribute roleAttribute : GameManager.getInstance().getRoleFactory().defaultAttributes())
+            foundAttributes.put(roleAttribute.attributeType(), roleAttribute);
 
         for (RoleAttribute attribute : this.getRole().attributes()) {
             if ((this.getWorld() == attribute.world() || attribute.world() == EWorld.ALL))
-                foundAttributes.add(attribute);
+                foundAttributes.put(attribute.attributeType(), attribute);
         }
 
         for (Role role : this.getSubRoles()) {
             for (RoleAttribute attribute : role.attributes()) {
                 if ((this.getWorld() == attribute.world() || attribute.world() == EWorld.ALL))
-                    foundAttributes.add(attribute);
+                    foundAttributes.put(attribute.attributeType(), attribute);
             }
         }
-        this.worldRoleAttribute = foundAttributes;
+
+        this.worldRoleAttribute = foundAttributes.values().stream().toList();
         actualizeAttribute();
     }
 
