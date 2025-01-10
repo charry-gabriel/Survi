@@ -5,5 +5,7 @@ public enum ERole {
     LOUP_GAROU,
     FEE,
     NAIN,
-    GEANT
+    GEANT,
+    COMBATANT,
+    MINEUR
 }

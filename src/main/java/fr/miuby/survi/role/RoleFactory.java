@@ -228,6 +228,20 @@ public class RoleFactory {
         
         roles.put(ERole.GEANT, new Role(ERole.GEANT, Component.text("[Géant]", NamedTextColor.DARK_GREEN), roleAttributes, "geant"));
         //endregion
+
+        //region Metier
+        roleAttributes = new ArrayList<>();
+        roleAttributes.add(new RoleAttribute(EWorld.ALL, Attribute.ATTACK_DAMAGE, 8));
+        roleAttributes.add(new RoleAttribute(EWorld.ALL, Attribute.ENTITY_INTERACTION_RANGE, 3.5f));
+        roleAttributes.add(new RoleAttribute(EWorld.ALL, Attribute.ATTACK_DAMAGE, 8));
+
+        roles.put(ERole.COMBATANT, new Role(ERole.COMBATANT, Component.text("\uD83D\uDDE1", NamedTextColor.GRAY), roleAttributes, "Metier"));
+
+        roleAttributes = new ArrayList<>();
+        roleAttributes.add(new RoleAttribute(EWorld.ALL, Attribute.BLOCK_BREAK_SPEED, 1.8f));
+
+        roles.put(ERole.MINEUR, new Role(ERole.MINEUR, Component.text("⛏", NamedTextColor.GRAY), roleAttributes, "Metier"));
+        //endregion
     }
 
     public Role getRole(ERole role) {
