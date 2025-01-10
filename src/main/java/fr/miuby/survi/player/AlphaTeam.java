@@ -1,39 +1,29 @@
 package fr.miuby.survi.player;
 
-import fr.miuby.survi.GameManager;
-import fr.miuby.survi.role.ERole;
 import fr.miuby.survi.role.Role;
-import fr.miuby.survi.world.EWorld;
 import fr.miuby.survi.world.Monde;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.Team;
 
+import java.util.Random;
+
 public class AlphaTeam {
     private final Team team;
-    private final String name;
-    private final Scoreboard scoreboard;
-    private final Monde world;
-    private final Role role;
 
-    public AlphaTeam(Scoreboard scoreboard, EWorld worldType, ERole roleType) {
-        this.world = Monde.get(worldType);
-        this.role = GameManager.getInstance().getRoleFactory().getRole(roleType);
+    public AlphaTeam(Scoreboard scoreboard, AlphaPlayer alphaPlayer) {
+        Random random = new Random();
+        this.team = scoreboard.registerNewTeam(alphaPlayer.getPseudo() + random.nextInt());
 
-        this.name = worldType.toString() + roleType.toString();
-        this.scoreboard = scoreboard;
-        this.team = this.scoreboard.registerNewTeam(name);
+        Monde world = Monde.get(alphaPlayer.getWorld());
+        this.team.color(world.getColor());
+        TextComponent prefix = Component.text(world.getName() + " - ");
 
-        this.team.color(this.world.getColor());
-        this.team.prefix(Component.text(world.getName() + " - ").append(role.displayName()).append(Component.text(" ")));
-    }
+        for (Role subRole : alphaPlayer.getSubRoles())
+            prefix = prefix.append(subRole.displayName());
 
-    public ERole getRole() {
-        return role.type();
-    }
-
-    public EWorld getWorld() {
-        return world.getType();
+        this.team.prefix(prefix.append(alphaPlayer.getRole().displayName()).append(Component.text(" ")));
     }
 
     public void addPlayer(AlphaPlayer player) {

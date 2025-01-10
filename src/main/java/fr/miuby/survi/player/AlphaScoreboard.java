@@ -1,17 +1,11 @@
 package fr.miuby.survi.player;
 
-import fr.miuby.survi.role.ERole;
-import fr.miuby.survi.world.EWorld;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.scoreboard.*;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class AlphaScoreboard {
     private final Scoreboard scoreboard;
-    private final List<AlphaTeam> teams = new ArrayList<>();
     private Score mortScore;
     private Score successScore;
 
@@ -28,16 +22,8 @@ public class AlphaScoreboard {
         life.setRenderType(RenderType.HEARTS);
     }
 
-    public AlphaTeam getTeam(EWorld worldType, ERole roleType) {
-        for (AlphaTeam team : teams) {
-            if (team.getRole() == roleType && team.getWorld() == worldType) {
-                return team;
-            }
-        }
-
-        AlphaTeam team = new AlphaTeam(scoreboard, worldType, roleType);
-        teams.add(team);
-        return team;
+    public AlphaTeam getTeam(AlphaPlayer alphaPlayer) {
+        return new AlphaTeam(scoreboard, alphaPlayer);
     }
 
     public Scoreboard getScoreboard() {
