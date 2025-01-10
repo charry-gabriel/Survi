@@ -33,11 +33,12 @@ public class Commands {
                 GameManager.getInstance().getDatabase().updatePlayer(alphaPlayer.getUUID(), "role", role.type().toString());
                 alphaPlayer.setRole(role);
 
-                alphaPlayer.switchRole();
+                if (alphaPlayer.getPlayer().isOnline())
+                    alphaPlayer.switchRole();
                 return true;
             }
             else if (commandName.equals("subrole") && args.length == 3) {
-                AlphaPlayer alphaPlayer = GameManager.getInstance().getAlphaPlayerFactory().getAlphaPlayer(args[0]);
+                AlphaPlayer alphaPlayer = GameManager.getInstance().getAlphaPlayerFactory().getAlphaPlayer(args[1]);
 
                 Role role = GameManager.getInstance().getRoleFactory().getRole(args[2]);
                 if (role == null) {
@@ -52,7 +53,8 @@ public class Commands {
                 }
                 GameManager.getInstance().getDatabase().updatePlayer(alphaPlayer.getUUID(), "subroles", String.join(",", alphaPlayer.getSubRoles().stream().map(subrole -> subrole.type().toString()).toList()));
 
-                alphaPlayer.switchRole();
+                if (alphaPlayer.getPlayer().isOnline())
+                    alphaPlayer.switchRole();
                 return true;
             }
             else if (commandName.equals("villager") && args.length == 2) {
