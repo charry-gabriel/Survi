@@ -7,5 +7,6 @@ public enum ERole {
     NAIN,
     GEANT,
     COMBATANT,
-    MINEUR
+    MINEUR,
+    NOVICE
 }

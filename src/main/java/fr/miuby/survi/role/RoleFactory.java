@@ -46,7 +46,7 @@ public class RoleFactory {
         roleAttributes.add(new RoleAttribute(EWorld.END, Attribute.BLOCK_BREAK_SPEED, 1.1f));
         roleAttributes.add(new RoleAttribute(EWorld.END, Attribute.SAFE_FALL_DISTANCE, 10f));
 
-        roles.put(ERole.DRAGON, new Role(ERole.DRAGON, Component.text("[Dragon]", NamedTextColor.GOLD), roleAttributes, "dragon"));
+        roles.put(ERole.DRAGON, new Role(ERole.DRAGON, Component.text("[Dragon \uD83D\uDC09]", NamedTextColor.GOLD), roleAttributes, "dragon"));
         //endregion
 
         //region LoupGarou
@@ -91,7 +91,7 @@ public class RoleFactory {
         roleAttributes.add(new RoleAttribute(EWorld.END, Attribute.BLOCK_BREAK_SPEED, 1f));
         roleAttributes.add(new RoleAttribute(EWorld.END, Attribute.ENTITY_INTERACTION_RANGE, 2.2f));
         
-        roles.put(ERole.LOUP_GAROU, new Role(ERole.LOUP_GAROU, Component.text("[Loup Garou]", NamedTextColor.DARK_RED), roleAttributes, "loup_garou"));
+        roles.put(ERole.LOUP_GAROU, new Role(ERole.LOUP_GAROU, Component.text("[Loup Garou \uD83D\uDC3A]", NamedTextColor.DARK_RED), roleAttributes, "loup_garou"));
         //endregion
 
         //region Fee
@@ -144,7 +144,7 @@ public class RoleFactory {
         roleAttributes.add(new RoleAttribute(EWorld.END, Attribute.ATTACK_KNOCKBACK, 10f));
         roleAttributes.add(new RoleAttribute(EWorld.END, Attribute.ENTITY_INTERACTION_RANGE, 10f));
 
-        roles.put(ERole.FEE, new Role(ERole.FEE, Component.text("[Fée]", NamedTextColor.LIGHT_PURPLE), roleAttributes, "fee"));
+        roles.put(ERole.FEE, new Role(ERole.FEE, Component.text("[Fée \uD83E\uDDDA]", NamedTextColor.LIGHT_PURPLE), roleAttributes, "fee"));
         //endregion
 
         //region Nain
@@ -185,7 +185,7 @@ public class RoleFactory {
         roleAttributes.add(new RoleAttribute(EWorld.END, Attribute.ENTITY_INTERACTION_RANGE, 3.5f));
         roleAttributes.add(new RoleAttribute(EWorld.END, Attribute.BLOCK_INTERACTION_RANGE, 8));
 
-        roles.put(ERole.NAIN, new Role(ERole.NAIN, Component.text("[Nain]", NamedTextColor.GREEN), roleAttributes, "nain"));
+        roles.put(ERole.NAIN, new Role(ERole.NAIN, Component.text("[Nain \uD83C\uDF44]", NamedTextColor.GREEN), roleAttributes, "nain"));
         //endregion
 
         //region Geant
@@ -226,7 +226,7 @@ public class RoleFactory {
         roleAttributes.add(new RoleAttribute(EWorld.END, Attribute.ENTITY_INTERACTION_RANGE, 3.5f));
         roleAttributes.add(new RoleAttribute(EWorld.END, Attribute.BLOCK_INTERACTION_RANGE, 8));
         
-        roles.put(ERole.GEANT, new Role(ERole.GEANT, Component.text("[Géant]", NamedTextColor.DARK_GREEN), roleAttributes, "geant"));
+        roles.put(ERole.GEANT, new Role(ERole.GEANT, Component.text("[Géant \uD83C\uDF44]", NamedTextColor.DARK_GREEN), roleAttributes, "geant"));
         //endregion
 
         //region Metier
@@ -241,6 +241,15 @@ public class RoleFactory {
         roleAttributes.add(new RoleAttribute(EWorld.ALL, Attribute.BLOCK_BREAK_SPEED, 1.8f));
 
         roles.put(ERole.MINEUR, new Role(ERole.MINEUR, Component.text("⛏", NamedTextColor.GRAY), roleAttributes, "Metier"));
+        //endregion
+
+        //region Novice
+        roleAttributes = new ArrayList<>();
+        roleAttributes.add(new RoleAttribute(EWorld.VILLAGE, Attribute.ARMOR, 30f));
+        roleAttributes.add(new RoleAttribute(EWorld.VILLAGE, Attribute.MAX_HEALTH, 10f));
+        roleAttributes.add(new RoleAttribute(EWorld.VILLAGE, Attribute.SCALE, 1f));
+
+        roles.put(ERole.NOVICE, new Role(ERole.NOVICE, Component.text("❤", NamedTextColor.YELLOW), roleAttributes, "novice"));
         //endregion
     }
 

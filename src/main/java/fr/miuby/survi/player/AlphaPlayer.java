@@ -4,7 +4,10 @@ import fr.miuby.survi.GameManager;
 import fr.miuby.survi.role.*;
 import fr.miuby.survi.world.EWorld;
 import fr.miuby.survi.world.Monde;
+import org.bukkit.Statistic;
 import org.bukkit.attribute.Attribute;
+import org.bukkit.block.BlockType;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 
 import java.io.Serializable;

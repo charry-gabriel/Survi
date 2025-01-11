@@ -831,9 +831,9 @@ public class VillagerFactory {
 
     private void spawnBarman(){
         ItemStack[] items = new ItemStack[]{
-                new ItemStack(Material.DIAMOND, 3),
-                new ItemStack(Material.GOLD_INGOT, 6),
-                new ItemStack(Material.GOLD_BLOCK, 6),
+                new ItemStack(Material.GOLD_INGOT, 10),
+                new ItemStack(Material.DIAMOND, 4),
+                new ItemStack(Material.GOLD_BLOCK, 8),
                 new ItemStack(Material.EMERALD, 1),
         };
 
