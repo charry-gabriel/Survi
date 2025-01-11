@@ -90,7 +90,8 @@ public class AlphaPlayer implements Serializable {
     }
 
     public void teleport(Monde monde) {
-        getPlayer().teleport(monde.getSpawnPoint());
+        if (getPlayer() != null)
+            getPlayer().teleport(monde.getSpawnPoint());
     }
 
     public void switchRole() {
