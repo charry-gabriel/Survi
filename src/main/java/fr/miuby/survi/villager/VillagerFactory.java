@@ -46,6 +46,7 @@ public class VillagerFactory {
         spawnHermanos();
         spawnSpeedBoots();
         spawnIndiana();
+        spawnScaleChestplate();
         spawnBarman();
         spawnReceptionniste();
         spawnConcierge();
@@ -778,6 +779,56 @@ public class VillagerFactory {
         this.addNewVillager(new VillagerVendor("Indiana", Component.text("Indiana"), Villager.Type.SNOW, Villager.Profession.CARTOGRAPHER, blessings, messages, items, openMessage));
     }
 
+    private void spawnScaleChestplate(){
+        ItemStack[] items = new ItemStack[]{
+                new ItemStack(Material.CHICKEN_SPAWN_EGG, 1),
+        };
+
+        ItemStack itemStack = new ItemStack(Material.LEATHER_CHESTPLATE);
+
+        ArmorMeta armorMeta = (ArmorMeta) itemStack.getItemMeta();
+        armorMeta.setTrim(new ArmorTrim(TrimMaterial.AMETHYST, TrimPattern.SILENCE));
+        itemStack.setItemMeta(armorMeta);
+
+        LeatherArmorMeta leatherArmorMeta = (LeatherArmorMeta) itemStack.getItemMeta();
+        leatherArmorMeta.setColor(Color.fromRGB(1408423));
+        itemStack.setItemMeta(leatherArmorMeta);
+
+        ItemMeta meta = itemStack.getItemMeta();
+        meta.addAttributeModifier(Attribute.SCALE,
+                new AttributeModifier(new NamespacedKey(GameManager.getInstance().getPlugin(), "CombinaisonEndialeScale"),
+                        -0.5f,
+                        AttributeModifier.Operation.ADD_SCALAR,
+                        EquipmentSlotGroup.CHEST));
+        meta.addAttributeModifier(Attribute.BLOCK_BREAK_SPEED,
+                new AttributeModifier(new NamespacedKey(GameManager.getInstance().getPlugin(), "CombinaisonEndialeBlockBreakSpeed"),
+                        -0.9f,
+                        AttributeModifier.Operation.ADD_SCALAR,
+                        EquipmentSlotGroup.CHEST));
+        meta.addAttributeModifier(Attribute.MOVEMENT_SPEED,
+                new AttributeModifier(new NamespacedKey(GameManager.getInstance().getPlugin(), "CombinaisonEndialeSpeed"),
+                        -0.02f,
+                        AttributeModifier.Operation.ADD_NUMBER,
+                        EquipmentSlotGroup.CHEST));
+        meta.setUnbreakable(true);
+        meta.customName(Component.text("Combinaison Endiale", NamedTextColor.YELLOW));
+        meta.addItemFlags(ItemFlag.HIDE_DYE);
+        meta.addItemFlags(ItemFlag.HIDE_ARMOR_TRIM);
+        itemStack.setItemMeta(meta);
+
+        Blessing[] blessings = new Blessing[]{
+                new Blessing(new ItemEffect(itemStack)),
+        };
+
+        TextComponent[] messages = new TextComponent[]{
+                Component.text("Voici une Combinaison pour visiter l'End"),
+        };
+
+        TextComponent openMessage = Component.text("La Combinaison Endiale, la combinaison à la bonne taille !");
+
+        this.addNewVillager(new VillagerVendor("Sophie", Component.text("Sophie Adenot"), Villager.Type.SWAMP, Villager.Profession.FISHERMAN, blessings, messages, items, openMessage));
+    }
+
     private void spawnBarman(){
         ItemStack[] items = new ItemStack[]{
                 new ItemStack(Material.DIAMOND, 3),
@@ -877,7 +928,7 @@ public class VillagerFactory {
         };
 
         TextComponent openMessage = Component.text("Quoi… Que… Que… vous m’avez repéré… ce n’est pas ce que vous croyez, je… je faisais le ménage! En tout cas j’ai pu être spectateur d’une performance honorable de votre part. Le shooter Orgasme de notre barman Fruity Delice a réussi son effet! Eum Eum… \n" + "\n" +
-                "Ecoutez, je pense qu’on peut s’arranger, je ne voudrais pas que de fausses rumeurs de répandent… que diriez-vous d’un arrangement? On est presque ami maintenant. Confirmez-moi que vous êtes bien client de l’hôtel, fournissez-moi vos clefs, et je vous fournirai une récompense en échange de votre aimable discrétion et de votre départ précipité.");
+                "Ecoutez, je pense qu’on peut s’arranger, je ne voudrais pas que de fausses rumeurs se répandent… que diriez-vous d’un arrangement? On est presque ami maintenant. Confirmez-moi que vous êtes bien client de l’hôtel, fournissez-moi vos clefs, et je vous fournirai une récompense en échange de votre aimable discrétion et de votre départ précipité.");
 
         AVillager villager = new VillagerVendor("Concierge", Component.text("Jean Touchatouille"), Villager.Type.TAIGA, Villager.Profession.ARMORER, blessings, messages, items, openMessage);
         this.addNewVillager(villager);
