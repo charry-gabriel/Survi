@@ -34,6 +34,14 @@ public class PlayerListener implements Listener {
     }
 
     @EventHandler
+    public void onPlayerPortal(PlayerPortalEvent event) {
+        if (event.getPlayer().getWorld().getName().equals(Monde.get(EWorld.VILLAGE).getName())) {
+            event.getPlayer().sendMessage(Component.text("C'est pas autorisé ça !", NamedTextColor.RED));
+            event.setCancelled(true);
+        }
+    }
+
+    @EventHandler
     public void onPlayerAdvancementDone(PlayerAdvancementDoneEvent event) {
         Player player = event.getPlayer();
         Advancement advancement = event.getAdvancement();
