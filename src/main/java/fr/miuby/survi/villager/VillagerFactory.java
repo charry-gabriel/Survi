@@ -1,6 +1,6 @@
 package fr.miuby.survi.villager;
 
-import fr.miuby.survi.GameManager;
+import fr.miuby.survi.item.ECustomItem;
 import fr.miuby.survi.player.AlphaPlayer;
 import fr.miuby.survi.utils.Rect;
 import fr.miuby.survi.villager.blessing.*;
@@ -12,20 +12,8 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.*;
-import org.bukkit.attribute.Attribute;
-import org.bukkit.attribute.AttributeModifier;
-import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Villager;
-import org.bukkit.inventory.EquipmentSlotGroup;
-import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.*;
-import org.bukkit.inventory.meta.trim.ArmorTrim;
-import org.bukkit.inventory.meta.trim.TrimMaterial;
-import org.bukkit.inventory.meta.trim.TrimPattern;
-import org.bukkit.persistence.PersistentDataType;
-import org.bukkit.potion.PotionEffect;
-import org.bukkit.potion.PotionEffectType;
 
 import javax.annotation.Nullable;
 import java.util.*;
@@ -630,23 +618,15 @@ public class VillagerFactory {
     }*/
 
     private void spawnGolDRoger(){
-        ItemStack[] items = new ItemStack[]{
+        ItemStack[] items = new ItemStack[] {
                 new ItemStack(Material.EMERALD_BLOCK, 9),
         };
 
-        ItemStack itemStack = new ItemStack(Material.FISHING_ROD);
-        ItemMeta meta = itemStack.getItemMeta();
-        meta.addEnchant(Enchantment.UNBREAKING, 5,true);
-        meta.addEnchant(Enchantment.LURE, 5,true);
-        meta.addEnchant(Enchantment.LUCK_OF_THE_SEA, 5,true);
-        meta.addEnchant(Enchantment.VANISHING_CURSE, 1,false);
-        itemStack.setItemMeta(meta);
-
-        Blessing[] blessings = new Blessing[]{
-                new Blessing(new ItemEffect(itemStack)),
+        Blessing[] blessings = new Blessing[] {
+                new Blessing(new ItemEffect(ECustomItem.FISHING_D_ROD)),
         };
 
-        TextComponent[] messages = new TextComponent[]{
+        TextComponent[] messages = new TextComponent[] {
                 Component.text("Voici une canne à pêche !"),
         };
 
@@ -662,13 +642,8 @@ public class VillagerFactory {
                 new ItemStack(Material.CHICKEN_SPAWN_EGG, 1),
         };
 
-        ItemStack itemStack = new ItemStack(Material.ENCHANTED_BOOK);
-        EnchantmentStorageMeta meta = (EnchantmentStorageMeta) itemStack.getItemMeta();
-        meta.addStoredEnchant(Enchantment.MENDING, 1,false);
-        itemStack.setItemMeta(meta);
-
         Blessing[] blessings = new Blessing[]{
-                new Blessing(new ItemEffect(itemStack)),
+                new Blessing(new ItemEffect(ECustomItem.MENDING)),
         };
 
         TextComponent[] messages = new TextComponent[]{
@@ -685,40 +660,8 @@ public class VillagerFactory {
                 new ItemStack(Material.CHICKEN_SPAWN_EGG, 1),
         };
 
-        ItemStack itemStack = new ItemStack(Material.LEATHER_BOOTS);
-
-        ArmorMeta armorMeta = (ArmorMeta) itemStack.getItemMeta();
-        armorMeta.setTrim(new ArmorTrim(TrimMaterial.NETHERITE, TrimPattern.SILENCE));
-        itemStack.setItemMeta(armorMeta);
-
-        LeatherArmorMeta leatherArmorMeta = (LeatherArmorMeta) itemStack.getItemMeta();
-        leatherArmorMeta.setColor(Color.fromRGB(16383998));
-        itemStack.setItemMeta(leatherArmorMeta);
-
-        ItemMeta meta = itemStack.getItemMeta();
-        meta.addAttributeModifier(Attribute.MOVEMENT_SPEED,
-                new AttributeModifier(new NamespacedKey(GameManager.getInstance().getPlugin(), "AirForceSpeed"),
-                        0.1f,
-                        AttributeModifier.Operation.ADD_NUMBER,
-                        EquipmentSlotGroup.FEET));
-        meta.addAttributeModifier(Attribute.BLOCK_BREAK_SPEED,
-                new AttributeModifier(new NamespacedKey(GameManager.getInstance().getPlugin(), "AirForceBlockBreakSpeed"),
-                        -0.8f,
-                        AttributeModifier.Operation.ADD_SCALAR,
-                        EquipmentSlotGroup.FEET));
-        meta.addAttributeModifier(Attribute.ARMOR,
-                new AttributeModifier(new NamespacedKey(GameManager.getInstance().getPlugin(), "AirForceArmor"),
-                        -0.8f,
-                        AttributeModifier.Operation.ADD_SCALAR,
-                        EquipmentSlotGroup.FEET));
-        meta.setUnbreakable(true);
-        meta.customName(Component.text("Air Force 1", NamedTextColor.YELLOW));
-        meta.addItemFlags(ItemFlag.HIDE_DYE);
-        meta.addItemFlags(ItemFlag.HIDE_ARMOR_TRIM);
-        itemStack.setItemMeta(meta);
-
         Blessing[] blessings = new Blessing[]{
-                new Blessing(new ItemEffect(itemStack)),
+                new Blessing(new ItemEffect(ECustomItem.AIR_FORCE)),
         };
 
         TextComponent[] messages = new TextComponent[]{
@@ -735,40 +678,8 @@ public class VillagerFactory {
                 new ItemStack(Material.CHICKEN_SPAWN_EGG, 1),
         };
 
-        ItemStack itemStack = new ItemStack(Material.LEATHER_HELMET);
-
-        ArmorMeta armorMeta = (ArmorMeta) itemStack.getItemMeta();
-        armorMeta.setTrim(new ArmorTrim(TrimMaterial.GOLD, TrimPattern.FLOW));
-        itemStack.setItemMeta(armorMeta);
-
-        LeatherArmorMeta leatherArmorMeta = (LeatherArmorMeta) itemStack.getItemMeta();
-        leatherArmorMeta.setColor(Color.fromRGB(13061821));
-        itemStack.setItemMeta(leatherArmorMeta);
-
-        ItemMeta meta = itemStack.getItemMeta();
-        meta.addAttributeModifier(Attribute.MINING_EFFICIENCY,
-                new AttributeModifier(new NamespacedKey(GameManager.getInstance().getPlugin(), "CasqueDeMineurMining"),
-                        10f,
-                        AttributeModifier.Operation.ADD_NUMBER,
-                        EquipmentSlotGroup.HEAD));
-        meta.addAttributeModifier(Attribute.MOVEMENT_SPEED,
-                new AttributeModifier(new NamespacedKey(GameManager.getInstance().getPlugin(), "CasqueDeMineurSpeed"),
-                        -0.02f,
-                        AttributeModifier.Operation.ADD_NUMBER,
-                        EquipmentSlotGroup.HEAD));
-        meta.addAttributeModifier(Attribute.ARMOR,
-                new AttributeModifier(new NamespacedKey(GameManager.getInstance().getPlugin(), "CasqueDeMineurArmor"),
-                        -0.8f,
-                        AttributeModifier.Operation.ADD_SCALAR,
-                        EquipmentSlotGroup.HEAD));
-        meta.setUnbreakable(true);
-        meta.customName(Component.text("Casque de Mineur", NamedTextColor.YELLOW));
-        meta.addItemFlags(ItemFlag.HIDE_DYE);
-        meta.addItemFlags(ItemFlag.HIDE_ARMOR_TRIM);
-        itemStack.setItemMeta(meta);
-
         Blessing[] blessings = new Blessing[]{
-                new Blessing(new ItemEffect(itemStack)),
+                new Blessing(new ItemEffect(ECustomItem.MINEUR)),
         };
 
         TextComponent[] messages = new TextComponent[]{
@@ -785,40 +696,8 @@ public class VillagerFactory {
                 new ItemStack(Material.CHICKEN_SPAWN_EGG, 1),
         };
 
-        ItemStack itemStack = new ItemStack(Material.LEATHER_CHESTPLATE);
-
-        ArmorMeta armorMeta = (ArmorMeta) itemStack.getItemMeta();
-        armorMeta.setTrim(new ArmorTrim(TrimMaterial.AMETHYST, TrimPattern.SILENCE));
-        itemStack.setItemMeta(armorMeta);
-
-        LeatherArmorMeta leatherArmorMeta = (LeatherArmorMeta) itemStack.getItemMeta();
-        leatherArmorMeta.setColor(Color.fromRGB(1408423));
-        itemStack.setItemMeta(leatherArmorMeta);
-
-        ItemMeta meta = itemStack.getItemMeta();
-        meta.addAttributeModifier(Attribute.SCALE,
-                new AttributeModifier(new NamespacedKey(GameManager.getInstance().getPlugin(), "CombinaisonEndialeScale"),
-                        -0.5f,
-                        AttributeModifier.Operation.ADD_SCALAR,
-                        EquipmentSlotGroup.CHEST));
-        meta.addAttributeModifier(Attribute.BLOCK_BREAK_SPEED,
-                new AttributeModifier(new NamespacedKey(GameManager.getInstance().getPlugin(), "CombinaisonEndialeBlockBreakSpeed"),
-                        -0.9f,
-                        AttributeModifier.Operation.ADD_SCALAR,
-                        EquipmentSlotGroup.CHEST));
-        meta.addAttributeModifier(Attribute.MOVEMENT_SPEED,
-                new AttributeModifier(new NamespacedKey(GameManager.getInstance().getPlugin(), "CombinaisonEndialeSpeed"),
-                        -0.02f,
-                        AttributeModifier.Operation.ADD_NUMBER,
-                        EquipmentSlotGroup.CHEST));
-        meta.setUnbreakable(true);
-        meta.customName(Component.text("Combinaison Endiale", NamedTextColor.YELLOW));
-        meta.addItemFlags(ItemFlag.HIDE_DYE);
-        meta.addItemFlags(ItemFlag.HIDE_ARMOR_TRIM);
-        itemStack.setItemMeta(meta);
-
         Blessing[] blessings = new Blessing[]{
-                new Blessing(new ItemEffect(itemStack)),
+                new Blessing(new ItemEffect(ECustomItem.ENDIALE)),
         };
 
         TextComponent[] messages = new TextComponent[]{
@@ -838,31 +717,11 @@ public class VillagerFactory {
                 new ItemStack(Material.EMERALD, 1),
         };
 
-        ItemStack itemStack = new ItemStack(Material.POTION);
-        PotionMeta meta = (PotionMeta) itemStack.getItemMeta();
-        meta.addCustomEffect(new PotionEffect(PotionEffectType.SPEED,900*20,4), false);
-        meta.addCustomEffect(new PotionEffect(PotionEffectType.JUMP_BOOST,900*20,1), false);
-        itemStack.setItemMeta(meta);
-
-        ItemStack itemStack2 = new ItemStack(Material.POTION);
-        PotionMeta meta2 = (PotionMeta) itemStack2.getItemMeta();
-        meta2.addCustomEffect(new PotionEffect(PotionEffectType.INSTANT_HEALTH,1,3), false);
-        meta2.addCustomEffect(new PotionEffect(PotionEffectType.REGENERATION,120*20,1), false);
-        itemStack2.setItemMeta(meta2);
-
-        ItemStack itemStack3 = new ItemStack(Material.POTION);
-        PotionMeta meta3 = (PotionMeta) itemStack3.getItemMeta();
-        meta3.addCustomEffect(new PotionEffect(PotionEffectType.STRENGTH,300*20,2), false);
-        meta3.addCustomEffect(new PotionEffect(PotionEffectType.WATER_BREATHING,300*20,1), false);
-        itemStack3.setItemMeta(meta3);
-
-        ItemStack itemStack4 = new ItemStack(Material.NAME_TAG);
-
         Blessing[] blessings = new Blessing[]{
-                new Blessing(new ItemEffect(itemStack)),
-                new Blessing(new ItemEffect(itemStack2)),
-                new Blessing(new ItemEffect(itemStack3)),
-                new Blessing(new ItemEffect(itemStack4)),
+                new Blessing(new ItemEffect(ECustomItem.SEX_ON_THE_BEACH)),
+                new Blessing(new ItemEffect(ECustomItem.PORN_STAR_MARTINI)),
+                new Blessing(new ItemEffect(ECustomItem.SHOOTER_ORGASM)),
+                new Blessing(new ItemEffect(ECustomItem.SPICY_SWEET_DREAMS_TICKET)),
         };
 
         TextComponent[] messages = new TextComponent[]{
@@ -884,13 +743,8 @@ public class VillagerFactory {
                 new ItemStack(Material.BEDROCK, 9),
         };
 
-        ItemStack itemStack = new ItemStack(Material.FISHING_ROD);
-        ItemMeta meta = itemStack.getItemMeta();
-        meta.getPersistentDataContainer().set(new NamespacedKey(GameManager.getInstance().getPlugin(), "unique_id"), PersistentDataType.STRING, "la cle 1");
-        itemStack.setItemMeta(meta);
-
         Blessing[] blessings = new Blessing[]{
-                new Blessing(new ItemEffect(itemStack)),
+                new Blessing(new ItemEffect(ECustomItem.CLE1)),
         };
 
         TextComponent[] messages = new TextComponent[]{
@@ -905,25 +759,12 @@ public class VillagerFactory {
     }
 
     private void spawnConcierge() {
-        ItemStack cle = new ItemStack(Material.FISHING_ROD);
-        ItemMeta metaCle = cle.getItemMeta();
-        metaCle.getPersistentDataContainer().set(new NamespacedKey(GameManager.getInstance().getPlugin(), "unique_id"), PersistentDataType.STRING, "la cle 1");
-        cle.setItemMeta(metaCle);
-
         ItemStack[] items = new ItemStack[]{
-                cle,
+                ECustomItem.CLE1.getItemStack(),
         };
 
-        ItemStack itemStack = new ItemStack(Material.FISHING_ROD);
-        ItemMeta meta = itemStack.getItemMeta();
-        meta.addEnchant(Enchantment.UNBREAKING, 5,true);
-        meta.addEnchant(Enchantment.LURE, 5,true);
-        meta.addEnchant(Enchantment.LUCK_OF_THE_SEA, 5,true);
-        meta.addEnchant(Enchantment.VANISHING_CURSE, 1,false);
-        itemStack.setItemMeta(meta);
-
         Blessing[] blessings = new Blessing[]{
-                new Blessing(new ItemEffect(itemStack)),
+                new Blessing(new ItemEffect(ECustomItem.CLE2)),
         };
 
         TextComponent[] messages = new TextComponent[]{

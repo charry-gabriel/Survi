@@ -1,17 +1,17 @@
 package fr.miuby.survi.villager.blessing;
 
+import fr.miuby.survi.item.ECustomItem;
 import fr.miuby.survi.player.AlphaPlayer;
-import org.bukkit.inventory.ItemStack;
 
 public class ItemEffect extends BlessingEffect{
-    public final ItemStack itemStack;
+    public final ECustomItem itemStack;
 
-    public ItemEffect(ItemStack itemStack) {
+    public ItemEffect(ECustomItem itemStack) {
         this.itemStack = itemStack;
     }
 
     @Override
     public void applyEffect(AlphaPlayer player) {
-        player.getPlayer().getInventory().addItem(itemStack);
+        player.getPlayer().getInventory().addItem(itemStack.getItemStack());
     }
 }
