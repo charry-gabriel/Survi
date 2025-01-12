@@ -8,11 +8,11 @@ import org.bukkit.inventory.recipe.CraftingBookCategory;
 
 import java.util.*;
 
-public class CustomItemFactory {
+public class CustomRecipeFactory {
     private final Map<NamespacedKey, CustomRecipe> newRecipes = new HashMap<>();
     private final List<NamespacedKey> oldRecipes = new ArrayList<>();
 
-    public CustomItemFactory() {
+    public CustomRecipeFactory() {
         NamespacedKey nsKey = new NamespacedKey(GameManager.getInstance().getPlugin(), "mending_egg");
         newRecipes.put(nsKey, new CustomRecipe(nsKey, CraftingBookCategory.MISC, new ItemStack(Material.CHICKEN_SPAWN_EGG), Arrays.asList(
             Material.END_CRYSTAL,
