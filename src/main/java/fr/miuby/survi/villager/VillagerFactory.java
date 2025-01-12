@@ -7,7 +7,6 @@ import fr.miuby.survi.villager.blessing.*;
 import fr.miuby.survi.world.EWorld;
 import fr.miuby.survi.item.locked_item.LockedArmorType;
 import fr.miuby.survi.item.locked_item.LockedToolType;
-import fr.miuby.survi.world.Monde;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -19,12 +18,9 @@ import javax.annotation.Nullable;
 import java.util.*;
 
 public class VillagerFactory {
-    private final World world;
     private final Map<UUID, AVillager> villagers = new HashMap<>();
 
     public VillagerFactory() {
-        this.world = Monde.get(EWorld.VILLAGE).getWorld();
-
         spawnSurvivant();
         spawnNain();
         spawnMaddox();
