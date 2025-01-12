@@ -8,11 +8,14 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
+import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Villager;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.persistence.PersistentDataContainer;
+import org.bukkit.persistence.PersistentDataType;
 
 import java.util.Objects;
 
@@ -35,19 +38,29 @@ public class VillagerVendor extends AVillager {
     @Override
     public void giveItems(Inventory inventory, ItemStack item, Player player){
         for (ItemStack inventoryItem : inventory.getContents()) {
-            if (inventoryItem != null && inventoryItem.isSimilar(item)) {
-                if (item.getAmount() < inventoryItem.getAmount()) {
-                    player.sendMessage(Component.text("<", NamedTextColor.AQUA).append(this.displayName).color(NamedTextColor.AQUA).append(Component.text("> Tu n'en as pas assez !", NamedTextColor.AQUA)));
-                } else if(player.getInventory().firstEmpty() == -1) {
-                    player.sendMessage(Component.text("<", NamedTextColor.AQUA).append(this.displayName).color(NamedTextColor.AQUA).append(Component.text("> Tu es full !", NamedTextColor.AQUA)));
-                } else {
-                    GameManager.getInstance().getLogger().info(this.nameId + " recupere " + inventoryItem.getAmount() + " de " + item.getType().name());
-                    player.sendMessage(Component.text("<", NamedTextColor.AQUA).append(this.displayName).color(NamedTextColor.AQUA).append(Component.text("> ", NamedTextColor.AQUA).append(getMessage(item)).color(NamedTextColor.AQUA)));
-                    applyBlessing(player, item);
-                    item.setAmount(item.getAmount() - inventoryItem.getAmount());
-                }
-                return;
+            if (inventoryItem == null)
+                continue;
+            if (!inventoryItem.isSimilar(item))
+                continue;
+
+            NamespacedKey key = new NamespacedKey(GameManager.getInstance().getPlugin(), "unique_id");
+            PersistentDataContainer container1 = inventoryItem.getItemMeta().getPersistentDataContainer();
+            PersistentDataContainer container2 = item.getItemMeta().getPersistentDataContainer();
+
+            if (container1.has(key, PersistentDataType.STRING) && container2.has(key, PersistentDataType.STRING) && !container1.get(key, PersistentDataType.STRING).equals(container2.get(key, PersistentDataType.STRING)))
+                continue;
+
+            if (item.getAmount() < inventoryItem.getAmount()) {
+                player.sendMessage(Component.text("<", NamedTextColor.AQUA).append(this.displayName).color(NamedTextColor.AQUA).append(Component.text("> Tu n'en as pas assez !", NamedTextColor.AQUA)));
+            } else if(player.getInventory().firstEmpty() == -1) {
+                player.sendMessage(Component.text("<", NamedTextColor.AQUA).append(this.displayName).color(NamedTextColor.AQUA).append(Component.text("> Tu es full !", NamedTextColor.AQUA)));
+            } else {
+                GameManager.getInstance().getLogger().info(this.nameId + " recupere " + inventoryItem.getAmount() + " de " + item.getType().name() + " de " + player.getName());
+                player.sendMessage(Component.text("<", NamedTextColor.AQUA).append(this.displayName).color(NamedTextColor.AQUA).append(Component.text("> ", NamedTextColor.AQUA).append(getMessage(item)).color(NamedTextColor.AQUA)));
+                applyBlessing(player, item);
+                item.setAmount(item.getAmount() - inventoryItem.getAmount());
             }
+            return;
         }
         player.sendMessage(Component.text("<", NamedTextColor.AQUA).append(this.displayName).color(NamedTextColor.AQUA).append(Component.text("> Je ne veux pas de cet item !", NamedTextColor.AQUA)));
     }
@@ -77,7 +90,7 @@ public class VillagerVendor extends AVillager {
     }
 
     public TextComponent getMessage(ItemStack itemStack) {
-        return messages[getItemIndex(itemStack)].color(NamedTextColor.AQUA);
+        return messages[getItemIndex(itemStack)];
     }
 
     public TextComponent getOpenMessage() {

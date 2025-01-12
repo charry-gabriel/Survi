@@ -23,6 +23,7 @@ import org.bukkit.inventory.meta.*;
 import org.bukkit.inventory.meta.trim.ArmorTrim;
 import org.bukkit.inventory.meta.trim.TrimMaterial;
 import org.bukkit.inventory.meta.trim.TrimPattern;
+import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
@@ -885,10 +886,7 @@ public class VillagerFactory {
 
         ItemStack itemStack = new ItemStack(Material.FISHING_ROD);
         ItemMeta meta = itemStack.getItemMeta();
-        meta.addEnchant(Enchantment.UNBREAKING, 5,true);
-        meta.addEnchant(Enchantment.LURE, 5,true);
-        meta.addEnchant(Enchantment.LUCK_OF_THE_SEA, 5,true);
-        meta.addEnchant(Enchantment.VANISHING_CURSE, 1,false);
+        meta.getPersistentDataContainer().set(new NamespacedKey(GameManager.getInstance().getPlugin(), "unique_id"), PersistentDataType.STRING, "la cle 1");
         itemStack.setItemMeta(meta);
 
         Blessing[] blessings = new Blessing[]{
@@ -906,9 +904,14 @@ public class VillagerFactory {
         this.addNewVillager(villager);
     }
 
-    private void spawnConcierge(){
+    private void spawnConcierge() {
+        ItemStack cle = new ItemStack(Material.FISHING_ROD);
+        ItemMeta metaCle = cle.getItemMeta();
+        metaCle.getPersistentDataContainer().set(new NamespacedKey(GameManager.getInstance().getPlugin(), "unique_id"), PersistentDataType.STRING, "la cle 1");
+        cle.setItemMeta(metaCle);
+
         ItemStack[] items = new ItemStack[]{
-                new ItemStack(Material.BEDROCK, 9),
+                cle,
         };
 
         ItemStack itemStack = new ItemStack(Material.FISHING_ROD);
