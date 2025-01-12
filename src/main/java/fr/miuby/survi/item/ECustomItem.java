@@ -20,6 +20,7 @@ import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
+@SuppressWarnings("UnstableApiUsage")
 public enum ECustomItem {
     FISHING_D_ROD(Material.FISHING_ROD, itemStack -> {
         ItemMeta meta = itemStack.getItemMeta();
