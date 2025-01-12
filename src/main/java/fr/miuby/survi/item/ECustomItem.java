@@ -3,6 +3,8 @@ package fr.miuby.survi.item;
 import fr.miuby.survi.GameManager;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
+import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -63,6 +65,13 @@ public enum ECustomItem {
     CLE1(Material.NAME_TAG, "cle1"),
 
     CLE2(Material.NAME_TAG, "cle2"),
+
+    MUFFIN(Material.PLAYER_HEAD, itemStack -> {
+        SkullMeta skullMeta = (SkullMeta) itemStack.getItemMeta();
+        skullMeta.setOwningPlayer(Bukkit.getOfflinePlayer("Molflin"));
+        skullMeta.customName(Component.text("Muffin", NamedTextColor.AQUA).decoration(TextDecoration.ITALIC, false));
+        itemStack.setItemMeta(skullMeta);
+    }),
 
     MENDING(Material.ENCHANTED_BOOK, itemStack -> {
         EnchantmentStorageMeta meta = (EnchantmentStorageMeta) itemStack.getItemMeta();

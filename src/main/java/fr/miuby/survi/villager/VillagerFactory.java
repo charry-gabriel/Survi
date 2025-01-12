@@ -760,7 +760,7 @@ public class VillagerFactory {
         };
 
         Blessing[] blessings = new Blessing[]{
-                new Blessing(new ItemEffect(ECustomItem.CLE2)),
+                new Blessing(new ItemEffect(ECustomItem.MUFFIN)),
         };
 
         TextComponent[] messages = new TextComponent[]{
