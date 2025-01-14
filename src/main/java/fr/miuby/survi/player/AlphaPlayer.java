@@ -56,7 +56,7 @@ public class AlphaPlayer implements Serializable {
             GameManager.getInstance().getAlphaPlayerFactory().setPlayersToTeam(scoreboard);
 
             player.discoverRecipes(GameManager.getInstance().getCustomItemFactory().getNewRecipes().keySet());
-            //retroaction, pas besoin sur un nouveau serveur
+            //TODO: pas besoin sur un nouveau serveur
             player.undiscoverRecipes(GameManager.getInstance().getCustomItemFactory().getOldRecipes());
         }
     }
