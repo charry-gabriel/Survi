@@ -13,7 +13,7 @@ public class AlphaPlayerListener implements Listener {
 
     @EventHandler
     public void onAlphaPlayerRoleChange(AlphaPlayerRoleChangeEvent event) {
-        if (event.getOldRole() == null)
+        if (event.getOldRole() == null || !event.getAlphaPlayer().getPlayer().isOnline())
             return;
 
         for (RoleAttribute attribute : event.getOldRole().attributes()) {
@@ -25,8 +25,5 @@ public class AlphaPlayerListener implements Listener {
                 }
             }
         }
-
-
-
     }
 }
