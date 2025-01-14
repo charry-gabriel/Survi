@@ -1,11 +1,10 @@
 package fr.miuby.survi;
 
 import fr.miuby.survi.player.AlphaPlayer;
-import fr.miuby.survi.role.ERole;
 import fr.miuby.survi.role.Role;
+import fr.miuby.survi.player.event.AlphaPlayerRoleChangeEvent;
 import fr.miuby.survi.villager.AVillager;
 import net.kyori.adventure.text.Component;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 public class Commands {
@@ -30,6 +29,13 @@ public class Commands {
                     return false;
                 }
 
+                // Call event
+                AlphaPlayerRoleChangeEvent alphaPlayerRoleChangeEvent = new AlphaPlayerRoleChangeEvent(alphaPlayer, alphaPlayer.getRole(), role);
+                GameManager.getInstance().callEvent(alphaPlayerRoleChangeEvent);
+                if (alphaPlayerRoleChangeEvent.isCancelled())
+                    return true;
+
+                // Swap role
                 GameManager.getInstance().getDatabase().updatePlayer(alphaPlayer.getUUID(), "role", role.type().toString());
                 alphaPlayer.setRole(role);
 
@@ -46,11 +52,25 @@ public class Commands {
                     return false;
                 }
 
-                if (args[0].equals("add")) {
+                // Call event
+                AlphaPlayerRoleChangeEvent alphaPlayerRoleChangeEvent;
+                if (args[0].equals("add"))
+                    alphaPlayerRoleChangeEvent = new AlphaPlayerRoleChangeEvent(alphaPlayer, null, role);
+                else if (args[0].equals("remove"))
+                    alphaPlayerRoleChangeEvent = new AlphaPlayerRoleChangeEvent(alphaPlayer, role, null);
+                else
+                    return false;
+
+                GameManager.getInstance().callEvent(alphaPlayerRoleChangeEvent);
+                if (alphaPlayerRoleChangeEvent.isCancelled())
+                    return true;
+
+                // Add or Remove subrole
+                if (args[0].equals("add"))
                     alphaPlayer.addSubRole(role);
-                } else if (args[0].equals("remove")) {
+                else if (args[0].equals("remove"))
                     alphaPlayer.removeSubRole(role);
-                }
+
                 GameManager.getInstance().getDatabase().updatePlayer(alphaPlayer.getUUID(), "subroles", String.join(",", alphaPlayer.getSubRoles().stream().map(subrole -> subrole.type().toString()).toList()));
 
                 if (alphaPlayer.getPlayer().isOnline())

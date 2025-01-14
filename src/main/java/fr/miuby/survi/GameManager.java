@@ -9,6 +9,7 @@ import fr.miuby.survi.player.AlphaPlayerFactory;
 import fr.miuby.survi.role.RoleFactory;
 import fr.miuby.survi.villager.VillagerFactory;
 import fr.miuby.survi.world.WorldFactory;
+import org.bukkit.event.Event;
 import org.bukkit.scheduler.BukkitScheduler;
 
 import java.util.logging.Logger;
@@ -118,5 +119,9 @@ public class GameManager {
 
     public BukkitScheduler getScheduler() {
         return scheduler;
+    }
+
+    public void callEvent(Event event) {
+        this.plugin.getServer().getPluginManager().callEvent(event);
     }
 }

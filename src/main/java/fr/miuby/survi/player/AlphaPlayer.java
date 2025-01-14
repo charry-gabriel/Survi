@@ -4,10 +4,10 @@ import fr.miuby.survi.GameManager;
 import fr.miuby.survi.role.*;
 import fr.miuby.survi.world.EWorld;
 import fr.miuby.survi.world.Monde;
-import org.bukkit.Statistic;
+import org.bukkit.NamespacedKey;
 import org.bukkit.attribute.Attribute;
-import org.bukkit.block.BlockType;
-import org.bukkit.entity.EntityType;
+import org.bukkit.attribute.AttributeInstance;
+import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.entity.Player;
 
 import java.io.Serializable;
@@ -100,32 +100,56 @@ public class AlphaPlayer implements Serializable {
     }
 
     public void setWorldRole() {
-        Map<Attribute, RoleAttribute> foundAttributes = new HashMap<>();
-        for (RoleAttribute roleAttribute : GameManager.getInstance().getRoleFactory().defaultAttributes())
-            foundAttributes.put(roleAttribute.attributeType(), roleAttribute);
+        List<RoleAttribute> foundAttributes = new ArrayList<>();
+        for (RoleAttribute attribute : GameManager.getInstance().getRoleFactory().defaultAttributes()) {
+            attribute.setRole("default");
+            foundAttributes.add(attribute);
+        }
 
         for (RoleAttribute attribute : this.getRole().attributes()) {
-            if ((this.getWorld() == attribute.world() || attribute.world() == EWorld.ALL))
-                foundAttributes.put(attribute.attributeType(), attribute);
+            if ((this.getWorld() == attribute.getWorld() || attribute.getWorld() == EWorld.ALL)) {
+                attribute.setRole(this.getRole().roleId());
+                foundAttributes.add(attribute);
+            }
         }
 
         for (Role role : this.getSubRoles()) {
             for (RoleAttribute attribute : role.attributes()) {
-                if ((this.getWorld() == attribute.world() || attribute.world() == EWorld.ALL))
-                    foundAttributes.put(attribute.attributeType(), attribute);
+                if ((this.getWorld() == attribute.getWorld() || attribute.getWorld() == EWorld.ALL)) {
+                    attribute.setRole(role.roleId());
+                    foundAttributes.add(attribute);
+                }
             }
         }
 
-        this.worldRoleAttribute = foundAttributes.values().stream().toList();
+        this.worldRoleAttribute = foundAttributes;
         actualizeAttribute();
     }
 
     public void actualizeAttribute() {
         for(RoleAttribute roleAttribute : worldRoleAttribute) {
-            if (roleAttribute.attributeType() == Attribute.MAX_HEALTH)
-                this.alphaLife.actualize(roleAttribute.attributeValue());
-            else
-                Objects.requireNonNull(this.getPlayer().getAttribute(roleAttribute.attributeType())).setBaseValue(roleAttribute.attributeValue());
+            if(roleAttribute.getName() == null)
+                continue;
+
+            if (roleAttribute.getAttributeType() == Attribute.MAX_HEALTH) {
+                this.alphaLife.actualize(roleAttribute.getValue());
+            } else {
+                AttributeInstance playerAttribute = this.getPlayer().getAttribute(roleAttribute.getAttributeType());
+                if (playerAttribute == null)
+                    continue;
+
+                AttributeModifier attributeModifier = playerAttribute.getModifier(new NamespacedKey(GameManager.getInstance().getPlugin(), roleAttribute.getName()));
+
+                // Already exist
+                if (attributeModifier != null)
+                    playerAttribute.removeModifier(attributeModifier);
+
+                //TODO: Remove the default after 1.21.4
+                if (roleAttribute.getOperation() == RoleAttribute.Operation.REMOVE)
+                    playerAttribute.setBaseValue(roleAttribute.getValue());
+                else
+                    playerAttribute.addTransientModifier(roleAttribute.createAttributeModifier());
+            }
         }
 
         if (hasArmorMalus())
