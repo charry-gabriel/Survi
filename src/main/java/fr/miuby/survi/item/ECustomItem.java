@@ -39,17 +39,21 @@ public enum ECustomItem {
 
     ENDIALE(Material.LEATHER_CHESTPLATE, ECustomItem::getEndiale),
 
+    TERMINATOR(Material.CROSSBOW, ECustomItem::getTerminator),
+
     SEX_ON_THE_BEACH(Material.POTION, itemStack -> {
         PotionMeta meta = (PotionMeta) itemStack.getItemMeta();
         meta.addCustomEffect(new PotionEffect(PotionEffectType.SPEED, 900*20, 4), false);
         meta.addCustomEffect(new PotionEffect(PotionEffectType.JUMP_BOOST, 900*20, 1), false);
+        meta.customName(Component.text("Sex On The Beatch", NamedTextColor.LIGHT_PURPLE));
         itemStack.setItemMeta(meta);
     }),
 
-    PORN_STAR_MARTINI(Material.POTION, itemStack -> {
+    PORN_STAR_MARTINI(Material.SPLASH_POTION, itemStack -> {
         PotionMeta meta = (PotionMeta) itemStack.getItemMeta();
         meta.addCustomEffect(new PotionEffect(PotionEffectType.INSTANT_HEALTH, 1, 3), false);
         meta.addCustomEffect(new PotionEffect(PotionEffectType.REGENERATION, 120*20, 1), false);
+        meta.customName(Component.text("Porn Star Martini", NamedTextColor.LIGHT_PURPLE));
         itemStack.setItemMeta(meta);
     }),
 
@@ -57,14 +61,75 @@ public enum ECustomItem {
         PotionMeta meta = (PotionMeta) itemStack.getItemMeta();
         meta.addCustomEffect(new PotionEffect(PotionEffectType.STRENGTH, 300*20, 2), false);
         meta.addCustomEffect(new PotionEffect(PotionEffectType.WATER_BREATHING, 300*20, 1), false);
+        meta.customName(Component.text("Shooter Orgasm", NamedTextColor.LIGHT_PURPLE));
+        itemStack.setItemMeta(meta);
+    }),
+
+    HEALING_ARROW(Material.TIPPED_ARROW, itemStack -> {
+        PotionMeta meta = (PotionMeta) itemStack.getItemMeta();
+        meta.addCustomEffect(new PotionEffect(PotionEffectType.INSTANT_HEALTH, 1, 1), false);
+        meta.customName(Component.text("JE TE HEAL", NamedTextColor.DARK_RED));
         itemStack.setItemMeta(meta);
     }),
 
     SPICY_SWEET_DREAMS_TICKET(Material.NAME_TAG, "spicy"),
 
-    CLE1(Material.NAME_TAG, "cle1"),
+    CLE00(Material.NAME_TAG, itemStack -> {
+        ItemMeta meta = itemStack.getItemMeta();
+        meta.customName(Component.text("Clé 00", NamedTextColor.GOLD));
+        itemStack.setItemMeta(meta);
+    }, "cle00"),
+    CLE01(Material.NAME_TAG, itemStack -> {
+        ItemMeta meta = itemStack.getItemMeta();
+        meta.customName(Component.text("Clé 01", NamedTextColor.GOLD));
+        itemStack.setItemMeta(meta);
+    }, "cle01"),
+    CLE02(Material.NAME_TAG, itemStack -> {
+        ItemMeta meta = itemStack.getItemMeta();
+        meta.customName(Component.text("Clé 02", NamedTextColor.GOLD));
+        itemStack.setItemMeta(meta);
+    }, "cle02"),
+    CLE11(Material.NAME_TAG, itemStack -> {
+        ItemMeta meta = itemStack.getItemMeta();
+        meta.customName(Component.text("Clé 11", NamedTextColor.GOLD));
+        itemStack.setItemMeta(meta);
+    }, "cle11"),
+    CLE12(Material.NAME_TAG, itemStack -> {
+        ItemMeta meta = itemStack.getItemMeta();
+        meta.customName(Component.text("Clé 12", NamedTextColor.GOLD));
+        itemStack.setItemMeta(meta);
+    }, "cle12"),
+    CLE13(Material.NAME_TAG, itemStack -> {
+        ItemMeta meta = itemStack.getItemMeta();
+        meta.customName(Component.text("Clé 13", NamedTextColor.GOLD));
+        itemStack.setItemMeta(meta);
+    }, "cle13"),
+    CLE14(Material.NAME_TAG, itemStack -> {
+        ItemMeta meta = itemStack.getItemMeta();
+        meta.customName(Component.text("Clé 14", NamedTextColor.GOLD));
+        itemStack.setItemMeta(meta);
+    }, "cle14"),
+    CLE15(Material.NAME_TAG, itemStack -> {
+        ItemMeta meta = itemStack.getItemMeta();
+        meta.customName(Component.text("Clé 15", NamedTextColor.GOLD));
+        itemStack.setItemMeta(meta);
+    }, "cle15"),
+    CLE16(Material.NAME_TAG, itemStack -> {
+        ItemMeta meta = itemStack.getItemMeta();
+        meta.customName(Component.text("Clé 16", NamedTextColor.GOLD));
+        itemStack.setItemMeta(meta);
+    }, "cle16"),
+    CLE31(Material.NAME_TAG, itemStack -> {
+        ItemMeta meta = itemStack.getItemMeta();
+        meta.customName(Component.text("Clé 31", NamedTextColor.GOLD));
+        itemStack.setItemMeta(meta);
+    }, "cle31"),
+    CLE32(Material.NAME_TAG, itemStack -> {
+        ItemMeta meta = itemStack.getItemMeta();
+        meta.customName(Component.text("Clé 32", NamedTextColor.GOLD));
+        itemStack.setItemMeta(meta);
+    }, "cle32"),
 
-    CLE2(Material.NAME_TAG, "cle2"),
 
     MUFFIN(Material.PLAYER_HEAD, itemStack -> {
         SkullMeta skullMeta = (SkullMeta) itemStack.getItemMeta();
@@ -73,11 +138,28 @@ public enum ECustomItem {
         itemStack.setItemMeta(skullMeta);
     }),
 
+    SILENCE_ARMOR_TRIM(Material.SILENCE_ARMOR_TRIM_SMITHING_TEMPLATE),
+    PIGLIN_HEAD(Material.PIGLIN_HEAD),
+    SKELETON_SKULL(Material.SKELETON_SKULL),
+    PARROT_SPAWN_EGG(Material.PARROT_SPAWN_EGG),
+    CAT_SPAWN_EGG(Material.CAT_SPAWN_EGG),
+    AXOLOTL_BUCKET(Material.AXOLOTL_BUCKET),
+    PRISMARINE_SHARD(Material.PRISMARINE_SHARD),
+    NETHERITE_INGOT(Material.NETHERITE_INGOT),
+
+    UMBREAKING5(Material.ENCHANTED_BOOK, itemStack -> {
+        EnchantmentStorageMeta meta = (EnchantmentStorageMeta) itemStack.getItemMeta();
+        meta.addStoredEnchant(Enchantment.UNBREAKING, 4, true);
+        itemStack.setItemMeta(meta);
+    }),
+
     MENDING(Material.ENCHANTED_BOOK, itemStack -> {
         EnchantmentStorageMeta meta = (EnchantmentStorageMeta) itemStack.getItemMeta();
         meta.addStoredEnchant(Enchantment.MENDING, 1, false);
         itemStack.setItemMeta(meta);
     });
+
+
 
     private final ItemStack itemStack;
 
@@ -200,5 +282,16 @@ public enum ECustomItem {
         meta.addItemFlags(ItemFlag.HIDE_DYE);
         meta.addItemFlags(ItemFlag.HIDE_ARMOR_TRIM);
         itemStack.setItemMeta(meta);
+    }
+
+    private static void getTerminator(ItemStack itemStack) {
+        CrossbowMeta crossbowMeta = (CrossbowMeta) itemStack.getItemMeta();
+        crossbowMeta.customName(Component.text("Terminator", NamedTextColor.DARK_PURPLE));
+        crossbowMeta.addEnchant(Enchantment.UNBREAKING, 3, false);
+        crossbowMeta.addEnchant(Enchantment.MENDING, 1, false);
+        crossbowMeta.addEnchant(Enchantment.PIERCING, 10, true);
+        crossbowMeta.addEnchant(Enchantment.MULTISHOT, 1, true);
+        crossbowMeta.addEnchant(Enchantment.QUICK_CHARGE, 100, true);
+        itemStack.setItemMeta(crossbowMeta);
     }
 }
