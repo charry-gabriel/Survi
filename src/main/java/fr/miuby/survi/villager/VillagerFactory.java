@@ -736,14 +736,44 @@ public class VillagerFactory {
 
     private void spawnReceptionniste(){
         ItemStack[] items = new ItemStack[]{
-                new ItemStack(Material.BEDROCK, 9),
+                new ItemStack(Material.NETHERITE_INGOT, 12),
+                new ItemStack(Material.GOLD_BLOCK, 3),
+                new ItemStack(Material.GOLD_INGOT, 9),
+                new ItemStack(Material.DIAMOND_BLOCK, 5),
+                new ItemStack(Material.DIAMOND, 27),
+                new ItemStack(Material.NETHERITE_UPGRADE_SMITHING_TEMPLATE, 1),
+                new ItemStack(Material.SPONGE, 1),
+                new ItemStack(Material.DRAGON_BREATH, 1),
+                new ItemStack(Material.EMERALD, 10),
+                new ItemStack(Material.HEART_OF_THE_SEA, 5),
+                new ItemStack(Material.MUSIC_DISC_PIGSTEP, 1),
         };
 
         Blessing[] blessings = new Blessing[]{
-                new Blessing(new ItemEffect(ECustomItem.CLE1)),
+                new Blessing(new ItemEffect(ECustomItem.CLE00)),
+                new Blessing(new ItemEffect(ECustomItem.CLE01)),
+                new Blessing(new ItemEffect(ECustomItem.CLE02)),
+                new Blessing(new ItemEffect(ECustomItem.CLE11)),
+                new Blessing(new ItemEffect(ECustomItem.CLE12)),
+                new Blessing(new ItemEffect(ECustomItem.CLE13)),
+                new Blessing(new ItemEffect(ECustomItem.CLE14)),
+                new Blessing(new ItemEffect(ECustomItem.CLE15)),
+                new Blessing(new ItemEffect(ECustomItem.CLE16)),
+                new Blessing(new ItemEffect(ECustomItem.CLE31)),
+                new Blessing(new ItemEffect(ECustomItem.CLE32)),
         };
 
         TextComponent[] messages = new TextComponent[]{
+                Component.text("Merci pour votre confiance. Vous ne regretterez pas votre séjour dans notre hôtel au concept inédit."),
+                Component.text("Merci pour votre confiance. Vous ne regretterez pas votre séjour dans notre hôtel au concept inédit."),
+                Component.text("Merci pour votre confiance. Vous ne regretterez pas votre séjour dans notre hôtel au concept inédit."),
+                Component.text("Merci pour votre confiance. Vous ne regretterez pas votre séjour dans notre hôtel au concept inédit."),
+                Component.text("Merci pour votre confiance. Vous ne regretterez pas votre séjour dans notre hôtel au concept inédit."),
+                Component.text("Merci pour votre confiance. Vous ne regretterez pas votre séjour dans notre hôtel au concept inédit."),
+                Component.text("Merci pour votre confiance. Vous ne regretterez pas votre séjour dans notre hôtel au concept inédit."),
+                Component.text("Merci pour votre confiance. Vous ne regretterez pas votre séjour dans notre hôtel au concept inédit."),
+                Component.text("Merci pour votre confiance. Vous ne regretterez pas votre séjour dans notre hôtel au concept inédit."),
+                Component.text("Merci pour votre confiance. Vous ne regretterez pas votre séjour dans notre hôtel au concept inédit."),
                 Component.text("Merci pour votre confiance. Vous ne regretterez pas votre séjour dans notre hôtel au concept inédit."),
         };
 
@@ -756,15 +786,46 @@ public class VillagerFactory {
 
     private void spawnConcierge() {
         ItemStack[] items = new ItemStack[]{
-                ECustomItem.CLE1.getItemStack(),
+                ECustomItem.CLE00.getItemStack(),
+                ECustomItem.CLE01.getItemStack(),
+                ECustomItem.CLE02.getItemStack(),
+                ECustomItem.CLE11.getItemStack(),
+                ECustomItem.CLE12.getItemStack(),
+                ECustomItem.CLE13.getItemStack(),
+                ECustomItem.CLE14.getItemStack(),
+                ECustomItem.CLE15.getItemStack(),
+                ECustomItem.CLE16.getItemStack(),
+                ECustomItem.CLE31.getItemStack(),
+                ECustomItem.CLE32.getItemStack(),
         };
 
         Blessing[] blessings = new Blessing[]{
-                new Blessing(new ItemEffect(ECustomItem.MUFFIN)),
+                new Blessing(new ItemEffect(ECustomItem.SILENCE_ARMOR_TRIM)),
+                new Blessing(new ItemEffect(ECustomItem.PIGLIN_HEAD)),
+                new Blessing(new ItemEffect(ECustomItem.SKELETON_SKULL)),
+                new Blessing(new ItemEffect(ECustomItem.PARROT_SPAWN_EGG)),
+                new Blessing(new ItemEffect(ECustomItem.CAT_SPAWN_EGG)),
+                new Blessing(new ItemEffect(ECustomItem.AXOLOTL_BUCKET)),
+                new Blessing(new ItemEffect(ECustomItem.PRISMARINE_SHARD, 64)),
+                new Blessing(new ItemEffect(ECustomItem.HEALING_ARROW, 64)),
+                new Blessing(new ItemEffect(ECustomItem.UMBREAKING5)),
+                new Blessing(new ItemEffect(ECustomItem.NETHERITE_INGOT)),
+                new Blessing(new ItemEffect(ECustomItem.TERMINATOR)),
         };
 
         TextComponent[] messages = new TextComponent[]{
                 Component.text("Allez, dégagez maintenant, je dois terminer mon nettoyage !"),
+                Component.text("Allez, dégagez maintenant, je dois terminer mon nettoyage !"),
+                Component.text("Allez, dégagez maintenant, je dois terminer mon nettoyage !"),
+                Component.text("Allez, dégagez maintenant, je dois terminer mon nettoyage !"),
+                Component.text("Allez, dégagez maintenant, je dois terminer mon nettoyage !"),
+                Component.text("Allez, dégagez maintenant, je dois terminer mon nettoyage !"),
+                Component.text("Allez, dégagez maintenant, je dois terminer mon nettoyage !"),
+                Component.text("Allez, dégagez maintenant, je dois terminer mon nettoyage !"),
+                Component.text("Allez, dégagez maintenant, je dois terminer mon nettoyage !"),
+                Component.text("Allez, dégagez maintenant, je dois terminer mon nettoyage !"),
+                Component.text("Allez, dégagez maintenant, je dois terminer mon nettoyage !"),
+
         };
 
         TextComponent openMessage = Component.text("Quoi… Que… Que… vous m’avez repéré… ce n’est pas ce que vous croyez, je… je faisais le ménage! En tout cas j’ai pu être spectateur d’une performance honorable de votre part. Le shooter Orgasme de notre barman Fruity Delice a réussi son effet! Eum Eum… \n" + "\n" +
