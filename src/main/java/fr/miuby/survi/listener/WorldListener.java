@@ -7,6 +7,7 @@ import fr.miuby.survi.role.RoleAttribute;
 import fr.miuby.survi.world.EWorld;
 import fr.miuby.survi.world.Monde;
 import org.bukkit.NamespacedKey;
+import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.event.EventHandler;
@@ -32,12 +33,20 @@ public class WorldListener implements Listener {
         if (alphaPlayer == null)
             return;
 
+        // change alphaPlayer world
+        alphaPlayer.setWorld(Monde.get(event.getPlayer().getWorld().getUID()));
+        GameManager.getInstance().getAlphaPlayerFactory().sendToPlayers(alphaPlayer);
+
+        // remove old attribute
         for (RoleAttribute attribute : alphaPlayer.getRole().attributes()) {
             AttributeInstance playerAttribute = event.getPlayer().getAttribute(attribute.getAttributeType());
             if (playerAttribute != null) {
                 AttributeModifier attributeModifier = playerAttribute.getModifier(new NamespacedKey(GameManager.getInstance().getPlugin(), RoleAttribute.createName(EWorld.get(event.getFrom()).toString(), attribute.getRole(), attribute.getAttributeType().getKey().getKey())));
                 if (attributeModifier != null) {
-                    playerAttribute.removeModifier(attributeModifier);
+                    if (attribute.getAttributeType() == Attribute.MAX_HEALTH)
+                        alphaPlayer.getAlphaLife().regenHealth(() -> playerAttribute.removeModifier(attributeModifier));
+                    else
+                        playerAttribute.removeModifier(attributeModifier);
                 }
             }
         }
@@ -48,12 +57,16 @@ public class WorldListener implements Listener {
                 if (playerAttribute != null) {
                     AttributeModifier attributeModifier = playerAttribute.getModifier(new NamespacedKey(GameManager.getInstance().getPlugin(), RoleAttribute.createName(EWorld.get(event.getFrom()).toString(), attribute.getRole(), attribute.getAttributeType().getKey().getKey())));
                     if (attributeModifier != null) {
-                        playerAttribute.removeModifier(attributeModifier);
+                        if (attribute.getAttributeType() == Attribute.MAX_HEALTH)
+                            alphaPlayer.getAlphaLife().regenHealth(() -> playerAttribute.removeModifier(attributeModifier));
+                        else
+                            playerAttribute.removeModifier(attributeModifier);
                     }
                 }
             }
         }
 
-        alphaPlayer.switchWorld();
+        // add new attribute
+        alphaPlayer.addRoleAttribute();
     }
 }

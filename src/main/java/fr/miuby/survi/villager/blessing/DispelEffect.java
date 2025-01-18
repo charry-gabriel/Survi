@@ -13,6 +13,6 @@ public class DispelEffect extends BlessingEffect{
     @Override
     public void applyEffect(AlphaPlayer player) {
         GameManager.getInstance().setDispel(dispel);
-        player.actualizeAttribute();
+        player.getAlphaLife().actualizeDeath();
     }
 }

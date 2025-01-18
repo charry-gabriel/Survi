@@ -1,9 +1,10 @@
 package fr.miuby.survi.player;
 
 import fr.miuby.survi.GameManager;
+import org.bukkit.NamespacedKey;
 import org.bukkit.attribute.Attribute;
-
-import java.util.Objects;
+import org.bukkit.attribute.AttributeInstance;
+import org.bukkit.attribute.AttributeModifier;
 
 import static java.lang.Math.max;
 import static java.lang.Math.min;
@@ -12,39 +13,85 @@ import static org.bukkit.util.NumberConversions.floor;
 public class AlphaLife {
     private final AlphaPlayer alphaPlayer;
 
-    private int maxHealthEffectLife = 2;
     private int successLife = 0;
     private int deathLife = 0;
+    private double blessingLife = 2;
+    private boolean hasArmorMalus;
+    private AttributeInstance attributeInstance;
 
-    private int maxLife;
+    private final NamespacedKey deathKey = new NamespacedKey(GameManager.getInstance().getPlugin(), "death_life");
+    private final NamespacedKey successKey = new NamespacedKey(GameManager.getInstance().getPlugin(), "success_life");
+    private final NamespacedKey blessingKey = new NamespacedKey(GameManager.getInstance().getPlugin(), "blessing_life");
 
     public AlphaLife(AlphaPlayer alphaPlayer) {
         this.alphaPlayer = alphaPlayer;
     }
 
-    public void actualize(float attributeValue) {
-        double oldHealth = this.alphaPlayer.getPlayer().getHealth();
-        double oldMaxHealth = this.maxLife;
+    public void regenHealth(IHealthAttribute healthAttribute) {
+        if (this.alphaPlayer.getPlayer() == null)
+            return;
 
-        int deathWithDispel = max(0, this.deathLife - GameManager.getInstance().getDispel());
-        double baseLife = this.maxHealthEffectLife + this.successLife - deathWithDispel;
-        this.maxLife = (int) Math.round(baseLife * attributeValue);
+        this.attributeInstance = this.alphaPlayer.getPlayer().getAttribute(Attribute.MAX_HEALTH);
+        if (attributeInstance == null)
+            return;
 
-        Objects.requireNonNull(this.alphaPlayer.getPlayer().getAttribute(Attribute.MAX_HEALTH)).setBaseValue(this.maxLife);
+        double oldMaxHealth = attributeInstance.getValue();
 
-        if (!alphaPlayer.getPlayer().isDead())
-            this.alphaPlayer.getPlayer().setHealth(min(max(1, (oldHealth * this.maxLife) / oldMaxHealth), this.maxLife));
+        healthAttribute.changeHealthAttribute();
+
+        if (!this.alphaPlayer.getPlayer().isDead())
+            this.alphaPlayer.getPlayer().setHealth(min(max(1, (this.alphaPlayer.getPlayer().getHealth() * this.attributeInstance.getValue()) / oldMaxHealth), this.attributeInstance.getValue()));
+    }
+
+    public void actualizeDeath() {
+        this.regenHealth(() -> {
+            int deathWithDispel = min(0, GameManager.getInstance().getDispel() - this.deathLife);
+            if (attributeInstance.getModifier(deathKey) != null)
+                attributeInstance.removeModifier(deathKey);
+            AttributeModifier deathModifier = new AttributeModifier(deathKey, deathWithDispel, AttributeModifier.Operation.ADD_NUMBER);
+            attributeInstance.addTransientModifier(deathModifier);
+        });
+
+        if (hasArmorMalus) {
+            if (attributeInstance.getModifier(deathKey) != null)
+                attributeInstance.removeModifier(deathKey);
+            AttributeModifier deathModifier = new AttributeModifier(deathKey, -999f, AttributeModifier.Operation.ADD_NUMBER);
+            attributeInstance.addTransientModifier(deathModifier);
+
+            if (!this.alphaPlayer.getPlayer().isDead())
+                this.alphaPlayer.getPlayer().setHealth(0.01f);
+        }
     }
 
     public void setSuccess(int success) {
-        this.successLife = floor((double) success);
+        this.regenHealth(() -> {
+            this.successLife = success;
+
+            if (attributeInstance.getModifier(successKey) != null)
+                attributeInstance.removeModifier(successKey);
+            AttributeModifier successModifier = new AttributeModifier(successKey, this.successLife, AttributeModifier.Operation.ADD_NUMBER);
+            attributeInstance.addTransientModifier(successModifier);
+        });
     }
 
     public void setDeath(int death) {
         this.deathLife = floor((double) death / 10f);
+        actualizeDeath();
     }
 
-    public void setMaxHealthBonus(int maxHealthBonus) {
-        this.maxHealthEffectLife = maxHealthBonus;
+    public void setBlessing(int blessing) {
+        this.regenHealth(() -> {
+            this.blessingLife = blessing;
+
+            if (attributeInstance.getModifier(blessingKey) != null)
+                attributeInstance.removeModifier(blessingKey);
+            AttributeModifier blessingModifier = new AttributeModifier(blessingKey, this.blessingLife, AttributeModifier.Operation.ADD_NUMBER);
+            attributeInstance.addTransientModifier(blessingModifier);
+        });
+    }
+
+    public void setArmorMalus(boolean hasArmorMalus) {
+        this.hasArmorMalus = hasArmorMalus;
+        this.actualizeDeath();
     }
 }

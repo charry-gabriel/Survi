@@ -276,7 +276,7 @@ public class RoleFactory {
     //TODO: Remove the default after 1.21.4
     public List<RoleAttribute> defaultAttributes() {
         List<RoleAttribute> roleAttributes = new ArrayList<>();
-        roleAttributes.add(new RoleAttribute(EWorld.ALL, Attribute.MAX_HEALTH, 1f, RoleAttribute.Operation.REMOVE));
+        roleAttributes.add(new RoleAttribute(EWorld.ALL, Attribute.MAX_HEALTH, 20f, RoleAttribute.Operation.REMOVE));
         roleAttributes.add(new RoleAttribute(EWorld.ALL, Attribute.ARMOR, 0f, RoleAttribute.Operation.REMOVE));
         roleAttributes.add(new RoleAttribute(EWorld.ALL, Attribute.ARMOR_TOUGHNESS, 0f, RoleAttribute.Operation.REMOVE));
         roleAttributes.add(new RoleAttribute(EWorld.ALL, Attribute.ATTACK_DAMAGE, 1f, RoleAttribute.Operation.REMOVE));

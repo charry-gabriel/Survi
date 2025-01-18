@@ -24,7 +24,6 @@ public class AlphaPlayer implements Serializable {
     private int mort = 0;
     private int success = 0;
     private boolean isTakingNoDamage;
-    private boolean hasArmorMalus;
     private String pseudo;
 
     //region Modifier
@@ -32,13 +31,12 @@ public class AlphaPlayer implements Serializable {
     private float damageModifier = 0.2f;
     private final float endResistanceModifier = 0.7f;
     private final float endDamageModifier = 0.7f;
-    private List<RoleAttribute> worldRoleAttribute;
     //endregion
 
     public AlphaPlayer(UUID uuid) {
         this.uuid = uuid;
-        scoreboard = new AlphaScoreboard();
-        alphaLife = new AlphaLife(this);
+        this.scoreboard = new AlphaScoreboard();
+        this.alphaLife = new AlphaLife(this);
     }
 
     public static AlphaPlayer get(UUID uuid) {
@@ -46,70 +44,42 @@ public class AlphaPlayer implements Serializable {
     }
 
     public void joinServer() {
-        if(player == null)
-            player = GameManager.getInstance().getPlugin().getServer().getPlayer(uuid);
+        if(this.player == null)
+            this.player = GameManager.getInstance().getPlugin().getServer().getPlayer(this.uuid);
 
-        if(player != null) {
-            player.setScoreboard(scoreboard.getScoreboard());
-            switchWorld();
+        if(this.player != null) {
+            this.player.setScoreboard(this.scoreboard.getScoreboard());
+
+            this.world = Monde.get(getPlayer().getWorld().getUID());
+            GameManager.getInstance().getAlphaPlayerFactory().sendToPlayers(this);
+
             GameManager.getInstance().getVillagerFactory().applyAllCurrentBlessing(this);
-            GameManager.getInstance().getAlphaPlayerFactory().setPlayersToTeam(scoreboard);
+            GameManager.getInstance().getAlphaPlayerFactory().setPlayersToTeam(this.scoreboard);
 
-            player.discoverRecipes(GameManager.getInstance().getCustomItemFactory().getNewRecipes().keySet());
-            //TODO: pas besoin sur un nouveau serveur
-            player.undiscoverRecipes(GameManager.getInstance().getCustomItemFactory().getOldRecipes());
+            //TODO: default attribute, pas besoin sur un nouveau serveur
+            for (RoleAttribute attribute : GameManager.getInstance().getRoleFactory().defaultAttributes()) {
+                attribute.setRole("default");
+                this.addAttribute(attribute);
+            }
+
+            this.addRoleAttribute();
+            this.getAlphaLife().actualizeDeath();
+
+            this.player.discoverRecipes(GameManager.getInstance().getCustomItemFactory().getNewRecipes().keySet());
+            //TODO: old recipe, pas besoin sur un nouveau serveur
+            this.player.undiscoverRecipes(GameManager.getInstance().getCustomItemFactory().getOldRecipes());
         }
     }
 
-    public void gainOneSuccess(boolean challenge) {
-        if(challenge) {
-            success++;
-            addSuccess(success);
-        }
-    }
-
-    public void addMort(int mort) {
-        this.mort += mort;
-        this.alphaLife.setDeath(this.mort);
-
-        GameManager.getInstance().getDatabase().updatePlayer(uuid, "mort", String.valueOf(this.mort));
-    }
-
-    public void addSuccess(int success) {
-        this.success = success;
-        this.alphaLife.setSuccess(success);
-        this.actualizeAttribute();
-
-        GameManager.getInstance().getDatabase().updatePlayer(uuid, "success", String.valueOf(this.success));
-    }
-
-    public void switchWorld() {
-        this.world = Monde.get(getPlayer().getWorld().getUID());
-        GameManager.getInstance().getAlphaPlayerFactory().sendToPlayers(this);
-        this.setWorldRole();
-    }
-
-    public void teleport(Monde monde) {
-        if (getPlayer() != null)
-            getPlayer().teleport(monde.getSpawnPoint());
-    }
-
-    public void switchRole() {
-        GameManager.getInstance().getAlphaPlayerFactory().sendToPlayers(this);
-        this.setWorldRole();
-    }
-
-    public void setWorldRole() {
-        List<RoleAttribute> foundAttributes = new ArrayList<>();
-        for (RoleAttribute attribute : GameManager.getInstance().getRoleFactory().defaultAttributes()) {
-            attribute.setRole("default");
-            foundAttributes.add(attribute);
-        }
-
+    public void addRoleAttribute() {
         for (RoleAttribute attribute : this.getRole().attributes()) {
             if ((this.getWorld() == attribute.getWorld() || attribute.getWorld() == EWorld.ALL)) {
                 attribute.setRole(this.getRole().roleId());
-                foundAttributes.add(attribute);
+
+                if (attribute.getAttributeType() == Attribute.MAX_HEALTH)
+                    this.getAlphaLife().regenHealth(() -> this.addAttribute(attribute));
+                else
+                    this.addAttribute(attribute);
             }
         }
 
@@ -117,43 +87,61 @@ public class AlphaPlayer implements Serializable {
             for (RoleAttribute attribute : role.attributes()) {
                 if ((this.getWorld() == attribute.getWorld() || attribute.getWorld() == EWorld.ALL)) {
                     attribute.setRole(role.roleId());
-                    foundAttributes.add(attribute);
+
+                    if (attribute.getAttributeType() == Attribute.MAX_HEALTH)
+                        this.getAlphaLife().regenHealth(() -> this.addAttribute(attribute));
+                    else
+                        this.addAttribute(attribute);
                 }
             }
         }
-
-        this.worldRoleAttribute = foundAttributes;
-        actualizeAttribute();
     }
 
-    public void actualizeAttribute() {
-        for(RoleAttribute roleAttribute : worldRoleAttribute) {
-            if(roleAttribute.getName() == null)
-                continue;
-
-            if (roleAttribute.getAttributeType() == Attribute.MAX_HEALTH) {
-                this.alphaLife.actualize(roleAttribute.getValue());
-            } else {
-                AttributeInstance playerAttribute = this.getPlayer().getAttribute(roleAttribute.getAttributeType());
-                if (playerAttribute == null)
-                    continue;
-
-                AttributeModifier attributeModifier = playerAttribute.getModifier(new NamespacedKey(GameManager.getInstance().getPlugin(), roleAttribute.getName()));
-
-                // Already exist
-                if (attributeModifier != null)
-                    playerAttribute.removeModifier(attributeModifier);
-
-                //TODO: Remove the default after 1.21.4
-                if (roleAttribute.getOperation() == RoleAttribute.Operation.REMOVE)
-                    playerAttribute.setBaseValue(roleAttribute.getValue());
-                else
-                    playerAttribute.addTransientModifier(roleAttribute.createAttributeModifier());
-            }
+    public void gainOneSuccess(boolean challenge) {
+        if(challenge) {
+            this.success++;
+            this.addSuccess(this.success);
         }
+    }
 
-        if (hasArmorMalus())
-            Objects.requireNonNull(this.getPlayer().getAttribute(Attribute.MAX_HEALTH)).setBaseValue(1);
+    public void addMort(int mort) {
+        this.mort += mort;
+        this.alphaLife.setDeath(this.mort);
+
+        GameManager.getInstance().getDatabase().updatePlayer(this.uuid, "mort", String.valueOf(this.mort));
+    }
+
+    public void addSuccess(int success) {
+        this.success = success;
+        this.getAlphaLife().regenHealth(() -> this.getAlphaLife().setSuccess(success));
+
+        GameManager.getInstance().getDatabase().updatePlayer(this.uuid, "success", String.valueOf(this.success));
+    }
+
+    public void teleport(Monde monde) {
+        if (getPlayer() != null)
+            getPlayer().teleport(monde.getSpawnPoint());
+    }
+
+    public void addAttribute(RoleAttribute roleAttribute) {
+        if(roleAttribute.getName() == null)
+            return;
+
+        AttributeInstance playerAttribute = this.getPlayer().getAttribute(roleAttribute.getAttributeType());
+        if (playerAttribute == null)
+            return;
+
+        AttributeModifier attributeModifier = playerAttribute.getModifier(new NamespacedKey(GameManager.getInstance().getPlugin(), roleAttribute.getName()));
+
+        // If already exist
+        if (attributeModifier != null)
+            playerAttribute.removeModifier(attributeModifier);
+
+        //TODO: Remove the default after 1.21.4
+        if (roleAttribute.getOperation() == RoleAttribute.Operation.REMOVE)
+            playerAttribute.setBaseValue(roleAttribute.getValue());
+        else
+            playerAttribute.addTransientModifier(roleAttribute.createAttributeModifier());
     }
 
     //region Getters Setters
@@ -236,23 +224,15 @@ public class AlphaPlayer implements Serializable {
     }
 
     public boolean isTakingNoDamage() {
-        return isTakingNoDamage;
+        return this.isTakingNoDamage;
     }
 
     public void setTakingNoDamage(boolean takeNoDamage) {
         this.isTakingNoDamage = takeNoDamage;
     }
 
-    public boolean hasArmorMalus() {
-        return hasArmorMalus;
-    }
-
-    public void setArmorMalus(boolean hasArmorMalus) {
-        this.hasArmorMalus = hasArmorMalus;
-    }
-
     public String getPseudo() {
-        return pseudo;
+        return this.pseudo;
     }
 
     public void setPseudo(String pseudo) {
@@ -260,21 +240,25 @@ public class AlphaPlayer implements Serializable {
     }
 
     public List<Role> getSubRoles() {
-        return subRoles;
+        return this.subRoles;
     }
 
     public void addSubRole(Role role) {
         Role removeRole = null;
-        for (Role subRole : subRoles) {
+        for (Role subRole : this.subRoles) {
             if (subRole.roleId().equals(role.roleId()))
                 removeRole = subRole;
         }
-        subRoles.remove(removeRole);
-        subRoles.add(role);
+        this.subRoles.remove(removeRole);
+        this.subRoles.add(role);
     }
 
     public void removeSubRole(Role role) {
-        subRoles.remove(role);
+        this.subRoles.remove(role);
+    }
+
+    public void setWorld(Monde monde) {
+        this.world = monde;
     }
     //endregion
 }

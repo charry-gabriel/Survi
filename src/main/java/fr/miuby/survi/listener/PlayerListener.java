@@ -98,9 +98,7 @@ public class PlayerListener implements Listener {
                 malus = true;
             }
         }
-        AlphaPlayer player = AlphaPlayer.get(event.getPlayer().getUniqueId());
-        player.setArmorMalus(malus);
-        player.actualizeAttribute();
+        AlphaPlayer.get(event.getPlayer().getUniqueId()).getAlphaLife().setArmorMalus(malus);
     }
 
     @EventHandler
@@ -117,8 +115,7 @@ public class PlayerListener implements Listener {
 
     @EventHandler
     public void onPlayerRespawn(PlayerRespawnEvent event) {
-        AlphaPlayer player = AlphaPlayer.get(event.getPlayer().getUniqueId());
-        player.actualizeAttribute();
+        AlphaPlayer.get(event.getPlayer().getUniqueId()).getAlphaLife().actualizeDeath();
     }
 
     @EventHandler
