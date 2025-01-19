@@ -77,56 +77,67 @@ public enum ECustomItem {
     CLE00(Material.NAME_TAG, itemStack -> {
         ItemMeta meta = itemStack.getItemMeta();
         meta.customName(Component.text("Clé 00", NamedTextColor.GOLD));
+        meta.setItemModel(new NamespacedKey(GameManager.getInstance().getPlugin(), "key"));
         itemStack.setItemMeta(meta);
     }, "cle00"),
     CLE01(Material.NAME_TAG, itemStack -> {
         ItemMeta meta = itemStack.getItemMeta();
         meta.customName(Component.text("Clé 01", NamedTextColor.GOLD));
+        meta.setItemModel(new NamespacedKey(GameManager.getInstance().getPlugin(), "key"));
         itemStack.setItemMeta(meta);
     }, "cle01"),
     CLE02(Material.NAME_TAG, itemStack -> {
         ItemMeta meta = itemStack.getItemMeta();
         meta.customName(Component.text("Clé 02", NamedTextColor.GOLD));
+        meta.setItemModel(new NamespacedKey(GameManager.getInstance().getPlugin(), "key"));
         itemStack.setItemMeta(meta);
     }, "cle02"),
     CLE11(Material.NAME_TAG, itemStack -> {
         ItemMeta meta = itemStack.getItemMeta();
         meta.customName(Component.text("Clé 11", NamedTextColor.GOLD));
+        meta.setItemModel(new NamespacedKey(GameManager.getInstance().getPlugin(), "key"));
         itemStack.setItemMeta(meta);
     }, "cle11"),
     CLE12(Material.NAME_TAG, itemStack -> {
         ItemMeta meta = itemStack.getItemMeta();
         meta.customName(Component.text("Clé 12", NamedTextColor.GOLD));
+        meta.setItemModel(new NamespacedKey(GameManager.getInstance().getPlugin(), "key"));
         itemStack.setItemMeta(meta);
     }, "cle12"),
     CLE13(Material.NAME_TAG, itemStack -> {
         ItemMeta meta = itemStack.getItemMeta();
         meta.customName(Component.text("Clé 13", NamedTextColor.GOLD));
+        meta.setItemModel(new NamespacedKey(GameManager.getInstance().getPlugin(), "key"));
         itemStack.setItemMeta(meta);
     }, "cle13"),
     CLE14(Material.NAME_TAG, itemStack -> {
         ItemMeta meta = itemStack.getItemMeta();
         meta.customName(Component.text("Clé 14", NamedTextColor.GOLD));
+        meta.setItemModel(new NamespacedKey(GameManager.getInstance().getPlugin(), "key"));
         itemStack.setItemMeta(meta);
     }, "cle14"),
     CLE15(Material.NAME_TAG, itemStack -> {
         ItemMeta meta = itemStack.getItemMeta();
         meta.customName(Component.text("Clé 15", NamedTextColor.GOLD));
+        meta.setItemModel(new NamespacedKey(GameManager.getInstance().getPlugin(), "key"));
         itemStack.setItemMeta(meta);
     }, "cle15"),
     CLE16(Material.NAME_TAG, itemStack -> {
         ItemMeta meta = itemStack.getItemMeta();
         meta.customName(Component.text("Clé 16", NamedTextColor.GOLD));
+        meta.setItemModel(new NamespacedKey(GameManager.getInstance().getPlugin(), "key"));
         itemStack.setItemMeta(meta);
     }, "cle16"),
     CLE31(Material.NAME_TAG, itemStack -> {
         ItemMeta meta = itemStack.getItemMeta();
         meta.customName(Component.text("Clé 31", NamedTextColor.GOLD));
+        meta.setItemModel(new NamespacedKey(GameManager.getInstance().getPlugin(), "key"));
         itemStack.setItemMeta(meta);
     }, "cle31"),
     CLE32(Material.NAME_TAG, itemStack -> {
         ItemMeta meta = itemStack.getItemMeta();
         meta.customName(Component.text("Clé 32", NamedTextColor.GOLD));
+        meta.setItemModel(new NamespacedKey(GameManager.getInstance().getPlugin(), "key"));
         itemStack.setItemMeta(meta);
     }, "cle32"),
 
