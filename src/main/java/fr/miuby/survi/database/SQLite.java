@@ -12,6 +12,12 @@ import fr.miuby.survi.GameManager;
 
 import javax.annotation.Nullable;
 
+/**
+ * The SQLite class provides an implementation for managing a SQLite database.
+ * This database is used to store and handle data related to players and villagers.
+ * It extends the Database class and includes functionality for establishing
+ * database connections, creating tables, and initializing the database.
+ */
 public class SQLite extends Database {
     private final String dbname;
 
@@ -41,6 +47,15 @@ public class SQLite extends Database {
             "PRIMARY KEY (`uuid`)" +
             ");";
 
+    /**
+     * Establishes and returns a connection to the SQLite database for the application.
+     * If the database file does not exist, it attempts to create the file.
+     * If the connection is already established and not closed, it returns the existing connection.
+     * Otherwise, it initializes a new SQLite connection.
+     *
+     * @return a {@link Connection} object representing the SQLite database connection,
+     * or null if unable to establish a connection due to an exception or missing dependencies.
+     */
     @Nullable
     public Connection getSQLConnection() {
         File dataFolder = new File(GameManager.getInstance().getPlugin().getDataFolder(), dbname+".db");
@@ -66,6 +81,18 @@ public class SQLite extends Database {
         return null;
     }
 
+    /**
+     * Loads the SQLite database by initializing the connection and executing the necessary SQL statements
+     * to ensure the required tables exist. If an error occurs during table creation, it logs the error using
+     * the application's logger. After database setup, the method calls the {@code initialize()} function
+     * to finalize the setup process.
+     *
+     * This method performs the following operations:
+     * - Establishes an SQLite connection using {@link #getSQLConnection()}.
+     * - Executes SQL commands to create the tables defined by {@code SQLiteCreatePlayerTable} and
+     *   {@code SQLiteCreateVillagerTable}.
+     * - Logs any SQL exceptions encountered during the execution.
+     */
     public void load() {
         connection = getSQLConnection();
         try {
