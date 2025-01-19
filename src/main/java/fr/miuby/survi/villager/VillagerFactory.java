@@ -808,7 +808,7 @@ public class VillagerFactory {
                 new Blessing(new ItemEffect(ECustomItem.AXOLOTL_BUCKET)),
                 new Blessing(new ItemEffect(ECustomItem.PRISMARINE_SHARD, 64)),
                 new Blessing(new ItemEffect(ECustomItem.HEALING_ARROW, 64)),
-                new Blessing(new ItemEffect(ECustomItem.UMBREAKING5)),
+                new Blessing(new ItemEffect(ECustomItem.UMBREAKING3)),
                 new Blessing(new ItemEffect(ECustomItem.NETHERITE_INGOT)),
                 new Blessing(new ItemEffect(ECustomItem.TERMINATOR)),
         };
