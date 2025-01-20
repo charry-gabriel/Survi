@@ -158,9 +158,9 @@ public enum ECustomItem {
     PRISMARINE_SHARD(Material.PRISMARINE_SHARD),
     NETHERITE_INGOT(Material.NETHERITE_INGOT),
 
-    UMBREAKING5(Material.ENCHANTED_BOOK, itemStack -> {
+    UMBREAKING3(Material.ENCHANTED_BOOK, itemStack -> {
         EnchantmentStorageMeta meta = (EnchantmentStorageMeta) itemStack.getItemMeta();
-        meta.addStoredEnchant(Enchantment.UNBREAKING, 4, true);
+        meta.addStoredEnchant(Enchantment.UNBREAKING, 3, false);
         itemStack.setItemMeta(meta);
     }),
 
