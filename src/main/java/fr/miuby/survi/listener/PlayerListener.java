@@ -3,6 +3,7 @@ package fr.miuby.survi.listener;
 import com.destroystokyo.paper.event.player.PlayerArmorChangeEvent;
 import fr.miuby.survi.GameManager;
 import fr.miuby.survi.player.AlphaPlayer;
+import fr.miuby.survi.role.RoleAttribute;
 import fr.miuby.survi.villager.AVillager;
 import fr.miuby.survi.villager.VillagerLevel;
 import fr.miuby.survi.villager.VillagerVendor;
@@ -14,6 +15,7 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.NamespacedKey;
 import org.bukkit.advancement.Advancement;
 import org.bukkit.advancement.AdvancementProgress;
+import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Villager;
@@ -22,6 +24,8 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.*;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 
 public class PlayerListener implements Listener {
 
@@ -115,7 +119,16 @@ public class PlayerListener implements Listener {
 
     @EventHandler
     public void onPlayerRespawn(PlayerRespawnEvent event) {
-        AlphaPlayer.get(event.getPlayer().getUniqueId()).getAlphaLife().actualizeDeath();
+        Player player = event.getPlayer();
+        AlphaPlayer alphaPlayer = AlphaPlayer.get(player.getUniqueId());
+        alphaPlayer.getAlphaLife().actualizeDeath();
+
+        for (RoleAttribute roleAttribute : alphaPlayer.getRole().attributes()) {
+            if (roleAttribute.getAttributeType() == Attribute.MAX_ABSORPTION) {
+                player.removePotionEffect(PotionEffectType.ABSORPTION);
+                player.addPotionEffect(new PotionEffect(PotionEffectType.ABSORPTION, 0, (int) roleAttribute.getValue()));
+            }
+        }
     }
 
     @EventHandler

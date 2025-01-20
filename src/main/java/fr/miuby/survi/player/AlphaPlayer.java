@@ -9,6 +9,8 @@ import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.entity.Player;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 
 import java.io.Serializable;
 import java.util.*;
@@ -143,6 +145,11 @@ public class AlphaPlayer implements Serializable {
             playerAttribute.setBaseValue(roleAttribute.getValue());
         else
             playerAttribute.addTransientModifier(roleAttribute.createAttributeModifier());
+
+        if (roleAttribute.getAttributeType() == Attribute.MAX_ABSORPTION) {
+            this.getPlayer().removePotionEffect(PotionEffectType.ABSORPTION);
+            this.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.ABSORPTION, 0, (int) roleAttribute.getValue()));
+        }
     }
 
     //region Getters Setters
