@@ -70,6 +70,7 @@ public class VillagerFactory {
     //region Villagers
     private void spawnSurvivant(){
         Tribute[] tributes = new Tribute[]{
+                new Tribute(new ItemStack(Material.DIRT, 1)),
                 new Tribute(new ItemStack(Material.WHEAT_SEEDS, 32)),
                 new Tribute(new ItemStack(Material.OAK_LOG, 640), new ItemStack(Material.APPLE, 32), new ItemStack(Material.SUGAR_CANE, 64)),
                 new Tribute(new ItemStack(Material.IRON_BLOCK, 160), new ItemStack(Material.COAL_BLOCK, 64), new ItemStack(Material.LAPIS_BLOCK, 64), new ItemStack(Material.WAXED_COPPER_BLOCK, 16), new ItemStack(Material.WAXED_EXPOSED_COPPER, 16), new ItemStack(Material.WAXED_WEATHERED_COPPER, 16), new ItemStack(Material.WAXED_OXIDIZED_COPPER, 16)),
@@ -84,20 +85,22 @@ public class VillagerFactory {
         };
 
         Blessing[] blessings = new Blessing[]{
-                new Blessing(new MaxHealthEffect(4),new UnlockToolEffect(LockedToolType.WOOD)),
-                new Blessing(new MaxHealthEffect(6),new UnlockArmorEffect(LockedArmorType.LEATHER), new UnlockToolEffect(LockedToolType.STONE)),
-                new Blessing(new MaxHealthEffect(8),new UnlockArmorEffect(LockedArmorType.CHAINMAIL), new UnlockToolEffect(LockedToolType.IRON)),
-                new Blessing(new MaxHealthEffect(10),new UnlockArmorEffect(LockedArmorType.IRON)),
-                new Blessing(new MaxHealthEffect(12),new UnlockArmorEffect(LockedArmorType.GOLD), new UnlockToolEffect(LockedToolType.GOLD)),
-                new Blessing(new MaxHealthEffect(14),new UnlockArmorEffect(LockedArmorType.DIAMOND), new UnlockToolEffect(LockedToolType.DIAMOND), new UnlockArmorEffect(LockedArmorType.NETHERITE)),
-                new Blessing(new MaxHealthEffect(15)),
-                new Blessing(new MaxHealthEffect(16)),
-                new Blessing(new MaxHealthEffect(17)),
-                new Blessing(new MaxHealthEffect(18)),
-                new Blessing(new MaxHealthEffect(20)),
+                new Blessing(new MaxHealthEffect(-20)),
+                new Blessing(new MaxHealthEffect(-18),new UnlockToolEffect(LockedToolType.WOOD)),
+                new Blessing(new MaxHealthEffect(-16),new UnlockArmorEffect(LockedArmorType.LEATHER), new UnlockToolEffect(LockedToolType.STONE)),
+                new Blessing(new MaxHealthEffect(-14),new UnlockArmorEffect(LockedArmorType.CHAINMAIL), new UnlockToolEffect(LockedToolType.IRON)),
+                new Blessing(new MaxHealthEffect(-12),new UnlockArmorEffect(LockedArmorType.IRON)),
+                new Blessing(new MaxHealthEffect(-10),new UnlockArmorEffect(LockedArmorType.GOLD), new UnlockToolEffect(LockedToolType.GOLD)),
+                new Blessing(new MaxHealthEffect(-8),new UnlockArmorEffect(LockedArmorType.DIAMOND), new UnlockToolEffect(LockedToolType.DIAMOND), new UnlockArmorEffect(LockedArmorType.NETHERITE)),
+                new Blessing(new MaxHealthEffect(-6)),
+                new Blessing(new MaxHealthEffect(-4)),
+                new Blessing(new MaxHealthEffect(-2)),
+                new Blessing(new MaxHealthEffect(0)),
+                new Blessing(new MaxHealthEffect(2)),
         };
 
         TextComponent[] messages = new TextComponent[]{
+                Component.text("Désolé, c'est fait exprès. **MOUAHAHAHAAHHA** (imaginez le rire d'ariscis)"),
                 Component.text("Vous pouvez maintenant avoir des outils en bois !"),
                 Component.text( "Vous pouvez maintenant avoir des outils en pierre et une armure en cuir !"),
                 Component.text( "Vous pouvez maintenant avoir des outils en fer et une armure en maille !"),
@@ -114,6 +117,7 @@ public class VillagerFactory {
         };
 
         TextComponent[] recap = new TextComponent[]{
+                Component.text( ""),
                 Component.text( ""),
                 Component.text("Outils en bois débloqué !"),
                 Component.text( "Outils en bois et armure en cuir débloqué !"),
@@ -141,6 +145,7 @@ public class VillagerFactory {
                 Component.text( "Survivant IX"),
                 Component.text( "Survivant X"),
                 Component.text( "Survivant XI"),
+                Component.text( "Survivant XII"),
                 Component.text( "Survivant MAX"),
         };
 
