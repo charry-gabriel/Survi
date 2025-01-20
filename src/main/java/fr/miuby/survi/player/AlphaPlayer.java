@@ -64,6 +64,7 @@ public class AlphaPlayer implements Serializable {
 
             this.addRoleAttribute();
             this.getAlphaLife().actualizeDeath();
+            this.getAlphaLife().actualizeSuccess();
 
             this.player.discoverRecipes(GameManager.getInstance().getCustomItemFactory().getNewRecipes().keySet());
             //TODO: old recipe, pas besoin sur un nouveau serveur

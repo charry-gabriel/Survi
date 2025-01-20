@@ -63,15 +63,19 @@ public class AlphaLife {
         }
     }
 
-    public void setSuccess(int success) {
+    public void actualizeSuccess() {
         this.regenHealth(() -> {
-            this.successLife = success;
-
             if (attributeInstance.getModifier(successKey) != null)
                 attributeInstance.removeModifier(successKey);
             AttributeModifier successModifier = new AttributeModifier(successKey, this.successLife, AttributeModifier.Operation.ADD_NUMBER);
             attributeInstance.addTransientModifier(successModifier);
         });
+    }
+
+    public void setSuccess(int success) {
+        this.successLife = success;
+
+        this.actualizeSuccess();
     }
 
     public void setDeath(int death) {
