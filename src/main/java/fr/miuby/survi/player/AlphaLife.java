@@ -84,14 +84,12 @@ public class AlphaLife {
     }
 
     public void setBlessing(int blessing) {
-        this.regenHealth(() -> {
-            this.blessingLife = blessing;
+        this.blessingLife = blessing;
 
-            if (attributeInstance.getModifier(blessingKey) != null)
-                attributeInstance.removeModifier(blessingKey);
-            AttributeModifier blessingModifier = new AttributeModifier(blessingKey, this.blessingLife, AttributeModifier.Operation.ADD_NUMBER);
-            attributeInstance.addTransientModifier(blessingModifier);
-        });
+        if (attributeInstance.getModifier(blessingKey) != null)
+            attributeInstance.removeModifier(blessingKey);
+        AttributeModifier blessingModifier = new AttributeModifier(blessingKey, this.blessingLife, AttributeModifier.Operation.ADD_NUMBER);
+        attributeInstance.addTransientModifier(blessingModifier);
     }
 
     public void setArmorMalus(boolean hasArmorMalus) {

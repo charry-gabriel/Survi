@@ -84,11 +84,13 @@ public class VillagerLevel extends AVillager {
     }
 
     public void applyAllCurrentBlessing(AlphaPlayer player) {
-        for (Blessing blessing : getCurrentBlessings()) {
-            for (BlessingEffect effect : blessing.getBlessingEffects()) {
-                effect.applyEffect(player);
+        player.getAlphaLife().regenHealth(() -> {
+            for (Blessing blessing : getCurrentBlessings()) {
+                for (BlessingEffect effect : blessing.getBlessingEffects()) {
+                    effect.applyEffect(player);
+                }
             }
-        }
+        });
     }
 
     public void applyBlessing() {
