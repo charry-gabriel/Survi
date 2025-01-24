@@ -8,6 +8,7 @@ import fr.miuby.survi.player.AlphaPlayer;
 import fr.miuby.survi.GameManager;
 import fr.miuby.survi.role.ERole;
 import fr.miuby.survi.villager.AVillager;
+import fr.miuby.survi.villager.VillagerLevel;
 import fr.miuby.survi.world.EWorld;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -189,11 +190,14 @@ public abstract class Database {
 
             if (rs.next()) {
                 UUID uuid = UUID.fromString(rs.getString("uuid"));
-                villager.setLevel(rs.getInt("level"));
 
-                String givenItems = rs.getString("givenItems");
-                if (givenItems != null)
-                    villager.setGivenItems(ItemStack.deserializeItemsFromBytes(Base64.getDecoder().decode(givenItems)));
+                if (villager instanceof VillagerLevel villagerLevel) {
+                    villagerLevel.setLevel(rs.getInt("level"));
+
+                    String givenItems = rs.getString("givenItems");
+                    if (givenItems != null)
+                        villagerLevel.setGivenItems(ItemStack.deserializeItemsFromBytes(Base64.getDecoder().decode(givenItems)));
+                }
 
                 villager.setLocation(new Location(GameManager.getInstance().getWorldFactory().getWorld(EWorld.VILLAGE).getWorld(), rs.getFloat("locationX"), rs.getFloat("locationY"), rs.getFloat("locationZ"), rs.getFloat("locationYaw"), rs.getFloat("locationPitch")));
                 villager.setRealVillager(uuid);

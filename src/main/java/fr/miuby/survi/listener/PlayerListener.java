@@ -5,8 +5,8 @@ import fr.miuby.survi.GameManager;
 import fr.miuby.survi.player.AlphaPlayer;
 import fr.miuby.survi.role.RoleAttribute;
 import fr.miuby.survi.villager.AVillager;
+import fr.miuby.survi.villager.Trader;
 import fr.miuby.survi.villager.VillagerLevel;
-import fr.miuby.survi.villager.VillagerVendor;
 import fr.miuby.survi.world.EWorld;
 import fr.miuby.survi.world.Monde;
 import io.papermc.paper.advancement.AdvancementDisplay;
@@ -67,26 +67,25 @@ public class PlayerListener implements Listener {
         if (event.getRightClicked().getType() == EntityType.VILLAGER)
         {
             Villager villager = (Villager) event.getRightClicked();
-            if (AVillager.contains(villager.getUniqueId()))
-            {
-                AVillager aVillager = AVillager.get(villager.getUniqueId());
+            AVillager aVillager = AVillager.get(villager.getUniqueId());
 
-                if (aVillager instanceof VillagerVendor vendor)
-                {
-                    player.openInventory(aVillager.getInventory());
-                    player.sendMessage(Component.text("<", NamedTextColor.AQUA).append(vendor.getDisplayName()).append(Component.text("> ", NamedTextColor.AQUA)).append(vendor.getOpenMessage()));
-                }
-                else if (aVillager instanceof VillagerLevel level && level.getTribute() == null)
-                {
+            switch (aVillager) {
+                case VillagerLevel level when level.getTribute() == null -> {
                     player.sendMessage(Component.text("<", NamedTextColor.AQUA).append(level.getDisplayName()).append(Component.text("> ", NamedTextColor.AQUA)).append(level.getMessage()));
+                    event.setCancelled(true);
                 }
-                else
-                {
-                    player.openInventory(aVillager.getInventory());
+                case VillagerLevel level -> {
+                    player.openInventory(level.getInventory());
+                    event.setCancelled(true);
+                }
+                case Trader trader -> {
+                    player.openMerchant(trader.getVillager(), true);
+                    player.sendMessage(Component.text("<", NamedTextColor.AQUA).append(aVillager.getDisplayName()).append(Component.text("> ", NamedTextColor.AQUA)).append(aVillager.getOpenMessage()));
+                    event.setCancelled(true);
+                }
+                case null, default -> {
                 }
             }
-
-            event.setCancelled(true);
         }
         else if (event.getRightClicked().getType() == EntityType.WANDERING_TRADER)
         {

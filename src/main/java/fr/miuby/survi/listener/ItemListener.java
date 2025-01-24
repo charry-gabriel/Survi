@@ -3,6 +3,11 @@ package fr.miuby.survi.listener;
 import fr.miuby.survi.GameManager;
 import fr.miuby.survi.item.CustomRecipe;
 import fr.miuby.survi.villager.AVillager;
+import fr.miuby.survi.villager.Trader;
+import fr.miuby.survi.villager.VillagerLevel;
+import io.papermc.paper.event.player.PlayerTradeEvent;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Villager;
@@ -10,6 +15,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.CrafterCraftEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.inventory.PrepareItemCraftEvent;
 import org.bukkit.inventory.ItemStack;
 
@@ -67,19 +73,36 @@ public class ItemListener implements Listener {
 
     @EventHandler
     public void onInventoryClick(InventoryClickEvent event) {
+        if (event.getClickedInventory() == null || event.getClickedInventory().getType() == InventoryType.MERCHANT || event.getInventory().getType() == InventoryType.MERCHANT)
+            return;
+
         Player player = (Player)event.getWhoClicked();
         ItemStack item = event.getCurrentItem();
-        if (event.getClickedInventory() != null && event.getClickedInventory().getHolder() instanceof Player && event.getInventory().getHolder() instanceof Villager) {
+
+        if (event.getClickedInventory().getHolder() instanceof Player && event.getInventory().getHolder() instanceof Villager) {
             if (item != null && item.getType() != Material.AIR) {
                 Villager v = (Villager) event.getInventory().getHolder();
-                AVillager villager = AVillager.get(v.getUniqueId());
+                VillagerLevel villager = (VillagerLevel) AVillager.get(v.getUniqueId());
+
+                if (villager == null)
+                    return;
 
                 villager.giveItems(event.getInventory(), item, player);
             }
 
             event.setCancelled(true);
-        } else if (event.getClickedInventory() != null && event.getClickedInventory().getHolder() instanceof Villager) {
+        } else if (event.getClickedInventory().getHolder() instanceof Villager) {
             event.setCancelled(true);
         }
+    }
+
+    @EventHandler
+    public void onPlayerTrade(PlayerTradeEvent event) {
+        Trader villager = (Trader) AVillager.get(event.getVillager().getUniqueId());
+        if (villager == null)
+            return;
+
+        event.getPlayer().sendMessage(Component.text("<", NamedTextColor.AQUA).append(villager.getDisplayName()).color(NamedTextColor.AQUA).append(Component.text("> ", NamedTextColor.AQUA)
+                .append(villager.getMessage(event.getTrade().getResult())).color(NamedTextColor.AQUA)));
     }
 }

@@ -18,19 +18,20 @@ import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 
 import java.util.Objects;
-
+/*
 public class VillagerVendor extends AVillager {
     private final ItemStack[] itemStacks;
     private final TextComponent displayName;
-    private final TextComponent openMessage;
+    protected final Blessing[] blessings;
 
     public VillagerVendor(String nameId, TextComponent displayName, Villager.Type type, Villager.Profession profession, Blessing[] blessings, TextComponent[] messages, ItemStack[] itemStacks, TextComponent openMessage) {
-        super(nameId, type, profession, blessings, messages);
+        super(nameId, type, profession, messages, openMessage);
+        this.blessings = blessings;
         this.itemStacks = itemStacks;
         this.nameId = nameId;
         this.displayName = displayName;
-        this.openMessage = openMessage;
 
+        initVillager();
         getVillager().customName(getDisplayName());
         createInventory();
     }
@@ -93,10 +94,6 @@ public class VillagerVendor extends AVillager {
         return messages[getItemIndex(itemStack)];
     }
 
-    public TextComponent getOpenMessage() {
-        return openMessage;
-    }
-
     private int getItemIndex(ItemStack itemStack) {
         for (int i = 0; i < itemStacks.length; i++) {
             if (itemStacks[i].isSimilar(itemStack))
@@ -104,4 +101,4 @@ public class VillagerVendor extends AVillager {
         }
         return -1;
     }
-}
+}*/

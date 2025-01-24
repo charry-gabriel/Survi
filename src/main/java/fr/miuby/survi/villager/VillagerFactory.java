@@ -13,6 +13,7 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.*;
 import org.bukkit.entity.Villager;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.MerchantRecipe;
 
 import javax.annotation.Nullable;
 import java.util.*;
@@ -149,7 +150,9 @@ public class VillagerFactory {
                 Component.text( "Survivant MAX"),
         };
 
-        this.addNewVillager(new VillagerLevel("Survivant", Villager.Type.SAVANNA, Villager.Profession.FARMER, blessings, messages, tributes, names, recap));
+        TextComponent openMessage = Component.text("");
+
+        this.addNewVillager(new VillagerLevel("Survivant", Villager.Type.SAVANNA, Villager.Profession.FARMER, blessings, messages, tributes, names, recap, openMessage));
     }
 
     private void spawnNain(){
@@ -196,7 +199,9 @@ public class VillagerFactory {
                 Component.text( "Nain Roux MAX"),
         };
 
-        this.addNewVillager(new VillagerLevel("Nain", Villager.Type.SWAMP, Villager.Profession.NITWIT, blessings, messages, tributes, names, recap));
+        TextComponent openMessage = Component.text("");
+
+        this.addNewVillager(new VillagerLevel("Nain", Villager.Type.SWAMP, Villager.Profession.NITWIT, blessings, messages, tributes, names, recap, openMessage));
     }
 
     private void spawnMaddox(){
@@ -243,7 +248,9 @@ public class VillagerFactory {
                 Component.text( "Maddox MAX"),
         };
 
-        this.addNewVillager(new VillagerLevel("Maddox", Villager.Type.TAIGA, Villager.Profession.BUTCHER, blessings, messages, tributes, names, recap));
+        TextComponent openMessage = Component.text("");
+
+        this.addNewVillager(new VillagerLevel("Maddox", Villager.Type.TAIGA, Villager.Profession.BUTCHER, blessings, messages, tributes, names, recap, openMessage));
     }
 
     private void spawnThomas(){
@@ -310,7 +317,9 @@ public class VillagerFactory {
                 Component.text( "Thomas Pesquet MAX"),
         };
 
-        this.addNewVillager(new VillagerLevel("Thomas", Villager.Type.SNOW, Villager.Profession.FISHERMAN, blessings, messages, tributes, names, recap));
+        TextComponent openMessage = Component.text("");
+
+        this.addNewVillager(new VillagerLevel("Thomas", Villager.Type.SNOW, Villager.Profession.FISHERMAN, blessings, messages, tributes, names, recap, openMessage));
     }
 
     private void spawnFrancois(){
@@ -383,7 +392,9 @@ public class VillagerFactory {
 
         };
 
-        this.addNewVillager(new VillagerLevel("François", Villager.Type.JUNGLE, Villager.Profession.CLERIC, blessings, messages, tributes, names, recap));
+        TextComponent openMessage = Component.text("");
+
+        this.addNewVillager(new VillagerLevel("François", Villager.Type.JUNGLE, Villager.Profession.CLERIC, blessings, messages, tributes, names, recap, openMessage));
     }
 
     /*private void spawnPecheur1(){
@@ -619,12 +630,11 @@ public class VillagerFactory {
     }*/
 
     private void spawnGolDRoger(){
-        ItemStack[] items = new ItemStack[] {
-                new ItemStack(Material.EMERALD_BLOCK, 9),
-        };
+        MerchantRecipe fishingRod = new MerchantRecipe(ECustomItem.FISHING_D_ROD.getItemStack(), 0, 99, false, 0, 0,9,0,true);
+        fishingRod.addIngredient(new ItemStack(Material.EMERALD_BLOCK, 9));
 
-        Blessing[] blessings = new Blessing[] {
-                new Blessing(new ItemEffect(ECustomItem.FISHING_D_ROD)),
+        MerchantRecipe[] recipes = new MerchantRecipe[] {
+                fishingRod,
         };
 
         TextComponent[] messages = new TextComponent[] {
@@ -633,18 +643,17 @@ public class VillagerFactory {
 
         TextComponent openMessage = Component.text("Veux-tu une belle canne à pêche ?");
 
-        AVillager villager = new VillagerVendor("GoldRoger", Component.text("Gol D. Roger"), Villager.Type.SAVANNA, Villager.Profession.WEAPONSMITH, blessings, messages, items, openMessage);
+        AVillager villager = new Trader("GoldRoger", Component.text("Gol D. Roger"), Villager.Type.SAVANNA, Villager.Profession.WEAPONSMITH, recipes, messages, openMessage);
         villager.getVillager().getEquipment().setItemInMainHand(new ItemStack(Material.FISHING_ROD));
         this.addNewVillager(villager);
     }
 
     private void spawnHermanos(){
-        ItemStack[] items = new ItemStack[]{
-                new ItemStack(Material.CHICKEN_SPAWN_EGG, 1),
-        };
+        MerchantRecipe mending = new MerchantRecipe(ECustomItem.MENDING.getItemStack(), 0, 99, false, 0, 0,9,0,true);
+        mending.addIngredient(new ItemStack(Material.CHICKEN_SPAWN_EGG, 1));
 
-        Blessing[] blessings = new Blessing[]{
-                new Blessing(new ItemEffect(ECustomItem.MENDING)),
+        MerchantRecipe[] recipes = new MerchantRecipe[] {
+                mending,
         };
 
         TextComponent[] messages = new TextComponent[]{
@@ -653,16 +662,15 @@ public class VillagerFactory {
 
         TextComponent openMessage = Component.text("J'adore le poulet. Je ne vends aucune drogue.");
 
-        this.addNewVillager(new VillagerVendor("Hermanos", Component.text("Los Pollos Hermanos"), Villager.Type.SWAMP, Villager.Profession.LIBRARIAN, blessings, messages, items, openMessage));
+        this.addNewVillager(new Trader("Hermanos", Component.text("Los Pollos Hermanos"), Villager.Type.SWAMP, Villager.Profession.LIBRARIAN, recipes, messages, openMessage));
     }
 
     private void spawnSpeedBoots(){
-        ItemStack[] items = new ItemStack[]{
-                new ItemStack(Material.CHICKEN_SPAWN_EGG, 1),
-        };
+        MerchantRecipe airForce = new MerchantRecipe(ECustomItem.AIR_FORCE.getItemStack(), 0, 99, false, 0, 0,9,0,true);
+        airForce.addIngredient(new ItemStack(Material.CHICKEN_SPAWN_EGG, 1));
 
-        Blessing[] blessings = new Blessing[]{
-                new Blessing(new ItemEffect(ECustomItem.AIR_FORCE)),
+        MerchantRecipe[] recipes = new MerchantRecipe[] {
+                airForce,
         };
 
         TextComponent[] messages = new TextComponent[]{
@@ -671,16 +679,15 @@ public class VillagerFactory {
 
         TextComponent openMessage = Component.text("Les Air Force 1, les chaussures qui courent vite.");
 
-        this.addNewVillager(new VillagerVendor("Nike_49", Component.text("Nike_49"), Villager.Type.PLAINS, Villager.Profession.LEATHERWORKER, blessings, messages, items, openMessage));
+        this.addNewVillager(new Trader("Nike_49", Component.text("Nike_49"), Villager.Type.PLAINS, Villager.Profession.LEATHERWORKER, recipes, messages, openMessage));
     }
 
     private void spawnIndiana(){
-        ItemStack[] items = new ItemStack[]{
-                new ItemStack(Material.CHICKEN_SPAWN_EGG, 1),
-        };
+        MerchantRecipe mineur = new MerchantRecipe(ECustomItem.MINEUR.getItemStack(), 0, 99, false, 0, 0,9,0,true);
+        mineur.addIngredient(new ItemStack(Material.CHICKEN_SPAWN_EGG, 1));
 
-        Blessing[] blessings = new Blessing[]{
-                new Blessing(new ItemEffect(ECustomItem.MINEUR)),
+        MerchantRecipe[] recipes = new MerchantRecipe[] {
+                mineur,
         };
 
         TextComponent[] messages = new TextComponent[]{
@@ -689,16 +696,15 @@ public class VillagerFactory {
 
         TextComponent openMessage = Component.text("Le Casque de Mineur, le casque qui mine vite.");
 
-        this.addNewVillager(new VillagerVendor("Indiana", Component.text("Indiana"), Villager.Type.SNOW, Villager.Profession.CARTOGRAPHER, blessings, messages, items, openMessage));
+        this.addNewVillager(new Trader("Indiana", Component.text("Indiana"), Villager.Type.SNOW, Villager.Profession.CARTOGRAPHER, recipes, messages, openMessage));
     }
 
     private void spawnScaleChestplate(){
-        ItemStack[] items = new ItemStack[]{
-                new ItemStack(Material.CHICKEN_SPAWN_EGG, 1),
-        };
+        MerchantRecipe endiale = new MerchantRecipe(ECustomItem.ENDIALE.getItemStack(), 0, 99, false, 0, 0,9,0,true);
+        endiale.addIngredient(new ItemStack(Material.CHICKEN_SPAWN_EGG, 1));
 
-        Blessing[] blessings = new Blessing[]{
-                new Blessing(new ItemEffect(ECustomItem.ENDIALE)),
+        MerchantRecipe[] recipes = new MerchantRecipe[] {
+                endiale,
         };
 
         TextComponent[] messages = new TextComponent[]{
@@ -707,22 +713,27 @@ public class VillagerFactory {
 
         TextComponent openMessage = Component.text("La Combinaison Endiale, la combinaison à la bonne taille !");
 
-        this.addNewVillager(new VillagerVendor("Sophie", Component.text("Sophie Adenot"), Villager.Type.SWAMP, Villager.Profession.FISHERMAN, blessings, messages, items, openMessage));
+        this.addNewVillager(new Trader("Sophie", Component.text("Sophie Adenot"), Villager.Type.SWAMP, Villager.Profession.FISHERMAN, recipes, messages, openMessage));
     }
 
     private void spawnBarman(){
-        ItemStack[] items = new ItemStack[]{
-                new ItemStack(Material.GOLD_INGOT, 10),
-                new ItemStack(Material.DIAMOND, 4),
-                new ItemStack(Material.GOLD_BLOCK, 8),
-                new ItemStack(Material.EMERALD, 1),
-        };
+        MerchantRecipe sexOnTheBeach = new MerchantRecipe(ECustomItem.SEX_ON_THE_BEACH.getItemStack(), 0, 99, false, 0, 0,9,0,true);
+        sexOnTheBeach.addIngredient(new ItemStack(Material.GOLD_INGOT, 10));
 
-        Blessing[] blessings = new Blessing[]{
-                new Blessing(new ItemEffect(ECustomItem.SEX_ON_THE_BEACH)),
-                new Blessing(new ItemEffect(ECustomItem.PORN_STAR_MARTINI)),
-                new Blessing(new ItemEffect(ECustomItem.SHOOTER_ORGASM)),
-                new Blessing(new ItemEffect(ECustomItem.SPICY_SWEET_DREAMS_TICKET)),
+        MerchantRecipe pornStarMartini = new MerchantRecipe(ECustomItem.PORN_STAR_MARTINI.getItemStack(), 0, 99, false, 0, 0,9,0,true);
+        pornStarMartini.addIngredient(new ItemStack(Material.DIAMOND, 4));
+
+        MerchantRecipe shooterOrgasm = new MerchantRecipe(ECustomItem.SHOOTER_ORGASM.getItemStack(), 0, 99, false, 0, 0,9,0,true);
+        shooterOrgasm.addIngredient(new ItemStack(Material.GOLD_BLOCK, 8));
+
+        MerchantRecipe SpicySweetDreamsTicket = new MerchantRecipe(ECustomItem.SPICY_SWEET_DREAMS_TICKET.getItemStack(), 0, 99, false, 0, 0,9,0,true);
+        SpicySweetDreamsTicket.addIngredient(new ItemStack(Material.EMERALD, 1));
+
+        MerchantRecipe[] recipes = new MerchantRecipe[] {
+                sexOnTheBeach,
+                pornStarMartini,
+                shooterOrgasm,
+                SpicySweetDreamsTicket,
         };
 
         TextComponent[] messages = new TextComponent[]{
@@ -734,38 +745,57 @@ public class VillagerFactory {
 
         TextComponent openMessage = Component.text("Bonjour, bienvenue au bar du Merveilleux Royal Bling-Bling Sexy-Baka Palace-Hôtel. A la carte, nous proposons différents cocktails élaborés avec amour, tendresse et voluptuosité: le Sex On the Beach, le Porn Star Martini, et notre fameux Shooter Orgasm. D’autre part, je peux aussi proposer un Spicy Sweet Dreams Ticket si vous le désirez !");
 
-        AVillager villager = new VillagerVendor("Barman", Component.text("Fruity Délice"), Villager.Type.SAVANNA, Villager.Profession.FLETCHER, blessings, messages, items, openMessage);
+        AVillager villager = new Trader("Barman", Component.text("Fruity Délice"), Villager.Type.SAVANNA, Villager.Profession.FLETCHER, recipes, messages, openMessage);
         villager.getVillager().getEquipment().setItemInMainHand(new ItemStack(Material.POTION));
         this.addNewVillager(villager);
     }
 
     private void spawnReceptionniste(){
-        ItemStack[] items = new ItemStack[]{
-                new ItemStack(Material.NETHERITE_INGOT, 12),
-                new ItemStack(Material.GOLD_BLOCK, 3),
-                new ItemStack(Material.GOLD_INGOT, 9),
-                new ItemStack(Material.DIAMOND_BLOCK, 5),
-                new ItemStack(Material.DIAMOND, 27),
-                new ItemStack(Material.NETHERITE_UPGRADE_SMITHING_TEMPLATE, 1),
-                new ItemStack(Material.SPONGE, 1),
-                new ItemStack(Material.DRAGON_BREATH, 1),
-                new ItemStack(Material.EMERALD, 10),
-                new ItemStack(Material.HEART_OF_THE_SEA, 5),
-                new ItemStack(Material.MUSIC_DISC_PIGSTEP, 1),
-        };
+        MerchantRecipe cle00 = new MerchantRecipe(ECustomItem.CLE00.getItemStack(), 0, 99, false, 0, 0,9,0,true);
+        cle00.addIngredient(new ItemStack(Material.NETHERITE_INGOT, 12));
 
-        Blessing[] blessings = new Blessing[]{
-                new Blessing(new ItemEffect(ECustomItem.CLE00)),
-                new Blessing(new ItemEffect(ECustomItem.CLE01)),
-                new Blessing(new ItemEffect(ECustomItem.CLE02)),
-                new Blessing(new ItemEffect(ECustomItem.CLE11)),
-                new Blessing(new ItemEffect(ECustomItem.CLE12)),
-                new Blessing(new ItemEffect(ECustomItem.CLE13)),
-                new Blessing(new ItemEffect(ECustomItem.CLE14)),
-                new Blessing(new ItemEffect(ECustomItem.CLE15)),
-                new Blessing(new ItemEffect(ECustomItem.CLE16)),
-                new Blessing(new ItemEffect(ECustomItem.CLE31)),
-                new Blessing(new ItemEffect(ECustomItem.CLE32)),
+        MerchantRecipe cle01 = new MerchantRecipe(ECustomItem.CLE01.getItemStack(), 0, 99, false, 0, 0,9,0,true);
+        cle01.addIngredient(new ItemStack(Material.GOLD_BLOCK, 3));
+
+        MerchantRecipe cle02 = new MerchantRecipe(ECustomItem.CLE02.getItemStack(), 0, 99, false, 0, 0,9,0,true);
+        cle02.addIngredient(new ItemStack(Material.GOLD_INGOT, 9));
+
+        MerchantRecipe cle11 = new MerchantRecipe(ECustomItem.CLE11.getItemStack(), 0, 99, false, 0, 0,9,0,true);
+        cle11.addIngredient(new ItemStack(Material.DIAMOND_BLOCK, 5));
+
+        MerchantRecipe cle12 = new MerchantRecipe(ECustomItem.CLE12.getItemStack(), 0, 99, false, 0, 0,9,0,true);
+        cle12.addIngredient(new ItemStack(Material.DIAMOND, 27));
+
+        MerchantRecipe cle13 = new MerchantRecipe(ECustomItem.CLE13.getItemStack(), 0, 99, false, 0, 0,9,0,true);
+        cle13.addIngredient(new ItemStack(Material.NETHERITE_UPGRADE_SMITHING_TEMPLATE, 1));
+
+        MerchantRecipe cle14 = new MerchantRecipe(ECustomItem.CLE14.getItemStack(), 0, 99, false, 0, 0,9,0,true);
+        cle14.addIngredient(new ItemStack(Material.SPONGE, 1));
+
+        MerchantRecipe cle15 = new MerchantRecipe(ECustomItem.CLE15.getItemStack(), 0, 99, false, 0, 0,9,0,true);
+        cle15.addIngredient(new ItemStack(Material.DRAGON_BREATH, 1));
+
+        MerchantRecipe cle16 = new MerchantRecipe(ECustomItem.CLE16.getItemStack(), 0, 99, false, 0, 0,9,0,true);
+        cle16.addIngredient(new ItemStack(Material.EMERALD, 10));
+
+        MerchantRecipe cle31 = new MerchantRecipe(ECustomItem.CLE31.getItemStack(), 0, 99, false, 0, 0,9,0,true);
+        cle31.addIngredient(new ItemStack(Material.HEART_OF_THE_SEA, 5));
+
+        MerchantRecipe cle32 = new MerchantRecipe(ECustomItem.CLE32.getItemStack(), 0, 99, false, 0, 0,9,0,true);
+        cle32.addIngredient(new ItemStack(Material.MUSIC_DISC_PIGSTEP, 1));
+
+        MerchantRecipe[] recipes = new MerchantRecipe[] {
+                cle00,
+                cle01,
+                cle02,
+                cle11,
+                cle12,
+                cle13,
+                cle14,
+                cle15,
+                cle16,
+                cle31,
+                cle32,
         };
 
         TextComponent[] messages = new TextComponent[]{
@@ -785,37 +815,56 @@ public class VillagerFactory {
         TextComponent openMessage = Component.text("La réception, c’est ma vocation. Bienvenue au Merveilleux Royal Bling-Bling Sexy-Baka Palace-Hôtel. Je vous accueille à bras ouverts dans notre somptueux manoir du 19ième, où le service 5 étoiles fourni par nos employés sauront ravir toutes vos exigences. Le discrétion c’est notre crédo… profitez de votre séjour et explorez à votre rythme chaque recoin de notre manoir qui abrite bien plus de secrets que vous ne pouvez l’imaginer. \n" +
                 "Si vous souhaitez siroter une délicieux cocktail aphrodisiaque, notre barman Fruity Delice saura vous contenter. En cas de demande particulière, veuillez-vous référez à Jean Touchatouille… mais on ne sait jamais où il traine celui-ci, il sait se faire discret. Jacques Black, notre croupier, est au premier étage si une envie de jouer vous vient.De toute manière, ici tous les jeux sont gagnants! ");
 
-        AVillager villager = new VillagerVendor("Receptionniste", Component.text("Alainse Lapince"), Villager.Type.JUNGLE, Villager.Profession.CARTOGRAPHER, blessings, messages, items, openMessage);
+        AVillager villager = new Trader("Receptionniste", Component.text("Alainse Lapince"), Villager.Type.JUNGLE, Villager.Profession.CARTOGRAPHER, recipes, messages, openMessage);
         this.addNewVillager(villager);
     }
 
     private void spawnConcierge() {
-        ItemStack[] items = new ItemStack[]{
-                ECustomItem.CLE00.getItemStack(),
-                ECustomItem.CLE01.getItemStack(),
-                ECustomItem.CLE02.getItemStack(),
-                ECustomItem.CLE11.getItemStack(),
-                ECustomItem.CLE12.getItemStack(),
-                ECustomItem.CLE13.getItemStack(),
-                ECustomItem.CLE14.getItemStack(),
-                ECustomItem.CLE15.getItemStack(),
-                ECustomItem.CLE16.getItemStack(),
-                ECustomItem.CLE31.getItemStack(),
-                ECustomItem.CLE32.getItemStack(),
-        };
+        MerchantRecipe silenceArmorTrim = new MerchantRecipe(new ItemStack(Material.SILENCE_ARMOR_TRIM_SMITHING_TEMPLATE), 0, 99, false, 0, 0,9,0,true);
+        silenceArmorTrim.addIngredient(ECustomItem.CLE00.getItemStack());
 
-        Blessing[] blessings = new Blessing[]{
-                new Blessing(new ItemEffect(ECustomItem.SILENCE_ARMOR_TRIM)),
-                new Blessing(new ItemEffect(ECustomItem.PIGLIN_HEAD)),
-                new Blessing(new ItemEffect(ECustomItem.SKELETON_SKULL)),
-                new Blessing(new ItemEffect(ECustomItem.PARROT_SPAWN_EGG)),
-                new Blessing(new ItemEffect(ECustomItem.CAT_SPAWN_EGG)),
-                new Blessing(new ItemEffect(ECustomItem.AXOLOTL_BUCKET)),
-                new Blessing(new ItemEffect(ECustomItem.PRISMARINE_SHARD, 64)),
-                new Blessing(new ItemEffect(ECustomItem.HEALING_ARROW, 64)),
-                new Blessing(new ItemEffect(ECustomItem.UMBREAKING3)),
-                new Blessing(new ItemEffect(ECustomItem.NETHERITE_INGOT)),
-                new Blessing(new ItemEffect(ECustomItem.TERMINATOR)),
+        MerchantRecipe piglinHead = new MerchantRecipe(new ItemStack(Material.PIGLIN_HEAD), 0, 99, false, 0, 0,9,0,true);
+        piglinHead.addIngredient(ECustomItem.CLE01.getItemStack());
+
+        MerchantRecipe skeletonSkull = new MerchantRecipe(new ItemStack(Material.SKELETON_SKULL), 0, 99, false, 0, 0,9,0,true);
+        skeletonSkull.addIngredient(ECustomItem.CLE02.getItemStack());
+
+        MerchantRecipe parrotSpawn = new MerchantRecipe(new ItemStack(Material.PARROT_SPAWN_EGG), 0, 99, false, 0, 0,9,0,true);
+        parrotSpawn.addIngredient(ECustomItem.CLE11.getItemStack());
+
+        MerchantRecipe catSpawn = new MerchantRecipe(new ItemStack(Material.CAT_SPAWN_EGG), 0, 99, false, 0, 0,9,0,true);
+        catSpawn.addIngredient(ECustomItem.CLE12.getItemStack());
+
+        MerchantRecipe axolotlBucket = new MerchantRecipe(new ItemStack(Material.AXOLOTL_BUCKET), 0, 99, false, 0, 0,9,0,true);
+        axolotlBucket.addIngredient(ECustomItem.CLE13.getItemStack());
+
+        MerchantRecipe prismarineShard = new MerchantRecipe(new ItemStack(Material.PRISMARINE_SHARD, 64), 0, 99, false, 0, 0,9,0,true);
+        prismarineShard.addIngredient(ECustomItem.CLE14.getItemStack());
+
+        MerchantRecipe healingArrow = new MerchantRecipe(ECustomItem.HEALING_ARROW.getItemStack(64), 0, 99, false, 0, 0,9,0,true);
+        healingArrow.addIngredient(ECustomItem.CLE16.getItemStack());
+
+        MerchantRecipe unbreaking = new MerchantRecipe(ECustomItem.UNBREAKING3.getItemStack(), 0, 99, false, 0, 0,9,0,true);
+        unbreaking.addIngredient(ECustomItem.CLE15.getItemStack());
+
+        MerchantRecipe netheriteIngot = new MerchantRecipe(new ItemStack(Material.NETHERITE_INGOT), 0, 99, false, 0, 0,9,0,true);
+        netheriteIngot.addIngredient(ECustomItem.CLE31.getItemStack());
+
+        MerchantRecipe terminator = new MerchantRecipe(ECustomItem.TERMINATOR.getItemStack(), 0, 99, false, 0, 0,9,0,true);
+        terminator.addIngredient(ECustomItem.CLE32.getItemStack());
+
+        MerchantRecipe[] recipes = new MerchantRecipe[] {
+                silenceArmorTrim,
+                piglinHead,
+                skeletonSkull,
+                parrotSpawn,
+                catSpawn,
+                axolotlBucket,
+                prismarineShard,
+                healingArrow,
+                unbreaking,
+                netheriteIngot,
+                terminator
         };
 
         TextComponent[] messages = new TextComponent[]{
@@ -836,7 +885,7 @@ public class VillagerFactory {
         TextComponent openMessage = Component.text("Quoi… Que… Que… vous m’avez repéré… ce n’est pas ce que vous croyez, je… je faisais le ménage! En tout cas j’ai pu être spectateur d’une performance honorable de votre part. Le shooter Orgasme de notre barman Fruity Delice a réussi son effet! Eum Eum… \n" + "\n" +
                 "Ecoutez, je pense qu’on peut s’arranger, je ne voudrais pas que de fausses rumeurs se répandent… que diriez-vous d’un arrangement? On est presque ami maintenant. Confirmez-moi que vous êtes bien client de l’hôtel, fournissez-moi vos clefs, et je vous fournirai une récompense en échange de votre aimable discrétion et de votre départ précipité.");
 
-        AVillager villager = new VillagerVendor("Concierge", Component.text("Jean Touchatouille"), Villager.Type.TAIGA, Villager.Profession.ARMORER, blessings, messages, items, openMessage);
+        AVillager villager = new Trader("Concierge", Component.text("Jean Touchatouille"), Villager.Type.TAIGA, Villager.Profession.ARMORER, recipes, messages, openMessage);
         this.addNewVillager(villager);
     }
 

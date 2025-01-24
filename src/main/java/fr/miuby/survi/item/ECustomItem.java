@@ -72,7 +72,11 @@ public enum ECustomItem {
         itemStack.setItemMeta(meta);
     }),
 
-    SPICY_SWEET_DREAMS_TICKET(Material.NAME_TAG, "spicy"),
+    SPICY_SWEET_DREAMS_TICKET(Material.NAME_TAG, itemStack -> {
+        ItemMeta meta = itemStack.getItemMeta();
+        meta.customName(Component.text("Spicy Sweet Dreams Ticket", NamedTextColor.LIGHT_PURPLE));
+        itemStack.setItemMeta(meta);
+    }),
 
     CLE00(Material.NAME_TAG, itemStack -> {
         ItemMeta meta = itemStack.getItemMeta();
@@ -149,16 +153,7 @@ public enum ECustomItem {
         itemStack.setItemMeta(skullMeta);
     }),
 
-    SILENCE_ARMOR_TRIM(Material.SILENCE_ARMOR_TRIM_SMITHING_TEMPLATE),
-    PIGLIN_HEAD(Material.PIGLIN_HEAD),
-    SKELETON_SKULL(Material.SKELETON_SKULL),
-    PARROT_SPAWN_EGG(Material.PARROT_SPAWN_EGG),
-    CAT_SPAWN_EGG(Material.CAT_SPAWN_EGG),
-    AXOLOTL_BUCKET(Material.AXOLOTL_BUCKET),
-    PRISMARINE_SHARD(Material.PRISMARINE_SHARD),
-    NETHERITE_INGOT(Material.NETHERITE_INGOT),
-
-    UMBREAKING3(Material.ENCHANTED_BOOK, itemStack -> {
+    UNBREAKING3(Material.ENCHANTED_BOOK, itemStack -> {
         EnchantmentStorageMeta meta = (EnchantmentStorageMeta) itemStack.getItemMeta();
         meta.addStoredEnchant(Enchantment.UNBREAKING, 3, false);
         itemStack.setItemMeta(meta);
@@ -196,6 +191,12 @@ public enum ECustomItem {
     }
 
     public ItemStack getItemStack() {
+        return itemStack;
+    }
+
+    public ItemStack getItemStack(int amount) {
+        ItemStack itemStack = this.getItemStack();
+        itemStack.setAmount(amount);
         return itemStack;
     }
 

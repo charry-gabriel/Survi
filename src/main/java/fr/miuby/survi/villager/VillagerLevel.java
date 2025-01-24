@@ -16,25 +16,32 @@ import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 
 public class VillagerLevel extends AVillager {
     private final Tribute[] tributes;
     private final TextComponent[] names;
     private final TextComponent[] recapMessages;
+    private final Blessing[] blessings;
 
-    public VillagerLevel(String nameId, Villager.Type type, Villager.Profession profession, Blessing[] blessings, TextComponent[] messages, Tribute[] tributes, TextComponent[] names, TextComponent[] recap) {
-        super(nameId, type, profession, blessings, messages);
+    private int level = 0;
+    private List<ItemStack> givenItems = new ArrayList<>();
+
+    public VillagerLevel(String nameId, Villager.Type type, Villager.Profession profession, Blessing[] blessings, TextComponent[] messages, Tribute[] tributes, TextComponent[] names, TextComponent[] recap, TextComponent openMessage) {
+        super(nameId, type, profession, messages, openMessage);
+        this.blessings = blessings;
         this.tributes = tributes;
         this.names = names;
         this.recapMessages = recap;
 
+        initVillager();
         getVillager().customName(getDisplayName());
         createInventory();
     }
 
-    @Override
     public void giveItems(Inventory inventory, ItemStack item, Player player) {
         removeItemStack(inventory, item, player);
 
@@ -177,5 +184,13 @@ public class VillagerLevel extends AVillager {
 
     public TextComponent getRecapMessage() {
         return recapMessages[this.level].color(NamedTextColor.AQUA);
+    }
+
+    public void setLevel(int level) {
+        this.level = level;
+    }
+
+    public void setGivenItems(ItemStack[] givenItems) {
+        this.givenItems = new ArrayList<>(List.of(givenItems));
     }
 }

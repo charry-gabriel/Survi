@@ -42,12 +42,11 @@ public class DamageListener implements Listener {
     public void onEntityDamage(EntityDamageEvent event) {
         if (event.getEntityType() == EntityType.VILLAGER) {
             Villager villager = (Villager) event.getEntity();
-            if (AVillager.contains(villager.getUniqueId())) {
-                event.setCancelled(true);
-            }
-        }
 
-        if(event.getEntityType() == EntityType.PLAYER) {
+            if (AVillager.get(villager.getUniqueId()) != null)
+                event.setCancelled(true);
+        }
+        else if(event.getEntityType() == EntityType.PLAYER) {
             AlphaPlayer damagedAlphaPlayer = AlphaPlayer.get(event.getEntity().getUniqueId());
             double damage = event.getDamage();
             double modifiedDamage;

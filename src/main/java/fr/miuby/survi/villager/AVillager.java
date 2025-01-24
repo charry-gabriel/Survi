@@ -1,44 +1,39 @@
 package fr.miuby.survi.villager;
 
 import fr.miuby.survi.GameManager;
-import fr.miuby.survi.villager.blessing.Blessing;
 import fr.miuby.survi.world.EWorld;
 import fr.miuby.survi.world.Monde;
 import net.kyori.adventure.text.TextComponent;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Player;
 import org.bukkit.entity.Villager;
 import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.ItemStack;
 
 import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 
 public abstract class AVillager {
     protected Villager villager;
     protected Inventory inventory;
     protected UUID uuid;
-    protected final Blessing[] blessings;
     protected final TextComponent[] messages;
-    protected int level = 0;
+    protected final TextComponent openMessage;
     protected String nameId;
     protected Location location;
-    protected List<ItemStack> givenItems = new ArrayList<>();
 
     private final Villager.Type type;
     private final Villager.Profession profession;
 
-    public AVillager(String nameId, Villager.Type type, Villager.Profession profession, Blessing[] blessings, TextComponent[] messages) {
-        this.blessings = blessings;
+    public AVillager(String nameId, Villager.Type type, Villager.Profession profession, TextComponent[] messages, TextComponent openMessage) {
         this.messages = messages;
         this.type = type;
         this.profession = profession;
         this.nameId = nameId;
+        this.openMessage = openMessage;
+    }
 
+    public void initVillager() {
         if (GameManager.getInstance().getDatabase().IsLoaded() && !GameManager.getInstance().getDatabase().initVillager(this, this.nameId)) {
             GameManager.getInstance().getLogger().warning(this.nameId + " doesn't exist");
             this.villager = CreateRealVillager(new Location(GameManager.getInstance().getWorldFactory().getWorld(EWorld.VILLAGE).getWorld(), 0, 700, 0), type, profession);
@@ -47,15 +42,12 @@ public abstract class AVillager {
         }
     }
 
+    @Nullable
     public static AVillager get(UUID uuid) {
-        AVillager villager = GameManager.getInstance().getVillagerFactory().getVillagers().get(uuid);
-        if (villager == null)
-            throw new NullPointerException(uuid.toString() + " villager not found !");
-        return villager;
-    }
+        if (GameManager.getInstance().getVillagerFactory().getVillagers().containsKey(uuid))
+            return GameManager.getInstance().getVillagerFactory().getVillagers().get(uuid);
 
-    public static boolean contains(UUID uuid) {
-        return GameManager.getInstance().getVillagerFactory().getVillagers().containsKey(uuid);
+        return null;
     }
 
     private Villager CreateRealVillager(Location location, Villager.Type type, Villager.Profession profession) {
@@ -68,8 +60,6 @@ public abstract class AVillager {
         villager.setSilent(true);
         return villager;
     }
-
-    public abstract void giveItems(Inventory inventory, ItemStack item, Player player);
 
     public abstract void createInventory();
 
@@ -110,15 +100,11 @@ public abstract class AVillager {
         return null;
     }
 
-    public void setLevel(int level) {
-        this.level = level;
-    }
-
     public void setLocation(Location location) {
         this.location = location;
     }
 
-    public void setGivenItems(ItemStack[] givenItems) {
-        this.givenItems = new ArrayList<>(List.of(givenItems));
+    public TextComponent getOpenMessage() {
+        return openMessage;
     }
 }
