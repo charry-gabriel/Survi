@@ -13,7 +13,7 @@ commands:
     usage: /<command> [player] [role]
   villager:
     description: Commande pour les villagers
-    usage: /<command> <subcommand> [villager]
+    usage: /<command> [villager] <teleport> et <player> ou <position> et <yaw> <pitch>
   subrole:
     description: Change les sous-role d'un joueur
     usage: /<command> <add/remove> [player] [role]

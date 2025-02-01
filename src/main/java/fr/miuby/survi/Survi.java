@@ -1,9 +1,11 @@
 package fr.miuby.survi;
 
+import fr.miuby.survi.database.SqlCommand;
 import fr.miuby.survi.listener.*;
 import fr.miuby.survi.role.RoleTabCompleter;
 import fr.miuby.survi.role.SubRoleTabCompleter;
-import fr.miuby.survi.villager.VillagerTabCompleter;
+import fr.miuby.survi.villager.VillagerCommand;
+import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -13,6 +15,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
+@SuppressWarnings("UnstableApiUsage")
 public class Survi extends JavaPlugin {
     private final Commands commands = new Commands();
 
@@ -29,9 +32,13 @@ public class Survi extends JavaPlugin {
         getConfig().options().copyDefaults(true);
         saveConfig();
 
+        this.getLifecycleManager().registerEventHandler(LifecycleEvents.COMMANDS, commands -> {
+            commands.registrar().register(SqlCommand.createCommand().build());
+            commands.registrar().register(VillagerCommand.createCommand().build());
+        });
+
         Objects.requireNonNull(getCommand("role")).setTabCompleter(new RoleTabCompleter());
         Objects.requireNonNull(getCommand("subrole")).setTabCompleter(new SubRoleTabCompleter());
-        Objects.requireNonNull(getCommand("villager")).setTabCompleter(new VillagerTabCompleter());
 
         GameManager.getInstance().init(this);
     }

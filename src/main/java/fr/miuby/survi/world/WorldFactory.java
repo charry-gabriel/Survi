@@ -4,6 +4,8 @@ import fr.miuby.survi.utils.Rect;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
 import org.bukkit.Server;
+import org.bukkit.World;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -47,6 +49,10 @@ public class WorldFactory {
             }
         }
         throw new NullPointerException("world uuid not found !");
+    }
+
+    public static World getDefaultWorld() {
+        return Monde.get(EWorld.VILLAGE).getWorld();
     }
 }
 

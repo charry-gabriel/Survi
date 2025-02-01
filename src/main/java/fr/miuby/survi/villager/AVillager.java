@@ -1,8 +1,7 @@
 package fr.miuby.survi.villager;
 
 import fr.miuby.survi.GameManager;
-import fr.miuby.survi.world.EWorld;
-import fr.miuby.survi.world.Monde;
+import fr.miuby.survi.world.WorldFactory;
 import net.kyori.adventure.text.TextComponent;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
@@ -36,7 +35,7 @@ public abstract class AVillager {
     public void initVillager() {
         if (GameManager.getInstance().getDatabase().IsLoaded() && !GameManager.getInstance().getDatabase().initVillager(this, this.nameId)) {
             GameManager.getInstance().getLogger().warning(this.nameId + " doesn't exist");
-            this.villager = CreateRealVillager(new Location(GameManager.getInstance().getWorldFactory().getWorld(EWorld.VILLAGE).getWorld(), 0, 700, 0), type, profession);
+            this.villager = CreateRealVillager(new Location(WorldFactory.getDefaultWorld(), 0, 700, 0), type, profession);
             this.uuid = this.villager.getUniqueId();
             GameManager.getInstance().getDatabase().CreateDBVillager(this.nameId, this.uuid);
         }
@@ -92,7 +91,7 @@ public abstract class AVillager {
 
     @Nullable
     private Villager findRealVillager(UUID uuid) {
-        Entity entity = Monde.get(EWorld.VILLAGE).getWorld().getEntity(uuid);
+        Entity entity = WorldFactory.getDefaultWorld().getEntity(uuid);
 
         if (entity != null && entity.getType() == EntityType.VILLAGER) {
             return (Villager)entity;
