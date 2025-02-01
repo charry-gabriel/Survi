@@ -10,7 +10,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
-
+/*
 public class VillagerTabCompleter implements TabCompleter {
     @Override
     public @Nullable List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
@@ -37,4 +37,4 @@ public class VillagerTabCompleter implements TabCompleter {
         }
         return null;
     }
-}
+}*/
