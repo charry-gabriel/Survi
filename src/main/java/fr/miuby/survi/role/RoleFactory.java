@@ -1,202 +1,164 @@
 package fr.miuby.survi.role;
 
-import fr.miuby.survi.GameManager;
 import fr.miuby.survi.world.EWorld;
-import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.attribute.Attribute;
 
 import java.util.*;
 
 public class RoleFactory {
-    private final Map<ERole, Role> roles = new HashMap<>();
+    private final Map<ERole, Role> roles = new EnumMap<>(ERole.class);
 
     public RoleFactory() {
-        //region dragon
-        List<RoleAttribute> roleAttributes = new ArrayList<>();
-        roleAttributes.add(new RoleAttribute(EWorld.ALL, Attribute.ARMOR, 0.5f, RoleAttribute.Operation.ADD_SCALAR));
-        roleAttributes.add(new RoleAttribute(EWorld.ALL, Attribute.MAX_HEALTH, 1f, RoleAttribute.Operation.ADD_SCALAR));
-        roleAttributes.add(new RoleAttribute(EWorld.ALL, Attribute.BLOCK_BREAK_SPEED, 0.1f, RoleAttribute.Operation.ADD_SCALAR));
+        List<RoleDefinition> roleDefinitions = Arrays.asList(
+            // Dragon
+            new RoleDefinition(ERole.DRAGON, "Dragon \uD83D\uDC09", NamedTextColor.GOLD, "dragon", b -> b
+                    .add(EWorld.ALL, Attribute.ARMOR, 0.5f)
+                    .add(EWorld.ALL, Attribute.MAX_HEALTH, 1f)
+                    .add(EWorld.ALL, Attribute.BLOCK_BREAK_SPEED, 0.1f)
 
+                    .add(EWorld.VILLAGE, Attribute.ATTACK_DAMAGE, 0.5f)
+                    .add(EWorld.VILLAGE, Attribute.MOVEMENT_SPEED, 0.1f, RoleAttribute.Operation.ADD_NUMBER)
+                    .add(EWorld.VILLAGE, Attribute.SAFE_FALL_DISTANCE, 1f)
 
-        roleAttributes.add(new RoleAttribute(EWorld.VILLAGE, Attribute.ATTACK_DAMAGE, 0.5f, RoleAttribute.Operation.ADD_SCALAR));
-        roleAttributes.add(new RoleAttribute(EWorld.VILLAGE, Attribute.MOVEMENT_SPEED, 0.1f, RoleAttribute.Operation.ADD_NUMBER));
-        roleAttributes.add(new RoleAttribute(EWorld.VILLAGE, Attribute.SAFE_FALL_DISTANCE, 1f, RoleAttribute.Operation.ADD_SCALAR));
+                    .add(EWorld.WILDERNESS, Attribute.ATTACK_DAMAGE, 0.25f)
+                    .add(EWorld.WILDERNESS, Attribute.MOVEMENT_SPEED, 0.01f, RoleAttribute.Operation.ADD_NUMBER)
+                    .add(EWorld.WILDERNESS, Attribute.SAFE_FALL_DISTANCE, 1f)
 
-        roleAttributes.add(new RoleAttribute(EWorld.WILDERNESS, Attribute.ATTACK_DAMAGE, 0.25f, RoleAttribute.Operation.ADD_SCALAR));
-        roleAttributes.add(new RoleAttribute(EWorld.WILDERNESS, Attribute.MOVEMENT_SPEED, 0.01f, RoleAttribute.Operation.ADD_NUMBER));
-        roleAttributes.add(new RoleAttribute(EWorld.WILDERNESS, Attribute.SAFE_FALL_DISTANCE, 1f, RoleAttribute.Operation.ADD_SCALAR));
+                    .add(EWorld.NETHER, Attribute.ATTACK_DAMAGE, 0.4f)
+                    .add(EWorld.NETHER, Attribute.MOVEMENT_SPEED, 0.05f, RoleAttribute.Operation.ADD_NUMBER)
+                    .add(EWorld.NETHER, Attribute.SAFE_FALL_DISTANCE, 10f)
 
-        roleAttributes.add(new RoleAttribute(EWorld.NETHER, Attribute.ATTACK_DAMAGE, 0.4f, RoleAttribute.Operation.ADD_SCALAR));
-        roleAttributes.add(new RoleAttribute(EWorld.NETHER, Attribute.MOVEMENT_SPEED, 0.05f, RoleAttribute.Operation.ADD_NUMBER));
-        roleAttributes.add(new RoleAttribute(EWorld.NETHER, Attribute.SAFE_FALL_DISTANCE, 10f, RoleAttribute.Operation.ADD_SCALAR));
+                    .add(EWorld.END, Attribute.ATTACK_DAMAGE, 0.1f)
+                    .add(EWorld.END, Attribute.MOVEMENT_SPEED, 0.01f, RoleAttribute.Operation.ADD_NUMBER)
+                    .add(EWorld.END, Attribute.SCALE, 0.556f)
+                    .add(EWorld.END, Attribute.SAFE_FALL_DISTANCE, 1f)
+            ),
 
-        roleAttributes.add(new RoleAttribute(EWorld.END, Attribute.ATTACK_DAMAGE, 0.1f, RoleAttribute.Operation.ADD_SCALAR));
-        roleAttributes.add(new RoleAttribute(EWorld.END, Attribute.MOVEMENT_SPEED, 0.01f, RoleAttribute.Operation.ADD_NUMBER));
-        roleAttributes.add(new RoleAttribute(EWorld.END, Attribute.SCALE, 0.556f, RoleAttribute.Operation.ADD_NUMBER));
-        roleAttributes.add(new RoleAttribute(EWorld.END, Attribute.SAFE_FALL_DISTANCE, 1f, RoleAttribute.Operation.ADD_SCALAR));
+            // Loup Garou
+            new RoleDefinition(ERole.LOUP_GAROU, "Loup Garou \uD83D\uDC3A", NamedTextColor.DARK_RED, "loup_garou", b -> b
+                    .add(EWorld.ALL, Attribute.ARMOR, -0.1f)
+                    .add(EWorld.ALL, Attribute.ATTACK_DAMAGE, 6f, RoleAttribute.Operation.ADD_NUMBER)
+                    .add(EWorld.ALL, Attribute.KNOCKBACK_RESISTANCE, 0.35f, RoleAttribute.Operation.ADD_NUMBER)
+                    .add(EWorld.ALL, Attribute.ATTACK_SPEED, 1f)
+                    .add(EWorld.ALL, Attribute.MAX_HEALTH, -0.05f)
+                    .add(EWorld.ALL, Attribute.STEP_HEIGHT, 0.4f, RoleAttribute.Operation.ADD_NUMBER)
+                    .add(EWorld.ALL, Attribute.ENTITY_INTERACTION_RANGE, -0.5f, RoleAttribute.Operation.ADD_NUMBER)
+                    .add(EWorld.ALL, Attribute.SNEAKING_SPEED, 0.7f, RoleAttribute.Operation.ADD_NUMBER)
 
-        roles.put(ERole.DRAGON, new Role(ERole.DRAGON, Component.text("[Dragon \uD83D\uDC09]", NamedTextColor.GOLD), roleAttributes, "dragon"));
-        //endregion
+                    .add(EWorld.VILLAGE, Attribute.MOVEMENT_SPEED, 0.1f, RoleAttribute.Operation.ADD_NUMBER)
+                    .add(EWorld.VILLAGE, Attribute.SCALE, 0.056f)
+                    .add(EWorld.VILLAGE, Attribute.BLOCK_BREAK_SPEED, 0.1f)
 
-        //region LoupGarou
-        roleAttributes = new ArrayList<>();
-        roleAttributes.add(new RoleAttribute(EWorld.ALL, Attribute.ARMOR, -0.1f, RoleAttribute.Operation.ADD_SCALAR));
-        roleAttributes.add(new RoleAttribute(EWorld.ALL, Attribute.ATTACK_DAMAGE, 6f , RoleAttribute.Operation.ADD_NUMBER));
-        roleAttributes.add(new RoleAttribute(EWorld.ALL, Attribute.KNOCKBACK_RESISTANCE, 0.35f, RoleAttribute.Operation.ADD_NUMBER));
-        roleAttributes.add(new RoleAttribute(EWorld.ALL, Attribute.ATTACK_SPEED, 1f, RoleAttribute.Operation.ADD_SCALAR));
-        roleAttributes.add(new RoleAttribute(EWorld.ALL, Attribute.MAX_HEALTH, -0.05f, RoleAttribute.Operation.ADD_SCALAR));
-        roleAttributes.add(new RoleAttribute(EWorld.ALL, Attribute.STEP_HEIGHT, 0.4f , RoleAttribute.Operation.ADD_NUMBER));
-        roleAttributes.add(new RoleAttribute(EWorld.ALL, Attribute.ENTITY_INTERACTION_RANGE, -0.5f, RoleAttribute.Operation.ADD_NUMBER));
-        roleAttributes.add(new RoleAttribute(EWorld.ALL, Attribute.SNEAKING_SPEED, 0.7f, RoleAttribute.Operation.ADD_NUMBER));
+                    .add(EWorld.WILDERNESS, Attribute.MOVEMENT_SPEED, 0.04f, RoleAttribute.Operation.ADD_NUMBER)
+                    .add(EWorld.WILDERNESS, Attribute.SCALE, 0.056f)
 
+                    .add(EWorld.NETHER, Attribute.MOVEMENT_SPEED, 0.04f, RoleAttribute.Operation.ADD_NUMBER)
+                    .add(EWorld.NETHER, Attribute.SCALE, 0.056f)
+                    .add(EWorld.NETHER, Attribute.BLOCK_BREAK_SPEED, 0.1f)
 
-        roleAttributes.add(new RoleAttribute(EWorld.VILLAGE, Attribute.MOVEMENT_SPEED, 0.1f, RoleAttribute.Operation.ADD_NUMBER));
-        roleAttributes.add(new RoleAttribute(EWorld.VILLAGE, Attribute.SCALE, 0.056f, RoleAttribute.Operation.ADD_NUMBER));
-        roleAttributes.add(new RoleAttribute(EWorld.VILLAGE, Attribute.BLOCK_BREAK_SPEED, 0.1f, RoleAttribute.Operation.ADD_SCALAR));
+                    .add(EWorld.END, Attribute.MOVEMENT_SPEED, 0.04f, RoleAttribute.Operation.ADD_NUMBER)
+                    .add(EWorld.END, Attribute.SCALE, 0.611f)
+            ),
 
-        roleAttributes.add(new RoleAttribute(EWorld.WILDERNESS, Attribute.MOVEMENT_SPEED, 0.04f, RoleAttribute.Operation.ADD_NUMBER));
-        roleAttributes.add(new RoleAttribute(EWorld.WILDERNESS, Attribute.SCALE, 0.056f, RoleAttribute.Operation.ADD_NUMBER));
+            // Fée
+            new RoleDefinition(ERole.FEE, "Fée \uD83E\uDDDA", NamedTextColor.LIGHT_PURPLE, "fee", b -> b
+                    .add(EWorld.ALL, Attribute.ARMOR, -0.3f)
+                    .add(EWorld.ALL, Attribute.MAX_HEALTH, -0.3f)
+                    .add(EWorld.ALL, Attribute.BLOCK_BREAK_SPEED, 0.1f)
+                    .add(EWorld.ALL, Attribute.SAFE_FALL_DISTANCE, 1f)
+                    .add(EWorld.ALL, Attribute.FALL_DAMAGE_MULTIPLIER, -1f)
+                    .add(EWorld.ALL, Attribute.OXYGEN_BONUS, 3f, RoleAttribute.Operation.ADD_NUMBER)
+                    .add(EWorld.ALL, Attribute.WATER_MOVEMENT_EFFICIENCY, 0.25f, RoleAttribute.Operation.ADD_NUMBER)
+                    .add(EWorld.ALL, Attribute.ENTITY_INTERACTION_RANGE, 2f)
+                    .add(EWorld.ALL, Attribute.MAX_ABSORPTION, 6f, RoleAttribute.Operation.ADD_NUMBER)
 
-        roleAttributes.add(new RoleAttribute(EWorld.NETHER, Attribute.MOVEMENT_SPEED, 0.04f, RoleAttribute.Operation.ADD_NUMBER));
-        roleAttributes.add(new RoleAttribute(EWorld.NETHER, Attribute.SCALE, 0.056f, RoleAttribute.Operation.ADD_NUMBER));
-        roleAttributes.add(new RoleAttribute(EWorld.NETHER, Attribute.BLOCK_BREAK_SPEED, 0.1f, RoleAttribute.Operation.ADD_SCALAR));
+                    .add(EWorld.VILLAGE, Attribute.MOVEMENT_SPEED, 0.1f, RoleAttribute.Operation.ADD_NUMBER)
+                    .add(EWorld.VILLAGE, Attribute.SCALE, -0.056f)
+                    .add(EWorld.VILLAGE, Attribute.GRAVITY, -0.5f)
+                    .add(EWorld.VILLAGE, Attribute.ATTACK_KNOCKBACK, 2f, RoleAttribute.Operation.ADD_NUMBER)
 
-        roleAttributes.add(new RoleAttribute(EWorld.END, Attribute.MOVEMENT_SPEED, 0.04f, RoleAttribute.Operation.ADD_NUMBER));
-        roleAttributes.add(new RoleAttribute(EWorld.END, Attribute.SCALE, 0.611f, RoleAttribute.Operation.ADD_NUMBER));
+                    .add(EWorld.WILDERNESS, Attribute.MOVEMENT_SPEED, 0.04f, RoleAttribute.Operation.ADD_NUMBER)
+                    .add(EWorld.WILDERNESS, Attribute.SCALE, -0.056f)
+                    .add(EWorld.WILDERNESS, Attribute.GRAVITY, -0.5f)
+                    .add(EWorld.WILDERNESS, Attribute.ATTACK_KNOCKBACK, 2f, RoleAttribute.Operation.ADD_NUMBER)
+
+                    .add(EWorld.NETHER, Attribute.MOVEMENT_SPEED, 0.04f, RoleAttribute.Operation.ADD_NUMBER)
+                    .add(EWorld.NETHER, Attribute.SCALE, -0.056f)
+                    .add(EWorld.NETHER, Attribute.GRAVITY, -0.5f)
+                    .add(EWorld.NETHER, Attribute.ATTACK_KNOCKBACK, 3f, RoleAttribute.Operation.ADD_NUMBER)
+
+                    .add(EWorld.END, Attribute.MOVEMENT_SPEED, 0.04f, RoleAttribute.Operation.ADD_NUMBER)
+                    .add(EWorld.END, Attribute.SCALE, 0.5f)
+            ),
+
+            // Nain
+            new RoleDefinition(ERole.NAIN, "Nain \uD83C\uDF44", NamedTextColor.DARK_GRAY, "nain", b -> b
+                    .add(EWorld.ALL, Attribute.ARMOR, 0.2f)
+                    .add(EWorld.ALL, Attribute.ATTACK_DAMAGE, 0.1f)
+                    .add(EWorld.ALL, Attribute.MAX_HEALTH, 0.2f)
+                    .add(EWorld.ALL, Attribute.BLOCK_BREAK_SPEED, 0.3f)
+                    .add(EWorld.ALL, Attribute.MOVEMENT_SPEED, -0.1f, RoleAttribute.Operation.ADD_NUMBER)
+            ),
+
+            // Géant
+            new RoleDefinition(ERole.GEANT, "Géant \uD83C\uDF44", NamedTextColor.RED, "geant", b -> b
+                    .add(EWorld.ALL, Attribute.ARMOR, 0.3f)
+                    .add(EWorld.ALL, Attribute.ATTACK_DAMAGE, 0.3f)
+                    .add(EWorld.ALL, Attribute.MAX_HEALTH, 0.5f)
+                    .add(EWorld.ALL, Attribute.MOVEMENT_SPEED, -0.2f, RoleAttribute.Operation.ADD_NUMBER)
+                    .add(EWorld.ALL, Attribute.SCALE, 0.3f)
+            ),
+
+            // Combattant
+            new RoleDefinition(ERole.COMBATANT, "\uD83D\uDDE1", NamedTextColor.DARK_RED, "combatant", b -> b
+                    .add(EWorld.ALL, Attribute.ATTACK_DAMAGE, 0.4f)
+                    .add(EWorld.ALL, Attribute.ATTACK_SPEED, 0.2f)
+                    .add(EWorld.ALL, Attribute.ARMOR, 0.2f)
+            ),
+
+            // Mineur
+            new RoleDefinition(ERole.MINEUR, "⛏", NamedTextColor.GRAY, "mineur", b -> b
+                    .add(EWorld.ALL, Attribute.BLOCK_BREAK_SPEED, 0.4f)
+                    .add(EWorld.ALL, Attribute.LUCK, 1.0f, RoleAttribute.Operation.ADD_NUMBER)
+                    .add(EWorld.ALL, Attribute.ARMOR, 0.1f)
+            ),
+
+            // Novice (rôle par défaut)
+            new RoleDefinition(ERole.NOVICE, "❤", NamedTextColor.GRAY, "novice", b ->
+                    // Pas de bonus particulier pour les novices
+                    b.add(EWorld.ALL, Attribute.LUCK, 0.1f, RoleAttribute.Operation.ADD_NUMBER)
+            ),
+
+            // Alchimiste
+            new RoleDefinition(ERole.ALCHEMIST, "⚗", NamedTextColor.DARK_PURPLE, "alchemist", b -> b
+                    .add(EWorld.ALL, Attribute.LUCK, 1.0f, RoleAttribute.Operation.ADD_NUMBER)
+                    .add(EWorld.ALL, Attribute.MAX_HEALTH, -0.1f)
+                    .add(EWorld.VILLAGE, Attribute.BLOCK_BREAK_SPEED, 0.1f)
+                    .add(EWorld.NETHER, Attribute.BLOCK_BREAK_SPEED, 0.2f)
+                    .add(EWorld.NETHER, Attribute.MOVEMENT_SPEED, 0.1f, RoleAttribute.Operation.ADD_NUMBER)
+            ),
+
+            // Enchanteur
+            new RoleDefinition(ERole.ENCHANTER, "\uD83E\uDDD9", NamedTextColor.AQUA, "enchanter", b -> b
+                    .add(EWorld.ALL, Attribute.LUCK, 2.0f, RoleAttribute.Operation.ADD_NUMBER)
+                    .add(EWorld.ALL, Attribute.ARMOR, -0.1f)
+                    .add(EWorld.VILLAGE, Attribute.BLOCK_BREAK_SPEED, 0.15f)
+                    .add(EWorld.END, Attribute.BLOCK_BREAK_SPEED, 0.25f)
+                    .add(EWorld.END, Attribute.MOVEMENT_SPEED, 0.1f, RoleAttribute.Operation.ADD_NUMBER)
+            )
+        );
         
-        roles.put(ERole.LOUP_GAROU, new Role(ERole.LOUP_GAROU, Component.text("[Loup Garou \uD83D\uDC3A]", NamedTextColor.DARK_RED), roleAttributes, "loup_garou"));
-        //endregion
-
-        //region Fee
-        roleAttributes = new ArrayList<>();
-        roleAttributes.add(new RoleAttribute(EWorld.ALL, Attribute.ARMOR, -0.3f, RoleAttribute.Operation.ADD_SCALAR));
-        roleAttributes.add(new RoleAttribute(EWorld.ALL, Attribute.MAX_HEALTH, -0.3f, RoleAttribute.Operation.ADD_SCALAR));
-        roleAttributes.add(new RoleAttribute(EWorld.ALL, Attribute.BLOCK_BREAK_SPEED, 0.1f, RoleAttribute.Operation.ADD_SCALAR));
-        roleAttributes.add(new RoleAttribute(EWorld.ALL, Attribute.SAFE_FALL_DISTANCE, 1f, RoleAttribute.Operation.ADD_SCALAR));
-        roleAttributes.add(new RoleAttribute(EWorld.ALL, Attribute.FALL_DAMAGE_MULTIPLIER, -1f, RoleAttribute.Operation.ADD_SCALAR));
-        roleAttributes.add(new RoleAttribute(EWorld.ALL, Attribute.OXYGEN_BONUS, 3f, RoleAttribute.Operation.ADD_NUMBER));
-        roleAttributes.add(new RoleAttribute(EWorld.ALL, Attribute.WATER_MOVEMENT_EFFICIENCY, 0.25f, RoleAttribute.Operation.ADD_NUMBER));
-        roleAttributes.add(new RoleAttribute(EWorld.ALL, Attribute.ENTITY_INTERACTION_RANGE, 2f, RoleAttribute.Operation.ADD_SCALAR));
-        roleAttributes.add(new RoleAttribute(EWorld.ALL, Attribute.MAX_ABSORPTION, 6f, RoleAttribute.Operation.ADD_NUMBER));
-
-
-        roleAttributes.add(new RoleAttribute(EWorld.VILLAGE, Attribute.MOVEMENT_SPEED, 0.1f, RoleAttribute.Operation.ADD_NUMBER));
-        roleAttributes.add(new RoleAttribute(EWorld.VILLAGE, Attribute.SCALE, -0.056f, RoleAttribute.Operation.ADD_NUMBER));
-        roleAttributes.add(new RoleAttribute(EWorld.VILLAGE, Attribute.GRAVITY, -0.5f, RoleAttribute.Operation.ADD_SCALAR));
-        roleAttributes.add(new RoleAttribute(EWorld.VILLAGE, Attribute.ATTACK_KNOCKBACK, 2f, RoleAttribute.Operation.ADD_NUMBER));
-
-        roleAttributes.add(new RoleAttribute(EWorld.WILDERNESS, Attribute.MOVEMENT_SPEED, 0.04f, RoleAttribute.Operation.ADD_NUMBER));
-        roleAttributes.add(new RoleAttribute(EWorld.WILDERNESS, Attribute.SCALE, -0.056f, RoleAttribute.Operation.ADD_NUMBER));
-        roleAttributes.add(new RoleAttribute(EWorld.WILDERNESS, Attribute.GRAVITY, -0.5f, RoleAttribute.Operation.ADD_SCALAR));
-        roleAttributes.add(new RoleAttribute(EWorld.WILDERNESS, Attribute.ATTACK_KNOCKBACK, 2f, RoleAttribute.Operation.ADD_NUMBER));
-
-        roleAttributes.add(new RoleAttribute(EWorld.NETHER, Attribute.MOVEMENT_SPEED, 0.04f, RoleAttribute.Operation.ADD_NUMBER));
-        roleAttributes.add(new RoleAttribute(EWorld.NETHER, Attribute.SCALE, -0.056f, RoleAttribute.Operation.ADD_NUMBER));
-        roleAttributes.add(new RoleAttribute(EWorld.NETHER, Attribute.GRAVITY, -0.5f, RoleAttribute.Operation.ADD_SCALAR));
-        roleAttributes.add(new RoleAttribute(EWorld.NETHER, Attribute.ATTACK_KNOCKBACK, 3f, RoleAttribute.Operation.ADD_NUMBER));
-
-        roleAttributes.add(new RoleAttribute(EWorld.END, Attribute.MOVEMENT_SPEED, 0.04f, RoleAttribute.Operation.ADD_NUMBER));
-        roleAttributes.add(new RoleAttribute(EWorld.END, Attribute.SCALE, 0.5f, RoleAttribute.Operation.ADD_NUMBER));
-        roleAttributes.add(new RoleAttribute(EWorld.END, Attribute.GRAVITY, -0.75f, RoleAttribute.Operation.ADD_SCALAR));
-        roleAttributes.add(new RoleAttribute(EWorld.END, Attribute.ATTACK_KNOCKBACK, 5f, RoleAttribute.Operation.ADD_NUMBER));
-
-        roles.put(ERole.FEE, new Role(ERole.FEE, Component.text("[Fée \uD83E\uDDDA]", NamedTextColor.LIGHT_PURPLE), roleAttributes, "fee"));
-        //endregion
-
-        //region Nain
-        roleAttributes = new ArrayList<>();
-        roleAttributes.add(new RoleAttribute(EWorld.ALL, Attribute.KNOCKBACK_RESISTANCE, 0.70f, RoleAttribute.Operation.ADD_NUMBER));
-        roleAttributes.add(new RoleAttribute(EWorld.ALL, Attribute.BLOCK_INTERACTION_RANGE, 1f, RoleAttribute.Operation.ADD_SCALAR));
-        roleAttributes.add(new RoleAttribute(EWorld.ALL, Attribute.ENTITY_INTERACTION_RANGE, 0.3f, RoleAttribute.Operation.ADD_NUMBER));
-
-
-        roleAttributes.add(new RoleAttribute(EWorld.VILLAGE, Attribute.ARMOR, 0.2f, RoleAttribute.Operation.ADD_SCALAR));
-        roleAttributes.add(new RoleAttribute(EWorld.VILLAGE, Attribute.MAX_HEALTH, 0.2f, RoleAttribute.Operation.ADD_SCALAR));
-        roleAttributes.add(new RoleAttribute(EWorld.VILLAGE, Attribute.MOVEMENT_SPEED, 0.08f, RoleAttribute.Operation.ADD_NUMBER));
-        roleAttributes.add(new RoleAttribute(EWorld.VILLAGE, Attribute.SCALE, -0.167f, RoleAttribute.Operation.ADD_NUMBER));
-        roleAttributes.add(new RoleAttribute(EWorld.VILLAGE, Attribute.BLOCK_BREAK_SPEED, 0.5f, RoleAttribute.Operation.ADD_SCALAR));
-
-        roleAttributes.add(new RoleAttribute(EWorld.WILDERNESS, Attribute.ARMOR, 1f, RoleAttribute.Operation.ADD_SCALAR));
-        roleAttributes.add(new RoleAttribute(EWorld.WILDERNESS, Attribute.MAX_HEALTH, 1f, RoleAttribute.Operation.ADD_SCALAR));
-        roleAttributes.add(new RoleAttribute(EWorld.WILDERNESS, Attribute.SCALE, -0.167f, RoleAttribute.Operation.ADD_NUMBER));
-        roleAttributes.add(new RoleAttribute(EWorld.WILDERNESS, Attribute.BLOCK_BREAK_SPEED, 1f, RoleAttribute.Operation.ADD_SCALAR));
-
-        roleAttributes.add(new RoleAttribute(EWorld.NETHER, Attribute.ARMOR, 0.2f, RoleAttribute.Operation.ADD_SCALAR));
-        roleAttributes.add(new RoleAttribute(EWorld.NETHER, Attribute.MAX_HEALTH, 0.2f, RoleAttribute.Operation.ADD_SCALAR));
-        roleAttributes.add(new RoleAttribute(EWorld.NETHER, Attribute.MOVEMENT_SPEED, -0.02f, RoleAttribute.Operation.ADD_NUMBER));
-        roleAttributes.add(new RoleAttribute(EWorld.NETHER, Attribute.SCALE, -0.167f, RoleAttribute.Operation.ADD_NUMBER));
-        roleAttributes.add(new RoleAttribute(EWorld.NETHER, Attribute.BLOCK_BREAK_SPEED, 0.5f, RoleAttribute.Operation.ADD_SCALAR));
-
-        roleAttributes.add(new RoleAttribute(EWorld.END, Attribute.ARMOR, 0.1f, RoleAttribute.Operation.ADD_SCALAR));
-        roleAttributes.add(new RoleAttribute(EWorld.END, Attribute.MAX_HEALTH, 0.1f, RoleAttribute.Operation.ADD_SCALAR));
-        roleAttributes.add(new RoleAttribute(EWorld.END, Attribute.MOVEMENT_SPEED, -0.02f, RoleAttribute.Operation.ADD_NUMBER));
-        roleAttributes.add(new RoleAttribute(EWorld.END, Attribute.SCALE, 0.389f, RoleAttribute.Operation.ADD_NUMBER));
-        roleAttributes.add(new RoleAttribute(EWorld.END, Attribute.BLOCK_BREAK_SPEED, 0.5f, RoleAttribute.Operation.ADD_SCALAR));
-
-        roles.put(ERole.NAIN, new Role(ERole.NAIN, Component.text("[Nain \uD83C\uDF44]", NamedTextColor.GREEN), roleAttributes, "nain"));
-        //endregion
-
-        //region Geant
-        roleAttributes = new ArrayList<>();
-        roleAttributes.add(new RoleAttribute(EWorld.ALL, Attribute.KNOCKBACK_RESISTANCE, 0.70f, RoleAttribute.Operation.ADD_NUMBER));
-        roleAttributes.add(new RoleAttribute(EWorld.ALL, Attribute.BLOCK_INTERACTION_RANGE, 1f, RoleAttribute.Operation.ADD_SCALAR));
-        roleAttributes.add(new RoleAttribute(EWorld.ALL, Attribute.ENTITY_INTERACTION_RANGE, 0.3f, RoleAttribute.Operation.ADD_NUMBER));
-
-
-        roleAttributes.add(new RoleAttribute(EWorld.VILLAGE, Attribute.ARMOR, 0.2f, RoleAttribute.Operation.ADD_SCALAR));
-        roleAttributes.add(new RoleAttribute(EWorld.VILLAGE, Attribute.MAX_HEALTH, 0.2f, RoleAttribute.Operation.ADD_SCALAR));
-        roleAttributes.add(new RoleAttribute(EWorld.VILLAGE, Attribute.MOVEMENT_SPEED, 0.08f, RoleAttribute.Operation.ADD_NUMBER));
-        roleAttributes.add(new RoleAttribute(EWorld.VILLAGE, Attribute.SCALE, 0.167f, RoleAttribute.Operation.ADD_NUMBER));
-        roleAttributes.add(new RoleAttribute(EWorld.VILLAGE, Attribute.BLOCK_BREAK_SPEED, 0.5f, RoleAttribute.Operation.ADD_SCALAR));
-
-        roleAttributes.add(new RoleAttribute(EWorld.WILDERNESS, Attribute.ARMOR, 1f, RoleAttribute.Operation.ADD_SCALAR));
-        roleAttributes.add(new RoleAttribute(EWorld.WILDERNESS, Attribute.MAX_HEALTH, 1f, RoleAttribute.Operation.ADD_SCALAR));
-        roleAttributes.add(new RoleAttribute(EWorld.WILDERNESS, Attribute.SCALE, 0.167f, RoleAttribute.Operation.ADD_NUMBER));
-        roleAttributes.add(new RoleAttribute(EWorld.WILDERNESS, Attribute.BLOCK_BREAK_SPEED, 1f, RoleAttribute.Operation.ADD_SCALAR));
-
-        roleAttributes.add(new RoleAttribute(EWorld.NETHER, Attribute.ARMOR, 0.2f, RoleAttribute.Operation.ADD_SCALAR));
-        roleAttributes.add(new RoleAttribute(EWorld.NETHER, Attribute.MAX_HEALTH, 0.2f, RoleAttribute.Operation.ADD_SCALAR));
-        roleAttributes.add(new RoleAttribute(EWorld.NETHER, Attribute.MOVEMENT_SPEED, -0.02f, RoleAttribute.Operation.ADD_NUMBER));
-        roleAttributes.add(new RoleAttribute(EWorld.NETHER, Attribute.SCALE, 0.167f, RoleAttribute.Operation.ADD_NUMBER));
-        roleAttributes.add(new RoleAttribute(EWorld.NETHER, Attribute.BLOCK_BREAK_SPEED, 0.5f, RoleAttribute.Operation.ADD_SCALAR));
-
-        roleAttributes.add(new RoleAttribute(EWorld.END, Attribute.ARMOR, 0.1f, RoleAttribute.Operation.ADD_SCALAR));
-        roleAttributes.add(new RoleAttribute(EWorld.END, Attribute.MAX_HEALTH, 0.1f, RoleAttribute.Operation.ADD_SCALAR));
-        roleAttributes.add(new RoleAttribute(EWorld.END, Attribute.MOVEMENT_SPEED, -0.02f, RoleAttribute.Operation.ADD_NUMBER));
-        roleAttributes.add(new RoleAttribute(EWorld.END, Attribute.SCALE, 0.722f, RoleAttribute.Operation.ADD_NUMBER));
-        roleAttributes.add(new RoleAttribute(EWorld.END, Attribute.BLOCK_BREAK_SPEED, 0.5f, RoleAttribute.Operation.ADD_SCALAR));
-        
-        roles.put(ERole.GEANT, new Role(ERole.GEANT, Component.text("[Géant \uD83C\uDF44]", NamedTextColor.DARK_GREEN), roleAttributes, "geant"));
-        //endregion
-
-        //region Metier
-        roleAttributes = new ArrayList<>();
-        roleAttributes.add(new RoleAttribute(EWorld.ALL, Attribute.ATTACK_DAMAGE, 0.2f, RoleAttribute.Operation.ADD_SCALAR));
-        roleAttributes.add(new RoleAttribute(EWorld.ALL, Attribute.ENTITY_INTERACTION_RANGE,  1f, RoleAttribute.Operation.ADD_NUMBER));
-        roleAttributes.add(new RoleAttribute(EWorld.ALL, Attribute.ATTACK_SPEED, 0.2f, RoleAttribute.Operation.ADD_SCALAR));
-
-        roles.put(ERole.COMBATANT, new Role(ERole.COMBATANT, Component.text("\uD83D\uDDE1", NamedTextColor.GRAY), roleAttributes, "Metier"));
-
-        roleAttributes = new ArrayList<>();
-        roleAttributes.add(new RoleAttribute(EWorld.ALL, Attribute.BLOCK_BREAK_SPEED, 0.2f, RoleAttribute.Operation.ADD_SCALAR));
-        roleAttributes.add(new RoleAttribute(EWorld.ALL, Attribute.BLOCK_INTERACTION_RANGE, 0.2f, RoleAttribute.Operation.ADD_SCALAR));
-
-        roles.put(ERole.MINEUR, new Role(ERole.MINEUR, Component.text("⛏", NamedTextColor.GRAY), roleAttributes, "Metier"));
-        //endregion
-
-        //region Novice
-        roleAttributes = new ArrayList<>();
-        roleAttributes.add(new RoleAttribute(EWorld.VILLAGE, Attribute.ARMOR, 20f, RoleAttribute.Operation.ADD_SCALAR));
-        roleAttributes.add(new RoleAttribute(EWorld.VILLAGE, Attribute.MAX_HEALTH, 20f, RoleAttribute.Operation.ADD_NUMBER));
-        roleAttributes.add(new RoleAttribute(EWorld.VILLAGE, Attribute.SCALE, 0f, RoleAttribute.Operation.ADD_SCALAR));
-
-        roles.put(ERole.NOVICE, new Role(ERole.NOVICE, Component.text("❤", NamedTextColor.YELLOW), roleAttributes, "novice"));
-        //endregion
+        // Construction de tous les rôles
+        roleDefinitions.forEach(def -> roles.put(def.getType(), def.toRole()));
     }
 
     public Role getRole(ERole role) {
         return roles.get(role);
+    }
+    
+    public Collection<Role> getAllRoles() {
+        return Collections.unmodifiableCollection(roles.values());
     }
 
     public Collection<Role> getRoles() {
@@ -208,11 +170,11 @@ public class RoleFactory {
     }
 
     public Role getRole(String roleType) {
-        for (String role : GameManager.getInstance().getRoleFactory().getRoles().stream().map(role -> role.type().toString()).toList()) {
-            if (roleType.equals(role))
-                return GameManager.getInstance().getRoleFactory().getRole(ERole.valueOf(role));
+        try {
+            return getRole(ERole.valueOf(roleType));
+        } catch (IllegalArgumentException e) {
+            return null;
         }
-        return null;
     }
 
     //TODO: Remove the default after 1.21.4
