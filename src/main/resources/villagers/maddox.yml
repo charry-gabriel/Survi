@@ -1,0 +1,44 @@
+name: "Maddox"
+type: TAIGA
+profession: BUTCHER
+
+levels:
+  - name: "Maddox I"
+    tribute:
+      - material: ARROW
+        amount: 256
+    message: "Vous avez tué 3 poulets et vous voulez une récompense ? D'accord.. vous êtes un peu plus fort maintenant mais pas autant que moi quand même."
+    recap: ""
+
+  - name: "Maddox II"
+    tribute:
+      - material: TNT
+        amount: 64
+    message: "Vous voulez une récompense pour 4 creepers en moins sur la map ? N'importe quoi.. vous êtes un peu plus fort maintenant mais pas autant que moi quand même."
+    recap: "Force I débloqué !"
+
+  - name: "Maddox III"
+    tribute:
+      - material: FERMENTED_SPIDER_EYE
+        amount: 300
+    message: "Comment on fait un oeil fermenté ? Avec un oeil... et tu le fermentes."
+    recap: "Force II débloqué !"
+
+  - name: "Maddox IV"
+    tribute:
+      - material: GHAST_TEAR
+        amount: 64
+    message: "Pour les 6 ghasts en moins dans ce monde, je vous offre un peu plus de force."
+    recap: "Force III débloqué !"
+
+  - name: "Maddox V"
+    tribute:
+      - material: DRAGON_HEAD
+        amount: 10
+    message: "C'est bon ? Vous avez fini de voyager ? Enfin... j'aurais été plus vite tout seul. Vous êtes maintenant assez fort. Mais toujours pas autant que moi."
+    recap: "Force IV débloqué !"
+
+  - name: "Maddox MAX"
+    tribute: []
+    message: "C'est fini, tu tapes beaucoup trop fort maintenant !"
+    recap: "Force V débloqué !"

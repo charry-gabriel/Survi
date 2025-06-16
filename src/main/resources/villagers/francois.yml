@@ -1,0 +1,79 @@
+name: "François"
+type: JUNGLE
+profession: CLERIC
+
+levels:
+  - name: "François I"
+    tribute:
+      - material: BELL
+        amount: 1
+    message: "Vos 10 dernières morts sont annulées."
+    recap: ""
+
+  - name: "François II"
+    tribute:
+      - material: CANDLE
+        amount: 10
+    message: "Vos 20 dernières morts sont annulées."
+    recap: "Les 10 dernières morts sont annulées !"
+
+  - name: "François III"
+    tribute:
+      - material: YELLOW_CANDLE
+        amount: 100
+    message: "Vos 30 dernières morts sont annulées."
+    recap: "Les 20 dernières morts sont annulées !"
+
+  - name: "François IV"
+    tribute:
+      - material: RED_CANDLE
+        amount: 200
+    message: "Vos 40 dernières morts sont annulées."
+    recap: "Les 30 dernières morts sont annulées !"
+
+  - name: "François V"
+    tribute:
+      - material: ORANGE_CANDLE
+        amount: 300
+    message: "Vos 50 dernières morts sont annulées."
+    recap: "Les 40 dernières morts sont annulées !"
+
+  - name: "François VI"
+    tribute:
+      - material: LIGHT_BLUE_CANDLE
+        amount: 400
+    message: "Vos 60 dernières morts sont annulées."
+    recap: "Les 50 dernières morts sont annulées !"
+
+  - name: "François VII"
+    tribute:
+      - material: GREEN_CANDLE
+        amount: 500
+    message: "Vos 70 dernières morts sont annulées."
+    recap: "Les 60 dernières morts sont annulées !"
+
+  - name: "François VIII"
+    tribute:
+      - material: PINK_CANDLE
+        amount: 600
+    message: "Vos 80 dernières morts sont annulées."
+    recap: "Les 70 dernières morts sont annulées !"
+
+  - name: "François IX"
+    tribute:
+      - material: WHITE_CANDLE
+        amount: 700
+    message: "Vos 90 dernières morts sont annulées."
+    recap: "Les 80 dernières morts sont annulées !"
+
+  - name: "François X"
+    tribute:
+      - material: TOTEM_OF_UNDYING
+        amount: 27
+    message: "Toutes vos morts sont annulées"
+    recap: "Les 90 dernières morts sont annulées !"
+
+  - name: "François MAX"
+    tribute: []
+    message: "Toutes vos morts sont annulées"
+    recap: "Toutes les morts sont annulées !"

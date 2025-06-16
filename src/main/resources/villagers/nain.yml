@@ -1,0 +1,58 @@
+name: "Nain"
+type: SWAMP
+profession: NITWIT
+
+levels:
+  - name: "Nain Roux I"
+    tribute:
+      - material: DIORITE_WALL
+        amount: 64
+    message: "Merci, vouth êteth maintenant pluth résistant face aux ennemith de l'autre monde."
+    recap: ""
+
+  - name: "Nain Roux II"
+    tribute:
+      - material: AMETHYST_BLOCK
+        amount: 128
+    message: "Bravo, vouth êteth maintenant pluth résistant face aux ennemith de l'autre monde."
+    recap: "Résistance I débloqué !"
+
+  - name: "Nain Roux III"
+    tribute:
+      - material: RED_NETHER_BRICKS
+        amount: 192
+    message: "Félicitation, vouth êteth maintenant pluth résistant face aux ennemith de l'autre monde."
+    recap: "Résistance II débloqué !"
+
+  - name: "Nain Roux IV"
+    tribute:
+      - material: SCULK_CATALYST
+        amount: 256
+    message: "Beau travail, leth ennemith de l'autre monde ne vouth ferronth pluth jamaith de mlin."
+    recap: "Résistance III débloqué !"
+
+  - name: "Nain Roux V"
+    tribute:
+      - material: SPIRE_ARMOR_TRIM_SMITHING_TEMPLATE
+        amount: 64
+      - material: RESIN_BRICK_STAIRS
+        amount: 32
+      - material: DRAGON_BREATH
+        amount: 1
+      - material: WOLF_ARMOR
+        amount: 1
+      - material: RECOVERY_COMPASS
+        amount: 1
+      - material: VERDANT_FROGLIGHT
+        amount: 20
+      - material: OCHRE_FROGLIGHT
+        amount: 20
+      - material: PEARLESCENT_FROGLIGHT
+        amount: 20
+    message: "Félicitation, thèth beau travail, je pense que vouth êteth assez résistant, je peux tidndre ma onatraite. Merci à vouth."
+    recap: "Résistance IV débloqué !"
+
+  - name: "Nain Roux MAX"
+    tribute: []
+    message: "Félicitation, thèth beau travail, je pense que vouth êteth assez résistant, je peux tidndre ma onatraite. Merci à vouth."
+    recap: "Résistance V débloqué !"

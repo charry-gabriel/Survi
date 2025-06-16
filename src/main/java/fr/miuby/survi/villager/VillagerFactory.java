@@ -1,6 +1,7 @@
 package fr.miuby.survi.villager;
 
 import fr.miuby.survi.item.ECustomItem;
+import fr.miuby.survi.item.SimpleItemStack;
 import fr.miuby.survi.player.AlphaPlayer;
 import fr.miuby.survi.utils.Rect;
 import fr.miuby.survi.villager.blessing.*;
@@ -38,53 +39,8 @@ public class VillagerFactory {
         spawnConcierge();
     }
 
-    private void addNewVillager(AVillager villager) {
-        villagers.put(villager.uuid, villager);
-    }
-
-    public Map<UUID, AVillager> getVillagers() {
-        return villagers;
-    }
-
-    @Nullable
-    public AVillager getVillager(String name) {
-        for (AVillager villager : villagers.values()) {
-            if (name.equals(villager.nameId))
-                return villager;
-        }
-        return null;
-    }
-
-    public void applyAllCurrentBlessing(AlphaPlayer player) {
-        player.getPlayer().sendMessage(Component.text("-------------------- Récapitulatif --------------------", NamedTextColor.AQUA));
-        for (AVillager villager : villagers.values()) {
-            if (villager instanceof VillagerLevel villagerLevel) {
-                villagerLevel.applyAllCurrentBlessing(player);
-                TextComponent text = villagerLevel.getRecapMessage();
-                if (!text.content().isEmpty())
-                    player.getPlayer().sendMessage(text);
-            }
-        }
-        player.getPlayer().sendMessage(Component.text("----------------------------------------------------", NamedTextColor.AQUA));
-    }
-
-    //region Villagers
+    //region VillagerLevel
     private void spawnSurvivant(){
-        Tribute[] tributes = new Tribute[]{
-                new Tribute(new ItemStack(Material.DIRT, 1)),
-                new Tribute(new ItemStack(Material.WHEAT_SEEDS, 32)),
-                new Tribute(new ItemStack(Material.OAK_LOG, 640), new ItemStack(Material.APPLE, 32), new ItemStack(Material.SUGAR_CANE, 64)),
-                new Tribute(new ItemStack(Material.IRON_BLOCK, 160), new ItemStack(Material.COAL_BLOCK, 64), new ItemStack(Material.LAPIS_BLOCK, 64), new ItemStack(Material.WAXED_COPPER_BLOCK, 16), new ItemStack(Material.WAXED_EXPOSED_COPPER, 16), new ItemStack(Material.WAXED_WEATHERED_COPPER, 16), new ItemStack(Material.WAXED_OXIDIZED_COPPER, 16)),
-                new Tribute(new ItemStack(Material.HAY_BLOCK, 32), new ItemStack(Material.BAKED_POTATO, 32), new ItemStack(Material.GOLDEN_CARROT, 128), new ItemStack(Material.PUFFERFISH, 32), new ItemStack(Material.PUMPKIN_PIE, 64)),
-                new Tribute(new ItemStack(Material.ENDER_PEARL, 16), new ItemStack(Material.FERMENTED_SPIDER_EYE, 64), new ItemStack(Material.PHANTOM_MEMBRANE, 32), new ItemStack(Material.GUNPOWDER, 64), new ItemStack(Material.BONE, 64), new ItemStack(Material.ROTTEN_FLESH, 64)),
-                new Tribute(new ItemStack(Material.ARMADILLO_SCUTE, 10), new ItemStack(Material.PALE_OAK_LOG, 64), new ItemStack(Material.CREAKING_HEART, 64), new ItemStack(Material.RESIN_BLOCK, 64)),
-                new Tribute(new ItemStack(Material.OAK_SAPLING, 64), new ItemStack(Material.OAK_LOG, 64), new ItemStack(Material.STRIPPED_OAK_LOG, 64),new ItemStack(Material.SPRUCE_SAPLING, 64), new ItemStack(Material.SPRUCE_LOG, 64), new ItemStack(Material.STRIPPED_SPRUCE_LOG, 64),new ItemStack(Material.BIRCH_SAPLING, 64), new ItemStack(Material.BIRCH_LOG, 64), new ItemStack(Material.STRIPPED_BIRCH_LOG, 64)),
-                new Tribute(new ItemStack(Material.JUNGLE_SAPLING, 64), new ItemStack(Material.JUNGLE_LOG, 64), new ItemStack(Material.STRIPPED_JUNGLE_LOG, 64),new ItemStack(Material.ACACIA_SAPLING, 64), new ItemStack(Material.ACACIA_LOG, 64), new ItemStack(Material.STRIPPED_ACACIA_LOG, 64),new ItemStack(Material.DARK_OAK_SAPLING, 64), new ItemStack(Material.DARK_OAK_LOG, 64), new ItemStack(Material.STRIPPED_DARK_OAK_LOG, 64)),
-                new Tribute(new ItemStack(Material.MANGROVE_PROPAGULE, 64), new ItemStack(Material.MANGROVE_LOG, 64), new ItemStack(Material.STRIPPED_MANGROVE_LOG, 64),new ItemStack(Material.CHERRY_SAPLING, 64), new ItemStack(Material.CHERRY_LOG, 64), new ItemStack(Material.STRIPPED_CHERRY_LOG, 64),new ItemStack(Material.PALE_OAK_SAPLING, 64), new ItemStack(Material.PALE_OAK_LOG, 64), new ItemStack(Material.STRIPPED_PALE_OAK_LOG, 64)),
-                new Tribute(new ItemStack(Material.CHORUS_FRUIT, 64),new ItemStack(Material.GOLDEN_APPLE, 64),new ItemStack(Material.TROPICAL_FISH, 64),new ItemStack(Material.COOKIE, 64),new ItemStack(Material.CAKE, 1)),
-                new Tribute(new ItemStack(Material.IRON_BLOCK, 256),new ItemStack(Material.LAPIS_BLOCK, 128),new ItemStack(Material.REDSTONE_BLOCK, 128),new ItemStack(Material.COPPER_BLOCK, 128),new ItemStack(Material.COAL_BLOCK, 128),new ItemStack(Material.GOLD_BLOCK, 64),new ItemStack(Material.DIAMOND_BLOCK, 32),new ItemStack(Material.EMERALD_BLOCK, 16),new ItemStack(Material.NETHERITE_BLOCK, 8)),
-        };
-
         Blessing[] blessings = new Blessing[]{
                 new Blessing(new MaxHealthEffect(-20)),
                 new Blessing(new MaxHealthEffect(-18),new UnlockToolEffect(LockedToolType.WOOD)),
@@ -100,70 +56,10 @@ public class VillagerFactory {
                 new Blessing(new MaxHealthEffect(2)),
         };
 
-        TextComponent[] messages = new TextComponent[]{
-                Component.text("Désolé, c'est fait exprès. **MOUAHAHAHAAHHA** (imaginez le rire d'ariscis)"),
-                Component.text("Vous pouvez maintenant avoir des outils en bois !"),
-                Component.text( "Vous pouvez maintenant avoir des outils en pierre et une armure en cuir !"),
-                Component.text( "Vous pouvez maintenant avoir des outils en fer et une armure en maille !"),
-                Component.text( "Vous pouvez maintenant avoir une armure en fer !"),
-                Component.text( "Vous pouvez maintenant avoir des outils en or et une armure en or !"),
-                Component.text( "Vous pouvez maintenant avoir des outils en diamant et une armure en diamant !"),
-                Component.text( "Un peu de vie pour vous !"),
-                Component.text( "Un peu de vie pour vous !"),
-                Component.text( "Un peu de vie pour vous !"),
-                Component.text( "Un peu de vie pour vous !"),
-                Component.text( "La quête était si simple en vrai.. fin bref, voici un coeur pour vous."),
-                Component.text( "C'est fini y a plus rien !"),
-
-        };
-
-        TextComponent[] recap = new TextComponent[]{
-                Component.text( ""),
-                Component.text( ""),
-                Component.text("Outils en bois débloqué !"),
-                Component.text( "Outils en bois et armure en cuir débloqué !"),
-                Component.text( "Outils en fer et armure en maille débloqué !"),
-                Component.text( "Outils en fer et armure en fer débloqué !"),
-                Component.text( "Outils en or et armure en or débloqué !"),
-                Component.text( "Outils en diamant et armure en diamant débloqué !"),
-                Component.text( "Outils en diamant, armure en diamant et vie en plus débloqué !"),
-                Component.text( "Outils en diamant, armure en diamant et vie en plus  débloqué !"),
-                Component.text( "Outils en diamant, armure en diamant et vie en plus  débloqué !"),
-                Component.text( "Outils en diamant, armure en diamant et vie en plus  débloqué !"),
-                Component.text( "Outils en diamant, armure en diamant et vie en plus  débloqué !"),
-
-        };
-
-        TextComponent[] names = new TextComponent[]{
-                Component.text( "Survivant I"),
-                Component.text( "Survivant II"),
-                Component.text( "Survivant III"),
-                Component.text( "Survivant IV"),
-                Component.text( "Survivant V"),
-                Component.text( "Survivant VI"),
-                Component.text( "Survivant VII"),
-                Component.text( "Survivant VIII"),
-                Component.text( "Survivant IX"),
-                Component.text( "Survivant X"),
-                Component.text( "Survivant XI"),
-                Component.text( "Survivant XII"),
-                Component.text( "Survivant MAX"),
-        };
-
-        TextComponent openMessage = Component.text("");
-
-        this.addNewVillager(new VillagerLevel("Survivant", Villager.Type.SAVANNA, Villager.Profession.FARMER, blessings, messages, tributes, names, recap, openMessage));
+        this.addNewVillagerLevel("survivant", blessings);
     }
 
     private void spawnNain(){
-        Tribute[] tributes = new Tribute[]{
-                new Tribute(new ItemStack(Material.DIORITE_WALL, 64)),
-                new Tribute(new ItemStack(Material.AMETHYST_BLOCK, 128)),
-                new Tribute(new ItemStack(Material.RED_NETHER_BRICKS, 192)),
-                new Tribute(new ItemStack(Material.SCULK_CATALYST, 256)),
-                new Tribute(new ItemStack(Material.SPIRE_ARMOR_TRIM_SMITHING_TEMPLATE, 64),new ItemStack(Material.RESIN_BRICK_STAIRS, 32),new ItemStack(Material.DRAGON_BREATH, 1),new ItemStack(Material.WOLF_ARMOR, 1),new ItemStack(Material.RECOVERY_COMPASS, 1),new ItemStack(Material.VERDANT_FROGLIGHT, 20),new ItemStack(Material.OCHRE_FROGLIGHT, 20),new ItemStack(Material.PEARLESCENT_FROGLIGHT, 20)),
-        };
-
         Blessing[] blessings = new Blessing[]{
                 new Blessing(new ResistanceEffect(0.4f)),
                 new Blessing(new ResistanceEffect(0.6f)),
@@ -172,47 +68,10 @@ public class VillagerFactory {
                 new Blessing(new ResistanceEffect(1.4f)),
         };
 
-        TextComponent[] messages = new TextComponent[]{
-                Component.text( "Merci, vouth êteth maintenant pluth résistant face aux ennemith de l'autre monde."),
-                Component.text( "Bravo, vouth êteth maintenant pluth résistant face aux ennemith de l'autre monde."),
-                Component.text( "Félicitation, vouth êteth maintenant pluth résistant face aux ennemith de l'autre monde."),
-                Component.text( "Beau travail, leth ennemith de l'autre monde ne vouth ferronth pluth jamaith de mlin."),
-                Component.text( "Félicitation, thèth beau travail, je pense que vouth êteth assez résistant, je peux tidndre ma onatraite. Merci à vouth."),
-                Component.text( "Félicitation, thèth beau travail, je pense que vouth êteth assez résistant, je peux tidndre ma onatraite. Merci à vouth."),
-        };
-
-        TextComponent[] recap = new TextComponent[]{
-                Component.text( ""),
-                Component.text( "Résistance I débloqué !"),
-                Component.text( "Résistance II débloqué !"),
-                Component.text( "Résistance III débloqué !"),
-                Component.text( "Résistance IV débloqué !"),
-                Component.text( "Résistance V débloqué !"),
-        };
-
-        TextComponent[] names = new TextComponent[]{
-                Component.text( "Nain Roux I"),
-                Component.text( "Nain Roux II"),
-                Component.text( "Nain Roux III"),
-                Component.text( "Nain Roux IV"),
-                Component.text( "Nain Roux V"),
-                Component.text( "Nain Roux MAX"),
-        };
-
-        TextComponent openMessage = Component.text("");
-
-        this.addNewVillager(new VillagerLevel("Nain", Villager.Type.SWAMP, Villager.Profession.NITWIT, blessings, messages, tributes, names, recap, openMessage));
+        this.addNewVillagerLevel("nain", blessings);
     }
 
     private void spawnMaddox(){
-        Tribute[] tributes = new Tribute[]{
-                new Tribute(new ItemStack(Material.ARROW, 256)),
-                new Tribute(new ItemStack(Material.TNT, 64)),
-                new Tribute(new ItemStack(Material.FERMENTED_SPIDER_EYE, 300)),
-                new Tribute(new ItemStack(Material.GHAST_TEAR, 64)),
-                new Tribute(new ItemStack(Material.DRAGON_HEAD, 10)),
-        };
-
         Blessing[] blessings = new Blessing[]{
                 new Blessing(new DamageEffect(0.4f)),
                 new Blessing(new DamageEffect(0.6f)),
@@ -221,51 +80,10 @@ public class VillagerFactory {
                 new Blessing(new DamageEffect(1.5f)),
         };
 
-        TextComponent[] messages = new TextComponent[]{
-                Component.text( "Vous avez tué 3 poulets et vous voulez une récompense ? D'accord.. vous êtes un peu plus fort maintenant mais pas autant que moi quand même."),
-                Component.text( "Vous voulez une récompense pour 4 creepers en moins sur la map ? N'importe quoi.. vous êtes un peu plus fort maintenant mais pas autant que moi quand même."),
-                Component.text( "Comment on fait un oeil fermenté ? Avec un oeil... et tu le fermentes."),
-                Component.text( "Pour les 6 ghasts en moins dans ce monde, je vous offre un peu plus de force."),
-                Component.text( "C'est bon ? Vous avez fini de voyager ? Enfin... j'aurais été plus vite tout seul. Vous êtes maintenant assez fort. Mais toujours pas autant que moi."),
-                Component.text( "C'est fini, tu tapes beaucoup trop fort maintenant !"),
-        };
-
-        TextComponent[] recap = new TextComponent[]{
-                Component.text( ""),
-                Component.text( "Force I débloqué !"),
-                Component.text( "Force II débloqué !"),
-                Component.text( "Force III débloqué !"),
-                Component.text( "Force IV débloqué !"),
-                Component.text( "Force V débloqué !"),
-        };
-
-        TextComponent[] names = new TextComponent[]{
-                Component.text( "Maddox I"),
-                Component.text( "Maddox II"),
-                Component.text( "Maddox III"),
-                Component.text( "Maddox IV"),
-                Component.text( "Maddox V"),
-                Component.text( "Maddox MAX"),
-        };
-
-        TextComponent openMessage = Component.text("");
-
-        this.addNewVillager(new VillagerLevel("Maddox", Villager.Type.TAIGA, Villager.Profession.BUTCHER, blessings, messages, tributes, names, recap, openMessage));
+        this.addNewVillagerLevel("maddox", blessings);
     }
 
     private void spawnThomas(){
-        Tribute[] tributes = new Tribute[]{
-                new Tribute(new ItemStack(Material.DIRT, 640)),
-                new Tribute(new ItemStack(Material.BEDROCK, 1)),
-                new Tribute(new ItemStack(Material.DIAMOND, 32)),
-                new Tribute(new ItemStack(Material.BEDROCK, 1)),
-                new Tribute(new ItemStack(Material.WITHER_SKELETON_SKULL, 10)),
-                new Tribute(new ItemStack(Material.BEDROCK, 1)),
-                new Tribute(new ItemStack(Material.ENCHANTED_GOLDEN_APPLE, 3)),
-                new Tribute(new ItemStack(Material.BEDROCK, 1)),
-                new Tribute(new ItemStack(Material.DRAGON_EGG, 1)),
-        };
-
         Blessing[] blessings = new Blessing[]{
                 new Blessing(new MessageEffect("Niveau I réussi !")),
                 new Blessing(new MessageEffect("Niveau II disponible pour Thomas Pesquet !")),
@@ -278,64 +96,10 @@ public class VillagerFactory {
                 new Blessing(new LimitWorldEffect(EWorld.WILDERNESS, new Rect(Integer.MAX_VALUE,Integer.MIN_VALUE, Integer.MAX_VALUE, Integer.MIN_VALUE,Integer.MAX_VALUE,Integer.MIN_VALUE))),
         };
 
-        TextComponent[] messages = new TextComponent[]{
-                Component.text( "Merci, revenez dans 24h pour la suite."),
-                Component.text( "Venez me voir."),
-                Component.text( "Merci, revenez dans 48h pour la suite. Vous pouvez maintenant explorer le nether !"),
-                Component.text( "Venez me voir."),
-                Component.text( "Merci, revenez dans 72h pour la suite. Vous pouvez maintenant explorer un peu plus le Wilderness"),
-                Component.text( "Venez me voir."),
-                Component.text( "Merci, revenez dans 100h pour la suite. Vous pouvez maintenant explorer l'end ! "),
-                Component.text( "Venez me voir."),
-                Component.text( "Merci pour cet objet unique. Vous pouvez maintenant explorer le Wilderness à l'infini."),
-                Component.text( "C'est fini y a plus rien !"),
-        };
-
-        TextComponent[] recap = new TextComponent[]{
-                Component.text( ""),
-                Component.text( ""),
-                Component.text( ""),
-                Component.text( "Nether débloqué !"),
-                Component.text( "Nether débloqué !"),
-                Component.text( "Nether débloqué et limite Wilderness augmenté !"),
-                Component.text( "Nether débloqué et limite Wilderness augmenté !"),
-                Component.text( "End débloqué et limite Wilderness augmenté !"),
-                Component.text( "End débloqué et limite Wilderness augmenté !"),
-                Component.text( "End débloqué et limite Wilderness infinie !"),
-        };
-
-        TextComponent[] names = new TextComponent[]{
-                Component.text( "Thomas Pesquet I"),
-                Component.text( "Thomas Pesquet I"),
-                Component.text( "Thomas Pesquet II"),
-                Component.text( "Thomas Pesquet II"),
-                Component.text( "Thomas Pesquet III"),
-                Component.text( "Thomas Pesquet III"),
-                Component.text( "Thomas Pesquet IV"),
-                Component.text( "Thomas Pesquet IV"),
-                Component.text( "Thomas Pesquet V"),
-                Component.text( "Thomas Pesquet MAX"),
-        };
-
-        TextComponent openMessage = Component.text("");
-
-        this.addNewVillager(new VillagerLevel("Thomas", Villager.Type.SNOW, Villager.Profession.FISHERMAN, blessings, messages, tributes, names, recap, openMessage));
+        this.addNewVillagerLevel("thomas", blessings);
     }
 
     private void spawnFrancois(){
-        Tribute[] tributes = new Tribute[]{
-                new Tribute(new ItemStack(Material.BELL, 1)),
-                new Tribute(new ItemStack(Material.CANDLE, 10)),
-                new Tribute(new ItemStack(Material.YELLOW_CANDLE, 100)),
-                new Tribute(new ItemStack(Material.RED_CANDLE, 200)),
-                new Tribute(new ItemStack(Material.ORANGE_CANDLE, 300)),
-                new Tribute(new ItemStack(Material.LIGHT_BLUE_CANDLE, 400)),
-                new Tribute(new ItemStack(Material.GREEN_CANDLE, 500)),
-                new Tribute(new ItemStack(Material.PINK_CANDLE, 600)),
-                new Tribute(new ItemStack(Material.WHITE_CANDLE, 700)),
-                new Tribute(new ItemStack(Material.TOTEM_OF_UNDYING, 27)),
-        };
-
         Blessing[] blessings = new Blessing[]{
                 new Blessing(new DispelEffect(1)),
                 new Blessing(new DispelEffect(2)),
@@ -349,286 +113,11 @@ public class VillagerFactory {
                 new Blessing(new DispelEffect(100)),
         };
 
-        TextComponent[] messages = new TextComponent[]{
-                Component.text( "Vos 10 dernières morts sont annulées."),
-                Component.text( "Vos 20 dernières morts sont annulées."),
-                Component.text( "Vos 30 dernières morts sont annulées."),
-                Component.text( "Vos 40 dernières morts sont annulées."),
-                Component.text( "Vos 50 dernières morts sont annulées."),
-                Component.text( "Vos 60 dernières morts sont annulées."),
-                Component.text( "Vos 70 dernières morts sont annulées."),
-                Component.text( "Vos 80 dernières morts sont annulées."),
-                Component.text( "Vos 90 dernières morts sont annulées."),
-                Component.text( "Toutes vos morts sont annulées"),
-                Component.text( "Toutes vos morts sont annulées"),
-        };
-
-        TextComponent[] recap = new TextComponent[]{
-                Component.text( ""),
-                Component.text( "Les 10 dernières morts sont annulées !"),
-                Component.text( "Les 20 dernières morts sont annulées !"),
-                Component.text( "Les 30 dernières morts sont annulées !"),
-                Component.text( "Les 40 dernières morts sont annulées !"),
-                Component.text( "Les 50 dernières morts sont annulées !"),
-                Component.text( "Les 60 dernières morts sont annulées !"),
-                Component.text( "Les 70 dernières morts sont annulées !"),
-                Component.text( "Les 80 dernières morts sont annulées !"),
-                Component.text( "Les 90 dernières morts sont annulées !"),
-                Component.text( "Toutes les morts sont annulées !"),
-        };
-
-        TextComponent[] names = new TextComponent[]{
-                Component.text( "François I"),
-                Component.text( "François II"),
-                Component.text( "François III"),
-                Component.text( "François IV"),
-                Component.text( "François V"),
-                Component.text( "François VI"),
-                Component.text( "François VII"),
-                Component.text( "François VIII"),
-                Component.text( "François IX"),
-                Component.text( "François X"),
-                Component.text( "François MAX"),
-
-        };
-
-        TextComponent openMessage = Component.text("");
-
-        this.addNewVillager(new VillagerLevel("François", Villager.Type.JUNGLE, Villager.Profession.CLERIC, blessings, messages, tributes, names, recap, openMessage));
+        this.addNewVillagerLevel("francois", blessings);
     }
+    //endregion VillagerLevel
 
-    /*private void spawnPecheur1(){
-        Location location = new Location(world, 12059.5, 63, 1469.5, 90, 0);
-
-        ItemStack[] items = new ItemStack[]{
-                new ItemStack(Material.COOKED_COD, 64),
-                new ItemStack(Material.COOKED_SALMON, 64),
-                new ItemStack(Material.TROPICAL_FISH, 64),
-                new ItemStack(Material.PUFFERFISH, 64),
-        };
-
-        Blessing[] blessings = new Blessing[]{
-                new Blessing(new ItemEffect(new ItemStack(Material.EMERALD, 1))),
-                new Blessing(new ItemEffect(new ItemStack(Material.EMERALD, 1))),
-                new Blessing(new ItemEffect(new ItemStack(Material.EMERALD, 1))),
-                new Blessing(new ItemEffect(new ItemStack(Material.EMERALD, 1))),
-        };
-
-        TextComponent[] messages = new TextComponent[]{
-                Component.text( "Merci pour ce poisson, voici 1 émeraude."),
-                Component.text( "Merci pour ce poisson, voici 1 émeraude."),
-                Component.text( "Merci pour ce poisson, voici 1 émeraude."),
-                Component.text( "Merci pour ce poisson, voici 1 émeraude."),
-        };
-
-        this.addNewVillager(new VillagerVendor("Vendeur Bajau", location, Villager.Type.SWAMP, Villager.Profession.NITWIT, blessings, messages, items));
-    }
-
-    private void spawnPecheur2(){
-        Location location = new Location(world, 12045, 63, 1454.5, -90, 0);
-
-        ItemStack[] items = new ItemStack[]{
-                new ItemStack(Material.NAUTILUS_SHELL, 64),
-                new ItemStack(Material.NAME_TAG, 64),
-        };
-
-        Blessing[] blessings = new Blessing[]{
-                new Blessing(new ItemEffect(new ItemStack(Material.EMERALD, 1))),
-                new Blessing(new ItemEffect(new ItemStack(Material.EMERALD, 2))),
-        };
-
-        TextComponent[] messages = new TextComponent[]{
-                Component.text( "Merci pour ces coquillages, voici 1 émeraude."),
-                Component.text( "Merci pour ces names-tags, voici 2 émeraude."),
-        };
-
-        this.addNewVillager(new VillagerVendor("Vendeur Sampan",location, Villager.Type.SWAMP, Villager.Profession.NITWIT, blessings, messages, items));
-    }
-
-    private void spawnRiche(){
-        Location location = new Location(world, 12072.5, 64, 1483.5, -90, 0);
-
-        Tribute[] tributes = new Tribute[]{
-                new Tribute(new ItemStack(Material.COPPER_BLOCK, 64), new ItemStack(Material.WAXED_COPPER_BLOCK, 64), new ItemStack(Material.EXPOSED_COPPER, 64), new ItemStack(Material.WAXED_EXPOSED_COPPER, 64), new ItemStack(Material.WEATHERED_COPPER, 64), new ItemStack(Material.WAXED_WEATHERED_COPPER, 64), new ItemStack(Material.OXIDIZED_COPPER, 64), new ItemStack(Material.WAXED_OXIDIZED_COPPER, 64), new ItemStack(Material.TORCHFLOWER, 64), new ItemStack(Material.PITCHER_PLANT, 64)),
-                new Tribute(new ItemStack(Material.COAL, 128), new ItemStack(Material.CHARCOAL, 128), new ItemStack(Material.COPPER_INGOT, 128), new ItemStack(Material.IRON_INGOT, 256), new ItemStack(Material.GOLD_INGOT, 128), new ItemStack(Material.REDSTONE_BLOCK, 64), new ItemStack(Material.QUARTZ_BLOCK, 64), new ItemStack(Material.DIAMOND, 64), new ItemStack(Material.EMERALD, 16), new ItemStack(Material.FLINT, 128), new ItemStack(Material.GLOWSTONE_DUST, 128), new ItemStack(Material.NETHERITE_INGOT, 6)),
-                new Tribute(new ItemStack(Material.STRIPPED_OAK_WOOD, 64), new ItemStack(Material.STRIPPED_SPRUCE_WOOD, 64), new ItemStack(Material.STRIPPED_BIRCH_WOOD, 64), new ItemStack(Material.STRIPPED_JUNGLE_WOOD, 64), new ItemStack(Material.STRIPPED_ACACIA_WOOD, 64), new ItemStack(Material.STRIPPED_DARK_OAK_WOOD, 64), new ItemStack(Material.STRIPPED_MANGROVE_WOOD, 64), new ItemStack(Material.STRIPPED_CHERRY_WOOD, 64), new ItemStack(Material.STRIPPED_BAMBOO_BLOCK, 64), new ItemStack(Material.STRIPPED_WARPED_HYPHAE, 64), new ItemStack(Material.STRIPPED_CRIMSON_HYPHAE, 64)),
-                new Tribute(new ItemStack(Material.SPYGLASS, 1), new ItemStack(Material.CLOCK, 1), new ItemStack(Material.SHEARS, 1), new ItemStack(Material.FLINT_AND_STEEL, 1), new ItemStack(Material.BRUSH, 1), new ItemStack(Material.LEAD, 64), new ItemStack(Material.COMPASS, 64), new ItemStack(Material.RECOVERY_COMPASS, 9), new ItemStack(Material.MUSIC_DISC_CAT, 10)),
-                new Tribute(new ItemStack(Material.TURTLE_HELMET, 3), new ItemStack(Material.LEATHER_HORSE_ARMOR, 3), new ItemStack(Material.IRON_HORSE_ARMOR, 3), new ItemStack(Material.GOLDEN_HORSE_ARMOR, 3), new ItemStack(Material.DIAMOND_HORSE_ARMOR, 3), new ItemStack(Material.RESPAWN_ANCHOR, 128)),
-                new Tribute(new ItemStack(Material.NETHER_WART, 640), new ItemStack(Material.NETHERITE_UPGRADE_SMITHING_TEMPLATE, 10), new ItemStack(Material.NETHER_STAR, 10), new ItemStack(Material.NETHERITE_INGOT, 640), new ItemStack(Material.WITHER_ROSE, 3), new ItemStack(Material.WITHER_SKELETON_SKULL, 30)),
-                new Tribute(new ItemStack(Material.BEDROCK, 1)),
-                new Tribute(new ItemStack(Material.BEDROCK, 1)),
-                new Tribute(new ItemStack(Material.BEDROCK, 1)),
-                new Tribute(new ItemStack(Material.BEDROCK, 1)),
-                new Tribute(new ItemStack(Material.BEDROCK, 1)),
-        };
-
-        Blessing[] blessings = new Blessing[]{
-                new Blessing(new MessageEffect("IMPOSSIBLE")),
-                new Blessing(new MessageEffect("IMPOSSIBLE")),
-                new Blessing(new MessageEffect("IMPOSSIBLE")),
-                new Blessing(new MessageEffect("IMPOSSIBLE")),
-                new Blessing(new MessageEffect("IMPOSSIBLE")),
-                new Blessing(new MessageEffect("IMPOSSIBLE")),
-                new Blessing(new MessageEffect("IMPOSSIBLE")),
-                new Blessing(new MessageEffect("IMPOSSIBLE")),
-                new Blessing(new MessageEffect("IMPOSSIBLE")),
-                new Blessing(new MessageEffect("IMPOSSIBLE")),
-                new Blessing(new MessageEffect("IMPOSSIBLE")),
-        };
-
-        TextComponent[] messages = new TextComponent[]{
-                Component.text( "Thomas Pesquet sera plus efficace d'une heure !"),
-                Component.text( "Thomas Pesquet sera plus efficace de deux heures !"),
-                Component.text( "Thomas Pesquet sera plus efficace de trois heures !"),
-                Component.text( "Thomas Pesquet sera plus efficace de cinq heures !"),
-                Component.text( "Thomas Pesquet sera plus efficace de sept heures !"),
-                Component.text( "Thomas Pesquet sera plus efficace de neuf heures !"),
-                Component.text( "Thomas Pesquet sera plus efficace de douze heures !"),
-                Component.text( "Thomas Pesquet sera plus efficace de quinze heures !"),
-                Component.text( "Thomas Pesquet sera plus efficace de dix-huit heures !"),
-                Component.text( "Thomas Pesquet sera plus efficace de vingt-huit heures !"),
-                Component.text( "IMPOSSIBLE"),
-        };
-
-        TextComponent[] names = new TextComponent[]{
-                Component.text( "Ariscis I"),
-                Component.text( "Cidrouille I"),
-                Component.text( "flyzeur_ I"),
-                Component.text( "Ariscis II"),
-                Component.text( "Cidrouille II"),
-                Component.text( "flyzeur_ II"),
-                Component.text( "Ariscis III"),
-                Component.text( "Cidrouille III"),
-                Component.text( "flyzeur_ III"),
-                Component.text( "Riche MAX"),
-                Component.text( "IMPOSSIBLE"),
-        };
-
-        this.addNewVillager(new VillagerLevel("Ariscis I", location, Villager.Type.TAIGA, Villager.Profession.CLERIC, blessings, messages, tributes, names));
-    }
-
-    private void spawnFermier1(){
-        Location location = new Location(world, 12010.5, 64, 1464.5, -90, 0);
-
-        ItemStack[] items = new ItemStack[]{
-                new ItemStack(Material.DRIED_KELP, 64),
-                new ItemStack(Material.COOKED_BEEF, 64),
-                new ItemStack(Material.COOKED_PORKCHOP, 64),
-                new ItemStack(Material.COOKED_MUTTON, 64),
-                new ItemStack(Material.COOKED_CHICKEN, 64),
-                new ItemStack(Material.COOKED_RABBIT, 64),
-                new ItemStack(Material.RABBIT_FOOT, 64),
-                new ItemStack(Material.LEATHER, 64),
-        };
-
-        Blessing[] blessings = new Blessing[]{
-                new Blessing(new ItemEffect(new ItemStack(Material.EMERALD, 1))),
-                new Blessing(new ItemEffect(new ItemStack(Material.EMERALD, 1))),
-                new Blessing(new ItemEffect(new ItemStack(Material.EMERALD, 1))),
-                new Blessing(new ItemEffect(new ItemStack(Material.EMERALD, 1))),
-                new Blessing(new ItemEffect(new ItemStack(Material.EMERALD, 1))),
-                new Blessing(new ItemEffect(new ItemStack(Material.EMERALD, 1))),
-                new Blessing(new ItemEffect(new ItemStack(Material.EMERALD, 2))),
-                new Blessing(new ItemEffect(new ItemStack(Material.EMERALD, 1))),
-        };
-
-        TextComponent[] messages = new TextComponent[]{
-                Component.text( "Merci pour ces algues, voici 1 émeraude."),
-                Component.text( "Merci pour la viande, voici 1 émeraude."),
-                Component.text( "Merci pour la viande, voici 1 émeraude."),
-                Component.text( "Merci pour la viande, voici 1 émeraude."),
-                Component.text( "Merci pour la viande, voici 1 émeraude."),
-                Component.text( "Merci pour la viande, voici 1 émeraude."),
-                Component.text( "Merci pour ces pattes, voici 2 émeraude."),
-                Component.text( "Merci pour ce cuir, voici 1 émeraude."),
-        };
-
-        this.addNewVillager(new VillagerVendor("Vendeur Santoku", location, Villager.Type.SWAMP, Villager.Profession.NITWIT, blessings, messages, items));
-    }
-
-    private void spawnFermier2(){
-        Location location = new Location(world, 12010.5, 64, 1466.5, -90, 0);
-
-        ItemStack[] items = new ItemStack[]{
-                new ItemStack(Material.HAY_BLOCK, 64),
-                new ItemStack(Material.GOLDEN_CARROT, 64),
-                new ItemStack(Material.BAKED_POTATO, 64),
-                new ItemStack(Material.PUMPKIN_PIE, 64),
-                new ItemStack(Material.MELON, 64),
-                new ItemStack(Material.NETHER_WART_BLOCK, 64),
-                new ItemStack(Material.BEETROOT, 64),
-                new ItemStack(Material.GLOW_BERRIES, 64),
-        };
-
-        Blessing[] blessings = new Blessing[]{
-                new Blessing(new ItemEffect(new ItemStack(Material.EMERALD, 2))),
-                new Blessing(new ItemEffect(new ItemStack(Material.EMERALD, 2))),
-                new Blessing(new ItemEffect(new ItemStack(Material.EMERALD, 1))),
-                new Blessing(new ItemEffect(new ItemStack(Material.EMERALD, 2))),
-                new Blessing(new ItemEffect(new ItemStack(Material.EMERALD, 1))),
-                new Blessing(new ItemEffect(new ItemStack(Material.EMERALD, 1))),
-                new Blessing(new ItemEffect(new ItemStack(Material.EMERALD, 1))),
-                new Blessing(new ItemEffect(new ItemStack(Material.EMERALD, 1))),
-        };
-
-        TextComponent[] messages = new TextComponent[]{
-                Component.text( "Merci pour ce blé, voici 2 émeraude."),
-                Component.text( "Merci pour ces carottes, voici 2 émeraude."),
-                Component.text( "Merci pour ces patates, voici 1 émeraude."),
-                Component.text( "Merci pour ces tartes, voici 2 émeraude."),
-                Component.text( "Merci pour ce melon, voici 1 émeraude."),
-                Component.text( "Merci pour ces verrues, voici 1 émeraude."),
-                Component.text( "Merci pour ces betteraves, voici 1 émeraude."),
-                Component.text( "Merci pour ces baies, voici 1 émeraude."),
-        };
-
-        this.addNewVillager(new VillagerVendor("Vendeur Tanaka", location, Villager.Type.SWAMP, Villager.Profession.NITWIT, blessings, messages, items));
-    }
-
-    private void spawnPharmacien(){
-        Location location = new Location(world, 12035.5, 64, 1425.5, 0, 0);
-
-        ItemStack[] items = new ItemStack[]{
-                new ItemStack(Material.EMERALD_BLOCK, 1),
-        };
-
-        ItemStack itemStack = new ItemStack(Material.POTION);
-        PotionMeta meta = (PotionMeta) itemStack.getItemMeta();
-        meta.addCustomEffect(new PotionEffect(PotionEffectType.INSTANT_HEALTH,1,1), false);
-        meta.addCustomEffect(new PotionEffect(PotionEffectType.ABSORPTION,3600*20,4), false);
-        meta.addCustomEffect(new PotionEffect(PotionEffectType.SPEED,20*20,20), false);
-        meta.addCustomEffect(new PotionEffect(PotionEffectType.REGENERATION,10*20,10), false);
-        itemStack.setItemMeta(meta);
-
-        Blessing[] blessings = new Blessing[]{
-                new Blessing(new ItemEffect(itemStack)),
-        };
-
-        TextComponent[] messages = new TextComponent[]{
-                Component.text( "Voici un médicament, tu iras mieux avec ça !"),
-        };
-
-        this.addNewVillager(new VillagerVendor("Vendeur Nossos", location, Villager.Type.DESERT, Villager.Profession.CLERIC, blessings, messages, items));
-    }
-
-    private void spawnPolicier(){
-        Location location = new Location(world, 12068.5, 67, 1402.5, 90, 0);
-
-        ItemStack[] items = new ItemStack[]{
-                new ItemStack(Material.EMERALD_BLOCK, 1),
-        };
-
-        Blessing[] blessings = new Blessing[]{
-                new Blessing(new GameModeEffect(GameMode.SURVIVAL)),
-        };
-
-        TextComponent[] messages = new TextComponent[]{
-                Component.text( "Vous êtes libre, mais on vous surveille."),
-        };
-
-        this.addNewVillager(new VillagerVendor("Vendeur Aspis", location, Villager.Type.SNOW, Villager.Profession.FLETCHER, blessings, messages, items));
-    }*/
-
+    //region Trader
     private void spawnGolDRoger(){
         MerchantRecipe fishingRod = new MerchantRecipe(ECustomItem.FISHING_D_ROD.getItemStack(), 0, 99, false, 0, 0,9,0,true);
         fishingRod.addIngredient(new ItemStack(Material.EMERALD_BLOCK, 9));
@@ -888,58 +377,49 @@ public class VillagerFactory {
         AVillager villager = new Trader("Concierge", Component.text("Jean Touchatouille"), Villager.Type.TAIGA, Villager.Profession.ARMORER, recipes, messages, openMessage);
         this.addNewVillager(villager);
     }
+    //endregion Trader
 
+    private void addNewVillager(AVillager villager) {
+        villagers.put(villager.uuid, villager);
+    }
 
-    /*private void spawnLibraire(){
-        Location location = new Location(world, 12138.5, 73, 1447.5, -135, 0);
+    private void addNewVillagerLevel(String id, Blessing[] blessings) {
+        VillagerConfig config = VillagerLoader.load(id);
 
-        ItemStack itemStack = new ItemStack(Material.ENCHANTED_BOOK, 1);
-        EnchantmentStorageMeta meta = (EnchantmentStorageMeta) itemStack.getItemMeta();
-        meta.addStoredEnchant(Enchantment.UNBREAKING, 3,false);
-        itemStack.setItemMeta(meta);
+        Villager.Type type = Registry.VILLAGER_TYPE.get(NamespacedKey.minecraft(config.type.toLowerCase()));
+        Villager.Profession profession = Registry.VILLAGER_PROFESSION.get(NamespacedKey.minecraft(config.profession.toLowerCase()));
+        TextComponent[] names = config.levels.stream().map(level -> Component.text(level.name)).toArray(TextComponent[]::new);
+        TextComponent[] messages = config.levels.stream().map(level -> Component.text(level.message)).toArray(TextComponent[]::new);
+        TextComponent[] recap = config.levels.stream().map(level -> Component.text(level.recap)).toArray(TextComponent[]::new);
+        Tribute[] tributes = config.levels.stream().map(level -> new Tribute(level.tribute.stream().map(SimpleItemStack::toItemStack).toArray(ItemStack[]::new))).toArray(Tribute[]::new);
+        TextComponent openMessage = Component.text(config.openMessage);
 
-        ItemStack itemStack2 = new ItemStack(Material.ENCHANTED_BOOK, 1);
-        EnchantmentStorageMeta meta2 = (EnchantmentStorageMeta) itemStack2.getItemMeta();
-        meta2.addStoredEnchant(Enchantment.PROTECTION, 4,false);
-        itemStack2.setItemMeta(meta2);
+        this.addNewVillager(new VillagerLevel(config.name, type, profession, blessings, messages, tributes, names, recap, openMessage));
+    }
 
-        ItemStack itemStack3 = new ItemStack(Material.ENCHANTED_BOOK, 1);
-        EnchantmentStorageMeta meta3 = (EnchantmentStorageMeta) itemStack3.getItemMeta();
-        meta3.addStoredEnchant(Enchantment.EFFICIENCY, 5,false);
-        itemStack3.setItemMeta(meta3);
+    public Map<UUID, AVillager> getVillagers() {
+        return villagers;
+    }
 
-        ItemStack itemStack4 = new ItemStack(Material.ENCHANTED_BOOK, 1);
-        EnchantmentStorageMeta meta4 = (EnchantmentStorageMeta) itemStack4.getItemMeta();
-        meta4.addStoredEnchant(Enchantment.THORNS, 3,false);
-        itemStack4.setItemMeta(meta4);
+    @Nullable
+    public AVillager getVillager(String name) {
+        for (AVillager villager : villagers.values()) {
+            if (name.equals(villager.nameId))
+                return villager;
+        }
+        return null;
+    }
 
-        ItemStack itemStack5 = new ItemStack(Material.ENCHANTED_BOOK, 1);
-        EnchantmentStorageMeta meta5 = (EnchantmentStorageMeta) itemStack5.getItemMeta();
-        meta5.addStoredEnchant(Enchantment.PUNCH, 2,false);
-        itemStack5.setItemMeta(meta5);
-
-        ItemStack[] items = new ItemStack[]{
-                itemStack, itemStack2, itemStack3, itemStack4, itemStack5
-        };
-
-        Blessing[] blessings = new Blessing[]{
-                new Blessing(new ItemEffect(new ItemStack(Material.EMERALD, 9))),
-                new Blessing(new ItemEffect(new ItemStack(Material.EMERALD, 9))),
-                new Blessing(new ItemEffect(new ItemStack(Material.EMERALD, 9))),
-                new Blessing(new ItemEffect(new ItemStack(Material.EMERALD, 9))),
-                new Blessing(new ItemEffect(new ItemStack(Material.EMERALD, 9))),
-
-        };
-
-        TextComponent[] messages = new TextComponent[]{
-                Component.text( "Merci pour ce livre, voici un peu d'émeraude."),
-                Component.text( "Merci pour ce livre, voici un peu d'émeraude."),
-                Component.text( "Merci pour ce livre, voici un peu d'émeraude."),
-                Component.text( "Merci pour ce livre, voici un peu d'émeraude."),
-                Component.text( "Merci pour ce livre, voici un peu d'émeraude."),
-        };
-
-        this.addNewVillager(new VillagerVendor("Junkudo", location, Villager.Type.SAVANNA, Villager.Profession.LIBRARIAN, blessings, messages, items));
-    }*/
-    //endregion
+    public void applyAllCurrentBlessing(AlphaPlayer player) {
+        player.getPlayer().sendMessage(Component.text("-------------------- Récapitulatif --------------------", NamedTextColor.AQUA));
+        for (AVillager villager : villagers.values()) {
+            if (villager instanceof VillagerLevel villagerLevel) {
+                villagerLevel.applyAllCurrentBlessing(player);
+                TextComponent text = villagerLevel.getRecapMessage();
+                if (!text.content().isEmpty())
+                    player.getPlayer().sendMessage(text);
+            }
+        }
+        player.getPlayer().sendMessage(Component.text("----------------------------------------------------", NamedTextColor.AQUA));
+    }
 }

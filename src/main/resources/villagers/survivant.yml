@@ -1,0 +1,205 @@
+name: "Survivant"
+type: SAVANNA
+profession: FARMER
+
+levels:
+  - name: "Survivant I"
+    message: "Désolé, c'est fait exprès. **MOUAHAHAHAAHHA** (imaginez le rire d'ariscis)"
+    recap: ""
+    tribute:
+      - material: DIRT
+        amount: 1
+
+  - name: "Survivant II"
+    message: "Vous pouvez maintenant avoir des outils en bois !"
+    recap: "Outils en bois débloqué !"
+    tribute:
+      - material: WHEAT_SEEDS
+        amount: 32
+
+  - name: "Survivant III"
+    message: "Vous pouvez maintenant avoir des outils en pierre et une armure en cuir !"
+    recap: "Outils en bois et armure en cuir débloqué !"
+    tribute:
+      - material: OAK_LOG
+        amount: 640
+      - material: APPLE
+        amount: 32
+      - material: SUGAR_CANE
+        amount: 64
+
+  - name: "Survivant IV"
+    message: "Vous pouvez maintenant avoir des outils en fer et une armure en maille !"
+    recap: "Outils en fer et armure en maille débloqué !"
+    tribute:
+      - material: IRON_BLOCK
+        amount: 160
+      - material: COAL_BLOCK
+        amount: 64
+      - material: LAPIS_BLOCK
+        amount: 64
+      - material: WAXED_COPPER_BLOCK
+        amount: 16
+      - material: WAXED_EXPOSED_COPPER
+        amount: 16
+      - material: WAXED_WEATHERED_COPPER
+        amount: 16
+      - material: WAXED_OXIDIZED_COPPER
+        amount: 16
+
+  - name: "Survivant V"
+    message: "Vous pouvez maintenant avoir une armure en fer !"
+    recap: "Outils en fer et armure en fer débloqué !"
+    tribute:
+      - material: HAY_BLOCK
+        amount: 32
+      - material: BAKED_POTATO
+        amount: 32
+      - material: GOLDEN_CARROT
+        amount: 128
+      - material: PUFFERFISH
+        amount: 32
+      - material: PUMPKIN_PIE
+        amount: 64
+
+  - name: "Survivant VI"
+    message: "Vous pouvez maintenant avoir des outils en or et une armure en or !"
+    recap: "Outils en or et armure en or débloqué !"
+    tribute:
+      - material: ENDER_PEARL
+        amount: 16
+      - material: FERMENTED_SPIDER_EYE
+        amount: 64
+      - material: PHANTOM_MEMBRANE
+        amount: 32
+      - material: GUNPOWDER
+        amount: 64
+      - material: BONE
+        amount: 64
+      - material: ROTTEN_FLESH
+        amount: 64
+
+  - name: "Survivant VII"
+    message: "Vous pouvez maintenant avoir des outils en diamant et une armure en diamant !"
+    recap: "Outils en diamant et armure en diamant débloqué !"
+    tribute:
+      - material: ARMADILLO_SCUTE
+        amount: 10
+      - material: PALE_OAK_LOG
+        amount: 64
+      - material: CREAKING_HEART
+        amount: 64
+      - material: RESIN_BLOCK
+        amount: 64
+
+  - name: "Survivant VIII"
+    message: "Un peu de vie pour vous !"
+    recap: "Outils en diamant, armure en diamant et vie en plus débloqué !"
+    tribute:
+      - material: OAK_SAPLING
+        amount: 64
+      - material: OAK_LOG
+        amount: 64
+      - material: STRIPPED_OAK_LOG
+        amount: 64
+      - material: SPRUCE_SAPLING
+        amount: 64
+      - material: SPRUCE_LOG
+        amount: 64
+      - material: STRIPPED_SPRUCE_LOG
+        amount: 64
+      - material: BIRCH_SAPLING
+        amount: 64
+      - material: BIRCH_LOG
+        amount: 64
+      - material: STRIPPED_BIRCH_LOG
+        amount: 64
+
+  - name: "Survivant IX"
+    message: "Un peu de vie pour vous !"
+    recap: "Outils en diamant, armure en diamant et vie en plus débloqué !"
+    tribute:
+      - material: JUNGLE_SAPLING
+        amount: 64
+      - material: JUNGLE_LOG
+        amount: 64
+      - material: STRIPPED_JUNGLE_LOG
+        amount: 64
+      - material: ACACIA_SAPLING
+        amount: 64
+      - material: ACACIA_LOG
+        amount: 64
+      - material: STRIPPED_ACACIA_LOG
+        amount: 64
+      - material: DARK_OAK_SAPLING
+        amount: 64
+      - material: DARK_OAK_LOG
+        amount: 64
+      - material: STRIPPED_DARK_OAK_LOG
+        amount: 64
+
+  - name: "Survivant X"
+    message: "Un peu de vie pour vous !"
+    recap: "Outils en diamant, armure en diamant et vie en plus débloqué !"
+    tribute:
+      - material: MANGROVE_PROPAGULE
+        amount: 64
+      - material: MANGROVE_LOG
+        amount: 64
+      - material: STRIPPED_MANGROVE_LOG
+        amount: 64
+      - material: CHERRY_SAPLING
+        amount: 64
+      - material: CHERRY_LOG
+        amount: 64
+      - material: STRIPPED_CHERRY_LOG
+        amount: 64
+      - material: PALE_OAK_SAPLING
+        amount: 64
+      - material: PALE_OAK_LOG
+        amount: 64
+      - material: STRIPPED_PALE_OAK_LOG
+        amount: 64
+
+  - name: "Survivant XI"
+    message: "Un peu de vie pour vous !"
+    recap: "Outils en diamant, armure en diamant et vie en plus débloqué !"
+    tribute:
+      - material: CHORUS_FRUIT
+        amount: 64
+      - material: GOLDEN_APPLE
+        amount: 64
+      - material: TROPICAL_FISH
+        amount: 64
+      - material: COOKIE
+        amount: 64
+      - material: CAKE
+        amount: 1
+
+  - name: "Survivant XII"
+    message: "La quête était si simple en vrai.. fin bref, voici un coeur pour vous."
+    recap: "Outils en diamant, armure en diamant et vie en plus débloqué !"
+    tribute:
+      - material: IRON_BLOCK
+        amount: 256
+      - material: LAPIS_BLOCK
+        amount: 128
+      - material: REDSTONE_BLOCK
+        amount: 128
+      - material: COPPER_BLOCK
+        amount: 128
+      - material: COAL_BLOCK
+        amount: 128
+      - material: GOLD_BLOCK
+        amount: 64
+      - material: DIAMOND_BLOCK
+        amount: 32
+      - material: EMERALD_BLOCK
+        amount: 16
+      - material: NETHERITE_BLOCK
+        amount: 8
+
+  - name: "Survivant MAX"
+    message: "C'est fini y a plus rien !"
+    recap: ""
+    tribute: []
