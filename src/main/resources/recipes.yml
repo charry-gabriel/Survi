@@ -1,0 +1,260 @@
+# Custom recipes for Survi plugin
+# --------------------------------------------------
+# new_recipes: map whose key is the custom namespaced key (without namespace)
+#   category: Bukkit CraftingBookCategory enum
+#   result: Bukkit Material enum for result item
+#   ingredients: 9-element list (row-major 3x3 grid) of Bukkit Material enums
+# old_recipes: list of minecraft:namespace keys to remove/disable
+
+new_recipes:
+  mending_egg:
+    category: MISC
+    result: CHICKEN_SPAWN_EGG
+    ingredients:
+      - END_CRYSTAL
+      - TORCHFLOWER
+      - END_CRYSTAL
+      - RED_NETHER_BRICK_SLAB
+      - BOOKSHELF
+      - RED_NETHER_BRICK_SLAB
+      - STRIPPED_MANGROVE_WOOD
+      - NETHERITE_INGOT
+      - STRIPPED_PALE_OAK_WOOD
+
+  chainmail_helmet:
+    category: EQUIPMENT
+    result: CHAINMAIL_HELMET
+    ingredients:
+      - LAVA_BUCKET
+      - LAVA_BUCKET
+      - LAVA_BUCKET
+      - LAVA_BUCKET
+      - LEATHER_HELMET
+      - LAVA_BUCKET
+      - AIR
+      - AIR
+      - AIR
+
+  chainmail_chestplate:
+    category: EQUIPMENT
+    result: CHAINMAIL_CHESTPLATE
+    ingredients:
+      - LAVA_BUCKET
+      - AIR
+      - LAVA_BUCKET
+      - LAVA_BUCKET
+      - LEATHER_CHESTPLATE
+      - LAVA_BUCKET
+      - LAVA_BUCKET
+      - LAVA_BUCKET
+      - LAVA_BUCKET
+
+  chainmail_leggings:
+    category: EQUIPMENT
+    result: CHAINMAIL_LEGGINGS
+    ingredients:
+      - LAVA_BUCKET
+      - LAVA_BUCKET
+      - LAVA_BUCKET
+      - LAVA_BUCKET
+      - LEATHER_LEGGINGS
+      - LAVA_BUCKET
+      - LAVA_BUCKET
+      - AIR
+      - LAVA_BUCKET
+
+  chainmail_boots:
+    category: EQUIPMENT
+    result: CHAINMAIL_BOOTS
+    ingredients:
+      - AIR
+      - AIR
+      - AIR
+      - LAVA_BUCKET
+      - LEATHER_BOOTS
+      - LAVA_BUCKET
+      - LAVA_BUCKET
+      - AIR
+      - LAVA_BUCKET
+
+  iron_helmet:
+    category: EQUIPMENT
+    result: IRON_HELMET
+    ingredients:
+      - IRON_BLOCK
+      - IRON_BLOCK
+      - IRON_BLOCK
+      - IRON_BLOCK
+      - CHAINMAIL_HELMET
+      - IRON_BLOCK
+      - AIR
+      - AIR
+      - AIR
+
+  iron_chestplate:
+    category: EQUIPMENT
+    result: IRON_CHESTPLATE
+    ingredients:
+      - IRON_BLOCK
+      - AIR
+      - IRON_BLOCK
+      - IRON_BLOCK
+      - CHAINMAIL_CHESTPLATE
+      - IRON_BLOCK
+      - IRON_BLOCK
+      - IRON_BLOCK
+      - IRON_BLOCK
+
+  iron_leggings:
+    category: EQUIPMENT
+    result: IRON_LEGGINGS
+    ingredients:
+      - IRON_BLOCK
+      - IRON_BLOCK
+      - IRON_BLOCK
+      - IRON_BLOCK
+      - CHAINMAIL_LEGGINGS
+      - IRON_BLOCK
+      - IRON_BLOCK
+      - AIR
+      - IRON_BLOCK
+
+  iron_boots:
+    category: EQUIPMENT
+    result: IRON_BOOTS
+    ingredients:
+      - AIR
+      - AIR
+      - AIR
+      - IRON_BLOCK
+      - CHAINMAIL_BOOTS
+      - IRON_BLOCK
+      - IRON_BLOCK
+      - AIR
+      - IRON_BLOCK
+
+  golden_helmet:
+    category: EQUIPMENT
+    result: GOLDEN_HELMET
+    ingredients:
+      - GOLD_BLOCK
+      - GOLD_BLOCK
+      - GOLD_BLOCK
+      - GOLD_BLOCK
+      - IRON_HELMET
+      - GOLD_BLOCK
+      - AIR
+      - AIR
+      - AIR
+
+  golden_chestplate:
+    category: EQUIPMENT
+    result: GOLDEN_CHESTPLATE
+    ingredients:
+      - GOLD_BLOCK
+      - AIR
+      - GOLD_BLOCK
+      - GOLD_BLOCK
+      - IRON_CHESTPLATE
+      - GOLD_BLOCK
+      - GOLD_BLOCK
+      - GOLD_BLOCK
+      - GOLD_BLOCK
+
+  golden_leggings:
+    category: EQUIPMENT
+    result: GOLDEN_LEGGINGS
+    ingredients:
+      - GOLD_BLOCK
+      - GOLD_BLOCK
+      - GOLD_BLOCK
+      - GOLD_BLOCK
+      - IRON_LEGGINGS
+      - GOLD_BLOCK
+      - GOLD_BLOCK
+      - AIR
+      - GOLD_BLOCK
+
+  golden_boots:
+    category: EQUIPMENT
+    result: GOLDEN_BOOTS
+    ingredients:
+      - AIR
+      - AIR
+      - AIR
+      - GOLD_BLOCK
+      - IRON_BOOTS
+      - GOLD_BLOCK
+      - GOLD_BLOCK
+      - AIR
+      - GOLD_BLOCK
+
+  diamond_helmet:
+    category: EQUIPMENT
+    result: DIAMOND_HELMET
+    ingredients:
+      - DIAMOND_BLOCK
+      - DIAMOND_BLOCK
+      - DIAMOND_BLOCK
+      - DIAMOND_BLOCK
+      - GOLDEN_HELMET
+      - DIAMOND_BLOCK
+      - AIR
+      - AIR
+      - AIR
+
+  diamond_chestplate:
+    category: EQUIPMENT
+    result: DIAMOND_CHESTPLATE
+    ingredients:
+      - DIAMOND_BLOCK
+      - AIR
+      - DIAMOND_BLOCK
+      - DIAMOND_BLOCK
+      - GOLDEN_CHESTPLATE
+      - DIAMOND_BLOCK
+      - DIAMOND_BLOCK
+      - DIAMOND_BLOCK
+      - DIAMOND_BLOCK
+
+  diamond_leggings:
+    category: EQUIPMENT
+    result: DIAMOND_LEGGINGS
+    ingredients:
+      - DIAMOND_BLOCK
+      - DIAMOND_BLOCK
+      - DIAMOND_BLOCK
+      - DIAMOND_BLOCK
+      - GOLDEN_LEGGINGS
+      - DIAMOND_BLOCK
+      - DIAMOND_BLOCK
+      - AIR
+      - DIAMOND_BLOCK
+
+  diamond_boots:
+    category: EQUIPMENT
+    result: DIAMOND_BOOTS
+    ingredients:
+      - AIR
+      - AIR
+      - AIR
+      - DIAMOND_BLOCK
+      - GOLDEN_BOOTS
+      - DIAMOND_BLOCK
+      - DIAMOND_BLOCK
+      - AIR
+      - DIAMOND_BLOCK
+
+old_recipes:
+  - minecraft:iron_helmet
+  - minecraft:iron_chestplate
+  - minecraft:iron_leggings
+  - minecraft:iron_boots
+  - minecraft:golden_helmet
+  - minecraft:golden_chestplate
+  - minecraft:golden_leggings
+  - minecraft:golden_boots
+  - minecraft:diamond_helmet
+  - minecraft:diamond_chestplate
+  - minecraft:diamond_leggings
+  - minecraft:diamond_boots
