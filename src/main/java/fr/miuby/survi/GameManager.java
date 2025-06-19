@@ -9,6 +9,8 @@ import fr.miuby.survi.player.AlphaPlayerFactory;
 import fr.miuby.survi.role.RoleFactory;
 import fr.miuby.survi.villager.VillagerFactory;
 import fr.miuby.survi.world.WorldFactory;
+import lombok.Getter;
+import lombok.Setter;
 import org.bukkit.event.Event;
 import org.bukkit.scheduler.BukkitScheduler;
 
@@ -16,22 +18,34 @@ import java.util.logging.Logger;
 
 public class GameManager {
     private static GameManager instance = null;
+
+    @Getter
     private Survi plugin;
+    @Getter
     private final Logger logger = Logger.getLogger("Survi");
+    @Getter
     private BukkitScheduler scheduler;
-
-    private int dispel = 0;
-    private boolean isNight;
-
-    //region Factory
+    @Getter
     private VillagerFactory villagerFactory;
+    @Getter
     private LockedItemsFactory lockedItemsFactory;
+    @Getter
     private CustomRecipeFactory customRecipeFactory;
+    @Getter
     private WorldFactory worldFactory;
+    @Getter
     private Database database;
+    @Getter
     private RoleFactory roleFactory;
+    @Getter
     private AlphaPlayerFactory alphaPlayerFactory;
-    //endregion
+
+    @Setter
+    @Getter
+    private int dispel = 0;
+    @Setter
+    @Getter
+    private boolean isNight;
 
     public static GameManager getInstance(){
         if(instance == null){
@@ -61,64 +75,6 @@ public class GameManager {
 
         Timer timer = new Timer();
         timer.update();
-    }
-
-    public int getDispel() {
-        return dispel;
-    }
-
-    public void setDispel(int dispel) {
-        this.dispel = dispel;
-    }
-
-    public boolean isNight() {
-        return isNight;
-    }
-
-    public void setNight(boolean night) {
-        isNight = night;
-    }
-
-    //region Factory
-    public VillagerFactory getVillagerFactory() {
-        return villagerFactory;
-    }
-
-    public LockedItemsFactory getLockedItemsFactory() {
-        return lockedItemsFactory;
-    }
-
-    public CustomRecipeFactory getCustomItemFactory() {
-        return customRecipeFactory;
-    }
-
-    public RoleFactory getRoleFactory() {
-        return roleFactory;
-    }
-
-    public WorldFactory getWorldFactory() {
-        return worldFactory;
-    }
-
-    public AlphaPlayerFactory getAlphaPlayerFactory() {
-        return alphaPlayerFactory;
-    }
-    //endregion
-
-    public Survi getPlugin() {
-        return plugin;
-    }
-
-    public Logger getLogger() {
-        return logger;
-    }
-
-    public Database getDatabase() {
-        return database;
-    }
-
-    public BukkitScheduler getScheduler() {
-        return scheduler;
     }
 
     public void callEvent(Event event) {

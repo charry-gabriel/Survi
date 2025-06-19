@@ -61,7 +61,7 @@ public class DamageListener implements Listener {
                 if (!damagedAlphaPlayer.isTakingNoDamage()) {
                     for (AlphaPlayer otherPlayer : GameManager.getInstance().getAlphaPlayerFactory().getAlphaPlayers().values()) {
                         if (otherPlayer.getPlayer() != null && otherPlayer.getRole().type() == ERole.FEE) {
-                            if (!otherPlayer.getUUID().equals(damagedAlphaPlayer.getUUID())) {
+                            if (!otherPlayer.getUuid().equals(damagedAlphaPlayer.getUuid())) {
                                 otherPlayer.setTakingNoDamage(true);
                                 otherPlayer.getPlayer().damage(damage);
                                 otherPlayer.getPlayer().playSound(slimeSound);

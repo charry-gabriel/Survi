@@ -1,13 +1,3 @@
 package fr.miuby.survi.villager.blessing;
 
-public class Blessing {
-    private final BlessingEffect[] blessingEffects;
-
-    public Blessing(BlessingEffect... blessingEffects) {
-        this.blessingEffects = blessingEffects;
-    }
-
-    public BlessingEffect[] getBlessingEffects() {
-        return blessingEffects;
-    }
-}
+public record Blessing(BlessingEffect... blessingEffects) { }

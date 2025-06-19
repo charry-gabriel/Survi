@@ -4,6 +4,7 @@ import fr.miuby.survi.player.AlphaPlayer;
 import fr.miuby.survi.GameManager;
 import fr.miuby.survi.villager.blessing.Blessing;
 import fr.miuby.survi.villager.blessing.BlessingEffect;
+import lombok.Setter;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.sound.Sound;
 import net.kyori.adventure.text.Component;
@@ -27,6 +28,7 @@ public class VillagerLevel extends AVillager {
     private final TextComponent[] recapMessages;
     private final Blessing[] blessings;
 
+    @Setter
     private int level = 0;
     private List<ItemStack> givenItems = new ArrayList<>();
 
@@ -93,7 +95,7 @@ public class VillagerLevel extends AVillager {
     public void applyAllCurrentBlessing(AlphaPlayer player) {
         player.getAlphaLife().regenHealth(() -> {
             for (Blessing blessing : getCurrentBlessings()) {
-                for (BlessingEffect effect : blessing.getBlessingEffects()) {
+                for (BlessingEffect effect : blessing.blessingEffects()) {
                     effect.applyEffect(player);
                 }
             }
@@ -106,7 +108,7 @@ public class VillagerLevel extends AVillager {
         for (Player player : Bukkit.getOnlinePlayers()) {
             player.playSound(myCustomSound);
 
-            for (BlessingEffect effect : getBlessing().getBlessingEffects()) {
+            for (BlessingEffect effect : getBlessing().blessingEffects()) {
                 effect.applyEffect(AlphaPlayer.get(player.getUniqueId()));
             }
         }
@@ -184,10 +186,6 @@ public class VillagerLevel extends AVillager {
 
     public TextComponent getRecapMessage() {
         return recapMessages[this.level].color(NamedTextColor.AQUA);
-    }
-
-    public void setLevel(int level) {
-        this.level = level;
     }
 
     public void setGivenItems(ItemStack[] givenItems) {

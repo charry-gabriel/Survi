@@ -8,6 +8,7 @@ import fr.miuby.survi.villager.blessing.*;
 import fr.miuby.survi.world.EWorld;
 import fr.miuby.survi.item.locked_item.LockedArmorType;
 import fr.miuby.survi.item.locked_item.LockedToolType;
+import lombok.Getter;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -19,6 +20,7 @@ import org.bukkit.inventory.MerchantRecipe;
 import javax.annotation.Nullable;
 import java.util.*;
 
+@Getter
 public class VillagerFactory {
     private final Map<UUID, AVillager> villagers = new HashMap<>();
 
@@ -395,10 +397,6 @@ public class VillagerFactory {
         TextComponent openMessage = Component.text(config.openMessage);
 
         this.addNewVillager(new VillagerLevel(config.name, type, profession, blessings, messages, tributes, names, recap, openMessage));
-    }
-
-    public Map<UUID, AVillager> getVillagers() {
-        return villagers;
     }
 
     @Nullable

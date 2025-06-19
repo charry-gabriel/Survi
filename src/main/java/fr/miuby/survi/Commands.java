@@ -25,7 +25,7 @@ public class Commands {
                     return true;
 
                 // Swap role
-                GameManager.getInstance().getDatabase().updatePlayer(alphaPlayer.getUUID(), "role", role.type().toString());
+                GameManager.getInstance().getDatabase().updatePlayer(alphaPlayer.getUuid(), "role", role.type().toString());
                 alphaPlayer.setRole(role);
 
                 if (alphaPlayer.getPlayer().isOnline())
@@ -60,7 +60,7 @@ public class Commands {
                 else if (args[0].equals("remove"))
                     alphaPlayer.removeSubRole(role);
 
-                GameManager.getInstance().getDatabase().updatePlayer(alphaPlayer.getUUID(), "subroles", String.join(",", alphaPlayer.getSubRoles().stream().map(subrole -> subrole.type().toString()).toList()));
+                GameManager.getInstance().getDatabase().updatePlayer(alphaPlayer.getUuid(), "subroles", String.join(",", alphaPlayer.getSubRoles().stream().map(subrole -> subrole.type().toString()).toList()));
 
                 if (alphaPlayer.getPlayer().isOnline())
                     GameManager.getInstance().getAlphaPlayerFactory().sendToPlayers(alphaPlayer);

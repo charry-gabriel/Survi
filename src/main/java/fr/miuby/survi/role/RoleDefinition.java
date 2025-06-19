@@ -1,5 +1,6 @@
 package fr.miuby.survi.role;
 
+import lombok.Getter;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 
@@ -7,6 +8,7 @@ import java.util.List;
 import java.util.function.Consumer;
 
 public class RoleDefinition {
+    @Getter
     private final ERole type;
     private final String displayName;
     private final NamedTextColor color;
@@ -33,8 +35,5 @@ public class RoleDefinition {
             id
         );
     }
-    
-    public ERole getType() {
-        return type;
-    }
+
 }

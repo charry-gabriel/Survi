@@ -2,59 +2,36 @@ package fr.miuby.survi.role;
 
 import fr.miuby.survi.GameManager;
 import fr.miuby.survi.world.EWorld;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import org.bukkit.NamespacedKey;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
 import org.jetbrains.annotations.Nullable;
 
+@RequiredArgsConstructor
 public class RoleAttribute {
+    @Getter
     private final EWorld world;
+    @Getter
     private final Attribute attributeType;
+    @Getter
     private final float value;
+    @Getter
     private final Operation operation;
 
+    @Getter @Nullable
     private String name;
+    @Getter @Nullable
     private String role;
 
     public RoleAttribute(EWorld world, Attribute attributeType, float value) {
         this(world, attributeType, value, Operation.ADD_NUMBER);
     }
 
-    public RoleAttribute(EWorld world, Attribute attributeType, float value, Operation operation) {
-        this.world = world;
-        this.attributeType = attributeType;
-        this.value = value;
-        this.operation = operation;
-    }
-
     public AttributeModifier createAttributeModifier() {
+        assert this.name != null;
         return new AttributeModifier(new NamespacedKey(GameManager.getInstance().getPlugin(), this.name), this.value, AttributeModifier.Operation.valueOf(this.operation.toString()));
-    }
-
-    @Nullable
-    public String getName() {
-        return this.name;
-    }
-
-    public Attribute getAttributeType() {
-        return attributeType;
-    }
-
-    public float getValue() {
-        return this.value;
-    }
-
-    public EWorld getWorld() {
-        return this.world;
-    }
-
-    public Operation getOperation() {
-        return this.operation;
-    }
-
-    @Nullable
-    public String getRole() {
-        return this.role;
     }
 
     public void setRole(String role) {

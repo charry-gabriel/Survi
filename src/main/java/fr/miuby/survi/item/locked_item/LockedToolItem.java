@@ -1,9 +1,11 @@
 package fr.miuby.survi.item.locked_item;
 
+import lombok.Getter;
 import org.bukkit.NamespacedKey;
 
 import java.util.List;
 
+@Getter
 public class LockedToolItem extends LockedItem {
     private final LockedToolType type;
 
@@ -12,7 +14,4 @@ public class LockedToolItem extends LockedItem {
         this.type = type;
     }
 
-    public LockedToolType getType() {
-        return type;
-    }
 }

@@ -16,7 +16,6 @@ public class Trader extends AVillager {
     public Trader(String nameId, TextComponent displayName, Villager.Type type, Villager.Profession profession, MerchantRecipe[] merchantRecipe, TextComponent[] messages, TextComponent openMessage) {
         super(nameId, type, profession, messages, openMessage);
         this.merchantRecipe = merchantRecipe;
-        this.nameId = nameId;
         this.displayName = displayName;
 
         initVillager();

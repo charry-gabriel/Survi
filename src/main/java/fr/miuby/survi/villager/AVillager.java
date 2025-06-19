@@ -2,6 +2,9 @@ package fr.miuby.survi.villager;
 
 import fr.miuby.survi.GameManager;
 import fr.miuby.survi.world.WorldFactory;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import net.kyori.adventure.text.TextComponent;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
@@ -12,25 +15,22 @@ import org.bukkit.inventory.Inventory;
 import javax.annotation.Nullable;
 import java.util.UUID;
 
+@RequiredArgsConstructor
 public abstract class AVillager {
-    protected Villager villager;
-    protected Inventory inventory;
-    protected UUID uuid;
-    protected final TextComponent[] messages;
-    protected final TextComponent openMessage;
-    protected String nameId;
-    protected Location location;
-
+    protected final String nameId;
     private final Villager.Type type;
     private final Villager.Profession profession;
+    protected final TextComponent[] messages;
+    @Getter
+    protected final TextComponent openMessage;
 
-    public AVillager(String nameId, Villager.Type type, Villager.Profession profession, TextComponent[] messages, TextComponent openMessage) {
-        this.messages = messages;
-        this.type = type;
-        this.profession = profession;
-        this.nameId = nameId;
-        this.openMessage = openMessage;
-    }
+    @Getter
+    protected Villager villager;
+    @Getter
+    protected Inventory inventory;
+    @Setter
+    protected Location location;
+    protected UUID uuid;
 
     public void initVillager() {
         if (GameManager.getInstance().getDatabase().IsLoaded() && !GameManager.getInstance().getDatabase().initVillager(this, this.nameId)) {
@@ -64,14 +64,6 @@ public abstract class AVillager {
 
     public abstract TextComponent getDisplayName();
 
-    public Villager getVillager() {
-        return villager;
-    }
-
-    public Inventory getInventory() {
-        return inventory;
-    }
-
     public void setRealVillager(UUID uuid) {
         Villager realVillager = findRealVillager(uuid);
 
@@ -99,11 +91,4 @@ public abstract class AVillager {
         return null;
     }
 
-    public void setLocation(Location location) {
-        this.location = location;
-    }
-
-    public TextComponent getOpenMessage() {
-        return openMessage;
-    }
 }

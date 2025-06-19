@@ -27,11 +27,11 @@ public class WorldFactory {
         worlds.put(EWorld.WILDERNESS, wilderness);
 
         Monde nether = new Monde(server.getWorld("Wilderness_nether"),"Nether", NamedTextColor.RED, EWorld.NETHER);
-        nether.setLock(true);
+        nether.setLocked(true);
         worlds.put(EWorld.NETHER, nether);
 
         Monde end = new Monde(server.getWorld("Wilderness_the_end"),"End", NamedTextColor.YELLOW, EWorld.END);
-        end.setLock(true);
+        end.setLocked(true);
         worlds.put(EWorld.END, end);
     }
 

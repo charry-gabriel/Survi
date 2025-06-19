@@ -1,10 +1,12 @@
 package fr.miuby.survi.player;
 
+import lombok.Getter;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.scoreboard.*;
 
 public class AlphaScoreboard {
+    @Getter
     private final Scoreboard scoreboard;
     private Score mortScore;
     private Score successScore;
@@ -26,8 +28,5 @@ public class AlphaScoreboard {
         return new AlphaTeam(scoreboard, alphaPlayer);
     }
 
-    public Scoreboard getScoreboard() {
-        return scoreboard;
-    }
 }
 

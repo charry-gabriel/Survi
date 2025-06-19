@@ -1,6 +1,7 @@
 package fr.miuby.survi.item;
 
 import fr.miuby.survi.GameManager;
+import lombok.Getter;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.ItemStack;
@@ -12,20 +13,13 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.plugin.java.JavaPlugin;
 
+@Getter
 public class CustomRecipeFactory {
     private final Map<NamespacedKey, CustomRecipe> newRecipes = new HashMap<>();
     private final List<NamespacedKey> oldRecipes = new ArrayList<>();
 
     public CustomRecipeFactory() {
         loadRecipes();
-    }
-
-    public Map<NamespacedKey, CustomRecipe> getNewRecipes() {
-        return newRecipes;
-    }
-
-    public List<NamespacedKey> getOldRecipes() {
-        return oldRecipes;
     }
 
     public NamespacedKey getOldNamespaceKeyOrDefault(NamespacedKey newNsKey) {

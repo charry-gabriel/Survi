@@ -4,6 +4,8 @@ import fr.miuby.survi.GameManager;
 import fr.miuby.survi.role.*;
 import fr.miuby.survi.world.EWorld;
 import fr.miuby.survi.world.Monde;
+import lombok.Getter;
+import lombok.Setter;
 import org.bukkit.NamespacedKey;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
@@ -16,22 +18,46 @@ import java.io.Serializable;
 import java.util.*;
 
 public class AlphaPlayer implements Serializable {
+    @Getter
     private final UUID uuid;
-    private Player player;
-    private Role role;
-    private final List<Role> subRoles = new ArrayList<>();
-    private final AlphaLife alphaLife;
+    @Getter
     private final AlphaScoreboard scoreboard;
+    @Getter
+    private final AlphaLife alphaLife;
+
+    @Getter
+    private final List<Role> subRoles = new ArrayList<>();
+
+    @Setter
     private Monde world;
+    @Getter
     private int mort = 0;
+    @Getter
     private int success = 0;
+
+    @Setter
+    @Getter
     private boolean isTakingNoDamage;
+    @Setter
+    @Getter
     private String pseudo;
+    @Setter
+    @Getter
+    private Player player;
+    @Setter
+    @Getter
+    private Role role;
 
     //region Modifier
+    @Getter
+    @Setter
     private float resistanceModifier = 0.2f;
+    @Setter
+    @Getter
     private float damageModifier = 0.2f;
+    @Getter
     private final float endResistanceModifier = 0.7f;
+    @Getter
     private final float endDamageModifier = 0.7f;
     //endregion
 
@@ -68,9 +94,9 @@ public class AlphaPlayer implements Serializable {
             this.getAlphaLife().actualizeDeath();
             this.getAlphaLife().actualizeSuccess();
 
-            this.player.discoverRecipes(GameManager.getInstance().getCustomItemFactory().getNewRecipes().keySet());
+            this.player.discoverRecipes(GameManager.getInstance().getCustomRecipeFactory().getNewRecipes().keySet());
             //TODO: old recipe, pas besoin sur un nouveau serveur
-            this.player.undiscoverRecipes(GameManager.getInstance().getCustomItemFactory().getOldRecipes());
+            this.player.undiscoverRecipes(GameManager.getInstance().getCustomRecipeFactory().getOldRecipes());
         }
     }
 
@@ -153,60 +179,12 @@ public class AlphaPlayer implements Serializable {
     }
 
     //region Getters Setters
-    public AlphaScoreboard getScoreboard() {
-        return this.scoreboard;
-    }
-
     public EWorld getWorld() {
         return this.world.getType();
     }
 
-    public UUID getUUID(){
-        return this.uuid;
-    }
-
-    public int getMort(){
-        return this.mort;
-    }
-
-    public int getSuccess(){
-        return this.success;
-    }
-
-    public Player getPlayer(){
-        return this.player;
-    }
-
     public void resetPlayer(){
         this.player = null;
-    }
-
-    public void setResistanceModifier(float modifier) {
-        this.resistanceModifier = modifier;
-    }
-
-    public float getResistanceModifier() {
-        return this.resistanceModifier;
-    }
-
-    public float getEndResistanceModifier() {
-        return this.endResistanceModifier;
-    }
-
-    public float getDamageModifier() {
-        return this.damageModifier;
-    }
-
-    public float getEndDamageModifier() {
-        return this.endDamageModifier;
-    }
-
-    public void setDamageModifier(float modifier) {
-        this.damageModifier = modifier;
-    }
-
-    public Role getRole() {
-        return this.role;
     }
 
     public void setMort(int mort) {
@@ -214,41 +192,9 @@ public class AlphaPlayer implements Serializable {
         this.alphaLife.setDeath(mort);
     }
 
-    public void setPlayer(Player player) {
-        this.player = player;
-    }
-
     public void setSuccess(int success) {
         this.success = success;
         this.alphaLife.setSuccess(success);
-    }
-
-    public void setRole(Role role) {
-        this.role = role;
-    }
-
-    public AlphaLife getAlphaLife() {
-        return this.alphaLife;
-    }
-
-    public boolean isTakingNoDamage() {
-        return this.isTakingNoDamage;
-    }
-
-    public void setTakingNoDamage(boolean takeNoDamage) {
-        this.isTakingNoDamage = takeNoDamage;
-    }
-
-    public String getPseudo() {
-        return this.pseudo;
-    }
-
-    public void setPseudo(String pseudo) {
-        this.pseudo = pseudo;
-    }
-
-    public List<Role> getSubRoles() {
-        return this.subRoles;
     }
 
     public void addSubRole(Role role) {
@@ -263,10 +209,6 @@ public class AlphaPlayer implements Serializable {
 
     public void removeSubRole(Role role) {
         this.subRoles.remove(role);
-    }
-
-    public void setWorld(Monde monde) {
-        this.world = monde;
     }
     //endregion
 }

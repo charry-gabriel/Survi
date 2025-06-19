@@ -13,6 +13,6 @@ public class LockWorldEffect extends BlessingEffect {
 
     @Override
     public void applyEffect(AlphaPlayer player) {
-        this.world.setLock(false);
+        this.world.setLocked(false);
     }
 }

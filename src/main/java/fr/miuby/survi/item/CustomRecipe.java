@@ -1,5 +1,6 @@
 package fr.miuby.survi.item;
 
+import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -11,8 +12,8 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
+@Getter
 public class CustomRecipe {
-
     public static List<CustomRecipe> recipes = new ArrayList<>();
 
     private final ItemStack result;
@@ -36,18 +37,6 @@ public class CustomRecipe {
         recipe.setCategory(category);
 
         recipes.add(this);
-    }
-
-    public List<Material> getIngredients() {
-        return ingredients;
-    }
-
-    public ItemStack getResult() {
-        return result;
-    }
-
-    public ShapedRecipe getRecipe() {
-        return recipe;
     }
 
     public static void registerRecipes() {

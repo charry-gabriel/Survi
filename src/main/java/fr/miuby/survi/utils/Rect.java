@@ -5,22 +5,7 @@ package fr.miuby.survi.utils;
  * its maximum and minimum coordinates along the X, Y, and Z axes. It can be
  * used to determine if a given point is inside or outside the rectangular bounds.
  */
-public class Rect {
-    public final int xMax;
-    public final int xMin;
-    public final int yMax;
-    public final int yMin;
-    public final int zMax;
-    public final int zMin;
-
-    public Rect(int xMax, int xMin, int yMax, int yMin, int zMax, int zMin) {
-        this.xMax = xMax;
-        this.xMin = xMin;
-        this.yMax = yMax;
-        this.yMin = yMin;
-        this.zMax = zMax;
-        this.zMin = zMin;
-    }
+public record Rect(int xMax, int xMin, int yMax, int yMin, int zMax, int zMin) {
 
     /**
      * Determines whether a point defined by its X, Y, and Z coordinates lies outside

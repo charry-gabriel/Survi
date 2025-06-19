@@ -1,9 +1,11 @@
 package fr.miuby.survi.item.locked_item;
 
+import lombok.Getter;
 import org.bukkit.NamespacedKey;
 
 import java.util.List;
 
+@Getter
 public class LockedItem {
     private final List<NamespacedKey> items;
 
@@ -12,14 +14,6 @@ public class LockedItem {
     public LockedItem(List<NamespacedKey> items) {
         this.items = items;
         this.isLocked = true;
-    }
-
-    public List<NamespacedKey> getItems() {
-        return items;
-    }
-
-    public boolean isLocked() {
-        return isLocked;
     }
 
     public void unlock() {

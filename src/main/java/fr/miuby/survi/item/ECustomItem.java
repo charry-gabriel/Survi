@@ -1,6 +1,7 @@
 package fr.miuby.survi.item;
 
 import fr.miuby.survi.GameManager;
+import lombok.Getter;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
@@ -22,6 +23,7 @@ import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
+@Getter
 @SuppressWarnings("UnstableApiUsage")
 public enum ECustomItem {
     FISHING_D_ROD(Material.FISHING_ROD, itemStack -> {
@@ -188,10 +190,6 @@ public enum ECustomItem {
         ItemMeta meta = itemStack.getItemMeta();
         meta.getPersistentDataContainer().set(new NamespacedKey(GameManager.getInstance().getPlugin(), "unique_id"), PersistentDataType.STRING, uniqueId);
         itemStack.setItemMeta(meta);
-    }
-
-    public ItemStack getItemStack() {
-        return itemStack;
     }
 
     public ItemStack getItemStack(int amount) {

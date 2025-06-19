@@ -99,13 +99,13 @@ public class LockedItemsFactory {
     public boolean isLocked(NamespacedKey item) {
         for (LockedItem lockedItem : armorItems) {
             for (NamespacedKey lockedNsKey : lockedItem.getItems()) {
-                if (lockedNsKey.toString().equals(GameManager.getInstance().getCustomItemFactory().getOldNamespaceKeyOrDefault(item).toString()))
+                if (lockedNsKey.toString().equals(GameManager.getInstance().getCustomRecipeFactory().getOldNamespaceKeyOrDefault(item).toString()))
                     return lockedItem.isLocked();
             }
         }
         for (LockedItem lockedItem : toolItems) {
             for (NamespacedKey lockedNsKey : lockedItem.getItems()) {
-                if (lockedNsKey.toString().equals(GameManager.getInstance().getCustomItemFactory().getOldNamespaceKeyOrDefault(item).toString()))
+                if (lockedNsKey.toString().equals(GameManager.getInstance().getCustomRecipeFactory().getOldNamespaceKeyOrDefault(item).toString()))
                     return lockedItem.isLocked();
             }
         }
@@ -121,7 +121,7 @@ public class LockedItemsFactory {
             }
         }
 
-        player.getPlayer().discoverRecipes(GameManager.getInstance().getCustomItemFactory().getNewRecipes().keySet());
+        player.getPlayer().discoverRecipes(GameManager.getInstance().getCustomRecipeFactory().getNewRecipes().keySet());
     }
 
     public void unlockToolItem(AlphaPlayer player, LockedToolType itemType) {
@@ -133,6 +133,6 @@ public class LockedItemsFactory {
             }
         }
 
-        player.getPlayer().discoverRecipes(GameManager.getInstance().getCustomItemFactory().getNewRecipes().keySet());
+        player.getPlayer().discoverRecipes(GameManager.getInstance().getCustomRecipeFactory().getNewRecipes().keySet());
     }
 }

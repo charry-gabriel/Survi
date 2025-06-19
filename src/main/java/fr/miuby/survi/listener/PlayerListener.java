@@ -132,7 +132,7 @@ public class PlayerListener implements Listener {
 
     @EventHandler
     public void onPlayerRecipeDiscover(PlayerRecipeDiscoverEvent event) {
-        for (NamespacedKey nsKey : GameManager.getInstance().getCustomItemFactory().getOldRecipes()) {
+        for (NamespacedKey nsKey : GameManager.getInstance().getCustomRecipeFactory().getOldRecipes()) {
             if (nsKey.toString().equals(event.getRecipe().toString()))
                 event.setCancelled(true);
         }

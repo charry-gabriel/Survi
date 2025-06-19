@@ -2,6 +2,9 @@ package fr.miuby.survi.world;
 
 import fr.miuby.survi.GameManager;
 import fr.miuby.survi.utils.Rect;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -10,21 +13,20 @@ import org.bukkit.entity.Player;
 
 import java.util.UUID;
 
+@Getter
+@RequiredArgsConstructor
 public class Monde {
     private final World world;
     private final String name;
-    private Location spawnPoint;
-    private Rect limit = null;
     private final NamedTextColor color;
     private final EWorld type;
-    private boolean isLocked;
 
-    public Monde(World world, String name, NamedTextColor color, EWorld type) {
-        this.world = world;
-        this.name = name;
-        this.color = color;
-        this.type = type;
-    }
+    @Setter
+    private Location spawnPoint;
+    @Setter
+    private Rect limit = null;
+    @Setter
+    private boolean isLocked;
 
     //region Static
     public static Monde get(EWorld worldType) {
@@ -50,49 +52,7 @@ public class Monde {
     }
     //endregion
 
-    //region Getters Setters
-    public World getWorld() {
-        return world;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public Location getSpawnPoint() {
-        return spawnPoint;
-    }
-
-    public Rect getLimit() {
-        return limit;
-    }
-
-    public void setLimit(Rect limit) {
-        this.limit = limit;
-    }
-
-    public void setSpawnPoint(Location spawnPoint) {
-        this.spawnPoint = spawnPoint;
-    }
-
-    public NamedTextColor getColor() {
-        return color;
-    }
-
-    public EWorld getType() {
-        return type;
-    }
-
     public UUID getUUID() {
         return world.getUID();
     }
-
-    public boolean isLocked() {
-        return isLocked;
-    }
-
-    public void setLock(boolean lock) {
-        this.isLocked = lock;
-    }
-    //endregion
 }
