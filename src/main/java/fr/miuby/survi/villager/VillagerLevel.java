@@ -161,7 +161,7 @@ public class VillagerLevel extends AVillager {
 
 
     public Tribute getTribute() {
-        if (tributes[this.level].getItemStacks().isEmpty())
+        if (this.level >= tributes.length || tributes[this.level].getItemStacks().isEmpty())
             return null;
 
         return tributes[this.level];
