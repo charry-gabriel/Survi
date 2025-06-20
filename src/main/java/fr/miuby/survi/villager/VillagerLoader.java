@@ -1,12 +1,12 @@
 package fr.miuby.survi.villager;
 
+import fr.miuby.survi.GameManager;
+import fr.miuby.survi.Survi;
 import org.yaml.snakeyaml.LoaderOptions;
 import org.yaml.snakeyaml.constructor.Constructor;
 import org.yaml.snakeyaml.Yaml;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
@@ -18,10 +18,17 @@ public class VillagerLoader {
         if (loaded.containsKey(id))
             return loaded.get(id);
 
-        try (InputStream stream = VillagerLoader.class.getResourceAsStream("/villagers/" + id + ".yml")) {
-            if (stream == null)
-                throw new FileNotFoundException("YAML file not found for villager: " + id);
+        Survi plugin = GameManager.getInstance().getPlugin();
+        File villagerFile = new File(plugin.getDataFolder(), "villagers/" + id + ".yml");
 
+        if (!villagerFile.getParentFile().exists()) {
+            villagerFile.getParentFile().mkdirs();
+        }
+        if (!villagerFile.exists()) {
+            plugin.saveResource("villagers/" + id + ".yml", false);
+        }
+
+        try (InputStream stream = new FileInputStream(villagerFile)) {
             String content = new String(stream.readAllBytes(), StandardCharsets.UTF_8);
             LoaderOptions options = new LoaderOptions();
             Yaml yaml = new Yaml(new Constructor(VillagerConfig.class, options));
