@@ -9,8 +9,7 @@ import org.bukkit.inventory.ShapedRecipe;
 import org.bukkit.inventory.recipe.CraftingBookCategory;
 
 import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 @Getter
 public class CustomRecipe {
@@ -27,12 +26,74 @@ public class CustomRecipe {
 
         recipe = new ShapedRecipe(nsKey, result);
 
-        recipe.shape("abc", "def", "ghi");
-
+        // Build the minimal bounding box that contains every non-empty ingredient
+        int minRow = 3, minCol = 3, maxRow = -1, maxCol = -1;
         for (int i = 0; i < 9; i++) {
             if (ingredients.get(i) == Material.AIR)
                 continue;
-            recipe.setIngredient((char)(i+'a'), ingredients.get(i));
+
+            int row = i / 3;
+            int col = i % 3;
+            if (row < minRow) minRow = row;
+            if (col < minCol) minCol = col;
+            if (row > maxRow) maxRow = row;
+            if (col > maxCol) maxCol = col;
+        }
+        // A recipe consisting only of AIR does not make sense
+        if (maxRow == -1) {
+            throw new IllegalArgumentException("CustomRecipe must contain at least one ingredient");
+        }
+
+        int height = maxRow - minRow + 1;
+        int width = maxCol - minCol + 1;
+
+        StringBuilder[] rows = new StringBuilder[height];
+        for (int r = 0; r < height; r++) {
+            rows[r] = new StringBuilder(" ".repeat(width));
+        }
+
+        // Fill rows with ingredient symbols (but register them later)
+        List<Character> symbols = new ArrayList<>();
+        List<Material> matsToRegister = new ArrayList<>();
+        // Re-use a symbol for identical materials to minimise distinct symbols
+        Map<Material, Character> materialSymbols = new HashMap<>();
+        char nextSymbol = 'a';
+        for (int i = 0; i < 9; i++) {
+            Material mat = ingredients.get(i);
+            if (mat == Material.AIR)
+                continue;
+
+            int globalRow = i / 3;
+            int globalCol = i % 3;
+            int r = globalRow - minRow;
+            int c = globalCol - minCol;
+
+            char symbol;
+            if (materialSymbols.containsKey(mat)) {
+                symbol = materialSymbols.get(mat);
+            } else {
+                symbol = nextSymbol;
+                materialSymbols.put(mat, nextSymbol);
+                nextSymbol++;
+            }
+            rows[r].setCharAt(c, symbol);
+
+            // Register only once per distinct symbol
+            if (!symbols.contains(symbol)) {
+                symbols.add(symbol);
+                matsToRegister.add(mat);
+            }
+        }
+
+        String[] shapeRows = new String[height];
+        for (int r = 0; r < height; r++) {
+            shapeRows[r] = rows[r].toString();
+        }
+        recipe.shape(shapeRows);
+        
+        // Now register ingredients (shape is already defined)
+        for (int idx = 0; idx < symbols.size(); idx++) {
+            recipe.setIngredient(symbols.get(idx), matsToRegister.get(idx));
         }
         recipe.setCategory(category);
 

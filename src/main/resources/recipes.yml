@@ -245,6 +245,14 @@ new_recipes:
       - AIR
       - DIAMOND_BLOCK
 
+  growth_pickaxe:
+    category: EQUIPMENT
+    result: WOODEN_PICKAXE
+    shape:
+      - "XXX"
+    keys:
+      X: DIAMOND_BLOCK
+
 old_recipes:
   - minecraft:iron_helmet
   - minecraft:iron_chestplate

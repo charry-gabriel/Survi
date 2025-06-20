@@ -468,7 +468,7 @@
   "definitions": {
     "recipe": {
       "type": "object",
-      "required": ["category", "result", "ingredients"],
+      "required": ["category", "result"],
       "properties": {
         "category": {
           "type": "string",
@@ -492,8 +492,34 @@
           "items": {
             "$ref": "#/definitions/Material"
           }
+        },
+        "shape": {
+          "type": "array",
+          "description": "1 to 3 strings, each 1-3 characters, representing crafting grid rows.",
+          "minItems": 1,
+          "maxItems": 3,
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 3
+          }
+        },
+        "keys": {
+          "type": "object",
+          "description": "Mapping of single-character symbols used in shape to Bukkit Material names.",
+          "minProperties": 1,
+          "propertyNames": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1
+          },
+          "additionalProperties": { "$ref": "#/definitions/Material" }
         }
       },
+      "oneOf": [
+        { "required": ["ingredients"] },
+        { "required": ["shape", "keys"] }
+      ],
       "additionalProperties": false
     },
     "Material": {

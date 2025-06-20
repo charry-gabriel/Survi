@@ -45,14 +45,52 @@ public class CustomRecipeFactory {
                 String catStr = newSec.getString(key + ".category", "MISC");
                 CraftingBookCategory category = CraftingBookCategory.valueOf(catStr);
                 Material resultMat = Material.valueOf(newSec.getString(key + ".result"));
-                List<String> list = newSec.getStringList(key + ".ingredients");
-                if (list.size() != 9) {
-                    plugin.getLogger().warning("Recipe " + key + " has not 9 ingredients. Skipped");
-                    continue;
-                }
-                List<Material> mats = new ArrayList<>();
-                for (String s : list) {
-                    mats.add(Material.valueOf(s));
+                List<Material> mats = new ArrayList<>(Collections.nCopies(9, Material.AIR));
+
+                List<String> shapeLines = newSec.getStringList(key + ".shape");
+                ConfigurationSection keySec = newSec.getConfigurationSection(key + ".keys");
+
+                if (!shapeLines.isEmpty() && keySec != null) {
+                    // parse shape definition
+                    if (shapeLines.size() > 3) {
+                        plugin.getLogger().warning("Recipe " + key + " has more than 3 shape lines. Skipped");
+                        continue;
+                    }
+                    for (int r = 0; r < shapeLines.size(); r++) {
+                        String line = shapeLines.get(r);
+                        if (line.length() > 3) {
+                            plugin.getLogger().warning("Recipe " + key + " shape line too long. Skipped");
+                            continue;
+                        }
+                        for (int c = 0; c < line.length(); c++) {
+                            char sym = line.charAt(c);
+                            if (sym == ' ') continue;
+                            String matStr = keySec.getString(String.valueOf(sym));
+                            if (matStr == null) {
+                                plugin.getLogger().warning("Recipe " + key + " missing key mapping for symbol " + sym + ". Skipped");
+                                continue;
+                            }
+                            Material mat;
+                            try {
+                                mat = Material.valueOf(matStr);
+                            } catch (IllegalArgumentException ex) {
+                                plugin.getLogger().warning("Recipe " + key + " unknown material " + matStr + ". Skipped");
+                                continue;
+                            }
+                            int index = r * 3 + c;
+                            mats.set(index, mat);
+                        }
+                    }
+                } else {
+                    // fallback to old 9-element list
+                    List<String> list = newSec.getStringList(key + ".ingredients");
+                    if (list.size() != 9) {
+                        plugin.getLogger().warning("Recipe " + key + " has not 9 ingredients. Skipped");
+                        continue;
+                    }
+                    for (int i = 0; i < 9; i++) {
+                        mats.set(i, Material.valueOf(list.get(i)));
+                    }
                 }
                 newRecipes.put(nsKey, new CustomRecipe(nsKey, category, new ItemStack(resultMat), mats));
             }

@@ -37,7 +37,11 @@ public class RecipesConfigTest {
     public static class RecipeEntry {
         public String category;
         public String result;
+        // Legacy 9-slot format
         public List<String> ingredients;
+        // New flexible shaped recipe format
+        public List<String> shape;
+        public Map<String, String> keys;
     }
 
     // ------------------------------------------------------------------------------------------
@@ -60,9 +64,37 @@ public class RecipesConfigTest {
                 String context = "Recette '" + key + "'";
                 assertStringNotEmpty(entry.category, context + " : category manquant");
                 assertStringNotEmpty(entry.result, context + " : result manquant");
-                assertNotNull(entry.ingredients, context + " : ingredients manquant");
-                assertEquals(9, entry.ingredients.size(), context + " : ingredients doit contenir exactement 9 éléments");
-                entry.ingredients.forEach(mat -> assertStringNotEmpty(mat, context + " : ingredient vide"));
+
+                boolean hasIngredients = entry.ingredients != null;
+                boolean hasShapeKeys = entry.shape != null && entry.keys != null;
+
+                assertTrue(hasIngredients || hasShapeKeys, context + " : doit définir soit ingredients soit shape+keys");
+
+                if (hasIngredients) {
+                    assertEquals(9, entry.ingredients.size(), context + " : ingredients doit contenir exactement 9 éléments");
+                    entry.ingredients.forEach(mat -> assertStringNotEmpty(mat, context + " : ingredient vide"));
+                } else {
+                    // shape validations
+                    assertTrue(!entry.shape.isEmpty() && entry.shape.size() <= 3, context + " : shape doit contenir 1 à 3 lignes");
+                    entry.shape.forEach(row -> {
+                        assertTrue(!row.isEmpty() && row.length() <= 3, context + " : chaque ligne de shape doit contenir 1 à 3 caractères");
+                    });
+
+                    // keys validations
+                    assertFalse(entry.keys.isEmpty(), context + " : keys ne doit pas être vide");
+                    entry.keys.forEach((sym, mat) -> {
+                        assertTrue(sym != null && sym.length() == 1, context + " : chaque clé doit être un caractère unique");
+                        assertStringNotEmpty(mat, context + " : material vide pour la clé '" + sym + "'");
+                    });
+
+                    // ensure all non-space symbols in shape are present in keys
+                    entry.shape.forEach(row -> {
+                        row.chars()
+                                .filter(c -> c != ' ')
+                                .mapToObj(c -> String.valueOf((char) c))
+                                .forEach(sym -> assertTrue(entry.keys.containsKey(sym), context + " : symbole '" + sym + "' dans shape non défini dans keys"));
+                    });
+                }
             });
 
             if (wrapper.old_recipes != null) {
