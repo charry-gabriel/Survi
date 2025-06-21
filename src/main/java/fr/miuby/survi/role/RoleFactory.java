@@ -131,7 +131,7 @@ public class RoleFactory {
             ),
 
             // Alchimiste
-            new RoleDefinition(ERole.ALCHEMIST, "⚗", NamedTextColor.DARK_PURPLE, "alchemist", b -> b
+            new RoleDefinition(ERole.ALCHIMISTE, "⚗", NamedTextColor.DARK_PURPLE, "alchimiste", b -> b
                     .add(EWorld.ALL, Attribute.LUCK, 1.0f, RoleAttribute.Operation.ADD_NUMBER)
                     .add(EWorld.ALL, Attribute.MAX_HEALTH, -0.1f)
                     .add(EWorld.VILLAGE, Attribute.BLOCK_BREAK_SPEED, 0.1f)
@@ -140,7 +140,7 @@ public class RoleFactory {
             ),
 
             // Enchanteur
-            new RoleDefinition(ERole.ENCHANTER, "\uD83E\uDDD9", NamedTextColor.AQUA, "enchanter", b -> b
+            new RoleDefinition(ERole.ENCHANTEUR, "\uD83E\uDDD9", NamedTextColor.AQUA, "enchanteur", b -> b
                     .add(EWorld.ALL, Attribute.LUCK, 2.0f, RoleAttribute.Operation.ADD_NUMBER)
                     .add(EWorld.ALL, Attribute.ARMOR, -0.1f)
                     .add(EWorld.VILLAGE, Attribute.BLOCK_BREAK_SPEED, 0.15f)

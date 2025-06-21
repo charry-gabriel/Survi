@@ -27,7 +27,6 @@ import static org.junit.jupiter.api.Assertions.*;
  * This mirrors the approach used in {@link VillagerConfigTest}.
  */
 public class RecipesConfigTest {
-
     // --- Helper POJOs matching the YAML structure ---------------------------------------------
     public static class RecipesFile {
         public Map<String, RecipeEntry> new_recipes;
@@ -37,9 +36,10 @@ public class RecipesConfigTest {
     public static class RecipeEntry {
         public String category;
         public String result;
-        // Legacy 9-slot format
+        public List<String> roles;
+        public List<String> tiers;
+        public List<String> categories;
         public List<String> ingredients;
-        // New flexible shaped recipe format
         public List<String> shape;
         public Map<String, String> keys;
     }
@@ -64,6 +64,30 @@ public class RecipesConfigTest {
                 String context = "Recette '" + key + "'";
                 assertStringNotEmpty(entry.category, context + " : category manquant");
                 assertStringNotEmpty(entry.result, context + " : result manquant");
+                
+                // Validate roles if present
+                if (entry.roles != null) {
+                    assertFalse(entry.roles.contains(null), context + " : les rôles ne doivent pas contenir de valeurs nulles");
+                    entry.roles.forEach(role ->
+                        assertStringNotEmpty(role, context + " : rôle vide trouvé")
+                    );
+                }
+                
+                // Validate tiers if present
+                if (entry.tiers != null) {
+                    assertFalse(entry.tiers.contains(null), context + " : les tiers ne doivent pas contenir de valeurs nulles");
+                    entry.tiers.forEach(tier ->
+                        assertStringNotEmpty(tier, context + " : tier vide trouvé")
+                    );
+                }
+                
+                // Validate categories if present
+                if (entry.categories != null) {
+                    assertFalse(entry.categories.contains(null), context + " : les catégories ne doivent pas contenir de valeurs nulles");
+                    entry.categories.forEach(cat ->
+                        assertStringNotEmpty(cat, context + " : catégorie vide trouvée")
+                    );
+                }
 
                 boolean hasIngredients = entry.ingredients != null;
                 boolean hasShapeKeys = entry.shape != null && entry.keys != null;

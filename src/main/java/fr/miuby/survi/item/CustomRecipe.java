@@ -18,11 +18,16 @@ public class CustomRecipe {
     private final ItemStack result;
     private final List<Material> ingredients;
     private final ShapedRecipe recipe;
+    private final List<String> roles;
+    private final List<String> tiers;
+    private final List<String> categories;
 
-    public CustomRecipe(NamespacedKey nsKey, CraftingBookCategory category, ItemStack result, List<Material> ingredients) {
-
+    public CustomRecipe(NamespacedKey nsKey, CraftingBookCategory category, ItemStack result, List<Material> ingredients, List<String> roles, List<String> tiers, List<String> categories) {
         this.ingredients = ingredients;
         this.result = result;
+        this.roles = roles;
+        this.tiers = tiers;
+        this.categories = categories;
 
         recipe = new ShapedRecipe(nsKey, result);
 
@@ -106,7 +111,7 @@ public class CustomRecipe {
         }
     }
 
-     @Nullable
+    @Nullable
     public static CustomRecipe getCustomRecipe(ItemStack result) {
         for (CustomRecipe cr : recipes) {
             if (cr.getResult().isSimilar(result))
@@ -114,5 +119,4 @@ public class CustomRecipe {
         }
         return null;
     }
-
 }

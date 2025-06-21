@@ -9,6 +9,6 @@ public enum ERole {
     COMBATANT,
     MINEUR,
     NOVICE,
-    ALCHEMIST,
-    ENCHANTER
+    ALCHIMISTE,
+    ENCHANTEUR
 }

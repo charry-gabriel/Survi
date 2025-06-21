@@ -45,6 +45,10 @@ public class CustomRecipeFactory {
                 String catStr = newSec.getString(key + ".category", "MISC");
                 CraftingBookCategory category = CraftingBookCategory.valueOf(catStr);
                 String resultStr = newSec.getString(key + ".result");
+                List<String> roles = newSec.getStringList(key + ".roles");
+                List<String> tiers = newSec.getStringList(key + ".tiers");
+                List<String> categoryTypes = newSec.getStringList(key + ".categories");
+                
                 ItemStack resultItem;
                 try {
                     // Try vanilla Material first
@@ -107,7 +111,7 @@ public class CustomRecipeFactory {
                         mats.set(i, Material.valueOf(list.get(i)));
                     }
                 }
-                newRecipes.put(nsKey, new CustomRecipe(nsKey, category, resultItem, mats));
+                newRecipes.put(nsKey, new CustomRecipe(nsKey, category, resultItem, mats, roles, tiers, categoryTypes));
             }
         }
 

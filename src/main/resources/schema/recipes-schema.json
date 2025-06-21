@@ -493,6 +493,30 @@
             "$ref": "#/definitions/Material"
           }
         },
+        "roles": {
+          "type": "array",
+          "description": "Roles for recipe permissions",
+          "items": {
+            "type": "string",
+            "enum": ["MINEUR", "ENCHANTER"]
+          }
+        },
+        "tiers": {
+          "type": "array",
+          "description": "Tiers for recipe categorization",
+          "items": {
+            "type": "string",
+            "enum": ["CHAINMAIL", "IRON", "GOLD", "DIAMOND"]
+          }
+        },
+        "categories": {
+          "type": "array",
+          "description": "Categories for recipe categorization",
+          "items": {
+            "type": "string",
+            "enum": ["ARMOR", "WEAPON", "MISC", "GROWTH", "TOOL"]
+          }
+        },
         "shape": {
           "type": "array",
           "description": "1 to 3 strings, each 1-3 characters, representing crafting grid rows.",

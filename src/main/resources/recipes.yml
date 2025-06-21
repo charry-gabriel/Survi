@@ -10,6 +10,9 @@ new_recipes:
   mending_egg:
     category: MISC
     result: CHICKEN_SPAWN_EGG
+    roles: []
+    tiers: []
+    categories: ["MISC"]
     ingredients:
       - END_CRYSTAL
       - TORCHFLOWER
@@ -24,6 +27,9 @@ new_recipes:
   chainmail_helmet:
     category: EQUIPMENT
     result: CHAINMAIL_HELMET
+    roles: []
+    tiers: ["CHAINMAIL"]
+    categories: ["ARMOR"]
     ingredients:
       - LAVA_BUCKET
       - LAVA_BUCKET
@@ -38,6 +44,9 @@ new_recipes:
   chainmail_chestplate:
     category: EQUIPMENT
     result: CHAINMAIL_CHESTPLATE
+    roles: []
+    tiers: ["CHAINMAIL"]
+    categories: ["ARMOR"]
     ingredients:
       - LAVA_BUCKET
       - AIR
@@ -52,6 +61,9 @@ new_recipes:
   chainmail_leggings:
     category: EQUIPMENT
     result: CHAINMAIL_LEGGINGS
+    roles: []
+    tiers: ["CHAINMAIL"]
+    categories: ["ARMOR"]
     ingredients:
       - LAVA_BUCKET
       - LAVA_BUCKET
@@ -66,6 +78,9 @@ new_recipes:
   chainmail_boots:
     category: EQUIPMENT
     result: CHAINMAIL_BOOTS
+    roles: []
+    tiers: ["CHAINMAIL"]
+    categories: ["ARMOR"]
     ingredients:
       - AIR
       - AIR
@@ -80,6 +95,9 @@ new_recipes:
   iron_helmet:
     category: EQUIPMENT
     result: IRON_HELMET
+    roles: []
+    tiers: ["IRON"]
+    categories: ["ARMOR"]
     ingredients:
       - IRON_BLOCK
       - IRON_BLOCK
@@ -94,6 +112,9 @@ new_recipes:
   iron_chestplate:
     category: EQUIPMENT
     result: IRON_CHESTPLATE
+    roles: []
+    tiers: ["IRON"]
+    categories: ["ARMOR"]
     ingredients:
       - IRON_BLOCK
       - AIR
@@ -108,6 +129,9 @@ new_recipes:
   iron_leggings:
     category: EQUIPMENT
     result: IRON_LEGGINGS
+    roles: []
+    tiers: ["IRON"]
+    categories: ["ARMOR"]
     ingredients:
       - IRON_BLOCK
       - IRON_BLOCK
@@ -122,6 +146,9 @@ new_recipes:
   iron_boots:
     category: EQUIPMENT
     result: IRON_BOOTS
+    roles: []
+    tiers: ["IRON"]
+    categories: ["ARMOR"]
     ingredients:
       - AIR
       - AIR
@@ -136,6 +163,9 @@ new_recipes:
   golden_helmet:
     category: EQUIPMENT
     result: GOLDEN_HELMET
+    roles: []
+    tiers: ["GOLD"]
+    categories: ["ARMOR"]
     ingredients:
       - GOLD_BLOCK
       - GOLD_BLOCK
@@ -150,6 +180,9 @@ new_recipes:
   golden_chestplate:
     category: EQUIPMENT
     result: GOLDEN_CHESTPLATE
+    roles: []
+    tiers: ["GOLD"]
+    categories: ["ARMOR"]
     ingredients:
       - GOLD_BLOCK
       - AIR
@@ -164,6 +197,9 @@ new_recipes:
   golden_leggings:
     category: EQUIPMENT
     result: GOLDEN_LEGGINGS
+    roles: []
+    tiers: ["GOLD"]
+    categories: ["ARMOR"]
     ingredients:
       - GOLD_BLOCK
       - GOLD_BLOCK
@@ -178,6 +214,9 @@ new_recipes:
   golden_boots:
     category: EQUIPMENT
     result: GOLDEN_BOOTS
+    roles: []
+    tiers: ["GOLD"]
+    categories: ["ARMOR"]
     ingredients:
       - AIR
       - AIR
@@ -192,6 +231,9 @@ new_recipes:
   diamond_helmet:
     category: EQUIPMENT
     result: DIAMOND_HELMET
+    roles: []
+    tiers: ["DIAMOND"]
+    categories: ["ARMOR"]
     ingredients:
       - DIAMOND_BLOCK
       - DIAMOND_BLOCK
@@ -206,6 +248,9 @@ new_recipes:
   diamond_chestplate:
     category: EQUIPMENT
     result: DIAMOND_CHESTPLATE
+    roles: []
+    tiers: ["DIAMOND"]
+    categories: ["ARMOR"]
     ingredients:
       - DIAMOND_BLOCK
       - AIR
@@ -220,6 +265,9 @@ new_recipes:
   diamond_leggings:
     category: EQUIPMENT
     result: DIAMOND_LEGGINGS
+    roles: []
+    tiers: ["DIAMOND"]
+    categories: ["ARMOR"]
     ingredients:
       - DIAMOND_BLOCK
       - DIAMOND_BLOCK
@@ -234,6 +282,9 @@ new_recipes:
   diamond_boots:
     category: EQUIPMENT
     result: DIAMOND_BOOTS
+    roles: []
+    tiers: ["DIAMOND"]
+    categories: ["ARMOR"]
     ingredients:
       - AIR
       - AIR
@@ -248,6 +299,9 @@ new_recipes:
   growth_pickaxe:
     category: EQUIPMENT
     result: GROWTH_PICKAXE
+    roles: ["MINEUR"]
+    tiers: []
+    categories: ["TOOL", "GROWTH"]
     shape:
       - "XXX"
     keys:
