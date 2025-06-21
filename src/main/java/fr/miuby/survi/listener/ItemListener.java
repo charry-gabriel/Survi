@@ -2,6 +2,9 @@ package fr.miuby.survi.listener;
 
 import fr.miuby.survi.GameManager;
 import fr.miuby.survi.item.CustomRecipe;
+import fr.miuby.survi.item.ECustomItem;
+import fr.miuby.survi.player.AlphaPlayer;
+import fr.miuby.survi.role.ERole;
 import fr.miuby.survi.villager.AVillager;
 import fr.miuby.survi.villager.Trader;
 import fr.miuby.survi.villager.VillagerLevel;
@@ -25,7 +28,7 @@ public class ItemListener implements Listener {
         if (event.getInventory().getResult() == null || event.getInventory().getResult().getType() == Material.AIR)
             return;
 
-        //block par les pnj
+        //lock par les pnj
         if(event.getInventory().getResult() != null) {
             if (GameManager.getInstance().getLockedItemsFactory().isLocked(event.getInventory().getResult().getType().getKey())) {
                 ItemStack air = new ItemStack(Material.AIR);
@@ -33,12 +36,21 @@ public class ItemListener implements Listener {
             }
         }
 
+        //lock par role
         CustomRecipe customRecipe = CustomRecipe.getCustomRecipe(event.getInventory().getResult());
+        if (customRecipe != null && customRecipe.getResult().isSimilar(ECustomItem.GROWTH_PICKAXE.getItemStack(1))) {
+            if (event.getViewers().isEmpty() || !(event.getViewers().getFirst() instanceof Player viewer)) {
+                event.getInventory().setResult(new ItemStack(Material.AIR));
+                return;
+            }
 
-        if (customRecipe == null)
-            return;
+            AlphaPlayer alpha = AlphaPlayer.get(viewer.getUniqueId());
+            boolean isMiner = alpha != null && alpha.getSubRoles().stream().anyMatch(role -> role.type() == ERole.MINEUR);
 
-        //si besoin d'une action, c'est ici
+            if (!isMiner) {
+                event.getInventory().setResult(new ItemStack(Material.AIR));
+            }
+        }
     }
 
     @EventHandler

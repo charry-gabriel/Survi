@@ -28,6 +28,7 @@ public class Survi extends JavaPlugin {
         pluginManager.registerEvents(new WorldListener(), this);
         pluginManager.registerEvents(new ItemListener(), this);
         pluginManager.registerEvents(new AlphaPlayerListener(), this);
+        pluginManager.registerEvents(new GrowthItemListener(), this);
 
         getConfig().options().copyDefaults(true);
         saveConfig();

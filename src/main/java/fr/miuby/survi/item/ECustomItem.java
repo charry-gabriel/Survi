@@ -1,6 +1,7 @@
 package fr.miuby.survi.item;
 
 import fr.miuby.survi.GameManager;
+import fr.miuby.survi.item.growth_item.GrowthItems;
 import lombok.Getter;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -19,6 +20,7 @@ import org.bukkit.inventory.meta.*;
 import org.bukkit.inventory.meta.trim.ArmorTrim;
 import org.bukkit.inventory.meta.trim.TrimMaterial;
 import org.bukkit.inventory.meta.trim.TrimPattern;
+import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
@@ -147,6 +149,26 @@ public enum ECustomItem {
         itemStack.setItemMeta(meta);
     }, "cle32"),
 
+    GROWTH_PICKAXE(Material.WOODEN_PICKAXE, itemStack -> {
+        ItemMeta meta = itemStack.getItemMeta();
+        CreateGrowthItem(meta, "GROWTH_PICKAXE");
+
+        meta.setUnbreakable(true);
+        meta.customName(Component.text("The pickaxe", NamedTextColor.GOLD));
+        //meta.setItemModel(new NamespacedKey(GameManager.getInstance().getPlugin(), "pickaxe"));
+        itemStack.setItemMeta(meta);
+    }),
+
+    GROWTH_SWORD(Material.WOODEN_SWORD, itemStack -> {
+        ItemMeta meta = itemStack.getItemMeta();
+        CreateGrowthItem(meta, "GROWTH_SWORD");
+
+        meta.setUnbreakable(true);
+        meta.customName(Component.text("The sword", NamedTextColor.GOLD));
+        //meta.setItemModel(new NamespacedKey(GameManager.getInstance().getPlugin(), "pickaxe"));
+        itemStack.setItemMeta(meta);
+    }),
+
 
     MUFFIN(Material.PLAYER_HEAD, itemStack -> {
         SkullMeta skullMeta = (SkullMeta) itemStack.getItemMeta();
@@ -168,7 +190,7 @@ public enum ECustomItem {
     });
 
 
-
+    public final NamespacedKey ID_KEY = new NamespacedKey(GameManager.getInstance().getPlugin(), "unique_id");
     private final ItemStack itemStack;
 
     ECustomItem(Material material) {
@@ -188,7 +210,7 @@ public enum ECustomItem {
     ECustomItem(Material material, String uniqueId) {
         this.itemStack = new ItemStack(material);
         ItemMeta meta = itemStack.getItemMeta();
-        meta.getPersistentDataContainer().set(new NamespacedKey(GameManager.getInstance().getPlugin(), "unique_id"), PersistentDataType.STRING, uniqueId);
+        meta.getPersistentDataContainer().set(ID_KEY, PersistentDataType.STRING, uniqueId);
         itemStack.setItemMeta(meta);
     }
 
@@ -196,6 +218,13 @@ public enum ECustomItem {
         ItemStack itemStack = this.getItemStack();
         itemStack.setAmount(amount);
         return itemStack;
+    }
+
+    private static void CreateGrowthItem(ItemMeta meta, String id) {
+        PersistentDataContainer pdc = meta.getPersistentDataContainer();
+        pdc.set(GrowthItems.ID_KEY, PersistentDataType.STRING, id);
+        pdc.set(GrowthItems.USES_KEY, PersistentDataType.INTEGER, 0);
+        pdc.set(GrowthItems.TIER_KEY, PersistentDataType.INTEGER, 0);
     }
 
     private static void getAirForce(ItemStack itemStack) {

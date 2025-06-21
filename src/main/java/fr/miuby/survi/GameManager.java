@@ -4,6 +4,7 @@ import fr.miuby.survi.database.Database;
 import fr.miuby.survi.database.SQLite;
 import fr.miuby.survi.item.CustomRecipeFactory;
 import fr.miuby.survi.item.CustomRecipe;
+import fr.miuby.survi.item.growth_item.GrowthItems;
 import fr.miuby.survi.item.locked_item.LockedItemsFactory;
 import fr.miuby.survi.player.AlphaPlayerFactory;
 import fr.miuby.survi.role.RoleFactory;
@@ -72,6 +73,7 @@ public class GameManager {
         lockedItemsFactory = new LockedItemsFactory();
         customRecipeFactory = new CustomRecipeFactory();
         CustomRecipe.registerRecipes();
+        GrowthItems.init();
 
         Timer timer = new Timer();
         timer.update();

@@ -44,7 +44,22 @@ public class CustomRecipeFactory {
                 NamespacedKey nsKey = new NamespacedKey(plugin, key);
                 String catStr = newSec.getString(key + ".category", "MISC");
                 CraftingBookCategory category = CraftingBookCategory.valueOf(catStr);
-                Material resultMat = Material.valueOf(newSec.getString(key + ".result"));
+                String resultStr = newSec.getString(key + ".result");
+                ItemStack resultItem;
+                try {
+                    // Try vanilla Material first
+                    Material mat = Material.valueOf(resultStr);
+                    resultItem = new ItemStack(mat);
+                } catch (IllegalArgumentException matEx) {
+                    try {
+                        // Fallback to custom item enum
+                        ECustomItem custom = ECustomItem.valueOf(resultStr);
+                        resultItem = custom.getItemStack(1);
+                    } catch (IllegalArgumentException customEx) {
+                        plugin.getLogger().warning("Recipe " + key + " : unknown result '" + resultStr + "'. Skipped");
+                        continue;
+                    }
+                }
                 List<Material> mats = new ArrayList<>(Collections.nCopies(9, Material.AIR));
 
                 List<String> shapeLines = newSec.getStringList(key + ".shape");
@@ -92,7 +107,7 @@ public class CustomRecipeFactory {
                         mats.set(i, Material.valueOf(list.get(i)));
                     }
                 }
-                newRecipes.put(nsKey, new CustomRecipe(nsKey, category, new ItemStack(resultMat), mats));
+                newRecipes.put(nsKey, new CustomRecipe(nsKey, category, resultItem, mats));
             }
         }
 

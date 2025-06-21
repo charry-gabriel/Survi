@@ -247,7 +247,7 @@ new_recipes:
 
   growth_pickaxe:
     category: EQUIPMENT
-    result: WOODEN_PICKAXE
+    result: GROWTH_PICKAXE
     shape:
       - "XXX"
     keys:
