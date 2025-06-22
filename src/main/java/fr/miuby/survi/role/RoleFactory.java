@@ -110,28 +110,28 @@ public class RoleFactory {
                     .add(EWorld.ALL, Attribute.SCALE, 0.3f)
             ),
 
-            // Combattant
-            new RoleDefinition(ERole.COMBATANT, "\uD83D\uDDE1", NamedTextColor.DARK_RED, "combatant", b -> b
-                    .add(EWorld.ALL, Attribute.ATTACK_DAMAGE, 0.4f)
-                    .add(EWorld.ALL, Attribute.ATTACK_SPEED, 0.2f)
-                    .add(EWorld.ALL, Attribute.ARMOR, 0.2f)
-            ),
-
-            // Mineur
-            new RoleDefinition(ERole.MINEUR, "⛏", NamedTextColor.GRAY, "mineur", b -> b
-                    .add(EWorld.ALL, Attribute.BLOCK_BREAK_SPEED, 0.4f)
-                    .add(EWorld.ALL, Attribute.LUCK, 1.0f, RoleAttribute.Operation.ADD_NUMBER)
-                    .add(EWorld.ALL, Attribute.ARMOR, 0.1f)
-            ),
-
             // Novice (rôle par défaut)
             new RoleDefinition(ERole.NOVICE, "❤", NamedTextColor.GRAY, "novice", b ->
                     // Pas de bonus particulier pour les novices
                     b.add(EWorld.ALL, Attribute.LUCK, 0.1f, RoleAttribute.Operation.ADD_NUMBER)
             ),
 
+            // Combattant
+            new RoleDefinition(ERole.COMBATANT, "\uD83D\uDDE1", NamedTextColor.DARK_RED, "metier", b -> b
+                    .add(EWorld.ALL, Attribute.ATTACK_DAMAGE, 0.4f)
+                    .add(EWorld.ALL, Attribute.ATTACK_SPEED, 0.2f)
+                    .add(EWorld.ALL, Attribute.ARMOR, 0.2f)
+            ),
+
+            // Mineur
+            new RoleDefinition(ERole.MINEUR, "⛏", NamedTextColor.GRAY, "metier", b -> b
+                    .add(EWorld.ALL, Attribute.BLOCK_BREAK_SPEED, 0.4f)
+                    .add(EWorld.ALL, Attribute.LUCK, 1.0f, RoleAttribute.Operation.ADD_NUMBER)
+                    .add(EWorld.ALL, Attribute.ARMOR, 0.1f)
+            ),
+
             // Alchimiste
-            new RoleDefinition(ERole.ALCHIMISTE, "⚗", NamedTextColor.DARK_PURPLE, "alchimiste", b -> b
+            new RoleDefinition(ERole.ALCHIMISTE, "⚗", NamedTextColor.DARK_PURPLE, "metier", b -> b
                     .add(EWorld.ALL, Attribute.LUCK, 1.0f, RoleAttribute.Operation.ADD_NUMBER)
                     .add(EWorld.ALL, Attribute.MAX_HEALTH, -0.1f)
                     .add(EWorld.VILLAGE, Attribute.BLOCK_BREAK_SPEED, 0.1f)
@@ -140,7 +140,7 @@ public class RoleFactory {
             ),
 
             // Enchanteur
-            new RoleDefinition(ERole.ENCHANTEUR, "\uD83E\uDDD9", NamedTextColor.AQUA, "enchanteur", b -> b
+            new RoleDefinition(ERole.ENCHANTEUR, "\uD83E\uDDD9", NamedTextColor.AQUA, "metier", b -> b
                     .add(EWorld.ALL, Attribute.LUCK, 2.0f, RoleAttribute.Operation.ADD_NUMBER)
                     .add(EWorld.ALL, Attribute.ARMOR, -0.1f)
                     .add(EWorld.VILLAGE, Attribute.BLOCK_BREAK_SPEED, 0.15f)
@@ -149,7 +149,7 @@ public class RoleFactory {
             ),
 
             // Fermier
-            new RoleDefinition(ERole.FERMIER, "\uD83C\uDF3E", NamedTextColor.GREEN, "fermier", b -> b
+            new RoleDefinition(ERole.FERMIER, "\uD83C\uDF3E", NamedTextColor.GREEN, "metier", b -> b
                 .add(EWorld.ALL, Attribute.LUCK, 2.0f, RoleAttribute.Operation.ADD_NUMBER)
                 .add(EWorld.ALL, Attribute.ARMOR, -0.1f)
                 .add(EWorld.VILLAGE, Attribute.BLOCK_BREAK_SPEED, 0.15f)
