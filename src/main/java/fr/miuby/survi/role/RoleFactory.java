@@ -146,6 +146,15 @@ public class RoleFactory {
                     .add(EWorld.VILLAGE, Attribute.BLOCK_BREAK_SPEED, 0.15f)
                     .add(EWorld.END, Attribute.BLOCK_BREAK_SPEED, 0.25f)
                     .add(EWorld.END, Attribute.MOVEMENT_SPEED, 0.1f, RoleAttribute.Operation.ADD_NUMBER)
+            ),
+
+            // Fermier
+            new RoleDefinition(ERole.FERMIER, "\uD83C\uDF3E", NamedTextColor.GREEN, "fermier", b -> b
+                .add(EWorld.ALL, Attribute.LUCK, 2.0f, RoleAttribute.Operation.ADD_NUMBER)
+                .add(EWorld.ALL, Attribute.ARMOR, -0.1f)
+                .add(EWorld.VILLAGE, Attribute.BLOCK_BREAK_SPEED, 0.15f)
+                .add(EWorld.END, Attribute.BLOCK_BREAK_SPEED, 0.25f)
+                .add(EWorld.END, Attribute.MOVEMENT_SPEED, 0.1f, RoleAttribute.Operation.ADD_NUMBER)
             )
         );
         

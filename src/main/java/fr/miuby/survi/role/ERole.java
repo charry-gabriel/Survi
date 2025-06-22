@@ -10,5 +10,6 @@ public enum ERole {
     MINEUR,
     NOVICE,
     ALCHIMISTE,
-    ENCHANTEUR
+    ENCHANTEUR,
+    FERMIER
 }

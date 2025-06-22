@@ -4,6 +4,7 @@ import java.sql.*;
 import java.util.*;
 import java.util.logging.Level;
 
+import fr.miuby.survi.crops.PlantedCrop;
 import fr.miuby.survi.player.AlphaPlayer;
 import fr.miuby.survi.GameManager;
 import fr.miuby.survi.role.ERole;
@@ -27,7 +28,7 @@ public abstract class Database {
         try{
             PreparedStatement ps = connection.prepareStatement("SELECT * FROM player WHERE pseudo = 'Miuby'");
             ResultSet rs = ps.executeQuery();
-            close(ps,rs);
+            closeResources(connection, ps, null);
             isLoaded = true;
             GameManager.getInstance().getLogger().log(Level.INFO, "Database connexion succeeded !");
         } catch (SQLException ex) {
@@ -67,14 +68,7 @@ public abstract class Database {
         } catch (SQLException ex) {
             GameManager.getInstance().getLogger().log(Level.SEVERE, Errors.sqlConnectionExecute, ex);
         } finally {
-            try {
-                if (ps != null)
-                    ps.close();
-                if (conn != null)
-                    conn.close();
-            } catch (SQLException ex) {
-                GameManager.getInstance().getLogger().log(Level.SEVERE, Errors.sqlConnectionClose, ex);
-            }
+            closeResources(conn, ps, null);
         }
     }
 
@@ -123,58 +117,40 @@ public abstract class Database {
         } catch (SQLException ex) {
             GameManager.getInstance().getLogger().log(Level.SEVERE, Errors.sqlConnectionExecute, ex);
         } finally {
-            try {
-                GameManager.getInstance().getLogger().info("close");
-                if (ps != null)
-                    ps.close();
-                if (conn != null)
-                    conn.close();
-            } catch (SQLException ex) {
-                GameManager.getInstance().getLogger().log(Level.SEVERE, Errors.sqlConnectionClose, ex);
-            }
+            closeResources(conn, ps, null);
         }
     }
 
     public void CreateDBPlayer(UUID uuid, String pseudo) {
-        Connection conn = null;
-        PreparedStatement ps = null;
-        try {
-            conn = getSQLConnection();
-            ps = conn.prepareStatement("INSERT INTO player VALUES ('"+uuid+"', 0, 0, '"+pseudo+"', '"+GameManager.getInstance().getRoleFactory().getDefaultRole().type().toString()+"', NULL)");
-            ps.executeUpdate();
-        } catch (SQLException ex) {
-            GameManager.getInstance().getLogger().log(Level.SEVERE, Errors.sqlConnectionExecute, ex);
-        } finally {
+        GameManager.getInstance().getScheduler().runTaskAsynchronously(GameManager.getInstance().getPlugin(), () -> {
+            Connection conn = null;
+            PreparedStatement ps = null;
             try {
-                if (ps != null)
-                    ps.close();
-                if (conn != null)
-                    conn.close();
+                conn = getSQLConnection();
+                ps = conn.prepareStatement("INSERT INTO player VALUES ('" + uuid + "', 0, 0, '" + pseudo + "', '" + GameManager.getInstance().getRoleFactory().getDefaultRole().type().toString() + "', NULL)");
+                ps.executeUpdate();
             } catch (SQLException ex) {
-                GameManager.getInstance().getLogger().log(Level.SEVERE, Errors.sqlConnectionClose, ex);
+                GameManager.getInstance().getLogger().log(Level.SEVERE, Errors.sqlConnectionExecute, ex);
+            } finally {
+                closeResources(conn, ps, null);
             }
-        }
+        });
     }
 
     public void updatePlayer(UUID uuid, String column, String value) {
-        Connection conn = null;
-        PreparedStatement ps = null;
-        try {
-            conn = getSQLConnection();
-            ps = conn.prepareStatement("UPDATE player SET "+column+" = '"+value+"' WHERE uuid = '"+uuid+"'");
-            ps.executeUpdate();
-        } catch (SQLException ex) {
-            GameManager.getInstance().getLogger().log(Level.SEVERE, Errors.sqlConnectionExecute, ex);
-        } finally {
+        GameManager.getInstance().getScheduler().runTaskAsynchronously(GameManager.getInstance().getPlugin(), () -> {
+            Connection conn = null;
+            PreparedStatement ps = null;
             try {
-                if (ps != null)
-                    ps.close();
-                if (conn != null)
-                    conn.close();
+                conn = getSQLConnection();
+                ps = conn.prepareStatement("UPDATE player SET " + column + " = '" + value + "' WHERE uuid = '" + uuid + "'");
+                ps.executeUpdate();
             } catch (SQLException ex) {
-                GameManager.getInstance().getLogger().log(Level.SEVERE, Errors.sqlConnectionClose, ex);
+                GameManager.getInstance().getLogger().log(Level.SEVERE, Errors.sqlConnectionExecute, ex);
+            } finally {
+                closeResources(conn, ps, null);
             }
-        }
+        });
     }
     //endregion
 
@@ -206,122 +182,90 @@ public abstract class Database {
         } catch (SQLException ex) {
             GameManager.getInstance().getLogger().log(Level.SEVERE, Errors.sqlConnectionExecute, ex);
         } finally {
-            try {
-                if (ps != null)
-                    ps.close();
-                if (conn != null)
-                    conn.close();
-            } catch (SQLException ex) {
-                GameManager.getInstance().getLogger().log(Level.SEVERE, Errors.sqlConnectionClose, ex);
-            }
+            closeResources(conn, ps, null);
         }
         return false;
     }
 
     public void CreateDBVillager(String name, UUID uuid) {
-        Connection conn = null;
-        PreparedStatement ps = null;
-        try {
-            conn = getSQLConnection();
-            ps = conn.prepareStatement("INSERT INTO villager VALUES ('"+uuid+"', '0', '"+name+"', NULL, '0', '700', '0', '0', '0')");
-            ps.executeUpdate();
-        } catch (SQLException ex) {
-            GameManager.getInstance().getLogger().log(Level.SEVERE, Errors.sqlConnectionExecute, ex);
-        } finally {
+        GameManager.getInstance().getScheduler().runTaskAsynchronously(GameManager.getInstance().getPlugin(), () -> {
+            Connection conn = null;
+            PreparedStatement ps = null;
             try {
-                if (ps != null)
-                    ps.close();
-                if (conn != null)
-                    conn.close();
+                conn = getSQLConnection();
+                ps = conn.prepareStatement("INSERT INTO villager VALUES ('" + uuid + "', '0', '" + name + "', NULL, '0', '700', '0', '0', '0')");
+                ps.executeUpdate();
             } catch (SQLException ex) {
-                GameManager.getInstance().getLogger().log(Level.SEVERE, Errors.sqlConnectionClose, ex);
+                GameManager.getInstance().getLogger().log(Level.SEVERE, Errors.sqlConnectionExecute, ex);
+            } finally {
+                closeResources(conn, ps, null);
             }
-        }
+        });
     }
 
     public void updateVillagerLevel(UUID uuid, int level) {
-        Connection conn = null;
-        PreparedStatement ps = null;
-        try {
-            conn = getSQLConnection();
-            ps = conn.prepareStatement("UPDATE villager SET level = '"+level+"' WHERE uuid = '"+uuid+"'");
-            ps.executeUpdate();
-        } catch (SQLException ex) {
-            GameManager.getInstance().getLogger().log(Level.SEVERE, Errors.sqlConnectionExecute, ex);
-        } finally {
+        GameManager.getInstance().getScheduler().runTaskAsynchronously(GameManager.getInstance().getPlugin(), () -> {
+            Connection conn = null;
+            PreparedStatement ps = null;
             try {
-                if (ps != null)
-                    ps.close();
-                if (conn != null)
-                    conn.close();
+                conn = getSQLConnection();
+                ps = conn.prepareStatement("UPDATE villager SET level = '" + level + "' WHERE uuid = '" + uuid + "'");
+                ps.executeUpdate();
             } catch (SQLException ex) {
-                GameManager.getInstance().getLogger().log(Level.SEVERE, Errors.sqlConnectionClose, ex);
+                GameManager.getInstance().getLogger().log(Level.SEVERE, Errors.sqlConnectionExecute, ex);
+            } finally {
+                closeResources(conn, ps, null);
             }
-        }
+        });
     }
 
     public void updateVillagerLocation(UUID uuid, Location location) {
-        Connection conn = null;
-        PreparedStatement ps = null;
-        try {
-            conn = getSQLConnection();
-            ps = conn.prepareStatement("UPDATE villager SET locationX = '"+location.getX()+"', locationY = '"+location.getY()+"', locationZ = '"+location.getZ()+"', locationYaw = '"+location.getYaw()+"', locationPitch = '"+location.getPitch()+"' WHERE uuid = '"+uuid+"'");
-            ps.executeUpdate();
-        } catch (SQLException ex) {
-            GameManager.getInstance().getLogger().log(Level.SEVERE, Errors.sqlConnectionExecute, ex);
-        } finally {
+        GameManager.getInstance().getScheduler().runTaskAsynchronously(GameManager.getInstance().getPlugin(), () -> {
+            Connection conn = null;
+            PreparedStatement ps = null;
             try {
-                if (ps != null)
-                    ps.close();
-                if (conn != null)
-                    conn.close();
+                conn = getSQLConnection();
+                ps = conn.prepareStatement("UPDATE villager SET locationX = '" + location.getX() + "', locationY = '" + location.getY() + "', locationZ = '" + location.getZ() + "', locationYaw = '" + location.getYaw() + "', locationPitch = '" + location.getPitch() + "' WHERE uuid = '" + uuid + "'");
+                ps.executeUpdate();
             } catch (SQLException ex) {
-                GameManager.getInstance().getLogger().log(Level.SEVERE, Errors.sqlConnectionClose, ex);
+                GameManager.getInstance().getLogger().log(Level.SEVERE, Errors.sqlConnectionExecute, ex);
+            } finally {
+                closeResources(conn, ps, null);
             }
-        }
+        });
     }
 
     public void updateVillagerUUID(UUID uuid, String name) {
-        Connection conn = null;
-        PreparedStatement ps = null;
-        try {
-            conn = getSQLConnection();
-            ps = conn.prepareStatement("UPDATE villager SET uuid = '"+uuid+"' WHERE name = '"+name+"'");
-            ps.executeUpdate();
-        } catch (SQLException ex) {
-            GameManager.getInstance().getLogger().log(Level.SEVERE, Errors.sqlConnectionExecute, ex);
-        } finally {
+        GameManager.getInstance().getScheduler().runTaskAsynchronously(GameManager.getInstance().getPlugin(), () -> {
+            Connection conn = null;
+            PreparedStatement ps = null;
             try {
-                if (ps != null)
-                    ps.close();
-                if (conn != null)
-                    conn.close();
+                conn = getSQLConnection();
+                ps = conn.prepareStatement("UPDATE villager SET uuid = '" + uuid + "' WHERE name = '" + name + "'");
+                ps.executeUpdate();
             } catch (SQLException ex) {
-                GameManager.getInstance().getLogger().log(Level.SEVERE, Errors.sqlConnectionClose, ex);
+                GameManager.getInstance().getLogger().log(Level.SEVERE, Errors.sqlConnectionExecute, ex);
+            } finally {
+                closeResources(conn, ps, null);
             }
-        }
+        });
     }
 
     public void updateVillagerGivenItem(UUID uuid, List<ItemStack> givenItems) {
-        Connection conn = null;
-        PreparedStatement ps = null;
-        try {
-            conn = getSQLConnection();
-            String givenItemsString = Base64.getEncoder().encodeToString(ItemStack.serializeItemsAsBytes(givenItems));
-            ps = conn.prepareStatement("UPDATE villager SET givenItems = '"+givenItemsString+"' WHERE uuid = '"+uuid+"'");
-            ps.executeUpdate();
-        } catch (SQLException ex) {
-            GameManager.getInstance().getLogger().log(Level.SEVERE, Errors.sqlConnectionExecute, ex);
-        } finally {
+        GameManager.getInstance().getScheduler().runTaskAsynchronously(GameManager.getInstance().getPlugin(), () -> {
+            Connection conn = null;
+            PreparedStatement ps = null;
             try {
-                if (ps != null)
-                    ps.close();
-                if (conn != null)
-                    conn.close();
+                conn = getSQLConnection();
+                String givenItemsString = Base64.getEncoder().encodeToString(ItemStack.serializeItemsAsBytes(givenItems));
+                ps = conn.prepareStatement("UPDATE villager SET givenItems = '" + givenItemsString + "' WHERE uuid = '" + uuid + "'");
+                ps.executeUpdate();
             } catch (SQLException ex) {
-                GameManager.getInstance().getLogger().log(Level.SEVERE, Errors.sqlConnectionClose, ex);
+                GameManager.getInstance().getLogger().log(Level.SEVERE, Errors.sqlConnectionExecute, ex);
+            } finally {
+                closeResources(conn, ps, null);
             }
-        }
+        });
     }
 
     public boolean isVillagerUUIDExist(UUID uuid) {
@@ -339,16 +283,93 @@ public abstract class Database {
         } catch (SQLException ex) {
             GameManager.getInstance().getLogger().log(Level.SEVERE, Errors.sqlConnectionExecute, ex);
         } finally {
-            try {
-                if (ps != null)
-                    ps.close();
-                if (conn != null)
-                    conn.close();
-            } catch (SQLException ex) {
-                GameManager.getInstance().getLogger().log(Level.SEVERE, Errors.sqlConnectionClose, ex);
-            }
+            closeResources(conn, ps, null);
         }
         return false;
+    }
+    //endregion
+
+    //region Crop
+    public boolean selectCrop(Set<String> plantedCrops) {
+        Connection conn = null;
+        PreparedStatement ps = null;
+        ResultSet rs;
+        try {
+            conn = getSQLConnection();
+            ps = conn.prepareStatement("CREATE TABLE IF NOT EXISTS planted_crops (" +
+                    "world_uid VARCHAR(36) NOT NULL," +
+                    "x INT NOT NULL," +
+                    "y INT NOT NULL," +
+                    "z INT NOT NULL," +
+                    "PRIMARY KEY (world_uid, x, y, z)" +
+                    ")");
+            ps.executeUpdate();
+
+            ps = conn.prepareStatement("SELECT * FROM planted_crops");
+            rs = ps.executeQuery();
+
+            while (rs.next()) {
+                String worldUid = rs.getString("world_uid");
+                int x = rs.getInt("x");
+                int y = rs.getInt("y");
+                int z = rs.getInt("z");
+
+                plantedCrops.add(new PlantedCrop(worldUid, x, y, z).getKey());
+            }
+
+            return true;
+        } catch (SQLException ex) {
+            GameManager.getInstance().getLogger().log(Level.SEVERE, Errors.sqlConnectionExecute, ex);
+        } finally {
+            closeResources(conn, ps, null);
+        }
+        return false;
+    }
+
+    public void saveCrop(PlantedCrop crop) {
+        GameManager.getInstance().getScheduler().runTaskAsynchronously(GameManager.getInstance().getPlugin(), () -> {
+            Connection conn = null;
+            PreparedStatement ps = null;
+
+            try {
+                conn = getSQLConnection();
+                ps = conn.prepareStatement("INSERT OR IGNORE INTO planted_crops (world_uid, x, y, z) VALUES (?, ?, ?, ?)");
+
+                ps.setString(1, crop.getWorldUid());
+                ps.setInt(2, crop.getX());
+                ps.setInt(3, crop.getY());
+                ps.setInt(4, crop.getZ());
+
+                ps.executeUpdate();
+            } catch (SQLException ex) {
+                GameManager.getInstance().getLogger().log(Level.SEVERE, "Failed to save planted crop", ex);
+            } finally {
+                closeResources(conn, ps, null);
+            }
+        });
+    }
+
+    public void removeCrop(PlantedCrop crop) {
+        GameManager.getInstance().getScheduler().runTaskAsynchronously(GameManager.getInstance().getPlugin(), () -> {
+            Connection conn = null;
+            PreparedStatement ps = null;
+
+            try {
+                conn = getSQLConnection();
+                ps = conn.prepareStatement("DELETE FROM planted_crops WHERE world_uid = ? AND x = ? AND y = ? AND z = ?");
+
+                ps.setString(1, crop.getWorldUid());
+                ps.setInt(2, crop.getX());
+                ps.setInt(3, crop.getY());
+                ps.setInt(4, crop.getZ());
+
+                ps.executeUpdate();
+            } catch (SQLException ex) {
+                GameManager.getInstance().getLogger().log(Level.SEVERE, "Failed to remove planted crop", ex);
+            } finally {
+                closeResources(conn, ps, null);
+            }
+        });
     }
     //endregion
 
@@ -382,26 +403,18 @@ public abstract class Database {
         } catch (SQLException ex) {
             GameManager.getInstance().getLogger().log(Level.SEVERE, Errors.sqlConnectionExecute, ex);
         } finally {
-            try {
-                if (ps != null)
-                    ps.close();
-                if (conn != null)
-                    conn.close();
-            } catch (SQLException ex) {
-                GameManager.getInstance().getLogger().log(Level.SEVERE, Errors.sqlConnectionClose, ex);
-            }
+            closeResources(conn, ps, null);
         }
         return "error";
     }
 
-    public void close(PreparedStatement ps,ResultSet rs){
+    private void closeResources(Connection conn, PreparedStatement ps, ResultSet rs) {
         try {
-            if (ps != null)
-                ps.close();
-            if (rs != null)
-                rs.close();
+            if (rs != null) rs.close();
+            if (ps != null) ps.close();
+            if (conn != null) conn.close();
         } catch (SQLException ex) {
-            Error.close(ex);
+            GameManager.getInstance().getLogger().log(Level.SEVERE, "Failed to close database resources", ex);
         }
     }
 

@@ -1,5 +1,6 @@
 package fr.miuby.survi;
 
+import fr.miuby.survi.crops.PlantedCropsManager;
 import fr.miuby.survi.database.Database;
 import fr.miuby.survi.database.SQLite;
 import fr.miuby.survi.item.CustomRecipeFactory;
@@ -40,6 +41,8 @@ public class GameManager {
     private RoleFactory roleFactory;
     @Getter
     private AlphaPlayerFactory alphaPlayerFactory;
+    @Getter
+    private PlantedCropsManager plantedCropsManager;
 
     @Setter
     @Getter
@@ -74,6 +77,9 @@ public class GameManager {
         customRecipeFactory = new CustomRecipeFactory();
         CustomRecipe.registerRecipes();
         GrowthItems.init();
+
+        this.plantedCropsManager = new PlantedCropsManager(database);
+        this.plantedCropsManager.load();
 
         Timer timer = new Timer();
         timer.update();

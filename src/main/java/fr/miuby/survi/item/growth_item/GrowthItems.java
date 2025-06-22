@@ -58,6 +58,8 @@ public final class GrowthItems {
         ItemStack hand = player.getInventory().getItemInMainHand();
         if (hand.getType().isAir())
             hand = player.getInventory().getItemInOffHand();
+        if (hand.getType().isAir())
+            return;
 
         // Check if growth item
         ItemMeta meta = hand.getItemMeta();
