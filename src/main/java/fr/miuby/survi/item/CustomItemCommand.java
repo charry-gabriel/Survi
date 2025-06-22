@@ -14,7 +14,7 @@ public class CustomItemCommand {
     
     public static LiteralArgumentBuilder<CommandSourceStack> createCommand() {
         return Commands.literal("customitem")
-            .requires(source -> source.getSender().hasPermission("survi.customitem"))
+            .requires(source -> source.getSender().isOp())
             .then(Commands.argument("item", StringArgumentType.word())
                 .suggests((context, builder) -> {
                     for (ECustomItem item : ECustomItem.values())

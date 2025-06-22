@@ -20,7 +20,6 @@ public class VillagerCommand {
     public static LiteralArgumentBuilder<CommandSourceStack> createCommand() {
         return Commands.literal("villager")
             .requires(sender -> sender.getSender().isOp())
-            .requires(sender -> sender.getSender().hasPermission("permission.villager"))
             .then(Commands.argument("villager", StringArgumentType.word())
                 .suggests((context, builder) -> {
                     GameManager.getInstance().getVillagerFactory().getVillagers().values().stream()
