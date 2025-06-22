@@ -1,6 +1,9 @@
 package fr.miuby.survi.listener;
 
 import fr.miuby.survi.GameManager;
+import fr.miuby.survi.player.AlphaPlayer;
+import fr.miuby.survi.role.ERole;
+import fr.miuby.survi.role.Role;
 import fr.miuby.survi.role.RoleAttribute;
 import fr.miuby.survi.player.event.AlphaPlayerRoleChangeEvent;
 import fr.miuby.survi.world.EWorld;
@@ -10,6 +13,9 @@ import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerItemConsumeEvent;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.persistence.PersistentDataContainer;
 
 public class AlphaPlayerListener implements Listener {
 
@@ -44,6 +50,30 @@ public class AlphaPlayerListener implements Listener {
                     else
                         event.getAlphaPlayer().addAttribute(attribute);
                 }
+            }
+        }
+    }
+
+    @EventHandler
+    public void onPlayerItemConsume(PlayerItemConsumeEvent event) {
+        ItemStack item = event.getItem();
+        PersistentDataContainer pdc = item.getItemMeta().getPersistentDataContainer();
+        
+        if (pdc.has(new NamespacedKey(GameManager.getInstance().getPlugin(), "edible"))) {
+            AlphaPlayer alphaPlayer = AlphaPlayer.get(event.getPlayer().getUniqueId());
+            
+            Role newRole = GameManager.getInstance().getRoleFactory().getRole(ERole.MINEUR);
+            AlphaPlayerRoleChangeEvent roleChangeEvent = new AlphaPlayerRoleChangeEvent(alphaPlayer, null, newRole);
+            GameManager.getInstance().callEvent(roleChangeEvent);
+            
+            if (!roleChangeEvent.isCancelled()) {
+                alphaPlayer.addSubRole(newRole);
+                
+                // Mettre à jour l'affichage pour les autres joueurs
+                if (alphaPlayer.getPlayer() != null && alphaPlayer.getPlayer().isOnline())
+                    GameManager.getInstance().getAlphaPlayerFactory().sendToPlayers(alphaPlayer);
+            } else {
+                event.setCancelled(true);
             }
         }
     }

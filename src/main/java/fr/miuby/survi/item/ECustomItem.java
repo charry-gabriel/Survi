@@ -187,6 +187,13 @@ public enum ECustomItem {
         EnchantmentStorageMeta meta = (EnchantmentStorageMeta) itemStack.getItemMeta();
         meta.addStoredEnchant(Enchantment.MENDING, 1, false);
         itemStack.setItemMeta(meta);
+    }),
+    
+    CHANGER_ROLE(Material.POTION, itemStack -> {
+        ItemMeta meta = itemStack.getItemMeta();
+        PersistentDataContainer pdc = meta.getPersistentDataContainer();
+        pdc.set(new NamespacedKey(GameManager.getInstance().getPlugin(), "edible"), PersistentDataType.BOOLEAN, true);
+        itemStack.setItemMeta(meta);
     });
 
 

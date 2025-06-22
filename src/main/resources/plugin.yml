@@ -17,6 +17,9 @@ commands:
   subrole:
     description: Change les sous-role d'un joueur
     usage: /<command> <add/remove> [player] [role]
+  customitem:
+    description: Donne un item custom
+    usage: /<command> <nom>
 permissions:
   Survi.sql:
     default: op

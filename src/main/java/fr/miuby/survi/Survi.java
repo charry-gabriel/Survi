@@ -1,6 +1,7 @@
 package fr.miuby.survi;
 
 import fr.miuby.survi.database.SqlCommand;
+import fr.miuby.survi.item.CustomItemCommand;
 import fr.miuby.survi.listener.*;
 import fr.miuby.survi.role.RoleTabCompleter;
 import fr.miuby.survi.role.SubRoleTabCompleter;
@@ -37,6 +38,7 @@ public class Survi extends JavaPlugin {
         this.getLifecycleManager().registerEventHandler(LifecycleEvents.COMMANDS, commands -> {
             commands.registrar().register(SqlCommand.createCommand().build());
             commands.registrar().register(VillagerCommand.createCommand().build());
+            commands.registrar().register(CustomItemCommand.createCommand().build());
         });
 
         Objects.requireNonNull(getCommand("role")).setTabCompleter(new RoleTabCompleter());

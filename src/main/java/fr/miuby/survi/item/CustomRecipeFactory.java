@@ -58,7 +58,7 @@ public class CustomRecipeFactory {
                     try {
                         // Fallback to custom item enum
                         ECustomItem custom = ECustomItem.valueOf(resultStr);
-                        resultItem = custom.getItemStack(1);
+                        resultItem = custom.getItemStack();
                     } catch (IllegalArgumentException customEx) {
                         plugin.getLogger().warning("Recipe " + key + " : unknown result '" + resultStr + "'. Skipped");
                         continue;
