@@ -296,15 +296,6 @@ public abstract class Database {
         ResultSet rs;
         try {
             conn = getSQLConnection();
-            ps = conn.prepareStatement("CREATE TABLE IF NOT EXISTS planted_crops (" +
-                    "world_uid VARCHAR(36) NOT NULL," +
-                    "x INT NOT NULL," +
-                    "y INT NOT NULL," +
-                    "z INT NOT NULL," +
-                    "PRIMARY KEY (world_uid, x, y, z)" +
-                    ")");
-            ps.executeUpdate();
-
             ps = conn.prepareStatement("SELECT * FROM planted_crops");
             rs = ps.executeQuery();
 

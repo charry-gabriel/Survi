@@ -46,6 +46,14 @@ public class SQLite extends Database {
             "`locationPitch` FLOAT NOT NULL," +
             "PRIMARY KEY (`uuid`)" +
             ");";
+            
+    public final String SQLiteCreateCropTable = "CREATE TABLE IF NOT EXISTS planted_crops (" +
+            "`world_uid` VARCHAR(36) NOT NULL," +
+            "`x` INT NOT NULL," +
+            "`y` INT NOT NULL," +
+            "`z` INT NOT NULL," +
+            "PRIMARY KEY (`world_uid`, `x`, `y`, `z`)" +
+            ");";
 
     /**
      * Establishes and returns a connection to the SQLite database for the application.
@@ -99,6 +107,7 @@ public class SQLite extends Database {
             Statement s = connection.createStatement();
             s.executeUpdate(SQLiteCreatePlayerTable);
             s.executeUpdate(SQLiteCreateVillagerTable);
+            s.executeUpdate(SQLiteCreateCropTable);
             s.close();
         } catch (SQLException e) {
             GameManager.getInstance().getLogger().severe(e.getMessage());
