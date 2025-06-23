@@ -69,7 +69,7 @@ public abstract class Database {
         } catch (SQLException ex) {
             GameManager.getInstance().getLogger().log(Level.SEVERE, Errors.sqlConnectionExecute, ex);
         } finally {
-            closeResources(conn, ps, null);
+            closeResources(conn, ps);
         }
     }
 
@@ -118,7 +118,7 @@ public abstract class Database {
         } catch (SQLException ex) {
             GameManager.getInstance().getLogger().log(Level.SEVERE, Errors.sqlConnectionExecute, ex);
         } finally {
-            closeResources(conn, ps, null);
+            closeResources(conn, ps);
         }
     }
 
@@ -182,7 +182,7 @@ public abstract class Database {
         } catch (SQLException ex) {
             GameManager.getInstance().getLogger().log(Level.SEVERE, Errors.sqlConnectionExecute, ex);
         } finally {
-            closeResources(conn, ps, null);
+            closeResources(conn, ps);
         }
         return false;
     }
@@ -282,7 +282,7 @@ public abstract class Database {
         } catch (SQLException ex) {
             GameManager.getInstance().getLogger().log(Level.SEVERE, Errors.sqlConnectionExecute, ex);
         } finally {
-            closeResources(conn, ps, null);
+            closeResources(conn, ps);
         }
         return false;
     }
@@ -311,7 +311,7 @@ public abstract class Database {
         } catch (SQLException ex) {
             GameManager.getInstance().getLogger().log(Level.SEVERE, Errors.sqlConnectionExecute, ex);
         } finally {
-            closeResources(conn, ps, null);
+            closeResources(conn, ps);
         }
         return false;
     }
@@ -334,7 +334,7 @@ public abstract class Database {
             } catch (SQLException ex) {
                 GameManager.getInstance().getLogger().log(Level.SEVERE, "Failed to save planted crop", ex);
             } finally {
-                closeResources(conn, ps, null);
+                closeResources(conn, ps);
             }
         });
     }
@@ -357,7 +357,7 @@ public abstract class Database {
             } catch (SQLException ex) {
                 GameManager.getInstance().getLogger().log(Level.SEVERE, "Failed to remove planted crop", ex);
             } finally {
-                closeResources(conn, ps, null);
+                closeResources(conn, ps);
             }
         });
     }
@@ -393,14 +393,13 @@ public abstract class Database {
         } catch (SQLException ex) {
             GameManager.getInstance().getLogger().log(Level.SEVERE, Errors.sqlConnectionExecute, ex);
         } finally {
-            closeResources(conn, ps, null);
+            closeResources(conn, ps);
         }
         return "error";
     }
 
-    private void closeResources(Connection conn, PreparedStatement ps, ResultSet rs) {
+    private void closeResources(Connection conn, PreparedStatement ps) {
         try {
-            if (rs != null) rs.close();
             if (ps != null) ps.close();
             if (conn != null) conn.close();
         } catch (SQLException ex) {

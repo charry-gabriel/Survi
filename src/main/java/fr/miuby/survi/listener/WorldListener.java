@@ -5,7 +5,6 @@ import fr.miuby.survi.player.AlphaPlayer;
 import fr.miuby.survi.role.Role;
 import fr.miuby.survi.role.RoleAttribute;
 import fr.miuby.survi.world.EWorld;
-import fr.miuby.world.MiubyWorld;
 import fr.miuby.survi.world.WorldFactory;
 import org.bukkit.NamespacedKey;
 import org.bukkit.attribute.Attribute;
