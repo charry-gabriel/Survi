@@ -1,9 +1,9 @@
 package fr.miuby.survi.villager;
 
+import fr.miuby.utils.Rect;
 import fr.miuby.survi.item.ECustomItem;
 import fr.miuby.survi.item.SimpleItemStack;
 import fr.miuby.survi.player.AlphaPlayer;
-import fr.miuby.survi.utils.Rect;
 import fr.miuby.survi.villager.blessing.*;
 import fr.miuby.survi.world.EWorld;
 import fr.miuby.survi.item.locked_item.LockedArmorType;

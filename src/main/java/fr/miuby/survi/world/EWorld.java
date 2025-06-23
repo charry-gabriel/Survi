@@ -1,9 +1,10 @@
 package fr.miuby.survi.world;
 
+import fr.miuby.world.WorldType;
 import org.bukkit.World;
 import org.jetbrains.annotations.NotNull;
 
-public enum EWorld {
+public enum EWorld implements WorldType {
     VILLAGE,
     WILDERNESS,
     NETHER,
@@ -11,6 +12,6 @@ public enum EWorld {
     ALL;
 
     public static EWorld get(@NotNull World world) {
-        return Monde.get(world.getUID()).getType();
+        return (EWorld) WorldFactory.get(world.getUID()).getType();
     }
 }

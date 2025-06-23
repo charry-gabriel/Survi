@@ -1,58 +1,66 @@
 package fr.miuby.survi.world;
 
-import fr.miuby.survi.utils.Rect;
+import fr.miuby.survi.GameManager;
+import fr.miuby.utils.Rect;
+import fr.miuby.world.MiubyWorld;
+import fr.miuby.world.WorldRegistry;
+import lombok.Getter;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
 import org.bukkit.Server;
 import org.bukkit.World;
-
-import java.util.HashMap;
-import java.util.Map;
 import java.util.UUID;
 
+@Getter
 public class WorldFactory {
-    private final Map<EWorld, Monde> worlds;
+    private final WorldRegistry registry;
 
     public WorldFactory(Server server) {
-        worlds = new HashMap<>();
+        registry = new WorldRegistry();
 
-        Monde village = new Monde(server.getWorld("Village"),"Village", NamedTextColor.AQUA, EWorld.VILLAGE);
+        MiubyWorld village = new MiubyWorld(server.getWorld("Village"),"Village", NamedTextColor.AQUA, EWorld.VILLAGE);
         village.setLimit(new Rect(512,-512,512,50,512,-512));
         village.setSpawnPoint(new Location(village.getWorld(), -24, 158, -30));
-        worlds.put(EWorld.VILLAGE, village);
+        registry.register(village);
 
-        Monde wilderness = new Monde(server.getWorld("Wilderness"),"Wilderness", NamedTextColor.GOLD, EWorld.WILDERNESS);
+        MiubyWorld wilderness = new MiubyWorld(server.getWorld("Wilderness"),"Wilderness", NamedTextColor.GOLD, EWorld.WILDERNESS);
         wilderness.setLimit(new Rect(2000,-2000, Integer.MAX_VALUE, Integer.MIN_VALUE,2000,-2000));
         wilderness.setSpawnPoint(new Location(wilderness.getWorld(), 3, 78, -12));
-        worlds.put(EWorld.WILDERNESS, wilderness);
+        registry.register(wilderness);
 
-        Monde nether = new Monde(server.getWorld("Wilderness_nether"),"Nether", NamedTextColor.RED, EWorld.NETHER);
+        MiubyWorld nether = new MiubyWorld(server.getWorld("Wilderness_nether"),"Nether", NamedTextColor.RED, EWorld.NETHER);
         nether.setLocked(true);
-        worlds.put(EWorld.NETHER, nether);
+        registry.register(nether);
 
-        Monde end = new Monde(server.getWorld("Wilderness_the_end"),"End", NamedTextColor.YELLOW, EWorld.END);
+        MiubyWorld end = new MiubyWorld(server.getWorld("Wilderness_the_end"),"End", NamedTextColor.YELLOW, EWorld.END);
         end.setLocked(true);
-        worlds.put(EWorld.END, end);
+        registry.register(end);
     }
 
-    public Monde getWorld(EWorld world) {
-        Monde monde = worlds.get(world);
-        if (monde == null)
+    public MiubyWorld getWorld(EWorld world) {
+        MiubyWorld miubyWorld = registry.get(world);
+        if (miubyWorld == null)
             throw new NullPointerException(world.toString() + " not found !");
-        return monde;
+        return miubyWorld;
     }
 
-    public Monde getWorld(UUID uuid) {
-        for (Monde monde : worlds.values()) {
-            if (monde.getUUID() == uuid) {
-                return monde;
-            }
-        }
-        throw new NullPointerException("world uuid not found !");
+    public MiubyWorld getWorld(UUID uuid) {
+        MiubyWorld world = registry.get(uuid);
+        if (world == null)
+            throw new NullPointerException("world not found !");
+        return world;
     }
 
     public static World getDefaultWorld() {
-        return Monde.get(EWorld.VILLAGE).getWorld();
+        return get(EWorld.VILLAGE).getWorld();
+    }
+
+    public static MiubyWorld get(EWorld worldType) {
+        return GameManager.getInstance().getWorldFactory().getWorld(worldType);
+    }
+
+    public static MiubyWorld get(UUID uuid) {
+        return GameManager.getInstance().getWorldFactory().getWorld(uuid);
     }
 }
 

@@ -8,7 +8,7 @@ import fr.miuby.survi.villager.AVillager;
 import fr.miuby.survi.villager.Trader;
 import fr.miuby.survi.villager.VillagerLevel;
 import fr.miuby.survi.world.EWorld;
-import fr.miuby.survi.world.Monde;
+import fr.miuby.survi.world.WorldFactory;
 import io.papermc.paper.advancement.AdvancementDisplay;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -31,15 +31,15 @@ public class PlayerListener implements Listener {
 
     @EventHandler
     public void onPlayerMove(PlayerMoveEvent event) {
-        if ((Monde.isOutOfLimit(event.getPlayer(), EWorld.VILLAGE) || Monde.isOutOfLimit(event.getPlayer(), EWorld.WILDERNESS)) && !event.getPlayer().isOp()) {
-            AlphaPlayer.get(event.getPlayer().getUniqueId()).teleport(Monde.get(EWorld.VILLAGE));
+        if ((WorldFactory.get(EWorld.VILLAGE).isPlayerOutOfLimit(event.getPlayer()) || WorldFactory.get(EWorld.WILDERNESS).isPlayerOutOfLimit(event.getPlayer())) && !event.getPlayer().isOp()) {
+            AlphaPlayer.get(event.getPlayer().getUniqueId()).teleport(WorldFactory.get(EWorld.VILLAGE));
             event.getPlayer().sendMessage(Component.text("Ne sort pas des limite du village, c'est dangereux !!", NamedTextColor.RED));
         }
     }
 
     @EventHandler
     public void onPlayerPortal(PlayerPortalEvent event) {
-        if (event.getPlayer().getWorld().getName().equals(Monde.get(EWorld.VILLAGE).getName())) {
+        if (event.getPlayer().getWorld().getName().equals(WorldFactory.get(EWorld.VILLAGE).getName())) {
             event.getPlayer().sendMessage(Component.text("C'est pas autorisé ça !", NamedTextColor.RED));
             event.setCancelled(true);
         }

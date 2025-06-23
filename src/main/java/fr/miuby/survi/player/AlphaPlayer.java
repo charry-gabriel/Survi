@@ -3,7 +3,8 @@ package fr.miuby.survi.player;
 import fr.miuby.survi.GameManager;
 import fr.miuby.survi.role.*;
 import fr.miuby.survi.world.EWorld;
-import fr.miuby.survi.world.Monde;
+import fr.miuby.survi.world.WorldFactory;
+import fr.miuby.world.MiubyWorld;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.NamespacedKey;
@@ -29,7 +30,7 @@ public class AlphaPlayer implements Serializable {
     private final List<Role> subRoles = new ArrayList<>();
 
     @Setter
-    private Monde world;
+    private MiubyWorld world;
     @Getter
     private int mort = 0;
     @Getter
@@ -78,7 +79,7 @@ public class AlphaPlayer implements Serializable {
         if(this.player != null) {
             this.player.setScoreboard(this.scoreboard.getScoreboard());
 
-            this.world = Monde.get(getPlayer().getWorld().getUID());
+            this.world = WorldFactory.get(getPlayer().getWorld().getUID());
             GameManager.getInstance().getAlphaPlayerFactory().sendToPlayers(this);
 
             GameManager.getInstance().getVillagerFactory().applyAllCurrentBlessing(this);
@@ -147,7 +148,7 @@ public class AlphaPlayer implements Serializable {
         GameManager.getInstance().getDatabase().updatePlayer(this.uuid, "success", String.valueOf(this.success));
     }
 
-    public void teleport(Monde monde) {
+    public void teleport(MiubyWorld monde) {
         if (getPlayer() != null)
             getPlayer().teleport(monde.getSpawnPoint());
     }
@@ -180,7 +181,7 @@ public class AlphaPlayer implements Serializable {
 
     //region Getters Setters
     public EWorld getWorld() {
-        return this.world.getType();
+        return (EWorld) this.world.getType();
     }
 
     public void resetPlayer(){

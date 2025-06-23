@@ -2,13 +2,14 @@ package fr.miuby.survi.villager.blessing;
 
 import fr.miuby.survi.player.AlphaPlayer;
 import fr.miuby.survi.world.EWorld;
-import fr.miuby.survi.world.Monde;
+import fr.miuby.survi.world.WorldFactory;
+import fr.miuby.world.MiubyWorld;
 
 public class LockWorldEffect extends BlessingEffect {
-    private final Monde world;
+    private final MiubyWorld world;
 
     public LockWorldEffect(EWorld worldType) {
-        this.world = Monde.get(worldType);
+        this.world = WorldFactory.get(worldType);
     }
 
     @Override

@@ -1,7 +1,7 @@
 package fr.miuby.survi;
 
 import fr.miuby.survi.world.EWorld;
-import fr.miuby.survi.world.Monde;
+import fr.miuby.survi.world.WorldFactory;
 
 import java.time.Duration;
 import java.time.Instant;
@@ -25,7 +25,7 @@ public class Timer {
                 tick = Math.round( (6000f / 28800f) * seconds - 6000);
                 GameManager.getInstance().setNight(true);
             }
-            Monde.get(EWorld.VILLAGE).getWorld().setTime(tick);
+            WorldFactory.get(EWorld.VILLAGE).getWorld().setTime(tick);
         }, 0, 20);
     }
 }
