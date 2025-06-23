@@ -24,13 +24,14 @@ public abstract class Database {
     public abstract void load();
 
     public void initialize(){
-        connection = getSQLConnection();
-        try{
-            PreparedStatement ps = connection.prepareStatement("SELECT * FROM player WHERE pseudo = 'Miuby'");
-            ResultSet rs = ps.executeQuery();
-            closeResources(connection, ps, null);
-            isLoaded = true;
-            GameManager.getInstance().getLogger().log(Level.INFO, "Database connexion succeeded !");
+        try (Connection conn = getSQLConnection();
+             PreparedStatement ps = conn.prepareStatement("SELECT * FROM player WHERE pseudo = ?")) {
+            
+            ps.setString(1, "Miuby");
+            try (ResultSet rs = ps.executeQuery()) {
+                isLoaded = true;
+                GameManager.getInstance().getLogger().log(Level.INFO, "Database connexion succeeded !");
+            }
         } catch (SQLException ex) {
             GameManager.getInstance().getLogger().log(Level.SEVERE, Errors.noSQLConnection, ex);
         }
@@ -123,32 +124,31 @@ public abstract class Database {
 
     public void CreateDBPlayer(UUID uuid, String pseudo) {
         GameManager.getInstance().getScheduler().runTaskAsynchronously(GameManager.getInstance().getPlugin(), () -> {
-            Connection conn = null;
-            PreparedStatement ps = null;
-            try {
-                conn = getSQLConnection();
-                ps = conn.prepareStatement("INSERT INTO player VALUES ('" + uuid + "', 0, 0, '" + pseudo + "', '" + GameManager.getInstance().getRoleFactory().getDefaultRole().type().toString() + "', NULL)");
+            try (Connection conn = getSQLConnection();
+                 PreparedStatement ps = conn.prepareStatement("INSERT INTO player (uuid, mort, success, pseudo, role) VALUES (?, 0, 0, ?, ?)")) {
+                
+                ps.setString(1, uuid.toString());
+                ps.setString(2, pseudo);
+                ps.setString(3, GameManager.getInstance().getRoleFactory().getDefaultRole().type().toString());
                 ps.executeUpdate();
+                
             } catch (SQLException ex) {
-                GameManager.getInstance().getLogger().log(Level.SEVERE, Errors.sqlConnectionExecute, ex);
-            } finally {
-                closeResources(conn, ps, null);
+                GameManager.getInstance().getLogger().log(Level.SEVERE, "Failed to create player in database", ex);
             }
         });
     }
 
     public void updatePlayer(UUID uuid, String column, String value) {
         GameManager.getInstance().getScheduler().runTaskAsynchronously(GameManager.getInstance().getPlugin(), () -> {
-            Connection conn = null;
-            PreparedStatement ps = null;
-            try {
-                conn = getSQLConnection();
-                ps = conn.prepareStatement("UPDATE player SET " + column + " = '" + value + "' WHERE uuid = '" + uuid + "'");
+            try (Connection conn = getSQLConnection();
+                 PreparedStatement ps = conn.prepareStatement("UPDATE player SET " + column + " = ? WHERE uuid = ?")) {
+                
+                ps.setString(1, value);
+                ps.setString(2, uuid.toString());
                 ps.executeUpdate();
+                
             } catch (SQLException ex) {
-                GameManager.getInstance().getLogger().log(Level.SEVERE, Errors.sqlConnectionExecute, ex);
-            } finally {
-                closeResources(conn, ps, null);
+                GameManager.getInstance().getLogger().log(Level.SEVERE, "Failed to update player data for column: " + column, ex);
             }
         });
     }
@@ -189,81 +189,80 @@ public abstract class Database {
 
     public void CreateDBVillager(String name, UUID uuid) {
         GameManager.getInstance().getScheduler().runTaskAsynchronously(GameManager.getInstance().getPlugin(), () -> {
-            Connection conn = null;
-            PreparedStatement ps = null;
-            try {
-                conn = getSQLConnection();
-                ps = conn.prepareStatement("INSERT INTO villager VALUES ('" + uuid + "', '0', '" + name + "', NULL, '0', '700', '0', '0', '0')");
+            try (Connection conn = getSQLConnection();
+                 PreparedStatement ps = conn.prepareStatement("INSERT INTO villager (uuid, level, name, givenItems, locationX, locationY, locationZ, locationYaw, locationPitch) VALUES (?, 0, ?, NULL, 700, 0, 0, 0, 0)")) {
+                
+                ps.setString(1, uuid.toString());
+                ps.setString(2, name);
                 ps.executeUpdate();
+                
             } catch (SQLException ex) {
-                GameManager.getInstance().getLogger().log(Level.SEVERE, Errors.sqlConnectionExecute, ex);
-            } finally {
-                closeResources(conn, ps, null);
+                GameManager.getInstance().getLogger().log(Level.SEVERE, "Failed to create villager in database", ex);
             }
         });
     }
 
     public void updateVillagerLevel(UUID uuid, int level) {
         GameManager.getInstance().getScheduler().runTaskAsynchronously(GameManager.getInstance().getPlugin(), () -> {
-            Connection conn = null;
-            PreparedStatement ps = null;
-            try {
-                conn = getSQLConnection();
-                ps = conn.prepareStatement("UPDATE villager SET level = '" + level + "' WHERE uuid = '" + uuid + "'");
+            try (Connection conn = getSQLConnection();
+                 PreparedStatement ps = conn.prepareStatement("UPDATE villager SET level = ? WHERE uuid = ?")) {
+                
+                ps.setInt(1, level);
+                ps.setString(2, uuid.toString());
                 ps.executeUpdate();
+                
             } catch (SQLException ex) {
-                GameManager.getInstance().getLogger().log(Level.SEVERE, Errors.sqlConnectionExecute, ex);
-            } finally {
-                closeResources(conn, ps, null);
+                GameManager.getInstance().getLogger().log(Level.SEVERE, "Failed to update villager level", ex);
             }
         });
     }
 
     public void updateVillagerLocation(UUID uuid, Location location) {
         GameManager.getInstance().getScheduler().runTaskAsynchronously(GameManager.getInstance().getPlugin(), () -> {
-            Connection conn = null;
-            PreparedStatement ps = null;
-            try {
-                conn = getSQLConnection();
-                ps = conn.prepareStatement("UPDATE villager SET locationX = '" + location.getX() + "', locationY = '" + location.getY() + "', locationZ = '" + location.getZ() + "', locationYaw = '" + location.getYaw() + "', locationPitch = '" + location.getPitch() + "' WHERE uuid = '" + uuid + "'");
+            try (Connection conn = getSQLConnection();
+                 PreparedStatement ps = conn.prepareStatement("UPDATE villager SET locationX = ?, locationY = ?, locationZ = ?, locationYaw = ?, locationPitch = ? WHERE uuid = ?")) {
+                
+                ps.setDouble(1, location.getX());
+                ps.setDouble(2, location.getY());
+                ps.setDouble(3, location.getZ());
+                ps.setFloat(4, location.getYaw());
+                ps.setFloat(5, location.getPitch());
+                ps.setString(6, uuid.toString());
                 ps.executeUpdate();
+                
             } catch (SQLException ex) {
-                GameManager.getInstance().getLogger().log(Level.SEVERE, Errors.sqlConnectionExecute, ex);
-            } finally {
-                closeResources(conn, ps, null);
+                GameManager.getInstance().getLogger().log(Level.SEVERE, "Failed to update villager location", ex);
             }
         });
     }
 
     public void updateVillagerUUID(UUID uuid, String name) {
         GameManager.getInstance().getScheduler().runTaskAsynchronously(GameManager.getInstance().getPlugin(), () -> {
-            Connection conn = null;
-            PreparedStatement ps = null;
-            try {
-                conn = getSQLConnection();
-                ps = conn.prepareStatement("UPDATE villager SET uuid = '" + uuid + "' WHERE name = '" + name + "'");
+            try (Connection conn = getSQLConnection();
+                 PreparedStatement ps = conn.prepareStatement("UPDATE villager SET uuid = ? WHERE name = ?")) {
+
+                ps.setString(1, uuid.toString());
+                ps.setString(2, name);
                 ps.executeUpdate();
+
             } catch (SQLException ex) {
-                GameManager.getInstance().getLogger().log(Level.SEVERE, Errors.sqlConnectionExecute, ex);
-            } finally {
-                closeResources(conn, ps, null);
+                GameManager.getInstance().getLogger().log(Level.SEVERE, "Failed to update villager UUID", ex);
             }
         });
     }
 
     public void updateVillagerGivenItem(UUID uuid, List<ItemStack> givenItems) {
         GameManager.getInstance().getScheduler().runTaskAsynchronously(GameManager.getInstance().getPlugin(), () -> {
-            Connection conn = null;
-            PreparedStatement ps = null;
-            try {
-                conn = getSQLConnection();
+            try (Connection conn = getSQLConnection();
+                 PreparedStatement ps = conn.prepareStatement("UPDATE villager SET givenItems = ? WHERE uuid = ?")) {
+                
                 String givenItemsString = Base64.getEncoder().encodeToString(ItemStack.serializeItemsAsBytes(givenItems));
-                ps = conn.prepareStatement("UPDATE villager SET givenItems = '" + givenItemsString + "' WHERE uuid = '" + uuid + "'");
+                ps.setString(1, givenItemsString);
+                ps.setString(2, uuid.toString());
                 ps.executeUpdate();
+                
             } catch (SQLException ex) {
-                GameManager.getInstance().getLogger().log(Level.SEVERE, Errors.sqlConnectionExecute, ex);
-            } finally {
-                closeResources(conn, ps, null);
+                GameManager.getInstance().getLogger().log(Level.SEVERE, "Failed to update villager given items", ex);
             }
         });
     }
