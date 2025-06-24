@@ -6,6 +6,7 @@ import fr.miuby.survi.player.AlphaPlayer;
 import fr.miuby.survi.role.Role;
 import fr.miuby.survi.role.RoleAttribute;
 import fr.miuby.survi.world.EWorld;
+import fr.miuby.survi.world.WorldFactory;
 import org.bukkit.NamespacedKey;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
@@ -14,8 +15,28 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.world.PortalCreateEvent;
+import org.bukkit.event.world.WorldLoadEvent;
 
 public class WorldListener implements Listener {
+    private boolean worldsInitialized = false;
+
+    @EventHandler
+    public void onWorldLoad(WorldLoadEvent event) {
+        if (!worldsInitialized && areAllWorldsLoaded()) {
+            GameManager.getInstance().initAfterWorldsLoad();
+            worldsInitialized = true;
+        }
+    }
+
+    private boolean areAllWorldsLoaded() {
+        for (String worldName : WorldFactory.getWorlds().values()) {
+            if (GameManager.getInstance().getPlugin().getServer().getWorld(worldName) == null) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     @EventHandler
     public void onPortalCreate(PortalCreateEvent event) {
         if (event.getReason().equals(PortalCreateEvent.CreateReason.FIRE)) {

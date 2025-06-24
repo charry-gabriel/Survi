@@ -34,8 +34,6 @@ public class GameManager {
     @Getter
     private CustomRecipeFactory customRecipeFactory;
     @Getter
-    private WorldFactory worldFactory;
-    @Getter
     private Database database;
     @Getter
     private RoleFactory roleFactory;
@@ -58,23 +56,26 @@ public class GameManager {
         return instance;
     }
 
-    public void init(Survi plugin){
+    public void init(Survi plugin) {
         this.plugin = plugin;
-
         this.scheduler = this.plugin.getServer().getScheduler();
-
-        this.worldFactory = new WorldFactory(this.plugin.getServer());
-        this.roleFactory = new RoleFactory();
-        this.alphaPlayerFactory = new AlphaPlayerFactory();
 
         this.database = new SQLite();
         this.database.load();
+    }
+
+    public void initAfterWorldsLoad() {
+        WorldFactory.initializeWorlds(plugin.getServer());
+        plugin.getLogger().info("Mondes initialisés avec succès !");
+
+        this.roleFactory = new RoleFactory();
+        this.alphaPlayerFactory = new AlphaPlayerFactory();
         this.database.createAlphaPlayers();
 
-        villagerFactory = new VillagerFactory();
+        this.villagerFactory = new VillagerFactory();
 
-        lockedItemsFactory = new LockedItemsFactory();
-        customRecipeFactory = new CustomRecipeFactory();
+        this.lockedItemsFactory = new LockedItemsFactory();
+        this.customRecipeFactory = new CustomRecipeFactory();
         CustomRecipe.registerRecipes();
         GrowthItems.init();
 
@@ -83,6 +84,8 @@ public class GameManager {
 
         Timer timer = new Timer();
         timer.update();
+        
+        plugin.getLogger().info("Plugin entièrement initialisé !");
     }
 
     public void callEvent(Event event) {
