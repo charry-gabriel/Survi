@@ -65,19 +65,41 @@ public abstract class AVillager {
     public abstract TextComponent getDisplayName();
 
     public void setRealVillager(UUID uuid) {
+        this.uuid = uuid;
         Villager realVillager = findRealVillager(uuid);
 
         if (realVillager != null) {
             this.villager = realVillager;
-            this.uuid = uuid;
-        } else {
-            GameManager.getInstance().getLogger().info("Didn't find villager uuid");
+            return;
+        }
 
-            if (GameManager.getInstance().getDatabase().IsLoaded()) {
-                this.villager = CreateRealVillager(location, type, profession);
-                this.uuid = this.villager.getUniqueId();
-                GameManager.getInstance().getDatabase().updateVillagerUUID(this.uuid, nameId);
-            }
+        // Villager not yet found – most likely because the chunk is not loaded.
+        GameManager.getInstance().getLogger().info("Villager " + nameId + " not yet loaded, waiting for chunk...");
+        waitForVillager(0);
+    }
+
+    /**
+     * Recursively attempts to find the real villager once the chunk is loaded.
+     * Tries up to 40 times (≈2 s). Stops early once the villager is found.
+     */
+    private void waitForVillager(int attempt) {
+        if (attempt >= 40) {
+            GameManager.getInstance().getLogger().warning("Unable to find villager " + nameId + " after waiting for chunk load.");
+            return;
+        }
+
+        // Ensure the chunk containing the expected location is loaded
+        if (location != null && !location.getChunk().isLoaded()) {
+            location.getChunk().load();
+        }
+
+        Villager realVillager = findRealVillager(uuid);
+        if (realVillager != null) {
+            this.villager = realVillager;
+            GameManager.getInstance().getLogger().info("Villager " + nameId + " found after waiting " + attempt + " ticks.");
+        } else {
+            // Try again next tick
+            GameManager.getInstance().getScheduler().runTaskLater(GameManager.getInstance().getPlugin(), () -> waitForVillager(attempt + 1), 1L);
         }
     }
 

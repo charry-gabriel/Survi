@@ -267,26 +267,6 @@ public abstract class Database {
             }
         });
     }
-
-    public boolean isVillagerUUIDExist(UUID uuid) {
-        Connection conn = null;
-        PreparedStatement ps = null;
-        ResultSet rs;
-        try {
-            conn = getSQLConnection();
-            ps = conn.prepareStatement("SELECT * FROM villager WHERE uuid = '"+uuid+"'");
-            rs = ps.executeQuery();
-
-            if (rs.next()) {
-                return true;
-            }
-        } catch (SQLException ex) {
-            GameManager.getInstance().getLogger().log(Level.SEVERE, Errors.sqlConnectionExecute, ex);
-        } finally {
-            closeResources(conn, ps);
-        }
-        return false;
-    }
     //endregion
 
     //region Crop
