@@ -3,6 +3,7 @@ package fr.miuby.survi.world;
 import fr.miuby.lib.world.WorldRegistry;
 import fr.miuby.lib.utils.Rect;
 import fr.miuby.lib.world.MiubyWorld;
+import fr.miuby.survi.GameManager;
 import lombok.Getter;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
@@ -14,6 +15,7 @@ import java.util.Map;
 public final class WorldFactory {
     @Getter
     private static final Map<EWorld, String> worlds;
+    private static boolean initialized = false;
 
     static {
         worlds = Map.of(
@@ -26,7 +28,9 @@ public final class WorldFactory {
 
     private WorldFactory() { }
 
-    public static void initializeWorlds(Server server) {
+    public static void initializeWorlds() {
+        Server server = GameManager.getInstance().getPlugin().getServer();
+
         MiubyWorld village = new MiubyWorld(server.getWorld(worlds.get(EWorld.VILLAGE)),"Village", NamedTextColor.AQUA, EWorld.VILLAGE);
         village.setLimit(new Rect(512,-512,512,50,512,-512));
         village.setSpawnPoint(new Location(village.getWorld(), -24, 158, -30));
@@ -48,6 +52,15 @@ public final class WorldFactory {
 
     public static World getDefaultWorld() {
         return WorldRegistry.get(EWorld.VILLAGE).getWorld();
+    }
+    
+    public static synchronized void initializeIfNeeded() {
+        Server server = GameManager.getInstance().getPlugin().getServer();
+
+        if (!initialized && worlds.values().stream().allMatch(worldName -> server.getWorld(worldName) != null)) {
+            GameManager.getInstance().initAfterWorldsLoad();
+            initialized = true;
+        }
     }
 }
 

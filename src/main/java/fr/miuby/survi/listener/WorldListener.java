@@ -18,23 +18,9 @@ import org.bukkit.event.world.PortalCreateEvent;
 import org.bukkit.event.world.WorldLoadEvent;
 
 public class WorldListener implements Listener {
-    private boolean worldsInitialized = false;
-
     @EventHandler
     public void onWorldLoad(WorldLoadEvent event) {
-        if (!worldsInitialized && areAllWorldsLoaded()) {
-            GameManager.getInstance().initAfterWorldsLoad();
-            worldsInitialized = true;
-        }
-    }
-
-    private boolean areAllWorldsLoaded() {
-        for (String worldName : WorldFactory.getWorlds().values()) {
-            if (GameManager.getInstance().getPlugin().getServer().getWorld(worldName) == null) {
-                return false;
-            }
-        }
-        return true;
+        WorldFactory.initializeIfNeeded();
     }
 
     @EventHandler

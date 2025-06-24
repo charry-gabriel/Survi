@@ -62,11 +62,12 @@ public class GameManager {
 
         this.database = new SQLite();
         this.database.load();
+
+        WorldFactory.initializeIfNeeded();
     }
 
     public void initAfterWorldsLoad() {
-        WorldFactory.initializeWorlds(plugin.getServer());
-        plugin.getLogger().info("Mondes initialisés avec succès !");
+        WorldFactory.initializeWorlds();
 
         this.roleFactory = new RoleFactory();
         this.alphaPlayerFactory = new AlphaPlayerFactory();
