@@ -4,6 +4,7 @@ import java.sql.*;
 import java.util.*;
 import java.util.logging.Level;
 
+import fr.miuby.lib.world.WorldRegistry;
 import fr.miuby.survi.crops.PlantedCrop;
 import fr.miuby.survi.player.AlphaPlayer;
 import fr.miuby.survi.GameManager;
@@ -175,7 +176,7 @@ public abstract class Database {
                         villagerLevel.setGivenItems(ItemStack.deserializeItemsFromBytes(Base64.getDecoder().decode(givenItems)));
                 }
 
-                villager.setLocation(new Location(GameManager.getInstance().getWorldFactory().getWorld(EWorld.VILLAGE).getWorld(), rs.getFloat("locationX"), rs.getFloat("locationY"), rs.getFloat("locationZ"), rs.getFloat("locationYaw"), rs.getFloat("locationPitch")));
+                villager.setLocation(new Location(WorldRegistry.get(EWorld.VILLAGE).getWorld(), rs.getFloat("locationX"), rs.getFloat("locationY"), rs.getFloat("locationZ"), rs.getFloat("locationYaw"), rs.getFloat("locationPitch")));
                 villager.setRealVillager(uuid);
                 return true;
             }

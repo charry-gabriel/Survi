@@ -1,10 +1,10 @@
 package fr.miuby.survi.player;
 
+import fr.miuby.lib.world.WorldRegistry;
 import fr.miuby.survi.GameManager;
 import fr.miuby.survi.role.*;
 import fr.miuby.survi.world.EWorld;
-import fr.miuby.survi.world.WorldFactory;
-import fr.miuby.world.MiubyWorld;
+import fr.miuby.lib.world.MiubyWorld;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.NamespacedKey;
@@ -79,7 +79,7 @@ public class AlphaPlayer implements Serializable {
         if(this.player != null) {
             this.player.setScoreboard(this.scoreboard.getScoreboard());
 
-            this.world = WorldFactory.get(getPlayer().getWorld().getUID());
+            this.world = WorldRegistry.get(getPlayer().getWorld().getUID());
             GameManager.getInstance().getAlphaPlayerFactory().sendToPlayers(this);
 
             GameManager.getInstance().getVillagerFactory().applyAllCurrentBlessing(this);

@@ -1,11 +1,11 @@
 package fr.miuby.survi.listener;
 
+import fr.miuby.lib.world.WorldRegistry;
 import fr.miuby.survi.GameManager;
 import fr.miuby.survi.player.AlphaPlayer;
 import fr.miuby.survi.role.ERole;
 import fr.miuby.survi.villager.AVillager;
 import fr.miuby.survi.world.EWorld;
-import fr.miuby.survi.world.WorldFactory;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.sound.Sound;
 import org.bukkit.entity.EntityType;
@@ -30,7 +30,7 @@ public class DamageListener implements Listener {
             UUID uuid = event.getDamager().getUniqueId();
             AlphaPlayer alphaPlayer =  AlphaPlayer.get(uuid);
 
-            if(WorldFactory.get(EWorld.END).isPlayerInWorld(alphaPlayer.getPlayer())) {
+            if(WorldRegistry.get(EWorld.END).isPlayerInWorld(alphaPlayer.getPlayer())) {
                 event.setDamage(damage * alphaPlayer.getDamageModifier() * alphaPlayer.getEndDamageModifier());
             } else {
                 event.setDamage(damage * alphaPlayer.getDamageModifier());
@@ -51,7 +51,7 @@ public class DamageListener implements Listener {
             double damage = event.getDamage();
             double modifiedDamage;
 
-            if(WorldFactory.get(EWorld.END).isPlayerInWorld(damagedAlphaPlayer.getPlayer())) {
+            if(WorldRegistry.get(EWorld.END).isPlayerInWorld(damagedAlphaPlayer.getPlayer())) {
                 modifiedDamage = round(damage / (damagedAlphaPlayer.getResistanceModifier() * damagedAlphaPlayer.getEndResistanceModifier()));
             } else {
                 modifiedDamage = round(damage / damagedAlphaPlayer.getResistanceModifier());

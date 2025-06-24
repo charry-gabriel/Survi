@@ -4,7 +4,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>fr.miuby</groupId>
+    <groupId>fr.miuby.survi</groupId>
     <artifactId>survi</artifactId>
     <version>3.3</version>
     <packaging>jar</packaging>
@@ -95,9 +95,9 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>fr.miuby</groupId>
+            <groupId>fr.miuby.lib</groupId>
             <artifactId>miuby-lib</artifactId>
-            <version>1.1</version>
+            <version>1.2</version>
         </dependency>
     </dependencies>
 </project>

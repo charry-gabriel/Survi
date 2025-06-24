@@ -1,8 +1,8 @@
 package fr.miuby.survi.player;
 
+import fr.miuby.lib.world.WorldRegistry;
 import fr.miuby.survi.role.Role;
-import fr.miuby.survi.world.WorldFactory;
-import fr.miuby.world.MiubyWorld;
+import fr.miuby.lib.world.MiubyWorld;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import org.bukkit.scoreboard.Scoreboard;
@@ -17,7 +17,7 @@ public class AlphaTeam {
         Random random = new Random();
         this.team = scoreboard.registerNewTeam(alphaPlayer.getPseudo() + random.nextInt());
 
-        MiubyWorld world = WorldFactory.get(alphaPlayer.getWorld());
+        MiubyWorld world = WorldRegistry.get(alphaPlayer.getWorld());
         this.team.color(world.getColor());
         TextComponent prefix = Component.text(world.getName() + " - ");
 

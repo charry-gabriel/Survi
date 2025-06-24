@@ -1,6 +1,6 @@
 package fr.miuby.survi.villager;
 
-import fr.miuby.utils.Rect;
+import fr.miuby.lib.utils.Rect;
 import fr.miuby.survi.item.ECustomItem;
 import fr.miuby.survi.item.SimpleItemStack;
 import fr.miuby.survi.player.AlphaPlayer;
