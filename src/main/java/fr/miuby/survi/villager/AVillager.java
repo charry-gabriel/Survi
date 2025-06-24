@@ -33,12 +33,21 @@ public abstract class AVillager {
     protected UUID uuid;
 
     public void initVillager() {
-        if (GameManager.getInstance().getDatabase().IsLoaded() && !GameManager.getInstance().getDatabase().initVillager(this, this.nameId)) {
-            GameManager.getInstance().getLogger().warning(this.nameId + " doesn't exist");
-            this.villager = CreateRealVillager(new Location(WorldFactory.getDefaultWorld(), 0, 700, 0), type, profession);
-            this.uuid = this.villager.getUniqueId();
-            GameManager.getInstance().getDatabase().CreateDBVillager(this.nameId, this.uuid);
+        if (!GameManager.getInstance().getDatabase().IsLoaded()) {
+            GameManager.getInstance().getLogger().warning("Database not loaded for villager: " + nameId);
+            return;
         }
+
+        // Essaie de charger depuis la base
+        if (GameManager.getInstance().getDatabase().initVillager(this, this.nameId)) {
+            return; // Trouvé et chargé avec succès
+        }
+
+        // Création d'un nouveau
+        GameManager.getInstance().getLogger().info("Creating new villager: " + nameId);
+        this.villager = CreateRealVillager();
+        this.uuid = this.villager.getUniqueId();
+        GameManager.getInstance().getDatabase().CreateDBVillager(this.nameId, this.uuid);
     }
 
     @Nullable
@@ -49,9 +58,8 @@ public abstract class AVillager {
         return null;
     }
 
-    private Villager CreateRealVillager(Location location, Villager.Type type, Villager.Profession profession) {
-        GameManager.getInstance().getLogger().info("Creating Villager");
-        Villager villager = (Villager) location.getWorld().spawnEntity(location, EntityType.VILLAGER);
+    private Villager CreateRealVillager() {
+        Villager villager = (Villager) WorldFactory.getDefaultWorld().spawnEntity(new Location(WorldFactory.getDefaultWorld(), 0, 700, 0), EntityType.VILLAGER);
         villager.setVillagerType(type);
         villager.setProfession(profession);
         villager.setAI(false);

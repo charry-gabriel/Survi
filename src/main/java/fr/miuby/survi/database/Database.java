@@ -157,15 +157,14 @@ public abstract class Database {
 
     //region Villager
     public boolean initVillager(AVillager villager, String name) {
-        Connection conn = null;
-        PreparedStatement ps = null;
-        ResultSet rs;
-        try {
-            conn = getSQLConnection();
-            ps = conn.prepareStatement("SELECT * FROM villager WHERE name = '"+name+"'");
-            rs = ps.executeQuery();
+        try (Connection conn = getSQLConnection();
+             PreparedStatement ps = conn.prepareStatement("SELECT * FROM villager WHERE name = ?")) {
+            
+            ps.setString(1, name);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (!rs.next())
+                    return false;
 
-            if (rs.next()) {
                 UUID uuid = UUID.fromString(rs.getString("uuid"));
 
                 if (villager instanceof VillagerLevel villagerLevel) {
@@ -176,16 +175,22 @@ public abstract class Database {
                         villagerLevel.setGivenItems(ItemStack.deserializeItemsFromBytes(Base64.getDecoder().decode(givenItems)));
                 }
 
-                villager.setLocation(new Location(WorldRegistry.get(EWorld.VILLAGE).getWorld(), rs.getFloat("locationX"), rs.getFloat("locationY"), rs.getFloat("locationZ"), rs.getFloat("locationYaw"), rs.getFloat("locationPitch")));
+                villager.setLocation(new Location(
+                    WorldRegistry.get(EWorld.VILLAGE).getWorld(),
+                    rs.getFloat("locationX"),
+                    rs.getFloat("locationY"),
+                    rs.getFloat("locationZ"),
+                    rs.getFloat("locationYaw"),
+                    rs.getFloat("locationPitch")
+                ));
+
                 villager.setRealVillager(uuid);
                 return true;
             }
         } catch (SQLException ex) {
-            GameManager.getInstance().getLogger().log(Level.SEVERE, Errors.sqlConnectionExecute, ex);
-        } finally {
-            closeResources(conn, ps);
+            GameManager.getInstance().getLogger().log(Level.SEVERE, "Failed to load villager: " + name, ex);
+            return false;
         }
-        return false;
     }
 
     public void CreateDBVillager(String name, UUID uuid) {
