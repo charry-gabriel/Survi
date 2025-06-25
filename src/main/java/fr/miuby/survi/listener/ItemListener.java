@@ -1,10 +1,10 @@
 package fr.miuby.survi.listener;
 
+import fr.miuby.lib.VillagerRegistry;
 import fr.miuby.survi.GameManager;
 import fr.miuby.survi.item.CustomRecipe;
 import fr.miuby.survi.player.AlphaPlayer;
 import fr.miuby.survi.role.Role;
-import fr.miuby.survi.villager.AVillager;
 import fr.miuby.survi.villager.Trader;
 import fr.miuby.survi.villager.VillagerLevel;
 import io.papermc.paper.event.player.PlayerTradeEvent;
@@ -91,10 +91,9 @@ public class ItemListener implements Listener {
         Player player = (Player)event.getWhoClicked();
         ItemStack item = event.getCurrentItem();
 
-        if (event.getClickedInventory().getHolder() instanceof Player && event.getInventory().getHolder() instanceof Villager) {
+        if (event.getClickedInventory().getHolder() instanceof Player && event.getInventory().getHolder() instanceof Villager v) {
             if (item != null && item.getType() != Material.AIR) {
-                Villager v = (Villager) event.getInventory().getHolder();
-                VillagerLevel villager = (VillagerLevel) AVillager.get(v.getUniqueId());
+                VillagerLevel villager = (VillagerLevel) VillagerRegistry.get(v.getUniqueId());
 
                 if (villager == null)
                     return;
@@ -110,7 +109,7 @@ public class ItemListener implements Listener {
 
     @EventHandler
     public void onPlayerTrade(PlayerTradeEvent event) {
-        Trader villager = (Trader) AVillager.get(event.getVillager().getUniqueId());
+        Trader villager = (Trader) VillagerRegistry.get(event.getVillager().getUniqueId());
         if (villager == null)
             return;
 

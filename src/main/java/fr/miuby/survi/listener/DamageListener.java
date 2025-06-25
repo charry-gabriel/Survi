@@ -1,10 +1,10 @@
 package fr.miuby.survi.listener;
 
+import fr.miuby.lib.VillagerRegistry;
 import fr.miuby.lib.world.WorldRegistry;
 import fr.miuby.survi.GameManager;
 import fr.miuby.survi.player.AlphaPlayer;
 import fr.miuby.survi.role.ERole;
-import fr.miuby.survi.villager.AVillager;
 import fr.miuby.survi.world.EWorld;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.sound.Sound;
@@ -43,7 +43,7 @@ public class DamageListener implements Listener {
         if (event.getEntityType() == EntityType.VILLAGER) {
             Villager villager = (Villager) event.getEntity();
 
-            if (AVillager.get(villager.getUniqueId()) != null)
+            if (VillagerRegistry.get(villager.getUniqueId()) != null)
                 event.setCancelled(true);
         }
         else if(event.getEntityType() == EntityType.PLAYER) {

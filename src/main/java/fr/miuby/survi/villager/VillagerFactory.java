@@ -1,5 +1,7 @@
 package fr.miuby.survi.villager;
 
+import fr.miuby.lib.MLVillager;
+import fr.miuby.lib.VillagerRegistry;
 import fr.miuby.lib.utils.Rect;
 import fr.miuby.survi.item.ECustomItem;
 import fr.miuby.survi.item.SimpleItemStack;
@@ -17,12 +19,8 @@ import org.bukkit.entity.Villager;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.MerchantRecipe;
 
-import javax.annotation.Nullable;
-import java.util.*;
-
 @Getter
 public class VillagerFactory {
-    private final Map<UUID, AVillager> villagers = new HashMap<>();
 
     public VillagerFactory() {
         spawnSurvivant();
@@ -134,9 +132,9 @@ public class VillagerFactory {
 
         TextComponent openMessage = Component.text("Veux-tu une belle canne à pêche ?");
 
-        AVillager villager = new Trader("GoldRoger", Component.text("Gol D. Roger"), Villager.Type.SAVANNA, Villager.Profession.WEAPONSMITH, recipes, messages, openMessage);
+        Trader villager = AVillager.create(() -> new Trader("GoldRoger", Component.text("Gol D. Roger"), Villager.Type.SAVANNA, Villager.Profession.WEAPONSMITH, recipes, messages, openMessage));
         villager.getVillager().getEquipment().setItemInMainHand(new ItemStack(Material.FISHING_ROD));
-        this.addNewVillager(villager);
+        VillagerRegistry.register(villager);
     }
 
     private void spawnHermanos(){
@@ -153,7 +151,7 @@ public class VillagerFactory {
 
         TextComponent openMessage = Component.text("J'adore le poulet. Je ne vends aucune drogue.");
 
-        this.addNewVillager(new Trader("Hermanos", Component.text("Los Pollos Hermanos"), Villager.Type.SWAMP, Villager.Profession.LIBRARIAN, recipes, messages, openMessage));
+        VillagerRegistry.register(AVillager.create(() -> new Trader("Hermanos", Component.text("Los Pollos Hermanos"), Villager.Type.SWAMP, Villager.Profession.LIBRARIAN, recipes, messages, openMessage)));
     }
 
     private void spawnSpeedBoots(){
@@ -170,7 +168,7 @@ public class VillagerFactory {
 
         TextComponent openMessage = Component.text("Les Air Force 1, les chaussures qui courent vite.");
 
-        this.addNewVillager(new Trader("Nike_49", Component.text("Nike_49"), Villager.Type.PLAINS, Villager.Profession.LEATHERWORKER, recipes, messages, openMessage));
+        VillagerRegistry.register(AVillager.create(() -> new Trader("Nike_49", Component.text("Nike_49"), Villager.Type.PLAINS, Villager.Profession.LEATHERWORKER, recipes, messages, openMessage)));
     }
 
     private void spawnIndiana(){
@@ -187,7 +185,7 @@ public class VillagerFactory {
 
         TextComponent openMessage = Component.text("Le Casque de Mineur, le casque qui mine vite.");
 
-        this.addNewVillager(new Trader("Indiana", Component.text("Indiana"), Villager.Type.SNOW, Villager.Profession.CARTOGRAPHER, recipes, messages, openMessage));
+        VillagerRegistry.register(AVillager.create(() -> new Trader("Indiana", Component.text("Indiana"), Villager.Type.SNOW, Villager.Profession.CARTOGRAPHER, recipes, messages, openMessage)));
     }
 
     private void spawnScaleChestplate(){
@@ -204,7 +202,7 @@ public class VillagerFactory {
 
         TextComponent openMessage = Component.text("La Combinaison Endiale, la combinaison à la bonne taille !");
 
-        this.addNewVillager(new Trader("Sophie", Component.text("Sophie Adenot"), Villager.Type.SWAMP, Villager.Profession.FISHERMAN, recipes, messages, openMessage));
+        VillagerRegistry.register(AVillager.create(() -> new Trader("Sophie", Component.text("Sophie Adenot"), Villager.Type.SWAMP, Villager.Profession.FISHERMAN, recipes, messages, openMessage)));
     }
 
     private void spawnBarman(){
@@ -236,9 +234,9 @@ public class VillagerFactory {
 
         TextComponent openMessage = Component.text("Bonjour, bienvenue au bar du Merveilleux Royal Bling-Bling Sexy-Baka Palace-Hôtel. A la carte, nous proposons différents cocktails élaborés avec amour, tendresse et voluptuosité: le Sex On the Beach, le Porn Star Martini, et notre fameux Shooter Orgasm. D’autre part, je peux aussi proposer un Spicy Sweet Dreams Ticket si vous le désirez !");
 
-        AVillager villager = new Trader("Barman", Component.text("Fruity Délice"), Villager.Type.SAVANNA, Villager.Profession.FLETCHER, recipes, messages, openMessage);
+        Trader villager = AVillager.create(() -> new Trader("Barman", Component.text("Fruity Délice"), Villager.Type.SAVANNA, Villager.Profession.FLETCHER, recipes, messages, openMessage));
         villager.getVillager().getEquipment().setItemInMainHand(new ItemStack(Material.POTION));
-        this.addNewVillager(villager);
+        VillagerRegistry.register(villager);
     }
 
     private void spawnReceptionniste(){
@@ -306,8 +304,7 @@ public class VillagerFactory {
         TextComponent openMessage = Component.text("La réception, c’est ma vocation. Bienvenue au Merveilleux Royal Bling-Bling Sexy-Baka Palace-Hôtel. Je vous accueille à bras ouverts dans notre somptueux manoir du 19ième, où le service 5 étoiles fourni par nos employés sauront ravir toutes vos exigences. Le discrétion c’est notre crédo… profitez de votre séjour et explorez à votre rythme chaque recoin de notre manoir qui abrite bien plus de secrets que vous ne pouvez l’imaginer. \n" +
                 "Si vous souhaitez siroter une délicieux cocktail aphrodisiaque, notre barman Fruity Delice saura vous contenter. En cas de demande particulière, veuillez-vous référez à Jean Touchatouille… mais on ne sait jamais où il traine celui-ci, il sait se faire discret. Jacques Black, notre croupier, est au premier étage si une envie de jouer vous vient.De toute manière, ici tous les jeux sont gagnants! ");
 
-        AVillager villager = new Trader("Receptionniste", Component.text("Alainse Lapince"), Villager.Type.JUNGLE, Villager.Profession.CARTOGRAPHER, recipes, messages, openMessage);
-        this.addNewVillager(villager);
+        VillagerRegistry.register(AVillager.create(() -> new Trader("Receptionniste", Component.text("Alainse Lapince"), Villager.Type.JUNGLE, Villager.Profession.CARTOGRAPHER, recipes, messages, openMessage)));
     }
 
     private void spawnConcierge() {
@@ -376,14 +373,9 @@ public class VillagerFactory {
         TextComponent openMessage = Component.text("Quoi… Que… Que… vous m’avez repéré… ce n’est pas ce que vous croyez, je… je faisais le ménage! En tout cas j’ai pu être spectateur d’une performance honorable de votre part. Le shooter Orgasme de notre barman Fruity Delice a réussi son effet! Eum Eum… \n" + "\n" +
                 "Ecoutez, je pense qu’on peut s’arranger, je ne voudrais pas que de fausses rumeurs se répandent… que diriez-vous d’un arrangement? On est presque ami maintenant. Confirmez-moi que vous êtes bien client de l’hôtel, fournissez-moi vos clefs, et je vous fournirai une récompense en échange de votre aimable discrétion et de votre départ précipité.");
 
-        AVillager villager = new Trader("Concierge", Component.text("Jean Touchatouille"), Villager.Type.TAIGA, Villager.Profession.ARMORER, recipes, messages, openMessage);
-        this.addNewVillager(villager);
+        VillagerRegistry.register(AVillager.create(() -> new Trader("Concierge", Component.text("Jean Touchatouille"), Villager.Type.TAIGA, Villager.Profession.ARMORER, recipes, messages, openMessage)));
     }
     //endregion Trader
-
-    private void addNewVillager(AVillager villager) {
-        villagers.put(villager.uuid, villager);
-    }
 
     private void addNewVillagerLevel(String id, Blessing[] blessings) {
         VillagerConfig config = VillagerLoader.load(id);
@@ -396,21 +388,12 @@ public class VillagerFactory {
         Tribute[] tributes = config.levels.stream().map(level -> new Tribute(level.tribute.stream().map(SimpleItemStack::toItemStack).toArray(ItemStack[]::new))).toArray(Tribute[]::new);
         TextComponent openMessage = Component.text(config.openMessage);
 
-        this.addNewVillager(new VillagerLevel(config.name, type, profession, blessings, messages, tributes, names, recap, openMessage));
-    }
-
-    @Nullable
-    public AVillager getVillager(String name) {
-        for (AVillager villager : villagers.values()) {
-            if (name.equals(villager.nameId))
-                return villager;
-        }
-        return null;
+        VillagerRegistry.register(AVillager.create(() -> new VillagerLevel(config.name, type, profession, blessings, messages, tributes, names, recap, openMessage)));
     }
 
     public void applyAllCurrentBlessing(AlphaPlayer player) {
         player.getPlayer().sendMessage(Component.text("-------------------- Récapitulatif --------------------", NamedTextColor.AQUA));
-        for (AVillager villager : villagers.values()) {
+        for (MLVillager villager : VillagerRegistry.getAll()) {
             if (villager instanceof VillagerLevel villagerLevel) {
                 villagerLevel.applyAllCurrentBlessing(player);
                 TextComponent text = villagerLevel.getRecapMessage();

@@ -5,6 +5,8 @@ import com.mojang.brigadier.arguments.DoubleArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
+import fr.miuby.lib.MLVillager;
+import fr.miuby.lib.VillagerRegistry;
 import fr.miuby.survi.GameManager;
 import fr.miuby.survi.world.WorldFactory;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
@@ -22,8 +24,8 @@ public class VillagerCommand {
             .requires(sender -> sender.getSender().isOp())
             .then(Commands.argument("villager", StringArgumentType.word())
                 .suggests((context, builder) -> {
-                    GameManager.getInstance().getVillagerFactory().getVillagers().values().stream()
-                            .map(villager -> villager.nameId)
+                    VillagerRegistry.getAll().stream()
+                            .map(MLVillager::getNameId)
                             .filter(argument -> argument.startsWith(context.getLastChild().getArgument("villager", String.class)))
                             .forEach(builder::suggest);
                     return builder.buildFuture();
@@ -52,7 +54,7 @@ public class VillagerCommand {
 
     @SuppressWarnings("SameReturnValue")
     private static int villagerExecute(CommandContext<CommandSourceStack> ctx, Location location) {
-        AVillager villager = GameManager.getInstance().getVillagerFactory().getVillager(StringArgumentType.getString(ctx, "villager"));
+        AVillager villager = (AVillager) VillagerRegistry.get(StringArgumentType.getString(ctx, "villager"));
 
         if (villager == null) {
             ctx.getSource().getSender().sendMessage(Component.text("Villager introuvable !"));

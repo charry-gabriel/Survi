@@ -1,9 +1,11 @@
 package fr.miuby.survi.villager;
 
+import fr.miuby.lib.MLVillagerData;
 import fr.miuby.survi.player.AlphaPlayer;
 import fr.miuby.survi.GameManager;
 import fr.miuby.survi.villager.blessing.Blessing;
 import fr.miuby.survi.villager.blessing.BlessingEffect;
+import fr.miuby.survi.world.WorldFactory;
 import lombok.Setter;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.sound.Sound;
@@ -11,6 +13,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Villager;
 import org.bukkit.event.inventory.InventoryType;
@@ -38,10 +41,26 @@ public class VillagerLevel extends AVillager {
         this.tributes = tributes;
         this.names = names;
         this.recapMessages = recap;
+    }
 
-        initVillager();
+    @Override
+    protected void onInitialized() {
         getVillager().customName(getDisplayName());
         createInventory();
+    }
+
+    @Override
+    protected void setData(MLVillagerData villagerData) {
+        AlphaVillagerData alphaVillagerData = (AlphaVillagerData) villagerData;
+        this.uuid = alphaVillagerData.getUuid();
+        this.location = alphaVillagerData.getLocation();
+        this.level = alphaVillagerData.getLevel();
+        this.givenItems = alphaVillagerData.getGivenItems();
+    }
+
+    @Override
+    protected AlphaVillagerData createDefaultData() {
+        return new AlphaVillagerData(null, new Location(WorldFactory.getDefaultWorld(), 0, 700, 0), new ArrayList<>(), 0);
     }
 
     public void giveItems(Inventory inventory, ItemStack item, Player player) {
@@ -159,7 +178,6 @@ public class VillagerLevel extends AVillager {
             inventory.removeItem(itemToRemove);
     }
 
-
     public Tribute getTribute() {
         if (this.level >= tributes.length || tributes[this.level].getItemStacks().isEmpty())
             return null;
@@ -186,9 +204,5 @@ public class VillagerLevel extends AVillager {
 
     public TextComponent getRecapMessage() {
         return recapMessages[this.level].color(NamedTextColor.AQUA);
-    }
-
-    public void setGivenItems(ItemStack[] givenItems) {
-        this.givenItems = new ArrayList<>(List.of(givenItems));
     }
 }

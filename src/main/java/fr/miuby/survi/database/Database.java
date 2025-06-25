@@ -9,8 +9,7 @@ import fr.miuby.survi.crops.PlantedCrop;
 import fr.miuby.survi.player.AlphaPlayer;
 import fr.miuby.survi.GameManager;
 import fr.miuby.survi.role.ERole;
-import fr.miuby.survi.villager.AVillager;
-import fr.miuby.survi.villager.VillagerLevel;
+import fr.miuby.survi.villager.AlphaVillagerData;
 import fr.miuby.survi.world.EWorld;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -156,40 +155,42 @@ public abstract class Database {
     //endregion
 
     //region Villager
-    public boolean initVillager(AVillager villager, String name) {
+    public AlphaVillagerData initVillager(String nameId) {
         try (Connection conn = getSQLConnection();
              PreparedStatement ps = conn.prepareStatement("SELECT * FROM villager WHERE name = ?")) {
             
-            ps.setString(1, name);
+            ps.setString(1, nameId);
             try (ResultSet rs = ps.executeQuery()) {
                 if (!rs.next())
-                    return false;
+                    return null;
 
                 UUID uuid = UUID.fromString(rs.getString("uuid"));
 
-                if (villager instanceof VillagerLevel villagerLevel) {
-                    villagerLevel.setLevel(rs.getInt("level"));
 
-                    String givenItems = rs.getString("givenItems");
-                    if (givenItems != null)
-                        villagerLevel.setGivenItems(ItemStack.deserializeItemsFromBytes(Base64.getDecoder().decode(givenItems)));
-                }
+                int level = rs.getInt("level");
 
-                villager.setLocation(new Location(
+                List<ItemStack> givenItems;
+                String givenItemsString = rs.getString("givenItems");
+                if (givenItemsString == null)
+                    givenItems = new ArrayList<>();
+                else
+                    givenItems = List.of(ItemStack.deserializeItemsFromBytes(Base64.getDecoder().decode(givenItemsString)));
+
+
+                Location location = new Location(
                     WorldRegistry.get(EWorld.VILLAGE).getWorld(),
                     rs.getFloat("locationX"),
                     rs.getFloat("locationY"),
                     rs.getFloat("locationZ"),
                     rs.getFloat("locationYaw"),
                     rs.getFloat("locationPitch")
-                ));
+                );
 
-                villager.setRealVillager(uuid);
-                return true;
+                return new AlphaVillagerData(uuid, location, givenItems, level);
             }
         } catch (SQLException ex) {
-            GameManager.getInstance().getLogger().log(Level.SEVERE, "Failed to load villager: " + name, ex);
-            return false;
+            GameManager.getInstance().getLogger().log(Level.SEVERE, "Failed to load villager: " + nameId, ex);
+            return null;
         }
     }
 

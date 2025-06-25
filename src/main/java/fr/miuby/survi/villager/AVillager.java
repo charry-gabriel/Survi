@@ -1,124 +1,48 @@
 package fr.miuby.survi.villager;
 
+import fr.miuby.lib.MLVillager;
 import fr.miuby.survi.GameManager;
 import fr.miuby.survi.world.WorldFactory;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
 import net.kyori.adventure.text.TextComponent;
 import org.bukkit.Location;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Villager;
 import org.bukkit.inventory.Inventory;
 
-import javax.annotation.Nullable;
-import java.util.UUID;
+import java.util.function.Supplier;
 
-@RequiredArgsConstructor
-public abstract class AVillager {
-    protected final String nameId;
-    private final Villager.Type type;
-    private final Villager.Profession profession;
+public abstract class AVillager extends MLVillager {
     protected final TextComponent[] messages;
     @Getter
     protected final TextComponent openMessage;
 
     @Getter
-    protected Villager villager;
-    @Getter
     protected Inventory inventory;
-    @Setter
-    protected Location location;
-    protected UUID uuid;
 
-    public void initVillager() {
-        if (!GameManager.getInstance().getDatabase().IsLoaded()) {
-            GameManager.getInstance().getLogger().warning("Database not loaded for villager: " + nameId);
-            return;
-        }
+    public static <T extends MLVillager> T create(Supplier<T> constructor) {
+        T villager = constructor.get();
+        villager.init(GameManager.getInstance().getDatabase().initVillager(villager.getNameId()));
+        return villager;
+    }
 
-        // Essaie de charger depuis la base
-        if (GameManager.getInstance().getDatabase().initVillager(this, this.nameId)) {
-            return; // Trouvé et chargé avec succès
-        }
+    public AVillager(String nameId, Villager.Type type, Villager.Profession profession, TextComponent[] messages, TextComponent openMessage) {
+        super(nameId, type, profession);
 
-        // Création d'un nouveau
-        GameManager.getInstance().getLogger().info("Creating new villager: " + nameId);
-        this.villager = CreateRealVillager();
-        this.uuid = this.villager.getUniqueId();
+        this.messages = messages;
+        this.openMessage = openMessage;
+    }
+
+    @Override
+    protected void saveData() {
         GameManager.getInstance().getDatabase().CreateDBVillager(this.nameId, this.uuid);
     }
 
-    @Nullable
-    public static AVillager get(UUID uuid) {
-        if (GameManager.getInstance().getVillagerFactory().getVillagers().containsKey(uuid))
-            return GameManager.getInstance().getVillagerFactory().getVillagers().get(uuid);
-
-        return null;
-    }
-
-    private Villager CreateRealVillager() {
-        Villager villager = (Villager) WorldFactory.getDefaultWorld().spawnEntity(new Location(WorldFactory.getDefaultWorld(), 0, 700, 0), EntityType.VILLAGER);
-        villager.setVillagerType(type);
-        villager.setProfession(profession);
-        villager.setAI(false);
-        villager.setCollidable(false);
-        villager.setSilent(true);
-        return villager;
+    @Override
+    protected AlphaVillagerData createDefaultData() {
+        return new AlphaVillagerData(null, new Location(WorldFactory.getDefaultWorld(), 0, 700, 0));
     }
 
     public abstract void createInventory();
 
     public abstract TextComponent getDisplayName();
-
-    public void setRealVillager(UUID uuid) {
-        this.uuid = uuid;
-        Villager realVillager = findRealVillager(uuid);
-
-        if (realVillager != null) {
-            this.villager = realVillager;
-            return;
-        }
-
-        // Villager not yet found – most likely because the chunk is not loaded.
-        GameManager.getInstance().getLogger().info("Villager " + nameId + " not yet loaded, waiting for chunk...");
-        waitForVillager(0);
-    }
-
-    /**
-     * Recursively attempts to find the real villager once the chunk is loaded.
-     * Tries up to 40 times (≈2 s). Stops early once the villager is found.
-     */
-    private void waitForVillager(int attempt) {
-        if (attempt >= 40) {
-            GameManager.getInstance().getLogger().warning("Unable to find villager " + nameId + " after waiting for chunk load.");
-            return;
-        }
-
-        // Ensure the chunk containing the expected location is loaded
-        if (location != null && !location.getChunk().isLoaded()) {
-            location.getChunk().load();
-        }
-
-        Villager realVillager = findRealVillager(uuid);
-        if (realVillager != null) {
-            this.villager = realVillager;
-            GameManager.getInstance().getLogger().info("Villager " + nameId + " found after waiting " + attempt + " ticks.");
-        } else {
-            // Try again next tick
-            GameManager.getInstance().getScheduler().runTaskLater(GameManager.getInstance().getPlugin(), () -> waitForVillager(attempt + 1), 1L);
-        }
-    }
-
-    @Nullable
-    private Villager findRealVillager(UUID uuid) {
-        Entity entity = WorldFactory.getDefaultWorld().getEntity(uuid);
-
-        if (entity != null && entity.getType() == EntityType.VILLAGER) {
-            return (Villager)entity;
-        }
-        return null;
-    }
-
 }

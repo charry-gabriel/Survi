@@ -11,14 +11,15 @@ import java.util.List;
 
 public class Trader extends AVillager {
     private final MerchantRecipe[] merchantRecipe;
-    private final TextComponent displayName;
 
     public Trader(String nameId, TextComponent displayName, Villager.Type type, Villager.Profession profession, MerchantRecipe[] merchantRecipe, TextComponent[] messages, TextComponent openMessage) {
         super(nameId, type, profession, messages, openMessage);
         this.merchantRecipe = merchantRecipe;
         this.displayName = displayName;
+    }
 
-        initVillager();
+    @Override
+    protected void onInitialized() {
         getVillager().customName(getDisplayName());
         createInventory();
     }

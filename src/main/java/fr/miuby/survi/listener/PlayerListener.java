@@ -1,6 +1,7 @@
 package fr.miuby.survi.listener;
 
 import com.destroystokyo.paper.event.player.PlayerArmorChangeEvent;
+import fr.miuby.lib.VillagerRegistry;
 import fr.miuby.lib.world.WorldRegistry;
 import fr.miuby.survi.GameManager;
 import fr.miuby.survi.player.AlphaPlayer;
@@ -67,7 +68,7 @@ public class PlayerListener implements Listener {
         if (event.getRightClicked().getType() == EntityType.VILLAGER)
         {
             Villager villager = (Villager) event.getRightClicked();
-            AVillager aVillager = AVillager.get(villager.getUniqueId());
+            AVillager aVillager = (AVillager) VillagerRegistry.get(villager.getUniqueId());
 
             switch (aVillager) {
                 case VillagerLevel level when level.getTribute() == null -> {
