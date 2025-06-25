@@ -1,5 +1,6 @@
 package fr.miuby.survi;
 
+import fr.miuby.lib.MiubyLib;
 import fr.miuby.survi.crops.PlantedCropsManager;
 import fr.miuby.survi.database.Database;
 import fr.miuby.survi.database.SQLite;
@@ -62,6 +63,7 @@ public class GameManager {
 
         this.database = new SQLite();
         this.database.load();
+        MiubyLib.init(plugin);
 
         WorldFactory.initializeIfNeeded();
     }

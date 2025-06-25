@@ -1,6 +1,5 @@
 package fr.miuby.lib;
 
-import fr.miuby.survi.GameManager;
 import lombok.Getter;
 import net.kyori.adventure.text.TextComponent;
 import org.bukkit.Location;
@@ -70,7 +69,7 @@ public abstract class MLVillager {
 
     private void findVillager(int attempt) {
         if (attempt >= 40) {
-            GameManager.getInstance().getLogger().warning("Unable to find villager " + nameId + " after waiting for chunk load.");
+            MiubyLib.getLogger().warning("Unable to find villager " + nameId + " after waiting for chunk load.");
             createVillager();
         }
 
@@ -82,9 +81,9 @@ public abstract class MLVillager {
         Entity entity = location.getWorld().getEntity(uuid);
         if (entity != null && entity.getType() == EntityType.VILLAGER) {
             this.villager = (Villager)entity;
-            GameManager.getInstance().getLogger().info("Villager " + nameId + " found after waiting " + attempt + " ticks.");
+            MiubyLib.getLogger().info("Villager " + nameId + " found after waiting " + attempt + " ticks.");
         } else {
-            GameManager.getInstance().getScheduler().runTaskLater(GameManager.getInstance().getPlugin(), () -> findVillager(attempt + 1), 1L);
+            MiubyLib.runLater(() -> findVillager(attempt + 1), 1L);
         }
     }
 }
