@@ -35,8 +35,8 @@ public class VillagerLevel extends AVillager {
     private int level = 0;
     private List<ItemStack> givenItems = new ArrayList<>();
 
-    public VillagerLevel(String nameId, Villager.Type type, Villager.Profession profession, Blessing[] blessings, TextComponent[] messages, Tribute[] tributes, TextComponent[] names, TextComponent[] recap, TextComponent openMessage) {
-        super(nameId, type, profession, messages, openMessage);
+    public VillagerLevel(String nameId, Villager.Type type, Villager.Profession profession, Blessing[] blessings, TextComponent[] messages, Tribute[] tributes, TextComponent[] names, TextComponent[] recap) {
+        super(nameId, type, profession, messages);
         this.blessings = blessings;
         this.tributes = tributes;
         this.names = names;
@@ -44,16 +44,9 @@ public class VillagerLevel extends AVillager {
     }
 
     @Override
-    protected void onInitialized() {
-        getVillager().customName(getDisplayName());
-        createInventory();
-    }
-
-    @Override
     protected void setData(MLVillagerData villagerData) {
         AlphaVillagerData alphaVillagerData = (AlphaVillagerData) villagerData;
-        this.uuid = alphaVillagerData.getUuid();
-        this.location = alphaVillagerData.getLocation();
+        this.setVillagerData(alphaVillagerData);
         this.level = alphaVillagerData.getLevel();
         this.givenItems = alphaVillagerData.getGivenItems();
     }
@@ -75,7 +68,7 @@ public class VillagerLevel extends AVillager {
             player.closeInventory();
 
             this.givenItems.clear();
-            GameManager.getInstance().getDatabase().updateVillagerGivenItem(this.uuid, this.givenItems);
+            GameManager.getInstance().getDatabase().updateVillagerGivenItem(villager.getUniqueId(), this.givenItems);
         }
     }
 
@@ -108,7 +101,7 @@ public class VillagerLevel extends AVillager {
 
     public void addLevel() {
         this.level++;
-        GameManager.getInstance().getDatabase().updateVillagerLevel(uuid, level);
+        GameManager.getInstance().getDatabase().updateVillagerLevel(villager.getUniqueId(), level);
     }
 
     public void applyAllCurrentBlessing(AlphaPlayer player) {
@@ -161,7 +154,7 @@ public class VillagerLevel extends AVillager {
             if (tributeItem != null && tributeItem.isSimilar(item)) {
                 GameManager.getInstance().getLogger().info(this.nameId + " recupere " + item.getAmount() + " de " + item.getType().name());
                 this.givenItems.add(new ItemStack(item));
-                GameManager.getInstance().getDatabase().updateVillagerGivenItem(this.uuid, this.givenItems);
+                GameManager.getInstance().getDatabase().updateVillagerGivenItem(villager.getUniqueId(), this.givenItems);
 
                 if (item.getAmount() < tributeItem.getAmount()) {
                     tributeItem.setAmount(tributeItem.getAmount() - item.getAmount());

@@ -1,15 +1,15 @@
 package fr.miuby.lib;
 
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.Setter;
 import net.kyori.adventure.text.TextComponent;
-import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Villager;
 import org.bukkit.inventory.Inventory;
 
 import javax.annotation.Nullable;
-import java.util.UUID;
 import java.util.function.Supplier;
 
 @Getter
@@ -18,10 +18,12 @@ public abstract class MLVillager {
     private final Villager.Type type;
     private final Villager.Profession profession;
     protected Villager villager;
-    protected UUID uuid;
     protected TextComponent displayName;
     protected Inventory inventory;
-    protected Location location;
+
+    @Setter(AccessLevel.PROTECTED)
+    @Getter(AccessLevel.NONE)
+    private MLVillagerData villagerData;
 
     public static <T extends MLVillager> T create(Supplier<T> constructor, MLVillagerData data) {
         T villager = constructor.get();
@@ -47,24 +49,35 @@ public abstract class MLVillager {
         onInitialized();
     }
 
+    protected void destroy() {
+        if (villager != null) {
+            villager.remove();
+        }
+    }
+
     protected abstract MLVillagerData createDefaultData();
-    protected abstract void saveData();
-    protected abstract void onInitialized();
+    protected void saveData() { }
+
+    protected void onInitialized() {
+        getVillager().customName(getDisplayName());
+        createInventory();
+    }
 
     protected void setData(MLVillagerData villagerData) {
-        this.uuid = villagerData.getUuid();
-        this.location = villagerData.getLocation();
+        this.villagerData = villagerData;
+    }
+
+    protected void createInventory() {
+        this.inventory = this.getVillager().getInventory();
     }
 
     private void createVillager() {
-        this.villager = (Villager) location.getWorld().spawnEntity(location, EntityType.VILLAGER);
+        this.villager = (Villager) villagerData.location.getWorld().spawnEntity(villagerData.location, EntityType.VILLAGER);
         villager.setVillagerType(type);
         villager.setProfession(profession);
         villager.setAI(false);
         villager.setCollidable(false);
         villager.setSilent(true);
-
-        this.uuid = this.villager.getUniqueId();
     }
 
     private void findVillager(int attempt) {
@@ -73,12 +86,11 @@ public abstract class MLVillager {
             createVillager();
         }
 
-        if (location != null && !location.getChunk().isLoaded()) {
-            location.getChunk().load();
+        if (!villagerData.location.getChunk().isLoaded()) {
+            villagerData.location.getChunk().load();
         }
 
-        assert location != null;
-        Entity entity = location.getWorld().getEntity(uuid);
+        Entity entity = villagerData.location.getWorld().getEntity(villagerData.uuid);
         if (entity != null && entity.getType() == EntityType.VILLAGER) {
             this.villager = (Villager)entity;
             MiubyLib.getLogger().info("Villager " + nameId + " found after waiting " + attempt + " ticks.");

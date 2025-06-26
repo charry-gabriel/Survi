@@ -1,5 +1,6 @@
 package fr.miuby.survi.villager;
 
+import lombok.Getter;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -11,17 +12,14 @@ import java.util.List;
 
 public class Trader extends AVillager {
     private final MerchantRecipe[] merchantRecipe;
+    @Getter
+    protected final TextComponent openMessage;
 
     public Trader(String nameId, TextComponent displayName, Villager.Type type, Villager.Profession profession, MerchantRecipe[] merchantRecipe, TextComponent[] messages, TextComponent openMessage) {
-        super(nameId, type, profession, messages, openMessage);
+        super(nameId, type, profession, messages);
         this.merchantRecipe = merchantRecipe;
-        this.displayName = displayName;
-    }
-
-    @Override
-    protected void onInitialized() {
-        getVillager().customName(getDisplayName());
-        createInventory();
+        this.displayName = displayName.color(NamedTextColor.AQUA);
+        this.openMessage = openMessage;
     }
 
     public TextComponent getMessage(ItemStack itemStack) {
@@ -36,11 +34,5 @@ public class Trader extends AVillager {
     public void createInventory() {
         this.getVillager().setRecipes(List.of(merchantRecipe));
         this.inventory = this.getVillager().getInventory();
-    }
-
-
-    @Override
-    public TextComponent getDisplayName() {
-        return displayName.color(NamedTextColor.AQUA);
     }
 }

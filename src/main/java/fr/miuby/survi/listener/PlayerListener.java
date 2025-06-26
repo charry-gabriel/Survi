@@ -80,8 +80,9 @@ public class PlayerListener implements Listener {
                     event.setCancelled(true);
                 }
                 case Trader trader -> {
+                    //player.openInventory(MenuType.MERCHANT.builder().merchant(trader.getVillager()).build(player));
                     player.openMerchant(trader.getVillager(), true);
-                    player.sendMessage(Component.text("<", NamedTextColor.AQUA).append(aVillager.getDisplayName()).append(Component.text("> ", NamedTextColor.AQUA)).append(aVillager.getOpenMessage()));
+                    player.sendMessage(Component.text("<", NamedTextColor.AQUA).append(aVillager.getDisplayName()).append(Component.text("> ", NamedTextColor.AQUA)).append(((Trader)aVillager).getOpenMessage()));
                     event.setCancelled(true);
                 }
                 case null, default -> {

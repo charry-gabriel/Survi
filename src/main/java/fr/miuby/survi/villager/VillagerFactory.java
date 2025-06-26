@@ -386,9 +386,8 @@ public class VillagerFactory {
         TextComponent[] messages = config.levels.stream().map(level -> Component.text(level.message)).toArray(TextComponent[]::new);
         TextComponent[] recap = config.levels.stream().map(level -> Component.text(level.recap)).toArray(TextComponent[]::new);
         Tribute[] tributes = config.levels.stream().map(level -> new Tribute(level.tribute.stream().map(SimpleItemStack::toItemStack).toArray(ItemStack[]::new))).toArray(Tribute[]::new);
-        TextComponent openMessage = Component.text(config.openMessage);
 
-        VillagerRegistry.register(AVillager.create(() -> new VillagerLevel(config.name, type, profession, blessings, messages, tributes, names, recap, openMessage)));
+        VillagerRegistry.register(AVillager.create(() -> new VillagerLevel(config.name, type, profession, blessings, messages, tributes, names, recap)));
     }
 
     public void applyAllCurrentBlessing(AlphaPlayer player) {

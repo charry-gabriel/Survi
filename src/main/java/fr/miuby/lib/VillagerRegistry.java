@@ -13,7 +13,7 @@ public class VillagerRegistry {
     private VillagerRegistry() {}
 
     public static void register(MLVillager villager) {
-        villagers.put(villager.getUuid(), villager);
+        villagers.put(villager.getVillager().getUniqueId(), villager);
         byName.put(villager.getNameId(), villager);
     }
 
