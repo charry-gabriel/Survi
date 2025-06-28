@@ -1,6 +1,6 @@
 package fr.miuby.survi.villager;
 
-import fr.miuby.lib.MLVillagerData;
+import fr.miuby.lib.villager.MLVillagerData;
 import lombok.Getter;
 import org.bukkit.Location;
 import org.bukkit.inventory.ItemStack;
@@ -13,12 +13,12 @@ public class AlphaVillagerData extends MLVillagerData {
     private List<ItemStack> givenItems;
     private int level;
 
-    public AlphaVillagerData(UUID uuid, Location location) {
-        super(uuid, location);
+    public AlphaVillagerData(UUID uuid, String nameId, Location location) {
+        super(uuid, nameId, location);
     }
 
-    public AlphaVillagerData(UUID uuid, Location location, List<ItemStack> givenItems, int level) {
-        super(uuid, location);
+    public AlphaVillagerData(UUID uuid, String nameId, Location location, List<ItemStack> givenItems, int level) {
+        super(uuid, nameId, location);
 
         this.givenItems = givenItems;
         this.level = level;

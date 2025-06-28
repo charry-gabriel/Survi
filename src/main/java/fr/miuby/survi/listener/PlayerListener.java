@@ -1,7 +1,7 @@
 package fr.miuby.survi.listener;
 
 import com.destroystokyo.paper.event.player.PlayerArmorChangeEvent;
-import fr.miuby.lib.VillagerRegistry;
+import fr.miuby.lib.villager.VillagerRegistry;
 import fr.miuby.lib.world.WorldRegistry;
 import fr.miuby.survi.GameManager;
 import fr.miuby.survi.player.AlphaPlayer;

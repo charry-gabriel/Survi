@@ -1,6 +1,6 @@
 package fr.miuby.survi.listener;
 
-import fr.miuby.lib.VillagerRegistry;
+import fr.miuby.lib.villager.VillagerRegistry;
 import fr.miuby.survi.GameManager;
 import fr.miuby.survi.item.CustomRecipe;
 import fr.miuby.survi.player.AlphaPlayer;

@@ -1,7 +1,7 @@
 package fr.miuby.survi.villager;
 
-import fr.miuby.lib.MLVillager;
-import fr.miuby.lib.VillagerRegistry;
+import fr.miuby.lib.villager.MLVillager;
+import fr.miuby.lib.villager.VillagerRegistry;
 import fr.miuby.lib.utils.Rect;
 import fr.miuby.survi.item.ECustomItem;
 import fr.miuby.survi.item.SimpleItemStack;

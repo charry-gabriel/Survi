@@ -1,6 +1,5 @@
 package fr.miuby.survi.villager;
 
-import fr.miuby.lib.MLVillagerData;
 import fr.miuby.survi.player.AlphaPlayer;
 import fr.miuby.survi.GameManager;
 import fr.miuby.survi.villager.blessing.Blessing;
@@ -33,7 +32,7 @@ public class VillagerLevel extends AVillager {
 
     @Setter
     private int level = 0;
-    private List<ItemStack> givenItems = new ArrayList<>();
+    private final List<ItemStack> givenItems = new ArrayList<>();
 
     public VillagerLevel(String nameId, Villager.Type type, Villager.Profession profession, Blessing[] blessings, TextComponent[] messages, Tribute[] tributes, TextComponent[] names, TextComponent[] recap) {
         super(nameId, type, profession, messages);
@@ -44,16 +43,8 @@ public class VillagerLevel extends AVillager {
     }
 
     @Override
-    protected void setData(MLVillagerData villagerData) {
-        AlphaVillagerData alphaVillagerData = (AlphaVillagerData) villagerData;
-        this.setVillagerData(alphaVillagerData);
-        this.level = alphaVillagerData.getLevel();
-        this.givenItems = alphaVillagerData.getGivenItems();
-    }
-
-    @Override
     protected AlphaVillagerData createDefaultData() {
-        return new AlphaVillagerData(null, new Location(WorldFactory.getDefaultWorld(), 0, 700, 0), new ArrayList<>(), 0);
+        return new AlphaVillagerData(null, nameId, new Location(WorldFactory.getDefaultWorld(), 0, 700, 0), new ArrayList<>(), 0);
     }
 
     public void giveItems(Inventory inventory, ItemStack item, Player player) {

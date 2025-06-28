@@ -1,27 +1,27 @@
 package fr.miuby.survi.villager;
 
-import fr.miuby.lib.MLVillager;
+import fr.miuby.lib.villager.MLVillager;
+import fr.miuby.lib.villager.MLVillagerData;
 import fr.miuby.survi.GameManager;
 import fr.miuby.survi.world.WorldFactory;
 import net.kyori.adventure.text.TextComponent;
 import org.bukkit.Location;
 import org.bukkit.entity.Villager;
 
-import java.util.function.Supplier;
+import javax.annotation.Nullable;
 
 public abstract class AVillager extends MLVillager {
     protected final TextComponent[] messages;
-
-    public static <T extends MLVillager> T create(Supplier<T> constructor) {
-        T villager = constructor.get();
-        villager.init(GameManager.getInstance().getDatabase().initVillager(villager.getNameId()));
-        return villager;
-    }
 
     public AVillager(String nameId, Villager.Type type, Villager.Profession profession, TextComponent[] messages) {
         super(nameId, type, profession);
 
         this.messages = messages;
+    }
+
+    @Override
+    protected @Nullable MLVillagerData loadData() {
+        return GameManager.getInstance().getDatabase().initVillager(this.getNameId());
     }
 
     @Override
@@ -31,6 +31,6 @@ public abstract class AVillager extends MLVillager {
 
     @Override
     protected AlphaVillagerData createDefaultData() {
-        return new AlphaVillagerData(null, new Location(WorldFactory.getDefaultWorld(), 0, 700, 0));
+        return new AlphaVillagerData(null, nameId, new Location(WorldFactory.getDefaultWorld(), 0, 700, 0));
     }
 }

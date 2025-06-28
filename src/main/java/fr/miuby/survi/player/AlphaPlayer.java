@@ -4,7 +4,7 @@ import fr.miuby.lib.world.WorldRegistry;
 import fr.miuby.survi.GameManager;
 import fr.miuby.survi.role.*;
 import fr.miuby.survi.world.EWorld;
-import fr.miuby.lib.world.MiubyWorld;
+import fr.miuby.lib.world.MLWorld;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.NamespacedKey;
@@ -30,7 +30,7 @@ public class AlphaPlayer implements Serializable {
     private final List<Role> subRoles = new ArrayList<>();
 
     @Setter
-    private MiubyWorld world;
+    private MLWorld world;
     @Getter
     private int mort = 0;
     @Getter
@@ -148,7 +148,7 @@ public class AlphaPlayer implements Serializable {
         GameManager.getInstance().getDatabase().updatePlayer(this.uuid, "success", String.valueOf(this.success));
     }
 
-    public void teleport(MiubyWorld monde) {
+    public void teleport(MLWorld monde) {
         if (getPlayer() != null)
             getPlayer().teleport(monde.getSpawnPoint());
     }

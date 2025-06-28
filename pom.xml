@@ -97,7 +97,7 @@
         <dependency>
             <groupId>fr.miuby.lib</groupId>
             <artifactId>miuby-lib</artifactId>
-            <version>1.2</version>
+            <version>1.3</version>
         </dependency>
     </dependencies>
 </project>

@@ -2,7 +2,7 @@ package fr.miuby.survi.world;
 
 import fr.miuby.lib.world.WorldRegistry;
 import fr.miuby.lib.utils.Rect;
-import fr.miuby.lib.world.MiubyWorld;
+import fr.miuby.lib.world.MLWorld;
 import fr.miuby.survi.GameManager;
 import lombok.Getter;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -31,21 +31,21 @@ public final class WorldFactory {
     public static void initializeWorlds() {
         Server server = GameManager.getInstance().getPlugin().getServer();
 
-        MiubyWorld village = new MiubyWorld(server.getWorld(worlds.get(EWorld.VILLAGE)),"Village", NamedTextColor.AQUA, EWorld.VILLAGE);
+        MLWorld village = new MLWorld(server.getWorld(worlds.get(EWorld.VILLAGE)),"Village", NamedTextColor.AQUA, EWorld.VILLAGE);
         village.setLimit(new Rect(512,-512,512,50,512,-512));
         village.setSpawnPoint(new Location(village.getWorld(), -24, 158, -30));
         WorldRegistry.register(village);
 
-        MiubyWorld wilderness = new MiubyWorld(server.getWorld(worlds.get(EWorld.WILDERNESS)),"Wilderness", NamedTextColor.GOLD, EWorld.WILDERNESS);
+        MLWorld wilderness = new MLWorld(server.getWorld(worlds.get(EWorld.WILDERNESS)),"Wilderness", NamedTextColor.GOLD, EWorld.WILDERNESS);
         wilderness.setLimit(new Rect(2000,-2000, Integer.MAX_VALUE, Integer.MIN_VALUE,2000,-2000));
         wilderness.setSpawnPoint(new Location(wilderness.getWorld(), 3, 78, -12));
         WorldRegistry.register(wilderness);
 
-        MiubyWorld nether = new MiubyWorld(server.getWorld(worlds.get(EWorld.NETHER)),"Nether", NamedTextColor.RED, EWorld.NETHER);
+        MLWorld nether = new MLWorld(server.getWorld(worlds.get(EWorld.NETHER)),"Nether", NamedTextColor.RED, EWorld.NETHER);
         nether.setLocked(true);
         WorldRegistry.register(nether);
 
-        MiubyWorld end = new MiubyWorld(server.getWorld(worlds.get(EWorld.END)),"End", NamedTextColor.YELLOW, EWorld.END);
+        MLWorld end = new MLWorld(server.getWorld(worlds.get(EWorld.END)),"End", NamedTextColor.YELLOW, EWorld.END);
         end.setLocked(true);
         WorldRegistry.register(end);
     }

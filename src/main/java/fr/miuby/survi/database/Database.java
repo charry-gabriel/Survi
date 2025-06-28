@@ -186,7 +186,7 @@ public abstract class Database {
                     rs.getFloat("locationPitch")
                 );
 
-                return new AlphaVillagerData(uuid, location, givenItems, level);
+                return new AlphaVillagerData(uuid, nameId, location, givenItems, level);
             }
         } catch (SQLException ex) {
             GameManager.getInstance().getLogger().log(Level.SEVERE, "Failed to load villager: " + nameId, ex);
