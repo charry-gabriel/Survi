@@ -9,8 +9,10 @@ import fr.miuby.survi.item.CustomRecipe;
 import fr.miuby.survi.item.growth_item.GrowthItems;
 import fr.miuby.survi.item.locked_item.LockedItemsFactory;
 import fr.miuby.survi.player.AlphaPlayerFactory;
+import fr.miuby.survi.player.PlayerAttributeService;
 import fr.miuby.survi.role.RoleFactory;
 import fr.miuby.survi.villager.VillagerFactory;
+import fr.miuby.survi.display.TabDisplayManager;
 import fr.miuby.survi.world.WorldFactory;
 import lombok.Getter;
 import lombok.Setter;
@@ -42,6 +44,10 @@ public class GameManager {
     private AlphaPlayerFactory alphaPlayerFactory;
     @Getter
     private PlantedCropsManager plantedCropsManager;
+    @Getter
+    private TabDisplayManager tabDisplayManager;
+    @Getter
+    private PlayerAttributeService playerAttributeService;
 
     @Setter
     @Getter
@@ -84,6 +90,9 @@ public class GameManager {
 
         this.plantedCropsManager = new PlantedCropsManager(database);
         this.plantedCropsManager.load();
+
+        this.tabDisplayManager = new TabDisplayManager();
+        this.playerAttributeService = new PlayerAttributeService();
 
         Timer timer = new Timer();
         timer.update();

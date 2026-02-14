@@ -17,6 +17,8 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
 import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.*;
 
 public class AlphaPlayer implements Serializable {
@@ -49,6 +51,9 @@ public class AlphaPlayer implements Serializable {
     @Setter
     @Getter
     private Role role;
+
+    @Getter
+    private final Map<Attribute, Double> baseAttributes = new HashMap<>();
 
     //region Modifier
     @Getter
@@ -94,29 +99,59 @@ public class AlphaPlayer implements Serializable {
         }
     }
 
+    /**
+     * Applies main role + all sub-roles attributes for the current world.
+     * Single source of truth for "current role state" on the player.
+     */
     public void addRoleAttribute() {
-        for (RoleAttribute attribute : this.getRole().attributes()) {
-            if ((this.getWorld() == attribute.getWorld() || attribute.getWorld() == EWorld.ALL)) {
-                attribute.setRole(this.getRole().roleId());
+        addAttributesForRole(this.getRole());
+        for (Role subRole : this.getSubRoles()) {
+            addAttributesForRole(subRole);
+        }
+    }
 
+    /**
+     * Applies one role's attributes for the current world only.
+     */
+    public void addAttributesForRole(Role role) {
+        if (this.player == null) return;
+        for (RoleAttribute attribute : role.attributes()) {
+            if (this.getWorld() != attribute.getWorld() && attribute.getWorld() != EWorld.ALL)
+                continue;
+            attribute.setRole(role.roleId());
+            if (attribute.getAttributeType() == Attribute.MAX_HEALTH)
+                this.getAlphaLife().regenHealth(() -> this.addAttribute(attribute));
+            else
+                this.addAttribute(attribute);
+        }
+    }
+
+    /**
+     * Removes all attribute modifiers for the given role (all worlds for that role).
+     */
+    public void removeAttributesForRole(Role role) {
+        if (this.player == null) return;
+        for (RoleAttribute attribute : role.attributes()) {
+            AttributeInstance playerAttribute = this.player.getAttribute(attribute.getAttributeType());
+            if (playerAttribute == null) continue;
+            String name = RoleAttribute.createName(attribute.getWorld().toString(), role.roleId(), attribute.getAttributeType().getKey().getKey());
+            AttributeModifier mod = playerAttribute.getModifier(new NamespacedKey(GameManager.getInstance().getPlugin(), name));
+            if (mod != null) {
                 if (attribute.getAttributeType() == Attribute.MAX_HEALTH)
-                    this.getAlphaLife().regenHealth(() -> this.addAttribute(attribute));
+                    this.getAlphaLife().regenHealth(() -> playerAttribute.removeModifier(mod));
                 else
-                    this.addAttribute(attribute);
+                    playerAttribute.removeModifier(mod);
             }
         }
+    }
 
-        for (Role role : this.getSubRoles()) {
-            for (RoleAttribute attribute : role.attributes()) {
-                if ((this.getWorld() == attribute.getWorld() || attribute.getWorld() == EWorld.ALL)) {
-                    attribute.setRole(role.roleId());
-
-                    if (attribute.getAttributeType() == Attribute.MAX_HEALTH)
-                        this.getAlphaLife().regenHealth(() -> this.addAttribute(attribute));
-                    else
-                        this.addAttribute(attribute);
-                }
-            }
+    /**
+     * Clears all role-based modifiers (main role + sub-roles), then you typically call addRoleAttribute() to reapply for current world.
+     */
+    public void clearAllRoleAttributes() {
+        removeAttributesForRole(this.getRole());
+        for (Role subRole : this.getSubRoles()) {
+            removeAttributesForRole(subRole);
         }
     }
 
@@ -160,11 +195,12 @@ public class AlphaPlayer implements Serializable {
         if (attributeModifier != null)
             playerAttribute.removeModifier(attributeModifier);
 
-        //TODO: Remove the default after 1.21.4
-        if (roleAttribute.getOperation() == RoleAttribute.Operation.REMOVE)
+        if (roleAttribute.getOperation() == RoleAttribute.Operation.REMOVE) {
             playerAttribute.setBaseValue(roleAttribute.getValue());
-        else
+            baseAttributes.put(roleAttribute.getAttributeType(), (double) roleAttribute.getValue());
+        } else {
             playerAttribute.addTransientModifier(roleAttribute.createAttributeModifier());
+        }
 
         if (roleAttribute.getAttributeType() == Attribute.MAX_ABSORPTION) {
             this.getPlayer().removePotionEffect(PotionEffectType.ABSORPTION);
