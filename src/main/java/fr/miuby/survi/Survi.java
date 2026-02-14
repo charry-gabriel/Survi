@@ -16,7 +16,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
-@SuppressWarnings("UnstableApiUsage")
 public class Survi extends JavaPlugin {
     private final Commands commands = new Commands();
 
@@ -31,6 +30,7 @@ public class Survi extends JavaPlugin {
         pluginManager.registerEvents(new AlphaPlayerListener(), this);
         pluginManager.registerEvents(new GrowthItemListener(), this);
         pluginManager.registerEvents(new CropGrowthListener(), this);
+        pluginManager.registerEvents(new VillagerListener(), this);
 
         getConfig().options().copyDefaults(true);
         saveConfig();
@@ -49,8 +49,7 @@ public class Survi extends JavaPlugin {
 
     @Override
     public boolean onCommand(@NotNull CommandSender senderC, @NotNull Command cmd, @NotNull String commandLabel, String[] args) {
-        if(senderC instanceof Player) {
-            Player sender = (Player) senderC;
+        if(senderC instanceof Player sender) {
             String commandName = cmd.getName().toLowerCase();
 
             return commands.doCommand(sender, commandName, args);

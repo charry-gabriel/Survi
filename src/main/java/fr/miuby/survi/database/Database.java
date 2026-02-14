@@ -161,7 +161,7 @@ public abstract class Database {
     //region Villager
     public AlphaVillagerData initVillager(String nameId) {
         try (Connection conn = getSQLConnection();
-             PreparedStatement ps = conn.prepareStatement("SELECT * FROM villager WHERE name = ?")) {
+             PreparedStatement ps = conn.prepareStatement("SELECT * FROM villager WHERE name = ? ORDER BY rowid DESC LIMIT 1")) {
             
             ps.setString(1, nameId);
             try (ResultSet rs = ps.executeQuery()) {
@@ -201,11 +201,15 @@ public abstract class Database {
     public void CreateDBVillager(String name, UUID uuid) {
         GameManager.getInstance().getScheduler().runTaskAsynchronously(GameManager.getInstance().getPlugin(), () -> {
             try (Connection conn = getSQLConnection();
-                 PreparedStatement ps = conn.prepareStatement("INSERT INTO villager (uuid, level, name, givenItems, locationX, locationY, locationZ, locationYaw, locationPitch) VALUES (?, 0, ?, NULL, 700, 0, 0, 0, 0)")) {
-                
-                ps.setString(1, uuid.toString());
-                ps.setString(2, name);
-                ps.executeUpdate();
+                 PreparedStatement deletePs = conn.prepareStatement("DELETE FROM villager WHERE name = ?");
+                 PreparedStatement insertPs = conn.prepareStatement("INSERT INTO villager (uuid, level, name, givenItems, locationX, locationY, locationZ, locationYaw, locationPitch) VALUES (?, 0, ?, NULL, -23.5, 184.5, -19.5, 0, 0)")) {
+
+                deletePs.setString(1, name);
+                deletePs.executeUpdate();
+
+                insertPs.setString(1, uuid.toString());
+                insertPs.setString(2, name);
+                insertPs.executeUpdate();
                 
             } catch (SQLException ex) {
                 GameManager.getInstance().getLogger().log(Level.SEVERE, "Failed to create villager in database", ex);

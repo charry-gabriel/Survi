@@ -31,6 +31,6 @@ public abstract class AVillager extends MLVillager {
 
     @Override
     protected AlphaVillagerData createDefaultData() {
-        return new AlphaVillagerData(null, nameId, new Location(WorldFactory.getDefaultWorld(), 0, 700, 0));
+        return new AlphaVillagerData(null, nameId, new Location(WorldFactory.getDefaultWorld(), -23.5, 184.5, -19.5));
     }
 }

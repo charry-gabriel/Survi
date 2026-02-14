@@ -57,10 +57,17 @@ public final class WorldFactory {
     public static synchronized void initializeIfNeeded() {
         Server server = GameManager.getInstance().getPlugin().getServer();
 
-        if (!initialized && worlds.values().stream().allMatch(worldName -> server.getWorld(worldName) != null)) {
-            GameManager.getInstance().initAfterWorldsLoad();
+        if (worlds.values().stream().allMatch(worldName -> server.getWorld(worldName) != null))
+            checkWorldsLoaded();
+    }
+    
+    private static void checkWorldsLoaded() {
+        Server server = GameManager.getInstance().getPlugin().getServer();
+        
+        // Vérifier que tous les mondes sont chargés
+        if (worlds.values().stream().allMatch(worldName -> server.getWorld(worldName) != null) && !initialized) {
             initialized = true;
+            GameManager.getInstance().initAfterWorldsLoad();
         }
     }
 }
-

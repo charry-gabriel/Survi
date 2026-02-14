@@ -5,6 +5,7 @@ import fr.miuby.survi.GameManager;
 import fr.miuby.survi.villager.blessing.Blessing;
 import fr.miuby.survi.villager.blessing.BlessingEffect;
 import fr.miuby.survi.world.WorldFactory;
+import lombok.Getter;
 import lombok.Setter;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.sound.Sound;
@@ -30,6 +31,7 @@ public class VillagerLevel extends AVillager {
     private final TextComponent[] recapMessages;
     private final Blessing[] blessings;
 
+    @Getter
     @Setter
     private int level = 0;
     private final List<ItemStack> givenItems = new ArrayList<>();
@@ -54,17 +56,17 @@ public class VillagerLevel extends AVillager {
             Bukkit.broadcast(Component.text("<", NamedTextColor.AQUA).append(getDisplayName()).append(Component.text("> ", NamedTextColor.AQUA)).append(getMessage()));
             applyBlessing();
             addLevel();
-            villager.customName(getDisplayName());
+            getVillager().customName(getDisplayName());
             updateInventory();
             player.closeInventory();
 
             this.givenItems.clear();
-            GameManager.getInstance().getDatabase().updateVillagerGivenItem(villager.getUniqueId(), this.givenItems);
+            GameManager.getInstance().getDatabase().updateVillagerGivenItem(getVillager().getUniqueId(), this.givenItems);
         }
     }
 
     public void createInventory() {
-        Inventory inv = Bukkit.createInventory(villager, InventoryType.CHEST, Objects.requireNonNull(villager.customName()));
+        Inventory inv = Bukkit.createInventory(getVillager(), InventoryType.CHEST, Objects.requireNonNull(getVillager().customName()));
 
         Tribute tribute = getTribute();
         if (tribute == null)
@@ -92,7 +94,7 @@ public class VillagerLevel extends AVillager {
 
     public void addLevel() {
         this.level++;
-        GameManager.getInstance().getDatabase().updateVillagerLevel(villager.getUniqueId(), level);
+        GameManager.getInstance().getDatabase().updateVillagerLevel(getVillager().getUniqueId(), level);
     }
 
     public void applyAllCurrentBlessing(AlphaPlayer player) {
@@ -145,7 +147,7 @@ public class VillagerLevel extends AVillager {
             if (tributeItem != null && tributeItem.isSimilar(item)) {
                 GameManager.getInstance().getLogger().info(this.nameId + " recupere " + item.getAmount() + " de " + item.getType().name());
                 this.givenItems.add(new ItemStack(item));
-                GameManager.getInstance().getDatabase().updateVillagerGivenItem(villager.getUniqueId(), this.givenItems);
+                GameManager.getInstance().getDatabase().updateVillagerGivenItem(getVillager().getUniqueId(), this.givenItems);
 
                 if (item.getAmount() < tributeItem.getAmount()) {
                     tributeItem.setAmount(tributeItem.getAmount() - item.getAmount());
