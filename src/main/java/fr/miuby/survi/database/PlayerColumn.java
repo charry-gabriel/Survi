@@ -1,9 +1,12 @@
 package fr.miuby.survi.database;
 
+import lombok.Getter;
+
 /**
  * Whitelist of player table columns allowed for updates.
  * Prevents SQL injection and makes update sites explicit.
  */
+@Getter
 public enum PlayerColumn {
     MORT("mort"),
     SUCCESS("success"),
@@ -17,7 +20,4 @@ public enum PlayerColumn {
         this.columnName = columnName;
     }
 
-    public String getColumnName() {
-        return columnName;
-    }
 }
