@@ -2,6 +2,7 @@ package fr.miuby.survi.player;
 
 import fr.miuby.lib.world.WorldRegistry;
 import fr.miuby.survi.GameManager;
+import fr.miuby.survi.database.PlayerColumn;
 import fr.miuby.survi.role.*;
 import fr.miuby.survi.world.EWorld;
 import fr.miuby.lib.world.MLWorld;
@@ -130,14 +131,14 @@ public class AlphaPlayer implements Serializable {
         this.mort += mort;
         this.alphaLife.setDeath(this.mort);
 
-        GameManager.getInstance().getDatabase().updatePlayer(this.uuid, "mort", String.valueOf(this.mort));
+        GameManager.getInstance().getDatabase().updatePlayer(this.uuid, PlayerColumn.MORT, String.valueOf(this.mort));
     }
 
     public void addSuccess(int success) {
         this.success = success;
         this.getAlphaLife().regenHealth(() -> this.getAlphaLife().setSuccess(success));
 
-        GameManager.getInstance().getDatabase().updatePlayer(this.uuid, "success", String.valueOf(this.success));
+        GameManager.getInstance().getDatabase().updatePlayer(this.uuid, PlayerColumn.SUCCESS, String.valueOf(this.success));
     }
 
     public void teleport(MLWorld monde) {

@@ -35,7 +35,7 @@ public class RoleCommand implements BasicCommand {
             return;
 
         // Swap role
-        GameManager.getInstance().getDatabase().updatePlayer(alphaPlayer.getUUID(), "role", role.type().toString());
+        GameManager.getInstance().getDatabase().updatePlayer(alphaPlayer.getUUID(), fr.miuby.survi.database.PlayerColumn.ROLE, role.type().toString());
         alphaPlayer.setRole(role);
 
         if (alphaPlayer.getPlayer().isOnline())
@@ -121,7 +121,7 @@ public class RoleCommand {
             return Command.SINGLE_SUCCESS;
 
         // Swap role
-        GameManager.getInstance().getDatabase().updatePlayer(alphaPlayer.getUUID(), "role", role.type().toString());
+        GameManager.getInstance().getDatabase().updatePlayer(alphaPlayer.getUUID(), fr.miuby.survi.database.PlayerColumn.ROLE, role.type().toString());
         alphaPlayer.setRole(role);
 
         if (alphaPlayer.getPlayer().isOnline())

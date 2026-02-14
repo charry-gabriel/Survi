@@ -79,7 +79,8 @@ public abstract class Database {
         ResultSet rs;
         try {
             conn = getSQLConnection();
-            ps = conn.prepareStatement("SELECT * FROM player WHERE uuid = '"+uuid+"'");
+            ps = conn.prepareStatement("SELECT * FROM player WHERE uuid = ?");
+            ps.setString(1, uuid.toString());
             rs = ps.executeQuery();
 
             if (rs.next()) {
@@ -138,17 +139,20 @@ public abstract class Database {
         });
     }
 
-    public void updatePlayer(UUID uuid, String column, String value) {
+    /**
+     * Updates a single player column. Only columns in {@link PlayerColumn} are allowed (no raw strings).
+     */
+    public void updatePlayer(UUID uuid, PlayerColumn column, String value) {
         GameManager.getInstance().getScheduler().runTaskAsynchronously(GameManager.getInstance().getPlugin(), () -> {
             try (Connection conn = getSQLConnection();
-                 PreparedStatement ps = conn.prepareStatement("UPDATE player SET " + column + " = ? WHERE uuid = ?")) {
-                
+                 PreparedStatement ps = conn.prepareStatement("UPDATE player SET " + column.getColumnName() + " = ? WHERE uuid = ?")) {
+
                 ps.setString(1, value);
                 ps.setString(2, uuid.toString());
                 ps.executeUpdate();
-                
+
             } catch (SQLException ex) {
-                GameManager.getInstance().getLogger().log(Level.SEVERE, "Failed to update player data for column: " + column, ex);
+                GameManager.getInstance().getLogger().log(Level.SEVERE, "Failed to update player data for column: " + column.getColumnName(), ex);
             }
         });
     }
