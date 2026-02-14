@@ -85,19 +85,11 @@ public class AlphaPlayer implements Serializable {
             GameManager.getInstance().getVillagerFactory().applyAllCurrentBlessing(this);
             GameManager.getInstance().getAlphaPlayerFactory().setPlayersToTeam(this.scoreboard);
 
-            //TODO: default attribute, pas besoin sur un nouveau serveur
-            for (RoleAttribute attribute : GameManager.getInstance().getRoleFactory().defaultAttributes()) {
-                attribute.setRole("default");
-                this.addAttribute(attribute);
-            }
-
             this.addRoleAttribute();
             this.getAlphaLife().actualizeDeath();
             this.getAlphaLife().actualizeSuccess();
 
             this.player.discoverRecipes(GameManager.getInstance().getCustomRecipeFactory().getNewRecipes().keySet());
-            //TODO: old recipe, pas besoin sur un nouveau serveur
-            this.player.undiscoverRecipes(GameManager.getInstance().getCustomRecipeFactory().getOldRecipes());
         }
     }
 

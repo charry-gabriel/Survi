@@ -17,7 +17,6 @@ import io.papermc.paper.command.brigadier.argument.resolvers.selector.PlayerSele
 import net.kyori.adventure.text.Component;
 import org.bukkit.Location;
 
-@SuppressWarnings("UnstableApiUsage")
 public class VillagerCommand {
     public static LiteralArgumentBuilder<CommandSourceStack> createCommand() {
         return Commands.literal("villager")
@@ -26,7 +25,6 @@ public class VillagerCommand {
                 .suggests((context, builder) -> {
                     VillagerRegistry.getAll().stream()
                             .map(MLVillager::getNameId)
-                            .filter(argument -> argument.startsWith(context.getLastChild().getArgument("villager", String.class)))
                             .forEach(builder::suggest);
                     return builder.buildFuture();
                 })
@@ -52,7 +50,6 @@ public class VillagerCommand {
             );
     }
 
-    @SuppressWarnings("SameReturnValue")
     private static int villagerExecute(CommandContext<CommandSourceStack> ctx, Location location) {
         AVillager villager = (AVillager) VillagerRegistry.get(StringArgumentType.getString(ctx, "villager"));
 

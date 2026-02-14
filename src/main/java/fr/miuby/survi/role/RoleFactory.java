@@ -185,28 +185,4 @@ public class RoleFactory {
             return null;
         }
     }
-
-    //TODO: Remove the default after 1.21.4
-    public List<RoleAttribute> defaultAttributes() {
-        List<RoleAttribute> roleAttributes = new ArrayList<>();
-        roleAttributes.add(new RoleAttribute(EWorld.ALL, Attribute.MAX_HEALTH, 20f, RoleAttribute.Operation.REMOVE));
-        roleAttributes.add(new RoleAttribute(EWorld.ALL, Attribute.ARMOR, 0f, RoleAttribute.Operation.REMOVE));
-        roleAttributes.add(new RoleAttribute(EWorld.ALL, Attribute.ARMOR_TOUGHNESS, 0f, RoleAttribute.Operation.REMOVE));
-        roleAttributes.add(new RoleAttribute(EWorld.ALL, Attribute.ATTACK_DAMAGE, 1f, RoleAttribute.Operation.REMOVE));
-        roleAttributes.add(new RoleAttribute(EWorld.ALL, Attribute.ATTACK_KNOCKBACK, 0f, RoleAttribute.Operation.REMOVE));
-        roleAttributes.add(new RoleAttribute(EWorld.ALL, Attribute.ATTACK_SPEED, 4f, RoleAttribute.Operation.REMOVE));
-        roleAttributes.add(new RoleAttribute(EWorld.ALL, Attribute.LUCK, 0f, RoleAttribute.Operation.REMOVE));
-        roleAttributes.add(new RoleAttribute(EWorld.ALL, Attribute.MOVEMENT_SPEED, 0.1f, RoleAttribute.Operation.REMOVE));
-        roleAttributes.add(new RoleAttribute(EWorld.ALL, Attribute.STEP_HEIGHT, 0.6f, RoleAttribute.Operation.REMOVE));
-        roleAttributes.add(new RoleAttribute(EWorld.ALL, Attribute.SCALE, 1f, RoleAttribute.Operation.REMOVE));
-        roleAttributes.add(new RoleAttribute(EWorld.ALL, Attribute.BLOCK_BREAK_SPEED, 1f, RoleAttribute.Operation.REMOVE));
-        roleAttributes.add(new RoleAttribute(EWorld.ALL, Attribute.SAFE_FALL_DISTANCE, 3f, RoleAttribute.Operation.REMOVE));
-        roleAttributes.add(new RoleAttribute(EWorld.ALL, Attribute.KNOCKBACK_RESISTANCE, 0f, RoleAttribute.Operation.REMOVE));
-        roleAttributes.add(new RoleAttribute(EWorld.ALL, Attribute.ENTITY_INTERACTION_RANGE, 3f, RoleAttribute.Operation.REMOVE));
-        roleAttributes.add(new RoleAttribute(EWorld.ALL, Attribute.BLOCK_INTERACTION_RANGE, 4.5f, RoleAttribute.Operation.REMOVE));
-        roleAttributes.add(new RoleAttribute(EWorld.ALL, Attribute.OXYGEN_BONUS, 0f, RoleAttribute.Operation.REMOVE));
-        roleAttributes.add(new RoleAttribute(EWorld.ALL, Attribute.WATER_MOVEMENT_EFFICIENCY, 0f, RoleAttribute.Operation.REMOVE));
-        roleAttributes.add(new RoleAttribute(EWorld.ALL, Attribute.GRAVITY, 0.08f, RoleAttribute.Operation.REMOVE));
-        return roleAttributes;
-    }
 }
