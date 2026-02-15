@@ -1,15 +1,16 @@
 package fr.miuby.survi.role;
 
+import fr.miuby.lib.utils.MultiKeyRegistry;
 import fr.miuby.survi.world.EWorld;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.attribute.Attribute;
 
 import java.util.*;
 
-public class RoleFactory {
-    private final Map<ERole, Role> roles = new EnumMap<>(ERole.class);
+public class RoleRegistry {
+    private static final MultiKeyRegistry<Role> INSTANCE = new MultiKeyRegistry<>();
 
-    public RoleFactory() {
+    public RoleRegistry() {
         List<RoleDefinition> roleDefinitions = Arrays.asList(
             // Dragon
             new RoleDefinition(ERole.DRAGON, "Dragon \uD83D\uDC09", NamedTextColor.GOLD, "dragon", b -> b
@@ -159,23 +160,19 @@ public class RoleFactory {
         );
         
         // Construction de tous les rôles
-        roleDefinitions.forEach(def -> roles.put(def.getType(), def.toRole()));
+        roleDefinitions.forEach(def -> INSTANCE.register(def.toRole(), def.getType()));
     }
 
     public Role getRole(ERole role) {
-        return roles.get(role);
-    }
-    
-    public Collection<Role> getAllRoles() {
-        return Collections.unmodifiableCollection(roles.values());
+        return INSTANCE.get(role);
     }
 
     public Collection<Role> getRoles() {
-        return roles.values();
+        return INSTANCE.getAll();
     }
 
     public Role getDefaultRole() {
-        return roles.get(ERole.NAIN);
+        return INSTANCE.get(ERole.NAIN);
     }
 
     public Role getRole(String roleType) {

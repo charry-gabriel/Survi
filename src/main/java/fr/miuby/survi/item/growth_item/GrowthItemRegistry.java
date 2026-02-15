@@ -1,20 +1,17 @@
 package fr.miuby.survi.item.growth_item;
 
+import fr.miuby.lib.utils.MultiKeyRegistry;
 import fr.miuby.survi.item.growth_item.config.GrowthConfig;
 
-import java.util.HashMap;
-
-import java.util.Map;
-
 public final class GrowthItemRegistry {
-    private static final Map<String, GrowthConfig> REGISTRY = new HashMap<>();
+    private static final MultiKeyRegistry<GrowthConfig> INSTANCE = new MultiKeyRegistry<>();
 
     public static void register(String id, GrowthConfig config) {
-        REGISTRY.putIfAbsent(id, config);
+        INSTANCE.register(config, id);
     }
 
     public static GrowthConfig get(String id) {
-        return REGISTRY.get(id);
+        return INSTANCE.get(id);
     }
 
     private GrowthItemRegistry() {}

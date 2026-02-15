@@ -10,7 +10,7 @@ import fr.miuby.survi.item.growth_item.GrowthItems;
 import fr.miuby.survi.item.locked_item.LockedItemsFactory;
 import fr.miuby.survi.player.AlphaPlayerFactory;
 import fr.miuby.survi.player.PlayerAttributeService;
-import fr.miuby.survi.role.RoleFactory;
+import fr.miuby.survi.role.RoleRegistry;
 import fr.miuby.survi.villager.VillagerFactory;
 import fr.miuby.survi.display.TabDisplayManager;
 import fr.miuby.survi.world.WorldFactory;
@@ -39,7 +39,7 @@ public class GameManager {
     @Getter
     private Database database;
     @Getter
-    private RoleFactory roleFactory;
+    private RoleRegistry roleRegistry;
     @Getter
     private AlphaPlayerFactory alphaPlayerFactory;
     @Getter
@@ -77,7 +77,7 @@ public class GameManager {
     public void initAfterWorldsLoad() {
         WorldFactory.initializeWorlds();
 
-        this.roleFactory = new RoleFactory();
+        this.roleRegistry = new RoleRegistry();
         this.alphaPlayerFactory = new AlphaPlayerFactory();
         this.database.createAlphaPlayers();
 

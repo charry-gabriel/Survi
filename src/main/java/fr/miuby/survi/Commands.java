@@ -13,7 +13,7 @@ public class Commands {
             if (commandName.equals("role") && args.length == 2) {
                 AlphaPlayer alphaPlayer = GameManager.getInstance().getAlphaPlayerFactory().getAlphaPlayer(args[0]);
 
-                Role role = GameManager.getInstance().getRoleFactory().getRole(args[1]);
+                Role role = GameManager.getInstance().getRoleRegistry().getRole(args[1]);
                 if (role == null) {
                     sender.sendMessage(Component.text("Role introuvable !"));
                     return false;
@@ -36,7 +36,7 @@ public class Commands {
             else if (commandName.equals("subrole") && args.length == 3) {
                 AlphaPlayer alphaPlayer = GameManager.getInstance().getAlphaPlayerFactory().getAlphaPlayer(args[1]);
 
-                Role role = GameManager.getInstance().getRoleFactory().getRole(args[2]);
+                Role role = GameManager.getInstance().getRoleRegistry().getRole(args[2]);
                 if (role == null) {
                     sender.sendMessage(Component.text("Role introuvable !"));
                     return false;

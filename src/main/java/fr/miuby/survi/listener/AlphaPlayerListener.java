@@ -30,7 +30,7 @@ public class AlphaPlayerListener implements Listener {
         if (pdc.has(new NamespacedKey(GameManager.getInstance().getPlugin(), "edible"))) {
             AlphaPlayer alphaPlayer = AlphaPlayer.get(event.getPlayer().getUniqueId());
             
-            Role newRole = GameManager.getInstance().getRoleFactory().getRole(ERole.MINEUR);
+            Role newRole = GameManager.getInstance().getRoleRegistry().getRole(ERole.MINEUR);
             AlphaPlayerRoleChangeEvent roleChangeEvent = new AlphaPlayerRoleChangeEvent(alphaPlayer, null, newRole);
             GameManager.getInstance().callEvent(roleChangeEvent);
             

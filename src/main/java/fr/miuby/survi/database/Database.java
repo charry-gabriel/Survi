@@ -55,12 +55,12 @@ public abstract class Database {
 
                 alphaPlayer.setMort(rs.getInt("mort"));
                 alphaPlayer.setSuccess(rs.getInt("success"));
-                alphaPlayer.setRole(GameManager.getInstance().getRoleFactory().getRole(ERole.valueOf(rs.getString("role"))));
+                alphaPlayer.setRole(GameManager.getInstance().getRoleRegistry().getRole(ERole.valueOf(rs.getString("role"))));
 
                 String subRoles = rs.getString("subroles");
                 if (subRoles != null && !subRoles.isEmpty()) {
                     for (String subRole : subRoles.split(","))
-                        alphaPlayer.addSubRole(GameManager.getInstance().getRoleFactory().getRole(ERole.valueOf(subRole)));
+                        alphaPlayer.addSubRole(GameManager.getInstance().getRoleRegistry().getRole(ERole.valueOf(subRole)));
                 }
 
                 alphaPlayer.setPseudo(rs.getString("pseudo"));
@@ -91,12 +91,12 @@ public abstract class Database {
 
                 alphaPlayer.setMort(mort);
                 alphaPlayer.setSuccess(success);
-                alphaPlayer.setRole(GameManager.getInstance().getRoleFactory().getRole(ERole.valueOf(role)));
+                alphaPlayer.setRole(GameManager.getInstance().getRoleRegistry().getRole(ERole.valueOf(role)));
 
                 String subRoles = rs.getString("subroles");
                 if (subRoles != null && !subRoles.isEmpty()) {
                     for (String subRole : subRoles.split(","))
-                        alphaPlayer.addSubRole(GameManager.getInstance().getRoleFactory().getRole(ERole.valueOf(subRole)));
+                        alphaPlayer.addSubRole(GameManager.getInstance().getRoleRegistry().getRole(ERole.valueOf(subRole)));
                 }
 
                 alphaPlayer.setPseudo(pseudo);
@@ -110,7 +110,7 @@ public abstract class Database {
                     alphaPlayer.setPlayer(player);
                     alphaPlayer.setMort(0);
                     alphaPlayer.setSuccess(0);
-                    alphaPlayer.setRole(GameManager.getInstance().getRoleFactory().getDefaultRole());
+                    alphaPlayer.setRole(GameManager.getInstance().getRoleRegistry().getDefaultRole());
                     alphaPlayer.setPseudo(player.getName());
                     CreateDBPlayer(player.getUniqueId(), player.getName());
                 }
@@ -130,7 +130,7 @@ public abstract class Database {
                 
                 ps.setString(1, uuid.toString());
                 ps.setString(2, pseudo);
-                ps.setString(3, GameManager.getInstance().getRoleFactory().getDefaultRole().type().toString());
+                ps.setString(3, GameManager.getInstance().getRoleRegistry().getDefaultRole().type().toString());
                 ps.executeUpdate();
                 
             } catch (SQLException ex) {
