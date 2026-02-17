@@ -57,14 +57,6 @@ public final class WorldInitializer {
     public static synchronized void initializeIfNeeded() {
         Server server = GameManager.getInstance().getPlugin().getServer();
 
-        if (worlds.values().stream().allMatch(worldName -> server.getWorld(worldName) != null))
-            checkWorldsLoaded();
-    }
-    
-    private static void checkWorldsLoaded() {
-        Server server = GameManager.getInstance().getPlugin().getServer();
-        
-        // Vérifier que tous les mondes sont chargés
         if (worlds.values().stream().allMatch(worldName -> server.getWorld(worldName) != null) && !initialized) {
             initialized = true;
             GameManager.getInstance().initAfterWorldsLoad();

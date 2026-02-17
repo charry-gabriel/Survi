@@ -16,7 +16,7 @@ public class AlphaPlayerFactory {
     @Getter
     private final PlayerAttributeService attributeService = new PlayerAttributeService();
     @Getter
-    private final PlayerPersistenceService persistenceService = new PlayerPersistenceService();
+    private final PlayerPersistenceService persistenceService = new PlayerPersistenceService(GameManager.getInstance().getDatabase());
 
     public AlphaPlayer get(UUID uuid) {
         return registry.get(uuid);
