@@ -5,7 +5,6 @@ import fr.miuby.survi.database.Errors;
 import fr.miuby.survi.player.AlphaPlayer;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.EnderDragon;
-import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntitySpawnEvent;

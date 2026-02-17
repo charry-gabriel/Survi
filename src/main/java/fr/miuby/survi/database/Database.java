@@ -199,21 +199,6 @@ public abstract class Database {
         });
     }
 
-    public void updateVillagerUUID(UUID uuid, String name) {
-        GameManager.getInstance().getScheduler().runTaskAsynchronously(GameManager.getInstance().getPlugin(), () -> {
-            try (Connection conn = getSQLConnection();
-                 PreparedStatement ps = conn.prepareStatement("UPDATE villager SET uuid = ? WHERE name = ?")) {
-
-                ps.setString(1, uuid.toString());
-                ps.setString(2, name);
-                ps.executeUpdate();
-
-            } catch (SQLException ex) {
-                GameManager.getInstance().getLogger().log(Level.SEVERE, "Failed to update villager UUID", ex);
-            }
-        });
-    }
-
     public void updateVillagerGivenItem(UUID uuid, List<ItemStack> givenItems) {
         GameManager.getInstance().getScheduler().runTaskAsynchronously(GameManager.getInstance().getPlugin(), () -> {
             try (Connection conn = getSQLConnection();
@@ -348,9 +333,5 @@ public abstract class Database {
         } catch (SQLException ex) {
             GameManager.getInstance().getLogger().log(Level.SEVERE, "Failed to close database resources", ex);
         }
-    }
-
-    public boolean IsLoaded() {
-        return isLoaded;
     }
 }

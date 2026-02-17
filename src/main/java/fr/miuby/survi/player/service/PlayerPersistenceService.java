@@ -4,8 +4,6 @@ import fr.miuby.survi.GameManager;
 import fr.miuby.survi.database.PlayerColumn;
 import fr.miuby.survi.player.AlphaPlayer;
 
-import java.util.UUID;
-
 public final class PlayerPersistenceService {
 
     public void updateMort(AlphaPlayer alphaPlayer) {
@@ -24,9 +22,5 @@ public final class PlayerPersistenceService {
     public void updateSubRoles(AlphaPlayer alphaPlayer) {
         String value = String.join(",", alphaPlayer.getSubRoles().stream().map(subrole -> subrole.type().toString()).toList());
         GameManager.getInstance().getDatabase().updatePlayer(alphaPlayer.getUuid(), PlayerColumn.SUBROLES, value);
-    }
-
-    public AlphaPlayer load(UUID uuid) {
-        return GameManager.getInstance().getAlphaPlayerFactory().getAlphaPlayer(uuid);
     }
 }

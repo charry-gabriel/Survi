@@ -27,8 +27,7 @@ public class AlphaPlayerFactory {
     }
 
     public Collection<String> getAllPseudo() {
-        Collection<String> pseudos = registry.getAll().stream().map(AlphaPlayer::getPseudo).toList();
-        return pseudos;
+        return registry.getAll().stream().map(AlphaPlayer::getPseudo).toList();
     }
 
     public AlphaPlayer getAlphaPlayer(UUID uuid){
@@ -62,7 +61,7 @@ public class AlphaPlayerFactory {
     }
 
     public void onPlayerJoin(Player bukkitPlayer) {
-        AlphaPlayer alphaPlayer = GameManager.getInstance().getAlphaPlayerFactory().get(bukkitPlayer.getUniqueId());
+        AlphaPlayer alphaPlayer = get(bukkitPlayer.getUniqueId());
 
         // if player doesn't exist in database, create it
         if (alphaPlayer == null) {
