@@ -4,7 +4,7 @@ import fr.miuby.lib.world.WorldRegistry;
 import fr.miuby.survi.GameManager;
 import fr.miuby.survi.player.AlphaPlayer;
 import fr.miuby.survi.world.EWorld;
-import fr.miuby.survi.world.WorldFactory;
+import fr.miuby.survi.world.WorldInitializer;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
@@ -14,7 +14,7 @@ import org.bukkit.event.world.WorldLoadEvent;
 public class WorldListener implements Listener {
     @EventHandler
     public void onWorldLoad(WorldLoadEvent event) {
-        WorldFactory.initializeIfNeeded();
+        WorldInitializer.initializeIfNeeded();
     }
 
     @EventHandler

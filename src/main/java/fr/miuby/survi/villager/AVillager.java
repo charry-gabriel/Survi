@@ -3,7 +3,7 @@ package fr.miuby.survi.villager;
 import fr.miuby.lib.villager.MLVillager;
 import fr.miuby.lib.villager.MLVillagerData;
 import fr.miuby.survi.GameManager;
-import fr.miuby.survi.world.WorldFactory;
+import fr.miuby.survi.world.WorldInitializer;
 import net.kyori.adventure.text.TextComponent;
 import org.bukkit.Location;
 import org.bukkit.entity.Villager;
@@ -31,6 +31,6 @@ public abstract class AVillager extends MLVillager {
 
     @Override
     protected AlphaVillagerData createDefaultData() {
-        return new AlphaVillagerData(null, nameId, new Location(WorldFactory.getDefaultWorld(), -23.5, 184.5, -19.5));
+        return new AlphaVillagerData(null, nameId, new Location(WorldInitializer.getDefaultWorld(), -23.5, 184.5, -19.5));
     }
 }

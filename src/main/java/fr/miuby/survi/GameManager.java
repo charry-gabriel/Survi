@@ -9,11 +9,10 @@ import fr.miuby.survi.item.CustomRecipe;
 import fr.miuby.survi.item.growth_item.GrowthItems;
 import fr.miuby.survi.item.locked_item.LockedItemsFactory;
 import fr.miuby.survi.player.AlphaPlayerFactory;
-import fr.miuby.survi.player.PlayerAttributeService;
 import fr.miuby.survi.role.RoleRegistry;
 import fr.miuby.survi.villager.VillagerFactory;
 import fr.miuby.survi.display.TabDisplayManager;
-import fr.miuby.survi.world.WorldFactory;
+import fr.miuby.survi.world.WorldInitializer;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.event.Event;
@@ -46,8 +45,6 @@ public class GameManager {
     private PlantedCropsManager plantedCropsManager;
     @Getter
     private TabDisplayManager tabDisplayManager;
-    @Getter
-    private PlayerAttributeService playerAttributeService;
 
     @Setter
     @Getter
@@ -55,6 +52,13 @@ public class GameManager {
     @Setter
     @Getter
     private boolean isNight;
+
+    private enum InitState {
+        NOT_INITIALIZED,
+        DATABASE_LOADED,
+        WORLDS_LOADED
+    }
+    private InitState initState = InitState.NOT_INITIALIZED;
 
     public static GameManager getInstance(){
         if(instance == null){
@@ -67,37 +71,65 @@ public class GameManager {
         this.plugin = plugin;
         this.scheduler = this.plugin.getServer().getScheduler();
 
-        this.database = new SQLite();
-        this.database.load();
+        this.initDatabase();
         MiubyLib.init(plugin);
 
-        WorldFactory.initializeIfNeeded();
+        this.initWorlds();
+    }
+
+    private void initDatabase() {
+        if (this.initState != InitState.NOT_INITIALIZED)
+            throw new IllegalStateException("Wrong init order !");
+
+        this.database = new SQLite();
+        this.database.load();
+        this.initState = InitState.DATABASE_LOADED;
+    }
+
+    private void initWorlds() {
+        if (this.initState != InitState.DATABASE_LOADED)
+            throw new IllegalStateException("Wrong init order !");
+
+        WorldInitializer.initializeIfNeeded();
+        this.initState = InitState.WORLDS_LOADED;
     }
 
     public void initAfterWorldsLoad() {
-        WorldFactory.initializeWorlds();
+        if (this.initState != InitState.WORLDS_LOADED)
+            throw new IllegalStateException("Wrong init order !");
 
-        this.roleRegistry = new RoleRegistry();
-        this.alphaPlayerFactory = new AlphaPlayerFactory();
-        this.database.createAlphaPlayers();
+        WorldInitializer.initializeWorlds();
+
+        this.initPlayers();
 
         this.villagerFactory = new VillagerFactory();
 
-        this.lockedItemsFactory = new LockedItemsFactory();
-        this.customRecipeFactory = new CustomRecipeFactory();
-        CustomRecipe.registerRecipes();
-        GrowthItems.init();
+        this.initItems();
 
         this.plantedCropsManager = new PlantedCropsManager(database);
         this.plantedCropsManager.load();
-
-        this.tabDisplayManager = new TabDisplayManager();
-        this.playerAttributeService = new PlayerAttributeService();
 
         Timer timer = new Timer();
         timer.update();
         
         plugin.getLogger().info("Plugin entièrement initialisé !");
+    }
+
+    private void initPlayers() {
+        this.roleRegistry = new RoleRegistry();
+        this.alphaPlayerFactory = new AlphaPlayerFactory();
+        this.database.createAlphaPlayers();
+
+        this.tabDisplayManager = new TabDisplayManager();
+    }
+
+    private void initItems() {
+        this.lockedItemsFactory = new LockedItemsFactory();
+
+        this.customRecipeFactory = new CustomRecipeFactory();
+        CustomRecipe.registerRecipes();
+
+        GrowthItems.init();
     }
 
     public void callEvent(Event event) {

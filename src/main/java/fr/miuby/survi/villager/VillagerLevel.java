@@ -4,7 +4,7 @@ import fr.miuby.survi.player.AlphaPlayer;
 import fr.miuby.survi.GameManager;
 import fr.miuby.survi.villager.blessing.Blessing;
 import fr.miuby.survi.villager.blessing.BlessingEffect;
-import fr.miuby.survi.world.WorldFactory;
+import fr.miuby.survi.world.WorldInitializer;
 import lombok.Getter;
 import lombok.Setter;
 import net.kyori.adventure.key.Key;
@@ -46,7 +46,7 @@ public class VillagerLevel extends AVillager {
 
     @Override
     protected AlphaVillagerData createDefaultData() {
-        return new AlphaVillagerData(null, nameId, new Location(WorldFactory.getDefaultWorld(), 0, 700, 0), new ArrayList<>(), 0);
+        return new AlphaVillagerData(null, nameId, new Location(WorldInitializer.getDefaultWorld(), 0, 700, 0), new ArrayList<>(), 0);
     }
 
     public void giveItems(Inventory inventory, ItemStack item, Player player) {

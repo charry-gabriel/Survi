@@ -12,7 +12,7 @@ import org.bukkit.World;
 
 import java.util.Map;
 
-public final class WorldFactory {
+public final class WorldInitializer {
     @Getter
     private static final Map<EWorld, String> worlds;
     private static boolean initialized = false;
@@ -26,7 +26,7 @@ public final class WorldFactory {
         );
     }
 
-    private WorldFactory() { }
+    private WorldInitializer() { }
 
     public static void initializeWorlds() {
         Server server = GameManager.getInstance().getPlugin().getServer();
