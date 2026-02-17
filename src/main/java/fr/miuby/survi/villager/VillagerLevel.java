@@ -1,5 +1,6 @@
 package fr.miuby.survi.villager;
 
+import fr.miuby.lib.villager.MLVillagerData;
 import fr.miuby.survi.player.AlphaPlayer;
 import fr.miuby.survi.GameManager;
 import fr.miuby.survi.villager.blessing.Blessing;
@@ -20,6 +21,7 @@ import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -49,20 +51,51 @@ public class VillagerLevel extends AVillager {
         return new AlphaVillagerData(null, nameId, new Location(WorldInitializer.getDefaultWorld(), 0, 700, 0), new ArrayList<>(), 0);
     }
 
+    @Override
+    protected @Nullable MLVillagerData loadData() {
+        AlphaVillagerData data = GameManager.getInstance().getDatabase().initVillager(this.getNameId());
+        if (data != null) {
+            this.level = data.getLevel();
+            this.givenItems.addAll(data.getGivenItems());
+        }
+        return data;
+    }
+
     public void giveItems(Inventory inventory, ItemStack item, Player player) {
         removeItemStack(inventory, item, player);
 
         if (inventory.isEmpty()) {
-            Bukkit.broadcast(Component.text("<", NamedTextColor.AQUA).append(getDisplayName()).append(Component.text("> ", NamedTextColor.AQUA)).append(getMessage()));
-            applyBlessing();
-            addLevel();
-            getVillager().customName(getDisplayName());
-            updateInventory();
+            levelUp();
             player.closeInventory();
-
-            this.givenItems.clear();
-            GameManager.getInstance().getDatabase().updateVillagerGivenItem(getVillager().getUniqueId(), this.givenItems);
         }
+    }
+
+    public boolean isMaxLevel() {
+        return level >= Math.max(
+                Math.max(tributes.length, blessings.length),
+                Math.max(names.length, Math.max(messages.length, recapMessages.length))
+        ) - 1;
+    }
+
+    public boolean levelUp() {
+        if (isMaxLevel()) {
+            GameManager.getInstance().getLogger().info(nameId + " est déjà au niveau maximum");
+            return false;
+        }
+
+        Bukkit.broadcast(Component.text("<", NamedTextColor.AQUA).append(getDisplayName()).append(Component.text("> ", NamedTextColor.AQUA)).append(getRecapMessage()));
+        applyBlessing();
+
+        this.level++;
+        GameManager.getInstance().getDatabase().updateVillagerLevel(getVillager().getUniqueId(), level);
+
+        getVillager().customName(getDisplayName());
+        updateInventory();
+
+        this.givenItems.clear();
+        GameManager.getInstance().getDatabase().updateVillagerGivenItem(getVillager().getUniqueId(), this.givenItems);
+
+        return true;
     }
 
     public void createInventory() {
@@ -90,11 +123,6 @@ public class VillagerLevel extends AVillager {
             for (ItemStack item : tribute.getItemStacks())
                 this.inventory.addItem(item);
         }
-    }
-
-    public void addLevel() {
-        this.level++;
-        GameManager.getInstance().getDatabase().updateVillagerLevel(getVillager().getUniqueId(), level);
     }
 
     public void applyAllCurrentBlessing(AlphaPlayer player) {

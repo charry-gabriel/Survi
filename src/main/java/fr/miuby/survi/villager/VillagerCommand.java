@@ -29,28 +29,31 @@ public class VillagerCommand {
                     return builder.buildFuture();
                 })
                 .then(Commands.literal("teleport")
-                    .executes(ctx -> VillagerCommand.villagerExecute(ctx, ctx.getSource().getLocation()))
+                    .executes(ctx -> VillagerCommand.villagerExecuteTeleport(ctx, ctx.getSource().getLocation()))
                     .then(Commands.argument("player", ArgumentTypes.player())
-                        .executes(ctx -> VillagerCommand.villagerExecute(ctx, ctx.getArgument("player", PlayerSelectorArgumentResolver.class).resolve(ctx.getSource()).getFirst().getLocation()))
+                        .executes(ctx -> VillagerCommand.villagerExecuteTeleport(ctx, ctx.getArgument("player", PlayerSelectorArgumentResolver.class).resolve(ctx.getSource()).getFirst().getLocation()))
                     )
                     .then(Commands.argument("location", ArgumentTypes.finePosition(true))
-                        .executes(ctx -> VillagerCommand.villagerExecute(ctx, ctx.getArgument("location", FinePositionResolver.class).resolve(ctx.getSource()).toLocation(WorldInitializer.getDefaultWorld())))
+                        .executes(ctx -> VillagerCommand.villagerExecuteTeleport(ctx, ctx.getArgument("location", FinePositionResolver.class).resolve(ctx.getSource()).toLocation(WorldInitializer.getDefaultWorld())))
                         .then(Commands.argument("yaw", DoubleArgumentType.doubleArg(0, 360))
                             .then(Commands.argument("pitch", DoubleArgumentType.doubleArg(0, 360))
                                 .executes(ctx -> {
                                     Location location = ctx.getArgument("location", FinePositionResolver.class).resolve(ctx.getSource()).toLocation(WorldInitializer.getDefaultWorld());
                                     location.setYaw((float) DoubleArgumentType.getDouble(ctx, "yaw"));
                                     location.setPitch((float) DoubleArgumentType.getDouble(ctx, "pitch"));
-                                    return VillagerCommand.villagerExecute(ctx, location);
+                                    return VillagerCommand.villagerExecuteTeleport(ctx, location);
                                 })
                             )
                         )
                     )
                 )
+                .then(Commands.literal("addlevel")
+                    .executes(VillagerCommand::villagerExecuteAddLevel)
+                )
             );
     }
 
-    private static int villagerExecute(CommandContext<CommandSourceStack> ctx, Location location) {
+    private static int villagerExecuteTeleport(CommandContext<CommandSourceStack> ctx, Location location) {
         AVillager villager = (AVillager) VillagerRegistry.get(StringArgumentType.getString(ctx, "villager"));
 
         if (villager == null) {
@@ -60,6 +63,23 @@ public class VillagerCommand {
 
         GameManager.getInstance().getDatabase().updateVillagerLocation(villager.getVillager().getUniqueId(), location);
         villager.getVillager().teleport(location);
+        return Command.SINGLE_SUCCESS;
+    }
+
+    private static int villagerExecuteAddLevel(CommandContext<CommandSourceStack> ctx) {
+        AVillager villager = (AVillager) VillagerRegistry.get(StringArgumentType.getString(ctx, "villager"));
+
+        if (villager == null) {
+            ctx.getSource().getSender().sendMessage(Component.text("Villager introuvable !"));
+            return Command.SINGLE_SUCCESS;
+        }
+
+        if (villager instanceof VillagerLevel villagerLevel) {
+            if (!villagerLevel.levelUp())
+                ctx.getSource().getSender().sendMessage(Component.text("Villager already at max level !"));
+        } else {
+            ctx.getSource().getSender().sendMessage(Component.text("Villager is not a levelable villager !"));
+        }
         return Command.SINGLE_SUCCESS;
     }
 }
