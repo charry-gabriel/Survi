@@ -1,6 +1,5 @@
 package fr.miuby.survi;
-
-import fr.miuby.survi.database.PlayerColumn;
+/*
 import fr.miuby.survi.player.AlphaPlayer;
 import fr.miuby.survi.role.Role;
 import fr.miuby.survi.player.event.AlphaPlayerRoleChangeEvent;
@@ -26,8 +25,8 @@ public class Commands {
                     return true;
 
                 // Swap role
-                GameManager.getInstance().getDatabase().updatePlayer(alphaPlayer.getUuid(), PlayerColumn.ROLE, role.type().toString());
                 alphaPlayer.setRole(role);
+                GameManager.getInstance().getAlphaPlayerFactory().getPersistenceService().updateRole(alphaPlayer);
 
                 if (alphaPlayer.getPlayer().isOnline())
                     GameManager.getInstance().getAlphaPlayerFactory().sendToPlayers(alphaPlayer);
@@ -61,7 +60,7 @@ public class Commands {
                 else if (args[0].equals("remove"))
                     alphaPlayer.removeSubRole(role);
 
-                GameManager.getInstance().getDatabase().updatePlayer(alphaPlayer.getUuid(), PlayerColumn.SUBROLES, String.join(",", alphaPlayer.getSubRoles().stream().map(subrole -> subrole.type().toString()).toList()));
+                GameManager.getInstance().getAlphaPlayerFactory().getPersistenceService().updateSubRoles(alphaPlayer);
 
                 if (alphaPlayer.getPlayer().isOnline())
                     GameManager.getInstance().getAlphaPlayerFactory().sendToPlayers(alphaPlayer);
@@ -71,3 +70,4 @@ public class Commands {
         return false;
     }
 }
+*/
