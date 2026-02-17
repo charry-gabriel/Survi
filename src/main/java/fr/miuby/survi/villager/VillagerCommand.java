@@ -8,7 +8,7 @@ import com.mojang.brigadier.context.CommandContext;
 import fr.miuby.lib.villager.MLVillager;
 import fr.miuby.lib.villager.VillagerRegistry;
 import fr.miuby.survi.GameManager;
-import fr.miuby.survi.world.WorldFactory;
+import fr.miuby.survi.world.WorldInitializer;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
 import io.papermc.paper.command.brigadier.Commands;
 import io.papermc.paper.command.brigadier.argument.ArgumentTypes;
@@ -34,11 +34,11 @@ public class VillagerCommand {
                         .executes(ctx -> VillagerCommand.villagerExecute(ctx, ctx.getArgument("player", PlayerSelectorArgumentResolver.class).resolve(ctx.getSource()).getFirst().getLocation()))
                     )
                     .then(Commands.argument("location", ArgumentTypes.finePosition(true))
-                        .executes(ctx -> VillagerCommand.villagerExecute(ctx, ctx.getArgument("location", FinePositionResolver.class).resolve(ctx.getSource()).toLocation(WorldFactory.getDefaultWorld())))
+                        .executes(ctx -> VillagerCommand.villagerExecute(ctx, ctx.getArgument("location", FinePositionResolver.class).resolve(ctx.getSource()).toLocation(WorldInitializer.getDefaultWorld())))
                         .then(Commands.argument("yaw", DoubleArgumentType.doubleArg(0, 360))
                             .then(Commands.argument("pitch", DoubleArgumentType.doubleArg(0, 360))
                                 .executes(ctx -> {
-                                    Location location = ctx.getArgument("location", FinePositionResolver.class).resolve(ctx.getSource()).toLocation(WorldFactory.getDefaultWorld());
+                                    Location location = ctx.getArgument("location", FinePositionResolver.class).resolve(ctx.getSource()).toLocation(WorldInitializer.getDefaultWorld());
                                     location.setYaw((float) DoubleArgumentType.getDouble(ctx, "yaw"));
                                     location.setPitch((float) DoubleArgumentType.getDouble(ctx, "pitch"));
                                     return VillagerCommand.villagerExecute(ctx, location);
