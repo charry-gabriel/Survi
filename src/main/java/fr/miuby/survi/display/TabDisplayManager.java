@@ -100,7 +100,7 @@ public class TabDisplayManager {
         double currentValue = attributeInstance.getValue();
         double diff = currentValue - baseValue;
 
-        String sign = "";
+        String sign = " ";
         NamedTextColor color;
         if (Math.abs(diff) < 0.001) {
             diff = 0;
@@ -110,9 +110,10 @@ public class TabDisplayManager {
             sign = "+";
         } else {
             color = NamedTextColor.RED;
+            sign = "-";
         }
 
         return Component.text(statName + ": ", NamedTextColor.WHITE)
-                .append(Component.text(sign + formatDouble(diff), color));
+                .append(Component.text(formatDouble(baseValue) + sign + formatDouble(diff), color));
     }
 }
