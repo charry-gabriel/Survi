@@ -1,29 +1,21 @@
 package fr.miuby.survi.player;
 
+import fr.miuby.lib.player.MLPlayer;
 import fr.miuby.lib.world.WorldRegistry;
 import fr.miuby.survi.GameManager;
-import fr.miuby.survi.database.PlayerColumn;
 import fr.miuby.survi.role.*;
 import fr.miuby.survi.world.EWorld;
 import fr.miuby.lib.world.MLWorld;
 import lombok.Getter;
 import lombok.Setter;
-import org.bukkit.NamespacedKey;
 import org.bukkit.attribute.Attribute;
-import org.bukkit.attribute.AttributeInstance;
-import org.bukkit.attribute.AttributeModifier;
-import org.bukkit.entity.Player;
-import org.bukkit.potion.PotionEffect;
-import org.bukkit.potion.PotionEffectType;
 
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.*;
 
-public class AlphaPlayer implements Serializable {
-    @Getter
-    private final UUID uuid;
+public class AlphaPlayer extends MLPlayer implements Serializable {
     @Getter
     private final AlphaScoreboard scoreboard;
     @Getter
@@ -42,12 +34,6 @@ public class AlphaPlayer implements Serializable {
     @Setter
     @Getter
     private boolean isTakingNoDamage;
-    @Setter
-    @Getter
-    private String pseudo;
-    @Setter
-    @Getter
-    private Player player;
     @Setter
     @Getter
     private Role role;
@@ -69,7 +55,7 @@ public class AlphaPlayer implements Serializable {
     //endregion
 
     public AlphaPlayer(UUID uuid) {
-        this.uuid = uuid;
+        super(uuid);
         this.scoreboard = new AlphaScoreboard();
         this.alphaLife = new AlphaLife(this);
     }
@@ -78,81 +64,20 @@ public class AlphaPlayer implements Serializable {
         return GameManager.getInstance().getAlphaPlayerFactory().getAlphaPlayer(uuid);
     }
 
-    public void joinServer() {
-        if(this.player == null)
-            this.player = GameManager.getInstance().getPlugin().getServer().getPlayer(this.uuid);
+    @Override
+    public void onJoinServer() {
+        this.player.setScoreboard(this.scoreboard.getScoreboard());
 
-        if(this.player != null) {
-            this.player.setScoreboard(this.scoreboard.getScoreboard());
+        this.world = WorldRegistry.get(getPlayer().getWorld().getUID());
+        GameManager.getInstance().getAlphaPlayerFactory().sendToPlayers(this);
 
-            this.world = WorldRegistry.get(getPlayer().getWorld().getUID());
-            GameManager.getInstance().getAlphaPlayerFactory().sendToPlayers(this);
+        GameManager.getInstance().getVillagerFactory().applyAllCurrentBlessing(this);
+        GameManager.getInstance().getAlphaPlayerFactory().setPlayersToTeam(this.scoreboard);
 
-            GameManager.getInstance().getVillagerFactory().applyAllCurrentBlessing(this);
-            GameManager.getInstance().getAlphaPlayerFactory().setPlayersToTeam(this.scoreboard);
+        this.getAlphaLife().actualizeDeath();
+        this.getAlphaLife().actualizeSuccess();
 
-            this.addRoleAttribute();
-            this.getAlphaLife().actualizeDeath();
-            this.getAlphaLife().actualizeSuccess();
-
-            this.player.discoverRecipes(GameManager.getInstance().getCustomRecipeFactory().getNewRecipes().keySet());
-        }
-    }
-
-    /**
-     * Applies main role + all sub-roles attributes for the current world.
-     * Single source of truth for "current role state" on the player.
-     */
-    public void addRoleAttribute() {
-        addAttributesForRole(this.getRole());
-        for (Role subRole : this.getSubRoles()) {
-            addAttributesForRole(subRole);
-        }
-    }
-
-    /**
-     * Applies one role's attributes for the current world only.
-     */
-    public void addAttributesForRole(Role role) {
-        if (this.player == null) return;
-        for (RoleAttribute attribute : role.attributes()) {
-            if (this.getWorld() != attribute.getWorld() && attribute.getWorld() != EWorld.ALL)
-                continue;
-            attribute.setRole(role.roleId());
-            if (attribute.getAttributeType() == Attribute.MAX_HEALTH)
-                this.getAlphaLife().regenHealth(() -> this.addAttribute(attribute));
-            else
-                this.addAttribute(attribute);
-        }
-    }
-
-    /**
-     * Removes all attribute modifiers for the given role (all worlds for that role).
-     */
-    public void removeAttributesForRole(Role role) {
-        if (this.player == null) return;
-        for (RoleAttribute attribute : role.attributes()) {
-            AttributeInstance playerAttribute = this.player.getAttribute(attribute.getAttributeType());
-            if (playerAttribute == null) continue;
-            String name = RoleAttribute.createName(attribute.getWorld().toString(), role.roleId(), attribute.getAttributeType().getKey().getKey());
-            AttributeModifier mod = playerAttribute.getModifier(new NamespacedKey(GameManager.getInstance().getPlugin(), name));
-            if (mod != null) {
-                if (attribute.getAttributeType() == Attribute.MAX_HEALTH)
-                    this.getAlphaLife().regenHealth(() -> playerAttribute.removeModifier(mod));
-                else
-                    playerAttribute.removeModifier(mod);
-            }
-        }
-    }
-
-    /**
-     * Clears all role-based modifiers (main role + sub-roles), then you typically call addRoleAttribute() to reapply for current world.
-     */
-    public void clearAllRoleAttributes() {
-        removeAttributesForRole(this.getRole());
-        for (Role subRole : this.getSubRoles()) {
-            removeAttributesForRole(subRole);
-        }
+        this.player.discoverRecipes(GameManager.getInstance().getCustomRecipeFactory().getNewRecipes().keySet());
     }
 
     public void gainOneSuccess(boolean challenge) {
@@ -165,47 +90,18 @@ public class AlphaPlayer implements Serializable {
     public void addMort(int mort) {
         this.mort += mort;
         this.alphaLife.setDeath(this.mort);
-
-        GameManager.getInstance().getDatabase().updatePlayer(this.uuid, PlayerColumn.MORT, String.valueOf(this.mort));
+        GameManager.getInstance().getAlphaPlayerFactory().getPersistenceService().updateMort(this);
     }
 
     public void addSuccess(int success) {
         this.success = success;
         this.getAlphaLife().regenHealth(() -> this.getAlphaLife().setSuccess(success));
-
-        GameManager.getInstance().getDatabase().updatePlayer(this.uuid, PlayerColumn.SUCCESS, String.valueOf(this.success));
+        GameManager.getInstance().getAlphaPlayerFactory().getPersistenceService().updateSuccess(this);
     }
 
     public void teleport(MLWorld monde) {
         if (getPlayer() != null)
             getPlayer().teleport(monde.getSpawnPoint());
-    }
-
-    public void addAttribute(RoleAttribute roleAttribute) {
-        if(roleAttribute.getName() == null)
-            return;
-
-        AttributeInstance playerAttribute = this.getPlayer().getAttribute(roleAttribute.getAttributeType());
-        if (playerAttribute == null)
-            return;
-
-        AttributeModifier attributeModifier = playerAttribute.getModifier(new NamespacedKey(GameManager.getInstance().getPlugin(), roleAttribute.getName()));
-
-        // If already exist
-        if (attributeModifier != null)
-            playerAttribute.removeModifier(attributeModifier);
-
-        if (roleAttribute.getOperation() == RoleAttribute.Operation.REMOVE) {
-            playerAttribute.setBaseValue(roleAttribute.getValue());
-            baseAttributes.put(roleAttribute.getAttributeType(), (double) roleAttribute.getValue());
-        } else {
-            playerAttribute.addTransientModifier(roleAttribute.createAttributeModifier());
-        }
-
-        if (roleAttribute.getAttributeType() == Attribute.MAX_ABSORPTION) {
-            this.getPlayer().removePotionEffect(PotionEffectType.ABSORPTION);
-            this.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.ABSORPTION, 0, (int) roleAttribute.getValue()));
-        }
     }
 
     //region Getters Setters

@@ -36,6 +36,6 @@ public class WorldListener implements Listener {
 
         alphaPlayer.setWorld(WorldRegistry.get(event.getPlayer().getWorld().getUID()));
         GameManager.getInstance().getAlphaPlayerFactory().sendToPlayers(alphaPlayer);
-        GameManager.getInstance().getPlayerAttributeService().reapplyAllRoleAttributes(alphaPlayer);
+        GameManager.getInstance().getAlphaPlayerFactory().getAttributeService().reapplyAllRoleAttributes(alphaPlayer);
     }
 }

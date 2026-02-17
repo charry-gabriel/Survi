@@ -17,8 +17,7 @@ import java.util.logging.Level;
 public class ServerListener implements Listener {
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event){
-        Player player = event.getPlayer();
-        GameManager.getInstance().getAlphaPlayerFactory().playerJoin(player.getUniqueId());
+        GameManager.getInstance().getAlphaPlayerFactory().onPlayerJoin(event.getPlayer());
     }
 
     @EventHandler

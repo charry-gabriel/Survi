@@ -27,7 +27,7 @@ public class SubRoleTabCompleter implements TabCompleter {
             }
             else if (args.length == 2) {
                 return StringUtil.copyPartialMatches(args[1],
-                        GameManager.getInstance().getAlphaPlayerFactory().getAlphaPlayers().values().stream().map(AlphaPlayer::getPseudo).toList(),
+                        GameManager.getInstance().getAlphaPlayerFactory().getAllPseudo(),
                         new ArrayList<>());
             } else if (args.length == 3) {
                 AlphaPlayer alphaPlayer = GameManager.getInstance().getAlphaPlayerFactory().getAlphaPlayer(args[1]);

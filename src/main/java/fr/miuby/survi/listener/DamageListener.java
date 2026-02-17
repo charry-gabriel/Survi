@@ -59,7 +59,7 @@ public class DamageListener implements Listener {
 
             if (damagedAlphaPlayer.getRole().type() == ERole.FEE) {
                 if (!damagedAlphaPlayer.isTakingNoDamage()) {
-                    for (AlphaPlayer otherPlayer : GameManager.getInstance().getAlphaPlayerFactory().getAlphaPlayers().values()) {
+                    for (AlphaPlayer otherPlayer : GameManager.getInstance().getAlphaPlayerFactory().getAlphaPlayers()) {
                         if (otherPlayer.getPlayer() != null && otherPlayer.getRole().type() == ERole.FEE) {
                             if (!otherPlayer.getUuid().equals(damagedAlphaPlayer.getUuid())) {
                                 otherPlayer.setTakingNoDamage(true);

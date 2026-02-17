@@ -18,7 +18,7 @@ public class AlphaPlayerListener implements Listener {
     public void onAlphaPlayerRoleChange(AlphaPlayerRoleChangeEvent event) {
         if (!event.getAlphaPlayer().getPlayer().isOnline())
             return;
-        GameManager.getInstance().getPlayerAttributeService().onRoleAttributesChange(
+        GameManager.getInstance().getAlphaPlayerFactory().getAttributeService().onRoleAttributesChange(
                 event.getAlphaPlayer(), event.getOldRole(), event.getNewRole());
     }
 

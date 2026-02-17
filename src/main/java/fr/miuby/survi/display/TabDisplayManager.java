@@ -26,7 +26,7 @@ public class TabDisplayManager {
     private void updateTabList() {
         for (Player player : Bukkit.getOnlinePlayers()) {
             AlphaPlayer alphaPlayer = AlphaPlayer.get(player.getUniqueId());
-            if (alphaPlayer != null && alphaPlayer.getPlayer() != null && alphaPlayer.getRole() != null) {
+            if (alphaPlayer != null && alphaPlayer.getPlayer() != null) {
                 player.sendPlayerListHeaderAndFooter(buildHeader(alphaPlayer), buildFooter(alphaPlayer));
             }
         }
@@ -100,17 +100,17 @@ public class TabDisplayManager {
         double currentValue = attributeInstance.getValue();
         double diff = currentValue - baseValue;
 
+        String sign = "";
         NamedTextColor color;
         if (Math.abs(diff) < 0.001) {
             diff = 0;
             color = NamedTextColor.GRAY;
         } else if (diff > 0) {
             color = NamedTextColor.GREEN;
+            sign = "+";
         } else {
             color = NamedTextColor.RED;
         }
-
-        String sign = diff >= 0 ? "+" : "";
 
         return Component.text(statName + ": ", NamedTextColor.WHITE)
                 .append(Component.text(sign + formatDouble(diff), color));

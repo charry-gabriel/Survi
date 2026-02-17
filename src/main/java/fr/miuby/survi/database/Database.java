@@ -9,6 +9,7 @@ import fr.miuby.survi.crops.PlantedCrop;
 import fr.miuby.survi.player.AlphaPlayer;
 import fr.miuby.survi.GameManager;
 import fr.miuby.survi.role.ERole;
+import fr.miuby.survi.role.Role;
 import fr.miuby.survi.villager.AlphaVillagerData;
 import fr.miuby.survi.world.EWorld;
 import org.bukkit.Location;
@@ -48,23 +49,20 @@ public abstract class Database {
 
             rs = ps.executeQuery();
             while(rs.next()){
-
                 UUID uuid = UUID.fromString(rs.getString("uuid"));
-                AlphaPlayer alphaPlayer = new AlphaPlayer(uuid);
-                GameManager.getInstance().getAlphaPlayerFactory().getAlphaPlayers().put(uuid, alphaPlayer);
+                String pseudo = rs.getString("pseudo");
+                Role role = GameManager.getInstance().getRoleRegistry().getRole(ERole.valueOf(rs.getString("role")));
+
+                AlphaPlayer alphaPlayer = GameManager.getInstance().getAlphaPlayerFactory().registerAlphaPlayer(uuid, pseudo, role);
 
                 alphaPlayer.setMort(rs.getInt("mort"));
                 alphaPlayer.setSuccess(rs.getInt("success"));
-                alphaPlayer.setRole(GameManager.getInstance().getRoleRegistry().getRole(ERole.valueOf(rs.getString("role"))));
 
                 String subRoles = rs.getString("subroles");
                 if (subRoles != null && !subRoles.isEmpty()) {
                     for (String subRole : subRoles.split(","))
                         alphaPlayer.addSubRole(GameManager.getInstance().getRoleRegistry().getRole(ERole.valueOf(subRole)));
                 }
-
-                alphaPlayer.setPseudo(rs.getString("pseudo"));
-                GameManager.getInstance().getScheduler().runTask(GameManager.getInstance().getPlugin(), alphaPlayer::joinServer);
             }
         } catch (SQLException ex) {
             GameManager.getInstance().getLogger().log(Level.SEVERE, Errors.sqlConnectionExecute, ex);
@@ -73,63 +71,13 @@ public abstract class Database {
         }
     }
 
-    public void initAlphaPlayer(AlphaPlayer alphaPlayer, UUID uuid) {
-        Connection conn = null;
-        PreparedStatement ps = null;
-        ResultSet rs;
-        try {
-            conn = getSQLConnection();
-            ps = conn.prepareStatement("SELECT * FROM player WHERE uuid = ?");
-            ps.setString(1, uuid.toString());
-            rs = ps.executeQuery();
-
-            if (rs.next()) {
-                int mort = rs.getInt("mort");
-                int success = rs.getInt("success");
-                String role = rs.getString("role");
-                String pseudo = rs.getString("pseudo");
-
-                alphaPlayer.setMort(mort);
-                alphaPlayer.setSuccess(success);
-                alphaPlayer.setRole(GameManager.getInstance().getRoleRegistry().getRole(ERole.valueOf(role)));
-
-                String subRoles = rs.getString("subroles");
-                if (subRoles != null && !subRoles.isEmpty()) {
-                    for (String subRole : subRoles.split(","))
-                        alphaPlayer.addSubRole(GameManager.getInstance().getRoleRegistry().getRole(ERole.valueOf(subRole)));
-                }
-
-                alphaPlayer.setPseudo(pseudo);
-                GameManager.getInstance().getScheduler().runTask(GameManager.getInstance().getPlugin(), alphaPlayer::joinServer);
-            } else {
-                Player player = GameManager.getInstance().getPlugin().getServer().getPlayer(uuid);
-
-                GameManager.getInstance().getLogger().info("player "+(player != null));
-                if (player != null) {
-                    GameManager.getInstance().getLogger().info("player "+player.getName());
-                    alphaPlayer.setPlayer(player);
-                    alphaPlayer.setMort(0);
-                    alphaPlayer.setSuccess(0);
-                    alphaPlayer.setRole(GameManager.getInstance().getRoleRegistry().getDefaultRole());
-                    alphaPlayer.setPseudo(player.getName());
-                    CreateDBPlayer(player.getUniqueId(), player.getName());
-                }
-                GameManager.getInstance().getScheduler().runTask(GameManager.getInstance().getPlugin(), alphaPlayer::joinServer);
-            }
-        } catch (SQLException ex) {
-            GameManager.getInstance().getLogger().log(Level.SEVERE, Errors.sqlConnectionExecute, ex);
-        } finally {
-            closeResources(conn, ps);
-        }
-    }
-
-    public void CreateDBPlayer(UUID uuid, String pseudo) {
+    public void CreateDBPlayer(Player player) {
         GameManager.getInstance().getScheduler().runTaskAsynchronously(GameManager.getInstance().getPlugin(), () -> {
             try (Connection conn = getSQLConnection();
                  PreparedStatement ps = conn.prepareStatement("INSERT INTO player (uuid, mort, success, pseudo, role) VALUES (?, 0, 0, ?, ?)")) {
                 
-                ps.setString(1, uuid.toString());
-                ps.setString(2, pseudo);
+                ps.setString(1, player.getUniqueId().toString());
+                ps.setString(2, player.getName());
                 ps.setString(3, GameManager.getInstance().getRoleRegistry().getDefaultRole().type().toString());
                 ps.executeUpdate();
                 

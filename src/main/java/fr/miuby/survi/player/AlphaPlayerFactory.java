@@ -1,55 +1,85 @@
 package fr.miuby.survi.player;
 
+import fr.miuby.lib.player.MLPlayerRegistry;
 import fr.miuby.survi.GameManager;
+import fr.miuby.survi.player.service.PlayerAttributeService;
+import fr.miuby.survi.player.service.PlayerPersistenceService;
+import fr.miuby.survi.role.Role;
+import lombok.Getter;
+import org.bukkit.entity.Player;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Collection;
 import java.util.UUID;
 
 public class AlphaPlayerFactory {
-    private final Map<UUID, AlphaPlayer> players = new HashMap<>();
+    private final MLPlayerRegistry<AlphaPlayer> registry = new MLPlayerRegistry<>();
+    @Getter
+    private final PlayerAttributeService attributeService = new PlayerAttributeService();
+    @Getter
+    private final PlayerPersistenceService persistenceService = new PlayerPersistenceService();
 
-    public Map<UUID, AlphaPlayer> getAlphaPlayers(){
-        return players;
+    public AlphaPlayer get(UUID uuid) {
+        return registry.get(uuid);
+    }
+
+    public Collection<AlphaPlayer> getAlphaPlayers() {
+        return registry.getAll();
+    }
+
+    public Collection<String> getAllPseudo() {
+        Collection<String> pseudos = registry.getAll().stream().map(AlphaPlayer::getPseudo).toList();
+        return pseudos;
     }
 
     public AlphaPlayer getAlphaPlayer(UUID uuid){
-        AlphaPlayer alphaPlayer = players.get(uuid);
+        AlphaPlayer alphaPlayer = registry.get(uuid);
         if (alphaPlayer == null)
             throw new NullPointerException(uuid.toString() + " alphaPlayer doesn't exist !");
         return alphaPlayer;
     }
 
     public AlphaPlayer getAlphaPlayer(String pseudo) {
-        for (AlphaPlayer player : players.values()) {
-            if (player.getPseudo().equals(pseudo))
-                return player;
+        AlphaPlayer alphaPlayer = registry.get(pseudo);
+        if (alphaPlayer == null) {
+            throw new NullPointerException(pseudo + " alphaPlayer doesn't exist !");
         }
-        throw new NullPointerException(pseudo + " alphaPlayer doesn't exist !");
+        return alphaPlayer;
     }
 
     public void setPlayersToTeam(AlphaScoreboard scoreboard) {
-        for(AlphaPlayer alphaPlayer : players.values()) {
+        for(AlphaPlayer alphaPlayer : registry.getAll()) {
             if(alphaPlayer.getPlayer() != null)
                 scoreboard.getTeam(alphaPlayer).addPlayer(alphaPlayer);
         }
     }
 
     public void sendToPlayers(AlphaPlayer player) {
-        for(AlphaPlayer alphaPlayer : players.values()) {
+        for(AlphaPlayer alphaPlayer : registry.getAll()) {
             if(alphaPlayer.getPlayer() != null) {
                 alphaPlayer.getScoreboard().getTeam(player).addPlayer(player);
             }
         }
     }
 
-    public void playerJoin(UUID uuid) {
-        if(!players.containsKey(uuid)) {
-            AlphaPlayer alphaPlayer = new AlphaPlayer(uuid);
-            players.put(uuid, alphaPlayer);
-            GameManager.getInstance().getDatabase().initAlphaPlayer(alphaPlayer, uuid);
-        }else{
-            AlphaPlayer.get(uuid).joinServer();
+    public void onPlayerJoin(Player bukkitPlayer) {
+        AlphaPlayer alphaPlayer = GameManager.getInstance().getAlphaPlayerFactory().get(bukkitPlayer.getUniqueId());
+
+        // if player doesn't exist in database, create it
+        if (alphaPlayer == null) {
+            GameManager.getInstance().getDatabase().CreateDBPlayer(bukkitPlayer);
+            alphaPlayer = registerAlphaPlayer(bukkitPlayer.getUniqueId(), bukkitPlayer.getName(), GameManager.getInstance().getRoleRegistry().getDefaultRole());
         }
+
+        alphaPlayer.setPlayer(bukkitPlayer);
+        alphaPlayer.onJoinServer();
+        attributeService.applyAllRoleAttributes(alphaPlayer);
+    }
+
+    public AlphaPlayer registerAlphaPlayer(UUID uuid, String pseudo, Role role) {
+        AlphaPlayer alphaPlayer = new AlphaPlayer(uuid);
+        alphaPlayer.setPseudo(pseudo);
+        alphaPlayer.setRole(role);
+        registry.register(alphaPlayer);
+        return alphaPlayer;
     }
 }
