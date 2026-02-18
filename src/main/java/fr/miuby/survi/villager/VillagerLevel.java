@@ -5,12 +5,12 @@ import fr.miuby.survi.player.AlphaPlayer;
 import fr.miuby.survi.GameManager;
 import fr.miuby.survi.villager.blessing.Blessing;
 import fr.miuby.survi.villager.blessing.BlessingEffect;
+import fr.miuby.survi.villager.event.VillagerLevelUpEvent;
 import fr.miuby.survi.world.WorldInitializer;
 import lombok.Getter;
 import lombok.Setter;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.sound.Sound;
-import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
@@ -83,8 +83,8 @@ public class VillagerLevel extends AVillager {
             return false;
         }
 
-        Bukkit.broadcast(Component.text("<", NamedTextColor.AQUA).append(getDisplayName()).append(Component.text("> ", NamedTextColor.AQUA)).append(getRecapMessage()));
-        applyBlessing();
+        VillagerLevelUpEvent event = new VillagerLevelUpEvent(this, this.level + 1);
+        Bukkit.getPluginManager().callEvent(event);
 
         this.level++;
         GameManager.getInstance().getDatabase().updateVillagerLevel(getVillager().getUniqueId(), level);
