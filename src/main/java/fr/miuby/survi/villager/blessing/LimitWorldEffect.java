@@ -3,6 +3,7 @@ package fr.miuby.survi.villager.blessing;
 import fr.miuby.lib.world.WorldRegistry;
 import fr.miuby.lib.utils.Rect;
 import fr.miuby.survi.player.AlphaPlayer;
+import fr.miuby.survi.villager.VillagerLevel;
 import fr.miuby.survi.world.EWorld;
 import fr.miuby.lib.world.MLWorld;
 
@@ -16,7 +17,7 @@ public class LimitWorldEffect extends BlessingEffect {
     }
 
     @Override
-    public void applyEffect(AlphaPlayer player) {
+    public void applyEffect(VillagerLevel villager, AlphaPlayer player) {
         this.world.setLimit(this.rect);
     }
 }

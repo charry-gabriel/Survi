@@ -3,14 +3,13 @@ package fr.miuby.survi.villager;
 import fr.miuby.lib.villager.MLVillagerData;
 import fr.miuby.survi.player.AlphaPlayer;
 import fr.miuby.survi.GameManager;
+import fr.miuby.survi.system.log.LogManager;
 import fr.miuby.survi.villager.blessing.Blessing;
 import fr.miuby.survi.villager.blessing.BlessingEffect;
 import fr.miuby.survi.villager.event.VillagerLevelUpEvent;
 import fr.miuby.survi.world.WorldInitializer;
 import lombok.Getter;
 import lombok.Setter;
-import net.kyori.adventure.key.Key;
-import net.kyori.adventure.sound.Sound;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
@@ -20,12 +19,16 @@ import org.bukkit.entity.Villager;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.scheduler.BukkitTask;
 
 import javax.annotation.Nullable;
+import java.time.Duration;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.logging.Level;
 
 public class VillagerLevel extends AVillager {
     private final Tribute[] tributes;
@@ -38,6 +41,10 @@ public class VillagerLevel extends AVillager {
     private int level = 0;
     private final List<ItemStack> givenItems = new ArrayList<>();
 
+    private Instant unlockedDate;
+    @Getter
+    private BukkitTask unlockTask;
+
     public VillagerLevel(String nameId, Villager.Type type, Villager.Profession profession, Blessing[] blessings, TextComponent[] messages, Tribute[] tributes, TextComponent[] names, TextComponent[] recap) {
         super(nameId, type, profession, messages);
         this.blessings = blessings;
@@ -48,7 +55,7 @@ public class VillagerLevel extends AVillager {
 
     @Override
     protected AlphaVillagerData createDefaultData() {
-        return new AlphaVillagerData(null, nameId, new Location(WorldInitializer.getDefaultWorld(), 0, 700, 0), new ArrayList<>(), 0);
+        return new AlphaVillagerData(null, nameId, new Location(WorldInitializer.getDefaultWorld(), 0, 700, 0), new ArrayList<>(), 0, null);
     }
 
     @Override
@@ -57,6 +64,9 @@ public class VillagerLevel extends AVillager {
         if (data != null) {
             this.level = data.getLevel();
             this.givenItems.addAll(data.getGivenItems());
+
+            if (data.getUnlockedDate() != null)
+                this.unlockedDate = Instant.ofEpochMilli(data.getUnlockedDate());
         }
         return data;
     }
@@ -79,7 +89,7 @@ public class VillagerLevel extends AVillager {
 
     public boolean levelUp() {
         if (isMaxLevel()) {
-            GameManager.getInstance().getLogger().info(nameId + " est déjà au niveau maximum");
+            LogManager.getInstance().log(Level.INFO, LogManager.ETagLog.VILLAGER, nameId + " est déjà au niveau maximum");
             return false;
         }
 
@@ -116,6 +126,7 @@ public class VillagerLevel extends AVillager {
     }
 
     public void updateInventory() {
+        if (this.inventory == null) return;
         this.inventory.clear();
 
         Tribute tribute = getTribute();
@@ -125,26 +136,14 @@ public class VillagerLevel extends AVillager {
         }
     }
 
-    public void applyAllCurrentBlessing(AlphaPlayer player) {
+    public void applyAllCurrentBlessing(VillagerLevel villager, AlphaPlayer player) {
         player.getAlphaLife().regenHealth(() -> {
             for (Blessing blessing : getCurrentBlessings()) {
                 for (BlessingEffect effect : blessing.blessingEffects()) {
-                    effect.applyEffect(player);
+                    effect.applyEffect(villager, player);
                 }
             }
         });
-    }
-
-    public void applyBlessing() {
-        Sound myCustomSound = Sound.sound(Key.key("ui.toast.challenge_complete"), Sound.Source.AMBIENT, 1f, 1.1f);
-
-        for (Player player : Bukkit.getOnlinePlayers()) {
-            player.playSound(myCustomSound);
-
-            for (BlessingEffect effect : getBlessing().blessingEffects()) {
-                effect.applyEffect(AlphaPlayer.get(player.getUniqueId()));
-            }
-        }
     }
 
     private void createItemStack(Inventory inventory, ItemStack item) {
@@ -152,7 +151,7 @@ public class VillagerLevel extends AVillager {
 
         for (ItemStack tributeItem : inventory.getContents()) {
             if (tributeItem != null && tributeItem.isSimilar(item)) {
-                GameManager.getInstance().getLogger().info(this.nameId + " recupere " + item.getAmount() + " de " + item.getType().name());
+                LogManager.getInstance().log(Level.INFO, LogManager.ETagLog.VILLAGER, this.nameId + " recupere " + item.getAmount() + " de " + item.getType().name());
 
                 if (item.getAmount() < tributeItem.getAmount()) {
                     tributeItem.setAmount(tributeItem.getAmount() - item.getAmount());
@@ -173,7 +172,7 @@ public class VillagerLevel extends AVillager {
 
         for (ItemStack tributeItem : inventory.getContents()) {
             if (tributeItem != null && tributeItem.isSimilar(item)) {
-                GameManager.getInstance().getLogger().info(this.nameId + " recupere " + item.getAmount() + " de " + item.getType().name());
+                LogManager.getInstance().log(Level.INFO, LogManager.ETagLog.VILLAGER, this.nameId + " recupere " + item.getAmount() + " de " + item.getType().name());
                 this.givenItems.add(new ItemStack(item));
                 GameManager.getInstance().getDatabase().updateVillagerGivenItem(getVillager().getUniqueId(), this.givenItems);
 
@@ -219,4 +218,45 @@ public class VillagerLevel extends AVillager {
     public TextComponent getRecapMessage() {
         return recapMessages[this.level].color(NamedTextColor.AQUA);
     }
+
+    //region unlock
+    public boolean isUnlocked() {
+        if (unlockedDate == null) return false;
+        return Instant.now().isAfter(unlockedDate);
+    }
+
+    public void cancelUnlockTask() {
+        if (unlockTask != null && !unlockTask.isCancelled()) {
+            unlockTask.cancel();
+            unlockTask = null;
+        }
+    }
+
+    public void lock(Duration duration) {
+        if (this.isUnlocked()) {
+            this.unlockedDate = Instant.now().plus(duration);
+            cancelUnlockTask();
+
+            unlockTask = Bukkit.getScheduler().runTaskLater(GameManager.getInstance().getPlugin(), this::handleUnlockTask, duration.getSeconds() * 20);
+            GameManager.getInstance().getDatabase().lockVillager(getVillager().getUniqueId(), this.unlockedDate.toEpochMilli());
+        }
+    }
+
+    public void handleUnlockTask() {
+        if (isUnlocked()) {
+            LogManager.getInstance().log(Level.WARNING, LogManager.ETagLog.VILLAGER, "Task unlock déclenchée mais " + getNameId() + " déjà débloqué");
+            return;
+        }
+
+        cancelUnlockTask();
+
+        unlockedDate = null;
+        GameManager.getInstance().getDatabase().lockVillager(getVillager().getUniqueId(), null);
+    }
+
+    public String getUnlockedDate() {
+        if (unlockedDate.getEpochSecond() == 0) return "N/A";
+        return unlockedDate.toString();
+    }
+    //endregion
 }

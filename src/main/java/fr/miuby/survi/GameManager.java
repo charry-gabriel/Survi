@@ -2,31 +2,32 @@ package fr.miuby.survi;
 
 import fr.miuby.lib.MiubyLib;
 import fr.miuby.survi.crops.PlantedCropsManager;
-import fr.miuby.survi.database.Database;
-import fr.miuby.survi.database.SQLite;
+import fr.miuby.survi.system.database.Database;
+import fr.miuby.survi.system.database.SQLite;
 import fr.miuby.survi.item.CustomRecipeFactory;
 import fr.miuby.survi.item.CustomRecipe;
 import fr.miuby.survi.item.growth_item.GrowthItems;
 import fr.miuby.survi.item.locked_item.LockedItemsFactory;
 import fr.miuby.survi.player.AlphaPlayerFactory;
 import fr.miuby.survi.role.RoleRegistry;
+import fr.miuby.survi.system.time.TimeManager;
 import fr.miuby.survi.villager.VillagerFactory;
 import fr.miuby.survi.display.TabDisplayManager;
 import fr.miuby.survi.world.WorldInitializer;
+import fr.miuby.survi.system.log.LogManager;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.event.Event;
 import org.bukkit.scheduler.BukkitScheduler;
 
-import java.util.logging.Logger;
+import java.util.logging.Level;
 
 public class GameManager {
     private static GameManager instance = null;
 
     @Getter
     private Survi plugin;
-    @Getter
-    private final Logger logger = Logger.getLogger("Survi");
+
     @Getter
     private BukkitScheduler scheduler;
     @Getter
@@ -45,6 +46,8 @@ public class GameManager {
     private PlantedCropsManager plantedCropsManager;
     @Getter
     private TabDisplayManager tabDisplayManager;
+    @Getter
+    private TimeManager timeManager;
 
     @Setter
     @Getter
@@ -67,9 +70,13 @@ public class GameManager {
         return instance;
     }
 
+    private GameManager(){}
+
     public void init(Survi plugin) {
         this.plugin = plugin;
         this.scheduler = this.plugin.getServer().getScheduler();
+
+        LogManager.getInstance().log(Level.INFO, LogManager.ETagLog.SYSTEM, "Initialisation du plugin...");
 
         this.initDatabase();
         MiubyLib.init(plugin);
@@ -81,38 +88,46 @@ public class GameManager {
         if (this.initState != InitState.NOT_INITIALIZED)
             throw new IllegalStateException("Wrong init order !");
 
+        LogManager.getInstance().log(Level.INFO, LogManager.ETagLog.SYSTEM, "Chargement de la base de données...");
         this.database = new SQLite();
         this.database.load();
         this.initState = InitState.DATABASE_LOADED;
+        LogManager.getInstance().log(Level.INFO, LogManager.ETagLog.SYSTEM, "Base de données chargée");
     }
 
     private void initWorlds() {
         if (this.initState != InitState.DATABASE_LOADED)
             throw new IllegalStateException("Wrong init order !");
 
+        LogManager.getInstance().log(Level.INFO, LogManager.ETagLog.WORLD, "Initialisation (si besoin) des mondes...");
         WorldInitializer.initializeIfNeeded();
         this.initState = InitState.WORLDS_LOADED;
+        LogManager.getInstance().log(Level.INFO, LogManager.ETagLog.WORLD, "Mondes prêts");
     }
 
     public void initAfterWorldsLoad() {
         if (this.initState != InitState.WORLDS_LOADED)
             throw new IllegalStateException("Wrong init order !");
 
+        LogManager.getInstance().log(Level.INFO, LogManager.ETagLog.WORLD, "Chargement complet des mondes...");
         WorldInitializer.initializeWorlds();
 
+        LogManager.getInstance().log(Level.INFO, LogManager.ETagLog.PLAYER, "Initialisation des joueurs...");
         this.initPlayers();
 
+        LogManager.getInstance().log(Level.INFO, LogManager.ETagLog.VILLAGER, "Initialisation des villageois...");
         this.villagerFactory = new VillagerFactory();
 
+        LogManager.getInstance().log(Level.INFO, LogManager.ETagLog.ITEM, "Initialisation des items/recettes...");
         this.initItems();
 
         this.plantedCropsManager = new PlantedCropsManager(database);
         this.plantedCropsManager.load();
 
-        Timer timer = new Timer();
-        timer.update();
-        
-        plugin.getLogger().info("Plugin entièrement initialisé !");
+        this.timeManager = new TimeManager();
+        timeManager.start();
+
+        LogManager.getInstance().log(Level.INFO, LogManager.ETagLog.SYSTEM, "Plugin entièrement initialisé !");
     }
 
     private void initPlayers() {

@@ -1,15 +1,12 @@
-package fr.miuby.survi.database;
+package fr.miuby.survi.system.database;
 
 import java.io.File;
 import java.io.IOException;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.logging.Level;
 
 import fr.miuby.survi.GameManager;
+import fr.miuby.survi.system.log.LogManager;
 
 import javax.annotation.Nullable;
 
@@ -24,11 +21,19 @@ public class SQLite extends Database {
     private final String dbname;
 
     /** Current schema version. Bump this when you add a migration. */
-    private static final int CURRENT_DB_VERSION = 2;
+    private static final int CURRENT_DB_VERSION = 8;
 
     public SQLite(){
         dbname = GameManager.getInstance().getPlugin().getConfig().getString("SQLite.Filename", "minecraft");
     }
+
+    public final String SQLiteCreateDelayedEffectsTable = "CREATE TABLE IF NOT EXISTS delayed_effects (" +
+            "id INTEGER PRIMARY KEY AUTOINCREMENT," +
+            "effect_type varchar(255) NOT NULL," +
+            "target_uuid varchar(255)," +
+            "trigger_time BIGINT NOT NULL," +
+            "data TEXT" +
+            ");";
 
     public final String SQLiteCreatePlayerTable = "CREATE TABLE IF NOT EXISTS player (" +
             "`uuid` varchar(255) NOT NULL," +
@@ -50,6 +55,7 @@ public class SQLite extends Database {
             "`locationZ` FLOAT NOT NULL," +
             "`locationYaw` FLOAT NOT NULL," +
             "`locationPitch` FLOAT NOT NULL," +
+            "`unlockedDate` BIGINT DEFAULT NULL," +
             "PRIMARY KEY (`uuid`)" +
             ");";
             
@@ -59,6 +65,29 @@ public class SQLite extends Database {
             "`y` INT NOT NULL," +
             "`z` INT NOT NULL," +
             "PRIMARY KEY (`world_uid`, `x`, `y`, `z`)" +
+            ");";
+
+    public final String SQLiteCreateReputationTable = "CREATE TABLE IF NOT EXISTS player_reputation (" +
+            "`player_uuid` varchar(255) NOT NULL," +
+            "`trader_id` varchar(255) NOT NULL," +
+            "`reputation` int(11) NOT NULL," +
+            "PRIMARY KEY (`player_uuid`, `trader_id`)" +
+            ");";
+
+    public final String SQLiteCreatePlayerQuestTable = "CREATE TABLE IF NOT EXISTS player_quest (" +
+            "`player_uuid` varchar(255) NOT NULL," +
+            "`quest_id` varchar(255) NOT NULL," +
+            "`progress` int(11) NOT NULL," +
+            "`last_accepted` varchar(255) NOT NULL," +
+            "`is_completed` boolean NOT NULL," +
+            "`trader_id` varchar(255) NOT NULL DEFAULT ''," +
+            "`claimed` boolean NOT NULL DEFAULT 0," +
+            "PRIMARY KEY (`player_uuid`)" +
+            ");";
+
+    public final String SQLiteCreateServerData = "CREATE TABLE IF NOT EXISTS server_data (" +
+            "    key TEXT PRIMARY KEY," +
+            "    value TEXT NOT NULL" +
             ");";
 
     /**
@@ -77,7 +106,7 @@ public class SQLite extends Database {
             try {
                 dataFolder.createNewFile();
             } catch (IOException e) {
-                GameManager.getInstance().getLogger().log(Level.SEVERE, "File write error: "+dbname+".db");
+                LogManager.getInstance().log(Level.SEVERE, LogManager.ETagLog.SYSTEM, "File write error: " + dbname + ".db");
             }
         }
         try {
@@ -88,9 +117,9 @@ public class SQLite extends Database {
             Class.forName("org.sqlite.JDBC");
             return DriverManager.getConnection("jdbc:sqlite:" + dataFolder);
         } catch (SQLException ex) {
-            GameManager.getInstance().getLogger().log(Level.SEVERE,"SQLite exception on initialize", ex);
+            LogManager.getInstance().log(Level.SEVERE, LogManager.ETagLog.SYSTEM, "SQLite exception on initialize (" + ex.getMessage() + ")");
         } catch (ClassNotFoundException ex) {
-            GameManager.getInstance().getLogger().log(Level.SEVERE, "You need the SQLite JBDC library. Google it. Put it in /lib folder.");
+            LogManager.getInstance().log(Level.SEVERE, LogManager.ETagLog.SYSTEM, "You need the SQLite JBDC library. Google it. Put it in /lib folder.");
         }
         return null;
     }
@@ -104,7 +133,7 @@ public class SQLite extends Database {
              ResultSet rs = s.executeQuery("PRAGMA user_version")) {
             return rs.next() ? rs.getInt(1) : 0;
         } catch (SQLException e) {
-            GameManager.getInstance().getLogger().log(Level.WARNING, "Could not read DB version, assuming 0", e);
+            LogManager.getInstance().log(Level.WARNING, LogManager.ETagLog.SYSTEM, "Could not read DB version, assuming 0 (" + e.getMessage() + ")");
             return 0;
         }
     }
@@ -139,10 +168,37 @@ public class SQLite extends Database {
      * CURRENT_DB_VERSION each time you change the schema.
      */
     private void runMigration(Connection conn, int currentVersion) throws SQLException {
-        GameManager.getInstance().getLogger().info("Database schema " + currentVersion + " -> " + CURRENT_DB_VERSION + ", running migration.");
+        LogManager.getInstance().log(Level.INFO, LogManager.ETagLog.SYSTEM, "Database schema " + currentVersion + " -> " + CURRENT_DB_VERSION + ", running migration.");
         try (Statement s = conn.createStatement()) {
-            if (!hasColumn(conn, "player", "subroles")) {
-                s.executeUpdate("ALTER TABLE player ADD COLUMN subroles varchar(255)");
+            if (currentVersion < 2) {
+                if (!hasColumn(conn, "player", "subroles")) {
+                    s.executeUpdate("ALTER TABLE player ADD COLUMN subroles varchar(255)");
+                }
+            }
+            if (currentVersion < 3) {
+                s.executeUpdate(SQLiteCreateReputationTable);
+                s.executeUpdate(SQLiteCreatePlayerQuestTable);
+            }
+            if (currentVersion < 4) {
+                if (!hasColumn(conn, "player_quest", "trader_id")) {
+                    s.executeUpdate("ALTER TABLE player_quest ADD COLUMN trader_id varchar(255) NOT NULL DEFAULT ''");
+                }
+            }
+            if (currentVersion < 5) {
+                if (!hasColumn(conn, "player_quest", "claimed")) {
+                    s.executeUpdate("ALTER TABLE player_quest ADD COLUMN claimed boolean NOT NULL DEFAULT 0");
+                }
+            }
+            if (currentVersion < 6) {
+                s.executeUpdate(SQLiteCreateServerData);
+            }
+            if (currentVersion < 7) {
+                s.executeUpdate(SQLiteCreateDelayedEffectsTable);
+            }
+            if (currentVersion < 8) {
+                if (!hasColumn(conn, "villager", "unlockedDate")) {
+                    s.executeUpdate("ALTER TABLE villager ADD COLUMN unlockedDate BIGINT DEFAULT NULL");
+                }
             }
             setVersion(conn, CURRENT_DB_VERSION);
         }
@@ -164,6 +220,9 @@ public class SQLite extends Database {
             s.executeUpdate(SQLiteCreatePlayerTable);
             s.executeUpdate(SQLiteCreateVillagerTable);
             s.executeUpdate(SQLiteCreateCropTable);
+            s.executeUpdate(SQLiteCreateReputationTable);
+            s.executeUpdate(SQLiteCreatePlayerQuestTable);
+            s.executeUpdate(SQLiteCreateDelayedEffectsTable);
             s.close();
 
             int current = getCurrentVersion(connection);
@@ -171,7 +230,7 @@ public class SQLite extends Database {
                 runMigration(connection, current);
             }
         } catch (SQLException e) {
-            GameManager.getInstance().getLogger().severe(e.getMessage());
+            LogManager.getInstance().log(Level.SEVERE, LogManager.ETagLog.SYSTEM, e.getMessage());
         }
         initialize();
     }

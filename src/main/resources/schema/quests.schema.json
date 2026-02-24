@@ -1,0 +1,44 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "properties": {
+    "quests": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "name": { "type": "string" },
+          "description": { "type": "string" },
+          "type": {
+            "type": "string",
+            "enum": ["MINE", "KILL", "BREED", "FISH", "SHEAR", "CRAFT", "SMELT"]
+          },
+          "difficulty": {
+            "type": "string",
+            "enum": ["COMMON", "RARE", "LEGENDARY"]
+          },
+          "target": {
+            "type": ["string", "null"]
+          },
+          "goal": { "type": "integer", "minimum": 1 },
+          "reputation_reward": { "type": "integer", "minimum": 0 },
+          "rewards": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "type": { "type": "string" },
+                "duration": { "type": "integer", "minimum": 1 },
+                "amplifier": { "type": "integer", "minimum": 0 }
+              },
+              "required": ["type", "duration", "amplifier"]
+            }
+          }
+        },
+        "required": ["id", "name", "description", "type", "difficulty", "goal", "reputation_reward", "rewards"]
+      }
+    }
+  },
+  "required": ["quests"]
+}

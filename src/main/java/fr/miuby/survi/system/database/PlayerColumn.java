@@ -1,4 +1,4 @@
-package fr.miuby.survi.database;
+package fr.miuby.survi.system.database;
 
 import lombok.Getter;
 

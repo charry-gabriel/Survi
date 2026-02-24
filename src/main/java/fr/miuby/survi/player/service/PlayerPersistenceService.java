@@ -1,7 +1,7 @@
 package fr.miuby.survi.player.service;
 
-import fr.miuby.survi.database.Database;
-import fr.miuby.survi.database.PlayerColumn;
+import fr.miuby.survi.system.database.Database;
+import fr.miuby.survi.system.database.PlayerColumn;
 import fr.miuby.survi.player.AlphaPlayer;
 
 public final class PlayerPersistenceService {

@@ -1,6 +1,7 @@
 package fr.miuby.survi.item;
 
 import fr.miuby.survi.GameManager;
+import fr.miuby.survi.system.log.LogManager;
 import lombok.Getter;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -9,6 +10,7 @@ import org.bukkit.inventory.recipe.CraftingBookCategory;
 
 import java.util.*;
 import java.io.File;
+import java.util.logging.Level;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -60,7 +62,7 @@ public class CustomRecipeFactory {
                         ECustomItem custom = ECustomItem.valueOf(resultStr);
                         resultItem = custom.getItemStack();
                     } catch (IllegalArgumentException customEx) {
-                        plugin.getLogger().warning("Recipe " + key + " : unknown result '" + resultStr + "'. Skipped");
+                        LogManager.getInstance().log(Level.WARNING, LogManager.ETagLog.ITEM, "Recipe " + key + " : unknown result '" + resultStr + "'. Skipped");
                         continue;
                     }
                 }
@@ -72,13 +74,13 @@ public class CustomRecipeFactory {
                 if (!shapeLines.isEmpty() && keySec != null) {
                     // parse shape definition
                     if (shapeLines.size() > 3) {
-                        plugin.getLogger().warning("Recipe " + key + " has more than 3 shape lines. Skipped");
+                        LogManager.getInstance().log(Level.WARNING, LogManager.ETagLog.ITEM, "Recipe " + key + " has more than 3 shape lines. Skipped");
                         continue;
                     }
                     for (int r = 0; r < shapeLines.size(); r++) {
                         String line = shapeLines.get(r);
                         if (line.length() > 3) {
-                            plugin.getLogger().warning("Recipe " + key + " shape line too long. Skipped");
+                            LogManager.getInstance().log(Level.WARNING, LogManager.ETagLog.ITEM, "Recipe " + key + " shape line too long. Skipped");
                             continue;
                         }
                         for (int c = 0; c < line.length(); c++) {
@@ -86,14 +88,14 @@ public class CustomRecipeFactory {
                             if (sym == ' ') continue;
                             String matStr = keySec.getString(String.valueOf(sym));
                             if (matStr == null) {
-                                plugin.getLogger().warning("Recipe " + key + " missing key mapping for symbol " + sym + ". Skipped");
+                                LogManager.getInstance().log(Level.WARNING, LogManager.ETagLog.ITEM, "Recipe " + key + " missing key mapping for symbol " + sym + ". Skipped");
                                 continue;
                             }
                             Material mat;
                             try {
                                 mat = Material.valueOf(matStr);
                             } catch (IllegalArgumentException ex) {
-                                plugin.getLogger().warning("Recipe " + key + " unknown material " + matStr + ". Skipped");
+                                LogManager.getInstance().log(Level.WARNING, LogManager.ETagLog.ITEM, "Recipe " + key + " unknown material " + matStr + ". Skipped");
                                 continue;
                             }
                             int index = r * 3 + c;
@@ -104,7 +106,7 @@ public class CustomRecipeFactory {
                     // fallback to old 9-element list
                     List<String> list = newSec.getStringList(key + ".ingredients");
                     if (list.size() != 9) {
-                        plugin.getLogger().warning("Recipe " + key + " has not 9 ingredients. Skipped");
+                        LogManager.getInstance().log(Level.WARNING, LogManager.ETagLog.ITEM, "Recipe " + key + " has not 9 ingredients. Skipped");
                         continue;
                     }
                     for (int i = 0; i < 9; i++) {

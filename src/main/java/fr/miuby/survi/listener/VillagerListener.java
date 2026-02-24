@@ -41,7 +41,7 @@ public class VillagerListener implements Listener {
             player.playSound(myCustomSound);
 
             for (BlessingEffect effect : villager.getBlessing().blessingEffects()) {
-                effect.applyEffect(AlphaPlayer.get(player.getUniqueId()));
+                effect.applyEffect(villager, AlphaPlayer.get(player.getUniqueId()));
             }
         }
     }

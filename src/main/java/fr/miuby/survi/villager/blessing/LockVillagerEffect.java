@@ -1,17 +1,17 @@
 package fr.miuby.survi.villager.blessing;
 
 import fr.miuby.survi.player.AlphaPlayer;
-import fr.miuby.survi.GameManager;
 import fr.miuby.survi.villager.VillagerLevel;
 import lombok.RequiredArgsConstructor;
 
+import java.time.Duration;
+
 @RequiredArgsConstructor
-public class DispelEffect extends BlessingEffect{
-    private final int dispel;
+public class LockVillagerEffect extends BlessingEffect {
+    private final Duration duration;
 
     @Override
     public void applyEffect(VillagerLevel villager, AlphaPlayer player) {
-        GameManager.getInstance().setDispel(dispel);
-        player.getAlphaLife().actualizeDeath();
+        villager.lock(duration);
     }
 }

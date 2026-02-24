@@ -1,6 +1,6 @@
 package fr.miuby.survi.crops;
 
-import fr.miuby.survi.database.Database;
+import fr.miuby.survi.system.database.Database;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;

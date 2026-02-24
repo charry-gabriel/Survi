@@ -1,0 +1,181 @@
+quests:
+  - id: "mine_cobblestone_common"
+    name: "Mineur de Pierre"
+    description: "Minez 500 blocs de pierre."
+    type: "MINE"
+    difficulty: "COMMON"
+    target: "COBBLESTONE"
+    goal: 500
+    reputation_reward: 10
+    rewards:
+      - type: "HASTE"
+        duration: 1728000
+        amplifier: 0
+
+  - id: "kill_zombies_common"
+    name: "Chasseur de Zombies"
+    description: "Tuez 20 zombies."
+    type: "KILL"
+    difficulty: "COMMON"
+    target: "ZOMBIE"
+    goal: 20
+    reputation_reward: 10
+    rewards:
+      - type: "STRENGTH"
+        duration: 1728000
+        amplifier: 0
+
+  - id: "fish_common"
+    name: "Pêcheur du Dimanche"
+    description: "Pêchez 10 poissons."
+    type: "FISH"
+    difficulty: "COMMON"
+    target: null
+    goal: 10
+    reputation_reward: 12
+    rewards:
+      - type: "LUCK"
+        duration: 1728000
+        amplifier: 0
+
+  - id: "shear_sheep_common"
+    name: "Tondeur"
+    description: "Tondez 20 moutons."
+    type: "SHEAR"
+    difficulty: "COMMON"
+    target: "SHEEP"
+    goal: 20
+    reputation_reward: 12
+    rewards:
+      - type: "SPEED"
+        duration: 1728000
+        amplifier: 0
+
+  - id: "mine_iron_rare"
+    name: "Mineur de Fer"
+    description: "Minez 100 minerais de fer."
+    type: "MINE"
+    difficulty: "RARE"
+    target: "IRON_ORE"
+    goal: 100
+    reputation_reward: 25
+    rewards:
+      - type: "HASTE"
+        duration: 1728000
+        amplifier: 1
+      - type: "NIGHT_VISION"
+        duration: 1728000
+        amplifier: 0
+
+  - id: "breed_any_rare"
+    name: "Fermier Passionné"
+    description: "Faites se reproduire 20 animaux."
+    type: "BREED"
+    difficulty: "RARE"
+    target: null
+    goal: 20
+    reputation_reward: 30
+    rewards:
+      - type: "SATURATION"
+        duration: 1728000
+        amplifier: 0
+
+  - id: "craft_bread_rare"
+    name: "Boulanger"
+    description: "Fabriquez 32 pains."
+    type: "CRAFT"
+    difficulty: "RARE"
+    target: "BREAD"
+    goal: 32
+    reputation_reward: 28
+    rewards:
+      - type: "REGENERATION"
+        duration: 1728000
+        amplifier: 0
+
+  - id: "smelt_iron_rare"
+    name: "Maître Fondeur"
+    description: "Faites cuire 256 minerais de fer."
+    type: "SMELT"
+    difficulty: "RARE"
+    target: "IRON_INGOT"
+    goal: 256
+    reputation_reward: 40
+    rewards:
+      - type: "FIRE_RESISTANCE"
+        duration: 1728000
+        amplifier: 0
+
+  - id: "fish_rare"
+    name: "Pêcheur Confirmé"
+    description: "Pêchez 25 poissons."
+    type: "FISH"
+    difficulty: "RARE"
+    target: null
+    goal: 25
+    reputation_reward: 30
+    rewards:
+      - type: "LUCK"
+        duration: 1728000
+        amplifier: 1
+
+  - id: "kill_endermen_legendary"
+    name: "Chasseur de l'End"
+    description: "Tuez 50 Endermen."
+    type: "KILL"
+    difficulty: "LEGENDARY"
+    target: "ENDERMAN"
+    goal: 50
+    reputation_reward: 100
+    rewards:
+      - type: "STRENGTH"
+        duration: 1728000
+        amplifier: 1
+      - type: "SPEED"
+        duration: 1728000
+        amplifier: 1
+      - type: "RESISTANCE"
+        duration: 1728000
+        amplifier: 0
+
+  - id: "kill_wither_skeleton_legendary"
+    name: "Faucheur des Âmes"
+    description: "Tuez 5 Wither Squelettes."
+    type: "KILL"
+    difficulty: "LEGENDARY"
+    target: "WITHER_SKELETON"
+    goal: 5
+    reputation_reward: 140
+    rewards:
+      - type: "STRENGTH"
+        duration: 1728000
+        amplifier: 1
+      - type: "RESISTANCE"
+        duration: 1728000
+        amplifier: 1
+
+  - id: "mine_obsidian_legendary"
+    name: "Briseur d'Obsidienne"
+    description: "Minez 200 obsidiennes."
+    type: "MINE"
+    difficulty: "LEGENDARY"
+    target: "OBSIDIAN"
+    goal: 200
+    reputation_reward: 160
+    rewards:
+      - type: "HASTE"
+        duration: 1728000
+        amplifier: 2
+
+  - id: "smelt_gold_legendary"
+    name: "Fondeur d'Or"
+    description: "Faites cuire 128 minerais d'or."
+    type: "SMELT"
+    difficulty: "LEGENDARY"
+    target: "GOLD_INGOT"
+    goal: 128
+    reputation_reward: 120
+    rewards:
+      - type: "FIRE_RESISTANCE"
+        duration: 1728000
+        amplifier: 0

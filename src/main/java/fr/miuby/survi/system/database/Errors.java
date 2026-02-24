@@ -1,4 +1,4 @@
-package fr.miuby.survi.database;
+package fr.miuby.survi.system.database;
 
 /**
  * The Errors class defines a set of constant error messages that are commonly used

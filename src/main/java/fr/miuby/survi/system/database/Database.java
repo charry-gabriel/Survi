@@ -1,15 +1,18 @@
-package fr.miuby.survi.database;
+package fr.miuby.survi.system.database;
 
 import java.sql.*;
+import java.time.LocalDate;
 import java.util.*;
 import java.util.logging.Level;
 
 import fr.miuby.lib.world.WorldRegistry;
 import fr.miuby.survi.crops.PlantedCrop;
 import fr.miuby.survi.player.AlphaPlayer;
+import fr.miuby.survi.quest.PlayerQuestData;
 import fr.miuby.survi.GameManager;
 import fr.miuby.survi.role.ERole;
 import fr.miuby.survi.role.Role;
+import fr.miuby.survi.system.log.LogManager;
 import fr.miuby.survi.villager.AlphaVillagerData;
 import fr.miuby.survi.world.EWorld;
 import org.bukkit.Location;
@@ -18,7 +21,6 @@ import org.bukkit.inventory.ItemStack;
 
 public abstract class Database {
     protected Connection connection;
-    private boolean isLoaded = false;
 
     public abstract Connection getSQLConnection();
 
@@ -30,11 +32,10 @@ public abstract class Database {
             
             ps.setString(1, "Miuby");
             try (ResultSet rs = ps.executeQuery()) {
-                isLoaded = true;
-                GameManager.getInstance().getLogger().log(Level.INFO, "Database connexion succeeded !");
+                LogManager.getInstance().log(Level.INFO, LogManager.ETagLog.SYSTEM, "Database connexion succeeded !");
             }
         } catch (SQLException ex) {
-            GameManager.getInstance().getLogger().log(Level.SEVERE, Errors.noSQLConnection, ex);
+            LogManager.getInstance().log(Level.SEVERE, LogManager.ETagLog.SYSTEM, Errors.noSQLConnection + " (" + ex.getMessage() + ")");
         }
     }
 
@@ -65,7 +66,7 @@ public abstract class Database {
                 }
             }
         } catch (SQLException ex) {
-            GameManager.getInstance().getLogger().log(Level.SEVERE, Errors.sqlConnectionExecute, ex);
+            LogManager.getInstance().log(Level.SEVERE, LogManager.ETagLog.PLAYER, Errors.sqlConnectionExecute + " (" + ex.getMessage() + ")");
         } finally {
             closeResources(conn, ps);
         }
@@ -82,7 +83,7 @@ public abstract class Database {
                 ps.executeUpdate();
                 
             } catch (SQLException ex) {
-                GameManager.getInstance().getLogger().log(Level.SEVERE, "Failed to create player in database", ex);
+                LogManager.getInstance().log(Level.SEVERE, LogManager.ETagLog.PLAYER, "Failed to create player in database (" + ex.getMessage() + ")");
             }
         });
     }
@@ -100,7 +101,7 @@ public abstract class Database {
                 ps.executeUpdate();
 
             } catch (SQLException ex) {
-                GameManager.getInstance().getLogger().log(Level.SEVERE, "Failed to update player data for column: " + column.getColumnName(), ex);
+                LogManager.getInstance().log(Level.SEVERE, LogManager.ETagLog.PLAYER, "Failed to update player data for column: " + column.getColumnName() + " (" + ex.getMessage() + ")");
             }
         });
     }
@@ -120,6 +121,7 @@ public abstract class Database {
 
 
                 int level = rs.getInt("level");
+                Long unlockedDate = rs.getLong("unlockedDate");
 
                 List<ItemStack> givenItems;
                 String givenItemsString = rs.getString("givenItems");
@@ -138,10 +140,10 @@ public abstract class Database {
                     rs.getFloat("locationPitch")
                 );
 
-                return new AlphaVillagerData(uuid, nameId, location, givenItems, level);
+                return new AlphaVillagerData(uuid, nameId, location, givenItems, level, unlockedDate);
             }
         } catch (SQLException ex) {
-            GameManager.getInstance().getLogger().log(Level.SEVERE, "Failed to load villager: " + nameId, ex);
+            LogManager.getInstance().log(Level.SEVERE, LogManager.ETagLog.VILLAGER, "Failed to load villager: " + nameId + " (" + ex.getMessage() + ")");
             return null;
         }
     }
@@ -160,7 +162,7 @@ public abstract class Database {
                 insertPs.executeUpdate();
                 
             } catch (SQLException ex) {
-                GameManager.getInstance().getLogger().log(Level.SEVERE, "Failed to create villager in database", ex);
+                LogManager.getInstance().log(Level.SEVERE, LogManager.ETagLog.VILLAGER, "Failed to create villager in database (" + ex.getMessage() + ")");
             }
         });
     }
@@ -175,7 +177,7 @@ public abstract class Database {
                 ps.executeUpdate();
                 
             } catch (SQLException ex) {
-                GameManager.getInstance().getLogger().log(Level.SEVERE, "Failed to update villager level", ex);
+                LogManager.getInstance().log(Level.SEVERE, LogManager.ETagLog.VILLAGER, "Failed to update villager level (" + ex.getMessage() + ")");
             }
         });
     }
@@ -194,7 +196,7 @@ public abstract class Database {
                 ps.executeUpdate();
                 
             } catch (SQLException ex) {
-                GameManager.getInstance().getLogger().log(Level.SEVERE, "Failed to update villager location", ex);
+                LogManager.getInstance().log(Level.SEVERE, LogManager.ETagLog.VILLAGER, "Failed to update villager location (" + ex.getMessage() + ")");
             }
         });
     }
@@ -210,7 +212,26 @@ public abstract class Database {
                 ps.executeUpdate();
                 
             } catch (SQLException ex) {
-                GameManager.getInstance().getLogger().log(Level.SEVERE, "Failed to update villager given items", ex);
+                LogManager.getInstance().log(Level.SEVERE, LogManager.ETagLog.VILLAGER, "Failed to update villager given items (" + ex.getMessage() + ")");
+            }
+        });
+    }
+
+    public void lockVillager(UUID uuid, Long unlockedDate) {
+        GameManager.getInstance().getScheduler().runTaskAsynchronously(GameManager.getInstance().getPlugin(), () -> {
+            try (Connection conn = getSQLConnection();
+                 PreparedStatement ps = conn.prepareStatement("UPDATE villager SET unlockedDate = ? WHERE uuid = ?")) {
+
+                if (unlockedDate != null) {
+                    ps.setLong(1, unlockedDate);
+                } else {
+                    ps.setNull(1, java.sql.Types.BIGINT);
+                }
+                ps.setString(2, uuid.toString());
+                ps.executeUpdate();
+
+            } catch (SQLException ex) {
+                LogManager.getInstance().log(Level.SEVERE, LogManager.ETagLog.VILLAGER, "Failed to update villager unlockedDate (" + ex.getMessage() + ")");
             }
         });
     }
@@ -237,7 +258,7 @@ public abstract class Database {
 
             return true;
         } catch (SQLException ex) {
-            GameManager.getInstance().getLogger().log(Level.SEVERE, Errors.sqlConnectionExecute, ex);
+            LogManager.getInstance().log(Level.SEVERE, LogManager.ETagLog.WORLD, Errors.sqlConnectionExecute + " (" + ex.getMessage() + ")");
         } finally {
             closeResources(conn, ps);
         }
@@ -260,7 +281,7 @@ public abstract class Database {
 
                 ps.executeUpdate();
             } catch (SQLException ex) {
-                GameManager.getInstance().getLogger().log(Level.SEVERE, "Failed to save planted crop", ex);
+                LogManager.getInstance().log(Level.SEVERE, LogManager.ETagLog.WORLD, "Failed to save planted crop (" + ex.getMessage() + ")");
             } finally {
                 closeResources(conn, ps);
             }
@@ -283,11 +304,128 @@ public abstract class Database {
 
                 ps.executeUpdate();
             } catch (SQLException ex) {
-                GameManager.getInstance().getLogger().log(Level.SEVERE, "Failed to remove planted crop", ex);
+                LogManager.getInstance().log(Level.SEVERE, LogManager.ETagLog.WORLD, "Failed to remove planted crop (" + ex.getMessage() + ")");
             } finally {
                 closeResources(conn, ps);
             }
         });
+    }
+    //endregion
+
+    //region Quest & Reputation
+    public Map<String, Integer> getReputation(UUID playerUuid) {
+        Map<String, Integer> reputations = new HashMap<>();
+        try (Connection conn = getSQLConnection();
+             PreparedStatement ps = conn.prepareStatement("SELECT trader_id, reputation FROM player_reputation WHERE player_uuid = ?")) {
+            ps.setString(1, playerUuid.toString());
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    reputations.put(rs.getString("trader_id"), rs.getInt("reputation"));
+                }
+            }
+        } catch (SQLException ex) {
+            LogManager.getInstance().log(Level.SEVERE, LogManager.ETagLog.REPUTATION, "Failed to get reputation (" + ex.getMessage() + ")");
+        }
+        return reputations;
+    }
+
+    public void updateReputation(UUID playerUuid, String traderId, int reputation) {
+        GameManager.getInstance().getScheduler().runTaskAsynchronously(GameManager.getInstance().getPlugin(), () -> {
+            try (Connection conn = getSQLConnection();
+                 PreparedStatement ps = conn.prepareStatement("INSERT OR REPLACE INTO player_reputation (player_uuid, trader_id, reputation) VALUES (?, ?, ?)")) {
+                ps.setString(1, playerUuid.toString());
+                ps.setString(2, traderId);
+                ps.setInt(3, reputation);
+                ps.executeUpdate();
+            } catch (SQLException ex) {
+                LogManager.getInstance().log(Level.SEVERE, LogManager.ETagLog.REPUTATION, "Failed to update reputation (" + ex.getMessage() + ")");
+            }
+        });
+    }
+
+    public PlayerQuestData getPlayerQuest(UUID playerUuid) {
+        try (Connection conn = getSQLConnection();
+             PreparedStatement ps = conn.prepareStatement("SELECT quest_id, progress, last_accepted, is_completed, trader_id, claimed FROM player_quest WHERE player_uuid = ?")) {
+            ps.setString(1, playerUuid.toString());
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return new PlayerQuestData(
+                            rs.getString("quest_id"),
+                            rs.getInt("progress"),
+                            LocalDate.parse(rs.getString("last_accepted")),
+                            rs.getBoolean("is_completed"),
+                            rs.getString("trader_id"),
+                            rs.getBoolean("claimed")
+                    );
+                }
+            }
+        } catch (SQLException ex) {
+            LogManager.getInstance().log(Level.SEVERE, LogManager.ETagLog.QUEST, "Failed to get player quest (" + ex.getMessage() + ")");
+        }
+        return null;
+    }
+
+    public void updatePlayerQuest(UUID playerUuid, PlayerQuestData questData) {
+        GameManager.getInstance().getScheduler().runTaskAsynchronously(GameManager.getInstance().getPlugin(), () -> {
+            try (Connection conn = getSQLConnection();
+                 PreparedStatement ps = conn.prepareStatement("INSERT OR REPLACE INTO player_quest (player_uuid, quest_id, progress, last_accepted, is_completed, trader_id, claimed) VALUES (?, ?, ?, ?, ?, ?, ?)")) {
+                ps.setString(1, playerUuid.toString());
+                ps.setString(2, questData.getQuestId());
+                ps.setInt(3, questData.getProgress());
+                ps.setString(4, questData.getLastAccepted().toString());
+                ps.setBoolean(5, questData.isCompleted());
+                ps.setString(6, questData.getTraderId());
+                ps.setBoolean(7, questData.isClaimed());
+                ps.executeUpdate();
+            } catch (SQLException ex) {
+                LogManager.getInstance().log(Level.SEVERE, LogManager.ETagLog.QUEST, "Failed to update player quest (" + ex.getMessage() + ")");
+            }
+        });
+    }
+
+    public void clearPlayerQuest(UUID playerUuid) {
+        GameManager.getInstance().getScheduler().runTaskAsynchronously(GameManager.getInstance().getPlugin(), () -> {
+            try (Connection conn = getSQLConnection();
+                 PreparedStatement ps = conn.prepareStatement("DELETE FROM player_quest WHERE player_uuid = ?")) {
+                ps.setString(1, playerUuid.toString());
+                ps.executeUpdate();
+            } catch (SQLException ex) {
+                LogManager.getInstance().log(Level.SEVERE, LogManager.ETagLog.QUEST, "Failed to clear player quest (" + ex.getMessage() + ")");
+            }
+        });
+    }
+    //endregion
+
+    //region time
+    public String getServerData(String key) {
+        try (Connection conn = getSQLConnection();
+             PreparedStatement ps = conn.prepareStatement(
+                     "SELECT value FROM server_data WHERE key = ?")) {
+
+            ps.setString(1, key);
+            ResultSet rs = ps.executeQuery();
+
+            if (rs.next()) {
+                return rs.getString("value");
+            }
+        } catch (SQLException e) {
+            LogManager.getInstance().log(Level.SEVERE, LogManager.ETagLog.SYSTEM, "Erreur getServerData: " + key + " (" + e.getMessage() + ")");
+        }
+        return null;
+    }
+
+    public void saveServerData(String key, String value) {
+        try (Connection conn = getSQLConnection();
+             PreparedStatement ps = conn.prepareStatement(
+                     "INSERT OR REPLACE INTO server_data (key, value) VALUES (?, ?)")) {
+
+            ps.setString(1, key);
+            ps.setString(2, value);
+            ps.executeUpdate();
+
+        } catch (SQLException e) {
+            LogManager.getInstance().log(Level.SEVERE, LogManager.ETagLog.SYSTEM, "Erreur saveServerData: " + key + " (" + e.getMessage() + ")");
+        }
     }
     //endregion
 
@@ -319,7 +457,7 @@ public abstract class Database {
             }
 
         } catch (SQLException ex) {
-            GameManager.getInstance().getLogger().log(Level.SEVERE, Errors.sqlConnectionExecute, ex);
+            LogManager.getInstance().log(Level.SEVERE, LogManager.ETagLog.SYSTEM, Errors.sqlConnectionExecute + " (" + ex.getMessage() + ")");
         } finally {
             closeResources(conn, ps);
         }
@@ -331,7 +469,7 @@ public abstract class Database {
             if (ps != null) ps.close();
             if (conn != null) conn.close();
         } catch (SQLException ex) {
-            GameManager.getInstance().getLogger().log(Level.SEVERE, "Failed to close database resources", ex);
+            LogManager.getInstance().log(Level.SEVERE, LogManager.ETagLog.SYSTEM, "Failed to close database resources (" + ex.getMessage() + ")");
         }
     }
 }

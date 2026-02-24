@@ -6,6 +6,7 @@ import fr.miuby.lib.utils.Rect;
 import fr.miuby.survi.item.ECustomItem;
 import fr.miuby.survi.item.SimpleItemStack;
 import fr.miuby.survi.player.AlphaPlayer;
+import fr.miuby.survi.quest.QuestDifficulty;
 import fr.miuby.survi.villager.blessing.*;
 import fr.miuby.survi.world.EWorld;
 import fr.miuby.survi.item.locked_item.LockedArmorType;
@@ -18,6 +19,8 @@ import org.bukkit.*;
 import org.bukkit.entity.Villager;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.MerchantRecipe;
+
+import java.time.Duration;
 
 @Getter
 public class VillagerFactory {
@@ -84,19 +87,20 @@ public class VillagerFactory {
     }
 
     private void spawnThomas(){
+        String villagerId = "thomas";
         Blessing[] blessings = new Blessing[]{
-                new Blessing(new MessageEffect("Niveau I réussi !")),
-                new Blessing(new MessageEffect("Niveau II disponible pour Thomas Pesquet !")),
+                new Blessing(new LockVillagerEffect(Duration.ofDays(3)), new MessageEffect("Niveau I réussi !")),
+                new Blessing(new LockVillagerEffect(Duration.ofDays(3)), new MessageEffect("Niveau II disponible pour Thomas Pesquet !")),
                 new Blessing(new LockWorldEffect(EWorld.NETHER), new MessageEffect("Niveau II réussi !")),
-                new Blessing(new MessageEffect("Niveau III disponible pour Thomas Pesquet !")),
+                new Blessing(new LockVillagerEffect(Duration.ofDays(3)), new MessageEffect("Niveau III disponible pour Thomas Pesquet !")),
                 new Blessing(new LimitWorldEffect(EWorld.WILDERNESS, new Rect(10000,-10000, Integer.MAX_VALUE, Integer.MIN_VALUE,10000,-10000))),
-                new Blessing(new MessageEffect("Niveau VI disponible pour Thomas Pesquet !")),
+                new Blessing(new LockVillagerEffect(Duration.ofDays(3)), new MessageEffect("Niveau VI disponible pour Thomas Pesquet !")),
                 new Blessing(new LockWorldEffect(EWorld.END), new MessageEffect("Niveau VI réussi !")),
-                new Blessing(new MessageEffect("Niveau V disponible pour Thomas Pesquet !")),
+                new Blessing(new LockVillagerEffect(Duration.ofDays(3)), new MessageEffect("Niveau V disponible pour Thomas Pesquet !")),
                 new Blessing(new LimitWorldEffect(EWorld.WILDERNESS, new Rect(Integer.MAX_VALUE,Integer.MIN_VALUE, Integer.MAX_VALUE, Integer.MIN_VALUE,Integer.MAX_VALUE,Integer.MIN_VALUE))),
         };
 
-        this.addNewVillagerLevel("thomas", blessings);
+        this.addNewVillagerLevel(villagerId, blessings);
     }
 
     private void spawnFrancois(){
@@ -233,7 +237,17 @@ public class VillagerFactory {
 
         TextComponent openMessage = Component.text("Bonjour, bienvenue au bar du Merveilleux Royal Bling-Bling Sexy-Baka Palace-Hôtel. A la carte, nous proposons différents cocktails élaborés avec amour, tendresse et voluptuosité: le Sex On the Beach, le Porn Star Martini, et notre fameux Shooter Orgasm. D’autre part, je peux aussi proposer un Spicy Sweet Dreams Ticket si vous le désirez !");
 
-        AVillager.spawn(() -> new Trader("Barman", Component.text("Fruity Délice"), Villager.Type.SAVANNA, Villager.Profession.FLETCHER, recipes, messages, openMessage));
+        AVillager.spawn(() -> {
+            Trader trader = new Trader("Barman", Component.text("Fruity Délice"), Villager.Type.SAVANNA, Villager.Profession.FLETCHER, recipes, messages, openMessage);
+            trader.setQuestDifficulty(QuestDifficulty.COMMON);
+            
+            // Items débloqués par réputation
+            MerchantRecipe rareCocktail = new MerchantRecipe(new ItemStack(Material.DRAGON_BREATH), 0, 99, false, 0, 0,9,0,true);
+            rareCocktail.addIngredient(new ItemStack(Material.DIAMOND, 5));
+            trader.addReputationRecipe(rareCocktail, 50); // Débloqué à 50 de réputation
+            
+            return trader;
+        });
         VillagerPostLoadActions.add("Barman", villager -> villager.getVillager().getEquipment().setItemInMainHand(new ItemStack(Material.POTION)));
     }
 
@@ -392,7 +406,7 @@ public class VillagerFactory {
         player.getPlayer().sendMessage(Component.text("-------------------- Récapitulatif --------------------", NamedTextColor.AQUA));
         for (MLVillager villager : VillagerRegistry.getAll()) {
             if (villager instanceof VillagerLevel villagerLevel) {
-                villagerLevel.applyAllCurrentBlessing(player);
+                villagerLevel.applyAllCurrentBlessing(villagerLevel, player);
                 TextComponent text = villagerLevel.getRecapMessage();
                 if (!text.content().isEmpty())
                     player.getPlayer().sendMessage(text);

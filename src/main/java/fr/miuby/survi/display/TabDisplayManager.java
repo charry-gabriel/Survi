@@ -3,6 +3,9 @@ package fr.miuby.survi.display;
 import fr.miuby.lib.villager.VillagerRegistry;
 import fr.miuby.survi.GameManager;
 import fr.miuby.survi.player.AlphaPlayer;
+import fr.miuby.survi.quest.PlayerQuestData;
+import fr.miuby.survi.quest.Quest;
+import fr.miuby.survi.quest.QuestManager;
 import fr.miuby.survi.villager.VillagerLevel;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -12,6 +15,7 @@ import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.entity.Player;
 
 import java.text.DecimalFormat;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -42,7 +46,8 @@ public class TabDisplayManager {
         Component footer = Component.text("\n");
 
         footer = footer.append(buildVillagerLevelsLine());
-        footer = footer.append(Component.newline());
+        footer = footer.append(Component.text("\n"));
+        footer = footer.append(Component.text("\n"));
 
         footer = footer.append(formatStat(alphaPlayer, Attribute.MAX_HEALTH, "Vie"));
         footer = footer.append(Component.text(" | ", NamedTextColor.DARK_GRAY));
@@ -56,7 +61,46 @@ public class TabDisplayManager {
         footer = footer.append(Component.text(" | ", NamedTextColor.DARK_GRAY));
         footer = footer.append(formatStat(alphaPlayer, Attribute.LUCK, "Chance"));
 
+        footer = footer.append(Component.text("\n"));
+
+        Component questLine = buildQuestLine(alphaPlayer);
+        if (!questLine.equals(Component.empty())) {
+            footer = footer.append(Component.newline());
+            footer = footer.append(questLine);
+        }
+
         return footer.append(Component.text("\n"));
+    }
+
+    private Component buildQuestLine(AlphaPlayer alphaPlayer) {
+        PlayerQuestData data = alphaPlayer.getActiveQuest();
+        if (data == null || data.isClaimed()) {
+            return Component.empty();
+        }
+
+        // On ne montre la quête que si elle est d'aujourd'hui
+        if (!data.getLastAccepted().isEqual(LocalDate.now())) {
+            return Component.empty();
+        }
+
+        Quest quest = QuestManager.getInstance().getQuest(data.getQuestId());
+        if (quest == null) {
+            return Component.empty();
+        }
+
+        Component questLine = Component.text("Quête: ", NamedTextColor.GOLD)
+                .append(Component.text(quest.getName(), NamedTextColor.YELLOW))
+                .append(Component.text(" (", NamedTextColor.GRAY))
+                .append(Component.text(data.getProgress(), data.isCompleted() ? NamedTextColor.GREEN : NamedTextColor.AQUA))
+                .append(Component.text("/", NamedTextColor.GRAY))
+                .append(Component.text(quest.getGoal(), NamedTextColor.AQUA))
+                .append(Component.text(")", NamedTextColor.GRAY));
+
+        if (data.isCompleted()) {
+            questLine = questLine.append(Component.text(" - Allez voir le Trader !", NamedTextColor.GREEN));
+        }
+
+        return questLine;
     }
 
     /**

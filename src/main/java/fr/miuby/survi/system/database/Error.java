@@ -1,6 +1,6 @@
-package fr.miuby.survi.database;
+package fr.miuby.survi.system.database;
 
-import fr.miuby.survi.GameManager;
+import fr.miuby.survi.system.log.LogManager;
 
 import java.util.logging.Level;
 
@@ -16,14 +16,15 @@ public class Error {
      * @param ex the exception encountered while attempting to execute the MySQL statement
      */
     public static void execute(Exception ex){
-        GameManager.getInstance().getLogger().log(Level.SEVERE, "Couldn't execute MySQL statement: ", ex);
+        LogManager.getInstance().log(Level.SEVERE, LogManager.ETagLog.SYSTEM, "Couldn't execute MySQL statement: " + ex.getMessage());
     }
+
     /**
      * Logs an error message when failing to close a MySQL connection.
      *
      * @param ex the exception encountered while attempting to close the MySQL connection
      */
     public static void close(Exception ex){
-        GameManager.getInstance().getLogger().log(Level.SEVERE, "Failed to close MySQL connection: ", ex);
+        LogManager.getInstance().log(Level.SEVERE, LogManager.ETagLog.SYSTEM, "Failed to close MySQL connection: " + ex.getMessage());
     }
 }

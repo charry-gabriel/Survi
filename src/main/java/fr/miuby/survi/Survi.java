@@ -1,9 +1,14 @@
 package fr.miuby.survi;
 
-import fr.miuby.survi.database.SqlCommand;
+import fr.miuby.survi.system.database.SqlCommand;
 import fr.miuby.survi.item.CustomItemCommand;
 import fr.miuby.survi.listener.*;
+import fr.miuby.survi.quest.QuestCommand;
+import fr.miuby.survi.quest.QuestListener;
 import fr.miuby.survi.role.RoleCommand;
+import fr.miuby.survi.system.log.LogCommand;
+import fr.miuby.survi.system.time.TimeCommand;
+import fr.miuby.survi.system.time.TimeManager;
 import fr.miuby.survi.villager.VillagerCommand;
 import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
 import org.bukkit.plugin.PluginManager;
@@ -22,6 +27,7 @@ public class Survi extends JavaPlugin {
         pluginManager.registerEvents(new GrowthItemListener(), this);
         pluginManager.registerEvents(new CropGrowthListener(), this);
         pluginManager.registerEvents(new VillagerListener(), this);
+        pluginManager.registerEvents(new QuestListener(), this);
 
         getConfig().options().copyDefaults(true);
         saveConfig();
@@ -32,8 +38,19 @@ public class Survi extends JavaPlugin {
             commands.registrar().register(CustomItemCommand.createCommand().build());
             commands.registrar().register(RoleCommand.createRoleCommand().build());
             commands.registrar().register(RoleCommand.createSubRoleCommand().build());
+            commands.registrar().register(QuestCommand.createCommand().build());
+            commands.registrar().register(TimeCommand.createCommand().build());
+            commands.registrar().register(LogCommand.createCommand().build());
         });
 
         GameManager.getInstance().init(this);
+    }
+
+    @Override
+    public void onDisable() {
+        TimeManager tm = GameManager.getInstance().getTimeManager();
+        if (tm != null) {
+            tm.stop();
+        }
     }
 }

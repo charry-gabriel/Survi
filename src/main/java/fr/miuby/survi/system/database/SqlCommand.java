@@ -1,4 +1,4 @@
-package fr.miuby.survi.database;
+package fr.miuby.survi.system.database;
 
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.arguments.StringArgumentType;
@@ -10,7 +10,6 @@ import io.papermc.paper.command.brigadier.Commands;
 import net.kyori.adventure.text.Component;
 import org.bukkit.command.CommandSender;
 
-@SuppressWarnings("UnstableApiUsage")
 public class SqlCommand {
     public static LiteralArgumentBuilder<CommandSourceStack> createCommand() {
         return Commands.literal("sql")

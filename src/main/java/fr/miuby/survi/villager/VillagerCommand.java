@@ -23,8 +23,10 @@ public class VillagerCommand {
             .requires(sender -> sender.getSender().isOp())
             .then(Commands.argument("villager", StringArgumentType.word())
                 .suggests((context, builder) -> {
+                    String remaining = builder.getRemaining().toLowerCase();
                     VillagerRegistry.getAll().stream()
                             .map(MLVillager::getNameId)
+                            .filter(name -> name.toLowerCase().startsWith(remaining))
                             .forEach(builder::suggest);
                     return builder.buildFuture();
                 })
@@ -50,7 +52,51 @@ public class VillagerCommand {
                 .then(Commands.literal("addlevel")
                     .executes(VillagerCommand::villagerExecuteAddLevel)
                 )
+                .then(Commands.literal("info")
+                    .executes(VillagerCommand::villagerExecuteInfo)
+                )
+                .then(Commands.literal("unlock")
+                        .executes(VillagerCommand::villagerExecuteUnlock)
+                )
             );
+    }
+
+    private static int villagerExecuteUnlock(CommandContext<CommandSourceStack> ctx) {
+        AVillager villager = (AVillager) VillagerRegistry.get(StringArgumentType.getString(ctx, "villager"));
+        if (villager == null) {
+            ctx.getSource().getSender().sendMessage(Component.text("Villager introuvable !"));
+            return Command.SINGLE_SUCCESS;
+        }
+
+        if (villager instanceof VillagerLevel villagerLevel) {
+            villagerLevel.handleUnlockTask();
+        } else {
+            ctx.getSource().getSender().sendMessage(Component.text("Villager is not a levelable villager !"));
+        }
+        return Command.SINGLE_SUCCESS;
+    }
+
+    private static int villagerExecuteInfo(CommandContext<CommandSourceStack> ctx) {
+        AVillager villager = (AVillager) VillagerRegistry.get(StringArgumentType.getString(ctx, "villager"));
+        if (villager == null) {
+            ctx.getSource().getSender().sendMessage(Component.text("Villager introuvable !"));
+            return Command.SINGLE_SUCCESS;
+        }
+
+        Component text = Component.text("Nom : ").append(villager.getDisplayName());
+        if (villager instanceof VillagerLevel villagerLevel) {
+            text = text
+                    .appendNewline()
+                    .append(Component.text("Level : " + villagerLevel.getLevel()))
+                    .appendNewline()
+                    .append(Component.text("unlock : " + villagerLevel.getUnlockedDate()));
+        } else if (villager instanceof Trader trader) {
+            text = text
+                    .appendNewline()
+                    .append(Component.text("Reputation : " + GameManager.getInstance().getAlphaPlayerFactory().getAlphaPlayer(ctx.getSource().getSender().getName()).getReputation(trader.getNameId())));
+        }
+        ctx.getSource().getSender().sendMessage(text);
+        return Command.SINGLE_SUCCESS;
     }
 
     private static int villagerExecuteTeleport(CommandContext<CommandSourceStack> ctx, Location location) {

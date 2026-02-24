@@ -13,6 +13,7 @@ import org.bukkit.attribute.Attribute;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
+import fr.miuby.survi.quest.PlayerQuestData;
 import java.util.*;
 
 public class AlphaPlayer extends MLPlayer implements Serializable {
@@ -23,6 +24,12 @@ public class AlphaPlayer extends MLPlayer implements Serializable {
 
     @Getter
     private final List<Role> subRoles = new ArrayList<>();
+
+    @Getter
+    private final Map<String, Integer> reputationByTrader = new HashMap<>();
+    @Getter
+    @Setter
+    private PlayerQuestData activeQuest;
 
     @Setter
     private MLWorld world;
@@ -78,6 +85,10 @@ public class AlphaPlayer extends MLPlayer implements Serializable {
         this.getAlphaLife().actualizeSuccess();
 
         this.player.discoverRecipes(GameManager.getInstance().getCustomRecipeFactory().getNewRecipes().keySet());
+
+        // Load reputation and quest data
+        this.reputationByTrader.putAll(GameManager.getInstance().getDatabase().getReputation(this.getUuid()));
+        this.activeQuest = GameManager.getInstance().getDatabase().getPlayerQuest(this.getUuid());
     }
 
     public void gainOneSuccess(boolean challenge) {
@@ -135,6 +146,16 @@ public class AlphaPlayer extends MLPlayer implements Serializable {
 
     public void removeSubRole(Role role) {
         this.subRoles.remove(role);
+    }
+
+    public int getReputation(String traderId) {
+        return reputationByTrader.getOrDefault(traderId, 0);
+    }
+
+    public void addReputation(String traderId, int amount) {
+        int newRep = getReputation(traderId) + amount;
+        reputationByTrader.put(traderId, newRep);
+        GameManager.getInstance().getDatabase().updateReputation(this.getUuid(), traderId, newRep);
     }
     //endregion
 }
