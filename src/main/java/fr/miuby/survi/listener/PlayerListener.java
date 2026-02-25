@@ -76,6 +76,7 @@ public class PlayerListener implements Listener {
             switch (aVillager) {
                 case VillagerLevel level when level.getTribute() == null || !level.isUnlocked() -> {
                     player.sendMessage(Component.text("<", NamedTextColor.AQUA).append(level.getDisplayName()).append(Component.text("> ", NamedTextColor.AQUA)).append(level.getMessage()));
+                    player.sendMessage("§e" + villager.getName() + " §eest indisponible pendant encore " + level.getRemainingLock());
                     event.setCancelled(true);
                 }
                 case VillagerLevel level -> {

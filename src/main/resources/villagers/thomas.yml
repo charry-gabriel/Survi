@@ -11,7 +11,9 @@ levels:
     recap: ""
 
   - name: "Thomas Pesquet I"
-    tribute: []
+    tribute:
+      - material: DIRT
+        amount: 640
     message: "Venez me voir."
     recap: ""
 
@@ -23,7 +25,9 @@ levels:
     recap: ""
 
   - name: "Thomas Pesquet II"
-    tribute: []
+    tribute:
+      - material: DIRT
+        amount: 640
     message: "Venez me voir."
     recap: "Nether débloqué !"
 
@@ -35,7 +39,9 @@ levels:
     recap: "Nether débloqué !"
 
   - name: "Thomas Pesquet III"
-    tribute: []
+    tribute:
+      - material: DIRT
+        amount: 640
     message: "Venez me voir."
     recap: "Nether débloqué et limite Wilderness augmenté !"
 
@@ -47,7 +53,9 @@ levels:
     recap: "Nether débloqué et limite Wilderness augmenté !"
 
   - name: "Thomas Pesquet IV"
-    tribute: []
+    tribute:
+      - material: DIRT
+        amount: 640
     message: "Venez me voir."
     recap: "End débloqué et limite Wilderness augmenté !"
 
@@ -59,6 +67,8 @@ levels:
     recap: "End débloqué et limite Wilderness augmenté !"
 
   - name: "Thomas Pesquet MAX"
-    tribute: []
+    tribute:
+      - material: DIRT
+        amount: 640
     message: "C'est fini y a plus rien !"
     recap: "End débloqué et limite Wilderness infinie !"

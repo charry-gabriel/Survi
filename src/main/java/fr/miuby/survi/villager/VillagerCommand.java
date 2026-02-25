@@ -89,7 +89,7 @@ public class VillagerCommand {
                     .appendNewline()
                     .append(Component.text("Level : " + villagerLevel.getLevel()))
                     .appendNewline()
-                    .append(Component.text("unlock : " + villagerLevel.getUnlockedDate()));
+                    .append(Component.text("unlock : " + villagerLevel.getRemainingLock()));
         } else if (villager instanceof Trader trader) {
             text = text
                     .appendNewline()

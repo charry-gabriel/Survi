@@ -4,6 +4,7 @@ import fr.miuby.lib.villager.MLVillagerData;
 import fr.miuby.survi.player.AlphaPlayer;
 import fr.miuby.survi.GameManager;
 import fr.miuby.survi.system.log.LogManager;
+import fr.miuby.survi.system.time.TimeManager;
 import fr.miuby.survi.villager.blessing.Blessing;
 import fr.miuby.survi.villager.blessing.BlessingEffect;
 import fr.miuby.survi.villager.event.VillagerLevelUpEvent;
@@ -19,7 +20,6 @@ import org.bukkit.entity.Villager;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.scheduler.BukkitTask;
 
 import javax.annotation.Nullable;
 import java.time.Duration;
@@ -40,10 +40,7 @@ public class VillagerLevel extends AVillager {
     @Setter
     private int level = 0;
     private final List<ItemStack> givenItems = new ArrayList<>();
-
-    private Instant unlockedDate;
-    @Getter
-    private BukkitTask unlockTask;
+    private Instant unlockedInstant = Instant.EPOCH;
 
     public VillagerLevel(String nameId, Villager.Type type, Villager.Profession profession, Blessing[] blessings, TextComponent[] messages, Tribute[] tributes, TextComponent[] names, TextComponent[] recap) {
         super(nameId, type, profession, messages);
@@ -55,7 +52,7 @@ public class VillagerLevel extends AVillager {
 
     @Override
     protected AlphaVillagerData createDefaultData() {
-        return new AlphaVillagerData(null, nameId, new Location(WorldInitializer.getDefaultWorld(), 0, 700, 0), new ArrayList<>(), 0, null);
+        return new AlphaVillagerData(null, nameId, new Location(WorldInitializer.getDefaultWorld(), 0, 700, 0), new ArrayList<>(), 0, Instant.EPOCH.toEpochMilli());
     }
 
     @Override
@@ -65,8 +62,8 @@ public class VillagerLevel extends AVillager {
             this.level = data.getLevel();
             this.givenItems.addAll(data.getGivenItems());
 
-            if (data.getUnlockedDate() != null)
-                this.unlockedDate = Instant.ofEpochMilli(data.getUnlockedDate());
+            if (data.getUnlockToEpochMilli() != null)
+                this.unlockedInstant = Instant.ofEpochMilli(data.getUnlockToEpochMilli());
         }
         return data;
     }
@@ -192,8 +189,15 @@ public class VillagerLevel extends AVillager {
     }
 
     public Tribute getTribute() {
-        if (this.level >= tributes.length || tributes[this.level].getItemStacks().isEmpty())
+        if (this.level >= tributes.length)
             return null;
+
+        if (tributes[this.level].getItemStacks().isEmpty()) {
+            if (this.level + 1 != tributes.length)
+                LogManager.getInstance().log(Level.WARNING, LogManager.ETagLog.VILLAGER, "Le niveau " + this.level + " de " + this.nameId + " n'a pas de tributes !");
+
+            return null;
+        }
 
         return tributes[this.level];
     }
@@ -221,24 +225,13 @@ public class VillagerLevel extends AVillager {
 
     //region unlock
     public boolean isUnlocked() {
-        if (unlockedDate == null) return false;
-        return Instant.now().isAfter(unlockedDate);
-    }
-
-    public void cancelUnlockTask() {
-        if (unlockTask != null && !unlockTask.isCancelled()) {
-            unlockTask.cancel();
-            unlockTask = null;
-        }
+        return Instant.now().isAfter(unlockedInstant);
     }
 
     public void lock(Duration duration) {
         if (this.isUnlocked()) {
-            this.unlockedDate = Instant.now().plus(duration);
-            cancelUnlockTask();
-
-            unlockTask = Bukkit.getScheduler().runTaskLater(GameManager.getInstance().getPlugin(), this::handleUnlockTask, duration.getSeconds() * 20);
-            GameManager.getInstance().getDatabase().lockVillager(getVillager().getUniqueId(), this.unlockedDate.toEpochMilli());
+            this.unlockedInstant = Instant.now().plus(duration);
+            GameManager.getInstance().getDatabase().lockVillager(getVillager().getUniqueId(), this.unlockedInstant.toEpochMilli());
         }
     }
 
@@ -248,15 +241,21 @@ public class VillagerLevel extends AVillager {
             return;
         }
 
-        cancelUnlockTask();
-
-        unlockedDate = null;
+        unlockedInstant = Instant.EPOCH;
         GameManager.getInstance().getDatabase().lockVillager(getVillager().getUniqueId(), null);
     }
 
-    public String getUnlockedDate() {
-        if (unlockedDate.getEpochSecond() == 0) return "N/A";
-        return unlockedDate.toString();
+    public String getRemainingLock() {
+        if (unlockedInstant == null || unlockedInstant.equals(Instant.EPOCH)) {
+            return "Débloqué";
+        }
+
+        Duration remaining = Duration.between(Instant.now(), unlockedInstant);
+        if (remaining.isNegative()) {
+            return "Débloqué";
+        }
+
+        return TimeManager.formatTime(remaining);
     }
     //endregion
 }

@@ -55,7 +55,7 @@ public class SQLite extends Database {
             "`locationZ` FLOAT NOT NULL," +
             "`locationYaw` FLOAT NOT NULL," +
             "`locationPitch` FLOAT NOT NULL," +
-            "`unlockedDate` BIGINT DEFAULT NULL," +
+            "`unlockedDate` BIGINT NOT NULL," +
             "PRIMARY KEY (`uuid`)" +
             ");";
             
@@ -197,7 +197,7 @@ public class SQLite extends Database {
             }
             if (currentVersion < 8) {
                 if (!hasColumn(conn, "villager", "unlockedDate")) {
-                    s.executeUpdate("ALTER TABLE villager ADD COLUMN unlockedDate BIGINT DEFAULT NULL");
+                    s.executeUpdate("ALTER TABLE villager ADD COLUMN unlockedDate BIGINT DEFAULT 0");
                 }
             }
             setVersion(conn, CURRENT_DB_VERSION);

@@ -121,7 +121,6 @@ public abstract class Database {
 
 
                 int level = rs.getInt("level");
-                Long unlockedDate = rs.getLong("unlockedDate");
 
                 List<ItemStack> givenItems;
                 String givenItemsString = rs.getString("givenItems");
@@ -140,7 +139,9 @@ public abstract class Database {
                     rs.getFloat("locationPitch")
                 );
 
-                return new AlphaVillagerData(uuid, nameId, location, givenItems, level, unlockedDate);
+                Long unlockToEpochMilli = rs.getLong("unlockedDate");
+
+                return new AlphaVillagerData(uuid, nameId, location, givenItems, level, unlockToEpochMilli);
             }
         } catch (SQLException ex) {
             LogManager.getInstance().log(Level.SEVERE, LogManager.ETagLog.VILLAGER, "Failed to load villager: " + nameId + " (" + ex.getMessage() + ")");
@@ -152,7 +153,7 @@ public abstract class Database {
         GameManager.getInstance().getScheduler().runTaskAsynchronously(GameManager.getInstance().getPlugin(), () -> {
             try (Connection conn = getSQLConnection();
                  PreparedStatement deletePs = conn.prepareStatement("DELETE FROM villager WHERE name = ?");
-                 PreparedStatement insertPs = conn.prepareStatement("INSERT INTO villager (uuid, level, name, givenItems, locationX, locationY, locationZ, locationYaw, locationPitch) VALUES (?, 0, ?, NULL, -23.5, 184.5, -19.5, 0, 0)")) {
+                 PreparedStatement insertPs = conn.prepareStatement("INSERT INTO villager (uuid, level, name, givenItems, locationX, locationY, locationZ, locationYaw, locationPitch, unlockedDate) VALUES (?, 0, ?, NULL, -23.5, 184.5, -19.5, 0, 0, 0)")) {
 
                 deletePs.setString(1, name);
                 deletePs.executeUpdate();
