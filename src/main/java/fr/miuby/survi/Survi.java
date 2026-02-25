@@ -6,8 +6,7 @@ import fr.miuby.survi.listener.*;
 import fr.miuby.survi.quest.QuestCommand;
 import fr.miuby.survi.quest.QuestListener;
 import fr.miuby.survi.role.RoleCommand;
-import fr.miuby.survi.system.log.LogCommand;
-import fr.miuby.survi.system.time.TimeCommand;
+import fr.miuby.survi.system.SystemCommand;
 import fr.miuby.survi.system.time.TimeManager;
 import fr.miuby.survi.villager.VillagerCommand;
 import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
@@ -39,8 +38,7 @@ public class Survi extends JavaPlugin {
             commands.registrar().register(RoleCommand.createRoleCommand().build());
             commands.registrar().register(RoleCommand.createSubRoleCommand().build());
             commands.registrar().register(QuestCommand.createCommand().build());
-            commands.registrar().register(TimeCommand.createCommand().build());
-            commands.registrar().register(LogCommand.createCommand().build());
+            commands.registrar().register(SystemCommand.createCommand().build());
         });
 
         GameManager.getInstance().init(this);

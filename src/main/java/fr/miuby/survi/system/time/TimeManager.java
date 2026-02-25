@@ -11,40 +11,15 @@ import org.bukkit.scheduler.BukkitTask;
 import java.time.*;
 import java.util.logging.Level;
 
-/**
- * Gère le système de temps du serveur :
- * 1. Synchronise le temps Minecraft du Village avec l'heure réelle
- * 2. Déclenche un reset quotidien à 6h du matin
- *
- * COMMENT ÇA MARCHE :
- *
- * === SYNCHRO TEMPS RÉEL → MINECRAFT ===
- * Le Village suit l'heure réelle avec cette logique simple :
- * - 0h réelle   = 0 ticks Minecraft (lever du soleil)
- * - 8h réelle   = 12000 ticks (coucher du soleil)
- * - 24h réelle  = 24000 ticks (retour au lever du soleil)
- *
- * === RESET QUOTIDIEN ===
- * À 6h du matin chaque jour :
- * - Vérifie qu'on a pas déjà reset aujourd'hui
- * - Déclenche un DailyResetEvent
- * - Les systèmes (quêtes, buffs, etc.) écoutent cet event et se resetent
- * - Persiste l'état en DB pour détecter les resets manqués
- */
 public class TimeManager {
-    // === CONFIGURATION ===
-    private static final int RESET_HOUR = 6;         // 6h du matin
-    private static final int REAL_SUNRISE = 0;       // 0h réelle = lever du soleil MC
-    private static final int REAL_SUNSET = 8;        // 8h réelle = coucher du soleil MC
-    private static final int SYNC_INTERVAL_TICKS = 20;      // Update temps chaque seconde
-    private static final int RESET_CHECK_INTERVAL_TICKS = 20 * 60;  // Vérifie reset chaque minute
+    private static final int REAL_SUNRISE_HOUR = 9;
+    private static final int REAL_SUNSET_HOUR = 0;
 
-    // === CONSTANTES MINECRAFT ===
-    // Un jour Minecraft complet = 24000 ticks (20 minutes réelles)
-    // 0 ticks = 6h matin MC, 6000 = midi, 12000 = 18h soir, 18000 = minuit
-    private static final int MC_DAY_START = 0;       // Lever du soleil
-    private static final int MC_SUNSET = 12000;      // Coucher du soleil
-    private static final int MC_FULL_DAY = 24000;    // Jour complet
+    private static final int RESET_HOUR = 6;
+    private static final int SYNC_INTERVAL_TICKS = 20;
+    private static final int RESET_CHECK_INTERVAL_TICKS = 20 * 60;
+
+    private static final int MC_FULL_DAY = 24000;
 
     private final LogManager logger = LogManager.getInstance();
     @Getter
@@ -54,20 +29,15 @@ public class TimeManager {
     private BukkitTask resetCheckTask;
 
     @Getter
-    private long lastResetTimestamp;  // Timestamp du dernier reset
+    private long lastResetTimestamp;
     @Getter
-    private int lastResetDay;         // Jour depuis epoch du dernier reset
+    private int lastResetDay;
 
     public TimeManager() {
         this.serverTimezone = ZoneId.systemDefault();
         loadLastReset();
     }
 
-    /**
-     * Démarre les deux systèmes :
-     * 1. Synchronisation temps réel → Minecraft (chaque seconde)
-     * 2. Vérification du reset quotidien (chaque minute)
-     */
     public void start() {
         // Vérifie immédiatement si on a manqué un reset
         checkForMissedReset();
@@ -96,9 +66,6 @@ public class TimeManager {
                 java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy à HH:mm")));
     }
 
-    /**
-     * Arrête le système proprement (sauvegarde l'état).
-     */
     public void stop() {
         if (syncTask != null) {
             syncTask.cancel();
@@ -112,94 +79,115 @@ public class TimeManager {
         logger.log(Level.INFO, LogManager.ETagLog.SYSTEM,"TimeManager arrêté");
     }
 
-    // ============================================================================
-    // PARTIE 1 : SYNCHRONISATION TEMPS RÉEL → MINECRAFT
-    // ============================================================================
-
-    /**
-     * Met à jour le temps Minecraft du Village selon l'heure réelle.
-     * Appelé chaque seconde par la task.
-     *
-     * PRINCIPE :
-     * L'heure réelle est convertie en ticks Minecraft avec une progression linéaire.
-     * De 0h à 8h : jour Minecraft (0 → 12000 ticks)
-     * De 8h à 24h : nuit Minecraft (12000 → 24000 → 0 ticks)
-     */
+    //region real time
     private void updateMinecraftTime() {
         ZonedDateTime now = ZonedDateTime.now(serverTimezone);
 
-        // Secondes écoulées depuis minuit (0h00)
-        long secondsSinceMidnight = now.toLocalTime().toSecondOfDay();
+        int hour = now.getHour();
+        int minute = now.getMinute();
 
-        // Calcule les ticks Minecraft correspondants
-        int minecraftTicks = calculateMinecraftTicks(secondsSinceMidnight);
+        double currentTime = hour + (minute / 60.0);
 
-        // Détermine si c'est la nuit (après 8h réelles)
-        boolean isNight = secondsSinceMidnight >= (REAL_SUNSET * 3600);
+        int ticks = calculateTicks(currentTime);
+        boolean isNight = checkIfNight(currentTime);
 
         // Applique au monde Village
-        WorldRegistry.get(EWorld.VILLAGE).getWorld().setTime(minecraftTicks);
+        WorldRegistry.get(EWorld.VILLAGE).getWorld().setTime(ticks);
         GameManager.getInstance().setNight(isNight);
     }
 
-    /**
-     * Calcule les ticks Minecraft selon l'heure réelle.
-     *
-     * FORMULE CLAIRE ET COMMENTÉE :
-     *
-     * Phase 1 - JOUR (0h → 8h réelles) :
-     *   Progression : 0% à 100% du lever au coucher du soleil
-     *   Ticks : 0 → 12000
-     *   Formule : (secondes écoulées / secondes totales du jour) × 12000
-     *
-     * Phase 2 - NUIT (8h → 24h réelles) :
-     *   Progression : 0% à 100% du coucher au lever du soleil
-     *   Ticks : 12000 → 24000 (puis retour à 0)
-     *   Formule : 12000 + ((secondes depuis coucher / secondes totales nuit) × 12000)
-     *
-     * @param secondsSinceMidnight Secondes écoulées depuis minuit (0-86400)
-     * @return Ticks Minecraft (0-24000)
-     */
-    private int calculateMinecraftTicks(long secondsSinceMidnight) {
-        // Conversion heures → secondes
-        int sunriseSeconds = REAL_SUNRISE * 3600;  // 0h = 0 secondes
-        int sunsetSeconds = REAL_SUNSET * 3600;    // 8h = 28800 secondes
-        int midnightSeconds = 24 * 3600;           // 24h = 86400 secondes
+    private int calculateTicks(double currentTime) {
+        // Calcule les durées
+        double dayLength = getDayLength();
+        double nightLength = 24.0 - dayLength;
 
-        if (secondsSinceMidnight < sunsetSeconds) {
-            // === PHASE JOUR (0h-8h) ===
-            // Exemple : 4h du matin (14400 secondes)
-            //   progress = 14400 / 28800 = 0.5 (50%)
-            //   ticks = 0.5 × 12000 = 6000 (midi Minecraft)
-            double progress = (double) secondsSinceMidnight / sunsetSeconds;
-            return (int) (progress * MC_SUNSET);
+        // Vérifie si on est le jour ou la nuit
+        if (isDayTime(currentTime)) {
+            // === JOUR ===
+            // Calcule combien d'heures depuis le lever
+            double hoursSinceSunrise;
+            if (REAL_SUNSET_HOUR == 0 || REAL_SUNSET_HOUR < REAL_SUNRISE_HOUR) {
+                // Cas wrap (ex: lever 9h, coucher 0h OU lever 20h, coucher 6h)
+                if (currentTime >= REAL_SUNRISE_HOUR) {
+                    hoursSinceSunrise = currentTime - REAL_SUNRISE_HOUR;
+                } else {
+                    hoursSinceSunrise = (24 - REAL_SUNRISE_HOUR) + currentTime;
+                }
+            } else {
+                // Cas normal (ex: lever 6h, coucher 18h)
+                hoursSinceSunrise = currentTime - REAL_SUNRISE_HOUR;
+            }
+
+            // Progression du jour (0.0 → 1.0)
+            double progress = hoursSinceSunrise / dayLength;
+
+            // Ticks du jour : 0 → 12000
+            return (int) (progress * 12000);
 
         } else {
-            // === PHASE NUIT (8h-24h) ===
-            // Exemple : 20h du soir (72000 secondes)
-            //   nightSeconds = 72000 - 28800 = 43200
-            //   totalNightSeconds = 86400 - 28800 = 57600
-            //   progress = 43200 / 57600 = 0.75 (75% de la nuit)
-            //   ticks = 12000 + (0.75 × 12000) = 21000
-            long nightSeconds = secondsSinceMidnight - sunsetSeconds;
-            long totalNightSeconds = midnightSeconds - sunsetSeconds;
-            double progress = (double) nightSeconds / totalNightSeconds;
-            return MC_SUNSET + (int) (progress * (MC_FULL_DAY - MC_SUNSET));
+            // === NUIT ===
+            // Calcule combien d'heures depuis le coucher
+            double hoursSinceSunset;
+            if (REAL_SUNSET_HOUR == 0) {
+                // Coucher à minuit : 0h = début de nuit
+                hoursSinceSunset = currentTime;
+            } else if (REAL_SUNRISE_HOUR > REAL_SUNSET_HOUR) {
+                // Cas wrap
+                if (currentTime >= REAL_SUNSET_HOUR && currentTime < REAL_SUNRISE_HOUR) {
+                    hoursSinceSunset = currentTime - REAL_SUNSET_HOUR;
+                } else if (currentTime >= REAL_SUNSET_HOUR) {
+                    hoursSinceSunset = currentTime - REAL_SUNSET_HOUR;
+                } else {
+                    hoursSinceSunset = (24 - REAL_SUNSET_HOUR) + currentTime;
+                }
+            } else {
+                // Cas normal
+                if (currentTime >= REAL_SUNSET_HOUR) {
+                    hoursSinceSunset = currentTime - REAL_SUNSET_HOUR;
+                } else {
+                    hoursSinceSunset = (24 - REAL_SUNSET_HOUR) + currentTime;
+                }
+            }
+
+            double progress = hoursSinceSunset / nightLength;
+
+            int nightTicks = 12000 + (int) (progress * 12000);
+            return nightTicks % 24000;
         }
     }
 
-    // ============================================================================
-    // PARTIE 2 : RESET QUOTIDIEN À 6H
-    // ============================================================================
+    private boolean isDayTime(double currentTime) {
+        if (REAL_SUNSET_HOUR == 0) {
+            // Coucher à minuit : jour si >= lever
+            return currentTime >= REAL_SUNRISE_HOUR;
+        } else if (REAL_SUNSET_HOUR > REAL_SUNRISE_HOUR) {
+            // Cas normal : lever < coucher
+            return currentTime >= REAL_SUNRISE_HOUR && currentTime < REAL_SUNSET_HOUR;
+        } else {
+            // Cas wrap : lever > coucher
+            return currentTime >= REAL_SUNRISE_HOUR || currentTime < REAL_SUNSET_HOUR;
+        }
+    }
 
-    /**
-     * Vérifie si on doit faire un reset maintenant.
-     * Appelé chaque minute par la task.
-     *
-     * CONDITIONS pour reset :
-     * 1. On est un jour différent du dernier reset
-     * 2. Il est au moins 6h du matin
-     */
+    private boolean checkIfNight(double currentTime) {
+        return !isDayTime(currentTime);
+    }
+
+    private double getDayLength() {
+        if (REAL_SUNSET_HOUR == 0) {
+            // Ex: lever 9h, coucher 0h → 24 - 9 = 15h
+            return 24.0 - REAL_SUNRISE_HOUR;
+        } else if (REAL_SUNSET_HOUR > REAL_SUNRISE_HOUR) {
+            // Ex: lever 6h, coucher 18h → 18 - 6 = 12h
+            return REAL_SUNSET_HOUR - REAL_SUNRISE_HOUR;
+        } else {
+            // Ex: lever 20h, coucher 6h → (24-20) + 6 = 10h
+            return (24.0 - REAL_SUNRISE_HOUR) + REAL_SUNSET_HOUR;
+        }
+    }
+    //endregion
+
+    //region daily reset
     private void checkForReset() {
         ZonedDateTime now = ZonedDateTime.now(serverTimezone);
         int currentDay = getCurrentDay(now);
@@ -209,15 +197,6 @@ public class TimeManager {
         }
     }
 
-    /**
-     * Vérifie si on a manqué un reset (serveur éteint pendant plusieurs jours).
-     * Appelé au démarrage.
-     *
-     * SCÉNARIO :
-     * - Dernier reset : 17 février à 6h
-     * - Serveur redémarre : 20 février à 14h
-     * → On a manqué 3 jours de reset, on reset immédiatement
-     */
     private void checkForMissedReset() {
         ZonedDateTime now = ZonedDateTime.now(serverTimezone);
         int currentDay = getCurrentDay(now);
@@ -226,8 +205,8 @@ public class TimeManager {
             logger.log(Level.WARNING, LogManager.ETagLog.SYSTEM,"╔════════════════════════════════════╗");
             logger.log(Level.WARNING, LogManager.ETagLog.SYSTEM,"║   RESET MANQUÉ DÉTECTÉ !           ║");
             logger.log(Level.WARNING, LogManager.ETagLog.SYSTEM,"╠════════════════════════════════════╣");
-            logger.log(Level.WARNING, LogManager.ETagLog.SYSTEM,"║ Dernier reset : jour " + lastResetDay + "          ║");
-            logger.log(Level.WARNING, LogManager.ETagLog.SYSTEM,"║ Jour actuel   : jour " + currentDay + "          ║");
+            logger.log(Level.WARNING, LogManager.ETagLog.SYSTEM,"║ Dernier reset : jour " + lastResetDay);
+            logger.log(Level.WARNING, LogManager.ETagLog.SYSTEM,"║ Jour actuel   : jour " + currentDay);
             logger.log(Level.WARNING, LogManager.ETagLog.SYSTEM,"║ → Reset immédiat déclenché         ║");
             logger.log(Level.WARNING, LogManager.ETagLog.SYSTEM,"╚════════════════════════════════════╝");
             performDailyReset(now);
@@ -236,14 +215,6 @@ public class TimeManager {
         }
     }
 
-    /**
-     * Effectue le reset quotidien.
-     *
-     * ACTIONS :
-     * 1. Met à jour lastResetDay et lastResetTimestamp
-     * 2. Sauvegarde en DB
-     * 3. Déclenche DailyResetEvent pour tous les systèmes
-     */
     private void performDailyReset(ZonedDateTime now) {
         int currentDay = getCurrentDay(now);
         long timestamp = now.toInstant().toEpochMilli();
@@ -252,8 +223,7 @@ public class TimeManager {
         logger.log(Level.INFO, LogManager.ETagLog.SYSTEM,"║         RESET QUOTIDIEN - 6H00                ║");
         logger.log(Level.INFO, LogManager.ETagLog.SYSTEM,"╠═══════════════════════════════════════════════╣");
         logger.log(Level.INFO, LogManager.ETagLog.SYSTEM,"║ Jour : " + currentDay + " (précédent : " + lastResetDay + ")");
-        logger.log(Level.INFO, LogManager.ETagLog.SYSTEM,"║ Heure : " + now.format(
-                java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy à HH:mm:ss")));
+        logger.log(Level.INFO, LogManager.ETagLog.SYSTEM,"║ Heure : " + now.format(java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy à HH:mm:ss")));
         logger.log(Level.INFO, LogManager.ETagLog.SYSTEM,"╚═══════════════════════════════════════════════╝");
 
         // Update l'état
@@ -268,32 +238,18 @@ public class TimeManager {
         logger.log(Level.INFO, LogManager.ETagLog.SYSTEM,"Reset quotidien terminé !");
     }
 
-    /**
-     * Force un reset manuel (pour admin/debug).
-     * Commande : /time forcereset
-     */
     public void forceReset() {
         logger.log(Level.INFO, LogManager.ETagLog.SYSTEM,"╔═══════════════════════════════════════════════╗");
         logger.log(Level.INFO, LogManager.ETagLog.SYSTEM,"║      RESET FORCÉ MANUELLEMENT                 ║");
         logger.log(Level.INFO, LogManager.ETagLog.SYSTEM,"╚═══════════════════════════════════════════════╝");
         performDailyReset(ZonedDateTime.now(serverTimezone));
     }
+    //endregion
 
-    // ============================================================================
-    // UTILITAIRES - INFO ET CALCULS
-    // ============================================================================
-
-    /**
-     * Retourne le nombre de jours depuis l'epoch (01/01/1970).
-     * Utilisé pour comparer les jours entre eux.
-     */
     private int getCurrentDay(ZonedDateTime time) {
         return (int) time.toLocalDate().toEpochDay();
     }
 
-    /**
-     * Retourne la prochaine heure de reset (demain 6h si on a dépassé 6h aujourd'hui).
-     */
     public ZonedDateTime getNextResetTime() {
         ZonedDateTime now = ZonedDateTime.now(serverTimezone);
         ZonedDateTime nextReset = now.withHour(RESET_HOUR).withMinute(0).withSecond(0).withNano(0);
@@ -306,30 +262,23 @@ public class TimeManager {
         return nextReset;
     }
 
-    /**
-     * Retourne le temps restant avant le prochain reset.
-     */
-    public Duration getTimeUntilNextReset() {
-        ZonedDateTime now = ZonedDateTime.now(serverTimezone);
-        return Duration.between(now, getNextResetTime());
-    }
-
-    /**
-     * Vérifie si on a déjà reset aujourd'hui.
-     */
     public boolean hasResetToday() {
         ZonedDateTime now = ZonedDateTime.now(serverTimezone);
         return lastResetDay == getCurrentDay(now);
     }
 
-    // ============================================================================
-    // PERSISTENCE - SAUVEGARDE/CHARGEMENT DB
-    // ============================================================================
+    public static String formatTime(Duration duration) {
+        long days = duration.toDays();
+        long hours = duration.toHoursPart();
+        long minutes = duration.toMinutesPart();
 
-    /**
-     * Charge le dernier reset depuis la DB.
-     * Appelé au démarrage du TimeManager.
-     */
+        if (days > 0) return days + " jours et " + hours + "h" + minutes;
+        if (hours > 0) return hours + "h" + minutes;
+        if (minutes > 0) return minutes + "m";
+        return "moins d'1 minute";
+    }
+
+    //region save/load
     private void loadLastReset() {
         try {
             String data = GameManager.getInstance().getDatabase().getServerData("last_daily_reset");
@@ -370,18 +319,13 @@ public class TimeManager {
         }
     }
 
-    /**
-     * Sauvegarde le dernier reset en DB.
-     * Format : "timestamp:daysSinceEpoch"
-     * Exemple : "1708502400000:19750"
-     */
     private void saveLastReset() {
         try {
             String data = lastResetTimestamp + ":" + lastResetDay;
             GameManager.getInstance().getDatabase().saveServerData("last_daily_reset", data);
         } catch (Exception e) {
             logger.log(Level.SEVERE, LogManager.ETagLog.SYSTEM,"ERREUR lors de la sauvegarde du reset : " + e.getMessage());
-            e.printStackTrace();
         }
     }
+    //endregion
 }
