@@ -12,20 +12,20 @@ public final class PlayerPersistenceService {
     }
 
     public void updateMort(AlphaPlayer alphaPlayer) {
-        database.updatePlayer(alphaPlayer.getUuid(), PlayerColumn.MORT, String.valueOf(alphaPlayer.getMort()));
+        database.players().update(alphaPlayer.getUuid(), PlayerColumn.MORT, String.valueOf(alphaPlayer.getMort()));
     }
 
     public void updateSuccess(AlphaPlayer alphaPlayer) {
-        database.updatePlayer(alphaPlayer.getUuid(), PlayerColumn.SUCCESS, String.valueOf(alphaPlayer.getSuccess()));
+        database.players().update(alphaPlayer.getUuid(), PlayerColumn.SUCCESS, String.valueOf(alphaPlayer.getSuccess()));
     }
 
     public void updateRole(AlphaPlayer alphaPlayer) {
         if (alphaPlayer.getRole() == null) return;
-        database.updatePlayer(alphaPlayer.getUuid(), PlayerColumn.ROLE, alphaPlayer.getRole().type().toString());
+        database.players().update(alphaPlayer.getUuid(), PlayerColumn.ROLE, alphaPlayer.getRole().type().toString());
     }
 
     public void updateSubRoles(AlphaPlayer alphaPlayer) {
         String value = String.join(",", alphaPlayer.getSubRoles().stream().map(subrole -> subrole.type().toString()).toList());
-        database.updatePlayer(alphaPlayer.getUuid(), PlayerColumn.SUBROLES, value);
+        database.players().update(alphaPlayer.getUuid(), PlayerColumn.SUBROLES, value);
     }
 }

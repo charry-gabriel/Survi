@@ -21,12 +21,12 @@ public abstract class AVillager extends MLVillager {
 
     @Override
     protected @Nullable MLVillagerData loadData() {
-        return GameManager.getInstance().getDatabase().initVillager(this.getNameId());
+        return GameManager.getInstance().getDatabase().villagers().load(this.getNameId());
     }
 
     @Override
     protected void saveData() {
-        GameManager.getInstance().getDatabase().CreateDBVillager(this.nameId, this.getVillager().getUniqueId());
+        GameManager.getInstance().getDatabase().villagers().create(this.nameId, this.getVillager().getUniqueId());
     }
 
     @Override

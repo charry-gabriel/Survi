@@ -57,7 +57,7 @@ public class VillagerLevel extends AVillager {
 
     @Override
     protected @Nullable MLVillagerData loadData() {
-        AlphaVillagerData data = GameManager.getInstance().getDatabase().initVillager(this.getNameId());
+        AlphaVillagerData data = GameManager.getInstance().getDatabase().villagers().load(this.getNameId());
         if (data != null) {
             this.level = data.getLevel();
             this.givenItems.addAll(data.getGivenItems());
@@ -94,13 +94,13 @@ public class VillagerLevel extends AVillager {
         Bukkit.getPluginManager().callEvent(event);
 
         this.level++;
-        GameManager.getInstance().getDatabase().updateVillagerLevel(getVillager().getUniqueId(), level);
+        GameManager.getInstance().getDatabase().villagers().updateLevel(getVillager().getUniqueId(), level);
 
         getVillager().customName(getDisplayName());
         updateInventory();
 
         this.givenItems.clear();
-        GameManager.getInstance().getDatabase().updateVillagerGivenItem(getVillager().getUniqueId(), this.givenItems);
+        GameManager.getInstance().getDatabase().villagers().updateGivenItems(getVillager().getUniqueId(), this.givenItems);
 
         return true;
     }
@@ -171,7 +171,7 @@ public class VillagerLevel extends AVillager {
             if (tributeItem != null && tributeItem.isSimilar(item)) {
                 LogManager.getInstance().log(Level.INFO, LogManager.ETagLog.VILLAGER, this.nameId + " recupere " + item.getAmount() + " de " + item.getType().name());
                 this.givenItems.add(new ItemStack(item));
-                GameManager.getInstance().getDatabase().updateVillagerGivenItem(getVillager().getUniqueId(), this.givenItems);
+                GameManager.getInstance().getDatabase().villagers().updateGivenItems(getVillager().getUniqueId(), this.givenItems);
 
                 if (item.getAmount() < tributeItem.getAmount()) {
                     tributeItem.setAmount(tributeItem.getAmount() - item.getAmount());
@@ -231,7 +231,7 @@ public class VillagerLevel extends AVillager {
     public void lock(Duration duration) {
         if (this.isUnlocked()) {
             this.unlockedInstant = Instant.now().plus(duration);
-            GameManager.getInstance().getDatabase().lockVillager(getVillager().getUniqueId(), this.unlockedInstant.toEpochMilli());
+            GameManager.getInstance().getDatabase().villagers().updateLock(getVillager().getUniqueId(), this.unlockedInstant.toEpochMilli());
         }
     }
 
@@ -242,7 +242,7 @@ public class VillagerLevel extends AVillager {
         }
 
         unlockedInstant = Instant.EPOCH;
-        GameManager.getInstance().getDatabase().lockVillager(getVillager().getUniqueId(), null);
+        GameManager.getInstance().getDatabase().villagers().updateLock(getVillager().getUniqueId(), null);
     }
 
     public String getRemainingLock() {

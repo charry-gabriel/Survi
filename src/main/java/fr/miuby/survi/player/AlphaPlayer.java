@@ -87,8 +87,8 @@ public class AlphaPlayer extends MLPlayer implements Serializable {
         this.player.discoverRecipes(GameManager.getInstance().getCustomRecipeFactory().getNewRecipes().keySet());
 
         // Load reputation and quest data
-        this.reputationByTrader.putAll(GameManager.getInstance().getDatabase().getReputation(this.getUuid()));
-        this.activeQuest = GameManager.getInstance().getDatabase().getPlayerQuest(this.getUuid());
+        this.reputationByTrader.putAll(GameManager.getInstance().getDatabase().quests().getReputation(this.getUuid()));
+        this.activeQuest = GameManager.getInstance().getDatabase().quests().getPlayerQuest(this.getUuid());
     }
 
     public void gainOneSuccess(boolean challenge) {
@@ -155,7 +155,7 @@ public class AlphaPlayer extends MLPlayer implements Serializable {
     public void addReputation(String traderId, int amount) {
         int newRep = getReputation(traderId) + amount;
         reputationByTrader.put(traderId, newRep);
-        GameManager.getInstance().getDatabase().updateReputation(this.getUuid(), traderId, newRep);
+        GameManager.getInstance().getDatabase().quests().updateReputation(this.getUuid(), traderId, newRep);
     }
     //endregion
 }

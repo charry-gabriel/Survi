@@ -65,7 +65,7 @@ public class AlphaPlayerFactory {
 
         // if player doesn't exist in database, create it
         if (alphaPlayer == null) {
-            GameManager.getInstance().getDatabase().CreateDBPlayer(bukkitPlayer);
+            GameManager.getInstance().getDatabase().players().create(bukkitPlayer);
             alphaPlayer = registerAlphaPlayer(bukkitPlayer.getUniqueId(), bukkitPlayer.getName(), GameManager.getInstance().getRoleRegistry().getDefaultRole());
         }
 

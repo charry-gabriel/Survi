@@ -8,21 +8,96 @@ import fr.miuby.survi.GameManager;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
 import io.papermc.paper.command.brigadier.Commands;
 import net.kyori.adventure.text.Component;
-import org.bukkit.command.CommandSender;
+import net.kyori.adventure.text.format.NamedTextColor;
 
 public class SqlCommand {
     public static LiteralArgumentBuilder<CommandSourceStack> createCommand() {
         return Commands.literal("sql")
                 .requires(sender -> sender.getSender().isOp())
-                .requires(sender -> sender.getSender().hasPermission("permission.sql"))
-                .then(Commands.argument("args", StringArgumentType.greedyString())
-                    .executes(SqlCommand::sqlExecute));
+                .then(Commands.literal("query")
+                    .then(Commands.argument("sql", StringArgumentType.greedyString())
+                        .executes(SqlCommand::sqlExecuteQuery)
+                    )
+                )
+                .then(Commands.literal("tables")
+                    .executes(SqlCommand::sqlExecuteTables)
+                )
+                .then(Commands.literal("schema")
+                    .then(Commands.argument("table", StringArgumentType.word())
+                        .suggests((context, builder) -> {
+                            builder.suggest("player");
+                            builder.suggest("villager");
+                            builder.suggest("planted_crops");
+                            builder.suggest("player_quest");
+                            builder.suggest("player_reputation");
+                            builder.suggest("server_data");
+                            return builder.buildFuture();
+                        })
+                        .executes(SqlCommand::sqlExecuteSchema)
+                    )
+                );
     }
 
-    private static int sqlExecute(CommandContext<CommandSourceStack> ctx) {
-        CommandSender sender = ctx.getSource().getSender();
-        String result = GameManager.getInstance().getDatabase().Request(StringArgumentType.getString(ctx, "args"));
-        sender.sendMessage(Component.text(result));
+    private static int sqlExecuteSchema(CommandContext<CommandSourceStack> ctx) {
+        String table = StringArgumentType.getString(ctx, "table");
+        String result = GameManager.getInstance().getDatabase()
+                .Request("PRAGMA table_info(" + table + ")");
+
+        ctx.getSource().getSender().sendMessage(
+                Component.text("═══ Schema: " + table + " ═══", NamedTextColor.GOLD)
+        );
+
+        for (String line : result.split("\n")) {
+            ctx.getSource().getSender().sendMessage(
+                    Component.text("  " + line, NamedTextColor.WHITE)
+            );
+        }
+
+        return Command.SINGLE_SUCCESS;
+    }
+
+    private static int sqlExecuteTables(CommandContext<CommandSourceStack> ctx) {
+        String result = GameManager.getInstance().getDatabase()
+                .Request("SELECT name FROM sqlite_master WHERE type='table'");
+
+        ctx.getSource().getSender().sendMessage(
+                Component.text("═══ Tables ═══", NamedTextColor.GOLD)
+        );
+
+        for (String line : result.split("\n")) {
+            ctx.getSource().getSender().sendMessage(
+                    Component.text("  • " + line, NamedTextColor.YELLOW)
+            );
+        }
+
+        return Command.SINGLE_SUCCESS;
+    }
+
+    private static int sqlExecuteQuery(CommandContext<CommandSourceStack> ctx) {
+        String sql = StringArgumentType.getString(ctx, "sql");
+
+        ctx.getSource().getSender().sendMessage(
+                Component.text("Executing: ", NamedTextColor.YELLOW)
+                        .append(Component.text(sql, NamedTextColor.WHITE))
+        );
+
+        String result = GameManager.getInstance().getDatabase().Request(sql);
+
+        if (result.isEmpty()) {
+            ctx.getSource().getSender().sendMessage(
+                    Component.text("(empty result)", NamedTextColor.GRAY)
+            );
+        } else {
+            ctx.getSource().getSender().sendMessage(
+                    Component.text("Result:", NamedTextColor.GREEN)
+            );
+            for (String line : result.split("\n")) {
+                ctx.getSource().getSender().sendMessage(
+                        Component.text("  " + line, NamedTextColor.WHITE)
+                );
+            }
+        }
+
         return Command.SINGLE_SUCCESS;
     }
 }

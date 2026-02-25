@@ -107,7 +107,7 @@ public class VillagerCommand {
             return Command.SINGLE_SUCCESS;
         }
 
-        GameManager.getInstance().getDatabase().updateVillagerLocation(villager.getVillager().getUniqueId(), location);
+        GameManager.getInstance().getDatabase().villagers().updateLocation(villager.getVillager().getUniqueId(), location);
         villager.getVillager().teleport(location);
         return Command.SINGLE_SUCCESS;
     }

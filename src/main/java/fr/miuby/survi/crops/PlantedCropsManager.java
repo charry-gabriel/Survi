@@ -25,7 +25,7 @@ public class PlantedCropsManager {
         if (loaded)
             return;
 
-        loaded = database.selectCrop(plantedCrops);
+        loaded = database.crops().loadAll(plantedCrops);
     }
 
     public void addPlantedCrop(Location location) {
@@ -33,7 +33,7 @@ public class PlantedCropsManager {
         String key = crop.getKey();
         
         if (plantedCrops.add(key)) {
-            database.saveCrop(crop);
+            database.crops().save(crop);
         }
     }
 
@@ -42,7 +42,7 @@ public class PlantedCropsManager {
         String key = crop.getKey();
         
         if (plantedCrops.remove(key)) {
-            database.removeCrop(crop);
+            database.crops().remove(crop);
         }
     }
 

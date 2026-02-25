@@ -141,7 +141,7 @@ public class QuestManager {
 
     public void resetQuest(AlphaPlayer player) {
         player.setActiveQuest(null);
-        GameManager.getInstance().getDatabase().clearPlayerQuest(player.getUuid());
+        GameManager.getInstance().getDatabase().quests().clearPlayerQuest(player.getUuid());
         
         if (player.getPlayer() != null) {
             player.getPlayer().sendMessage("§eVotre quête du jour a été réinitialisée par un administrateur.");
@@ -162,7 +162,7 @@ public class QuestManager {
 
         PlayerQuestData data = new PlayerQuestData(quest.getId(), 0, LocalDate.now(), false, trader.getNameId(), false);
         player.setActiveQuest(data);
-        GameManager.getInstance().getDatabase().updatePlayerQuest(player.getUuid(), data);
+        GameManager.getInstance().getDatabase().quests().updatePlayerQuest(player.getUuid(), data);
         
         player.getPlayer().sendMessage("§aNouvelle quête acceptée auprès de §b" + trader.getNameId() + " §a: §6" + quest.getName());
         player.getPlayer().sendMessage("§7" + quest.getDescription());
@@ -191,7 +191,7 @@ public class QuestManager {
         
         // Marquer comme réclamée (claim) pour empêcher les doubles récompenses
         data.setClaimed(true);
-        GameManager.getInstance().getDatabase().updatePlayerQuest(player.getUuid(), data);
+        GameManager.getInstance().getDatabase().quests().updatePlayerQuest(player.getUuid(), data);
     }
 
     public void progressQuest(AlphaPlayer player, QuestType type, Object target, int amount) {
@@ -212,7 +212,7 @@ public class QuestManager {
         if (data.getProgress() >= quest.getGoal()) {
             completeQuestInternal(player, quest);
         } else {
-            GameManager.getInstance().getDatabase().updatePlayerQuest(player.getUuid(), data);
+            GameManager.getInstance().getDatabase().quests().updatePlayerQuest(player.getUuid(), data);
         }
     }
 
@@ -220,7 +220,7 @@ public class QuestManager {
         PlayerQuestData data = player.getActiveQuest();
         data.setProgress(quest.getGoal());
         data.setCompleted(true);
-        GameManager.getInstance().getDatabase().updatePlayerQuest(player.getUuid(), data);
+        GameManager.getInstance().getDatabase().quests().updatePlayerQuest(player.getUuid(), data);
 
         player.getPlayer().sendMessage("§aQuête terminée : §6" + quest.getName());
         player.getPlayer().sendMessage("§7Allez voir le Trader pour obtenir votre récompense !");

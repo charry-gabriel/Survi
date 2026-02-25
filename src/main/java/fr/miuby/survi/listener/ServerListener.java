@@ -52,7 +52,7 @@ public class ServerListener implements Listener {
             // Si la quête n'est pas terminée ou pas claimed, on la reset
             if (quest != null && (!quest.isCompleted() || !quest.isClaimed())) {
                 player.setActiveQuest(null);
-                GameManager.getInstance().getDatabase().clearPlayerQuest(player.getUuid());
+                GameManager.getInstance().getDatabase().quests().clearPlayerQuest(player.getUuid());
                 resetCount++;
 
                 // Notifie le joueur s'il est connecté

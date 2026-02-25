@@ -281,7 +281,7 @@ public class TimeManager {
     //region save/load
     private void loadLastReset() {
         try {
-            String data = GameManager.getInstance().getDatabase().getServerData("last_daily_reset");
+            String data = GameManager.getInstance().getDatabase().system().getServerData("last_daily_reset");
 
             if (data != null && !data.isEmpty()) {
                 String[] parts = data.split(":");
@@ -322,7 +322,7 @@ public class TimeManager {
     private void saveLastReset() {
         try {
             String data = lastResetTimestamp + ":" + lastResetDay;
-            GameManager.getInstance().getDatabase().saveServerData("last_daily_reset", data);
+            GameManager.getInstance().getDatabase().system().saveServerData("last_daily_reset", data);
         } catch (Exception e) {
             logger.log(Level.SEVERE, LogManager.ETagLog.SYSTEM,"ERREUR lors de la sauvegarde du reset : " + e.getMessage());
         }

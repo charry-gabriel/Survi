@@ -80,6 +80,7 @@ public class GameManager {
 
         this.initDatabase();
         MiubyLib.init(plugin);
+        LogManager.getInstance().initialize();
 
         this.initWorlds();
     }
@@ -133,7 +134,7 @@ public class GameManager {
     private void initPlayers() {
         this.roleRegistry = new RoleRegistry();
         this.alphaPlayerFactory = new AlphaPlayerFactory();
-        this.database.createAlphaPlayers();
+        this.database.players().createAlphaPlayers();
 
         this.tabDisplayManager = new TabDisplayManager();
     }
