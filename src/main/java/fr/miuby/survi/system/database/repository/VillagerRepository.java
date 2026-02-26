@@ -23,8 +23,7 @@ public class VillagerRepository {
     }
 
     public AlphaVillagerData load(String nameId) {
-        try (PreparedStatement ps = connection.prepareStatement(
-                "SELECT * FROM villager WHERE name = ? ORDER BY rowid DESC LIMIT 1")) {
+        try (PreparedStatement ps = connection.prepareStatement("SELECT * FROM villager WHERE name = ? ORDER BY rowid DESC LIMIT 1")) {
 
             ps.setString(1, nameId);
             try (ResultSet rs = ps.executeQuery()) {
@@ -38,8 +37,7 @@ public class VillagerRepository {
                 if (givenItemsString == null) {
                     givenItems = new ArrayList<>();
                 } else {
-                    givenItems = List.of(ItemStack.deserializeItemsFromBytes(
-                            Base64.getDecoder().decode(givenItemsString)));
+                    givenItems = List.of(ItemStack.deserializeItemsFromBytes(Base64.getDecoder().decode(givenItemsString)));
                 }
 
                 Location location = new Location(
@@ -56,8 +54,7 @@ public class VillagerRepository {
                 return new AlphaVillagerData(uuid, nameId, location, givenItems, level, unlockToEpochMilli);
             }
         } catch (SQLException ex) {
-            LogManager.getInstance().log(Level.SEVERE, LogManager.ETagLog.VILLAGER,
-                    "Failed to load villager: " + nameId + " (" + ex.getMessage() + ")");
+            LogManager.getInstance().log(Level.SEVERE, LogManager.ETagLog.VILLAGER, "Failed to load villager: " + nameId + " (" + ex.getMessage() + ")");
             return null;
         }
     }
@@ -65,7 +62,7 @@ public class VillagerRepository {
     public void create(String name, UUID uuid) {
         GameManager.getInstance().getScheduler().runTaskAsynchronously(
                 GameManager.getInstance().getPlugin(), () -> {
-                    try (Connection conn = getConnection();
+                    try (Connection conn = GameManager.getInstance().getDatabase().getSQLConnection();
                          PreparedStatement deletePs = conn.prepareStatement("DELETE FROM villager WHERE name = ?");
                          PreparedStatement insertPs = conn.prepareStatement(
                                  "INSERT INTO villager (uuid, level, name, givenItems, locationX, locationY, locationZ, locationYaw, locationPitch, unlockedDate) " +
@@ -79,8 +76,7 @@ public class VillagerRepository {
                         insertPs.executeUpdate();
 
                     } catch (SQLException ex) {
-                        LogManager.getInstance().log(Level.SEVERE, LogManager.ETagLog.VILLAGER,
-                                "Failed to create villager (" + ex.getMessage() + ")");
+                        LogManager.getInstance().log(Level.SEVERE, LogManager.ETagLog.VILLAGER, "Failed to create villager (" + ex.getMessage() + ")");
                     }
                 }
         );
@@ -89,17 +85,15 @@ public class VillagerRepository {
     public void updateLevel(UUID uuid, int level) {
         GameManager.getInstance().getScheduler().runTaskAsynchronously(
                 GameManager.getInstance().getPlugin(), () -> {
-                    try (Connection conn = getConnection();
-                         PreparedStatement ps = conn.prepareStatement(
-                                 "UPDATE villager SET level = ? WHERE uuid = ?")) {
+                    try (Connection conn = GameManager.getInstance().getDatabase().getSQLConnection();
+                         PreparedStatement ps = conn.prepareStatement("UPDATE villager SET level = ? WHERE uuid = ?")) {
 
                         ps.setInt(1, level);
                         ps.setString(2, uuid.toString());
                         ps.executeUpdate();
 
                     } catch (SQLException ex) {
-                        LogManager.getInstance().log(Level.SEVERE, LogManager.ETagLog.VILLAGER,
-                                "Failed to update villager level (" + ex.getMessage() + ")");
+                        LogManager.getInstance().log(Level.SEVERE, LogManager.ETagLog.VILLAGER, "Failed to update villager level (" + ex.getMessage() + ")");
                     }
                 }
         );
@@ -108,9 +102,8 @@ public class VillagerRepository {
     public void updateLocation(UUID uuid, Location location) {
         GameManager.getInstance().getScheduler().runTaskAsynchronously(
                 GameManager.getInstance().getPlugin(), () -> {
-                    try (Connection conn = getConnection();
-                         PreparedStatement ps = conn.prepareStatement(
-                                 "UPDATE villager SET locationX = ?, locationY = ?, locationZ = ?, locationYaw = ?, locationPitch = ? WHERE uuid = ?")) {
+                    try (Connection conn = GameManager.getInstance().getDatabase().getSQLConnection();
+                         PreparedStatement ps = conn.prepareStatement("UPDATE villager SET locationX = ?, locationY = ?, locationZ = ?, locationYaw = ?, locationPitch = ? WHERE uuid = ?")) {
 
                         ps.setDouble(1, location.getX());
                         ps.setDouble(2, location.getY());
@@ -121,8 +114,7 @@ public class VillagerRepository {
                         ps.executeUpdate();
 
                     } catch (SQLException ex) {
-                        LogManager.getInstance().log(Level.SEVERE, LogManager.ETagLog.VILLAGER,
-                                "Failed to update villager location (" + ex.getMessage() + ")");
+                        LogManager.getInstance().log(Level.SEVERE, LogManager.ETagLog.VILLAGER, "Failed to update villager location (" + ex.getMessage() + ")");
                     }
                 }
         );
@@ -131,19 +123,16 @@ public class VillagerRepository {
     public void updateGivenItems(UUID uuid, List<ItemStack> givenItems) {
         GameManager.getInstance().getScheduler().runTaskAsynchronously(
                 GameManager.getInstance().getPlugin(), () -> {
-                    try (Connection conn = getConnection();
-                         PreparedStatement ps = conn.prepareStatement(
-                                 "UPDATE villager SET givenItems = ? WHERE uuid = ?")) {
+                    try (Connection conn = GameManager.getInstance().getDatabase().getSQLConnection();
+                         PreparedStatement ps = conn.prepareStatement("UPDATE villager SET givenItems = ? WHERE uuid = ?")) {
 
-                        String givenItemsString = Base64.getEncoder()
-                                .encodeToString(ItemStack.serializeItemsAsBytes(givenItems));
+                        String givenItemsString = Base64.getEncoder().encodeToString(ItemStack.serializeItemsAsBytes(givenItems));
                         ps.setString(1, givenItemsString);
                         ps.setString(2, uuid.toString());
                         ps.executeUpdate();
 
                     } catch (SQLException ex) {
-                        LogManager.getInstance().log(Level.SEVERE, LogManager.ETagLog.VILLAGER,
-                                "Failed to update villager given items (" + ex.getMessage() + ")");
+                        LogManager.getInstance().log(Level.SEVERE, LogManager.ETagLog.VILLAGER, "Failed to update villager given items (" + ex.getMessage() + ")");
                     }
                 }
         );
@@ -152,9 +141,8 @@ public class VillagerRepository {
     public void updateLock(UUID uuid, Long unlockedDate) {
         GameManager.getInstance().getScheduler().runTaskAsynchronously(
                 GameManager.getInstance().getPlugin(), () -> {
-                    try (Connection conn = getConnection();
-                         PreparedStatement ps = conn.prepareStatement(
-                                 "UPDATE villager SET unlockedDate = ? WHERE uuid = ?")) {
+                    try (Connection conn = GameManager.getInstance().getDatabase().getSQLConnection();
+                         PreparedStatement ps = conn.prepareStatement("UPDATE villager SET unlockedDate = ? WHERE uuid = ?")) {
 
                         if (unlockedDate != null) {
                             ps.setLong(1, unlockedDate);
@@ -165,14 +153,9 @@ public class VillagerRepository {
                         ps.executeUpdate();
 
                     } catch (SQLException ex) {
-                        LogManager.getInstance().log(Level.SEVERE, LogManager.ETagLog.VILLAGER,
-                                "Failed to update villager lock (" + ex.getMessage() + ")");
+                        LogManager.getInstance().log(Level.SEVERE, LogManager.ETagLog.VILLAGER, "Failed to update villager lock (" + ex.getMessage() + ")");
                     }
                 }
         );
-    }
-
-    private Connection getConnection() throws SQLException {
-        return connection;
     }
 }

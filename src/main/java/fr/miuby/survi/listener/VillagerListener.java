@@ -4,6 +4,9 @@ import fr.miuby.lib.villager.MLVillager;
 import fr.miuby.lib.villager.VillagerLoadedEvent;
 import fr.miuby.lib.villager.VillagerRegistry;
 import fr.miuby.survi.player.AlphaPlayer;
+import fr.miuby.survi.quest.QuestManager;
+import fr.miuby.survi.villager.AVillager;
+import fr.miuby.survi.villager.Trader;
 import fr.miuby.survi.villager.VillagerLevel;
 import fr.miuby.survi.villager.VillagerPostLoadActions;
 import fr.miuby.survi.villager.blessing.BlessingEffect;
@@ -11,13 +14,84 @@ import fr.miuby.survi.villager.event.VillagerLevelUpEvent;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.sound.Sound;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.event.ClickEvent;
+import net.kyori.adventure.text.event.HoverEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Villager;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerInteractEntityEvent;
+import org.bukkit.inventory.MenuType;
 
 public class VillagerListener implements Listener {
+    @SuppressWarnings("UnstableApiUsage")
+    @EventHandler
+    public void onPlayerInteractEntity(PlayerInteractEntityEvent event) {
+        Player player = event.getPlayer();
+
+        if (event.getRightClicked().getType() == EntityType.VILLAGER)
+        {
+            Villager villager = (Villager) event.getRightClicked();
+            AVillager aVillager = (AVillager) VillagerRegistry.get(villager.getUniqueId());
+
+            switch (aVillager) {
+                case VillagerLevel level when level.getTribute() == null || !level.isUnlocked() -> {
+                    player.sendMessage(Component.text("<", NamedTextColor.AQUA).append(level.getDisplayName()).append(Component.text("> ", NamedTextColor.AQUA)).append(level.getMessage()));
+                    player.sendMessage("§e" + villager.getName() + " §eest indisponible pendant encore " + level.getRemainingLock());
+                    event.setCancelled(true);
+                }
+                case VillagerLevel level -> {
+                    player.openInventory(level.getInventory());
+                    event.setCancelled(true);
+                }
+                case Trader trader -> {
+                    AlphaPlayer alphaPlayer = AlphaPlayer.get(player.getUniqueId());
+
+                    if (alphaPlayer.getActiveQuest() != null && alphaPlayer.getActiveQuest().isCompleted() && !alphaPlayer.getActiveQuest().isClaimed()) {
+                        QuestManager.getInstance().completeQuest(alphaPlayer, trader, false);
+                        event.setCancelled(true);
+                        return;
+                    }
+
+                    // On ne propose la quête que si le joueur n'en a pas déjà une aujourd'hui
+                    boolean hasQuestToday = false;
+                    if (alphaPlayer.getActiveQuest() != null) {
+                        java.time.LocalDate lastAccepted = alphaPlayer.getActiveQuest().getLastAccepted();
+                        if (lastAccepted != null && lastAccepted.isEqual(java.time.LocalDate.now())) {
+                            hasQuestToday = true;
+                        }
+                    }
+
+                    if (!hasQuestToday) {
+                        Component questMessage = Component.text("\n[Quête] ", NamedTextColor.GOLD)
+                                .append(Component.text("Cliquez ici pour accepter la quête du jour !", NamedTextColor.YELLOW)
+                                        .clickEvent(ClickEvent.callback(audience -> QuestManager.getInstance().assignQuest(alphaPlayer, trader)))
+                                        .hoverEvent(HoverEvent.showText(Component.text("Accepter la quête", NamedTextColor.GREEN))))
+                                .append(Component.text("\n"));
+                        player.sendMessage(questMessage);
+                    }
+
+                    // Update recipes based on reputation
+                    int reputation = alphaPlayer.getReputation(trader.getNameId());
+                    trader.getVillager().setRecipes(trader.getRecipesForPlayer(reputation));
+
+                    player.openInventory(MenuType.MERCHANT.builder().merchant(trader.getVillager()).title(trader.getDisplayName()).build(player));
+
+                    player.sendMessage(Component.text("<", NamedTextColor.AQUA).append(aVillager.getDisplayName()).append(Component.text("> ", NamedTextColor.AQUA)).append(((Trader)aVillager).getOpenMessage()));
+                    event.setCancelled(true);
+                }
+                case null, default -> {
+                }
+            }
+        }
+        else if (event.getRightClicked().getType() == EntityType.WANDERING_TRADER)
+        {
+            event.setCancelled(true);
+        }
+    }
 
     @EventHandler
     public void onVillagerLoaded(VillagerLoadedEvent event) {

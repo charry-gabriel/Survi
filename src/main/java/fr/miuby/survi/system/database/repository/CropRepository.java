@@ -33,8 +33,7 @@ public class CropRepository {
 
             return true;
         } catch (SQLException ex) {
-            LogManager.getInstance().log(Level.SEVERE, LogManager.ETagLog.WORLD,
-                    "Failed to load planted crops (" + ex.getMessage() + ")");
+            LogManager.getInstance().log(Level.SEVERE, LogManager.ETagLog.WORLD, "Failed to load planted crops (" + ex.getMessage() + ")");
             return false;
         }
     }
@@ -42,9 +41,8 @@ public class CropRepository {
     public void save(PlantedCrop crop) {
         GameManager.getInstance().getScheduler().runTaskAsynchronously(
                 GameManager.getInstance().getPlugin(), () -> {
-                    try (Connection conn = getConnection();
-                         PreparedStatement ps = conn.prepareStatement(
-                                 "INSERT OR IGNORE INTO planted_crops (world_uid, x, y, z) VALUES (?, ?, ?, ?)")) {
+                    try (Connection conn = GameManager.getInstance().getDatabase().getSQLConnection();
+                         PreparedStatement ps = conn.prepareStatement("INSERT OR IGNORE INTO planted_crops (world_uid, x, y, z) VALUES (?, ?, ?, ?)")) {
 
                         ps.setString(1, crop.getWorldUid());
                         ps.setInt(2, crop.getX());
@@ -53,8 +51,7 @@ public class CropRepository {
                         ps.executeUpdate();
 
                     } catch (SQLException ex) {
-                        LogManager.getInstance().log(Level.SEVERE, LogManager.ETagLog.WORLD,
-                                "Failed to save planted crop (" + ex.getMessage() + ")");
+                        LogManager.getInstance().log(Level.SEVERE, LogManager.ETagLog.WORLD, "Failed to save planted crop (" + ex.getMessage() + ")");
                     }
                 }
         );
@@ -63,9 +60,8 @@ public class CropRepository {
     public void remove(PlantedCrop crop) {
         GameManager.getInstance().getScheduler().runTaskAsynchronously(
                 GameManager.getInstance().getPlugin(), () -> {
-                    try (Connection conn = getConnection();
-                         PreparedStatement ps = conn.prepareStatement(
-                                 "DELETE FROM planted_crops WHERE world_uid = ? AND x = ? AND y = ? AND z = ?")) {
+                    try (Connection conn = GameManager.getInstance().getDatabase().getSQLConnection();
+                         PreparedStatement ps = conn.prepareStatement("DELETE FROM planted_crops WHERE world_uid = ? AND x = ? AND y = ? AND z = ?")) {
 
                         ps.setString(1, crop.getWorldUid());
                         ps.setInt(2, crop.getX());
@@ -74,14 +70,9 @@ public class CropRepository {
                         ps.executeUpdate();
 
                     } catch (SQLException ex) {
-                        LogManager.getInstance().log(Level.SEVERE, LogManager.ETagLog.WORLD,
-                                "Failed to remove planted crop (" + ex.getMessage() + ")");
+                        LogManager.getInstance().log(Level.SEVERE, LogManager.ETagLog.WORLD, "Failed to remove planted crop (" + ex.getMessage() + ")");
                     }
                 }
         );
-    }
-
-    private Connection getConnection() throws SQLException {
-        return connection;
     }
 }

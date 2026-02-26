@@ -5,6 +5,7 @@ import fr.miuby.survi.GameManager;
 import fr.miuby.survi.player.service.PlayerAttributeService;
 import fr.miuby.survi.player.service.PlayerPersistenceService;
 import fr.miuby.survi.role.Role;
+import fr.miuby.survi.system.exception.AlphaPlayerNotFoundException;
 import lombok.Getter;
 import org.bukkit.entity.Player;
 
@@ -16,7 +17,7 @@ public class AlphaPlayerFactory {
     @Getter
     private final PlayerAttributeService attributeService = new PlayerAttributeService();
     @Getter
-    private final PlayerPersistenceService persistenceService = new PlayerPersistenceService(GameManager.getInstance().getDatabase());
+    private final PlayerPersistenceService persistenceService = new PlayerPersistenceService(GameManager.getInstance().getDatabase().players());
 
     public AlphaPlayer get(UUID uuid) {
         return registry.get(uuid);
@@ -33,15 +34,14 @@ public class AlphaPlayerFactory {
     public AlphaPlayer getAlphaPlayer(UUID uuid){
         AlphaPlayer alphaPlayer = registry.get(uuid);
         if (alphaPlayer == null)
-            throw new NullPointerException(uuid.toString() + " alphaPlayer doesn't exist !");
+            throw new AlphaPlayerNotFoundException(uuid);
         return alphaPlayer;
     }
 
     public AlphaPlayer getAlphaPlayer(String pseudo) {
         AlphaPlayer alphaPlayer = registry.get(pseudo);
-        if (alphaPlayer == null) {
-            throw new NullPointerException(pseudo + " alphaPlayer doesn't exist !");
-        }
+        if (alphaPlayer == null)
+            throw new AlphaPlayerNotFoundException(pseudo);
         return alphaPlayer;
     }
 

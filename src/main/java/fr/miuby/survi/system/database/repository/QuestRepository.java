@@ -25,8 +25,7 @@ public class QuestRepository {
 
     public Map<String, Integer> getReputation(UUID playerUuid) {
         Map<String, Integer> reputations = new HashMap<>();
-        try (PreparedStatement ps = connection.prepareStatement(
-                "SELECT trader_id, reputation FROM player_reputation WHERE player_uuid = ?")) {
+        try (PreparedStatement ps = connection.prepareStatement("SELECT trader_id, reputation FROM player_reputation WHERE player_uuid = ?")) {
 
             ps.setString(1, playerUuid.toString());
             try (ResultSet rs = ps.executeQuery()) {
@@ -35,8 +34,7 @@ public class QuestRepository {
                 }
             }
         } catch (SQLException ex) {
-            LogManager.getInstance().log(Level.SEVERE, LogManager.ETagLog.REPUTATION,
-                    "Failed to get reputation (" + ex.getMessage() + ")");
+            LogManager.getInstance().log(Level.SEVERE, LogManager.ETagLog.REPUTATION, "Failed to get reputation (" + ex.getMessage() + ")");
         }
         return reputations;
     }
@@ -44,9 +42,8 @@ public class QuestRepository {
     public void updateReputation(UUID playerUuid, String traderId, int reputation) {
         GameManager.getInstance().getScheduler().runTaskAsynchronously(
                 GameManager.getInstance().getPlugin(), () -> {
-                    try (Connection conn = getConnection();
-                         PreparedStatement ps = conn.prepareStatement(
-                                 "INSERT OR REPLACE INTO player_reputation (player_uuid, trader_id, reputation) VALUES (?, ?, ?)")) {
+                    try (Connection conn = GameManager.getInstance().getDatabase().getSQLConnection();
+                         PreparedStatement ps = conn.prepareStatement("INSERT OR REPLACE INTO player_reputation (player_uuid, trader_id, reputation) VALUES (?, ?, ?)")) {
 
                         ps.setString(1, playerUuid.toString());
                         ps.setString(2, traderId);
@@ -54,8 +51,7 @@ public class QuestRepository {
                         ps.executeUpdate();
 
                     } catch (SQLException ex) {
-                        LogManager.getInstance().log(Level.SEVERE, LogManager.ETagLog.REPUTATION,
-                                "Failed to update reputation (" + ex.getMessage() + ")");
+                        LogManager.getInstance().log(Level.SEVERE, LogManager.ETagLog.REPUTATION, "Failed to update reputation (" + ex.getMessage() + ")");
                     }
                 }
         );
@@ -64,8 +60,7 @@ public class QuestRepository {
     // === QUEST ===
 
     public PlayerQuestData getPlayerQuest(UUID playerUuid) {
-        try (PreparedStatement ps = connection.prepareStatement(
-                "SELECT quest_id, progress, last_accepted, is_completed, trader_id, claimed FROM player_quest WHERE player_uuid = ?")) {
+        try (PreparedStatement ps = connection.prepareStatement("SELECT quest_id, progress, last_accepted, is_completed, trader_id, claimed FROM player_quest WHERE player_uuid = ?")) {
 
             ps.setString(1, playerUuid.toString());
             try (ResultSet rs = ps.executeQuery()) {
@@ -81,8 +76,7 @@ public class QuestRepository {
                 }
             }
         } catch (SQLException ex) {
-            LogManager.getInstance().log(Level.SEVERE, LogManager.ETagLog.QUEST,
-                    "Failed to get player quest (" + ex.getMessage() + ")");
+            LogManager.getInstance().log(Level.SEVERE, LogManager.ETagLog.QUEST, "Failed to get player quest (" + ex.getMessage() + ")");
         }
         return null;
     }
@@ -90,7 +84,7 @@ public class QuestRepository {
     public void updatePlayerQuest(UUID playerUuid, PlayerQuestData questData) {
         GameManager.getInstance().getScheduler().runTaskAsynchronously(
                 GameManager.getInstance().getPlugin(), () -> {
-                    try (Connection conn = getConnection();
+                    try (Connection conn = GameManager.getInstance().getDatabase().getSQLConnection();
                          PreparedStatement ps = conn.prepareStatement(
                                  "INSERT OR REPLACE INTO player_quest (player_uuid, quest_id, progress, last_accepted, is_completed, trader_id, claimed) " +
                                          "VALUES (?, ?, ?, ?, ?, ?, ?)")) {
@@ -105,8 +99,7 @@ public class QuestRepository {
                         ps.executeUpdate();
 
                     } catch (SQLException ex) {
-                        LogManager.getInstance().log(Level.SEVERE, LogManager.ETagLog.QUEST,
-                                "Failed to update player quest (" + ex.getMessage() + ")");
+                        LogManager.getInstance().log(Level.SEVERE, LogManager.ETagLog.QUEST, "Failed to update player quest (" + ex.getMessage() + ")");
                     }
                 }
         );
@@ -115,22 +108,16 @@ public class QuestRepository {
     public void clearPlayerQuest(UUID playerUuid) {
         GameManager.getInstance().getScheduler().runTaskAsynchronously(
                 GameManager.getInstance().getPlugin(), () -> {
-                    try (Connection conn = getConnection();
-                         PreparedStatement ps = conn.prepareStatement(
-                                 "DELETE FROM player_quest WHERE player_uuid = ?")) {
+                    try (Connection conn = GameManager.getInstance().getDatabase().getSQLConnection();
+                         PreparedStatement ps = conn.prepareStatement("DELETE FROM player_quest WHERE player_uuid = ?")) {
 
                         ps.setString(1, playerUuid.toString());
                         ps.executeUpdate();
 
                     } catch (SQLException ex) {
-                        LogManager.getInstance().log(Level.SEVERE, LogManager.ETagLog.QUEST,
-                                "Failed to clear player quest (" + ex.getMessage() + ")");
+                        LogManager.getInstance().log(Level.SEVERE, LogManager.ETagLog.QUEST, "Failed to clear player quest (" + ex.getMessage() + ")");
                     }
                 }
         );
-    }
-
-    private Connection getConnection() throws SQLException {
-        return connection;
     }
 }

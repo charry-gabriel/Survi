@@ -235,14 +235,15 @@ public class VillagerLevel extends AVillager {
         }
     }
 
-    public void handleUnlockTask() {
+    public boolean unlock() {
         if (isUnlocked()) {
-            LogManager.getInstance().log(Level.WARNING, LogManager.ETagLog.VILLAGER, "Task unlock déclenchée mais " + getNameId() + " déjà débloqué");
-            return;
+            LogManager.getInstance().log(Level.WARNING, LogManager.ETagLog.VILLAGER, getNameId() + " déjà débloqué");
+            return false;
         }
 
         unlockedInstant = Instant.EPOCH;
         GameManager.getInstance().getDatabase().villagers().updateLock(getVillager().getUniqueId(), null);
+        return true;
     }
 
     public String getRemainingLock() {

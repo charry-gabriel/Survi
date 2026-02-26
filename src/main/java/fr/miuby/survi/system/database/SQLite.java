@@ -15,8 +15,7 @@ public class SQLite extends Database {
     private static final int CURRENT_DB_VERSION = 8;
 
     public SQLite() {
-        dbname = GameManager.getInstance().getPlugin().getConfig()
-                .getString("SQLite.Filename", "minecraft");
+        dbname = GameManager.getInstance().getPlugin().getConfig().getString("SQLite.Filename", "minecraft");
     }
 
     @Nullable
@@ -26,24 +25,20 @@ public class SQLite extends Database {
             try {
                 dataFolder.createNewFile();
             } catch (IOException e) {
-                LogManager.getInstance().log(Level.SEVERE, LogManager.ETagLog.SYSTEM,
-                        "File write error: " + dbname + ".db");
+                LogManager.getInstance().log(Level.SEVERE, LogManager.ETagLog.SYSTEM, "File write error: " + dbname + ".db");
             }
         }
 
         try {
-            if (connection != null && !connection.isClosed() &&
-                    Thread.currentThread().getName().equals("Server thread")) {
+            if (connection != null && !connection.isClosed() && Thread.currentThread().getName().equals("Server thread")) {
                 return connection;
             }
             Class.forName("org.sqlite.JDBC");
             return DriverManager.getConnection("jdbc:sqlite:" + dataFolder);
         } catch (SQLException ex) {
-            LogManager.getInstance().log(Level.SEVERE, LogManager.ETagLog.SYSTEM,
-                    "SQLite exception on initialize (" + ex.getMessage() + ")");
+            LogManager.getInstance().log(Level.SEVERE, LogManager.ETagLog.SYSTEM, "SQLite exception on initialize (" + ex.getMessage() + ")");
         } catch (ClassNotFoundException ex) {
-            LogManager.getInstance().log(Level.SEVERE, LogManager.ETagLog.SYSTEM,
-                    "You need the SQLite JBDC library. Google it. Put it in /lib folder.");
+            LogManager.getInstance().log(Level.SEVERE, LogManager.ETagLog.SYSTEM, "You need the SQLite JBDC library. Google it. Put it in /lib folder.");
         }
         return null;
     }
@@ -88,17 +83,14 @@ public class SQLite extends Database {
     }
 
     public void initialize() {
-        try (PreparedStatement ps = connection.prepareStatement(
-                "SELECT * FROM player WHERE pseudo = ?")) {
+        try (PreparedStatement ps = connection.prepareStatement("SELECT * FROM player WHERE pseudo = ?")) {
 
             ps.setString(1, "Miuby");
             try (ResultSet rs = ps.executeQuery()) {
-                LogManager.getInstance().log(Level.INFO, LogManager.ETagLog.SYSTEM,
-                        "Database connexion succeeded !");
+                LogManager.getInstance().log(Level.INFO, LogManager.ETagLog.SYSTEM, "Database connexion succeeded !");
             }
         } catch (SQLException ex) {
-            LogManager.getInstance().log(Level.SEVERE, LogManager.ETagLog.SYSTEM,
-                    "No SQL connection (" + ex.getMessage() + ")");
+            LogManager.getInstance().log(Level.SEVERE, LogManager.ETagLog.SYSTEM, "No SQL connection (" + ex.getMessage() + ")");
         }
     }
 
@@ -187,8 +179,7 @@ public class SQLite extends Database {
              ResultSet rs = s.executeQuery("PRAGMA user_version")) {
             return rs.next() ? rs.getInt(1) : 0;
         } catch (SQLException e) {
-            LogManager.getInstance().log(Level.WARNING, LogManager.ETagLog.SYSTEM,
-                    "Could not read DB version, assuming 0 (" + e.getMessage() + ")");
+            LogManager.getInstance().log(Level.WARNING, LogManager.ETagLog.SYSTEM,"Could not read DB version, assuming 0 (" + e.getMessage() + ")");
             return 0;
         }
     }
@@ -212,8 +203,7 @@ public class SQLite extends Database {
     }
 
     private void runMigration(Connection conn, int currentVersion) throws SQLException {
-        LogManager.getInstance().log(Level.INFO, LogManager.ETagLog.SYSTEM,
-                "Database schema " + currentVersion + " -> " + CURRENT_DB_VERSION + ", running migration.");
+        LogManager.getInstance().log(Level.INFO, LogManager.ETagLog.SYSTEM, "Database schema " + currentVersion + " -> " + CURRENT_DB_VERSION + ", running migration.");
 
         try (Statement s = conn.createStatement()) {
             if (currentVersion < 2) {

@@ -8,6 +8,8 @@ import fr.miuby.survi.world.EWorld;
 import fr.miuby.lib.world.MLWorld;
 import lombok.Getter;
 import lombok.Setter;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.attribute.Attribute;
 
 import java.io.Serializable;
@@ -134,18 +136,43 @@ public class AlphaPlayer extends MLPlayer implements Serializable {
         this.alphaLife.setSuccess(success);
     }
 
-    public void addSubRole(Role role) {
+    public boolean addSubRole(Role role) {
+        if (this.subRoles.contains(role))
+            return false;
+
         Role removeRole = null;
         for (Role subRole : this.subRoles) {
             if (subRole.roleId().equals(role.roleId()))
                 removeRole = subRole;
         }
-        this.subRoles.remove(removeRole);
+
+        if (removeRole != null)
+            this.removeSubRole(removeRole);
+
         this.subRoles.add(role);
+
+        if (this.getPlayer() != null && this.getPlayer().isOnline()) {
+            this.getPlayer().sendMessage(
+                    Component.text("Le sous-role ").color(NamedTextColor.YELLOW)
+                    .append(role.displayName())
+                    .append(Component.text(" a ete ajouté !").color(NamedTextColor.YELLOW))
+            );
+        }
+        return true;
     }
 
-    public void removeSubRole(Role role) {
-        this.subRoles.remove(role);
+    public boolean removeSubRole(Role role) {
+        if (!this.subRoles.remove(role))
+            return false;
+
+        if (this.getPlayer() != null && this.getPlayer().isOnline()) {
+            this.getPlayer().sendMessage(Component
+                    .text("Le sous-role ").color(NamedTextColor.YELLOW)
+                    .append(role.displayName())
+                    .append(Component.text(" a ete retire !").color(NamedTextColor.YELLOW))
+            );
+        }
+        return true;
     }
 
     public int getReputation(String traderId) {

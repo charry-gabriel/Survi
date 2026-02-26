@@ -11,13 +11,11 @@ import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.attribute.Attribute;
-import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.EquipmentSlotGroup;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.*;
-import org.bukkit.inventory.meta.trim.ArmorTrim;
 import org.bukkit.inventory.meta.trim.TrimMaterial;
 import org.bukkit.inventory.meta.trim.TrimPattern;
 import org.bukkit.persistence.PersistentDataContainer;
@@ -25,8 +23,14 @@ import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
+import java.util.Arrays;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import static org.bukkit.attribute.AttributeModifier.Operation.ADD_NUMBER;
+import static org.bukkit.attribute.AttributeModifier.Operation.ADD_SCALAR;
+
 @Getter
-@SuppressWarnings("UnstableApiUsage")
 public enum ECustomItem {
     FISHING_D_ROD(Material.FISHING_ROD, itemStack -> {
         ItemMeta meta = itemStack.getItemMeta();
@@ -37,13 +41,46 @@ public enum ECustomItem {
         itemStack.setItemMeta(meta);
     }),
 
-    AIR_FORCE(Material.LEATHER_BOOTS, ECustomItem::getAirForce),
+    AIR_FORCE(Material.LEATHER_BOOTS, itemStack -> new CustomItemBuilder(itemStack, "AirForce")
+            .name("Air Force 1", NamedTextColor.YELLOW)
+            .leatherArmor(TrimMaterial.NETHERITE, TrimPattern.SILENCE, Color.fromRGB(16383998))
+            .addAttribute(Attribute.MOVEMENT_SPEED, 0.1, ADD_NUMBER, EquipmentSlotGroup.FEET)
+            .addAttribute(Attribute.BLOCK_BREAK_SPEED, -0.8, ADD_SCALAR, EquipmentSlotGroup.FEET)
+            .addAttribute(Attribute.ARMOR, -0.8, ADD_SCALAR, EquipmentSlotGroup.FEET)
+            .unbreakable()
+            .addItemFlag(ItemFlag.HIDE_DYE)
+            .addItemFlag(ItemFlag.HIDE_ARMOR_TRIM)),
 
-    MINEUR(Material.LEATHER_HELMET, ECustomItem::getMineur),
+    MINEUR(Material.LEATHER_HELMET, itemStack -> new CustomItemBuilder(itemStack, "AirForce")
+            .name("Casque de Mineur", NamedTextColor.YELLOW)
+            .leatherArmor(TrimMaterial.GOLD, TrimPattern.FLOW, Color.fromRGB(13061821))
+            .addAttribute(Attribute.MINING_EFFICIENCY, 10, ADD_NUMBER, EquipmentSlotGroup.HEAD)
+            .addAttribute(Attribute.MOVEMENT_SPEED, -0.02, ADD_NUMBER, EquipmentSlotGroup.HEAD)
+            .addAttribute(Attribute.ARMOR, -0.8, ADD_SCALAR, EquipmentSlotGroup.HEAD)
+            .unbreakable()
+            .addItemFlag(ItemFlag.HIDE_DYE)
+            .addItemFlag(ItemFlag.HIDE_ARMOR_TRIM)),
 
-    ENDIALE(Material.LEATHER_CHESTPLATE, ECustomItem::getEndiale),
+    ENDIALE(Material.LEATHER_CHESTPLATE, itemStack -> new CustomItemBuilder(itemStack, "AirForce")
+            .name("Combinaison Endiale", NamedTextColor.YELLOW)
+            .leatherArmor(TrimMaterial.AMETHYST, TrimPattern.SILENCE, Color.fromRGB(1408423))
+            .addAttribute(Attribute.SCALE, -0.5, ADD_SCALAR, EquipmentSlotGroup.CHEST)
+            .addAttribute(Attribute.BLOCK_BREAK_SPEED, -0.9, ADD_SCALAR, EquipmentSlotGroup.CHEST)
+            .addAttribute(Attribute.MOVEMENT_SPEED, -0.02, ADD_NUMBER, EquipmentSlotGroup.CHEST)
+            .unbreakable()
+            .addItemFlag(ItemFlag.HIDE_DYE)
+            .addItemFlag(ItemFlag.HIDE_ARMOR_TRIM)),
 
-    TERMINATOR(Material.CROSSBOW, ECustomItem::getTerminator),
+    TERMINATOR(Material.CROSSBOW, itemStack -> {
+        CrossbowMeta crossbowMeta = (CrossbowMeta) itemStack.getItemMeta();
+        crossbowMeta.customName(Component.text("Terminator", NamedTextColor.DARK_PURPLE));
+        crossbowMeta.addEnchant(Enchantment.UNBREAKING, 3, false);
+        crossbowMeta.addEnchant(Enchantment.MENDING, 1, false);
+        crossbowMeta.addEnchant(Enchantment.PIERCING, 10, true);
+        crossbowMeta.addEnchant(Enchantment.MULTISHOT, 1, true);
+        crossbowMeta.addEnchant(Enchantment.QUICK_CHARGE, 100, true);
+        itemStack.setItemMeta(crossbowMeta);
+    }),
 
     SEX_ON_THE_BEACH(Material.POTION, itemStack -> {
         PotionMeta meta = (PotionMeta) itemStack.getItemMeta();
@@ -82,76 +119,21 @@ public enum ECustomItem {
         itemStack.setItemMeta(meta);
     }),
 
-    CLE00(Material.NAME_TAG, itemStack -> {
-        ItemMeta meta = itemStack.getItemMeta();
-        meta.customName(Component.text("Clé 00", NamedTextColor.GOLD));
-        meta.setItemModel(new NamespacedKey(GameManager.getInstance().getPlugin(), "key"));
-        itemStack.setItemMeta(meta);
-    }, "cle00"),
-    CLE01(Material.NAME_TAG, itemStack -> {
-        ItemMeta meta = itemStack.getItemMeta();
-        meta.customName(Component.text("Clé 01", NamedTextColor.GOLD));
-        meta.setItemModel(new NamespacedKey(GameManager.getInstance().getPlugin(), "key"));
-        itemStack.setItemMeta(meta);
-    }, "cle01"),
-    CLE02(Material.NAME_TAG, itemStack -> {
-        ItemMeta meta = itemStack.getItemMeta();
-        meta.customName(Component.text("Clé 02", NamedTextColor.GOLD));
-        meta.setItemModel(new NamespacedKey(GameManager.getInstance().getPlugin(), "key"));
-        itemStack.setItemMeta(meta);
-    }, "cle02"),
-    CLE11(Material.NAME_TAG, itemStack -> {
-        ItemMeta meta = itemStack.getItemMeta();
-        meta.customName(Component.text("Clé 11", NamedTextColor.GOLD));
-        meta.setItemModel(new NamespacedKey(GameManager.getInstance().getPlugin(), "key"));
-        itemStack.setItemMeta(meta);
-    }, "cle11"),
-    CLE12(Material.NAME_TAG, itemStack -> {
-        ItemMeta meta = itemStack.getItemMeta();
-        meta.customName(Component.text("Clé 12", NamedTextColor.GOLD));
-        meta.setItemModel(new NamespacedKey(GameManager.getInstance().getPlugin(), "key"));
-        itemStack.setItemMeta(meta);
-    }, "cle12"),
-    CLE13(Material.NAME_TAG, itemStack -> {
-        ItemMeta meta = itemStack.getItemMeta();
-        meta.customName(Component.text("Clé 13", NamedTextColor.GOLD));
-        meta.setItemModel(new NamespacedKey(GameManager.getInstance().getPlugin(), "key"));
-        itemStack.setItemMeta(meta);
-    }, "cle13"),
-    CLE14(Material.NAME_TAG, itemStack -> {
-        ItemMeta meta = itemStack.getItemMeta();
-        meta.customName(Component.text("Clé 14", NamedTextColor.GOLD));
-        meta.setItemModel(new NamespacedKey(GameManager.getInstance().getPlugin(), "key"));
-        itemStack.setItemMeta(meta);
-    }, "cle14"),
-    CLE15(Material.NAME_TAG, itemStack -> {
-        ItemMeta meta = itemStack.getItemMeta();
-        meta.customName(Component.text("Clé 15", NamedTextColor.GOLD));
-        meta.setItemModel(new NamespacedKey(GameManager.getInstance().getPlugin(), "key"));
-        itemStack.setItemMeta(meta);
-    }, "cle15"),
-    CLE16(Material.NAME_TAG, itemStack -> {
-        ItemMeta meta = itemStack.getItemMeta();
-        meta.customName(Component.text("Clé 16", NamedTextColor.GOLD));
-        meta.setItemModel(new NamespacedKey(GameManager.getInstance().getPlugin(), "key"));
-        itemStack.setItemMeta(meta);
-    }, "cle16"),
-    CLE31(Material.NAME_TAG, itemStack -> {
-        ItemMeta meta = itemStack.getItemMeta();
-        meta.customName(Component.text("Clé 31", NamedTextColor.GOLD));
-        meta.setItemModel(new NamespacedKey(GameManager.getInstance().getPlugin(), "key"));
-        itemStack.setItemMeta(meta);
-    }, "cle31"),
-    CLE32(Material.NAME_TAG, itemStack -> {
-        ItemMeta meta = itemStack.getItemMeta();
-        meta.customName(Component.text("Clé 32", NamedTextColor.GOLD));
-        meta.setItemModel(new NamespacedKey(GameManager.getInstance().getPlugin(), "key"));
-        itemStack.setItemMeta(meta);
-    }, "cle32"),
+    CLE00(Material.NAME_TAG, createKey("00"), "cle00"),
+    CLE01(Material.NAME_TAG, createKey("01"), "cle01"),
+    CLE02(Material.NAME_TAG, createKey("02"), "cle02"),
+    CLE11(Material.NAME_TAG, createKey("11"), "cle11"),
+    CLE12(Material.NAME_TAG, createKey("12"), "cle12"),
+    CLE13(Material.NAME_TAG, createKey("13"), "cle13"),
+    CLE14(Material.NAME_TAG, createKey("14"), "cle14"),
+    CLE15(Material.NAME_TAG, createKey("15"), "cle15"),
+    CLE16(Material.NAME_TAG, createKey("16"), "cle16"),
+    CLE31(Material.NAME_TAG, createKey("31"), "cle31"),
+    CLE32(Material.NAME_TAG, createKey("32"), "cle32"),
 
     GROWTH_PICKAXE(Material.WOODEN_PICKAXE, itemStack -> {
         ItemMeta meta = itemStack.getItemMeta();
-        CreateGrowthItem(meta, "GROWTH_PICKAXE");
+        createGrowthItem(meta, "GROWTH_PICKAXE");
 
         meta.setUnbreakable(true);
         meta.customName(Component.text("The pickaxe", NamedTextColor.GOLD));
@@ -161,7 +143,7 @@ public enum ECustomItem {
 
     GROWTH_SWORD(Material.WOODEN_SWORD, itemStack -> {
         ItemMeta meta = itemStack.getItemMeta();
-        CreateGrowthItem(meta, "GROWTH_SWORD");
+        createGrowthItem(meta, "GROWTH_SWORD");
 
         meta.setUnbreakable(true);
         meta.customName(Component.text("The sword", NamedTextColor.GOLD));
@@ -196,12 +178,16 @@ public enum ECustomItem {
         itemStack.setItemMeta(meta);
     });
 
+    private static final String DEFAULT_NAMESPACE = "survi";
+    private static final Map<String, ECustomItem> LOOKUP = Arrays.stream(values()).collect(
+            Collectors.toUnmodifiableMap(r -> r.name().toLowerCase(), r -> r));
 
-    public final NamespacedKey ID_KEY = new NamespacedKey(GameManager.getInstance().getPlugin(), "unique_id");
+    @Getter(lazy = true)
+    private final NamespacedKey idKey = new NamespacedKey(GameManager.getInstance().getPlugin(), "unique_id");
     private final ItemStack itemStack;
 
     ECustomItem(Material material) {
-        this(material, "survi");
+        this(material, DEFAULT_NAMESPACE);
     }
 
     ECustomItem(Material material, ICustomItemMeta customItemMeta) {
@@ -217,8 +203,13 @@ public enum ECustomItem {
     ECustomItem(Material material, String uniqueId) {
         this.itemStack = new ItemStack(material);
         ItemMeta meta = itemStack.getItemMeta();
-        meta.getPersistentDataContainer().set(ID_KEY, PersistentDataType.STRING, uniqueId);
+        meta.getPersistentDataContainer().set(getIdKey(), PersistentDataType.STRING, uniqueId);
         itemStack.setItemMeta(meta);
+    }
+
+    public static ECustomItem fromString(String input) {
+        if (input == null) return null;
+        return LOOKUP.get(input.toLowerCase());
     }
 
     public ItemStack getItemStack(int amount) {
@@ -227,117 +218,19 @@ public enum ECustomItem {
         return itemStack;
     }
 
-    private static void CreateGrowthItem(ItemMeta meta, String id) {
+    private static void createGrowthItem(ItemMeta meta, String id) {
         PersistentDataContainer pdc = meta.getPersistentDataContainer();
         pdc.set(GrowthItems.ID_KEY, PersistentDataType.STRING, id);
         pdc.set(GrowthItems.USES_KEY, PersistentDataType.INTEGER, 0);
         pdc.set(GrowthItems.TIER_KEY, PersistentDataType.INTEGER, 0);
     }
 
-    private static void getAirForce(ItemStack itemStack) {
-        ArmorMeta armorMeta = (ArmorMeta) itemStack.getItemMeta();
-        armorMeta.setTrim(new ArmorTrim(TrimMaterial.NETHERITE, TrimPattern.SILENCE));
-        itemStack.setItemMeta(armorMeta);
-
-        LeatherArmorMeta leatherArmorMeta = (LeatherArmorMeta) itemStack.getItemMeta();
-        leatherArmorMeta.setColor(Color.fromRGB(16383998));
-        itemStack.setItemMeta(leatherArmorMeta);
-
-        ItemMeta meta = itemStack.getItemMeta();
-        meta.addAttributeModifier(Attribute.MOVEMENT_SPEED,
-                new AttributeModifier(new NamespacedKey(GameManager.getInstance().getPlugin(), "AirForceSpeed"),
-                        0.1f,
-                        AttributeModifier.Operation.ADD_NUMBER,
-                        EquipmentSlotGroup.FEET));
-        meta.addAttributeModifier(Attribute.BLOCK_BREAK_SPEED,
-                new AttributeModifier(new NamespacedKey(GameManager.getInstance().getPlugin(), "AirForceBlockBreakSpeed"),
-                        -0.8f,
-                        AttributeModifier.Operation.ADD_SCALAR,
-                        EquipmentSlotGroup.FEET));
-        meta.addAttributeModifier(Attribute.ARMOR,
-                new AttributeModifier(new NamespacedKey(GameManager.getInstance().getPlugin(), "AirForceArmor"),
-                        -0.8f,
-                        AttributeModifier.Operation.ADD_SCALAR,
-                        EquipmentSlotGroup.FEET));
-        meta.setUnbreakable(true);
-        meta.customName(Component.text("Air Force 1", NamedTextColor.YELLOW));
-        meta.addItemFlags(ItemFlag.HIDE_DYE);
-        meta.addItemFlags(ItemFlag.HIDE_ARMOR_TRIM);
-        itemStack.setItemMeta(meta);
-    }
-
-    private static void getMineur(ItemStack itemStack) {
-        ArmorMeta armorMeta = (ArmorMeta) itemStack.getItemMeta();
-        armorMeta.setTrim(new ArmorTrim(TrimMaterial.GOLD, TrimPattern.FLOW));
-        itemStack.setItemMeta(armorMeta);
-
-        LeatherArmorMeta leatherArmorMeta = (LeatherArmorMeta) itemStack.getItemMeta();
-        leatherArmorMeta.setColor(Color.fromRGB(13061821));
-        itemStack.setItemMeta(leatherArmorMeta);
-
-        ItemMeta meta = itemStack.getItemMeta();
-        meta.addAttributeModifier(Attribute.MINING_EFFICIENCY,
-                new AttributeModifier(new NamespacedKey(GameManager.getInstance().getPlugin(), "CasqueDeMineurMining"),
-                        10f,
-                        AttributeModifier.Operation.ADD_NUMBER,
-                        EquipmentSlotGroup.HEAD));
-        meta.addAttributeModifier(Attribute.MOVEMENT_SPEED,
-                new AttributeModifier(new NamespacedKey(GameManager.getInstance().getPlugin(), "CasqueDeMineurSpeed"),
-                        -0.02f,
-                        AttributeModifier.Operation.ADD_NUMBER,
-                        EquipmentSlotGroup.HEAD));
-        meta.addAttributeModifier(Attribute.ARMOR,
-                new AttributeModifier(new NamespacedKey(GameManager.getInstance().getPlugin(), "CasqueDeMineurArmor"),
-                        -0.8f,
-                        AttributeModifier.Operation.ADD_SCALAR,
-                        EquipmentSlotGroup.HEAD));
-        meta.setUnbreakable(true);
-        meta.customName(Component.text("Casque de Mineur", NamedTextColor.YELLOW));
-        meta.addItemFlags(ItemFlag.HIDE_DYE);
-        meta.addItemFlags(ItemFlag.HIDE_ARMOR_TRIM);
-        itemStack.setItemMeta(meta);
-    }
-
-    private static void getEndiale(ItemStack itemStack) {
-        ArmorMeta armorMeta = (ArmorMeta) itemStack.getItemMeta();
-        armorMeta.setTrim(new ArmorTrim(TrimMaterial.AMETHYST, TrimPattern.SILENCE));
-        itemStack.setItemMeta(armorMeta);
-
-        LeatherArmorMeta leatherArmorMeta = (LeatherArmorMeta) itemStack.getItemMeta();
-        leatherArmorMeta.setColor(Color.fromRGB(1408423));
-        itemStack.setItemMeta(leatherArmorMeta);
-
-        ItemMeta meta = itemStack.getItemMeta();
-        meta.addAttributeModifier(Attribute.SCALE,
-                new AttributeModifier(new NamespacedKey(GameManager.getInstance().getPlugin(), "CombinaisonEndialeScale"),
-                        -0.5f,
-                        AttributeModifier.Operation.ADD_SCALAR,
-                        EquipmentSlotGroup.CHEST));
-        meta.addAttributeModifier(Attribute.BLOCK_BREAK_SPEED,
-                new AttributeModifier(new NamespacedKey(GameManager.getInstance().getPlugin(), "CombinaisonEndialeBlockBreakSpeed"),
-                        -0.9f,
-                        AttributeModifier.Operation.ADD_SCALAR,
-                        EquipmentSlotGroup.CHEST));
-        meta.addAttributeModifier(Attribute.MOVEMENT_SPEED,
-                new AttributeModifier(new NamespacedKey(GameManager.getInstance().getPlugin(), "CombinaisonEndialeSpeed"),
-                        -0.02f,
-                        AttributeModifier.Operation.ADD_NUMBER,
-                        EquipmentSlotGroup.CHEST));
-        meta.setUnbreakable(true);
-        meta.customName(Component.text("Combinaison Endiale", NamedTextColor.YELLOW));
-        meta.addItemFlags(ItemFlag.HIDE_DYE);
-        meta.addItemFlags(ItemFlag.HIDE_ARMOR_TRIM);
-        itemStack.setItemMeta(meta);
-    }
-
-    private static void getTerminator(ItemStack itemStack) {
-        CrossbowMeta crossbowMeta = (CrossbowMeta) itemStack.getItemMeta();
-        crossbowMeta.customName(Component.text("Terminator", NamedTextColor.DARK_PURPLE));
-        crossbowMeta.addEnchant(Enchantment.UNBREAKING, 3, false);
-        crossbowMeta.addEnchant(Enchantment.MENDING, 1, false);
-        crossbowMeta.addEnchant(Enchantment.PIERCING, 10, true);
-        crossbowMeta.addEnchant(Enchantment.MULTISHOT, 1, true);
-        crossbowMeta.addEnchant(Enchantment.QUICK_CHARGE, 100, true);
-        itemStack.setItemMeta(crossbowMeta);
+    private static ICustomItemMeta createKey(String number) {
+        return itemStack -> {
+            ItemMeta meta = itemStack.getItemMeta();
+            meta.customName(Component.text("Clé " + number, NamedTextColor.GOLD));
+            meta.setItemModel(new NamespacedKey(GameManager.getInstance().getPlugin(), "key"));
+            itemStack.setItemMeta(meta);
+        };
     }
 }

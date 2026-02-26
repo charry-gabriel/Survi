@@ -6,7 +6,7 @@ import fr.miuby.survi.listener.*;
 import fr.miuby.survi.quest.QuestCommand;
 import fr.miuby.survi.quest.QuestListener;
 import fr.miuby.survi.role.RoleCommand;
-import fr.miuby.survi.system.SystemCommand;
+import fr.miuby.survi.system.command.SystemCommand;
 import fr.miuby.survi.system.time.TimeManager;
 import fr.miuby.survi.villager.VillagerCommand;
 import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;

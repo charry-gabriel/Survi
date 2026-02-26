@@ -49,27 +49,23 @@ public class PlayerRepository {
                 }
             }
         } catch (SQLException ex) {
-            LogManager.getInstance().log(Level.SEVERE, LogManager.ETagLog.PLAYER,
-                    "Failed to load players (" + ex.getMessage() + ")");
+            LogManager.getInstance().log(Level.SEVERE, LogManager.ETagLog.PLAYER, "Failed to load players (" + ex.getMessage() + ")");
         }
     }
 
     public void create(Player player) {
         GameManager.getInstance().getScheduler().runTaskAsynchronously(
                 GameManager.getInstance().getPlugin(), () -> {
-                    try (Connection conn = getConnection();
-                         PreparedStatement ps = conn.prepareStatement(
-                                 "INSERT INTO player (uuid, mort, success, pseudo, role) VALUES (?, 0, 0, ?, ?)")) {
+                    try (Connection conn = GameManager.getInstance().getDatabase().getSQLConnection();
+                         PreparedStatement ps = conn.prepareStatement("INSERT INTO player (uuid, mort, success, pseudo, role) VALUES (?, 0, 0, ?, ?)")) {
 
                         ps.setString(1, player.getUniqueId().toString());
                         ps.setString(2, player.getName());
-                        ps.setString(3, GameManager.getInstance().getRoleRegistry()
-                                .getDefaultRole().type().toString());
+                        ps.setString(3, GameManager.getInstance().getRoleRegistry().getDefaultRole().type().toString());
                         ps.executeUpdate();
 
                     } catch (SQLException ex) {
-                        LogManager.getInstance().log(Level.SEVERE, LogManager.ETagLog.PLAYER,
-                                "Failed to create player (" + ex.getMessage() + ")");
+                        LogManager.getInstance().log(Level.SEVERE, LogManager.ETagLog.PLAYER,  "Failed to create player (" + ex.getMessage() + ")");
                     }
                 }
         );
@@ -78,23 +74,17 @@ public class PlayerRepository {
     public void update(UUID uuid, PlayerColumn column, String value) {
         GameManager.getInstance().getScheduler().runTaskAsynchronously(
                 GameManager.getInstance().getPlugin(), () -> {
-                    try (Connection conn = getConnection();
-                         PreparedStatement ps = conn.prepareStatement(
-                                 "UPDATE player SET " + column.getColumnName() + " = ? WHERE uuid = ?")) {
+                    try (Connection conn = GameManager.getInstance().getDatabase().getSQLConnection();
+                         PreparedStatement ps = conn.prepareStatement("UPDATE player SET " + column.getColumnName() + " = ? WHERE uuid = ?")) {
 
                         ps.setString(1, value);
                         ps.setString(2, uuid.toString());
                         ps.executeUpdate();
 
                     } catch (SQLException ex) {
-                        LogManager.getInstance().log(Level.SEVERE, LogManager.ETagLog.PLAYER,
-                                "Failed to update player (" + ex.getMessage() + ")");
+                        LogManager.getInstance().log(Level.SEVERE, LogManager.ETagLog.PLAYER, "Failed to update player (" + ex.getMessage() + ")");
                     }
                 }
         );
-    }
-
-    private Connection getConnection() throws SQLException {
-        return connection;
     }
 }

@@ -2,12 +2,12 @@ package fr.miuby.survi.villager;
 
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.arguments.DoubleArgumentType;
-import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
-import fr.miuby.lib.villager.MLVillager;
-import fr.miuby.lib.villager.VillagerRegistry;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import fr.miuby.survi.GameManager;
+import fr.miuby.survi.system.command.CommandErrors;
+import fr.miuby.survi.system.command.VillagerArgument;
 import fr.miuby.survi.world.WorldInitializer;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
 import io.papermc.paper.command.brigadier.Commands;
@@ -15,21 +15,15 @@ import io.papermc.paper.command.brigadier.argument.ArgumentTypes;
 import io.papermc.paper.command.brigadier.argument.resolvers.FinePositionResolver;
 import io.papermc.paper.command.brigadier.argument.resolvers.selector.PlayerSelectorArgumentResolver;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
 
 public class VillagerCommand {
+    @SuppressWarnings("UnstableApiUsage")
     public static LiteralArgumentBuilder<CommandSourceStack> createCommand() {
         return Commands.literal("villager")
             .requires(sender -> sender.getSender().isOp())
-            .then(Commands.argument("villager", StringArgumentType.word())
-                .suggests((context, builder) -> {
-                    String remaining = builder.getRemaining().toLowerCase();
-                    VillagerRegistry.getAll().stream()
-                            .map(MLVillager::getNameId)
-                            .filter(name -> name.toLowerCase().startsWith(remaining))
-                            .forEach(builder::suggest);
-                    return builder.buildFuture();
-                })
+            .then(Commands.argument("villager", VillagerArgument.villager())
                 .then(Commands.literal("teleport")
                     .executes(ctx -> VillagerCommand.villagerExecuteTeleport(ctx, ctx.getSource().getLocation()))
                     .then(Commands.argument("player", ArgumentTypes.player())
@@ -49,8 +43,8 @@ public class VillagerCommand {
                         )
                     )
                 )
-                .then(Commands.literal("addlevel")
-                    .executes(VillagerCommand::villagerExecuteAddLevel)
+                .then(Commands.literal("levelup")
+                    .executes(VillagerCommand::villagerExecuteLevelUp)
                 )
                 .then(Commands.literal("info")
                     .executes(VillagerCommand::villagerExecuteInfo)
@@ -61,27 +55,20 @@ public class VillagerCommand {
             );
     }
 
-    private static int villagerExecuteUnlock(CommandContext<CommandSourceStack> ctx) {
-        AVillager villager = (AVillager) VillagerRegistry.get(StringArgumentType.getString(ctx, "villager"));
-        if (villager == null) {
-            ctx.getSource().getSender().sendMessage(Component.text("Villager introuvable !"));
-            return Command.SINGLE_SUCCESS;
-        }
+    private static int villagerExecuteUnlock(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
+        AVillager villager = VillagerArgument.getVillager(ctx, "villager");
 
         if (villager instanceof VillagerLevel villagerLevel) {
-            villagerLevel.handleUnlockTask();
+            if (villagerLevel.unlock())
+                ctx.getSource().getSender().sendMessage(Component.text("Villager unlocked !").color(NamedTextColor.GREEN));
         } else {
-            ctx.getSource().getSender().sendMessage(Component.text("Villager is not a levelable villager !"));
+            throw CommandErrors.NOT_A_LEVEL_VILLAGER.create();
         }
         return Command.SINGLE_SUCCESS;
     }
 
     private static int villagerExecuteInfo(CommandContext<CommandSourceStack> ctx) {
-        AVillager villager = (AVillager) VillagerRegistry.get(StringArgumentType.getString(ctx, "villager"));
-        if (villager == null) {
-            ctx.getSource().getSender().sendMessage(Component.text("Villager introuvable !"));
-            return Command.SINGLE_SUCCESS;
-        }
+        AVillager villager = VillagerArgument.getVillager(ctx, "villager");
 
         Component text = Component.text("Nom : ").append(villager.getDisplayName());
         if (villager instanceof VillagerLevel villagerLevel) {
@@ -100,31 +87,22 @@ public class VillagerCommand {
     }
 
     private static int villagerExecuteTeleport(CommandContext<CommandSourceStack> ctx, Location location) {
-        AVillager villager = (AVillager) VillagerRegistry.get(StringArgumentType.getString(ctx, "villager"));
-
-        if (villager == null) {
-            ctx.getSource().getSender().sendMessage(Component.text("Villager introuvable !"));
-            return Command.SINGLE_SUCCESS;
-        }
+        AVillager villager = VillagerArgument.getVillager(ctx, "villager");
 
         GameManager.getInstance().getDatabase().villagers().updateLocation(villager.getVillager().getUniqueId(), location);
         villager.getVillager().teleport(location);
+        ctx.getSource().getSender().sendMessage(Component.text("Villager teleported !").color(NamedTextColor.GREEN));
         return Command.SINGLE_SUCCESS;
     }
 
-    private static int villagerExecuteAddLevel(CommandContext<CommandSourceStack> ctx) {
-        AVillager villager = (AVillager) VillagerRegistry.get(StringArgumentType.getString(ctx, "villager"));
-
-        if (villager == null) {
-            ctx.getSource().getSender().sendMessage(Component.text("Villager introuvable !"));
-            return Command.SINGLE_SUCCESS;
-        }
+    private static int villagerExecuteLevelUp(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
+        AVillager villager = VillagerArgument.getVillager(ctx, "villager");
 
         if (villager instanceof VillagerLevel villagerLevel) {
             if (!villagerLevel.levelUp())
-                ctx.getSource().getSender().sendMessage(Component.text("Villager already at max level !"));
+                ctx.getSource().getSender().sendMessage(Component.text("Villager already at max level !").color(NamedTextColor.RED));
         } else {
-            ctx.getSource().getSender().sendMessage(Component.text("Villager is not a levelable villager !"));
+            throw CommandErrors.NOT_A_LEVEL_VILLAGER.create();
         }
         return Command.SINGLE_SUCCESS;
     }

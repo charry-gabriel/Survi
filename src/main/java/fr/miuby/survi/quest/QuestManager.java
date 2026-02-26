@@ -6,6 +6,8 @@ import fr.miuby.survi.system.log.LogManager;
 import fr.miuby.survi.villager.Trader;
 import lombok.Getter;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
+import org.bukkit.Registry;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.EntityType;
 import org.bukkit.potion.PotionEffect;
@@ -89,7 +91,10 @@ public class QuestManager {
                 if (rewardsList != null) {
                     for (Object rewardObj : rewardsList) {
                         if (rewardObj instanceof Map<?, ?> rewardMap) {
-                            PotionEffectType effectType = PotionEffectType.getByName((String) rewardMap.get("type"));
+                            String potionType = ((String) rewardMap.get("type")).toLowerCase();
+                            NamespacedKey key = NamespacedKey.minecraft(potionType);
+                            PotionEffectType effectType = Registry.POTION_EFFECT_TYPE.get(key);
+
                             int duration = ((Number) rewardMap.get("duration")).intValue();
                             int amplifier = ((Number) rewardMap.get("amplifier")).intValue();
                             if (effectType != null) {
@@ -113,7 +118,6 @@ public class QuestManager {
 
             } catch (Exception e) {
                 LogManager.getInstance().log(Level.WARNING, LogManager.ETagLog.QUEST, "Erreur lors du chargement d'une quête dans quests.yml : " + e.getMessage());
-                e.printStackTrace();
             }
         }
 
@@ -139,13 +143,17 @@ public class QuestManager {
         return QuestDifficulty.COMMON;                    // 70%
     }
 
-    public void resetQuest(AlphaPlayer player) {
+    public boolean resetQuest(AlphaPlayer player) {
+        if (player.getActiveQuest() == null)
+            return false;
+
         player.setActiveQuest(null);
         GameManager.getInstance().getDatabase().quests().clearPlayerQuest(player.getUuid());
         
         if (player.getPlayer() != null) {
             player.getPlayer().sendMessage("§eVotre quête du jour a été réinitialisée par un administrateur.");
         }
+        return true;
     }
 
     public void assignQuest(AlphaPlayer player, Trader trader) {
@@ -168,16 +176,19 @@ public class QuestManager {
         player.getPlayer().sendMessage("§7" + quest.getDescription());
     }
 
-    public void completeQuest(AlphaPlayer player, Trader trader) {
+    public boolean completeQuest(AlphaPlayer player, Trader trader, boolean force) {
         PlayerQuestData data = player.getActiveQuest();
-        if (data == null || !data.isCompleted() || data.isClaimed()) return;
+
+        if (data == null || (!force && !data.isCompleted()) || data.isClaimed())
+            return false;
+
         if (data.getTraderId() != null && !data.getTraderId().equals(trader.getNameId())) {
             player.getPlayer().sendMessage("§cCette quête doit être validée auprès de §b" + data.getTraderId());
-            return;
+            return false;
         }
 
         Quest quest = getQuest(data.getQuestId());
-        if (quest == null) return;
+        if (quest == null) return false;
 
         // Apply rewards
         for (PotionEffect effect : quest.getRewards()) {
@@ -192,6 +203,7 @@ public class QuestManager {
         // Marquer comme réclamée (claim) pour empêcher les doubles récompenses
         data.setClaimed(true);
         GameManager.getInstance().getDatabase().quests().updatePlayerQuest(player.getUuid(), data);
+        return true;
     }
 
     public void progressQuest(AlphaPlayer player, QuestType type, Object target, int amount) {

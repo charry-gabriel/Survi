@@ -1,4 +1,4 @@
-package fr.miuby.survi.system;
+package fr.miuby.survi.system.command;
 
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.arguments.StringArgumentType;

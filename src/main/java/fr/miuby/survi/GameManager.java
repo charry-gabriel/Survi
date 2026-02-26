@@ -2,6 +2,7 @@ package fr.miuby.survi;
 
 import fr.miuby.lib.MiubyLib;
 import fr.miuby.survi.crops.PlantedCropsManager;
+import fr.miuby.survi.role.RoleManagementService;
 import fr.miuby.survi.system.database.Database;
 import fr.miuby.survi.system.database.SQLite;
 import fr.miuby.survi.item.CustomRecipeFactory;
@@ -48,6 +49,8 @@ public class GameManager {
     private TabDisplayManager tabDisplayManager;
     @Getter
     private TimeManager timeManager;
+    @Getter
+    private RoleManagementService roleManagementService;
 
     @Setter
     @Getter
@@ -137,6 +140,7 @@ public class GameManager {
         this.database.players().createAlphaPlayers();
 
         this.tabDisplayManager = new TabDisplayManager();
+        this.roleManagementService = new RoleManagementService(alphaPlayerFactory.getPersistenceService(), alphaPlayerFactory);
     }
 
     private void initItems() {

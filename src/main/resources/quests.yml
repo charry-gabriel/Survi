@@ -8,7 +8,7 @@ quests:
     goal: 500
     reputation_reward: 10
     rewards:
-      - type: "HASTE"
+      - type: "haste"
         duration: 1728000
         amplifier: 0
 
@@ -21,7 +21,7 @@ quests:
     goal: 20
     reputation_reward: 10
     rewards:
-      - type: "STRENGTH"
+      - type: "strength"
         duration: 1728000
         amplifier: 0
 
@@ -34,7 +34,7 @@ quests:
     goal: 10
     reputation_reward: 12
     rewards:
-      - type: "LUCK"
+      - type: "luck"
         duration: 1728000
         amplifier: 0
 
@@ -47,7 +47,7 @@ quests:
     goal: 20
     reputation_reward: 12
     rewards:
-      - type: "SPEED"
+      - type: "speed"
         duration: 1728000
         amplifier: 0
 
@@ -60,10 +60,10 @@ quests:
     goal: 100
     reputation_reward: 25
     rewards:
-      - type: "HASTE"
+      - type: "haste"
         duration: 1728000
         amplifier: 1
-      - type: "NIGHT_VISION"
+      - type: "night_vision"
         duration: 1728000
         amplifier: 0
 
@@ -76,7 +76,7 @@ quests:
     goal: 20
     reputation_reward: 30
     rewards:
-      - type: "SATURATION"
+      - type: "saturation"
         duration: 1728000
         amplifier: 0
 
@@ -89,7 +89,7 @@ quests:
     goal: 32
     reputation_reward: 28
     rewards:
-      - type: "REGENERATION"
+      - type: "regeneration"
         duration: 1728000
         amplifier: 0
 
@@ -102,7 +102,7 @@ quests:
     goal: 256
     reputation_reward: 40
     rewards:
-      - type: "FIRE_RESISTANCE"
+      - type: "fire_resistance"
         duration: 1728000
         amplifier: 0
 
@@ -115,7 +115,7 @@ quests:
     goal: 25
     reputation_reward: 30
     rewards:
-      - type: "LUCK"
+      - type: "luck"
         duration: 1728000
         amplifier: 1
 
@@ -128,13 +128,13 @@ quests:
     goal: 50
     reputation_reward: 100
     rewards:
-      - type: "STRENGTH"
+      - type: "strength"
         duration: 1728000
         amplifier: 1
-      - type: "SPEED"
+      - type: "speed"
         duration: 1728000
         amplifier: 1
-      - type: "RESISTANCE"
+      - type: "resistance"
         duration: 1728000
         amplifier: 0
 
@@ -147,10 +147,10 @@ quests:
     goal: 5
     reputation_reward: 140
     rewards:
-      - type: "STRENGTH"
+      - type: "strength"
         duration: 1728000
         amplifier: 1
-      - type: "RESISTANCE"
+      - type: "resistance"
         duration: 1728000
         amplifier: 1
 
@@ -163,7 +163,7 @@ quests:
     goal: 200
     reputation_reward: 160
     rewards:
-      - type: "HASTE"
+      - type: "haste"
         duration: 1728000
         amplifier: 2
 
@@ -176,6 +176,6 @@ quests:
     goal: 128
     reputation_reward: 120
     rewards:
-      - type: "FIRE_RESISTANCE"
+      - type: "fire_resistance"
         duration: 1728000
         amplifier: 0

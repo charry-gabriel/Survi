@@ -1,6 +1,5 @@
 package fr.miuby.survi.system.database.repository;
 
-import fr.miuby.survi.system.database.Errors;
 import fr.miuby.survi.system.log.LogManager;
 
 import java.sql.Connection;
@@ -20,8 +19,7 @@ public class SystemRepository {
     }
 
     public String getServerData(String key) {
-        try (PreparedStatement ps = connection.prepareStatement(
-                "SELECT value FROM server_data WHERE key = ?")) {
+        try (PreparedStatement ps = connection.prepareStatement("SELECT value FROM server_data WHERE key = ?")) {
 
             ps.setString(1, key);
             ResultSet rs = ps.executeQuery();
@@ -30,23 +28,20 @@ public class SystemRepository {
                 return rs.getString("value");
             }
         } catch (SQLException e) {
-            LogManager.getInstance().log(Level.SEVERE, LogManager.ETagLog.SYSTEM,
-                    "Erreur getServerData: " + key + " (" + e.getMessage() + ")");
+            LogManager.getInstance().log(Level.SEVERE, LogManager.ETagLog.SYSTEM, "Erreur getServerData: " + key + " (" + e.getMessage() + ")");
         }
         return null;
     }
 
     public void saveServerData(String key, String value) {
-        try (PreparedStatement ps = connection.prepareStatement(
-                "INSERT OR REPLACE INTO server_data (key, value) VALUES (?, ?)")) {
+        try (PreparedStatement ps = connection.prepareStatement("INSERT OR REPLACE INTO server_data (key, value) VALUES (?, ?)")) {
 
             ps.setString(1, key);
             ps.setString(2, value);
             ps.executeUpdate();
 
         } catch (SQLException e) {
-            LogManager.getInstance().log(Level.SEVERE, LogManager.ETagLog.SYSTEM,
-                    "Erreur saveServerData: " + key + " (" + e.getMessage() + ")");
+            LogManager.getInstance().log(Level.SEVERE, LogManager.ETagLog.SYSTEM, "Erreur saveServerData: " + key + " (" + e.getMessage() + ")");
         }
     }
 

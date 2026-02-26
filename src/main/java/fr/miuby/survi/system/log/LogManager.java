@@ -48,13 +48,13 @@ public class LogManager {
         }
 
         // Levels : INFO désactivé, WARNING et SEVERE activés
-        enabledLevels.put(Level.INFO, false);
+        enabledLevels.put(Level.INFO, true);
         enabledLevels.put(Level.WARNING, true);
         enabledLevels.put(Level.SEVERE, true);
-        enabledLevels.put(Level.CONFIG, false);
-        enabledLevels.put(Level.FINE, false);
-        enabledLevels.put(Level.FINER, false);
-        enabledLevels.put(Level.FINEST, false);
+        enabledLevels.put(Level.CONFIG, true);
+        enabledLevels.put(Level.FINE, true);
+        enabledLevels.put(Level.FINER, true);
+        enabledLevels.put(Level.FINEST, true);
     }
 
     public enum ETagLog {
