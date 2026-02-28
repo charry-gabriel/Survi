@@ -21,13 +21,6 @@ public class VillagerLoader {
         Survi plugin = GameManager.getInstance().getPlugin();
         File villagerFile = new File(plugin.getDataFolder(), "villagers/" + id + ".yml");
 
-        if (!villagerFile.getParentFile().exists()) {
-            villagerFile.getParentFile().mkdirs();
-        }
-        if (!villagerFile.exists()) {
-            plugin.saveResource("villagers/" + id + ".yml", false);
-        }
-
         try (InputStream stream = new FileInputStream(villagerFile)) {
             String content = new String(stream.readAllBytes(), StandardCharsets.UTF_8);
             LoaderOptions options = new LoaderOptions();

@@ -14,7 +14,6 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
 import java.io.File;
-import java.io.InputStreamReader;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.logging.Level;
@@ -45,18 +44,10 @@ public class QuestManager {
 
     private void loadQuests() {
         File questFile = new File(GameManager.getInstance().getPlugin().getDataFolder(), "quests.yml");
-        if (!questFile.exists()) {
-            GameManager.getInstance().getPlugin().saveResource("quests.yml", false);
-        }
-
         YamlConfiguration config = YamlConfiguration.loadConfiguration(questFile);
         if (!config.contains("quests")) {
-            try (InputStreamReader reader = new InputStreamReader(Objects.requireNonNull(GameManager.getInstance().getPlugin().getResource("quests.yml")))) {
-                config = YamlConfiguration.loadConfiguration(reader);
-            } catch (Exception e) {
-                LogManager.getInstance().log(Level.SEVERE, LogManager.ETagLog.QUEST, "Impossible de charger les quêtes depuis le YAML !");
-                return;
-            }
+            LogManager.getInstance().log(Level.SEVERE, LogManager.ETagLog.QUEST, "Impossible de charger les quêtes depuis quests.yml !");
+            return;
         }
 
         questPool.clear();

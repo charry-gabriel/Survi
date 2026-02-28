@@ -1,5 +1,6 @@
 package fr.miuby.survi;
 
+import fr.miuby.survi.system.YmlResourceManager;
 import fr.miuby.survi.system.database.SqlCommand;
 import fr.miuby.survi.item.CustomItemCommand;
 import fr.miuby.survi.listener.*;
@@ -17,6 +18,8 @@ import org.bukkit.plugin.java.JavaPlugin;
 public class Survi extends JavaPlugin {
     @Override
     public void onEnable() {
+        updateResources();
+
         PluginManager pluginManager = this.getServer().getPluginManager();
         pluginManager.registerEvents(new ServerListener(), this);
         pluginManager.registerEvents(new PlayerListener(), this);
@@ -52,5 +55,25 @@ public class Survi extends JavaPlugin {
         if (tm != null) {
             tm.stop();
         }
+    }
+
+    private void updateResources() {
+        YmlResourceManager.update(this, "quests.yml");
+        YmlResourceManager.update(this, "recipes.yml");
+
+        String[] villagerFiles = getVillagerResourcePaths();
+        for (String path : villagerFiles) {
+            YmlResourceManager.update(this, path);
+        }
+    }
+
+    private String[] getVillagerResourcePaths() {
+        return new String[]{
+                "villagers/survivant.yml",
+                "villagers/nain.yml",
+                "villagers/maddox.yml",
+                "villagers/thomas.yml",
+                "villagers/francois.yml",
+        };
     }
 }
