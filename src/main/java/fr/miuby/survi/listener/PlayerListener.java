@@ -26,6 +26,9 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class PlayerListener implements Listener {
 
     @EventHandler
@@ -95,21 +98,25 @@ public class PlayerListener implements Listener {
             }
         }
 
-        // Réapplique les buffs de la quête active si elle est claim (récompense reçue)
-        // Les buffs durent jusqu'au reset de 6h même après la mort
-        PlayerQuestData questData = alphaPlayer.getActiveQuest();
-        if (questData != null && questData.isClaimed()) {
-            Quest quest = QuestManager.getInstance().getQuest(questData.getQuestId());
-            if (quest != null) {
-                // Petit délai pour éviter les conflits avec les PotionEffects par défaut au respawn
-                GameManager.getInstance().getScheduler().runTaskLater(GameManager.getInstance().getPlugin(), () -> {
-                    if (player.isOnline()) {
-                        for (PotionEffect effect : quest.getRewards()) {
-                            player.addPotionEffect(effect);
-                        }
-                    }
-                }, 5L);
+        // Réappliquer les buffs de TOUTES les quêtes réclamées du jour
+        // (un joueur peut avoir réclamé plusieurs quêtes dans la journée)
+        List<PotionEffect> effectsToReapply = new ArrayList<>();
+        for (PlayerQuestData questData : alphaPlayer.getActiveQuests()) {
+            if (questData.isClaimed()) {
+                Quest quest = QuestManager.getInstance().getQuest(questData.getQuestId());
+                if (quest != null) {
+                    effectsToReapply.addAll(quest.getRewards());
+                }
             }
+        }
+
+        if (!effectsToReapply.isEmpty()) {
+            // Petit délai pour éviter les conflits avec les PotionEffects par défaut au respawn
+            GameManager.getInstance().getScheduler().runTaskLater(GameManager.getInstance().getPlugin(), () -> {
+                if (player.isOnline()) {
+                    effectsToReapply.forEach(player::addPotionEffect);
+                }
+            }, 5L);
         }
     }
 
@@ -123,11 +130,4 @@ public class PlayerListener implements Listener {
         if (GameManager.getInstance().getLockedItemsFactory().isLocked(event.getRecipe()))
             event.setCancelled(true);
     }
-
-    /*@EventHandler
-    public void onPlayerBedEnter(PlayerBedEnterEvent event) {
-        if (event.getBedEnterResult().equals(PlayerBedEnterEvent.BedEnterResult.OK)) {
-            event.getPlayer().chat("zzz");
-        }
-    }*/
 }

@@ -4,6 +4,7 @@ import fr.miuby.lib.villager.MLVillager;
 import fr.miuby.lib.villager.VillagerLoadedEvent;
 import fr.miuby.lib.villager.VillagerRegistry;
 import fr.miuby.survi.player.AlphaPlayer;
+import fr.miuby.survi.quest.PlayerQuestData;
 import fr.miuby.survi.quest.QuestManager;
 import fr.miuby.survi.villager.AVillager;
 import fr.miuby.survi.villager.Trader;
@@ -50,24 +51,26 @@ public class VillagerListener implements Listener {
                 case Trader trader -> {
                     AlphaPlayer alphaPlayer = AlphaPlayer.get(player.getUniqueId());
 
-                    if (alphaPlayer.getActiveQuest() != null && alphaPlayer.getActiveQuest().isCompleted() && !alphaPlayer.getActiveQuest().isClaimed()) {
+                    // Priorité 1 : une quête complétée mais non réclamée est en attente → on la réclame
+                    PlayerQuestData completedUnclaimed = alphaPlayer.getActiveQuests().stream()
+                            .filter(q -> q.isCompleted() && !q.isClaimed())
+                            .findFirst()
+                            .orElse(null);
+
+                    if (completedUnclaimed != null) {
                         QuestManager.getInstance().completeQuest(alphaPlayer, trader, false);
                         event.setCancelled(true);
                         return;
                     }
 
-                    // On ne propose la quête que si le joueur n'en a pas déjà une aujourd'hui
-                    boolean hasQuestToday = false;
-                    if (alphaPlayer.getActiveQuest() != null) {
-                        java.time.LocalDate lastAccepted = alphaPlayer.getActiveQuest().getLastAccepted();
-                        if (lastAccepted != null && lastAccepted.isEqual(java.time.LocalDate.now())) {
-                            hasQuestToday = true;
-                        }
-                    }
+                    // Priorité 2 : proposer une nouvelle quête si le joueur a encore des slots disponibles
+                    // (getCurrentActiveQuest() == null signifie qu'il n'a pas de quête en cours non réclamée)
+                    boolean canAcceptNewQuest = alphaPlayer.getCurrentActiveQuest() == null
+                            && alphaPlayer.countTodayQuests() < QuestManager.DAILY_QUEST_LIMIT;
 
-                    if (!hasQuestToday) {
+                    if (canAcceptNewQuest) {
                         Component questMessage = Component.text("\n[Quête] ", NamedTextColor.GOLD)
-                                .append(Component.text("Cliquez ici pour accepter la quête du jour !", NamedTextColor.YELLOW)
+                                .append(Component.text("Cliquez ici pour accepter une quête !", NamedTextColor.YELLOW)
                                         .clickEvent(ClickEvent.callback(audience -> QuestManager.getInstance().assignQuest(alphaPlayer, trader)))
                                         .hoverEvent(HoverEvent.showText(Component.text("Accepter la quête", NamedTextColor.GREEN))))
                                 .append(Component.text("\n"));
@@ -111,11 +114,11 @@ public class VillagerListener implements Listener {
 
         Sound myCustomSound = Sound.sound(Key.key("ui.toast.challenge_complete"), Sound.Source.AMBIENT, 1f, 1.1f);
 
-        for (Player player : Bukkit.getOnlinePlayers()) {
-            player.playSound(myCustomSound);
+        for (Player p : Bukkit.getOnlinePlayers()) {
+            p.playSound(myCustomSound);
 
             for (BlessingEffect effect : villager.getBlessing().blessingEffects()) {
-                effect.applyEffect(villager, AlphaPlayer.get(player.getUniqueId()));
+                effect.applyEffect(villager, AlphaPlayer.get(p.getUniqueId()));
             }
         }
     }

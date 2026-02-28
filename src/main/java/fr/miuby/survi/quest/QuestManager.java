@@ -17,11 +17,16 @@ import java.io.File;
 import java.io.InputStreamReader;
 import java.time.LocalDate;
 import java.util.*;
-import java.util.UUID;
 import java.util.logging.Level;
 
 public class QuestManager {
     private static QuestManager instance;
+
+    /**
+     * Nombre maximum de quêtes qu'un joueur peut accepter par jour.
+     * Un admin peut permettre des quêtes supplémentaires via /quest remove.
+     */
+    public static final int DAILY_QUEST_LIMIT = 2;
 
     @Getter
     private final List<Quest> questPool = new ArrayList<>();
@@ -46,7 +51,6 @@ public class QuestManager {
 
         YamlConfiguration config = YamlConfiguration.loadConfiguration(questFile);
         if (!config.contains("quests")) {
-            // Tentative de lecture depuis les ressources si vide ou corrompu
             try (InputStreamReader reader = new InputStreamReader(Objects.requireNonNull(GameManager.getInstance().getPlugin().getResource("quests.yml")))) {
                 config = YamlConfiguration.loadConfiguration(reader);
             } catch (Exception e) {
@@ -75,7 +79,6 @@ public class QuestManager {
                 QuestType type = QuestType.valueOf((String) map.get("type"));
                 QuestDifficulty difficulty = QuestDifficulty.valueOf((String) map.get("difficulty"));
 
-                // Use Number for safer conversion from YAML to int
                 int goal = ((Number) map.get("goal")).intValue();
                 int reputationReward = ((Number) map.get("reputation_reward")).intValue();
 
@@ -133,9 +136,10 @@ public class QuestManager {
         return questPool.stream().filter(q -> q.getId().equals(id)).findFirst().orElse(null);
     }
 
-    // Mémorise la dernière quête attribuée par joueur (anti-répétition)
-    private final Map<UUID, String> lastQuestIdByPlayer = new HashMap<>();
-
+    /**
+     * Retourne une quête aléatoire de la difficulté donnée en évitant de répéter
+     * la dernière quête attribuée au joueur (persistée en DB, résiste aux restarts).
+     */
     public Quest getRandomQuest(QuestDifficulty difficulty, UUID playerUuid) {
         List<Quest> filtered = questPool.stream()
                 .filter(q -> q.getDifficulty() == difficulty)
@@ -143,18 +147,16 @@ public class QuestManager {
         if (filtered.isEmpty()) return null;
         if (filtered.size() == 1) return filtered.getFirst();
 
-        // Exclure la dernière quête reçue pour éviter la répétition
-        String lastId = lastQuestIdByPlayer.get(playerUuid);
+        // Lire le dernier questId depuis la DB (persistant entre les restarts)
+        String lastId = GameManager.getInstance().getDatabase().quests().getLastQuestId(playerUuid);
+
         List<Quest> candidates = filtered.stream()
                 .filter(q -> !q.getId().equals(lastId))
                 .toList();
 
-        Quest chosen = candidates.isEmpty()
+        return candidates.isEmpty()
                 ? filtered.get(random.nextInt(filtered.size()))
                 : candidates.get(random.nextInt(candidates.size()));
-
-        lastQuestIdByPlayer.put(playerUuid, chosen.getId());
-        return chosen;
     }
 
     public QuestDifficulty getRandomDifficulty() {
@@ -164,46 +166,78 @@ public class QuestManager {
         return QuestDifficulty.COMMON;                    // 70%
     }
 
+    /**
+     * Reset admin : supprime la quête en cours (non encore réclamée) du joueur,
+     * ce qui lui libère un slot pour en accepter une nouvelle.
+     * Retourne false s'il n'y a rien à reset.
+     */
     public boolean resetQuest(AlphaPlayer player) {
-        if (player.getActiveQuest() == null)
-            return false;
+        PlayerQuestData current = player.getCurrentActiveQuest();
+        if (current == null) return false;
 
-        player.setActiveQuest(null);
-        GameManager.getInstance().getDatabase().quests().clearPlayerQuest(player.getUuid());
-        
+        // Retirer les buffs si elle était déjà complétée (mais pas encore réclamée)
+        if (current.isCompleted() && player.getPlayer() != null) {
+            Quest quest = getQuest(current.getQuestId());
+            if (quest != null) {
+                for (PotionEffect effect : quest.getRewards()) {
+                    player.getPlayer().removePotionEffect(effect.getType());
+                }
+            }
+        }
+
+        player.removeQuest(current.getSlot());
+        GameManager.getInstance().getDatabase().quests().deletePlayerQuestSlot(player.getUuid(), current.getSlot());
+
         if (player.getPlayer() != null) {
-            player.getPlayer().sendMessage("§eVotre quête du jour a été réinitialisée par un administrateur.");
+            player.getPlayer().sendMessage("§eVotre quête a été réinitialisée par un administrateur. Vous pouvez en accepter une nouvelle !");
         }
         return true;
     }
 
+    /**
+     * Attribue une nouvelle quête au joueur s'il n'a pas atteint sa limite journalière.
+     */
     public void assignQuest(AlphaPlayer player, Trader trader) {
-        QuestDifficulty difficulty = getRandomDifficulty();
-        Quest quest = getRandomQuest(difficulty, player.getUuid());
-        if (quest == null) return;
-
-        // Bloque si le joueur a déjà une quête aujourd'hui (complétée ou non, réclamée ou non)
-        // Les quêtes expirent au reset de 6h, pas avant.
-        PlayerQuestData existing = player.getActiveQuest();
-        if (existing != null && existing.getLastAccepted() != null && existing.getLastAccepted().isEqual(LocalDate.now())) {
-            if (existing.isClaimed()) {
-                player.getPlayer().sendMessage("§cVous avez déjà réclamé votre récompense aujourd'hui. Revenez après 6h du matin !");
+        // Vérifier si le joueur a encore une quête non réclamée
+        PlayerQuestData current = player.getCurrentActiveQuest();
+        if (current != null) {
+            if (current.isCompleted()) {
+                player.getPlayer().sendMessage("§cVous avez déjà une quête terminée à réclamer !");
             } else {
-                player.getPlayer().sendMessage("§cVous avez déjà une quête active aujourd'hui.");
+                player.getPlayer().sendMessage("§cVous avez déjà une quête en cours. Terminez-la d'abord !");
             }
             return;
         }
 
-        PlayerQuestData data = new PlayerQuestData(quest.getId(), 0, LocalDate.now(), false, trader.getNameId(), false);
-        player.setActiveQuest(data);
+        // Vérifier la limite journalière
+        if (player.countTodayQuests() >= DAILY_QUEST_LIMIT) {
+            player.getPlayer().sendMessage("§cVous avez atteint votre limite de §6" + DAILY_QUEST_LIMIT + " quête(s) aujourd'hui§c. Revenez demain !");
+            return;
+        }
+
+        QuestDifficulty difficulty = getRandomDifficulty();
+        Quest quest = getRandomQuest(difficulty, player.getUuid());
+        if (quest == null) return;
+
+        // Prochain slot = nombre total de quêtes du jour
+        int nextSlot = player.countTodayQuests();
+
+        PlayerQuestData data = new PlayerQuestData(nextSlot, quest.getId(), 0, LocalDate.now(), false, trader.getNameId(), false);
+        player.putQuest(data);
         GameManager.getInstance().getDatabase().quests().updatePlayerQuest(player.getUuid(), data);
-        
+        // Mémoriser cette quête comme dernière attribuée pour l'anti-répétition
+        GameManager.getInstance().getDatabase().quests().setLastQuestId(player.getUuid(), quest.getId());
+
         player.getPlayer().sendMessage("§aNouvelle quête acceptée auprès de §b" + trader.getNameId() + " §a: §6" + quest.getName());
         player.getPlayer().sendMessage("§7" + quest.getDescription());
+        player.getPlayer().sendMessage("§8Quête " + (nextSlot + 1) + "/" + DAILY_QUEST_LIMIT + " du jour.");
     }
 
+    /**
+     * Réclame la récompense de la quête complétée auprès du bon Trader.
+     */
     public boolean completeQuest(AlphaPlayer player, Trader trader, boolean force) {
-        PlayerQuestData data = player.getActiveQuest();
+        PlayerQuestData data = player.getCurrentActiveQuest();
 
         if (data == null || (!force && !data.isCompleted()) || data.isClaimed())
             return false;
@@ -216,37 +250,33 @@ public class QuestManager {
         Quest quest = getQuest(data.getQuestId());
         if (quest == null) return false;
 
-        // Apply rewards
         for (PotionEffect effect : quest.getRewards()) {
             player.getPlayer().addPotionEffect(effect);
         }
 
-        // Give reputation
         player.addReputation(trader.getNameId(), quest.getReputationReward());
-        
         player.getPlayer().sendMessage("§aVous avez reçu les récompenses de la quête ! §b+" + quest.getReputationReward() + " réputation §aavec §b" + trader.getNameId());
-        
-        // Marquer comme réclamée (claim) pour empêcher les doubles récompenses
+
         data.setClaimed(true);
         GameManager.getInstance().getDatabase().quests().updatePlayerQuest(player.getUuid(), data);
         return true;
     }
 
+    /**
+     * Incrémente la progression de la quête active en cours (non complétée).
+     */
     public void progressQuest(AlphaPlayer player, QuestType type, Object target, int amount) {
-        PlayerQuestData data = player.getActiveQuest();
-        if (data == null || data.isCompleted() || !LocalDate.now().isEqual(data.getLastAccepted())) return;
+        PlayerQuestData data = player.getCurrentActiveQuest();
+        if (data == null || data.isCompleted()) return;
 
         Quest quest = getQuest(data.getQuestId());
         if (quest == null || quest.getType() != type) return;
 
-        boolean targetOk = true;
-        if (type != QuestType.FISH) { // FISH: accepter n'importe quel poisson
-            targetOk = (quest.getTarget() == null) || quest.getTarget().equals(target);
-        }
+        boolean targetOk = (type == QuestType.FISH) || (quest.getTarget() == null) || quest.getTarget().equals(target);
         if (!targetOk) return;
 
         data.setProgress(data.getProgress() + amount);
-        
+
         if (data.getProgress() >= quest.getGoal()) {
             completeQuestInternal(player, quest);
         } else {
@@ -255,7 +285,9 @@ public class QuestManager {
     }
 
     private void completeQuestInternal(AlphaPlayer player, Quest quest) {
-        PlayerQuestData data = player.getActiveQuest();
+        PlayerQuestData data = player.getCurrentActiveQuest();
+        if (data == null) return;
+
         data.setProgress(quest.getGoal());
         data.setCompleted(true);
         GameManager.getInstance().getDatabase().quests().updatePlayerQuest(player.getUuid(), data);

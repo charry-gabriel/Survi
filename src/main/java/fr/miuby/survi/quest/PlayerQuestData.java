@@ -8,6 +8,7 @@ import java.time.LocalDate;
 @Data
 @AllArgsConstructor
 public class PlayerQuestData {
+    private int slot;
     private String questId;
     private int progress;
     private LocalDate lastAccepted;

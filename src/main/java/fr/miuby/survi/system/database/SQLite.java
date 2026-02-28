@@ -12,7 +12,7 @@ import java.util.logging.Level;
 
 public class SQLite extends Database {
     private final String dbname;
-    private static final int CURRENT_DB_VERSION = 8;
+    private static final int CURRENT_DB_VERSION = 9;
 
     public SQLite() {
         dbname = GameManager.getInstance().getPlugin().getConfig().getString("SQLite.Filename", "minecraft");
@@ -77,6 +77,7 @@ public class SQLite extends Database {
             s.executeUpdate(createCropTable());
             s.executeUpdate(createReputationTable());
             s.executeUpdate(createPlayerQuestTable());
+            s.executeUpdate(createPlayerQuestMetaTable());
             s.executeUpdate(createServerDataTable());
             s.executeUpdate(createDelayedEffectsTable());
         }
@@ -145,12 +146,21 @@ public class SQLite extends Database {
     private String createPlayerQuestTable() {
         return "CREATE TABLE IF NOT EXISTS player_quest (" +
                 "`player_uuid` varchar(255) NOT NULL," +
+                "`slot` int NOT NULL DEFAULT 0," +
                 "`quest_id` varchar(255) NOT NULL," +
                 "`progress` int(11) NOT NULL," +
                 "`last_accepted` varchar(255) NOT NULL," +
                 "`is_completed` boolean NOT NULL," +
                 "`trader_id` varchar(255) NOT NULL DEFAULT ''," +
                 "`claimed` boolean NOT NULL DEFAULT 0," +
+                "PRIMARY KEY (`player_uuid`, `slot`)" +
+                ");";
+    }
+
+    private String createPlayerQuestMetaTable() {
+        return "CREATE TABLE IF NOT EXISTS player_quest_meta (" +
+                "`player_uuid` varchar(255) NOT NULL," +
+                "`last_quest_id` varchar(255)," +
                 "PRIMARY KEY (`player_uuid`)" +
                 ");";
     }
@@ -235,6 +245,19 @@ public class SQLite extends Database {
                 if (!hasColumn(conn, "villager", "unlockedDate")) {
                     s.executeUpdate("ALTER TABLE villager ADD COLUMN unlockedDate BIGINT DEFAULT 0");
                 }
+            }
+            if (currentVersion < 9) {
+                s.executeUpdate("ALTER TABLE player_quest RENAME TO player_quest_old");
+                s.executeUpdate(createPlayerQuestTable());
+                s.executeUpdate("INSERT INTO player_quest (player_uuid, slot, quest_id, progress, last_accepted, is_completed, trader_id, claimed) " +
+                                "SELECT player_uuid, 0, quest_id, progress, last_accepted, is_completed, trader_id, claimed FROM player_quest_old"
+                );
+                s.executeUpdate("DROP TABLE player_quest_old");
+
+                s.executeUpdate(createPlayerQuestMetaTable());
+                s.executeUpdate("INSERT OR IGNORE INTO player_quest_meta (player_uuid, last_quest_id) " +
+                                "SELECT player_uuid, quest_id FROM player_quest WHERE slot = 0"
+                );
             }
             setVersion(conn, CURRENT_DB_VERSION);
         }

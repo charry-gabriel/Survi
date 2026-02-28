@@ -1,5 +1,6 @@
 package fr.miuby.survi.player;
 
+import lombok.Getter;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 
@@ -7,6 +8,7 @@ import net.kyori.adventure.text.format.NamedTextColor;
  * Rang global basé sur la réputation totale de tous les Traders.
  * Ajustez les seuils selon votre équilibrage.
  */
+@Getter
 public enum GlobalRank {
 
     INCONNU    ("Inconnu",    0,    NamedTextColor.DARK_GRAY),
@@ -30,10 +32,6 @@ public enum GlobalRank {
     public Component displayComponent() {
         return Component.text("[" + displayName + "]", color);
     }
-
-    public String getDisplayName() { return displayName; }
-    public int getThreshold()      { return threshold; }
-    public NamedTextColor getColor() { return color; }
 
     public static GlobalRank fromReputation(int total) {
         GlobalRank result = INCONNU;

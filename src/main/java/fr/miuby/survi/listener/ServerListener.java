@@ -49,35 +49,36 @@ public class ServerListener implements Listener {
         int resetCount = 0;
 
         for (AlphaPlayer player : GameManager.getInstance().getAlphaPlayerFactory().getAlphaPlayers()) {
-            PlayerQuestData quest = player.getActiveQuest();
-            if (quest == null) continue;
+            if (player.getActiveQuests().isEmpty()) continue;
 
             boolean isOnline = player.getPlayer() != null;
 
             if (isOnline) {
-                // Joueur connecté : retirer les buffs si la quête était réclamée
-                if (quest.isClaimed()) {
-                    Quest completedQuest = QuestManager.getInstance().getQuest(quest.getQuestId());
-                    if (completedQuest != null) {
-                        for (PotionEffect effect : completedQuest.getRewards()) {
-                            player.getPlayer().removePotionEffect(effect.getType());
+                // Retirer les buffs de toutes les quêtes réclamées du jour
+                for (PlayerQuestData questData : player.getActiveQuests()) {
+                    if (questData.isClaimed()) {
+                        Quest quest = QuestManager.getInstance().getQuest(questData.getQuestId());
+                        if (quest != null) {
+                            for (PotionEffect effect : quest.getRewards()) {
+                                player.getPlayer().removePotionEffect(effect.getType());
+                            }
                         }
                     }
                 }
                 // Effacer en mémoire et en DB
-                player.setActiveQuest(null);
-                GameManager.getInstance().getDatabase().quests().clearPlayerQuest(player.getUuid());
-                player.getPlayer().sendMessage("§6[Quêtes] §eVotre quête du jour a expiré.");
+                player.getActiveQuests().clear();
+                GameManager.getInstance().getDatabase().quests().clearAllPlayerQuests(player.getUuid());
+                player.getPlayer().sendMessage("§6[Quêtes] §eVos quêtes du jour ont expiré.");
             } else {
-                // Joueur déconnecté : on efface uniquement en mémoire.
-                // L'enregistrement reste en DB (avec la date d'hier), ainsi
-                // cleanupExpiredQuestOnJoin() pourra retirer les buffs à la reconnexion.
-                player.setActiveQuest(null);
+                // Joueur déconnecté : on vide uniquement la mémoire.
+                // Les entrées restent en DB avec leur date d'hier, ainsi
+                // cleanupExpiredQuestsOnJoin() retirera les buffs à la reconnexion.
+                player.getActiveQuests().clear();
             }
 
             resetCount++;
         }
 
-        LogManager.getInstance().log(Level.INFO, LogManager.ETagLog.QUEST, resetCount + " quêtes réinitialisées !");
+        LogManager.getInstance().log(Level.INFO, LogManager.ETagLog.QUEST, resetCount + " joueurs réinitialisés !");
     }
 }

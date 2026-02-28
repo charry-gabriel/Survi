@@ -14,12 +14,14 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.attribute.Attribute;
 
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
 import fr.miuby.survi.quest.PlayerQuestData;
 import fr.miuby.survi.quest.Quest;
 import fr.miuby.survi.quest.QuestManager;
 import java.util.*;
+import java.util.logging.Level;
 
 import org.bukkit.potion.PotionEffect;
 
@@ -35,8 +37,7 @@ public class AlphaPlayer extends MLPlayer implements Serializable {
     @Getter
     private final Map<String, Integer> reputationByTrader = new HashMap<>();
     @Getter
-    @Setter
-    private PlayerQuestData activeQuest;
+    private final List<PlayerQuestData> activeQuests = new ArrayList<>();
 
     @Setter
     private MLWorld world;
@@ -78,6 +79,47 @@ public class AlphaPlayer extends MLPlayer implements Serializable {
         return GameManager.getInstance().getAlphaPlayerFactory().getAlphaPlayer(uuid);
     }
 
+    // -----------------------------------------------------------------------
+    // Helpers quêtes
+    // -----------------------------------------------------------------------
+
+    /**
+     * Retourne la quête active en cours (non complétée OU non réclamée) pour la journée.
+     * Utile pour la progression et les messages d'erreur.
+     */
+    public PlayerQuestData getCurrentActiveQuest() {
+        return activeQuests.stream()
+                .filter(q -> !q.isClaimed())
+                .findFirst()
+                .orElse(null);
+    }
+
+    /**
+     * Nombre de quêtes acceptées aujourd'hui (peu importe leur état).
+     */
+    public int countTodayQuests() {
+        return activeQuests.size();
+    }
+
+    /**
+     * Ajoute ou remplace un slot de quête en mémoire.
+     */
+    public void putQuest(PlayerQuestData data) {
+        activeQuests.removeIf(q -> q.getSlot() == data.getSlot());
+        activeQuests.add(data);
+    }
+
+    /**
+     * Supprime un slot de quête en mémoire.
+     */
+    public void removeQuest(int slot) {
+        activeQuests.removeIf(q -> q.getSlot() == slot);
+    }
+
+    // -----------------------------------------------------------------------
+    // Lifecycle
+    // -----------------------------------------------------------------------
+
     @Override
     public void onJoinServer() {
         this.player.setScoreboard(this.scoreboard.getScoreboard());
@@ -93,34 +135,77 @@ public class AlphaPlayer extends MLPlayer implements Serializable {
 
         this.player.discoverRecipes(GameManager.getInstance().getCustomRecipeFactory().getNewRecipes().keySet());
 
-        // Load reputation and quest data
+        // Chargement réputation + quêtes
         this.reputationByTrader.putAll(GameManager.getInstance().getDatabase().quests().getReputation(this.getUuid()));
-        this.activeQuest = GameManager.getInstance().getDatabase().quests().getPlayerQuest(this.getUuid());
+        List<PlayerQuestData> loaded = GameManager.getInstance().getDatabase().quests().getPlayerQuests(this.getUuid());
 
-        cleanupExpiredQuestOnJoin();
+        cleanupExpiredQuestsOnJoin(loaded);
     }
 
-    private void cleanupExpiredQuestOnJoin() {
-        final PlayerQuestData expired = this.activeQuest;
-        this.activeQuest = null;
-        GameManager.getInstance().getDatabase().quests().clearPlayerQuest(this.getUuid());
-        LogManager.getInstance().log(java.util.logging.Level.INFO, LogManager.ETagLog.QUEST, "Quête expirée effacée en mémoire et DB.");
+    /**
+     * Trie les quêtes chargées depuis la DB :
+     * - Quêtes d'aujourd'hui : conservées en mémoire, buffs réappliqués si réclamées.
+     * - Quêtes d'avant le reset : buffs retirés si réclamées, supprimées de la DB.
+     */
+    private void cleanupExpiredQuestsOnJoin(List<PlayerQuestData> loaded) {
+        this.activeQuests.clear();
+        LocalDate today = LocalDate.now();
 
-        if (expired != null && expired.isClaimed() && this.player != null) {
-            Quest expiredQuest = QuestManager.getInstance().getQuest(expired.getQuestId());
-            if (expiredQuest == null)
-                return;
+        List<PlayerQuestData> expired = new ArrayList<>();
+        List<PlayerQuestData> valid = new ArrayList<>();
 
-            final java.util.List<PotionEffect> rewards = expiredQuest.getRewards();
+        for (PlayerQuestData quest : loaded) {
+            if (today.isEqual(quest.getLastAccepted())) {
+                valid.add(quest);
+            } else {
+                expired.add(quest);
+            }
+        }
+
+        // Supprimer les quêtes expirées de la DB
+        for (PlayerQuestData q : expired) {
+            GameManager.getInstance().getDatabase().quests().deletePlayerQuestSlot(this.getUuid(), q.getSlot());
+            LogManager.getInstance().log(Level.INFO, LogManager.ETagLog.QUEST,
+                    "Quête expirée (slot " + q.getSlot() + ") supprimée pour " + this.getPseudo());
+        }
+
+        // Retirer les buffs des quêtes expirées qui avaient été réclamées
+        List<PotionEffect> effectsToRemove = new ArrayList<>();
+        for (PlayerQuestData q : expired) {
+            if (q.isClaimed()) {
+                Quest questDef = QuestManager.getInstance().getQuest(q.getQuestId());
+                if (questDef != null) effectsToRemove.addAll(questDef.getRewards());
+            }
+        }
+
+        if (!effectsToRemove.isEmpty()) {
             GameManager.getInstance().getScheduler().runTaskLater(GameManager.getInstance().getPlugin(), () -> {
-                if (!this.getPlayer().isOnline()) {
-                    LogManager.getInstance().log(java.util.logging.Level.WARNING, LogManager.ETagLog.QUEST, "[cleanup] Joueur déconnecté avant la suppression des effets.");
-                    return;
-                }
-                for (PotionEffect effect : rewards) {
+                if (!this.getPlayer().isOnline()) return;
+                for (PotionEffect effect : effectsToRemove) {
                     this.getPlayer().removePotionEffect(effect.getType());
                 }
             }, 2L);
+        }
+
+        // Garder les quêtes valides en mémoire
+        this.activeQuests.addAll(valid);
+
+        // Réappliquer les buffs des quêtes d'aujourd'hui déjà réclamées
+        List<PotionEffect> effectsToReapply = new ArrayList<>();
+        for (PlayerQuestData q : valid) {
+            if (q.isClaimed()) {
+                Quest questDef = QuestManager.getInstance().getQuest(q.getQuestId());
+                if (questDef != null) effectsToReapply.addAll(questDef.getRewards());
+            }
+        }
+
+        if (!effectsToReapply.isEmpty()) {
+            GameManager.getInstance().getScheduler().runTaskLater(GameManager.getInstance().getPlugin(), () -> {
+                if (!this.getPlayer().isOnline()) return;
+                for (PotionEffect effect : effectsToReapply) {
+                    this.getPlayer().addPotionEffect(effect);
+                }
+            }, 5L);
         }
     }
 
@@ -226,7 +311,6 @@ public class AlphaPlayer extends MLPlayer implements Serializable {
         reputationByTrader.put(traderId, newRep);
         GameManager.getInstance().getDatabase().quests().updateReputation(this.getUuid(), traderId, newRep);
 
-        // Notifie si le rang global a changé
         GlobalRank newRank = getGlobalRank();
         if (newRank != previousRank && getPlayer() != null) {
             getPlayer().sendMessage(
@@ -234,7 +318,6 @@ public class AlphaPlayer extends MLPlayer implements Serializable {
                             .append(newRank.displayComponent())
                             .append(Component.text(" (réputation totale : " + getTotalReputation() + ")", NamedTextColor.GRAY))
             );
-            // Pour associer un sous-rôle : GameManager.getInstance().getRoleManagementService().applyGlobalRankSubRole(this, newRank);
         }
     }
     //endregion

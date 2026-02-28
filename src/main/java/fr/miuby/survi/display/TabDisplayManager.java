@@ -81,7 +81,7 @@ public class TabDisplayManager {
     }
 
     private Component buildQuestLine(AlphaPlayer alphaPlayer) {
-        PlayerQuestData data = alphaPlayer.getActiveQuest();
+        PlayerQuestData data = alphaPlayer.getCurrentActiveQuest();
         if (data == null || data.isClaimed()) {
             return Component.empty();
         }
