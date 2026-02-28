@@ -23,9 +23,13 @@ public class CommandErrors {
 
     public static final DynamicCommandExceptionType CUSTOM_ITEM_NOT_FOUND =
             new DynamicCommandExceptionType(name -> BrigadierHelper.message(
-                    Component.text("Custom item introuvable : " + name)
+                    Component.text("Objet custom introuvable : " + name)
             ));
 
+    public static final DynamicCommandExceptionType WORLD_NOT_FOUND =
+            new DynamicCommandExceptionType(name -> BrigadierHelper.message(
+                    Component.text("Monde introuvable : " + name)
+            ));
 
     public static final SimpleCommandExceptionType NOT_A_TRADER =
             new SimpleCommandExceptionType(BrigadierHelper.message(

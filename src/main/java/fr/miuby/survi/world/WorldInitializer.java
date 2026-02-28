@@ -53,13 +53,17 @@ public final class WorldInitializer {
     public static World getDefaultWorld() {
         return WorldRegistry.get(EWorld.VILLAGE).getWorld();
     }
-    
-    public static synchronized void initializeIfNeeded() {
-        Server server = GameManager.getInstance().getPlugin().getServer();
 
-        if (worlds.values().stream().allMatch(worldName -> server.getWorld(worldName) != null) && !initialized) {
-            initialized = true;
-            GameManager.getInstance().initAfterWorldsLoad();
-        }
+    public static synchronized void initializeIfNeeded() {
+        if (initialized)
+            return;
+
+        Server server = GameManager.getInstance().getPlugin().getServer();
+        boolean allLoaded = worlds.values().stream().allMatch(worldName -> server.getWorld(worldName) != null);
+        if (!allLoaded)
+            return;
+
+        initialized = true;
+        GameManager.getInstance().initAfterWorldsLoad();
     }
 }

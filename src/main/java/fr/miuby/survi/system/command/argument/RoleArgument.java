@@ -1,4 +1,4 @@
-package fr.miuby.survi.system.command;
+package fr.miuby.survi.system.command.argument;
 
 import com.mojang.brigadier.arguments.ArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
@@ -8,6 +8,7 @@ import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 import fr.miuby.survi.GameManager;
 import fr.miuby.survi.role.Role;
+import fr.miuby.survi.system.command.CommandErrors;
 import io.papermc.paper.command.brigadier.argument.CustomArgumentType;
 import org.jspecify.annotations.NonNull;
 

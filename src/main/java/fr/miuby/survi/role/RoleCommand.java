@@ -6,9 +6,9 @@ import com.mojang.brigadier.context.CommandContext;
 import fr.miuby.survi.GameManager;
 import fr.miuby.survi.player.AlphaPlayer;
 
-import fr.miuby.survi.system.command.AlphaPlayerArgument;
-import fr.miuby.survi.system.command.RoleArgument;
-import fr.miuby.survi.system.command.SubRoleArgument;
+import fr.miuby.survi.system.command.argument.AlphaPlayerArgument;
+import fr.miuby.survi.system.command.argument.RoleArgument;
+import fr.miuby.survi.system.command.argument.SubRoleArgument;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
 import io.papermc.paper.command.brigadier.Commands;
 import net.kyori.adventure.text.Component;

@@ -2,6 +2,7 @@ package fr.miuby.survi;
 
 import fr.miuby.lib.MiubyLib;
 import fr.miuby.survi.crops.PlantedCropsManager;
+import fr.miuby.survi.display.TabDisplayManager;
 import fr.miuby.survi.role.RoleManagementService;
 import fr.miuby.survi.system.database.Database;
 import fr.miuby.survi.system.database.SQLite;
@@ -13,7 +14,6 @@ import fr.miuby.survi.player.AlphaPlayerFactory;
 import fr.miuby.survi.role.RoleRegistry;
 import fr.miuby.survi.system.time.TimeManager;
 import fr.miuby.survi.villager.VillagerFactory;
-import fr.miuby.survi.display.TabDisplayManager;
 import fr.miuby.survi.world.WorldInitializer;
 import fr.miuby.survi.system.log.LogManager;
 import lombok.Getter;
@@ -104,8 +104,9 @@ public class GameManager {
             throw new IllegalStateException("Wrong init order !");
 
         LogManager.getInstance().log(Level.INFO, LogManager.ETagLog.WORLD, "Initialisation (si besoin) des mondes...");
-        WorldInitializer.initializeIfNeeded();
         this.initState = InitState.WORLDS_LOADED;
+
+        WorldInitializer.initializeIfNeeded();
         LogManager.getInstance().log(Level.INFO, LogManager.ETagLog.WORLD, "Mondes prêts");
     }
 

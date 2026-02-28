@@ -3,7 +3,7 @@ package fr.miuby.survi.item;
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
-import fr.miuby.survi.system.command.CustomItemArgument;
+import fr.miuby.survi.system.command.argument.CustomItemArgument;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
 import io.papermc.paper.command.brigadier.Commands;
 import org.bukkit.entity.Player;

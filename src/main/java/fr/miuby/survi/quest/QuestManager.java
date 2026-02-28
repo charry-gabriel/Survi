@@ -17,11 +17,12 @@ import java.io.File;
 import java.io.InputStreamReader;
 import java.time.LocalDate;
 import java.util.*;
+import java.util.UUID;
 import java.util.logging.Level;
 
 public class QuestManager {
     private static QuestManager instance;
-    
+
     @Getter
     private final List<Quest> questPool = new ArrayList<>();
     private final Random random = new Random();
@@ -63,7 +64,9 @@ public class QuestManager {
         }
 
         for (Object obj : questsList) {
-            if (!(obj instanceof Map<?, ?> map)) continue;
+            if (!(obj instanceof Map<?, ?> rawMap)) continue;
+            @SuppressWarnings("unchecked")
+            Map<String, Object> map = (Map<String, Object>) rawMap;
 
             try {
                 String id = (String) map.get("id");
@@ -71,7 +74,7 @@ public class QuestManager {
                 String description = (String) map.get("description");
                 QuestType type = QuestType.valueOf((String) map.get("type"));
                 QuestDifficulty difficulty = QuestDifficulty.valueOf((String) map.get("difficulty"));
-                
+
                 // Use Number for safer conversion from YAML to int
                 int goal = ((Number) map.get("goal")).intValue();
                 int reputationReward = ((Number) map.get("reputation_reward")).intValue();
@@ -90,7 +93,9 @@ public class QuestManager {
                 List<?> rewardsList = (List<?>) map.get("rewards");
                 if (rewardsList != null) {
                     for (Object rewardObj : rewardsList) {
-                        if (rewardObj instanceof Map<?, ?> rewardMap) {
+                        if (rewardObj instanceof Map<?, ?> rawReward) {
+                            @SuppressWarnings("unchecked")
+                            Map<String, Object> rewardMap = (Map<String, Object>) rawReward;
                             String potionType = ((String) rewardMap.get("type")).toLowerCase();
                             NamespacedKey key = NamespacedKey.minecraft(potionType);
                             PotionEffectType effectType = Registry.POTION_EFFECT_TYPE.get(key);
@@ -128,12 +133,28 @@ public class QuestManager {
         return questPool.stream().filter(q -> q.getId().equals(id)).findFirst().orElse(null);
     }
 
-    public Quest getRandomQuest(QuestDifficulty difficulty) {
+    // Mémorise la dernière quête attribuée par joueur (anti-répétition)
+    private final Map<UUID, String> lastQuestIdByPlayer = new HashMap<>();
+
+    public Quest getRandomQuest(QuestDifficulty difficulty, UUID playerUuid) {
         List<Quest> filtered = questPool.stream()
                 .filter(q -> q.getDifficulty() == difficulty)
                 .toList();
         if (filtered.isEmpty()) return null;
-        return filtered.get(random.nextInt(filtered.size()));
+        if (filtered.size() == 1) return filtered.getFirst();
+
+        // Exclure la dernière quête reçue pour éviter la répétition
+        String lastId = lastQuestIdByPlayer.get(playerUuid);
+        List<Quest> candidates = filtered.stream()
+                .filter(q -> !q.getId().equals(lastId))
+                .toList();
+
+        Quest chosen = candidates.isEmpty()
+                ? filtered.get(random.nextInt(filtered.size()))
+                : candidates.get(random.nextInt(candidates.size()));
+
+        lastQuestIdByPlayer.put(playerUuid, chosen.getId());
+        return chosen;
     }
 
     public QuestDifficulty getRandomDifficulty() {
@@ -158,13 +179,18 @@ public class QuestManager {
 
     public void assignQuest(AlphaPlayer player, Trader trader) {
         QuestDifficulty difficulty = getRandomDifficulty();
-        Quest quest = getRandomQuest(difficulty);
+        Quest quest = getRandomQuest(difficulty, player.getUuid());
         if (quest == null) return;
 
-        // Si le joueur a déjà une quête aujourd'hui, ne pas écraser
+        // Bloque si le joueur a déjà une quête aujourd'hui (complétée ou non, réclamée ou non)
+        // Les quêtes expirent au reset de 6h, pas avant.
         PlayerQuestData existing = player.getActiveQuest();
         if (existing != null && existing.getLastAccepted() != null && existing.getLastAccepted().isEqual(LocalDate.now())) {
-            player.getPlayer().sendMessage("§cVous avez déjà une quête active aujourd'hui.");
+            if (existing.isClaimed()) {
+                player.getPlayer().sendMessage("§cVous avez déjà réclamé votre récompense aujourd'hui. Revenez après 6h du matin !");
+            } else {
+                player.getPlayer().sendMessage("§cVous avez déjà une quête active aujourd'hui.");
+            }
             return;
         }
 

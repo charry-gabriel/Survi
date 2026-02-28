@@ -4,6 +4,7 @@ main: fr.miuby.survi.Survi
 api-version: '1.20'
 authors: [Miuby]
 description: Petite survi TeamAlpha
+depend: [Multiverse-Core]
 commands:
   sql:
     description: Requete sql

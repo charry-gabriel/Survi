@@ -14,6 +14,7 @@ import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.entity.Player;
 
+import fr.miuby.survi.player.GlobalRank;
 import java.text.DecimalFormat;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -37,31 +38,38 @@ public class TabDisplayManager {
     }
 
     private Component buildHeader(AlphaPlayer alphaPlayer) {
+        GlobalRank rank = alphaPlayer.getGlobalRank();
+        int totalRep = alphaPlayer.getTotalReputation();
+
         return Component.text("\nServeur Survi | ", NamedTextColor.GOLD)
-                .append(alphaPlayer.getRole().displayName())
-                .append(Component.text("\n"));
+                .appendNewline()
+                .append(Component.text("Difficulté : ", NamedTextColor.RED))
+                //.append(Component.text(MobStatManager.getInstance().getDifficultyName()))
+                .appendNewline()
+                .append(rank.displayComponent())
+                .append(Component.text("  (Rép. : ", NamedTextColor.GRAY))
+                .append(Component.text(totalRep, rank.getColor()))
+                .append(Component.text(")", NamedTextColor.GRAY))
+                .appendNewline();
     }
 
     private Component buildFooter(AlphaPlayer alphaPlayer) {
-        Component footer = Component.text("\n");
-
-        footer = footer.append(buildVillagerLevelsLine());
-        footer = footer.append(Component.text("\n"));
-        footer = footer.append(Component.text("\n"));
-
-        footer = footer.append(formatStat(alphaPlayer, Attribute.MAX_HEALTH, "Vie"));
-        footer = footer.append(Component.text(" | ", NamedTextColor.DARK_GRAY));
-        footer = footer.append(formatStat(alphaPlayer, Attribute.ATTACK_DAMAGE, "Force"));
-        footer = footer.append(Component.text(" | ", NamedTextColor.DARK_GRAY));
-        footer = footer.append(formatStat(alphaPlayer, Attribute.ARMOR, "Armure"));
-        footer = footer.append(Component.newline());
-        footer = footer.append(formatStat(alphaPlayer, Attribute.MOVEMENT_SPEED, "Vitesse"));
-        footer = footer.append(Component.text(" | ", NamedTextColor.DARK_GRAY));
-        footer = footer.append(formatStat(alphaPlayer, Attribute.ATTACK_SPEED, "Vit. d'Attaque"));
-        footer = footer.append(Component.text(" | ", NamedTextColor.DARK_GRAY));
-        footer = footer.append(formatStat(alphaPlayer, Attribute.LUCK, "Chance"));
-
-        footer = footer.append(Component.text("\n"));
+        Component footer = Component.empty()
+                .append(buildVillagerLevelsLine())
+                .appendNewline()
+                .appendNewline()
+                .append(formatStat(alphaPlayer, Attribute.MAX_HEALTH, "Vie"))
+                .append(Component.text(" | ", NamedTextColor.DARK_GRAY))
+                .append(formatStat(alphaPlayer, Attribute.ATTACK_DAMAGE, "Force"))
+                .append(Component.text(" | ", NamedTextColor.DARK_GRAY))
+                .append(formatStat(alphaPlayer, Attribute.ARMOR, "Armure"))
+                .appendNewline()
+                .append(formatStat(alphaPlayer, Attribute.MOVEMENT_SPEED, "Vitesse"))
+                .append(Component.text(" | ", NamedTextColor.DARK_GRAY))
+                .append(formatStat(alphaPlayer, Attribute.ATTACK_SPEED, "Vit. d'Attaque"))
+                .append(Component.text(" | ", NamedTextColor.DARK_GRAY))
+                .append(formatStat(alphaPlayer, Attribute.LUCK, "Chance"))
+                .appendNewline();
 
         Component questLine = buildQuestLine(alphaPlayer);
         if (!questLine.equals(Component.empty())) {
@@ -69,7 +77,7 @@ public class TabDisplayManager {
             footer = footer.append(questLine);
         }
 
-        return footer.append(Component.text("\n"));
+        return footer.appendNewline();
     }
 
     private Component buildQuestLine(AlphaPlayer alphaPlayer) {

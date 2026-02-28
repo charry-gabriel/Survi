@@ -9,6 +9,10 @@ import fr.miuby.survi.world.EWorld;
 import io.papermc.paper.advancement.AdvancementDisplay;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import fr.miuby.survi.quest.PlayerQuestData;
+import fr.miuby.survi.quest.Quest;
+import fr.miuby.survi.quest.QuestManager;
+
 import org.bukkit.NamespacedKey;
 import org.bukkit.advancement.Advancement;
 import org.bukkit.advancement.AdvancementProgress;
@@ -88,6 +92,23 @@ public class PlayerListener implements Listener {
             if (roleAttribute.getAttributeType() == Attribute.MAX_ABSORPTION) {
                 player.removePotionEffect(PotionEffectType.ABSORPTION);
                 player.addPotionEffect(new PotionEffect(PotionEffectType.ABSORPTION, 0, (int) roleAttribute.getValue()));
+            }
+        }
+
+        // Réapplique les buffs de la quête active si elle est claim (récompense reçue)
+        // Les buffs durent jusqu'au reset de 6h même après la mort
+        PlayerQuestData questData = alphaPlayer.getActiveQuest();
+        if (questData != null && questData.isClaimed()) {
+            Quest quest = QuestManager.getInstance().getQuest(questData.getQuestId());
+            if (quest != null) {
+                // Petit délai pour éviter les conflits avec les PotionEffects par défaut au respawn
+                GameManager.getInstance().getScheduler().runTaskLater(GameManager.getInstance().getPlugin(), () -> {
+                    if (player.isOnline()) {
+                        for (PotionEffect effect : quest.getRewards()) {
+                            player.addPotionEffect(effect);
+                        }
+                    }
+                }, 5L);
             }
         }
     }
