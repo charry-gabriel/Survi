@@ -1,5 +1,6 @@
 package fr.miuby.survi.display;
 
+import fr.miuby.survi.world.WorldLevelManager;
 import fr.miuby.lib.villager.VillagerRegistry;
 import fr.miuby.survi.GameManager;
 import fr.miuby.survi.player.AlphaPlayer;
@@ -44,7 +45,7 @@ public class TabDisplayManager {
         return Component.text("\nServeur Survi | ", NamedTextColor.GOLD)
                 .appendNewline()
                 .append(Component.text("Difficulté : ", NamedTextColor.RED))
-                //.append(Component.text(MobStatManager.getInstance().getDifficultyName()))
+                .append(Component.text(WorldLevelManager.getInstance().getDisplayName(), NamedTextColor.YELLOW))
                 .appendNewline()
                 .append(rank.displayComponent())
                 .append(Component.text("  (Rép. : ", NamedTextColor.GRAY))

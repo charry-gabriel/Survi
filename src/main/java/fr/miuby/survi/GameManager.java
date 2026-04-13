@@ -14,6 +14,7 @@ import fr.miuby.survi.player.AlphaPlayerFactory;
 import fr.miuby.survi.role.RoleRegistry;
 import fr.miuby.survi.system.time.TimeManager;
 import fr.miuby.survi.villager.VillagerFactory;
+import fr.miuby.survi.world.WorldLevelManager;
 import fr.miuby.survi.world.WorldInitializer;
 import fr.miuby.survi.system.log.LogManager;
 import lombok.Getter;
@@ -113,6 +114,8 @@ public class GameManager {
     public void initAfterWorldsLoad() {
         if (this.initState != InitState.WORLDS_LOADED)
             throw new IllegalStateException("Wrong init order !");
+
+        WorldLevelManager.getInstance().load();
 
         LogManager.getInstance().log(Level.INFO, LogManager.ETagLog.WORLD, "Chargement complet des mondes...");
         WorldInitializer.initializeWorlds();

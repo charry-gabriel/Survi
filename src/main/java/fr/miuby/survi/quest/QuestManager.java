@@ -13,6 +13,8 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
+import fr.miuby.survi.world.WorldLevelManager;
+
 import java.io.File;
 import java.time.LocalDate;
 import java.util.*;
@@ -150,11 +152,20 @@ public class QuestManager {
                 : candidates.get(random.nextInt(candidates.size()));
     }
 
+    /**
+     * Rolls a quest difficulty whose distribution scales with the world level.
+     * At world level 0 the odds reproduce the original values (70 / 25 / 5).
+     * As the level rises, COMMON weight shrinks and LEGENDARY weight grows.
+     *
+     * @see WorldLevelManager#getQuestDifficultyWeights()
+     */
     public QuestDifficulty getRandomDifficulty() {
-        int chance = random.nextInt(100);
-        if (chance < 5) return QuestDifficulty.LEGENDARY; // 5%
-        if (chance < 30) return QuestDifficulty.RARE;     // 25%
-        return QuestDifficulty.COMMON;                    // 70%
+        int[] weights = WorldLevelManager.getInstance().getQuestDifficultyWeights();
+        // weights = { commonWeight, rareWeight, legendaryWeight }, sum = 100
+        int roll = random.nextInt(100);
+        if (roll < weights[2])                   return QuestDifficulty.LEGENDARY;
+        if (roll < weights[2] + weights[1])      return QuestDifficulty.RARE;
+        return QuestDifficulty.COMMON;
     }
 
     /**

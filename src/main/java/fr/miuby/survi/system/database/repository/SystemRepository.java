@@ -45,6 +45,19 @@ public class SystemRepository {
         }
     }
 
+    public int getWorldLevel() {
+        String raw = getServerData("world_level");
+        try {
+            return raw != null ? Integer.parseInt(raw) : 0;
+        } catch (NumberFormatException e) {
+            return 0;
+        }
+    }
+
+    public void saveWorldLevel(int level) {
+        saveServerData("world_level", String.valueOf(level));
+    }
+
     //region log
     /**
      * Récupère l'état d'un tag de log (VILLAGER, QUEST, etc.).
