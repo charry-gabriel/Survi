@@ -1,33 +1,7 @@
 name: Survi
 version: '${project.version}'
 main: fr.miuby.survi.Survi
-api-version: '1.20'
+api-version: '1.21'
 authors: [Miuby]
 description: Petite survi TeamAlpha
 depend: [Multiverse-Core]
-commands:
-  sql:
-    description: Requete sql
-    usage: /<command> [sql]
-    permission: op
-    permission-message: ''
-  role:
-    description: Change le role d'un joueur
-    usage: /<command> [player] [role]
-    permission: op
-    permission-message: ''
-  villager:
-    description: Commande pour les villagers
-    usage: /<command> [villager] <teleport> et <player> ou <position> et <yaw> <pitch>
-    permission: op
-    permission-message: ''
-  subrole:
-    description: Change les sous-role d'un joueur
-    usage: /<command> <add|remove> [player] [role]
-    permission: op
-    permission-message: ''
-  customitem:
-    description: Donne un item custom
-    usage: /<command> <nom>
-    permission: op
-    permission-message: ''
