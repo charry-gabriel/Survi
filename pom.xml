@@ -13,7 +13,7 @@
 
     <description>Petite survi TeamAlpha</description>
     <properties>
-        <java.version>21</java.version>
+        <java.version>25</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
@@ -94,7 +94,7 @@
         <dependency>
             <groupId>io.papermc.paper</groupId>
             <artifactId>paper-api</artifactId>
-            <version>1.21.11-R0.1-SNAPSHOT</version>
+            <version>26.1.2.build.5-alpha</version>
             <scope>provided</scope>
         </dependency>
         <dependency>

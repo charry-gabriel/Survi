@@ -8,7 +8,7 @@ import net.kyori.adventure.text.TextComponent;
 import org.bukkit.Location;
 import org.bukkit.entity.Villager;
 
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 
 public abstract class AVillager extends MLVillager {
     protected final TextComponent[] messages;
