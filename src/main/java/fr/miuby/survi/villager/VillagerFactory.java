@@ -15,6 +15,7 @@ import lombok.Getter;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.*;
 import org.bukkit.entity.Villager;
 import org.bukkit.inventory.ItemStack;
@@ -403,15 +404,28 @@ public class VillagerFactory {
     }
 
     public void applyAllCurrentBlessing(AlphaPlayer player) {
-        player.getPlayer().sendMessage(Component.text("-------------------- Récapitulatif --------------------", NamedTextColor.AQUA));
+        TextComponent.Builder builder = Component.text();
+
         for (MLVillager villager : VillagerRegistry.getAll()) {
-            if (villager instanceof VillagerLevel villagerLevel) {
-                villagerLevel.applyAllCurrentBlessing(villagerLevel, player);
-                TextComponent text = villagerLevel.getRecapMessage();
-                if (!text.content().isEmpty())
-                    player.getPlayer().sendMessage(text);
+            if (!(villager instanceof VillagerLevel villagerLevel))
+                continue;
+
+            villagerLevel.applyAllCurrentBlessing(villagerLevel, player);
+
+            Component recap = villagerLevel.getRecapMessage();
+            if (recap != null && !PlainTextComponentSerializer.plainText().serialize(recap).isBlank()) {
+                builder.append(recap).append(Component.newline());
             }
         }
-        player.getPlayer().sendMessage(Component.text("----------------------------------------------------", NamedTextColor.AQUA));
+
+        Component globalText = builder.build();
+        if (PlainTextComponentSerializer.plainText().serialize(globalText).isBlank())
+            return;
+
+        player.getPlayer().sendMessage(Component.text()
+                .append(Component.text("-------------------- Récapitulatif --------------------\n", NamedTextColor.AQUA))
+                .append(globalText)
+                .append(Component.text("----------------------------------------------------", NamedTextColor.AQUA))
+                .build());
     }
 }
