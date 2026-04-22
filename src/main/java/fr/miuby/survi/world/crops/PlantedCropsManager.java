@@ -1,4 +1,4 @@
-package fr.miuby.survi.crops;
+package fr.miuby.survi.world.crops;
 
 import fr.miuby.survi.system.database.Database;
 import org.bukkit.Location;

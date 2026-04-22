@@ -13,7 +13,7 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
-import fr.miuby.survi.world.WorldLevelManager;
+import fr.miuby.survi.system.WorldLevelManager;
 
 import java.io.File;
 import java.time.LocalDate;

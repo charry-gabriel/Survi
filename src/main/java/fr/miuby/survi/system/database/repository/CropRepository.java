@@ -1,7 +1,7 @@
 package fr.miuby.survi.system.database.repository;
 
 import fr.miuby.survi.GameManager;
-import fr.miuby.survi.crops.PlantedCrop;
+import fr.miuby.survi.world.crops.PlantedCrop;
 import fr.miuby.survi.system.log.LogManager;
 
 import java.sql.Connection;

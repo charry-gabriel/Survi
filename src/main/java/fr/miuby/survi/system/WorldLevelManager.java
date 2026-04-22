@@ -1,4 +1,4 @@
-package fr.miuby.survi.world;
+package fr.miuby.survi.system;
 
 import fr.miuby.survi.GameManager;
 import fr.miuby.survi.system.log.LogManager;

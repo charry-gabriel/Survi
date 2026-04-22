@@ -1,4 +1,4 @@
-package fr.miuby.survi.crops;
+package fr.miuby.survi.world.crops;
 
 import org.bukkit.Material;
 

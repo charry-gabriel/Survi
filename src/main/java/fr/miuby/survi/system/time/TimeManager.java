@@ -203,11 +203,11 @@ public class TimeManager {
 
         if (currentDay > lastResetDay && now.getHour() >= RESET_HOUR) {
             logger.log(Level.WARNING, LogManager.ETagLog.SYSTEM,"╔════════════════════════════════════╗");
-            logger.log(Level.WARNING, LogManager.ETagLog.SYSTEM,"║   RESET MANQUÉ DÉTECTÉ !           ║");
+            logger.log(Level.WARNING, LogManager.ETagLog.SYSTEM,"║   RESET MANQUÉ DÉTECTÉ !           ");
             logger.log(Level.WARNING, LogManager.ETagLog.SYSTEM,"╠════════════════════════════════════╣");
             logger.log(Level.WARNING, LogManager.ETagLog.SYSTEM,"║ Dernier reset : jour " + lastResetDay);
             logger.log(Level.WARNING, LogManager.ETagLog.SYSTEM,"║ Jour actuel   : jour " + currentDay);
-            logger.log(Level.WARNING, LogManager.ETagLog.SYSTEM,"║ → Reset immédiat déclenché         ║");
+            logger.log(Level.WARNING, LogManager.ETagLog.SYSTEM,"║ → Reset immédiat déclenché         ");
             logger.log(Level.WARNING, LogManager.ETagLog.SYSTEM,"╚════════════════════════════════════╝");
             performDailyReset(now);
         } else {
@@ -220,7 +220,7 @@ public class TimeManager {
         long timestamp = now.toInstant().toEpochMilli();
 
         logger.log(Level.INFO, LogManager.ETagLog.SYSTEM,"╔═══════════════════════════════════════════════╗");
-        logger.log(Level.INFO, LogManager.ETagLog.SYSTEM,"║         RESET QUOTIDIEN - 6H00                ║");
+        logger.log(Level.INFO, LogManager.ETagLog.SYSTEM,"║         RESET QUOTIDIEN - 6H00                ");
         logger.log(Level.INFO, LogManager.ETagLog.SYSTEM,"╠═══════════════════════════════════════════════╣");
         logger.log(Level.INFO, LogManager.ETagLog.SYSTEM,"║ Jour : " + currentDay + " (précédent : " + lastResetDay + ")");
         logger.log(Level.INFO, LogManager.ETagLog.SYSTEM,"║ Heure : " + now.format(java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy à HH:mm:ss")));
@@ -240,7 +240,7 @@ public class TimeManager {
 
     public void forceReset() {
         logger.log(Level.INFO, LogManager.ETagLog.SYSTEM,"╔═══════════════════════════════════════════════╗");
-        logger.log(Level.INFO, LogManager.ETagLog.SYSTEM,"║      RESET FORCÉ MANUELLEMENT                 ║");
+        logger.log(Level.INFO, LogManager.ETagLog.SYSTEM,"║      RESET FORCÉ MANUELLEMENT                 ");
         logger.log(Level.INFO, LogManager.ETagLog.SYSTEM,"╚═══════════════════════════════════════════════╝");
         performDailyReset(ZonedDateTime.now(serverTimezone));
     }

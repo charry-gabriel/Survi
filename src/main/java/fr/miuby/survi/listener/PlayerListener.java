@@ -35,15 +35,7 @@ public class PlayerListener implements Listener {
     public void onPlayerMove(PlayerMoveEvent event) {
         if ((WorldRegistry.get(EWorld.VILLAGE).isPlayerOutOfLimit(event.getPlayer()) || WorldRegistry.get(EWorld.WILDERNESS).isPlayerOutOfLimit(event.getPlayer())) && !event.getPlayer().isOp()) {
             AlphaPlayer.get(event.getPlayer().getUniqueId()).teleport(WorldRegistry.get(EWorld.VILLAGE));
-            event.getPlayer().sendMessage(Component.text("Ne sort pas des limite du village, c'est dangereux !!", NamedTextColor.RED));
-        }
-    }
-
-    @EventHandler
-    public void onPlayerPortal(PlayerPortalEvent event) {
-        if (event.getPlayer().getWorld().getName().equals(WorldRegistry.get(EWorld.VILLAGE).getName())) {
-            event.getPlayer().sendMessage(Component.text("C'est pas autorisé ça !", NamedTextColor.RED));
-            event.setCancelled(true);
+            event.getPlayer().sendMessage(Component.text("Ne sors pas des limites, c'est dangereux !", NamedTextColor.RED));
         }
     }
 
@@ -98,8 +90,6 @@ public class PlayerListener implements Listener {
             }
         }
 
-        // Réappliquer les buffs de TOUTES les quêtes réclamées du jour
-        // (un joueur peut avoir réclamé plusieurs quêtes dans la journée)
         List<PotionEffect> effectsToReapply = new ArrayList<>();
         for (PlayerQuestData questData : alphaPlayer.getActiveQuests()) {
             if (questData.isClaimed()) {
@@ -111,11 +101,8 @@ public class PlayerListener implements Listener {
         }
 
         if (!effectsToReapply.isEmpty()) {
-            // Petit délai pour éviter les conflits avec les PotionEffects par défaut au respawn
             GameManager.getInstance().getScheduler().runTaskLater(GameManager.getInstance().getPlugin(), () -> {
-                if (player.isOnline()) {
-                    effectsToReapply.forEach(player::addPotionEffect);
-                }
+                if (player.isOnline()) effectsToReapply.forEach(player::addPotionEffect);
             }, 5L);
         }
     }

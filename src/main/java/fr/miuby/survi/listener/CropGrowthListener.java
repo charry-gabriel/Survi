@@ -1,8 +1,8 @@
 package fr.miuby.survi.listener;
 
 import fr.miuby.survi.GameManager;
-import fr.miuby.survi.crops.PlantedCropUtils;
-import fr.miuby.survi.crops.PlantedCropsManager;
+import fr.miuby.survi.world.crops.PlantedCropUtils;
+import fr.miuby.survi.world.crops.PlantedCropsManager;
 import fr.miuby.survi.player.AlphaPlayer;
 import fr.miuby.survi.role.ERole;
 import org.bukkit.Material;

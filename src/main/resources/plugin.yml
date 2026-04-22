@@ -4,4 +4,3 @@ main: fr.miuby.survi.Survi
 api-version: '1.21'
 authors: [Miuby]
 description: Petite survi TeamAlpha
-depend: [Multiverse-Core]

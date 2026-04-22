@@ -2,7 +2,7 @@ package fr.miuby.survi.villager.blessing;
 
 import fr.miuby.survi.player.AlphaPlayer;
 import fr.miuby.survi.villager.VillagerLevel;
-import fr.miuby.survi.world.WorldLevelManager;
+import fr.miuby.survi.system.WorldLevelManager;
 import lombok.Getter;
 
 /**

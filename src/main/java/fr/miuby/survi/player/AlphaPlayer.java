@@ -7,10 +7,13 @@ import fr.miuby.survi.role.*;
 import fr.miuby.survi.system.log.LogManager;
 import fr.miuby.survi.world.EWorld;
 import fr.miuby.lib.world.MLWorld;
+import fr.miuby.survi.world.WorldInitializer;
 import lombok.Getter;
 import lombok.Setter;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.attribute.Attribute;
 
 import java.io.Serializable;
@@ -124,6 +127,8 @@ public class AlphaPlayer extends MLPlayer implements Serializable {
     public void onJoinServer() {
         this.player.setScoreboard(this.scoreboard.getScoreboard());
 
+        checkOrTeleportToValidWorld();
+
         this.world = WorldRegistry.get(getPlayer().getWorld().getUID());
         GameManager.getInstance().getAlphaPlayerFactory().sendToPlayers(this);
 
@@ -140,6 +145,19 @@ public class AlphaPlayer extends MLPlayer implements Serializable {
         List<PlayerQuestData> loaded = GameManager.getInstance().getDatabase().quests().getPlayerQuests(this.getUuid());
 
         cleanupExpiredQuestsOnJoin(loaded);
+    }
+
+    private void checkOrTeleportToValidWorld() {
+        boolean validWorld = false;
+        for (String name : WorldInitializer.getWorlds().values())
+            if (getPlayer().getWorld().getName().equals(name))
+                validWorld = true;
+
+        if (!validWorld) {
+            World village = WorldRegistry.get(EWorld.VILLAGE).getWorld();
+            Location safeSpawn = village.getSpawnLocation();
+            getPlayer().teleport(safeSpawn);
+        }
     }
 
     /**
@@ -230,7 +248,7 @@ public class AlphaPlayer extends MLPlayer implements Serializable {
 
     public void teleport(MLWorld monde) {
         if (getPlayer() != null)
-            getPlayer().teleport(monde.getSpawnPoint());
+            getPlayer().teleport(monde.getWorld().getSpawnLocation());
     }
 
     //region Getters Setters

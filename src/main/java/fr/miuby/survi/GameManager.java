@@ -1,7 +1,7 @@
 package fr.miuby.survi;
 
 import fr.miuby.lib.MiubyLib;
-import fr.miuby.survi.crops.PlantedCropsManager;
+import fr.miuby.survi.world.crops.PlantedCropsManager;
 import fr.miuby.survi.display.TabDisplayManager;
 import fr.miuby.survi.role.RoleManagementService;
 import fr.miuby.survi.system.database.Database;
@@ -14,7 +14,8 @@ import fr.miuby.survi.player.AlphaPlayerFactory;
 import fr.miuby.survi.role.RoleRegistry;
 import fr.miuby.survi.system.time.TimeManager;
 import fr.miuby.survi.villager.VillagerFactory;
-import fr.miuby.survi.world.WorldLevelManager;
+import fr.miuby.survi.world.WorldPortalManager;
+import fr.miuby.survi.system.WorldLevelManager;
 import fr.miuby.survi.world.WorldInitializer;
 import fr.miuby.survi.system.log.LogManager;
 import lombok.Getter;
@@ -27,38 +28,21 @@ import java.util.logging.Level;
 public class GameManager {
     private static GameManager instance = null;
 
-    @Getter
-    private Survi plugin;
+    @Getter private Survi plugin;
+    @Getter private BukkitScheduler scheduler;
+    @Getter private VillagerFactory villagerFactory;
+    @Getter private LockedItemsFactory lockedItemsFactory;
+    @Getter private CustomRecipeFactory customRecipeFactory;
+    @Getter private Database database;
+    @Getter private RoleRegistry roleRegistry;
+    @Getter private AlphaPlayerFactory alphaPlayerFactory;
+    @Getter private PlantedCropsManager plantedCropsManager;
+    @Getter private TabDisplayManager tabDisplayManager;
+    @Getter private TimeManager timeManager;
+    @Getter private RoleManagementService roleManagementService;
 
-    @Getter
-    private BukkitScheduler scheduler;
-    @Getter
-    private VillagerFactory villagerFactory;
-    @Getter
-    private LockedItemsFactory lockedItemsFactory;
-    @Getter
-    private CustomRecipeFactory customRecipeFactory;
-    @Getter
-    private Database database;
-    @Getter
-    private RoleRegistry roleRegistry;
-    @Getter
-    private AlphaPlayerFactory alphaPlayerFactory;
-    @Getter
-    private PlantedCropsManager plantedCropsManager;
-    @Getter
-    private TabDisplayManager tabDisplayManager;
-    @Getter
-    private TimeManager timeManager;
-    @Getter
-    private RoleManagementService roleManagementService;
-
-    @Setter
-    @Getter
-    private int dispel = 0;
-    @Setter
-    @Getter
-    private boolean isNight;
+    @Setter @Getter private int dispel = 0;
+    @Setter @Getter private boolean isNight;
 
     private enum InitState {
         NOT_INITIALIZED,
@@ -67,14 +51,12 @@ public class GameManager {
     }
     private InitState initState = InitState.NOT_INITIALIZED;
 
-    public static GameManager getInstance(){
-        if(instance == null){
-            instance = new GameManager();
-        }
+    public static GameManager getInstance() {
+        if (instance == null) instance = new GameManager();
         return instance;
     }
 
-    private GameManager(){}
+    private GameManager() {}
 
     public void init(Survi plugin) {
         this.plugin = plugin;
@@ -108,7 +90,6 @@ public class GameManager {
         this.initState = InitState.WORLDS_LOADED;
 
         WorldInitializer.initializeIfNeeded();
-        LogManager.getInstance().log(Level.INFO, LogManager.ETagLog.WORLD, "Mondes prêts");
     }
 
     public void initAfterWorldsLoad() {
@@ -117,8 +98,7 @@ public class GameManager {
 
         WorldLevelManager.getInstance().load();
 
-        LogManager.getInstance().log(Level.INFO, LogManager.ETagLog.WORLD, "Chargement complet des mondes...");
-        WorldInitializer.initializeWorlds();
+        WorldPortalManager.getInstance().init();
 
         LogManager.getInstance().log(Level.INFO, LogManager.ETagLog.PLAYER, "Initialisation des joueurs...");
         this.initPlayers();

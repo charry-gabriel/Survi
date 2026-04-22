@@ -5,19 +5,18 @@ import fr.miuby.lib.utils.Rect;
 import fr.miuby.survi.player.AlphaPlayer;
 import fr.miuby.survi.villager.VillagerLevel;
 import fr.miuby.survi.world.EWorld;
-import fr.miuby.lib.world.MLWorld;
 
 public class LimitWorldEffect extends BlessingEffect {
-    private final MLWorld world;
+    private final EWorld worldType;
     private final Rect rect;
 
     public LimitWorldEffect(EWorld worldType, Rect rect) {
-        this.world = WorldRegistry.get(worldType);
+        this.worldType = worldType;
         this.rect = rect;
     }
 
     @Override
     public void applyEffect(VillagerLevel villager, AlphaPlayer player) {
-        this.world.setLimit(this.rect);
+        WorldRegistry.get(worldType).setLimit(this.rect);
     }
 }

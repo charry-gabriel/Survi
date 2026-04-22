@@ -11,6 +11,7 @@ import fr.miuby.survi.system.command.SystemCommand;
 import fr.miuby.survi.system.time.TimeManager;
 import fr.miuby.survi.villager.VillagerCommand;
 import fr.miuby.survi.villager.blessing.BlessingCommand;
+import fr.miuby.survi.world.WorldCommand;
 import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -44,6 +45,8 @@ public class Survi extends JavaPlugin {
             commands.registrar().register(QuestCommand.createCommand().build());
             commands.registrar().register(SystemCommand.createCommand().build());
             commands.registrar().register(BlessingCommand.createCommand().build());
+            commands.registrar().register(WorldCommand.createWorldResetCommand().build());
+            commands.registrar().register(WorldCommand.createTeleportToCommand().build());
         });
 
         GameManager.getInstance().init(this);

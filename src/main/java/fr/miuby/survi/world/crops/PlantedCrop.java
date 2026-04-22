@@ -1,4 +1,4 @@
-package fr.miuby.survi.crops;
+package fr.miuby.survi.world.crops;
 
 import lombok.Getter;
 import org.bukkit.Location;

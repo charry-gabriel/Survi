@@ -213,42 +213,12 @@ public class BlessingCommand {
 
                         // ── world_reset <monde> ─────────────────────────
                         .then(Commands.literal("world_reset")
-                                .then(Commands.argument("world", WorldArgument.world())
-                                        .executes(ctx -> {
-                                            AlphaPlayer target = AlphaPlayerArgument.getAlphaPlayer(ctx, "player");
-                                            MLWorld world = WorldArgument.getWorld(ctx, "world");
+                                .executes(ctx -> {
+                                    AlphaPlayer target = AlphaPlayerArgument.getAlphaPlayer(ctx, "player");
 
-                                            String mvName;
-                                            org.bukkit.World.Environment env;
-                                            EWorld safeWorld;
-
-                                            switch ((EWorld) world.getType()) {
-                                                case EWorld.WILDERNESS -> {
-                                                    mvName    = fr.miuby.survi.world.WorldInitializer.getWorlds().get(EWorld.WILDERNESS);
-                                                    env       = org.bukkit.World.Environment.NORMAL;
-                                                    safeWorld = EWorld.VILLAGE;
-                                                }
-                                                case EWorld.NETHER -> {
-                                                    mvName    = fr.miuby.survi.world.WorldInitializer.getWorlds().get(EWorld.NETHER);
-                                                    env       = org.bukkit.World.Environment.NETHER;
-                                                    safeWorld = EWorld.VILLAGE;
-                                                }
-                                                case EWorld.END -> {
-                                                    mvName    = fr.miuby.survi.world.WorldInitializer.getWorlds().get(EWorld.END);
-                                                    env       = org.bukkit.World.Environment.THE_END;
-                                                    safeWorld = EWorld.VILLAGE;
-                                                }
-                                                default -> {
-                                                    ctx.getSource().getSender().sendMessage(Component.text("Monde invalide : " + world.getName(), NamedTextColor.RED));
-                                                    return 0;
-                                                }
-                                            }
-
-                                            new WorldResetEffect(mvName, env, safeWorld).applyEffect(null, target);
-                                            feedback(ctx, target, "Reset lancé → " + mvName);
-                                            return 1;
-                                        })
-                                )
+                                    new WorldResetEffect(1).applyEffect(null, target);
+                                    return 1;
+                                })
                         )
                 );
     }

@@ -84,10 +84,6 @@
             <id>sonatype</id>
             <url>https://oss.sonatype.org/content/groups/public/</url>
         </repository>
-        <repository>
-            <id>onarandombox</id>
-            <url>https://repo.onarandombox.com/content/groups/public/</url>
-        </repository>
     </repositories>
 
     <dependencies>
@@ -113,11 +109,6 @@
             <groupId>fr.miuby.lib</groupId>
             <artifactId>miuby-lib</artifactId>
             <version>1.10</version>
-        </dependency>
-        <dependency>
-            <groupId>com.onarandombox.multiversecore</groupId>
-            <artifactId>multiverse-core</artifactId>
-            <version>4.3.17-SNAPSHOT</version>
         </dependency>
     </dependencies>
 </project>

@@ -1,6 +1,6 @@
 package fr.miuby.survi.display;
 
-import fr.miuby.survi.world.WorldLevelManager;
+import fr.miuby.survi.system.WorldLevelManager;
 import fr.miuby.lib.villager.VillagerRegistry;
 import fr.miuby.survi.GameManager;
 import fr.miuby.survi.player.AlphaPlayer;
