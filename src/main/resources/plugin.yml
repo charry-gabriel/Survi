@@ -1,5 +1,5 @@
 name: Survi
-version: '${project.version}'
+version: '${version}'
 main: fr.miuby.survi.Survi
 api-version: '1.21'
 authors: [Miuby]
