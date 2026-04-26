@@ -1,6 +1,6 @@
 plugins {
     java
-    id("com.gradleup.shadow") version "8.3.6"
+    id("com.gradleup.shadow") version "9.4.1"
 }
 
 group = "fr.miuby.survi"
@@ -42,6 +42,7 @@ tasks {
 
     shadowJar {
         archiveClassifier = ""
+        relocate("fr.miuby.lib", "fr.miuby.survi.shaded.lib")
         exclude("META-INF/*.SF")
         exclude("META-INF/*.DSA")
         exclude("META-INF/*.RSA")
