@@ -1,5 +1,6 @@
 package fr.miuby.survi.villager;
 
+import fr.miuby.survi.job.EJob;
 import fr.miuby.survi.quest.QuestDifficulty;
 import lombok.Getter;
 import lombok.Setter;
@@ -23,6 +24,10 @@ public class Trader extends AVillager {
     @Getter
     @Setter
     private QuestDifficulty questDifficulty = QuestDifficulty.COMMON;
+
+    @Getter
+    @Setter
+    private EJob job = null;
 
     public Trader(String nameId, TextComponent displayName, Villager.Type type, Villager.Profession profession, MerchantRecipe[] merchantRecipe, TextComponent[] messages, TextComponent openMessage) {
         super(nameId, type, profession, messages);

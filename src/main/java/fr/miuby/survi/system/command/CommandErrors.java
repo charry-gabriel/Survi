@@ -31,11 +31,6 @@ public class CommandErrors {
                     Component.text("Monde introuvable : " + name)
             ));
 
-    public static final SimpleCommandExceptionType NOT_A_TRADER =
-            new SimpleCommandExceptionType(BrigadierHelper.message(
-                    Component.text("Ce villageois n'est pas un Trader.")
-            ));
-
     public static final SimpleCommandExceptionType NOT_A_LEVEL_VILLAGER =
             new SimpleCommandExceptionType(BrigadierHelper.message(
                     Component.text("Ce villageois n'est pas un a level.")

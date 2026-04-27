@@ -64,6 +64,7 @@ public class LogManager {
         REPUTATION,
         ITEM,
         ROLE,
+        JOB,
         WORLD,
         SYSTEM,
     }

@@ -2,6 +2,8 @@ package fr.miuby.survi.player;
 
 import fr.miuby.lib.player.MLPlayer;
 import fr.miuby.lib.world.WorldRegistry;
+import fr.miuby.survi.job.EJob;
+import fr.miuby.survi.job.JobLevelConfig;
 import fr.miuby.survi.GameManager;
 import fr.miuby.survi.role.*;
 import fr.miuby.survi.system.log.LogManager;
@@ -39,6 +41,10 @@ public class AlphaPlayer extends MLPlayer implements Serializable {
 
     @Getter
     private final Map<String, Integer> reputationByTrader = new HashMap<>();
+
+    @Getter
+    private final Map<EJob, Integer> jobLevels = new EnumMap<>(EJob.class);
+
     @Getter
     private final List<PlayerQuestData> activeQuests = new ArrayList<>();
 
@@ -145,6 +151,9 @@ public class AlphaPlayer extends MLPlayer implements Serializable {
         List<PlayerQuestData> loaded = GameManager.getInstance().getDatabase().quests().getPlayerQuests(this.getUuid());
 
         cleanupExpiredQuestsOnJoin(loaded);
+
+        // Calcul initial des niveaux de métier depuis la réputation chargée
+        initJobLevels();
     }
 
     private void checkOrTeleportToValidWorld() {
@@ -329,6 +338,9 @@ public class AlphaPlayer extends MLPlayer implements Serializable {
         reputationByTrader.put(traderId, newRep);
         GameManager.getInstance().getDatabase().quests().updateReputation(this.getUuid(), traderId, newRep);
 
+        // Mise à jour du niveau du métier lié à ce Trader
+        updateJobLevelForTrader(traderId, newRep);
+
         GlobalRank newRank = getGlobalRank();
         if (newRank != previousRank && getPlayer() != null) {
             getPlayer().sendMessage(
@@ -337,6 +349,70 @@ public class AlphaPlayer extends MLPlayer implements Serializable {
                             .append(Component.text(" (réputation totale : " + getTotalReputation() + ")", NamedTextColor.GRAY))
             );
         }
+    }
+
+    // -----------------------------------------------------------------------
+    // Métiers
+    // -----------------------------------------------------------------------
+
+    /**
+     * Initialise tous les niveaux de métier au login, depuis la réputation déjà chargée.
+     * Appelé dans onJoinServer(), après le chargement de reputationByTrader.
+     */
+    private void initJobLevels() {
+        for (EJob m : EJob.values()) {
+            jobLevels.put(m, 0);
+        }
+        GameManager.getInstance().getVillagerFactory().getTraders().forEach(trader -> {
+            if (trader.getJob() == null) return;
+            int rep = getReputation(trader.getNameId());
+            jobLevels.put(trader.getJob(), JobLevelConfig.computeLevel(rep));
+        });
+        LogManager.getInstance().log(Level.INFO, LogManager.ETagLog.JOB, "Niveaux de métier initialisés pour " + getPseudo());
+    }
+
+    /**
+     * Recalcule et met à jour le niveau du métier associé au trader indiqué.
+     * Envoie un message au joueur en cas de level-up.
+     */
+    private void updateJobLevelForTrader(String traderId, int newReputation) {
+        GameManager.getInstance().getVillagerFactory().getTraders().stream()
+                .filter(t -> traderId.equals(t.getNameId()) && t.getJob() != null)
+                .findFirst()
+                .ifPresent(trader -> {
+                    EJob job = trader.getJob();
+                    int oldLevel = jobLevels.getOrDefault(job, 0);
+                    int newLevel = JobLevelConfig.computeLevel(newReputation);
+                    jobLevels.put(job, newLevel);
+
+                    if (newLevel > oldLevel && getPlayer() != null && getPlayer().isOnline()) {
+                        int nextThreshold = JobLevelConfig.getNextThreshold(newReputation);
+                        String progress = nextThreshold >= 0
+                                ? " (" + newReputation + "/" + nextThreshold + " rep)"
+                                : " (niveau maximum atteint !)";
+                        getPlayer().sendMessage(
+                                Component.text("⚒ Métier ", NamedTextColor.GREEN)
+                                        .append(job.toComponent())
+                                        .append(Component.text(" : ", NamedTextColor.GREEN))
+                                        .append(Component.text(JobLevelConfig.getLevelName(newLevel), NamedTextColor.GOLD))
+                                        .append(Component.text(progress, NamedTextColor.GRAY))
+                        );
+                        LogManager.getInstance().log(Level.INFO, LogManager.ETagLog.JOB,
+                                getPseudo() + " : métier " + job.name()
+                                        + " niv. " + oldLevel + " -> " + newLevel
+                                        + " (rep=" + newReputation + ")");
+                    }
+                });
+    }
+
+    /**
+     * Retourne le niveau actuel d'un métier pour ce joueur.
+     *
+     * @param job le métier voulu
+     * @return niveau entre 0 et {@link JobLevelConfig#MAX_LEVEL}
+     */
+    public int getJobLevel(EJob job) {
+        return jobLevels.getOrDefault(job, 0);
     }
     //endregion
 }

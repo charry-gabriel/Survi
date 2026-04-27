@@ -4,7 +4,9 @@ import fr.miuby.survi.system.YmlResourceManager;
 import fr.miuby.survi.system.database.SqlCommand;
 import fr.miuby.survi.item.CustomItemCommand;
 import fr.miuby.survi.listener.*;
+import fr.miuby.survi.job.JobCommand;
 import fr.miuby.survi.quest.QuestCommand;
+import fr.miuby.survi.quest.ReputationCommand;
 import fr.miuby.survi.quest.QuestListener;
 import fr.miuby.survi.role.RoleCommand;
 import fr.miuby.survi.system.command.SystemCommand;
@@ -43,6 +45,8 @@ public class Survi extends JavaPlugin {
             commands.registrar().register(RoleCommand.createRoleCommand().build());
             commands.registrar().register(RoleCommand.createSubRoleCommand().build());
             commands.registrar().register(QuestCommand.createCommand().build());
+            commands.registrar().register(JobCommand.createCommand().build());
+            commands.registrar().register(ReputationCommand.createCommand().build());
             commands.registrar().register(SystemCommand.createCommand().build());
             commands.registrar().register(BlessingCommand.createCommand().build());
             commands.registrar().register(WorldCommand.createWorldResetCommand().build());

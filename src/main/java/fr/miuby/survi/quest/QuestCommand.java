@@ -6,9 +6,7 @@ import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import fr.miuby.survi.player.AlphaPlayer;
 import fr.miuby.survi.system.command.argument.AlphaPlayerArgument;
-import fr.miuby.survi.system.command.CommandErrors;
-import fr.miuby.survi.system.command.argument.VillagerArgument;
-import fr.miuby.survi.villager.AVillager;
+import fr.miuby.survi.system.command.argument.TraderArgument;
 import fr.miuby.survi.villager.Trader;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
 import io.papermc.paper.command.brigadier.Commands;
@@ -36,7 +34,7 @@ public class QuestCommand {
                 .then(Commands.literal("complete")
                         .requires(source -> source.getSender().isOp())
                         .then(Commands.argument("player", AlphaPlayerArgument.alphaPlayer())
-                                .then(Commands.argument("villager", VillagerArgument.villager())
+                                .then(Commands.argument("villager", TraderArgument.trader())
                                         .executes(QuestCommand::completeQuest)
                                 )
                         )
@@ -99,19 +97,15 @@ public class QuestCommand {
      */
     private static int completeQuest(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
         AlphaPlayer alphaPlayer = AlphaPlayerArgument.getAlphaPlayer(ctx, "player");
-        AVillager villager = VillagerArgument.getVillager(ctx, "villager");
+        Trader trader = TraderArgument.getTrader(ctx, "villager");
 
-        if (villager instanceof Trader trader) {
-            if (QuestManager.getInstance().completeQuest(alphaPlayer, trader, true)) {
-                ctx.getSource().getSender().sendMessage(
-                        Component.text("Quête complétée pour " + alphaPlayer.getPseudo()).color(NamedTextColor.GREEN));
-            } else {
-                ctx.getSource().getSender().sendMessage(
-                        Component.text("Impossible de compléter la quête pour " + alphaPlayer.getPseudo()
-                                + " (aucune quête en cours ou déjà réclamée)").color(NamedTextColor.RED));
-            }
+        if (QuestManager.getInstance().completeQuest(alphaPlayer, trader, true)) {
+            ctx.getSource().getSender().sendMessage(
+                    Component.text("Quête complétée pour " + alphaPlayer.getPseudo()).color(NamedTextColor.GREEN));
         } else {
-            throw CommandErrors.NOT_A_TRADER.create();
+            ctx.getSource().getSender().sendMessage(
+                    Component.text("Impossible de compléter la quête pour " + alphaPlayer.getPseudo()
+                            + " (aucune quête en cours ou déjà réclamée)").color(NamedTextColor.RED));
         }
         return Command.SINGLE_SUCCESS;
     }

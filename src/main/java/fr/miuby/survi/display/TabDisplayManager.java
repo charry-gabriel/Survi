@@ -15,6 +15,7 @@ import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.entity.Player;
 
+import fr.miuby.survi.job.EJob;
 import fr.miuby.survi.player.GlobalRank;
 import java.text.DecimalFormat;
 import java.time.LocalDate;
@@ -78,6 +79,15 @@ public class TabDisplayManager {
             footer = footer.append(questLine);
         }
 
+        // Lignes des niveaux de métier
+        footer = footer
+                .appendNewline()
+                .append(Component.text("──── Métiers ────", NamedTextColor.DARK_GRAY))
+                .appendNewline()
+                .append(buildJobLine(alphaPlayer, 0, 5))
+                .appendNewline()
+                .append(buildJobLine(alphaPlayer, 5, EJob.values().length));
+
         return footer.appendNewline();
     }
 
@@ -138,6 +148,40 @@ public class TabDisplayManager {
 
     private String formatDouble(double d) {
         return df.format(d);
+    }
+
+    /**
+     * Construit une ligne compacte de métiers pour le tab-list.
+     * Affiche les métiers de l'index [from, to[ sous la forme :
+     *   Mineur niv.2  |  Fermier niv.0  |  ...
+     */
+    private Component buildJobLine(AlphaPlayer alphaPlayer, int from, int to) {
+        EJob[] jobs = EJob.values();
+        Component line = Component.empty();
+        boolean first = true;
+        for (int i = from; i < to && i < jobs.length; i++) {
+            EJob job = jobs[i];
+            int level = alphaPlayer.getJobLevel(job);
+            int rep = getRepForJob(alphaPlayer, job);
+
+            if (!first) {
+                line = line.append(Component.text("  ", NamedTextColor.DARK_GRAY));
+            }
+            line = line
+                    .append(job.toComponent())
+                    .append(Component.text(" niv." + level + " (" + rep + " rep)",
+                            level > 0 ? NamedTextColor.YELLOW : NamedTextColor.DARK_GRAY));
+            first = false;
+        }
+        return line;
+    }
+
+    private int getRepForJob(AlphaPlayer player, EJob job) {
+        return GameManager.getInstance().getVillagerFactory().getTraders().stream()
+                .filter(t -> job.equals(t.getJob()))
+                .findFirst()
+                .map(t -> player.getReputation(t.getNameId()))
+                .orElse(0);
     }
 
     private Component formatStat(AlphaPlayer alphaPlayer, Attribute attributeType, String statName) {
