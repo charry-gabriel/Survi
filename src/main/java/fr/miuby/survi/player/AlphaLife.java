@@ -1,6 +1,7 @@
 package fr.miuby.survi.player;
 
 import fr.miuby.survi.GameManager;
+import fr.miuby.survi.system.SurviConfig;
 import org.bukkit.NamespacedKey;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
@@ -40,7 +41,7 @@ public class AlphaLife {
         healthAttribute.changeHealthAttribute();
 
         if (!this.alphaPlayer.getPlayer().isDead())
-            this.alphaPlayer.getPlayer().setHealth(min(max(1, (this.alphaPlayer.getPlayer().getHealth() * this.attributeInstance.getValue()) / oldMaxHealth), this.attributeInstance.getValue()));
+            this.alphaPlayer.getPlayer().setHealth(Math.clamp((this.alphaPlayer.getPlayer().getHealth() * this.attributeInstance.getValue()) / oldMaxHealth, 1, this.attributeInstance.getValue()));
     }
 
     public void actualizeDeath() {
@@ -79,7 +80,7 @@ public class AlphaLife {
     }
 
     public void setDeath(int death) {
-        this.deathLife = floor((double) death / 10f);
+        this.deathLife = floor((double) death / SurviConfig.getInstance().getDeathLifeDivisor());
         actualizeDeath();
     }
 

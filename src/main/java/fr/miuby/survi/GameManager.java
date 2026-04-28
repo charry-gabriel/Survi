@@ -16,6 +16,7 @@ import fr.miuby.survi.system.time.TimeManager;
 import fr.miuby.survi.villager.VillagerFactory;
 import fr.miuby.survi.world.WorldPortalManager;
 import fr.miuby.survi.system.WorldLevelManager;
+import fr.miuby.survi.system.SurviConfig;
 import fr.miuby.survi.world.WorldInitializer;
 import fr.miuby.survi.system.log.LogManager;
 import lombok.Getter;
@@ -59,6 +60,7 @@ public class GameManager {
     private GameManager() {}
 
     public void init(Survi plugin) {
+        SurviConfig.getInstance().init(plugin);
         this.plugin = plugin;
         this.scheduler = this.plugin.getServer().getScheduler();
 

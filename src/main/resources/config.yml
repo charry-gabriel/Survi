@@ -1,1 +1,94 @@
-Players:
+# ═══════════════════════════════════════════════════════════════════════════════
+#  Survi — Configuration principale
+# ═══════════════════════════════════════════════════════════════════════════════
+
+# ─── Temps ──────────────────────────────────────────────────────────────────────
+time:
+  # Heure réelle (0–23) à laquelle le lever/coucher du soleil est simulé en jeu
+  sunrise-hour: 9
+  sunset-hour: 0
+  # Heure réelle à laquelle le reset quotidien se déclenche (quêtes, etc.)
+  daily-reset-hour: 6
+
+# ─── Combat ─────────────────────────────────────────────────────────────────────
+combat:
+  # Modificateurs appliqués dans le monde normal
+  normal:
+    damage-modifier: 0.2
+    resistance-modifier: 0.2
+  # Modificateurs supplémentaires (multiplicatifs) dans l'End
+  end:
+    damage-modifier: 0.7
+    resistance-modifier: 0.7
+  # Diviseur appliqué à la vie max en fonction du nombre de morts accumulées
+  # Ex : 3 morts → −floor(3 / 10) cœurs de vie max
+  death-life-divisor: 10
+
+# ─── Réputation & Rangs globaux ─────────────────────────────────────────────────
+reputation:
+  # Rangs débloqués selon la réputation totale (toutes guildes confondues).
+  # L'id doit correspondre exactement au nom de l'entrée dans l'enum GlobalRank.
+  # Doit rester trié du seuil le plus bas au plus haut.
+  ranks:
+    - id: INCONNU
+      threshold: 0
+      display: "Inconnu"
+    - id: NOVICE
+      threshold: 50
+      display: "Novice"
+    - id: APPRENTI
+      threshold: 150
+      display: "Apprenti"
+    - id: MARCHAND
+      threshold: 350
+      display: "Marchand"
+    - id: EXPERT
+      threshold: 700
+      display: "Expert"
+    - id: MAITRE
+      threshold: 1200
+      display: "Maître"
+    - id: LEGENDAIRE
+      threshold: 2000
+      display: "Légendaire"
+
+# ─── Métiers ────────────────────────────────────────────────────────────────────
+jobs:
+  # Paliers calculés depuis la réputation accumulée auprès du Trader du métier.
+  # Doit rester trié du seuil le plus bas au plus haut.
+  levels:
+    - threshold: 0
+      name: "Inconnu"
+    - threshold: 10
+      name: "Apprenti"
+    - threshold: 30
+      name: "Journalier"
+    - threshold: 60
+      name: "Expert"
+    - threshold: 100
+      name: "Maître"
+    - threshold: 200
+      name: "Légendaire"
+
+# ─── Niveau du Monde ────────────────────────────────────────────────────────────
+world-level:
+  # Boost de rareté des mobs : base + niveau × per-level, plafonné à cap
+  mob-rarity:
+    base: 1.0
+    per-level: 0.15
+    cap: 5.0
+  # Multiplicateur de difficulté des mobs : base + niveau × per-level (sans plafond)
+  mob-difficulty:
+    base: 1.0
+    per-level: 0.05
+  # Poids de tirage des difficultés de quêtes selon le niveau du monde
+  quest-weights:
+    common:
+      base: 70
+      min: 30
+      per-level-penalty: 2
+    legendary:
+      base: 5
+      max: 30
+      per-level-gain: 1
+    # rare = 100 − common − legendary (calculé automatiquement, non configurable)

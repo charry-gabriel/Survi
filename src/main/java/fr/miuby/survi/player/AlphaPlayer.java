@@ -5,6 +5,7 @@ import fr.miuby.lib.world.WorldRegistry;
 import fr.miuby.survi.job.EJob;
 import fr.miuby.survi.job.JobLevelConfig;
 import fr.miuby.survi.GameManager;
+import fr.miuby.survi.system.SurviConfig;
 import fr.miuby.survi.role.*;
 import fr.miuby.survi.system.log.LogManager;
 import fr.miuby.survi.world.EWorld;
@@ -68,18 +69,23 @@ public class AlphaPlayer extends MLPlayer implements Serializable {
     //region Modifier
     @Getter
     @Setter
-    private float resistanceModifier = 0.2f;
+    private float resistanceModifier;
     @Setter
     @Getter
-    private float damageModifier = 0.2f;
+    private float damageModifier;
     @Getter
-    private final float endResistanceModifier = 0.7f;
+    private float endResistanceModifier;
     @Getter
-    private final float endDamageModifier = 0.7f;
+    private float endDamageModifier;
     //endregion
 
     public AlphaPlayer(UUID uuid) {
         super(uuid);
+        SurviConfig cfg = SurviConfig.getInstance();
+        this.resistanceModifier    = cfg.getNormalResistanceModifier();
+        this.damageModifier        = cfg.getNormalDamageModifier();
+        this.endResistanceModifier = cfg.getEndResistanceModifier();
+        this.endDamageModifier     = cfg.getEndDamageModifier();
         this.scoreboard = new AlphaScoreboard();
         this.alphaLife = new AlphaLife(this);
     }
@@ -409,7 +415,7 @@ public class AlphaPlayer extends MLPlayer implements Serializable {
      * Retourne le niveau actuel d'un métier pour ce joueur.
      *
      * @param job le métier voulu
-     * @return niveau entre 0 et {@link JobLevelConfig#MAX_LEVEL}
+     * @return niveau du metier
      */
     public int getJobLevel(EJob job) {
         return jobLevels.getOrDefault(job, 0);

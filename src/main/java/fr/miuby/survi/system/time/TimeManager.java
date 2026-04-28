@@ -2,6 +2,7 @@ package fr.miuby.survi.system.time;
 
 import fr.miuby.lib.world.WorldRegistry;
 import fr.miuby.survi.GameManager;
+import fr.miuby.survi.system.SurviConfig;
 import fr.miuby.survi.system.log.LogManager;
 import fr.miuby.survi.system.time.event.DailyResetEvent;
 import fr.miuby.survi.world.EWorld;
@@ -12,10 +13,7 @@ import java.time.*;
 import java.util.logging.Level;
 
 public class TimeManager {
-    private static final int REAL_SUNRISE_HOUR = 9;
-    private static final int REAL_SUNSET_HOUR = 0;
 
-    private static final int RESET_HOUR = 6;
     private static final int SYNC_INTERVAL_TICKS = 20;
     private static final int RESET_CHECK_INTERVAL_TICKS = 20 * 60;
 
@@ -61,7 +59,7 @@ public class TimeManager {
         logger.log(Level.INFO, LogManager.ETagLog.SYSTEM, "TimeManager démarré");
         logger.log(Level.INFO, LogManager.ETagLog.SYSTEM, "  ├─ Timezone: " + serverTimezone.getId());
         logger.log(Level.INFO, LogManager.ETagLog.SYSTEM, "  ├─ Village: synchro temps réel ACTIVE");
-        logger.log(Level.INFO, LogManager.ETagLog.SYSTEM, "  ├─ Reset quotidien: " + RESET_HOUR + "h00");
+        logger.log(Level.INFO, LogManager.ETagLog.SYSTEM, "  ├─ Reset quotidien: " + SurviConfig.getInstance().getDailyResetHour() + "h00");
         logger.log(Level.INFO, LogManager.ETagLog.SYSTEM, "  └─ Prochain reset: " + getNextResetTime().format(
                 java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy à HH:mm")));
     }
@@ -106,16 +104,16 @@ public class TimeManager {
             // === JOUR ===
             // Calcule combien d'heures depuis le lever
             double hoursSinceSunrise;
-            if (REAL_SUNSET_HOUR == 0 || REAL_SUNSET_HOUR < REAL_SUNRISE_HOUR) {
+            if (SurviConfig.getInstance().getSunsetHour() == 0 || SurviConfig.getInstance().getSunsetHour() < SurviConfig.getInstance().getSunriseHour()) {
                 // Cas wrap (ex: lever 9h, coucher 0h OU lever 20h, coucher 6h)
-                if (currentTime >= REAL_SUNRISE_HOUR) {
-                    hoursSinceSunrise = currentTime - REAL_SUNRISE_HOUR;
+                if (currentTime >= SurviConfig.getInstance().getSunriseHour()) {
+                    hoursSinceSunrise = currentTime - SurviConfig.getInstance().getSunriseHour();
                 } else {
-                    hoursSinceSunrise = (24 - REAL_SUNRISE_HOUR) + currentTime;
+                    hoursSinceSunrise = (24 - SurviConfig.getInstance().getSunriseHour()) + currentTime;
                 }
             } else {
                 // Cas normal (ex: lever 6h, coucher 18h)
-                hoursSinceSunrise = currentTime - REAL_SUNRISE_HOUR;
+                hoursSinceSunrise = currentTime - SurviConfig.getInstance().getSunriseHour();
             }
 
             // Progression du jour (0.0 → 1.0)
@@ -128,24 +126,24 @@ public class TimeManager {
             // === NUIT ===
             // Calcule combien d'heures depuis le coucher
             double hoursSinceSunset;
-            if (REAL_SUNSET_HOUR == 0) {
+            if (SurviConfig.getInstance().getSunsetHour() == 0) {
                 // Coucher à minuit : 0h = début de nuit
                 hoursSinceSunset = currentTime;
-            } else if (REAL_SUNRISE_HOUR > REAL_SUNSET_HOUR) {
+            } else if (SurviConfig.getInstance().getSunriseHour() > SurviConfig.getInstance().getSunsetHour()) {
                 // Cas wrap
-                if (currentTime >= REAL_SUNSET_HOUR && currentTime < REAL_SUNRISE_HOUR) {
-                    hoursSinceSunset = currentTime - REAL_SUNSET_HOUR;
-                } else if (currentTime >= REAL_SUNSET_HOUR) {
-                    hoursSinceSunset = currentTime - REAL_SUNSET_HOUR;
+                if (currentTime >= SurviConfig.getInstance().getSunsetHour() && currentTime < SurviConfig.getInstance().getSunriseHour()) {
+                    hoursSinceSunset = currentTime - SurviConfig.getInstance().getSunsetHour();
+                } else if (currentTime >= SurviConfig.getInstance().getSunsetHour()) {
+                    hoursSinceSunset = currentTime - SurviConfig.getInstance().getSunsetHour();
                 } else {
-                    hoursSinceSunset = (24 - REAL_SUNSET_HOUR) + currentTime;
+                    hoursSinceSunset = (24 - SurviConfig.getInstance().getSunsetHour()) + currentTime;
                 }
             } else {
                 // Cas normal
-                if (currentTime >= REAL_SUNSET_HOUR) {
-                    hoursSinceSunset = currentTime - REAL_SUNSET_HOUR;
+                if (currentTime >= SurviConfig.getInstance().getSunsetHour()) {
+                    hoursSinceSunset = currentTime - SurviConfig.getInstance().getSunsetHour();
                 } else {
-                    hoursSinceSunset = (24 - REAL_SUNSET_HOUR) + currentTime;
+                    hoursSinceSunset = (24 - SurviConfig.getInstance().getSunsetHour()) + currentTime;
                 }
             }
 
@@ -157,15 +155,15 @@ public class TimeManager {
     }
 
     private boolean isDayTime(double currentTime) {
-        if (REAL_SUNSET_HOUR == 0) {
+        if (SurviConfig.getInstance().getSunsetHour() == 0) {
             // Coucher à minuit : jour si >= lever
-            return currentTime >= REAL_SUNRISE_HOUR;
-        } else if (REAL_SUNSET_HOUR > REAL_SUNRISE_HOUR) {
+            return currentTime >= SurviConfig.getInstance().getSunriseHour();
+        } else if (SurviConfig.getInstance().getSunsetHour() > SurviConfig.getInstance().getSunriseHour()) {
             // Cas normal : lever < coucher
-            return currentTime >= REAL_SUNRISE_HOUR && currentTime < REAL_SUNSET_HOUR;
+            return currentTime >= SurviConfig.getInstance().getSunriseHour() && currentTime < SurviConfig.getInstance().getSunsetHour();
         } else {
             // Cas wrap : lever > coucher
-            return currentTime >= REAL_SUNRISE_HOUR || currentTime < REAL_SUNSET_HOUR;
+            return currentTime >= SurviConfig.getInstance().getSunriseHour() || currentTime < SurviConfig.getInstance().getSunsetHour();
         }
     }
 
@@ -174,15 +172,15 @@ public class TimeManager {
     }
 
     private double getDayLength() {
-        if (REAL_SUNSET_HOUR == 0) {
+        if (SurviConfig.getInstance().getSunsetHour() == 0) {
             // Ex: lever 9h, coucher 0h → 24 - 9 = 15h
-            return 24.0 - REAL_SUNRISE_HOUR;
-        } else if (REAL_SUNSET_HOUR > REAL_SUNRISE_HOUR) {
+            return 24.0 - SurviConfig.getInstance().getSunriseHour();
+        } else if (SurviConfig.getInstance().getSunsetHour() > SurviConfig.getInstance().getSunriseHour()) {
             // Ex: lever 6h, coucher 18h → 18 - 6 = 12h
-            return REAL_SUNSET_HOUR - REAL_SUNRISE_HOUR;
+            return SurviConfig.getInstance().getSunsetHour() - SurviConfig.getInstance().getSunriseHour();
         } else {
             // Ex: lever 20h, coucher 6h → (24-20) + 6 = 10h
-            return (24.0 - REAL_SUNRISE_HOUR) + REAL_SUNSET_HOUR;
+            return (24.0 - SurviConfig.getInstance().getSunriseHour()) + SurviConfig.getInstance().getSunsetHour();
         }
     }
     //endregion
@@ -192,7 +190,7 @@ public class TimeManager {
         ZonedDateTime now = ZonedDateTime.now(serverTimezone);
         int currentDay = getCurrentDay(now);
 
-        if (currentDay > lastResetDay && now.getHour() >= RESET_HOUR) {
+        if (currentDay > lastResetDay && now.getHour() >= SurviConfig.getInstance().getDailyResetHour()) {
             performDailyReset(now);
         }
     }
@@ -201,7 +199,7 @@ public class TimeManager {
         ZonedDateTime now = ZonedDateTime.now(serverTimezone);
         int currentDay = getCurrentDay(now);
 
-        if (currentDay > lastResetDay && now.getHour() >= RESET_HOUR) {
+        if (currentDay > lastResetDay && now.getHour() >= SurviConfig.getInstance().getDailyResetHour()) {
             logger.log(Level.WARNING, LogManager.ETagLog.SYSTEM,"╔════════════════════════════════════╗");
             logger.log(Level.WARNING, LogManager.ETagLog.SYSTEM,"║   RESET MANQUÉ DÉTECTÉ !           ");
             logger.log(Level.WARNING, LogManager.ETagLog.SYSTEM,"╠════════════════════════════════════╣");
@@ -252,10 +250,10 @@ public class TimeManager {
 
     public ZonedDateTime getNextResetTime() {
         ZonedDateTime now = ZonedDateTime.now(serverTimezone);
-        ZonedDateTime nextReset = now.withHour(RESET_HOUR).withMinute(0).withSecond(0).withNano(0);
+        ZonedDateTime nextReset = now.withHour(SurviConfig.getInstance().getDailyResetHour()).withMinute(0).withSecond(0).withNano(0);
 
         // Si on a dépassé 6h aujourd'hui, le prochain reset est demain
-        if (now.getHour() >= RESET_HOUR) {
+        if (now.getHour() >= SurviConfig.getInstance().getDailyResetHour()) {
             nextReset = nextReset.plusDays(1);
         }
 
