@@ -67,6 +67,7 @@ public class LogManager {
         JOB,
         WORLD,
         SYSTEM,
+        GRAVE
     }
 
     /**
@@ -123,12 +124,12 @@ public class LogManager {
      */
     public void log(Level level, ETagLog tag, String message) {
         // Vérifie que le tag est activé
-        if (!enabledTags.getOrDefault(tag, true)) {
+        if (Boolean.FALSE.equals(enabledTags.getOrDefault(tag, true))) {
             return;
         }
 
         // Vérifie que le level est activé
-        if (!enabledLevels.getOrDefault(level, true)) {
+        if (Boolean.FALSE.equals(enabledLevels.getOrDefault(level, true))) {
             return;
         }
 

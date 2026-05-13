@@ -34,6 +34,7 @@ public class Survi extends JavaPlugin {
         pluginManager.registerEvents(new CropGrowthListener(), this);
         pluginManager.registerEvents(new VillagerListener(), this);
         pluginManager.registerEvents(new QuestListener(), this);
+        pluginManager.registerEvents(new GraveListener(), this);
 
         getConfig().options().copyDefaults(true);
         saveConfig();
