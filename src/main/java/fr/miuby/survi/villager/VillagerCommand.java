@@ -19,22 +19,30 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
 
 public class VillagerCommand {
+    private static final String playerArgument = "player";
+    private static final String locationArgument = "location";
+    private static final String villagerArgument = "villager";
+
+    private VillagerCommand() {
+        /* This utility class should not be instantiated */
+    }
+
     @SuppressWarnings("UnstableApiUsage")
     public static LiteralArgumentBuilder<CommandSourceStack> createCommand() {
         return Commands.literal("villager")
             .requires(sender -> sender.getSender().isOp())
-            .then(Commands.argument("villager", VillagerArgument.villager())
+            .then(Commands.argument(villagerArgument, VillagerArgument.villager())
                 .then(Commands.literal("teleport")
                     .executes(ctx -> VillagerCommand.villagerExecuteTeleport(ctx, ctx.getSource().getLocation()))
-                    .then(Commands.argument("player", ArgumentTypes.player())
-                        .executes(ctx -> VillagerCommand.villagerExecuteTeleport(ctx, ctx.getArgument("player", PlayerSelectorArgumentResolver.class).resolve(ctx.getSource()).getFirst().getLocation()))
+                    .then(Commands.argument(playerArgument, ArgumentTypes.player())
+                        .executes(ctx -> VillagerCommand.villagerExecuteTeleport(ctx, ctx.getArgument(playerArgument, PlayerSelectorArgumentResolver.class).resolve(ctx.getSource()).getFirst().getLocation()))
                     )
-                    .then(Commands.argument("location", ArgumentTypes.finePosition(true))
-                        .executes(ctx -> VillagerCommand.villagerExecuteTeleport(ctx, ctx.getArgument("location", FinePositionResolver.class).resolve(ctx.getSource()).toLocation(WorldInitializer.getDefaultWorld())))
+                    .then(Commands.argument(locationArgument, ArgumentTypes.finePosition(true))
+                        .executes(ctx -> VillagerCommand.villagerExecuteTeleport(ctx, ctx.getArgument(locationArgument, FinePositionResolver.class).resolve(ctx.getSource()).toLocation(WorldInitializer.getDefaultWorld())))
                         .then(Commands.argument("yaw", DoubleArgumentType.doubleArg(0, 360))
                             .then(Commands.argument("pitch", DoubleArgumentType.doubleArg(0, 360))
                                 .executes(ctx -> {
-                                    Location location = ctx.getArgument("location", FinePositionResolver.class).resolve(ctx.getSource()).toLocation(WorldInitializer.getDefaultWorld());
+                                    Location location = ctx.getArgument(locationArgument, FinePositionResolver.class).resolve(ctx.getSource()).toLocation(WorldInitializer.getDefaultWorld());
                                     location.setYaw((float) DoubleArgumentType.getDouble(ctx, "yaw"));
                                     location.setPitch((float) DoubleArgumentType.getDouble(ctx, "pitch"));
                                     return VillagerCommand.villagerExecuteTeleport(ctx, location);
@@ -56,7 +64,7 @@ public class VillagerCommand {
     }
 
     private static int villagerExecuteUnlock(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
-        AVillager villager = VillagerArgument.getVillager(ctx, "villager");
+        AVillager villager = VillagerArgument.getVillager(ctx, villagerArgument);
 
         if (villager instanceof VillagerLevel villagerLevel) {
             if (villagerLevel.unlock())
@@ -68,7 +76,7 @@ public class VillagerCommand {
     }
 
     private static int villagerExecuteInfo(CommandContext<CommandSourceStack> ctx) {
-        AVillager villager = VillagerArgument.getVillager(ctx, "villager");
+        AVillager villager = VillagerArgument.getVillager(ctx, villagerArgument);
 
         Component text = Component.text("Nom : ").append(villager.getDisplayName());
         if (villager instanceof VillagerLevel villagerLevel) {
@@ -87,7 +95,7 @@ public class VillagerCommand {
     }
 
     private static int villagerExecuteTeleport(CommandContext<CommandSourceStack> ctx, Location location) {
-        AVillager villager = VillagerArgument.getVillager(ctx, "villager");
+        AVillager villager = VillagerArgument.getVillager(ctx, villagerArgument);
 
         GameManager.getInstance().getDatabase().villagers().updateLocation(villager.getVillager().getUniqueId(), location);
         villager.getVillager().teleport(location);
@@ -96,7 +104,7 @@ public class VillagerCommand {
     }
 
     private static int villagerExecuteLevelUp(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
-        AVillager villager = VillagerArgument.getVillager(ctx, "villager");
+        AVillager villager = VillagerArgument.getVillager(ctx, villagerArgument);
 
         if (villager instanceof VillagerLevel villagerLevel) {
             if (!villagerLevel.levelUp())

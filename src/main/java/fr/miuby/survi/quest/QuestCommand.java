@@ -3,7 +3,6 @@ package fr.miuby.survi.quest;
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
-import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import fr.miuby.survi.player.AlphaPlayer;
 import fr.miuby.survi.system.command.argument.AlphaPlayerArgument;
 import fr.miuby.survi.system.command.argument.TraderArgument;
@@ -15,26 +14,41 @@ import net.kyori.adventure.text.format.NamedTextColor;
 
 import fr.miuby.survi.GameManager;
 
+@SuppressWarnings({"java:S3516", "SameReturnValue"})
 public class QuestCommand {
+    private static final String playerArgument = "player";
+    private static final String villagerArgument = "villager";
+
+    private QuestCommand() {
+        /* This utility class should not be instantiated */
+    }
 
     public static LiteralArgumentBuilder<CommandSourceStack> createCommand() {
         return Commands.literal("quest")
+                .then(Commands.literal("give")
+                        .requires(source -> source.getSender().isOp())
+                        .then(Commands.argument(playerArgument, AlphaPlayerArgument.alphaPlayer())
+                                .then(Commands.argument(villagerArgument, TraderArgument.trader())
+                                        .executes(QuestCommand::giveQuest)
+                                )
+                        )
+                )
                 .then(Commands.literal("remove")
                         .requires(source -> source.getSender().isOp())
-                        .then(Commands.argument("player", AlphaPlayerArgument.alphaPlayer())
+                        .then(Commands.argument(playerArgument, AlphaPlayerArgument.alphaPlayer())
                                 .executes(QuestCommand::removeQuest)
                         )
                 )
                 .then(Commands.literal("reset")
                         .requires(source -> source.getSender().isOp())
-                        .then(Commands.argument("player", AlphaPlayerArgument.alphaPlayer())
+                        .then(Commands.argument(playerArgument, AlphaPlayerArgument.alphaPlayer())
                                 .executes(QuestCommand::resetAllQuests)
                         )
                 )
                 .then(Commands.literal("complete")
                         .requires(source -> source.getSender().isOp())
-                        .then(Commands.argument("player", AlphaPlayerArgument.alphaPlayer())
-                                .then(Commands.argument("villager", TraderArgument.trader())
+                        .then(Commands.argument(playerArgument, AlphaPlayerArgument.alphaPlayer())
+                                .then(Commands.argument(villagerArgument, TraderArgument.trader())
                                         .executes(QuestCommand::completeQuest)
                                 )
                         )
@@ -42,11 +56,26 @@ public class QuestCommand {
     }
 
     /**
+     * Donne une nouvelle quête.
+     */
+    private static int giveQuest(CommandContext<CommandSourceStack> ctx) {
+        AlphaPlayer alphaPlayer = AlphaPlayerArgument.getAlphaPlayer(ctx, playerArgument);
+        Trader trader = TraderArgument.getTrader(ctx, villagerArgument);
+
+        if (alphaPlayer.getCurrentActiveQuest() == null) {
+            QuestManager.getInstance().assignQuest(alphaPlayer, trader, true);
+        } else {
+            ctx.getSource().getSender().sendMessage(Component.text("Une quête existe déjà pour " + alphaPlayer.getPseudo()).color(NamedTextColor.RED));
+        }
+        return Command.SINGLE_SUCCESS;
+    }
+
+    /**
      * Supprime la quête en cours (non réclamée) du joueur.
      * Le joueur récupère un slot et peut en accepter une nouvelle.
      */
     private static int removeQuest(CommandContext<CommandSourceStack> ctx) {
-        AlphaPlayer alphaPlayer = AlphaPlayerArgument.getAlphaPlayer(ctx, "player");
+        AlphaPlayer alphaPlayer = AlphaPlayerArgument.getAlphaPlayer(ctx, playerArgument);
 
         if (QuestManager.getInstance().resetQuest(alphaPlayer)) {
             ctx.getSource().getSender().sendMessage(
@@ -63,7 +92,7 @@ public class QuestCommand {
      * Utile pour recommencer la journée à zéro.
      */
     private static int resetAllQuests(CommandContext<CommandSourceStack> ctx) {
-        AlphaPlayer alphaPlayer = AlphaPlayerArgument.getAlphaPlayer(ctx, "player");
+        AlphaPlayer alphaPlayer = AlphaPlayerArgument.getAlphaPlayer(ctx, playerArgument);
 
         if (alphaPlayer.getActiveQuests().isEmpty()) {
             ctx.getSource().getSender().sendMessage(
@@ -95,9 +124,9 @@ public class QuestCommand {
     /**
      * Force la complétion de la quête en cours (admin).
      */
-    private static int completeQuest(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
-        AlphaPlayer alphaPlayer = AlphaPlayerArgument.getAlphaPlayer(ctx, "player");
-        Trader trader = TraderArgument.getTrader(ctx, "villager");
+    private static int completeQuest(CommandContext<CommandSourceStack> ctx) {
+        AlphaPlayer alphaPlayer = AlphaPlayerArgument.getAlphaPlayer(ctx, playerArgument);
+        Trader trader = TraderArgument.getTrader(ctx, villagerArgument);
 
         if (QuestManager.getInstance().completeQuest(alphaPlayer, trader, true)) {
             ctx.getSource().getSender().sendMessage(

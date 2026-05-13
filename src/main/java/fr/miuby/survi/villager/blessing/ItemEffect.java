@@ -13,8 +13,8 @@ public class ItemEffect extends BlessingEffect{
 
     @Override
     public void applyEffect(VillagerLevel villager, AlphaPlayer player) {
-        ItemStack itemStack = this.itemStack.getItemStack();
-        itemStack.setAmount(this.amount);
-        player.getPlayer().getInventory().addItem(itemStack);
+        ItemStack item = this.itemStack.getItemStack();
+        item.setAmount(this.amount);
+        player.getPlayer().getInventory().addItem(item);
     }
 }

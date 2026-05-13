@@ -2,6 +2,7 @@ package fr.miuby.survi;
 
 import org.bukkit.Material;
 import org.bukkit.entity.EntityType;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -18,10 +19,12 @@ import java.util.stream.Stream;
 public class SchemaGeneratorTest {
 
     @Test
-    public void updateSchemas() throws IOException {
-        updateVillagersSchema();
-        updateRecipesSchema();
-        updateQuestsSchema();
+    public void updateSchemas() {
+        Assertions.assertDoesNotThrow(() -> {
+            updateVillagersSchema();
+            updateRecipesSchema();
+            updateQuestsSchema();
+        });
     }
 
     private void updateVillagersSchema() throws IOException {
@@ -43,7 +46,7 @@ public class SchemaGeneratorTest {
                 .filter(m -> !m.isLegacy())
                 .map(Enum::name)
                 .sorted()
-                .collect(Collectors.toList());
+                .toList();
         content = replaceEnum(content, "material", materials);
 
         Files.writeString(path, content);
@@ -60,13 +63,13 @@ public class SchemaGeneratorTest {
                 .filter(m -> !m.isLegacy())
                 .map(Enum::name)
                 .sorted()
-                .collect(Collectors.toList());
+                .toList();
 
         // Update old_recipes enum (namespaced keys: minecraft:item_name)
         List<String> namespacedKeys = materials.stream()
                 .map(m -> "minecraft:" + m.toLowerCase())
                 .sorted()
-                .collect(Collectors.toList());
+                .toList();
         
         // Regex to find "old_recipes" and its enum items
         Pattern oldRecipesPattern = Pattern.compile("\"old_recipes\":\\s*\\{[^}]*\"items\":\\s*\\{[^}]*\"enum\":\\s*\\[[^\\]]*\\]");
@@ -103,16 +106,16 @@ public class SchemaGeneratorTest {
         List<String> materials = Arrays.stream(Material.values())
                 .filter(m -> !m.isLegacy())
                 .map(Enum::name)
-                .collect(Collectors.toList());
+                .toList();
         
         List<String> entities = Arrays.stream(EntityType.values())
                 .map(Enum::name)
-                .collect(Collectors.toList());
+                .toList();
         
         List<String> allTargets = Stream.concat(materials.stream(), entities.stream())
                 .distinct()
                 .sorted()
-                .collect(Collectors.toList());
+                .toList();
 
         // Replace target type with enum if it matches the pattern
         Pattern targetPattern = Pattern.compile("\"target\":\\s*\\{\\s*\"type\":\\s*\\[\"string\",\\s*\"null\"\\]\\s*\\}");

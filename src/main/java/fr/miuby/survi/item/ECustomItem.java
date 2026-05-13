@@ -32,16 +32,16 @@ import static org.bukkit.attribute.AttributeModifier.Operation.ADD_SCALAR;
 
 @Getter
 public enum ECustomItem {
-    FISHING_D_ROD(Material.FISHING_ROD, itemStack -> {
-        ItemMeta meta = itemStack.getItemMeta();
+    FISHING_D_ROD(Material.FISHING_ROD, item -> {
+        ItemMeta meta = item.getItemMeta();
         meta.addEnchant(Enchantment.UNBREAKING, 5, true);
         meta.addEnchant(Enchantment.LURE, 5, true);
         meta.addEnchant(Enchantment.LUCK_OF_THE_SEA, 5, true);
         meta.addEnchant(Enchantment.VANISHING_CURSE, 1, false);
-        itemStack.setItemMeta(meta);
+        item.setItemMeta(meta);
     }),
 
-    AIR_FORCE(Material.LEATHER_BOOTS, itemStack -> new CustomItemBuilder(itemStack, "AirForce")
+    AIR_FORCE(Material.LEATHER_BOOTS, item -> new CustomItemBuilder(item, "AirForce")
             .name("Air Force 1", NamedTextColor.YELLOW)
             .leatherArmor(TrimMaterial.NETHERITE, TrimPattern.SILENCE, Color.fromRGB(16383998))
             .addAttribute(Attribute.MOVEMENT_SPEED, 0.1, ADD_NUMBER, EquipmentSlotGroup.FEET)
@@ -51,7 +51,7 @@ public enum ECustomItem {
             .addItemFlag(ItemFlag.HIDE_DYE)
             .addItemFlag(ItemFlag.HIDE_ARMOR_TRIM)),
 
-    MINEUR(Material.LEATHER_HELMET, itemStack -> new CustomItemBuilder(itemStack, "AirForce")
+    MINEUR(Material.LEATHER_HELMET, item -> new CustomItemBuilder(item, "AirForce")
             .name("Casque de Mineur", NamedTextColor.YELLOW)
             .leatherArmor(TrimMaterial.GOLD, TrimPattern.FLOW, Color.fromRGB(13061821))
             .addAttribute(Attribute.MINING_EFFICIENCY, 10, ADD_NUMBER, EquipmentSlotGroup.HEAD)
@@ -61,7 +61,7 @@ public enum ECustomItem {
             .addItemFlag(ItemFlag.HIDE_DYE)
             .addItemFlag(ItemFlag.HIDE_ARMOR_TRIM)),
 
-    ENDIALE(Material.LEATHER_CHESTPLATE, itemStack -> new CustomItemBuilder(itemStack, "AirForce")
+    ENDIALE(Material.LEATHER_CHESTPLATE, item -> new CustomItemBuilder(item, "AirForce")
             .name("Combinaison Endiale", NamedTextColor.YELLOW)
             .leatherArmor(TrimMaterial.AMETHYST, TrimPattern.SILENCE, Color.fromRGB(1408423))
             .addAttribute(Attribute.SCALE, -0.5, ADD_SCALAR, EquipmentSlotGroup.CHEST)
@@ -71,52 +71,52 @@ public enum ECustomItem {
             .addItemFlag(ItemFlag.HIDE_DYE)
             .addItemFlag(ItemFlag.HIDE_ARMOR_TRIM)),
 
-    TERMINATOR(Material.CROSSBOW, itemStack -> {
-        CrossbowMeta crossbowMeta = (CrossbowMeta) itemStack.getItemMeta();
+    TERMINATOR(Material.CROSSBOW, item -> {
+        CrossbowMeta crossbowMeta = (CrossbowMeta) item.getItemMeta();
         crossbowMeta.customName(Component.text("Terminator", NamedTextColor.DARK_PURPLE));
         crossbowMeta.addEnchant(Enchantment.UNBREAKING, 3, false);
         crossbowMeta.addEnchant(Enchantment.MENDING, 1, false);
         crossbowMeta.addEnchant(Enchantment.PIERCING, 10, true);
         crossbowMeta.addEnchant(Enchantment.MULTISHOT, 1, true);
         crossbowMeta.addEnchant(Enchantment.QUICK_CHARGE, 100, true);
-        itemStack.setItemMeta(crossbowMeta);
+        item.setItemMeta(crossbowMeta);
     }),
 
-    SEX_ON_THE_BEACH(Material.POTION, itemStack -> {
-        PotionMeta meta = (PotionMeta) itemStack.getItemMeta();
+    SEX_ON_THE_BEACH(Material.POTION, item -> {
+        PotionMeta meta = (PotionMeta) item.getItemMeta();
         meta.addCustomEffect(new PotionEffect(PotionEffectType.SPEED, 900*20, 4), false);
         meta.addCustomEffect(new PotionEffect(PotionEffectType.JUMP_BOOST, 900*20, 1), false);
         meta.customName(Component.text("Sex On The Beatch", NamedTextColor.LIGHT_PURPLE));
-        itemStack.setItemMeta(meta);
+        item.setItemMeta(meta);
     }),
 
-    PORN_STAR_MARTINI(Material.SPLASH_POTION, itemStack -> {
-        PotionMeta meta = (PotionMeta) itemStack.getItemMeta();
+    PORN_STAR_MARTINI(Material.SPLASH_POTION, item -> {
+        PotionMeta meta = (PotionMeta) item.getItemMeta();
         meta.addCustomEffect(new PotionEffect(PotionEffectType.INSTANT_HEALTH, 1, 3), false);
         meta.addCustomEffect(new PotionEffect(PotionEffectType.REGENERATION, 120*20, 1), false);
         meta.customName(Component.text("Porn Star Martini", NamedTextColor.LIGHT_PURPLE));
-        itemStack.setItemMeta(meta);
+        item.setItemMeta(meta);
     }),
 
-    SHOOTER_ORGASM(Material.POTION, itemStack -> {
-        PotionMeta meta = (PotionMeta) itemStack.getItemMeta();
+    SHOOTER_ORGASM(Material.POTION, item -> {
+        PotionMeta meta = (PotionMeta) item.getItemMeta();
         meta.addCustomEffect(new PotionEffect(PotionEffectType.STRENGTH, 300*20, 2), false);
         meta.addCustomEffect(new PotionEffect(PotionEffectType.WATER_BREATHING, 300*20, 1), false);
         meta.customName(Component.text("Shooter Orgasm", NamedTextColor.LIGHT_PURPLE));
-        itemStack.setItemMeta(meta);
+        item.setItemMeta(meta);
     }),
 
-    HEALING_ARROW(Material.TIPPED_ARROW, itemStack -> {
-        PotionMeta meta = (PotionMeta) itemStack.getItemMeta();
+    HEALING_ARROW(Material.TIPPED_ARROW, item -> {
+        PotionMeta meta = (PotionMeta) item.getItemMeta();
         meta.addCustomEffect(new PotionEffect(PotionEffectType.INSTANT_HEALTH, 1, 1), false);
         meta.customName(Component.text("JE TE HEAL", NamedTextColor.DARK_RED));
-        itemStack.setItemMeta(meta);
+        item.setItemMeta(meta);
     }),
 
-    SPICY_SWEET_DREAMS_TICKET(Material.NAME_TAG, itemStack -> {
-        ItemMeta meta = itemStack.getItemMeta();
+    SPICY_SWEET_DREAMS_TICKET(Material.NAME_TAG, item -> {
+        ItemMeta meta = item.getItemMeta();
         meta.customName(Component.text("Spicy Sweet Dreams Ticket", NamedTextColor.LIGHT_PURPLE));
-        itemStack.setItemMeta(meta);
+        item.setItemMeta(meta);
     }),
 
     CLE00(Material.NAME_TAG, createKey("00"), "cle00"),
@@ -131,51 +131,51 @@ public enum ECustomItem {
     CLE31(Material.NAME_TAG, createKey("31"), "cle31"),
     CLE32(Material.NAME_TAG, createKey("32"), "cle32"),
 
-    GROWTH_PICKAXE(Material.WOODEN_PICKAXE, itemStack -> {
-        ItemMeta meta = itemStack.getItemMeta();
+    GROWTH_PICKAXE(Material.WOODEN_PICKAXE, item -> {
+        ItemMeta meta = item.getItemMeta();
         createGrowthItem(meta, "GROWTH_PICKAXE");
 
         meta.setUnbreakable(true);
         meta.customName(Component.text("The pickaxe", NamedTextColor.GOLD));
         //meta.setItemModel(new NamespacedKey(GameManager.getInstance().getPlugin(), "pickaxe"));
-        itemStack.setItemMeta(meta);
+        item.setItemMeta(meta);
     }),
 
-    GROWTH_SWORD(Material.WOODEN_SWORD, itemStack -> {
-        ItemMeta meta = itemStack.getItemMeta();
+    GROWTH_SWORD(Material.WOODEN_SWORD, item -> {
+        ItemMeta meta = item.getItemMeta();
         createGrowthItem(meta, "GROWTH_SWORD");
 
         meta.setUnbreakable(true);
         meta.customName(Component.text("The sword", NamedTextColor.GOLD));
         //meta.setItemModel(new NamespacedKey(GameManager.getInstance().getPlugin(), "pickaxe"));
-        itemStack.setItemMeta(meta);
+        item.setItemMeta(meta);
     }),
 
 
-    MUFFIN(Material.PLAYER_HEAD, itemStack -> {
-        SkullMeta skullMeta = (SkullMeta) itemStack.getItemMeta();
+    MUFFIN(Material.PLAYER_HEAD, item -> {
+        SkullMeta skullMeta = (SkullMeta) item.getItemMeta();
         skullMeta.setOwningPlayer(Bukkit.getOfflinePlayer("Molflin"));
         skullMeta.customName(Component.text("Muffin", NamedTextColor.AQUA).decoration(TextDecoration.ITALIC, false));
-        itemStack.setItemMeta(skullMeta);
+        item.setItemMeta(skullMeta);
     }),
 
-    UNBREAKING3(Material.ENCHANTED_BOOK, itemStack -> {
-        EnchantmentStorageMeta meta = (EnchantmentStorageMeta) itemStack.getItemMeta();
+    UNBREAKING3(Material.ENCHANTED_BOOK, item -> {
+        EnchantmentStorageMeta meta = (EnchantmentStorageMeta) item.getItemMeta();
         meta.addStoredEnchant(Enchantment.UNBREAKING, 3, false);
-        itemStack.setItemMeta(meta);
+        item.setItemMeta(meta);
     }),
 
-    MENDING(Material.ENCHANTED_BOOK, itemStack -> {
-        EnchantmentStorageMeta meta = (EnchantmentStorageMeta) itemStack.getItemMeta();
+    MENDING(Material.ENCHANTED_BOOK, item -> {
+        EnchantmentStorageMeta meta = (EnchantmentStorageMeta) item.getItemMeta();
         meta.addStoredEnchant(Enchantment.MENDING, 1, false);
-        itemStack.setItemMeta(meta);
+        item.setItemMeta(meta);
     }),
     
-    CHANGER_ROLE(Material.POTION, itemStack -> {
-        ItemMeta meta = itemStack.getItemMeta();
+    CHANGER_ROLE(Material.POTION, item -> {
+        ItemMeta meta = item.getItemMeta();
         PersistentDataContainer pdc = meta.getPersistentDataContainer();
         pdc.set(new NamespacedKey(GameManager.getInstance().getPlugin(), "edible"), PersistentDataType.BOOLEAN, true);
-        itemStack.setItemMeta(meta);
+        item.setItemMeta(meta);
     });
 
     private static final String DEFAULT_NAMESPACE = "survi";
@@ -213,9 +213,9 @@ public enum ECustomItem {
     }
 
     public ItemStack getItemStack(int amount) {
-        ItemStack itemStack = this.getItemStack();
-        itemStack.setAmount(amount);
-        return itemStack;
+        ItemStack item = this.getItemStack();
+        item.setAmount(amount);
+        return item;
     }
 
     private static void createGrowthItem(ItemMeta meta, String id) {

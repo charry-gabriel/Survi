@@ -3,6 +3,10 @@ package fr.miuby.survi.world.crops;
 import org.bukkit.Material;
 
 public class PlantedCropUtils {
+    private PlantedCropUtils() {
+        /* This utility class should not be instantiated */
+    }
+
     public static boolean isPlantable(Material material) {
         return isSeed(material) || isSapling(material) ||
                 material == Material.BAMBOO || material == Material.SUGAR_CANE ||

@@ -12,6 +12,12 @@ import io.papermc.paper.command.brigadier.argument.resolvers.FinePositionResolve
 import org.bukkit.Location;
 
 public class WorldCommand {
+    private static final String playerArgument = "player";
+    private static final String worldArgument = "MLworld";
+
+    private WorldCommand() {
+        /* This utility class should not be instantiated */
+    }
 
     public static LiteralArgumentBuilder<CommandSourceStack> createWorldResetCommand() {
         return Commands.literal("worldreset")
@@ -25,19 +31,19 @@ public class WorldCommand {
     public static LiteralArgumentBuilder<CommandSourceStack> createTeleportToCommand() {
         return Commands.literal("teleportTo")
                 .requires(source -> source.getSender().isOp())
-                .then(Commands.argument("player", AlphaPlayerArgument.alphaPlayer())
-                        .then(Commands.argument("MLworld", WorldArgument.world())
+                .then(Commands.argument(playerArgument, AlphaPlayerArgument.alphaPlayer())
+                        .then(Commands.argument(worldArgument, WorldArgument.world())
                                 .executes(ctx -> {
-                                    MLWorld mlWorld = WorldArgument.getWorld(ctx, "MLworld");
-                                    AlphaPlayerArgument.getAlphaPlayer(ctx, "player").getPlayer().teleport(mlWorld.getWorld().getSpawnLocation());
+                                    MLWorld mlWorld = WorldArgument.getWorld(ctx, worldArgument);
+                                    AlphaPlayerArgument.getAlphaPlayer(ctx, playerArgument).getPlayer().teleport(mlWorld.getWorld().getSpawnLocation());
                                     return Command.SINGLE_SUCCESS;
                                 })
                                 .then(Commands.argument("location", ArgumentTypes.finePosition(true))
                                         .executes(ctx -> {
                                             Location location = ctx.getArgument("location", FinePositionResolver.class)
                                                     .resolve(ctx.getSource())
-                                                    .toLocation(WorldArgument.getWorld(ctx, "MLworld").getWorld());
-                                            AlphaPlayerArgument.getAlphaPlayer(ctx, "player").getPlayer().teleport(location);
+                                                    .toLocation(WorldArgument.getWorld(ctx, worldArgument).getWorld());
+                                            AlphaPlayerArgument.getAlphaPlayer(ctx, playerArgument).getPlayer().teleport(location);
                                             return Command.SINGLE_SUCCESS;
                                         })
                                 )

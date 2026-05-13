@@ -16,6 +16,12 @@ import java.util.EnumSet;
 import java.util.logging.Level;
 
 public class SystemCommand {
+    private static final String levelArgument = "level";
+
+    private SystemCommand() {
+        /* This utility class should not be instantiated */
+    }
+
     public static LiteralArgumentBuilder<CommandSourceStack> createCommand() {
         return Commands.literal("survi")
                 .requires(sender -> sender.getSender().isOp())
@@ -36,8 +42,8 @@ public class SystemCommand {
                                     // Tags
                                     sender.sendMessage(Component.text("║ TAGS:", NamedTextColor.YELLOW));
                                     for (var entry : lm.getAllTagStates().entrySet()) {
-                                        NamedTextColor color = entry.getValue() ? NamedTextColor.GREEN : NamedTextColor.RED;
-                                        String icon = entry.getValue() ? "✓" : "✗";
+                                        NamedTextColor color = Boolean.TRUE.equals(entry.getValue()) ? NamedTextColor.GREEN : NamedTextColor.RED;
+                                        String icon = Boolean.TRUE.equals(entry.getValue()) ? "✓" : "✗";
                                         sender.sendMessage(
                                                 Component.text("║   " + icon + " ", color)
                                                         .append(Component.text(entry.getKey().name(), NamedTextColor.WHITE))
@@ -49,8 +55,8 @@ public class SystemCommand {
                                     // Levels
                                     sender.sendMessage(Component.text("║ LEVELS:", NamedTextColor.YELLOW));
                                     for (var entry : lm.getAllLevelStates().entrySet()) {
-                                        NamedTextColor color = entry.getValue() ? NamedTextColor.GREEN : NamedTextColor.RED;
-                                        String icon = entry.getValue() ? "✓" : "✗";
+                                        NamedTextColor color = Boolean.TRUE.equals(entry.getValue()) ? NamedTextColor.GREEN : NamedTextColor.RED;
+                                        String icon = Boolean.TRUE.equals(entry.getValue()) ? "✓" : "✗";
                                         sender.sendMessage(
                                                 Component.text("║   " + icon + " ", color)
                                                         .append(Component.text(entry.getKey().getName(), NamedTextColor.WHITE))
@@ -129,7 +135,7 @@ public class SystemCommand {
                         // /survi log level <toggle/enable/disable> <LEVEL>
                         .then(Commands.literal("level")
                                 .then(Commands.literal("toggle")
-                                        .then(Commands.argument("level", StringArgumentType.word())
+                                        .then(Commands.argument(levelArgument, StringArgumentType.word())
                                                 .suggests((context, builder) -> {
                                                     builder.suggest("INFO");
                                                     builder.suggest("WARNING");
@@ -141,7 +147,7 @@ public class SystemCommand {
                                                     return builder.buildFuture();
                                                 })
                                                 .executes(ctx -> {
-                                                    String levelName = StringArgumentType.getString(ctx, "level");
+                                                    String levelName = StringArgumentType.getString(ctx, levelArgument);
                                                     Level level = Level.parse(levelName);
                                                     LogManager.getInstance().toggleLevel(level);
                                                     boolean enabled = LogManager.getInstance().isLevelEnabled(level);
@@ -156,7 +162,7 @@ public class SystemCommand {
                                         )
                                 )
                                 .then(Commands.literal("enable")
-                                        .then(Commands.argument("level", StringArgumentType.word())
+                                        .then(Commands.argument(levelArgument, StringArgumentType.word())
                                                 .suggests((context, builder) -> {
                                                     builder.suggest("INFO");
                                                     builder.suggest("WARNING");
@@ -164,7 +170,7 @@ public class SystemCommand {
                                                     return builder.buildFuture();
                                                 })
                                                 .executes(ctx -> {
-                                                    String levelName = StringArgumentType.getString(ctx, "level");
+                                                    String levelName = StringArgumentType.getString(ctx, levelArgument);
                                                     Level level = Level.parse(levelName);
                                                     LogManager.getInstance().setLevelEnabled(level, true);
 
@@ -176,7 +182,7 @@ public class SystemCommand {
                                         )
                                 )
                                 .then(Commands.literal("disable")
-                                        .then(Commands.argument("level", StringArgumentType.word())
+                                        .then(Commands.argument(levelArgument, StringArgumentType.word())
                                                 .suggests((context, builder) -> {
                                                     builder.suggest("INFO");
                                                     builder.suggest("WARNING");
@@ -184,7 +190,7 @@ public class SystemCommand {
                                                     return builder.buildFuture();
                                                 })
                                                 .executes(ctx -> {
-                                                    String levelName = StringArgumentType.getString(ctx, "level");
+                                                    String levelName = StringArgumentType.getString(ctx, levelArgument);
                                                     Level level = Level.parse(levelName);
                                                     LogManager.getInstance().setLevelEnabled(level, false);
 

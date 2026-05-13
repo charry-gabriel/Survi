@@ -134,7 +134,7 @@ public class LogManager {
 
         // Formate et log
         String formattedTag = CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, tag.toString());
-        logger.log(level, "[" + formattedTag + "] " + message);
+        logger.log(level, "[{0}] {1}", new Object[]{formattedTag, message});
     }
 
     // ============================================================================

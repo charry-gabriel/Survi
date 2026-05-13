@@ -6,6 +6,10 @@ package fr.miuby.survi.system.database;
  * centralizing error messages to maintain consistency and improve code readability.
  */
 public class Errors {
+    private Errors() {
+        /* This utility class should not be instantiated */
+    }
+
     public static final String sqlConnectionExecute = "Couldn't execute MySQL statement: ";
     public static final String sqlConnectionClose = "Failed to close MySQL connection: ";
     public static final String noSQLConnection = "Unable to retrieve MYSQL connection: ";

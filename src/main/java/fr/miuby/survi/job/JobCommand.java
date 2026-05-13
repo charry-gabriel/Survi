@@ -14,7 +14,11 @@ import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+@SuppressWarnings({"java:S3516", "SameReturnValue"})
 public class JobCommand {
+    private JobCommand() {
+        /* This utility class should not be instantiated */
+    }
 
     public static LiteralArgumentBuilder<CommandSourceStack> createCommand() {
         return Commands.literal("job")

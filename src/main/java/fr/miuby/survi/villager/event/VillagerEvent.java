@@ -10,7 +10,7 @@ import org.jetbrains.annotations.NotNull;
 public abstract class VillagerEvent extends Event {
     protected final VillagerLevel villagerLevel;
 
-    public VillagerEvent(@NotNull VillagerLevel villagerLevel) {
+    protected VillagerEvent(@NotNull VillagerLevel villagerLevel) {
         this.villagerLevel = villagerLevel;
     }
 

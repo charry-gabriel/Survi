@@ -105,6 +105,7 @@ public class VillagerLevel extends AVillager {
         return true;
     }
 
+    @Override
     public void createInventory() {
         Inventory inv = Bukkit.createInventory(getVillager(), InventoryType.CHEST, Objects.requireNonNull(getVillager().customName()));
 

@@ -24,7 +24,6 @@ import org.bukkit.inventory.MerchantRecipe;
 import fr.miuby.survi.job.EJob;
 import java.time.Duration;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Getter
 public class VillagerFactory {
@@ -140,7 +139,7 @@ public class VillagerFactory {
 
         TextComponent openMessage = Component.text("Veux-tu une belle canne à pêche ?");
 
-        AVillager.spawn(() -> {
+        MLVillager.spawn(() -> {
             Trader t = new Trader("GoldRoger", Component.text("Gol D. Roger"), Villager.Type.SAVANNA, Villager.Profession.WEAPONSMITH, recipes, messages, openMessage);
             t.setJob(EJob.PECHEUR);
             return t;
@@ -162,7 +161,7 @@ public class VillagerFactory {
 
         TextComponent openMessage = Component.text("J'adore le poulet. Je ne vends aucune drogue.");
 
-        AVillager.spawn(() -> {
+        MLVillager.spawn(() -> {
             Trader t = new Trader("Hermanos", Component.text("Los Pollos Hermanos"), Villager.Type.SWAMP, Villager.Profession.LIBRARIAN, recipes, messages, openMessage);
             t.setJob(EJob.ENCHANTEUR);
             return t;
@@ -183,7 +182,7 @@ public class VillagerFactory {
 
         TextComponent openMessage = Component.text("Les Air Force 1, les chaussures qui courent vite.");
 
-        AVillager.spawn(() -> {
+        MLVillager.spawn(() -> {
             Trader t = new Trader("Nike_49", Component.text("Nike_49"), Villager.Type.PLAINS, Villager.Profession.LEATHERWORKER, recipes, messages, openMessage);
             t.setJob(EJob.AVENTURIER);
             return t;
@@ -204,7 +203,7 @@ public class VillagerFactory {
 
         TextComponent openMessage = Component.text("Le Casque de Mineur, le casque qui mine vite.");
 
-        AVillager.spawn(() -> {
+        MLVillager.spawn(() -> {
             Trader t = new Trader("Indiana", Component.text("Indiana"), Villager.Type.SNOW, Villager.Profession.CARTOGRAPHER, recipes, messages, openMessage);
             t.setJob(EJob.MINEUR);
             return t;
@@ -225,7 +224,7 @@ public class VillagerFactory {
 
         TextComponent openMessage = Component.text("La Combinaison Endiale, la combinaison à la bonne taille !");
 
-        AVillager.spawn(() -> {
+        MLVillager.spawn(() -> {
             Trader t = new Trader("Sophie", Component.text("Sophie Adenot"), Villager.Type.SWAMP, Villager.Profession.FISHERMAN, recipes, messages, openMessage);
             t.setJob(EJob.COMBATANT);
             return t;
@@ -261,7 +260,7 @@ public class VillagerFactory {
 
         TextComponent openMessage = Component.text("Bonjour, bienvenue au bar du Merveilleux Royal Bling-Bling Sexy-Baka Palace-Hôtel. A la carte, nous proposons différents cocktails élaborés avec amour, tendresse et voluptuosité: le Sex On the Beach, le Porn Star Martini, et notre fameux Shooter Orgasm. D’autre part, je peux aussi proposer un Spicy Sweet Dreams Ticket si vous le désirez !");
 
-        AVillager.spawn(() -> {
+        MLVillager.spawn(() -> {
             Trader trader = new Trader("Barman", Component.text("Fruity Délice"), Villager.Type.SAVANNA, Villager.Profession.FLETCHER, recipes, messages, openMessage);
             trader.setQuestDifficulty(QuestDifficulty.COMMON);
             trader.setJob(EJob.ALCHIMISTE);
@@ -341,7 +340,7 @@ public class VillagerFactory {
         TextComponent openMessage = Component.text("La réception, c’est ma vocation. Bienvenue au Merveilleux Royal Bling-Bling Sexy-Baka Palace-Hôtel. Je vous accueille à bras ouverts dans notre somptueux manoir du 19ième, où le service 5 étoiles fourni par nos employés sauront ravir toutes vos exigences. Le discrétion c’est notre crédo… profitez de votre séjour et explorez à votre rythme chaque recoin de notre manoir qui abrite bien plus de secrets que vous ne pouvez l’imaginer. \n" +
                 "Si vous souhaitez siroter une délicieux cocktail aphrodisiaque, notre barman Fruity Delice saura vous contenter. En cas de demande particulière, veuillez-vous référez à Jean Touchatouille… mais on ne sait jamais où il traine celui-ci, il sait se faire discret. Jacques Black, notre croupier, est au premier étage si une envie de jouer vous vient.De toute manière, ici tous les jeux sont gagnants! ");
 
-        AVillager.spawn(() -> {
+        MLVillager.spawn(() -> {
             Trader t = new Trader("Receptionniste", Component.text("Alainse Lapince"), Villager.Type.JUNGLE, Villager.Profession.CARTOGRAPHER, recipes, messages, openMessage);
             t.setJob(EJob.MARCHAND);
             return t;
@@ -414,7 +413,7 @@ public class VillagerFactory {
         TextComponent openMessage = Component.text("Quoi… Que… Que… vous m’avez repéré… ce n’est pas ce que vous croyez, je… je faisais le ménage! En tout cas j’ai pu être spectateur d’une performance honorable de votre part. Le shooter Orgasme de notre barman Fruity Delice a réussi son effet! Eum Eum… \n" + "\n" +
                 "Ecoutez, je pense qu’on peut s’arranger, je ne voudrais pas que de fausses rumeurs se répandent… que diriez-vous d’un arrangement? On est presque ami maintenant. Confirmez-moi que vous êtes bien client de l’hôtel, fournissez-moi vos clefs, et je vous fournirai une récompense en échange de votre aimable discrétion et de votre départ précipité.");
 
-        AVillager.spawn(() -> {
+        MLVillager.spawn(() -> {
             Trader t = new Trader("Concierge", Component.text("Jean Touchatouille"), Villager.Type.TAIGA, Villager.Profession.ARMORER, recipes, messages, openMessage);
             t.setJob(EJob.FORGERON);
             return t;
@@ -432,7 +431,7 @@ public class VillagerFactory {
         TextComponent[] recap = config.levels.stream().map(level -> Component.text(level.recap)).toArray(TextComponent[]::new);
         Tribute[] tributes = config.levels.stream().map(level -> new Tribute(level.tribute.stream().map(SimpleItemStack::toItemStack).toArray(ItemStack[]::new))).toArray(Tribute[]::new);
 
-        AVillager.spawn(() -> new VillagerLevel(config.name, type, profession, blessings, messages, tributes, names, recap));
+        MLVillager.spawn(() -> new VillagerLevel(config.name, type, profession, blessings, messages, tributes, names, recap));
     }
 
     /**
@@ -441,9 +440,9 @@ public class VillagerFactory {
      */
     public List<Trader> getTraders() {
         return VillagerRegistry.getAll().stream()
-                .filter(v -> v instanceof Trader)
+                .filter(Trader.class::isInstance)
                 .map(v -> (Trader) v)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     public void applyAllCurrentBlessing(AlphaPlayer player) {

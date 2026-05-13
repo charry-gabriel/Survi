@@ -11,6 +11,10 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 
 public class SqlCommand {
+    private SqlCommand() {
+        /* This utility class should not be instantiated */
+    }
+
     public static LiteralArgumentBuilder<CommandSourceStack> createCommand() {
         return Commands.literal("sql")
                 .requires(sender -> sender.getSender().isOp())

@@ -10,6 +10,10 @@ import java.util.logging.Level;
  * GameManager instance to log relevant error messages along with exception details.
  */
 public class Error {
+    private Error() {
+        /* This utility class should not be instantiated */
+    }
+
     /**
      * Logs an error message indicating that the execution of a MySQL statement has failed.
      *

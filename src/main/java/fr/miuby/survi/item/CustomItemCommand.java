@@ -10,6 +10,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 public class CustomItemCommand {
+    private CustomItemCommand() {
+        /* This utility class should not be instantiated */
+    }
     
     public static LiteralArgumentBuilder<CommandSourceStack> createCommand() {
         return Commands.literal("customitem")

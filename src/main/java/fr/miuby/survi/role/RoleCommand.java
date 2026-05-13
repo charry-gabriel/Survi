@@ -16,12 +16,19 @@ import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
 
 public class RoleCommand {
+    private static final String playerArgument = "player";
+    private static final String roleArgument = "role";
+    private static final String subRoleArgument = "subrole";
+
+    private RoleCommand() {
+        /* This utility class should not be instantiated */
+    }
 
     public static LiteralArgumentBuilder<CommandSourceStack> createRoleCommand() {
         return Commands.literal("role")
                 .requires(source -> source.getSender().isOp())
-                .then(Commands.argument("player", AlphaPlayerArgument.alphaPlayer())
-                        .then(Commands.argument("role", RoleArgument.role())
+                .then(Commands.argument(playerArgument, AlphaPlayerArgument.alphaPlayer())
+                        .then(Commands.argument(roleArgument, RoleArgument.role())
                                 .executes(RoleCommand::executeRole)
                         )
                 );
@@ -31,15 +38,15 @@ public class RoleCommand {
         return Commands.literal("subrole")
                 .requires(source -> source.getSender().isOp())
                 .then(Commands.literal("add")
-                        .then(Commands.argument("player", AlphaPlayerArgument.alphaPlayer())
-                                .then(Commands.argument("subrole", SubRoleArgument.subrole())
+                        .then(Commands.argument(playerArgument, AlphaPlayerArgument.alphaPlayer())
+                                .then(Commands.argument(subRoleArgument, SubRoleArgument.subrole())
                                         .executes(ctx -> executeSubRole(ctx, true))
                                 )
                         )
                 )
                 .then(Commands.literal("remove")
-                        .then(Commands.argument("player", AlphaPlayerArgument.alphaPlayer())
-                                .then(Commands.argument("subrole", SubRoleArgument.subrole())
+                        .then(Commands.argument(playerArgument, AlphaPlayerArgument.alphaPlayer())
+                                .then(Commands.argument(subRoleArgument, SubRoleArgument.subrole())
                                         .executes(ctx -> executeSubRole(ctx, false))
                                 )
                         )
@@ -47,8 +54,8 @@ public class RoleCommand {
     }
 
     private static int executeRole(CommandContext<CommandSourceStack> ctx) {
-        AlphaPlayer alphaPlayer = AlphaPlayerArgument.getAlphaPlayer(ctx, "player");
-        Role role = RoleArgument.getRole(ctx, "role");
+        AlphaPlayer alphaPlayer = AlphaPlayerArgument.getAlphaPlayer(ctx, playerArgument);
+        Role role = RoleArgument.getRole(ctx, roleArgument);
 
         if (GameManager.getInstance().getRoleManagementService().changeMainRole(alphaPlayer, role)) {
             ctx.getSource().getSender().sendMessage(
@@ -62,8 +69,8 @@ public class RoleCommand {
     }
 
     private static int executeSubRole(CommandContext<CommandSourceStack> ctx, boolean isAdd) {
-        AlphaPlayer alphaPlayer = AlphaPlayerArgument.getAlphaPlayer(ctx, "player");
-        Role role = SubRoleArgument.getSubRole(ctx, "subrole");
+        AlphaPlayer alphaPlayer = AlphaPlayerArgument.getAlphaPlayer(ctx, playerArgument);
+        Role role = SubRoleArgument.getSubRole(ctx, subRoleArgument);
 
         RoleManagementService service = GameManager.getInstance().getRoleManagementService();
 

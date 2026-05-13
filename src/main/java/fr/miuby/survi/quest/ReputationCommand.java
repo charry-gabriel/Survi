@@ -24,7 +24,15 @@ import net.kyori.adventure.text.format.NamedTextColor;
  *   /reputation set    <joueur> <trader> <valeur>
  *   /reputation info   <joueur> <trader>
  */
+@SuppressWarnings({"java:S3516", "SameReturnValue"})
 public class ReputationCommand {
+    private static final String amountArgument = "amount";
+    private static final String playerArgument = "player";
+    private static final String traderArgument = "trader";
+
+    private ReputationCommand() {
+        /* This utility class should not be instantiated */
+    }
 
     public static LiteralArgumentBuilder<CommandSourceStack> createCommand() {
         return Commands.literal("reputation")
@@ -32,9 +40,9 @@ public class ReputationCommand {
 
                 // /reputation add <player> <trader> <amount>
                 .then(Commands.literal("add")
-                        .then(Commands.argument("player", AlphaPlayerArgument.alphaPlayer())
-                                .then(Commands.argument("trader", TraderArgument.trader())
-                                        .then(Commands.argument("amount", IntegerArgumentType.integer(1, 10000))
+                        .then(Commands.argument(playerArgument, AlphaPlayerArgument.alphaPlayer())
+                                .then(Commands.argument(traderArgument, TraderArgument.trader())
+                                        .then(Commands.argument(amountArgument, IntegerArgumentType.integer(1, 10000))
                                                 .executes(ctx -> executeAdd(ctx, true))
                                         )
                                 )
@@ -43,9 +51,9 @@ public class ReputationCommand {
 
                 // /reputation remove <player> <trader> <amount>
                 .then(Commands.literal("remove")
-                        .then(Commands.argument("player", AlphaPlayerArgument.alphaPlayer())
-                                .then(Commands.argument("trader", TraderArgument.trader())
-                                        .then(Commands.argument("amount", IntegerArgumentType.integer(1, 10000))
+                        .then(Commands.argument(playerArgument, AlphaPlayerArgument.alphaPlayer())
+                                .then(Commands.argument(traderArgument, TraderArgument.trader())
+                                        .then(Commands.argument(amountArgument, IntegerArgumentType.integer(1, 10000))
                                                 .executes(ctx -> executeAdd(ctx, false))
                                         )
                                 )
@@ -54,8 +62,8 @@ public class ReputationCommand {
 
                 // /reputation set <player> <trader> <value>
                 .then(Commands.literal("set")
-                        .then(Commands.argument("player", AlphaPlayerArgument.alphaPlayer())
-                                .then(Commands.argument("trader", TraderArgument.trader())
+                        .then(Commands.argument(playerArgument, AlphaPlayerArgument.alphaPlayer())
+                                .then(Commands.argument(traderArgument, TraderArgument.trader())
                                         .then(Commands.argument("value", IntegerArgumentType.integer(0, 100000))
                                                 .executes(ReputationCommand::executeSet)
                                         )
@@ -65,8 +73,8 @@ public class ReputationCommand {
 
                 // /reputation info <player> <trader>
                 .then(Commands.literal("info")
-                        .then(Commands.argument("player", AlphaPlayerArgument.alphaPlayer())
-                                .then(Commands.argument("trader", TraderArgument.trader())
+                        .then(Commands.argument(playerArgument, AlphaPlayerArgument.alphaPlayer())
+                                .then(Commands.argument(traderArgument, TraderArgument.trader())
                                         .executes(ReputationCommand::executeInfo)
                                 )
                         )
@@ -76,9 +84,9 @@ public class ReputationCommand {
     // ── /reputation add | remove ──────────────────────────────────────────────
 
     private static int executeAdd(CommandContext<CommandSourceStack> ctx, boolean isAdd) {
-        AlphaPlayer target  = AlphaPlayerArgument.getAlphaPlayer(ctx, "player");
-        Trader      trader   = TraderArgument.getTrader(ctx, "trader");
-        int         amount   = IntegerArgumentType.getInteger(ctx, "amount");
+        AlphaPlayer target  = AlphaPlayerArgument.getAlphaPlayer(ctx, playerArgument);
+        Trader      trader   = TraderArgument.getTrader(ctx, traderArgument);
+        int         amount   = IntegerArgumentType.getInteger(ctx, amountArgument);
 
         int before = target.getReputation(trader.getNameId());
         int delta  = isAdd ? amount : -amount;
@@ -104,7 +112,7 @@ public class ReputationCommand {
         ctx.getSource().getSender().sendMessage(
                 Component.text(verb + " ", color)
                         .append(Component.text(Math.abs(actualDelta) + " rep", NamedTextColor.WHITE))
-                        .append(Component.text(isAdd ? " à " : " à ", color))
+                        .append(Component.text(" à ", color))
                         .append(Component.text(target.getPseudo(), NamedTextColor.YELLOW))
                         .append(Component.text(" auprès de ", color))
                         .append(Component.text(trader.getNameId(), NamedTextColor.AQUA))
@@ -125,8 +133,8 @@ public class ReputationCommand {
     // ── /reputation set ───────────────────────────────────────────────────────
 
     private static int executeSet(CommandContext<CommandSourceStack> ctx) {
-        AlphaPlayer target   = AlphaPlayerArgument.getAlphaPlayer(ctx, "player");
-        Trader      trader   = TraderArgument.getTrader(ctx, "trader");
+        AlphaPlayer target   = AlphaPlayerArgument.getAlphaPlayer(ctx, playerArgument);
+        Trader      trader   = TraderArgument.getTrader(ctx, traderArgument);
         int         value    = IntegerArgumentType.getInteger(ctx, "value");
 
         int before = target.getReputation(trader.getNameId());
@@ -155,8 +163,8 @@ public class ReputationCommand {
     // ── /reputation info ──────────────────────────────────────────────────────
 
     private static int executeInfo(CommandContext<CommandSourceStack> ctx) {
-        AlphaPlayer target   = AlphaPlayerArgument.getAlphaPlayer(ctx, "player");
-        Trader      trader   = TraderArgument.getTrader(ctx, "trader");
+        AlphaPlayer target   = AlphaPlayerArgument.getAlphaPlayer(ctx, playerArgument);
+        Trader      trader   = TraderArgument.getTrader(ctx, traderArgument);
 
         int rep = target.getReputation(trader.getNameId());
 

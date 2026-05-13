@@ -12,6 +12,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class VillagerLoader {
+    private VillagerLoader() {
+        /* This utility class should not be instantiated */
+    }
+
     private static final Map<String, VillagerConfig> loaded = new HashMap<>();
 
     public static VillagerConfig load(String id) {

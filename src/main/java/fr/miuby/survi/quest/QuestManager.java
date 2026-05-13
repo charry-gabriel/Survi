@@ -200,6 +200,13 @@ public class QuestManager {
      * Attribue une nouvelle quête au joueur s'il n'a pas atteint sa limite journalière.
      */
     public void assignQuest(AlphaPlayer player, Trader trader) {
+        assignQuest(player, trader, false);
+    }
+
+    /**
+     * Attribue une nouvelle quête au joueur s'il n'a pas atteint sa limite journalière.
+     */
+    public void assignQuest(AlphaPlayer player, Trader trader, boolean force) {
         // Vérifier si le joueur a encore une quête non réclamée
         PlayerQuestData current = player.getCurrentActiveQuest();
         if (current != null) {
@@ -212,7 +219,7 @@ public class QuestManager {
         }
 
         // Vérifier la limite journalière
-        if (player.countTodayQuests() >= DAILY_QUEST_LIMIT) {
+        if (!force && player.countTodayQuests() >= DAILY_QUEST_LIMIT) {
             player.getPlayer().sendMessage("§cVous avez atteint votre limite de §6" + DAILY_QUEST_LIMIT + " quête(s) aujourd'hui§c. Revenez demain !");
             return;
         }

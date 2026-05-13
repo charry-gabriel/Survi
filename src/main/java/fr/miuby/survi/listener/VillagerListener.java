@@ -6,6 +6,7 @@ import fr.miuby.lib.villager.VillagerRegistry;
 import fr.miuby.survi.player.AlphaPlayer;
 import fr.miuby.survi.quest.PlayerQuestData;
 import fr.miuby.survi.quest.QuestManager;
+import fr.miuby.survi.system.log.LogManager;
 import fr.miuby.survi.villager.AVillager;
 import fr.miuby.survi.villager.Trader;
 import fr.miuby.survi.villager.VillagerLevel;
@@ -26,6 +27,8 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.inventory.MenuType;
+
+import java.util.logging.Level;
 
 public class VillagerListener implements Listener {
     @SuppressWarnings("UnstableApiUsage")
@@ -87,6 +90,8 @@ public class VillagerListener implements Listener {
                     event.setCancelled(true);
                 }
                 case null, default -> {
+                    event.setCancelled(true);
+                    LogManager.getInstance().log(Level.SEVERE, LogManager.ETagLog.VILLAGER, "Villager interacted with an unknown entity: " + event.getRightClicked().getType());
                 }
             }
         }

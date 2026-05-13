@@ -15,11 +15,11 @@ import org.jetbrains.annotations.NotNull;
 public abstract class AlphaPlayerEvent extends Event {
     protected AlphaPlayer alphaPlayer;
 
-    public AlphaPlayerEvent(@NotNull AlphaPlayer alphaPlayer) {
+    protected AlphaPlayerEvent(@NotNull AlphaPlayer alphaPlayer) {
         this.alphaPlayer = alphaPlayer;
     }
 
-    public AlphaPlayerEvent(@NotNull AlphaPlayer alphaPlayer, boolean async) {
+    protected AlphaPlayerEvent(@NotNull AlphaPlayer alphaPlayer, boolean async) {
         super(async);
         this.alphaPlayer = alphaPlayer;
     }

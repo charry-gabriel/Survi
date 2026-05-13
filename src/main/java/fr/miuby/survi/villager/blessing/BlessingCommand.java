@@ -1,5 +1,6 @@
 package fr.miuby.survi.villager.blessing;
 
+import com.mojang.brigadier.Command;
 import com.mojang.brigadier.arguments.FloatArgumentType;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
@@ -15,7 +16,6 @@ import io.papermc.paper.command.brigadier.CommandSourceStack;
 import io.papermc.paper.command.brigadier.Commands;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
-import org.bukkit.GameMode;
 
 import java.util.Arrays;
 
@@ -35,76 +35,55 @@ import java.util.Arrays;
  *   dispel                   — déclenche l'effet Dispel
  *   world_reset <worldName>  — reset un monde Multiverse (WILDERNESS | NETHER | END)
  */
+@SuppressWarnings({"java:S3516", "SameReturnValue"})
 public class BlessingCommand {
+    private static final String playerArgument = "player";
+    private static final String valueArgument = "value";
+
+    private BlessingCommand() {
+        /* This utility class should not be instantiated */
+    }
 
     public static LiteralArgumentBuilder<CommandSourceStack> createCommand() {
         return Commands.literal("blessing")
                 .requires(src -> src.getSender().hasPermission("survi.admin"))
-                .then(Commands.argument("player", AlphaPlayerArgument.alphaPlayer())
+                .then(Commands.argument(playerArgument, AlphaPlayerArgument.alphaPlayer())
 
                         // ── damage <float> ──────────────────────────────
                         .then(Commands.literal("damage")
-                                .then(Commands.argument("value", FloatArgumentType.floatArg(0.01f, 10f))
+                                .then(Commands.argument(valueArgument, FloatArgumentType.floatArg(0.01f, 10f))
                                         .executes(ctx -> {
-                                            AlphaPlayer target = AlphaPlayerArgument.getAlphaPlayer(ctx, "player");
-                                            float value = FloatArgumentType.getFloat(ctx, "value");
+                                            AlphaPlayer target = AlphaPlayerArgument.getAlphaPlayer(ctx, playerArgument);
+                                            float value = FloatArgumentType.getFloat(ctx, valueArgument);
                                             new DamageEffect(value).applyEffect(null, target);
                                             feedback(ctx, target, "Damage modifier → " + value);
-                                            return 1;
+                                            return Command.SINGLE_SUCCESS;
                                         })
                                 )
                         )
 
                         // ── resistance <float> ──────────────────────────
                         .then(Commands.literal("resistance")
-                                .then(Commands.argument("value", FloatArgumentType.floatArg(0.01f, 10f))
+                                .then(Commands.argument(valueArgument, FloatArgumentType.floatArg(0.01f, 10f))
                                         .executes(ctx -> {
-                                            AlphaPlayer target = AlphaPlayerArgument.getAlphaPlayer(ctx, "player");
-                                            float value = FloatArgumentType.getFloat(ctx, "value");
+                                            AlphaPlayer target = AlphaPlayerArgument.getAlphaPlayer(ctx, playerArgument);
+                                            float value = FloatArgumentType.getFloat(ctx, valueArgument);
                                             new ResistanceEffect(value).applyEffect(null, target);
                                             feedback(ctx, target, "Resistance modifier → " + value);
-                                            return 1;
+                                            return Command.SINGLE_SUCCESS;
                                         })
                                 )
                         )
 
                         // ── max_health <int> ────────────────────────────
                         .then(Commands.literal("max_health")
-                                .then(Commands.argument("value", IntegerArgumentType.integer(-20, 100))
+                                .then(Commands.argument(valueArgument, IntegerArgumentType.integer(-20, 100))
                                         .executes(ctx -> {
-                                            AlphaPlayer target = AlphaPlayerArgument.getAlphaPlayer(ctx, "player");
-                                            int value = IntegerArgumentType.getInteger(ctx, "value");
+                                            AlphaPlayer target = AlphaPlayerArgument.getAlphaPlayer(ctx, playerArgument);
+                                            int value = IntegerArgumentType.getInteger(ctx, valueArgument);
                                             new MaxHealthEffect(value).applyEffect(null, target);
                                             feedback(ctx, target, "Max health bonus → " + value);
-                                            return 1;
-                                        })
-                                )
-                        )
-
-                        // ── gamemode <mode> ─────────────────────────────
-                        .then(Commands.literal("gamemode")
-                                .then(Commands.argument("mode", StringArgumentType.word())
-                                        .suggests((ctx, builder) -> {
-                                            String rem = builder.getRemaining().toLowerCase();
-                                            Arrays.stream(new String[]{"survival", "creative", "adventure", "spectator"})
-                                                    .filter(s -> s.startsWith(rem))
-                                                    .forEach(builder::suggest);
-                                            return builder.buildFuture();
-                                        })
-                                        .executes(ctx -> {
-                                            AlphaPlayer target = AlphaPlayerArgument.getAlphaPlayer(ctx, "player");
-                                            String modeStr = StringArgumentType.getString(ctx, "mode");
-                                            GameMode mode;
-                                            try {
-                                                mode = GameMode.valueOf(modeStr.toUpperCase());
-                                            } catch (IllegalArgumentException e) {
-                                                ctx.getSource().getSender().sendMessage(
-                                                        Component.text("Mode invalide : " + modeStr, NamedTextColor.RED));
-                                                return 0;
-                                            }
-                                            new GameModeEffect(mode).applyEffect(null, target);
-                                            feedback(ctx, target, "GameMode → " + mode.name());
-                                            return 1;
+                                            return Command.SINGLE_SUCCESS;
                                         })
                                 )
                         )
@@ -114,11 +93,11 @@ public class BlessingCommand {
                         .then(Commands.literal("lock_world")
                                 .then(Commands.argument("world", WorldArgument.world())
                                         .executes(ctx -> {
-                                            AlphaPlayer target = AlphaPlayerArgument.getAlphaPlayer(ctx, "player");
+                                            AlphaPlayer target = AlphaPlayerArgument.getAlphaPlayer(ctx, playerArgument);
                                             MLWorld world = WorldArgument.getWorld(ctx, "world");
                                             new LockWorldEffect((EWorld) world.getType()).applyEffect(null, target);
                                             feedback(ctx, target, "Monde déverrouillé → " + world.getName());
-                                            return 1;
+                                            return Command.SINGLE_SUCCESS;
                                         })
                                 )
                         )
@@ -135,7 +114,7 @@ public class BlessingCommand {
                                             return builder.buildFuture();
                                         })
                                         .executes(ctx -> {
-                                            AlphaPlayer target = AlphaPlayerArgument.getAlphaPlayer(ctx, "player");
+                                            AlphaPlayer target = AlphaPlayerArgument.getAlphaPlayer(ctx, playerArgument);
                                             String typeStr = StringArgumentType.getString(ctx, "type").toUpperCase();
                                             LockedArmorType armorType;
                                             try {
@@ -147,7 +126,7 @@ public class BlessingCommand {
                                             }
                                             new UnlockArmorEffect(armorType).applyEffect(null, target);
                                             feedback(ctx, target, "Armure déverrouillée → " + armorType.name());
-                                            return 1;
+                                            return Command.SINGLE_SUCCESS;
                                         })
                                 )
                         )
@@ -164,7 +143,7 @@ public class BlessingCommand {
                                             return builder.buildFuture();
                                         })
                                         .executes(ctx -> {
-                                            AlphaPlayer target = AlphaPlayerArgument.getAlphaPlayer(ctx, "player");
+                                            AlphaPlayer target = AlphaPlayerArgument.getAlphaPlayer(ctx, playerArgument);
                                             String typeStr = StringArgumentType.getString(ctx, "type").toUpperCase();
                                             LockedToolType toolType;
                                             try {
@@ -176,7 +155,7 @@ public class BlessingCommand {
                                             }
                                             new UnlockToolEffect(toolType).applyEffect(null, target);
                                             feedback(ctx, target, "Outil déverrouillé → " + toolType.name());
-                                            return 1;
+                                            return Command.SINGLE_SUCCESS;
                                         })
                                 )
                         )
@@ -184,40 +163,40 @@ public class BlessingCommand {
                         // ── fly (pas de paramètre) ──────────────────────
                         .then(Commands.literal("fly")
                                 .executes(ctx -> {
-                                    AlphaPlayer target = AlphaPlayerArgument.getAlphaPlayer(ctx, "player");
+                                    AlphaPlayer target = AlphaPlayerArgument.getAlphaPlayer(ctx, playerArgument);
                                     new FlyEffect().applyEffect(null, target);
                                     feedback(ctx, target, "Vol activé");
-                                    return 1;
+                                    return Command.SINGLE_SUCCESS;
                                 })
                         )
 
                         // ── regen (pas de paramètre) ────────────────────
                         .then(Commands.literal("regen")
                                 .executes(ctx -> {
-                                    AlphaPlayer target = AlphaPlayerArgument.getAlphaPlayer(ctx, "player");
+                                    AlphaPlayer target = AlphaPlayerArgument.getAlphaPlayer(ctx, playerArgument);
                                     new RegenEffect().applyEffect(null, target);
                                     feedback(ctx, target, "Régénération naturelle activée en Wilderness");
-                                    return 1;
+                                    return Command.SINGLE_SUCCESS;
                                 })
                         )
 
                         // ── dispel (pas de paramètre) ───────────────────
                         .then(Commands.literal("dispel")
                                 .executes(ctx -> {
-                                    AlphaPlayer target = AlphaPlayerArgument.getAlphaPlayer(ctx, "player");
+                                    AlphaPlayer target = AlphaPlayerArgument.getAlphaPlayer(ctx, playerArgument);
                                     new DispelEffect(10).applyEffect(null, target);
                                     feedback(ctx, target, "Dispel appliqué");
-                                    return 1;
+                                    return Command.SINGLE_SUCCESS;
                                 })
                         )
 
                         // ── world_reset <monde> ─────────────────────────
                         .then(Commands.literal("world_reset")
                                 .executes(ctx -> {
-                                    AlphaPlayer target = AlphaPlayerArgument.getAlphaPlayer(ctx, "player");
+                                    AlphaPlayer target = AlphaPlayerArgument.getAlphaPlayer(ctx, playerArgument);
 
                                     new WorldResetEffect(1).applyEffect(null, target);
-                                    return 1;
+                                    return Command.SINGLE_SUCCESS;
                                 })
                         )
                 );

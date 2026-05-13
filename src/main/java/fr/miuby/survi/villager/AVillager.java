@@ -13,7 +13,7 @@ import org.jetbrains.annotations.Nullable;
 public abstract class AVillager extends MLVillager {
     protected final TextComponent[] messages;
 
-    public AVillager(String nameId, Villager.Type type, Villager.Profession profession, TextComponent[] messages) {
+    protected AVillager(String nameId, Villager.Type type, Villager.Profession profession, TextComponent[] messages) {
         super(nameId, type, profession);
 
         this.messages = messages;
