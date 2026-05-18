@@ -129,7 +129,7 @@ public class WorldResetManager {
         for (int h = 0; h <= 4; h++) {
             for (int w = -1; w <= 2; w++) {
                 boolean isBorder = (h == 0 || h == 4 || w == -1 || w == 2);
-                Material mat = isBorder ? Material.STONE_BRICKS : Material.GLASS;
+                Material mat = isBorder ? Material.STONE_BRICKS : Material.MAGENTA_STAINED_GLASS_PANE;
                 world.getBlockAt(bx + w, by + h, bz).setType(mat);
             }
         }

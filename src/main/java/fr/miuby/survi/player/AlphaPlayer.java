@@ -11,6 +11,7 @@ import fr.miuby.survi.system.log.LogManager;
 import fr.miuby.survi.world.EWorld;
 import fr.miuby.lib.world.MLWorld;
 import fr.miuby.survi.world.WorldInitializer;
+import fr.miuby.survi.world.WorldPortalManager;
 import lombok.Getter;
 import lombok.Setter;
 import net.kyori.adventure.text.Component;
@@ -151,6 +152,8 @@ public class AlphaPlayer extends MLPlayer implements Serializable {
         this.getAlphaLife().actualizeSuccess();
 
         this.player.discoverRecipes(GameManager.getInstance().getCustomRecipeFactory().getNewRecipes().keySet());
+
+        WorldPortalManager.getInstance().sendAllFakePortalBlocks(this.player);
 
         // Chargement réputation + quêtes
         this.reputationByTrader.putAll(GameManager.getInstance().getDatabase().quests().getReputation(this.getUuid()));

@@ -8,6 +8,7 @@ import org.bukkit.block.data.Orientable;
 import org.bukkit.entity.Player;
 
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
 import java.util.logging.Level;
 
 public class WorldPortalManager {
@@ -18,6 +19,9 @@ public class WorldPortalManager {
     private static final int VILLAGE_MAX_X = -49;    // ← à ajuster (+1 en X si orienté X)
     private static final int VILLAGE_MAX_Y = 165;   // ← à ajuster (min.Y + 2 pour 3 blocs haut)
     private static final int VILLAGE_MAX_Z = -18;    // ← à ajuster (même Z si orienté X)
+
+    /** Délai (ticks) après le chargement serveur des chunks pour laisser le client les recevoir. */
+    private static final long CLIENT_CHUNK_RECEIVE_DELAY = 20L;
 
     private static final String DB_KEY_WORLD  = "world_portal_wild_world";
     private static final String DB_KEY_MIN_X  = "world_portal_wild_min_x";
@@ -77,11 +81,8 @@ public class WorldPortalManager {
 
     /**
      * Enregistre la zone intérieure (blocs de verre) du portail Wilderness.
-     * Sauvegarde min et max en DB et envoie les faux blocs aux joueurs déjà présents.
-     *
-     * @param worldName nom du monde Wilderness nouvellement créé
-     * @param min       coin inférieur-gauche de l'intérieur (bloc le plus bas d'un côté)
-     * @param max       coin supérieur-droit de l'intérieur (bloc le plus haut de l'autre côté)
+     * Sauvegarde min et max en DB, puis envoie les faux blocs aux joueurs présents
+     * dans ce monde une fois les chunks chargés côté serveur et client.
      */
     public void registerWildernessPortal(String worldName, Location min, Location max) {
         portalZones.put(worldName, new Location[]{ min.clone(), max.clone() });
@@ -89,7 +90,7 @@ public class WorldPortalManager {
 
         World world = Bukkit.getWorld(worldName);
         if (world != null) {
-            world.getPlayers().forEach(p -> sendFakePortalBlocks(p, min, max));
+            world.getPlayers().forEach(p -> sendFakePortalBlocksAsync(p, min, max));
         }
 
         LogManager.getInstance().log(Level.INFO, LogManager.ETagLog.WORLD,
@@ -104,25 +105,75 @@ public class WorldPortalManager {
     }
 
     // -------------------------------------------------------------------------
-    // Envoi des faux blocs NETHER_PORTAL au client
+    // Point d'entrée unique : connexion ou changement de monde
     // -------------------------------------------------------------------------
 
+    /**
+     * À appeler depuis {@code PlayerJoinEvent} ET {@code PlayerChangedWorldEvent}.
+     * Charge les chunks du portail côté serveur si nécessaire, attend que le client
+     * les ait reçus, puis envoie les faux blocs NETHER_PORTAL.
+     */
     public void sendFakePortalBlocksIfNeeded(Player player) {
         Location[] zone = portalZones.get(player.getWorld().getName());
         if (zone == null) return;
-        sendFakePortalBlocks(player, zone[0], zone[1]);
+
+        sendFakePortalBlocksAsync(player, zone[0], zone[1]);
     }
 
+    public void sendAllFakePortalBlocks(Player player) {
+        portalZones.values().forEach(zone -> sendFakePortalBlocksAsync(player, zone[0], zone[1]));
+    }
+
+    // -------------------------------------------------------------------------
+    // Envoi async : chargement chunk serveur → délai client → sendBlockChange
+    // -------------------------------------------------------------------------
+
     /**
-     * Envoie les faux blocs {@code NETHER_PORTAL} pour tous les blocs intérieurs
-     * compris entre {@code min} et {@code max} (inclus).
+     * Charge en async tous les chunks couvrant la zone [min, max] du portail,
+     * puis attend {@link #CLIENT_CHUNK_RECEIVE_DELAY} ticks pour laisser le client
+     * recevoir les chunks, puis envoie les faux blocs NETHER_PORTAL au joueur.
      *
-     * L'axe est déduit automatiquement :
-     * <ul>
-     *   <li>même Z ({@code min.Z == max.Z}) → {@code Axis.X}</li>
-     *   <li>même X ({@code min.X == max.X}) → {@code Axis.Z}</li>
-     * </ul>
+     * <p>Deux étapes garantissent que {@code sendBlockChange} arrive après que
+     * le client a le chunk en mémoire :</p>
+     * <ol>
+     *   <li>Chargement async serveur (world.getChunkAtAsync)</li>
+     *   <li>Délai réseau client (CLIENT_CHUNK_RECEIVE_DELAY ticks)</li>
+     * </ol>
      */
+    private void sendFakePortalBlocksAsync(Player player, Location min, Location max) {
+        World world = min.getWorld();
+        if (world == null) return;
+
+        int minCX = Math.min(min.getBlockX(), max.getBlockX()) >> 4;
+        int maxCX = Math.max(min.getBlockX(), max.getBlockX()) >> 4;
+        int minCZ = Math.min(min.getBlockZ(), max.getBlockZ()) >> 4;
+        int maxCZ = Math.max(min.getBlockZ(), max.getBlockZ()) >> 4;
+
+        List<CompletableFuture<Chunk>> futures = new ArrayList<>();
+        for (int cx = minCX; cx <= maxCX; cx++) {
+            for (int cz = minCZ; cz <= maxCZ; cz++) {
+                futures.add(world.getChunkAtAsync(cx, cz));
+            }
+        }
+
+        // Étape 1 : attendre que tous les chunks soient chargés côté serveur
+        CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).thenRun(() ->
+                // Étape 2 : petit délai pour que le client reçoive les chunks via réseau
+                Bukkit.getScheduler().runTaskLater(GameManager.getInstance().getPlugin(), () -> {
+                    if (!player.isOnline()) return;
+                    if (!player.getWorld().equals(world)) return; // changement de monde entre-temps
+
+                    LogManager.getInstance().log(Level.INFO, LogManager.ETagLog.WORLD,
+                            "Envoi faux blocs portail à " + player.getName() + " dans " + world.getName());
+                    sendFakePortalBlocks(player, min, max);
+                }, CLIENT_CHUNK_RECEIVE_DELAY)
+        );
+    }
+
+    // -------------------------------------------------------------------------
+    // Envoi bas niveau
+    // -------------------------------------------------------------------------
+
     public void sendFakePortalBlocks(Player player, Location min, Location max) {
         Axis axis = detectAxis(min, max);
 
@@ -136,16 +187,16 @@ public class WorldPortalManager {
         int minZ = Math.min(min.getBlockZ(), max.getBlockZ());
         int maxZ = Math.max(min.getBlockZ(), max.getBlockZ());
 
-        Bukkit.getScheduler().runTaskLater(GameManager.getInstance().getPlugin(), () -> {
-                World world = min.getWorld();
-                for (int x = minX; x <= maxX; x++) {
-                    for (int y = minY; y <= maxY; y++) {
-                        for (int z = minZ; z <= maxZ; z++) {
-                            player.sendBlockChange(new Location(world, x, y, z), fakePortal);
-                        }
-                    }
+        World world = min.getWorld();
+        for (int x = minX; x <= maxX; x++) {
+            for (int y = minY; y <= maxY; y++) {
+                for (int z = minZ; z <= maxZ; z++) {
+                    player.sendBlockChange(new Location(world, x, y, z), fakePortal);
+                    LogManager.getInstance().log(Level.INFO, LogManager.ETagLog.WORLD,
+                            world.getName() + " : " + x + "," + y + "," + z + " -> FAKE_NETHER_PORTAL");
                 }
-        }, 10L); // 2 ticks, suffisent généralement
+            }
+        }
     }
 
     // -------------------------------------------------------------------------
@@ -172,28 +223,12 @@ public class WorldPortalManager {
     // Helpers
     // -------------------------------------------------------------------------
 
-    /**
-     * Détermine l'axe du portail depuis les deux coins de l'intérieur.
-     * <ul>
-     *   <li>Si {@code min.Z == max.Z} → le portail s'étend en X → {@code Axis.X}</li>
-     *   <li>Si {@code min.X == max.X} → le portail s'étend en Z → {@code Axis.Z}</li>
-     * </ul>
-     * Par défaut retourne {@code Axis.X} si les deux coordonnées diffèrent.
-     */
     private Axis detectAxis(Location min, Location max) {
         if (min.getBlockZ() == max.getBlockZ()) return Axis.X;
         if (min.getBlockX() == max.getBlockX()) return Axis.Z;
-        return Axis.X; // fallback
+        return Axis.X;
     }
 
-    /**
-     * Vérifie si le joueur est dans la zone de déclenchement du portail.
-     *
-     * La zone est légèrement élargie sur l'axe d'entrée (±1.2) pour déclencher
-     * la téléportation avant que le joueur ne soit bloqué par le verre.
-     * Sur l'axe de la largeur (axe du portail), la zone est ±0.9 pour rester
-     * dans le cadre sans déborder sur les montants.
-     */
     private boolean isInPortalZone(Location loc, Location min, Location max) {
         int minX = Math.min(min.getBlockX(), max.getBlockX());
         int maxX = Math.max(min.getBlockX(), max.getBlockX());
@@ -203,17 +238,13 @@ public class WorldPortalManager {
         int maxZ = Math.max(min.getBlockZ(), max.getBlockZ());
 
         Axis axis = detectAxis(min, max);
-
-        // Tolérance sur Y : +1 pour le demi-bloc du joueur qui entre par le bas
         boolean inY = loc.getY() >= minY && loc.getY() < maxY + 1.0;
 
         if (axis == Axis.X) {
-            // Portail en X : on entre par Z → tolérance élargie en Z, serrée en X
             boolean inX = loc.getX() >= minX - 0.9 && loc.getX() <= maxX + 1.9;
             boolean inZ = loc.getZ() >= minZ - 1.2 && loc.getZ() <= maxZ + 1.2;
             return inX && inY && inZ;
         } else {
-            // Portail en Z : on entre par X → tolérance élargie en X, serrée en Z
             boolean inX = loc.getX() >= minX - 1.2 && loc.getX() <= maxX + 1.2;
             boolean inZ = loc.getZ() >= minZ - 0.9 && loc.getZ() <= maxZ + 1.9;
             return inX && inY && inZ;
@@ -233,7 +264,6 @@ public class WorldPortalManager {
         player.teleport(mlWorld.getWorld().getSpawnLocation());
         player.sendMessage(message);
 
-        // Lever le cooldown après 1 s pour éviter le re-déclenchement immédiat à l'arrivée
         Bukkit.getScheduler().runTaskLater(GameManager.getInstance().getPlugin(), () -> teleporting.remove(player.getUniqueId()), 20L);
     }
 
@@ -251,14 +281,17 @@ public class WorldPortalManager {
         String sMaxY = db.getServerData(DB_KEY_MAX_Y);
         String sMaxZ = db.getServerData(DB_KEY_MAX_Z);
 
-        if (worldName == null || sMinX == null || sMinY == null || sMinZ == null || sMaxX == null || sMaxY == null || sMaxZ == null) {
-            LogManager.getInstance().log(Level.INFO, LogManager.ETagLog.WORLD, "Aucun portail Wilderness en DB (premier démarrage ou avant le 1er reset).");
+        if (worldName == null || sMinX == null || sMinY == null || sMinZ == null
+                || sMaxX == null || sMaxY == null || sMaxZ == null) {
+            LogManager.getInstance().log(Level.INFO, LogManager.ETagLog.WORLD,
+                    "Aucun portail Wilderness en DB (premier démarrage ou avant le 1er reset).");
             return;
         }
 
         World world = Bukkit.getWorld(worldName);
         if (world == null) {
-            LogManager.getInstance().log(Level.WARNING, LogManager.ETagLog.WORLD, "loadWildernessPortalFromDB : monde introuvable → " + worldName);
+            LogManager.getInstance().log(Level.WARNING, LogManager.ETagLog.WORLD,
+                    "loadWildernessPortalFromDB : monde introuvable → " + worldName);
             return;
         }
 
