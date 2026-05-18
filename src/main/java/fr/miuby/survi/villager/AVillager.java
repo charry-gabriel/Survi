@@ -3,6 +3,7 @@ package fr.miuby.survi.villager;
 import fr.miuby.lib.villager.MLVillager;
 import fr.miuby.lib.villager.MLVillagerData;
 import fr.miuby.survi.GameManager;
+import fr.miuby.survi.villager.villagerlevel.AlphaVillagerData;
 import fr.miuby.survi.world.WorldInitializer;
 import net.kyori.adventure.text.TextComponent;
 import org.bukkit.Location;

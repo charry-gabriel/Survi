@@ -12,7 +12,7 @@ import fr.miuby.survi.role.RoleCommand;
 import fr.miuby.survi.system.command.SystemCommand;
 import fr.miuby.survi.system.time.TimeManager;
 import fr.miuby.survi.villager.VillagerCommand;
-import fr.miuby.survi.villager.blessing.BlessingCommand;
+import fr.miuby.survi.villager.villagerlevel.blessing.BlessingCommand;
 import fr.miuby.survi.world.WorldCommand;
 import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
 import org.bukkit.plugin.PluginManager;
@@ -73,6 +73,11 @@ public class Survi extends JavaPlugin {
         for (String path : villagerFiles) {
             YmlResourceManager.update(this, path);
         }
+
+        String[] traderFiles = getTraderResourcePaths();
+        for (String path : traderFiles) {
+            YmlResourceManager.update(this, path);
+        }
     }
 
     private String[] getVillagerResourcePaths() {
@@ -82,6 +87,13 @@ public class Survi extends JavaPlugin {
                 "villagers/maddox.yml",
                 "villagers/thomas.yml",
                 "villagers/francois.yml",
+        };
+    }
+
+    private String[] getTraderResourcePaths() {
+        return new String[]{
+                "traders/barman.yml",
+                "traders/goldroger.yml",
         };
     }
 }

@@ -1,3 +1,4 @@
+# yaml-language-server: $schema=./schema/recipes-schema.json
 # Custom recipes for Survi plugin
 # --------------------------------------------------
 # new_recipes: map whose key is the custom namespaced key (without namespace)

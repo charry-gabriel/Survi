@@ -8,17 +8,18 @@ import fr.miuby.survi.quest.PlayerQuestData;
 import fr.miuby.survi.quest.QuestManager;
 import fr.miuby.survi.system.log.LogManager;
 import fr.miuby.survi.villager.AVillager;
-import fr.miuby.survi.villager.Trader;
-import fr.miuby.survi.villager.VillagerLevel;
+import fr.miuby.survi.villager.trader.Trader;
+import fr.miuby.survi.villager.villagerlevel.VillagerLevel;
 import fr.miuby.survi.villager.VillagerPostLoadActions;
-import fr.miuby.survi.villager.blessing.BlessingEffect;
-import fr.miuby.survi.villager.event.VillagerLevelUpEvent;
+import fr.miuby.survi.villager.villagerlevel.blessing.BlessingEffect;
+import fr.miuby.survi.villager.villagerlevel.event.VillagerLevelUpEvent;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.sound.Sound;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.event.HoverEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -28,6 +29,8 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.inventory.MenuType;
 
+import org.bukkit.inventory.MerchantRecipe;
+import java.util.List;
 import java.util.logging.Level;
 
 public class VillagerListener implements Listener {
@@ -44,7 +47,8 @@ public class VillagerListener implements Listener {
             switch (aVillager) {
                 case VillagerLevel level when level.getTribute() == null || !level.isUnlocked() -> {
                     player.sendMessage(Component.text("<", NamedTextColor.AQUA).append(level.getDisplayName()).append(Component.text("> ", NamedTextColor.AQUA)).append(level.getMessage()));
-                    player.sendMessage("§e" + villager.getName() + " §eest indisponible pendant encore " + level.getRemainingLock());
+                    if (!level.isUnlocked())
+                        player.sendMessage("§e" + villager.getName() + " §eest indisponible pendant encore " + level.getRemainingLock());
                     event.setCancelled(true);
                 }
                 case VillagerLevel level -> {
@@ -82,7 +86,8 @@ public class VillagerListener implements Listener {
 
                     // Update recipes based on reputation
                     int reputation = alphaPlayer.getReputation(trader.getNameId());
-                    trader.getVillager().setRecipes(trader.getRecipesForPlayer(reputation));
+                    List<MerchantRecipe> recipes = trader.getRecipesForPlayer(reputation);
+                    trader.getVillager().setRecipes(recipes);
 
                     player.openInventory(MenuType.MERCHANT.builder().merchant(trader.getVillager()).title(trader.getDisplayName()).build(player));
 
@@ -111,11 +116,15 @@ public class VillagerListener implements Listener {
     @EventHandler
     public void onVillagerLevelUp(VillagerLevelUpEvent event) {
         VillagerLevel villager = event.getVillagerLevel();
-        Bukkit.broadcast(Component.text("<", NamedTextColor.AQUA)
-                .append(villager.getDisplayName())
-                .append(Component.text("> ", NamedTextColor.AQUA))
-                .append(villager.getRecapMessage())
-        );
+        Component message = villager.getMessage();
+
+        if (message != null && !PlainTextComponentSerializer.plainText().serialize(message).isBlank()) {
+            Bukkit.broadcast(Component.text("<", NamedTextColor.AQUA)
+                    .append(villager.getDisplayName())
+                    .append(Component.text("> ", NamedTextColor.AQUA))
+                    .append(message)
+            );
+        }
 
         Sound myCustomSound = Sound.sound(Key.key("ui.toast.challenge_complete"), Sound.Source.AMBIENT, 1f, 1.1f);
 

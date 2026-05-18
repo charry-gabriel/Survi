@@ -3,7 +3,7 @@ package fr.miuby.survi.quest;
 import fr.miuby.survi.GameManager;
 import fr.miuby.survi.player.AlphaPlayer;
 import fr.miuby.survi.system.log.LogManager;
-import fr.miuby.survi.villager.Trader;
+import fr.miuby.survi.villager.trader.Trader;
 import lombok.Getter;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;

@@ -1,0 +1,34 @@
+# yaml-language-server: $schema=../schema/traders-schema.json
+nameId: "GoldRoger"
+displayName: "Gol D. Roger"
+type: SAVANNA
+profession: WEAPONSMITH
+job: PECHEUR
+openMessage: "Veux-tu une belle canne à pêche ?"
+mainHandItem: FISHING_ROD
+
+recipes:
+  - result:
+      customItem: FISHING_D_ROD
+    ingredient:
+      material: EMERALD_BLOCK
+      amount: 9
+    message: "Voici une canne à pêche !"
+
+  - result:
+      material: NAUTILUS_SHELL
+      amount: 1
+    ingredient:
+      material: DIAMOND
+      amount: 2
+    message: "Un souvenir des profondeurs pour un marin d'exception."
+    requiredReputation: 20
+
+  - result:
+      material: HEART_OF_THE_SEA
+      amount: 1
+    ingredient:
+      material: DIAMOND
+      amount: 10
+    message: "Le trésor ultime de l'océan, entre tes mains !"
+    requiredReputation: 50

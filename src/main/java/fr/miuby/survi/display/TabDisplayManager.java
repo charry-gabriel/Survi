@@ -7,7 +7,7 @@ import fr.miuby.survi.player.AlphaPlayer;
 import fr.miuby.survi.quest.PlayerQuestData;
 import fr.miuby.survi.quest.Quest;
 import fr.miuby.survi.quest.QuestManager;
-import fr.miuby.survi.villager.VillagerLevel;
+import fr.miuby.survi.villager.villagerlevel.VillagerLevel;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;

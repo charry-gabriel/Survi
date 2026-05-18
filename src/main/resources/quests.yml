@@ -1,3 +1,4 @@
+# yaml-language-server: $schema=./schema/quests.schema.json
 quests:
 
   # ─────────────────── COMMON (17 quêtes) ───────────────────

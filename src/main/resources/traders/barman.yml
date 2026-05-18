@@ -1,0 +1,69 @@
+# yaml-language-server: $schema=../schema/traders-schema.json
+nameId: "Barman"
+displayName: "Fruity Délice"
+type: SAVANNA
+profession: FLETCHER
+job: ALCHIMISTE
+questDifficulty: COMMON
+openMessage: >
+  Bonjour, bienvenue au bar du Merveilleux Royal Bling-Bling Sexy-Baka Palace-Hôtel.
+  A la carte, nous proposons différents cocktails élaborés avec amour, tendresse et voluptuosité:
+  le Sex On the Beach, le Porn Star Martini, et notre fameux Shooter Orgasm.
+  D'autre part, je peux aussi proposer un Spicy Sweet Dreams Ticket si vous le désirez !
+mainHandItem: POTION
+
+recipes:
+  - result:
+      customItem: SEX_ON_THE_BEACH
+    ingredient:
+      material: GOLD_INGOT
+      amount: 10
+    message: "Très bon choix! Rendez-vous à minuit au casino au premier étage pour y admirer ces délicieuses peintures. Les dés sont lancés, puisse le sort et votre rencontre vous être favorables: votre regard sur votre voisin de la chambre 32, ou votre impression sur votre voisine du 2ième risque d'être chamboulés …"
+
+  - result:
+      customItem: PORN_STAR_MARTINI
+    ingredient:
+      material: DIAMOND
+      amount: 4
+    message: "Très bon choix! Rendez-vous à minuit au casino au premier étage pour y admirer ces délicieuses peintures. Les dés sont lancés, puisse le sort et votre rencontre vous être favorables: votre regard sur votre voisin de la chambre 32, ou votre impression sur votre voisine du 2ième risque d'être chamboulés …"
+
+  - result:
+      customItem: SHOOTER_ORGASM
+    ingredient:
+      material: GOLD_BLOCK
+      amount: 8
+    message: "Très bon choix! Rendez-vous à minuit au casino au premier étage pour y admirer ces délicieuses peintures. Les dés sont lancés, puisse le sort et votre rencontre vous être favorables: votre regard sur votre voisin de la chambre 32, ou votre impression sur votre voisine du 2ième risque d'être chamboulés …"
+
+  - result:
+      customItem: SPICY_SWEET_DREAMS_TICKET
+    ingredient:
+      material: EMERALD
+      amount: 1
+    message: "Très bon choix! Rendez-vous à minuit au casino au premier étage pour y admirer ces délicieuses peintures. Les dés sont lancés, puisse le sort et votre rencontre vous être favorables: votre regard sur votre voisin de la chambre 32, ou votre impression sur votre voisine du 2ième risque d'être chamboulés …"
+
+  - result:
+      material: DRAGON_BREATH
+      amount: 1
+    ingredient:
+      material: DIAMOND
+      amount: 5
+    message: ""
+    requiredReputation: 50
+
+  - result:
+      material: GLISTERING_MELON_SLICE
+      amount: 4
+    ingredient:
+      material: GOLD_INGOT
+      amount: 1
+    message: "Pour décorer vos verres, monsieur."
+    requiredReputation: 10
+
+  - result:
+      material: GHAST_TEAR
+      amount: 1
+    ingredient:
+      material: DIAMOND
+      amount: 2
+    message: "Un ingrédient rare pour un cocktail... percutant."
+    requiredReputation: 30

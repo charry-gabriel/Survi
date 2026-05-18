@@ -1,3 +1,4 @@
+# yaml-language-server: $schema=../schema/villagers-schema.json
 name: "Nain"
 type: SWAMP
 profession: NITWIT

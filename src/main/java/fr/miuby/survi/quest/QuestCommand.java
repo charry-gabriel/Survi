@@ -6,7 +6,7 @@ import com.mojang.brigadier.context.CommandContext;
 import fr.miuby.survi.player.AlphaPlayer;
 import fr.miuby.survi.system.command.argument.AlphaPlayerArgument;
 import fr.miuby.survi.system.command.argument.TraderArgument;
-import fr.miuby.survi.villager.Trader;
+import fr.miuby.survi.villager.trader.Trader;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
 import io.papermc.paper.command.brigadier.Commands;
 import net.kyori.adventure.text.Component;

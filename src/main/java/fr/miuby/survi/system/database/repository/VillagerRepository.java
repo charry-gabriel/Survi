@@ -3,7 +3,7 @@ package fr.miuby.survi.system.database.repository;
 import fr.miuby.lib.world.WorldRegistry;
 import fr.miuby.survi.GameManager;
 import fr.miuby.survi.system.log.LogManager;
-import fr.miuby.survi.villager.AlphaVillagerData;
+import fr.miuby.survi.villager.villagerlevel.AlphaVillagerData;
 import fr.miuby.survi.world.EWorld;
 import org.bukkit.Location;
 import org.bukkit.inventory.ItemStack;

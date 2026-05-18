@@ -9,7 +9,7 @@ import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 import fr.miuby.lib.villager.MLVillager;
 import fr.miuby.lib.villager.VillagerRegistry;
 import fr.miuby.survi.system.command.CommandErrors;
-import fr.miuby.survi.villager.Trader;
+import fr.miuby.survi.villager.trader.Trader;
 import io.papermc.paper.command.brigadier.argument.CustomArgumentType;
 import org.jspecify.annotations.NonNull;
 

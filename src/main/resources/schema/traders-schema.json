@@ -1,17 +1,18 @@
-{
+﻿{
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "title": "VillagerConfig",
+  "title": "TraderConfig",
   "type": "object",
   "required": [
-    "name",
+    "nameId",
+    "displayName",
     "type",
     "profession",
-    "levels"
+    "openMessage",
+    "recipes"
   ],
   "properties": {
-    "name": {
-      "type": "string"
-    },
+    "nameId": { "type": "string" },
+    "displayName": { "type": "string" },
     "type": {
       "type": "string",
       "enum": [
@@ -44,33 +45,40 @@
         "WEAPONSMITH"
       ]
     },
-    "openMessage": {
+    "job": {
+      "type": "string",
+      "enum": [
+        "MINEUR",
+        "FERMIER",
+        "COMBATANT",
+        "ALCHIMISTE",
+        "ENCHANTEUR",
+        "FORGERON",
+        "PECHEUR",
+        "CHASSEUR",
+        "MARCHAND",
+        "AVENTURIER",
+        "BATISSEUR"
+      ]
+    },
+    "questDifficulty": {
+      "type": "string",
+      "enum": ["COMMON", "RARE", "LEGENDARY"]
+    },
+    "openMessage": { "type": "string" },
+    "mainHandItem": {
       "type": "string"
     },
-    "levels": {
+    "recipes": {
       "type": "array",
       "items": {
         "type": "object",
-        "required": [
-          "name",
-          "message",
-          "recap",
-          "tribute"
-        ],
+        "required": ["result", "ingredient"],
         "properties": {
-          "name": {
-            "type": "string"
-          },
-          "message": {
-            "type": "string"
-          },
-          "recap": {
-            "type": "string"
-          },
-          "tribute": {
-            "type": "array",
-            "items": { "$ref": "#/definitions/item" }
-          }
+          "result": { "$ref": "#/definitions/item" },
+          "ingredient": { "$ref": "#/definitions/item" },
+          "message": { "type": "string" },
+          "requiredReputation": { "type": "integer", "minimum": 0 }
         }
       }
     }

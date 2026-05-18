@@ -1,6 +1,6 @@
 package fr.miuby.survi;
 
-import fr.miuby.survi.villager.LevelConfig;
+import fr.miuby.survi.villager.villagerlevel.VillagerLevelConfig;
 import fr.miuby.survi.villager.VillagerConfig;
 import org.junit.jupiter.api.Test;
 import org.yaml.snakeyaml.LoaderOptions;
@@ -13,10 +13,10 @@ import java.io.InputStream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class VillagerConfigTest {
+class VillagerConfigTest {
 
     @Test
-    public void testAllVillagerConfigs() {
+    void testAllVillagerConfigs() {
         File folder = new File("src/main/resources/villagers");
         assertTrue(folder.exists(), "Le dossier villagers/ est introuvable");
 
@@ -37,7 +37,7 @@ public class VillagerConfigTest {
                 assertNotNull(config.levels, "levels manquant dans " + file.getName());
 
                 for (int i = 0; i < config.levels.size(); i++) {
-                    LevelConfig level = config.levels.get(i);
+                    VillagerLevelConfig level = config.levels.get(i);
                     assertStringNotEmpty(level.name, file.getName() + " : level[" + i + "] name manquant");
                     assertNotNull(level.message, file.getName() + " : level[" + i + "] message manquant");
                     assertNotNull(level.recap, file.getName() + " : level[" + i + "] recap manquant");

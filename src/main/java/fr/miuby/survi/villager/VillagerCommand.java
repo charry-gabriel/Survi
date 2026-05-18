@@ -8,6 +8,8 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import fr.miuby.survi.GameManager;
 import fr.miuby.survi.system.command.CommandErrors;
 import fr.miuby.survi.system.command.argument.VillagerArgument;
+import fr.miuby.survi.villager.trader.Trader;
+import fr.miuby.survi.villager.villagerlevel.VillagerLevel;
 import fr.miuby.survi.world.WorldInitializer;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
 import io.papermc.paper.command.brigadier.Commands;
