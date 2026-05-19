@@ -1,11 +1,13 @@
 package fr.miuby.survi.listener;
 
 import com.destroystokyo.paper.event.player.PlayerArmorChangeEvent;
+import fr.miuby.lib.world.MLWorld;
 import fr.miuby.lib.world.WorldRegistry;
 import fr.miuby.survi.GameManager;
 import fr.miuby.survi.player.AlphaPlayer;
 import fr.miuby.survi.role.RoleAttribute;
 import fr.miuby.survi.world.EWorld;
+import fr.miuby.survi.world.VillageZoneManager;
 import io.papermc.paper.advancement.AdvancementDisplay;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -13,6 +15,7 @@ import fr.miuby.survi.quest.PlayerQuestData;
 import fr.miuby.survi.quest.Quest;
 import fr.miuby.survi.quest.QuestManager;
 
+import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
 import org.bukkit.advancement.Advancement;
 import org.bukkit.advancement.AdvancementProgress;
@@ -27,15 +30,52 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 public class PlayerListener implements Listener {
 
+    /** Cooldown d'avertissement "limite du village" par joueur (évite le spam, en ms). */
+    private static final long WARN_COOLDOWN_MS = 6_000L;
+    private final Map<UUID, Long> lastWarnTime = new HashMap<>();
+
     @EventHandler
     public void onPlayerMove(PlayerMoveEvent event) {
-        if ((WorldRegistry.get(EWorld.VILLAGE).isPlayerOutOfLimit(event.getPlayer()) || WorldRegistry.get(EWorld.WILDERNESS).isPlayerOutOfLimit(event.getPlayer())) && !event.getPlayer().isOp()) {
-            AlphaPlayer.get(event.getPlayer().getUniqueId()).teleport(WorldRegistry.get(EWorld.VILLAGE));
-            event.getPlayer().sendMessage(Component.text("Ne sors pas des limites, c'est dangereux !", NamedTextColor.RED));
+        Player player = event.getPlayer();
+
+        if (player.isOp() || !event.hasChangedPosition())
+            return;
+
+        String worldName = player.getWorld().getName();
+        MLWorld villageWorld = WorldRegistry.get(EWorld.VILLAGE);
+        MLWorld wildernessWorld = WorldRegistry.get(EWorld.WILDERNESS);
+
+        if ((worldName.equals(villageWorld.getName()) && VillageZoneManager.getInstance().isLocationOutOfBounds(event.getTo()))
+            || (worldName.equals(wildernessWorld.getName()) && wildernessWorld.isPlayerOutOfLimit(player))) {
+                blockMovement(event);
+                warn(player);
+        }
+    }
+
+    private void blockMovement(PlayerMoveEvent event) {
+        Location from = event.getFrom();
+
+        Location blocked = event.getTo().clone();
+        blocked.setX(from.getX());
+        blocked.setZ(from.getZ());
+
+        event.setTo(blocked);
+    }
+
+    private void warn(Player player) {
+        long now = System.currentTimeMillis();
+
+        if (now - lastWarnTime.getOrDefault(player.getUniqueId(), 0L) >= WARN_COOLDOWN_MS) {
+            lastWarnTime.put(player.getUniqueId(), now);
+
+            player.sendMessage(Component.text("Tu ne peux pas aller plus loin !", NamedTextColor.RED));
         }
     }
 

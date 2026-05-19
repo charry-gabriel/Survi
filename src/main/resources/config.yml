@@ -92,3 +92,64 @@ world-level:
       max: 30
       per-level-gain: 1
     # rare = 100 − common − legendary (calculé automatiquement, non configurable)
+
+# ─── Zone Village ────────────────────────────────────────────────────────────────
+village-zone:
+  # Centre du village (coordonnées XZ). Le rayon est mesuré depuis ce point.
+  center:
+    x: 0
+    z: 0
+
+  # Paliers de zone — triés par after-hours croissant.
+  # after-hours : nombre d'heures réelles après le début de partie
+  # radius       : rayon autorisé en blocs (horizontal, XZ)
+  # portal       : coordonnées intérieures (fakeblocks) du portail Village pour ce palier
+  #                min-x/y/z → max-x/y/z  (identique à la convention Wilderness)
+  stages:
+    - after-hours: 0
+      radius: 10
+      spawn:
+        x: 0
+        y: 64
+        z: 0
+        yaw: 0.0
+        pitch: 0.0
+      portal:
+        min-x: -5
+        min-y: 62
+        min-z: -5
+        max-x: -5
+        max-y: 64
+        max-z: -7
+
+    - after-hours: 0.5       # après 1 h de jeu réel
+      radius: 50
+      spawn:
+        x: 10
+        y: 64
+        z: 10
+        yaw: 0.0
+        pitch: 0.0
+      portal:
+        min-x: -20
+        min-y: 62
+        min-z: -20
+        max-x: -20
+        max-y: 64
+        max-z: -22
+
+    - after-hours: 24      # après 24 h de jeu réel
+      radius: 200
+      spawn:
+        x: 30
+        y: 64
+        z: 30
+        yaw: 0.0
+        pitch: 0.0
+      portal:
+        min-x: -80
+        min-y: 62
+        min-z: -80
+        max-x: -80
+        max-y: 64
+        max-z: -82

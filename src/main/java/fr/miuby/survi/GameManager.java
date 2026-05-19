@@ -15,6 +15,7 @@ import fr.miuby.survi.role.RoleRegistry;
 import fr.miuby.survi.system.time.TimeManager;
 import fr.miuby.survi.villager.VillagerFactory;
 import fr.miuby.survi.world.WorldPortalManager;
+import fr.miuby.survi.world.VillageZoneManager;
 import fr.miuby.survi.system.WorldLevelManager;
 import fr.miuby.survi.system.SurviConfig;
 import fr.miuby.survi.world.WorldInitializer;
@@ -101,6 +102,7 @@ public class GameManager {
         WorldLevelManager.getInstance().load();
 
         WorldPortalManager.getInstance().init();
+        VillageZoneManager.getInstance().init();
 
         LogManager.getInstance().log(Level.INFO, LogManager.ETagLog.PLAYER, "Initialisation des joueurs...");
         this.initPlayers();

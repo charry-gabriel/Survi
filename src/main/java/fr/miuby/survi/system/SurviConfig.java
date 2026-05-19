@@ -33,6 +33,29 @@ public class SurviConfig {
     public record RankEntry(String id, int threshold, String display) {}
     public record JobLevelEntry(int threshold, String name) {}
 
+    /** Coordonnées du portail village pour un palier donné. */
+    public record VillageZonePortal(int minX, int minY, int minZ, int maxX, int maxY, int maxZ) {}
+
+    /** Spawn du village pour un palier donné. */
+    public record VillageZoneSpawn(int x, int y, int z, float yaw, float pitch) {}
+
+    /**
+     * Un palier de zone village.
+     * @param afterHours Nombre d'heures réelles après le début de partie à partir duquel ce palier s'active.
+     * @param radius     Rayon autorisé en blocs depuis le centre.
+     * @param spawn      Point de spawn du village pour ce palier.
+     * @param portal     Position du portail village pour ce palier.
+     */
+    public record VillageZoneStage(float afterHours, int radius, VillageZoneSpawn spawn, VillageZonePortal portal) {}
+
+    /**
+     * Configuration complète de la zone village.
+     * @param centerX Coordonnée X du centre du village.
+     * @param centerZ Coordonnée Z du centre du village.
+     * @param stages  Liste des paliers triés par {@code afterHours} croissant.
+     */
+    public record VillageZoneConfig(int centerX, int centerZ, List<VillageZoneStage> stages) {}
+
     // ─── Champs ──────────────────────────────────────────────────────────────────
 
     @Getter private int sunriseHour;
@@ -60,6 +83,8 @@ public class SurviConfig {
     @Getter private int questLegendaryBase;
     @Getter private int questLegendaryMax;
     @Getter private int questLegendaryPerLevelGain;
+
+    @Getter private VillageZoneConfig villageZoneConfig;
 
     // ─── Initialisation ──────────────────────────────────────────────────────────
 
@@ -118,8 +143,50 @@ public class SurviConfig {
 
         GlobalRank.initFromConfig(this);
 
+        // ─── Zone Village ────────────────────────────────────────────────────────────
+        int centerX = cfg.getInt("village-zone.center.x", 0);
+        int centerZ = cfg.getInt("village-zone.center.z", 0);
+
+        List<VillageZoneStage> zoneStages = new ArrayList<>();
+        List<?> rawStages = cfg.getList("village-zone.stages");
+        if (rawStages != null) {
+            for (Object obj : rawStages) {
+                if (obj instanceof java.util.Map<?, ?> stageMap) {
+                    float afterHours = ((Number) stageMap.get("after-hours")).floatValue();
+                    int  radius     = ((Number) stageMap.get("radius")).intValue();
+
+                    @SuppressWarnings("unchecked")
+                    java.util.Map<String, Object> spawnMap =
+                            (java.util.Map<String, Object>) stageMap.get("spawn");
+                    VillageZoneSpawn spawn = new VillageZoneSpawn(
+                            ((Number) spawnMap.get("x")).intValue(),
+                            ((Number) spawnMap.get("y")).intValue(),
+                            ((Number) spawnMap.get("z")).intValue(),
+                            spawnMap.containsKey("yaw")   ? ((Number) spawnMap.get("yaw")).floatValue()   : 0f,
+                            spawnMap.containsKey("pitch") ? ((Number) spawnMap.get("pitch")).floatValue() : 0f
+                    );
+
+                    @SuppressWarnings("unchecked")
+                    java.util.Map<String, Object> portalMap =
+                            (java.util.Map<String, Object>) stageMap.get("portal");
+
+                    VillageZonePortal portal = new VillageZonePortal(
+                            ((Number) portalMap.get("min-x")).intValue(),
+                            ((Number) portalMap.get("min-y")).intValue(),
+                            ((Number) portalMap.get("min-z")).intValue(),
+                            ((Number) portalMap.get("max-x")).intValue(),
+                            ((Number) portalMap.get("max-y")).intValue(),
+                            ((Number) portalMap.get("max-z")).intValue()
+                    );
+                    zoneStages.add(new VillageZoneStage(afterHours, radius, spawn, portal));
+                }
+            }
+        }
+        villageZoneConfig = new VillageZoneConfig(centerX, centerZ, zoneStages);
+
         LogManager.getInstance().log(Level.INFO, LogManager.ETagLog.SYSTEM,
                 "[SurviConfig] Configuration chargée (" + rankEntries.size() + " rangs, "
-                        + jobLevelEntries.size() + " niveaux de métier)");
+                        + jobLevelEntries.size() + " niveaux de métier, "
+                        + zoneStages.size() + " paliers de zone village)");
     }
 }

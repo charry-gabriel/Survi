@@ -13,13 +13,6 @@ import java.util.logging.Level;
 
 public class WorldPortalManager {
 
-    private static final int VILLAGE_MIN_X = -49;    // ← à ajuster
-    private static final int VILLAGE_MIN_Y = 162;   // ← à ajuster
-    private static final int VILLAGE_MIN_Z = -16;    // ← à ajuster
-    private static final int VILLAGE_MAX_X = -49;    // ← à ajuster (+1 en X si orienté X)
-    private static final int VILLAGE_MAX_Y = 165;   // ← à ajuster (min.Y + 2 pour 3 blocs haut)
-    private static final int VILLAGE_MAX_Z = -18;    // ← à ajuster (même Z si orienté X)
-
     /** Délai (ticks) après le chargement serveur des chunks pour laisser le client les recevoir. */
     private static final long CLIENT_CHUNK_RECEIVE_DELAY = 20L;
 
@@ -52,27 +45,8 @@ public class WorldPortalManager {
 
     public void init() {
         loadWildernessPortalFromDB();
-        registerVillagePortal();
 
         LogManager.getInstance().log(Level.INFO, LogManager.ETagLog.WORLD, "WorldPortalManager initialisé.");
-    }
-
-    private void registerVillagePortal() {
-        String villageName = WorldInitializer.getWorlds().get(EWorld.VILLAGE);
-        if (villageName == null) return;
-
-        World world = Bukkit.getWorld(villageName);
-        if (world == null) {
-            LogManager.getInstance().log(Level.WARNING, LogManager.ETagLog.WORLD, "registerVillagePortal : monde Village introuvable.");
-            return;
-        }
-
-        Location min = new Location(world, VILLAGE_MIN_X, VILLAGE_MIN_Y, VILLAGE_MIN_Z);
-        Location max = new Location(world, VILLAGE_MAX_X, VILLAGE_MAX_Y, VILLAGE_MAX_Z);
-        portalZones.put(villageName, new Location[]{ min, max });
-
-        LogManager.getInstance().log(Level.INFO, LogManager.ETagLog.WORLD,
-                "Portail Village enregistré : " + fmt(min) + " → " + fmt(max) + " (axe : " + detectAxis(min, max) + ")");
     }
 
     // -------------------------------------------------------------------------
@@ -95,6 +69,34 @@ public class WorldPortalManager {
 
         LogManager.getInstance().log(Level.INFO, LogManager.ETagLog.WORLD,
                 "Portail Wilderness enregistré : " + worldName + " " + fmt(min) + " → " + fmt(max) + " (axe : " + detectAxis(min, max) + ")");
+    }
+
+    /**
+     * Met à jour la position du portail Village (appelé par {@link VillageZoneManager}
+     * à chaque changement de palier de zone).
+     *
+     * <p>Enregistre la nouvelle zone dans {@link #portalZones} et envoie immédiatement
+     * les faux blocs NETHER_PORTAL à tous les joueurs présents dans le Village.</p>
+     */
+    public void updateVillagePortal(String villageName, Location min, Location max) {
+        World world = Bukkit.getWorld(villageName);
+
+        // ── Effacer les anciens faux blocs si une zone existait déjà ──────────────
+        Location[] oldZone = portalZones.get(villageName);
+        if (oldZone != null && world != null) {
+            world.getPlayers().forEach(p -> clearFakePortalBlocks(p, oldZone[0], oldZone[1]));
+        }
+
+        // ── Enregistrer la nouvelle zone et envoyer les nouveaux faux blocs ───────
+        portalZones.put(villageName, new Location[]{ min.clone(), max.clone() });
+
+        if (world != null) {
+            world.getPlayers().forEach(p -> sendFakePortalBlocksAsync(p, min, max));
+        }
+
+        LogManager.getInstance().log(Level.INFO, LogManager.ETagLog.WORLD,
+                "Portail Village mis à jour : " + fmt(min) + " → " + fmt(max)
+                        + " (axe : " + detectAxis(min, max) + ")");
     }
 
     /** Retire la zone du portail Wilderness avant unload (reset). */
@@ -180,6 +182,38 @@ public class WorldPortalManager {
         var fakePortal = Bukkit.createBlockData(Material.NETHER_PORTAL,
                 bd -> ((Orientable) bd).setAxis(axis));
 
+        iterateZone(min, max, (world, x, y, z) -> {
+            player.sendBlockChange(new Location(world, x, y, z), fakePortal);
+            LogManager.getInstance().log(Level.INFO, LogManager.ETagLog.WORLD,
+                    world.getName() + " : " + x + "," + y + "," + z + " -> FAKE_NETHER_PORTAL");
+        });
+    }
+
+    /**
+     * Envoie des faux blocs AIR à l'ancienne position du portail pour effacer
+     * les NETHER_PORTAL côté client. Utilise le vrai type du bloc serveur pour
+     * ne pas écraser un bloc réel si la structure a changé entre-temps.
+     */
+    public void clearFakePortalBlocks(Player player, Location min, Location max) {
+        iterateZone(min, max, (world, x, y, z) -> {
+            Location loc = new Location(world, x, y, z);
+            // On renvoie le vrai bloc serveur — annule le fake sans toucher au décor réel
+            player.sendBlockChange(loc, world.getBlockAt(loc).getBlockData());
+            LogManager.getInstance().log(Level.INFO, LogManager.ETagLog.WORLD,
+                    world.getName() + " : " + x + "," + y + "," + z + " -> CLEAR_FAKE_PORTAL");
+        });
+    }
+
+    /** Itère sur tous les blocs de la zone [min, max] et applique {@code action}. */
+    @FunctionalInterface
+    private interface BlockAction {
+        void apply(World world, int x, int y, int z);
+    }
+
+    private void iterateZone(Location min, Location max, BlockAction action) {
+        World world = min.getWorld();
+        if (world == null) return;
+
         int minX = Math.min(min.getBlockX(), max.getBlockX());
         int maxX = Math.max(min.getBlockX(), max.getBlockX());
         int minY = Math.min(min.getBlockY(), max.getBlockY());
@@ -187,16 +221,10 @@ public class WorldPortalManager {
         int minZ = Math.min(min.getBlockZ(), max.getBlockZ());
         int maxZ = Math.max(min.getBlockZ(), max.getBlockZ());
 
-        World world = min.getWorld();
-        for (int x = minX; x <= maxX; x++) {
-            for (int y = minY; y <= maxY; y++) {
-                for (int z = minZ; z <= maxZ; z++) {
-                    player.sendBlockChange(new Location(world, x, y, z), fakePortal);
-                    LogManager.getInstance().log(Level.INFO, LogManager.ETagLog.WORLD,
-                            world.getName() + " : " + x + "," + y + "," + z + " -> FAKE_NETHER_PORTAL");
-                }
-            }
-        }
+        for (int x = minX; x <= maxX; x++)
+            for (int y = minY; y <= maxY; y++)
+                for (int z = minZ; z <= maxZ; z++)
+                    action.apply(world, x, y, z);
     }
 
     // -------------------------------------------------------------------------

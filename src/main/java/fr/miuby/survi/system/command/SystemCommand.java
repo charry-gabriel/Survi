@@ -4,8 +4,10 @@ import com.mojang.brigadier.Command;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import fr.miuby.survi.GameManager;
+import fr.miuby.survi.system.SurviConfig;
 import fr.miuby.survi.system.log.LogManager;
 import fr.miuby.survi.system.time.TimeManager;
+import fr.miuby.survi.world.VillageZoneManager;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
 import io.papermc.paper.command.brigadier.Commands;
 import net.kyori.adventure.text.Component;
@@ -290,6 +292,95 @@ public class SystemCommand {
                                     ctx.getSource().getSender().sendMessage(
                                             Component.text("✓ Reset effectué avec succès !", NamedTextColor.GREEN)
                                     );
+                                    return Command.SINGLE_SUCCESS;
+                                })
+                        )
+                )
+
+                // === ZONE COMMANDS ===
+                .then(Commands.literal("zone")
+
+                        // /survi zone start — lance le timer de partie
+                        .then(Commands.literal("start")
+                                .executes(ctx -> {
+                                    var sender = ctx.getSource().getSender();
+                                    boolean ok = VillageZoneManager.getInstance().start();
+                                    if (ok) {
+                                        sender.sendMessage(Component.text(
+                                                "✓ Partie démarrée ! Zone village active (palier 0).",
+                                                NamedTextColor.GREEN));
+                                    } else {
+                                        sender.sendMessage(Component.text(
+                                                "⚠ Le timer est déjà en cours. Utilisez /survi zone reset pour le relancer.",
+                                                NamedTextColor.YELLOW));
+                                    }
+                                    return Command.SINGLE_SUCCESS;
+                                })
+                        )
+
+                        // /survi zone reset — remet le timer à zéro (tests)
+                        .then(Commands.literal("reset")
+                                .executes(ctx -> {
+                                    VillageZoneManager.getInstance().reset();
+                                    ctx.getSource().getSender().sendMessage(Component.text(
+                                            "✓ Timer réinitialisé — palier 0 restauré (rayon "
+                                                    + VillageZoneManager.getInstance().getCurrentRadius()
+                                                    + " blocs).",
+                                            NamedTextColor.GREEN));
+                                    return Command.SINGLE_SUCCESS;
+                                })
+                        )
+
+                        // /survi zone status — affiche l'état courant
+                        .then(Commands.literal("status")
+                                .executes(ctx -> {
+                                    var sender = ctx.getSource().getSender();
+                                    VillageZoneManager vzm = VillageZoneManager.getInstance();
+                                    SurviConfig.VillageZoneConfig cfg =
+                                            SurviConfig.getInstance().getVillageZoneConfig();
+
+                                    sender.sendMessage(Component.text("╔═══════════════════════════════╗", NamedTextColor.GOLD));
+                                    sender.sendMessage(Component.text("║    VILLAGE ZONE STATUS        ║", NamedTextColor.GOLD));
+                                    sender.sendMessage(Component.text("╠═══════════════════════════════╣", NamedTextColor.GOLD));
+
+                                    sender.sendMessage(
+                                            Component.text("║ Démarrée : ", NamedTextColor.YELLOW)
+                                                    .append(Component.text(vzm.isStarted() ? "Oui" : "Non",
+                                                            vzm.isStarted() ? NamedTextColor.GREEN : NamedTextColor.RED)));
+
+                                    if (vzm.isStarted()) {
+                                        float elapsed = vzm.getElapsedMinutes() / 60f;
+                                        sender.sendMessage(
+                                                Component.text("║ Temps écoulé : ", NamedTextColor.YELLOW)
+                                                        .append(Component.text(String.format("%.2f", elapsed) + "h", NamedTextColor.WHITE)));
+
+                                        sender.sendMessage(
+                                                Component.text("║ Palier actuel : ", NamedTextColor.YELLOW)
+                                                        .append(Component.text(vzm.getCurrentStageIndex(), NamedTextColor.WHITE)));
+
+                                        sender.sendMessage(
+                                                Component.text("║ Rayon : ", NamedTextColor.YELLOW)
+                                                        .append(Component.text(vzm.getCurrentRadius() + " blocs", NamedTextColor.WHITE)));
+
+                                        sender.sendMessage(
+                                                Component.text("║ Centre : ", NamedTextColor.YELLOW)
+                                                        .append(Component.text("(" + cfg.centerX() + ", " + cfg.centerZ() + ")", NamedTextColor.WHITE)));
+
+                                        // Prochain palier
+                                        var stages = cfg.stages();
+                                        int next = vzm.getCurrentStageIndex() + 1;
+                                        if (next < stages.size()) {
+                                            float hoursLeft = stages.get(next).afterHours() - elapsed;
+                                            sender.sendMessage(
+                                                    Component.text("║ Prochain palier dans : ", NamedTextColor.YELLOW)
+                                                            .append(Component.text(String.format("%.2f", hoursLeft) + "h → rayon "
+                                                                    + stages.get(next).radius() + " blocs", NamedTextColor.WHITE)));
+                                        } else {
+                                            sender.sendMessage(Component.text("║ Palier final atteint.", NamedTextColor.AQUA));
+                                        }
+                                    }
+
+                                    sender.sendMessage(Component.text("╚═══════════════════════════════╝", NamedTextColor.GOLD));
                                     return Command.SINGLE_SUCCESS;
                                 })
                         )
