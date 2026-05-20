@@ -5,6 +5,7 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import fr.miuby.survi.player.AlphaPlayer;
 import fr.miuby.survi.system.command.argument.AlphaPlayerArgument;
+import fr.miuby.survi.system.command.argument.QuestArgument;
 import fr.miuby.survi.system.command.argument.TraderArgument;
 import fr.miuby.survi.villager.trader.Trader;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
@@ -18,6 +19,7 @@ import fr.miuby.survi.GameManager;
 public class QuestCommand {
     private static final String playerArgument = "player";
     private static final String villagerArgument = "villager";
+    private static final String questArgument = "quest";
 
     private QuestCommand() {
         /* This utility class should not be instantiated */
@@ -50,6 +52,14 @@ public class QuestCommand {
                         .then(Commands.argument(playerArgument, AlphaPlayerArgument.alphaPlayer())
                                 .then(Commands.argument(villagerArgument, TraderArgument.trader())
                                         .executes(QuestCommand::completeQuest)
+                                )
+                        )
+                )
+                .then(Commands.literal("test")
+                        .requires(source -> source.getSender().isOp())
+                        .then(Commands.argument(playerArgument, AlphaPlayerArgument.alphaPlayer())
+                                .then(Commands.argument(questArgument, QuestArgument.quest())
+                                        .executes(QuestCommand::testQuest)
                                 )
                         )
                 );
@@ -118,6 +128,21 @@ public class QuestCommand {
         }
         ctx.getSource().getSender().sendMessage(
                 Component.text("Toutes les quêtes du jour réinitialisées pour " + alphaPlayer.getPseudo() + ".").color(NamedTextColor.GREEN));
+        return Command.SINGLE_SUCCESS;
+    }
+
+    /**
+     * Assigne une quête spécifique à un joueur pour la tester (admin).
+     * Remplace toute quête active non réclamée. Aucun Trader requis pour la validation.
+     */
+    private static int testQuest(CommandContext<CommandSourceStack> ctx) {
+        AlphaPlayer alphaPlayer = AlphaPlayerArgument.getAlphaPlayer(ctx, playerArgument);
+        Quest quest = QuestArgument.getQuest(ctx, questArgument);
+
+        QuestManager.getInstance().assignSpecificQuest(alphaPlayer, quest);
+
+        ctx.getSource().getSender().sendMessage(
+                Component.text("[TEST] Quête « " + quest.getName() + " » assignée à " + alphaPlayer.getPseudo() + ".").color(NamedTextColor.YELLOW));
         return Command.SINGLE_SUCCESS;
     }
 

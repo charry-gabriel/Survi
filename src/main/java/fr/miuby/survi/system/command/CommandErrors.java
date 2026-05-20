@@ -21,6 +21,11 @@ public class CommandErrors {
                     Component.text("Role introuvable : " + name)
             ));
 
+    public static final DynamicCommandExceptionType QUEST_NOT_FOUND =
+            new DynamicCommandExceptionType(name -> BrigadierHelper.message(
+                    Component.text("Quête introuvable : " + name)
+            ));
+
     public static final DynamicCommandExceptionType CUSTOM_ITEM_NOT_FOUND =
             new DynamicCommandExceptionType(name -> BrigadierHelper.message(
                     Component.text("Objet custom introuvable : " + name)

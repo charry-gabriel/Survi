@@ -27,9 +27,8 @@ public class ItemListener implements Listener {
     @EventHandler
     public void onPrepareItemCraft(PrepareItemCraftEvent event) {
         ItemStack result = event.getInventory().getResult();
-        if (result == null || result.getType() == Material.AIR) {
+        if (result == null || result.getType() == Material.AIR)
             return;
-        }
 
         // Vérification du verrouillage par PNJ
         if (GameManager.getInstance().getLockedItemsFactory().isLocked(result.getType().getKey())) {
@@ -38,7 +37,10 @@ public class ItemListener implements Listener {
         }
 
         CustomRecipe customRecipe = CustomRecipe.getCustomRecipe(result);
-        if (customRecipe == null || event.getViewers().isEmpty() || !(event.getViewers().getFirst() instanceof Player viewer)) {
+        if (customRecipe == null)
+            return;
+
+        if (event.getViewers().isEmpty() || !(event.getViewers().getFirst() instanceof Player viewer)) {
             event.getInventory().setResult(new ItemStack(Material.AIR));
             return;
         }

@@ -243,6 +243,33 @@ public class QuestManager {
     }
 
     /**
+     * Attribue une quête spécifique au joueur (mode test admin).
+     * Ignore la limite journalière et la sélection aléatoire.
+     * Si le joueur a déjà une quête active, elle est remplacée après confirmation.
+     */
+    public void assignSpecificQuest(AlphaPlayer player, Quest quest) {
+        // Si une quête non réclamée est déjà active, on la supprime d'abord
+        PlayerQuestData current = player.getCurrentActiveQuest();
+        if (current != null) {
+            player.removeQuest(current.getSlot());
+            GameManager.getInstance().getDatabase().quests().deletePlayerQuestSlot(player.getUuid(), current.getSlot());
+        }
+
+        int nextSlot = player.countTodayQuests();
+        // traderId null en mode test : pas besoin d'un villageois pour valider
+        PlayerQuestData data = new PlayerQuestData(nextSlot, quest.getId(), 0, LocalDate.now(), false, null, false);
+        player.putQuest(data);
+        GameManager.getInstance().getDatabase().quests().updatePlayerQuest(player.getUuid(), data);
+        GameManager.getInstance().getDatabase().quests().setLastQuestId(player.getUuid(), quest.getId());
+
+        if (player.getPlayer() != null) {
+            player.getPlayer().sendMessage("§e[TEST] Quête de test assignée : §6" + quest.getName());
+            player.getPlayer().sendMessage("§7" + quest.getDescription());
+            player.getPlayer().sendMessage("§8Objectif : " + quest.getGoal() + " | Difficulté : " + quest.getDifficulty().name());
+        }
+    }
+
+    /**
      * Réclame la récompense de la quête complétée auprès du bon Trader.
      */
     public boolean completeQuest(AlphaPlayer player, Trader trader, boolean force) {
