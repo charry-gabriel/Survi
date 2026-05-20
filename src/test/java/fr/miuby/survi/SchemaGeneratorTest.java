@@ -9,21 +9,21 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class SchemaGeneratorTest {
+class SchemaGeneratorTest {
 
     @Test
-    public void updateSchemas() {
+    void updateSchemas() {
         Assertions.assertDoesNotThrow(() -> {
             updateVillagersSchema();
             updateRecipesSchema();
             updateQuestsSchema();
+            updateTradersSchema();
         });
     }
 
@@ -42,12 +42,10 @@ public class SchemaGeneratorTest {
         content = replaceEnum(content, "profession", professions);
 
         // Update Material enum (for tributes)
-        List<String> materials = Arrays.stream(Material.values())
-                .filter(m -> !m.isLegacy())
-                .map(Enum::name)
-                .sorted()
-                .toList();
-        content = replaceEnum(content, "material", materials);
+        content = replaceEnum(content, "material", getMaterialNames());
+
+        // Update CustomItem enum
+        content = replaceEnum(content, "customItem", getCustomItemNames());
 
         Files.writeString(path, content);
     }
@@ -58,37 +56,31 @@ public class SchemaGeneratorTest {
 
         String content = Files.readString(path);
 
-        // Update Material definition enum
-        List<String> materials = Arrays.stream(Material.values())
-                .filter(m -> !m.isLegacy())
-                .map(Enum::name)
-                .sorted()
-                .toList();
+        List<String> materials = getMaterialNames();
 
-        // Update old_recipes enum (namespaced keys: minecraft:item_name)
+        // Update old_recipes (namespaced keys: minecraft:item_name)
         List<String> namespacedKeys = materials.stream()
                 .map(m -> "minecraft:" + m.toLowerCase())
                 .sorted()
                 .toList();
         
-        // Regex to find "old_recipes" and its enum items
-        Pattern oldRecipesPattern = Pattern.compile("\"old_recipes\":\\s*\\{[^}]*\"items\":\\s*\\{[^}]*\"enum\":\\s*\\[[^\\]]*\\]");
+        // Regex to find "old_recipes" and its items block
+        Pattern oldRecipesPattern = Pattern.compile("\"old_recipes\":\\s*\\{[^}]*\"items\":\\s*\\{[^{}]*\\}");
         Matcher oldMatcher = oldRecipesPattern.matcher(content);
         if (oldMatcher.find()) {
             String match = oldMatcher.group();
-            String enumJson = "\"enum\": [\n              " + 
-                    namespacedKeys.stream().map(s -> "\"" + s + "\"").collect(Collectors.joining(",\n              ")) + 
-                    "\n            ]";
-            String replaced = match.replaceAll("\"enum\":\\s*\\[[^\\]]*\\]", Matcher.quoteReplacement(enumJson));
-            content = content.replace(match, replaced);
+            String updated = replaceEnum(match, "items", namespacedKeys);
+            content = content.replace(match, updated);
         }
 
-        // Specially update the Material definition at the end
-        Pattern materialPattern = Pattern.compile("\"Material\":\\s*\\{\\s*\"type\":\\s*\"string\",\\s*\"enum\":\\s*\\[[^\\]]*\\]\\s*\\}");
-        String materialEnumJson = "\"Material\": {\n      \"type\": \"string\",\n      \"enum\": [\n        " + 
-                materials.stream().map(s -> "\"" + s + "\"").collect(Collectors.joining(",\n        ")) + 
-                "\n      ]\n    }";
-        content = materialPattern.matcher(content).replaceAll(Matcher.quoteReplacement(materialEnumJson));
+        // Update Roles
+        content = replaceEnum(content, "roles", getEnumNamesFromSource("src/main/java/fr/miuby/survi/role/ERole.java"));
+
+        // Update Material definition
+        content = replaceEnum(content, "Material", materials);
+
+        // Update CustomItem enum
+        content = replaceEnum(content, "CustomItem", getCustomItemNames());
 
         Files.writeString(path, content);
     }
@@ -99,26 +91,42 @@ public class SchemaGeneratorTest {
 
         String content = Files.readString(path);
 
-        // Update target enum if it exists, or add it.
-        // In the provided quests.schema.json, target is: "target": { "type": ["string", "null"] }
-        // We can improve it by adding an enum of Materials and EntityTypes.
+        // Update Quest Type (distinct from reward type)
+        List<String> questTypes = getEnumNamesFromSource("src/main/java/fr/miuby/survi/quest/QuestType.java");
+        String questTypeEnumJson = "\"enum\": [\n              " + 
+                questTypes.stream().map(s -> "\"" + s + "\"").collect(Collectors.joining(",\n              ")) + 
+                "\n            ]";
+        // Regex matching only the first "type" which is the quest type (no description)
+        Pattern questTypePattern = Pattern.compile("\"type\":\\s*\\{\\s*\"type\":\\s*\"string\",\\s*\"enum\":\\s*\\[[^\\]]*\\]\\s*\\}");
+        content = questTypePattern.matcher(content).replaceFirst(Matcher.quoteReplacement("\"type\": {\n            \"type\": \"string\",\n            " + questTypeEnumJson + "\n          }"));
+
+        // Update Quest Difficulty
+        content = replaceEnum(content, "difficulty", getEnumNamesFromSource("src/main/java/fr/miuby/survi/quest/QuestDifficulty.java"));
+
+        // Update Reward Potion Effects
+        List<String> potionEffects = Stream.of(
+            "speed", "slowness", "haste", "mining_fatigue", "strength", "instant_health", "instant_damage",
+            "jump_boost", "regeneration", "resistance", "fire_resistance", "water_breathing", "invisibility",
+            "blindness", "night_vision", "hunger", "weakness", "poison", "wither", "health_boost",
+            "absorption", "saturation", "glowing", "levitation", "luck", "unluck", "slow_falling",
+            "conduit_power", "dolphins_grace", "bad_omen", "hero_of_the_village", "darkness"
+        ).sorted().toList();
         
-        List<String> materials = Arrays.stream(Material.values())
-                .filter(m -> !m.isLegacy())
-                .map(Enum::name)
-                .toList();
-        
-        List<String> entities = Arrays.stream(EntityType.values())
-                .map(Enum::name)
-                .toList();
-        
-        List<String> allTargets = Stream.concat(materials.stream(), entities.stream())
+        String potionEnumJson = "\"enum\": [\n                    " + 
+                potionEffects.stream().map(s -> "\"" + s + "\"").collect(Collectors.joining(",\n                    ")) + 
+                "\n                  ]";
+        // Regex matching the type with description
+        Pattern potionTypePattern = Pattern.compile("\"type\":\\s*\\{\\s*\"type\":\\s*\"string\",\\s*\"description\":\\s*\"Nom de l'effet de potion[^\"]*\",\\s*\"enum\":\\s*\\[[^\\]]*\\]\\s*\\}");
+        content = potionTypePattern.matcher(content).replaceFirst(Matcher.quoteReplacement("\"type\": {\n                  \"type\": \"string\",\n                  \"description\": \"Nom de l'effet de potion (ex: speed, haste, strength)\",\n                  " + potionEnumJson + "\n                }"));
+
+        // Update target enum
+        List<String> allTargets = Stream.concat(getMaterialNames().stream(), getEntityTypeNames().stream())
                 .distinct()
                 .sorted()
                 .toList();
-
+        
         // Replace target type with enum if it matches the pattern
-        Pattern targetPattern = Pattern.compile("\"target\":\\s*\\{\\s*\"type\":\\s*\\[\"string\",\\s*\"null\"\\]\\s*\\}");
+        Pattern targetPattern = Pattern.compile("\"target\":\\s*\\{\\s*\"type\":\\s*\\[\"string\",\\s*\"null\"\\][^{}]*\\}");
         String targetEnumJson = "\"target\": {\n            \"type\": [\"string\", \"null\"],\n            \"enum\": [\n              null,\n              " + 
                 allTargets.stream().map(s -> "\"" + s + "\"").collect(Collectors.joining(",\n              ")) + 
                 "\n            ]\n          }";
@@ -133,18 +141,170 @@ public class SchemaGeneratorTest {
         Files.writeString(path, content);
     }
 
+    private void updateTradersSchema() throws IOException {
+        Path path = Paths.get("src/main/resources/schema/traders-schema.json");
+        if (!Files.exists(path)) return;
+
+        String content = Files.readString(path);
+
+        // Update Villager Type enum
+        List<String> types = List.of("DESERT", "JUNGLE", "PLAINS", "SAVANNA", "SNOW", "SWAMP", "TAIGA");
+        content = replaceEnum(content, "type", types);
+
+        // Update Villager Profession enum
+        List<String> professions = List.of("ARMORER", "BUTCHER", "CARTOGRAPHER", "CLERIC", "FARMER", "FISHERMAN", "FLETCHER", "LEATHERWORKER", "LIBRARIAN", "MASON", "NITWIT", "NONE", "SHEPHERD", "TOOLSMITH", "WEAPONSMITH");
+        content = replaceEnum(content, "profession", professions);
+
+        // Update Jobs
+        content = replaceEnum(content, "job", getEnumNamesFromSource("src/main/java/fr/miuby/survi/job/EJob.java"));
+
+        // Update Quest Difficulty
+        content = replaceEnum(content, "questDifficulty", getEnumNamesFromSource("src/main/java/fr/miuby/survi/quest/QuestDifficulty.java"));
+
+        // Update CustomItem enum
+        content = replaceEnum(content, "customItem", getCustomItemNames());
+
+        // Update Material enum
+        content = replaceEnum(content, "material", getMaterialNames());
+
+        // Update mainHandItem (Material + CustomItem)
+        List<String> allItems = Stream.concat(getMaterialNames().stream(), getCustomItemNames().stream())
+                .distinct().sorted().toList();
+        content = replaceEnum(content, "mainHandItem", allItems);
+
+        Files.writeString(path, content);
+    }
+
+    private List<String> getMaterialNames() {
+        Set<String> materials = new TreeSet<>();
+        try {
+            Arrays.stream(Material.values())
+                    .filter(m -> !m.isLegacy())
+                    .map(Enum::name)
+                    .forEach(materials::add);
+        } catch (Throwable _) {
+            // Fallback si Material.values() échoue
+            materials.addAll(List.of("AIR", "STONE", "GRASS_BLOCK", "DIRT", "COBBLESTONE", "OAK_PLANKS", "EMERALD", "DIAMOND", "IRON_INGOT", "GOLD_INGOT"));
+        }
+        
+        // Enrichir avec les YML
+        materials.addAll(collectValuesFromYml("material"));
+        
+        return materials.stream().toList();
+    }
+
+    private List<String> getEntityTypeNames() {
+        Set<String> entities = new TreeSet<>();
+        try {
+            Arrays.stream(EntityType.values())
+                    .filter(e -> e != EntityType.UNKNOWN)
+                    .map(Enum::name)
+                    .forEach(entities::add);
+        } catch (Throwable _) {
+            entities.addAll(List.of("PLAYER", "ZOMBIE", "SKELETON", "CREEPER", "COW", "SHEEP", "PIG", "CHICKEN"));
+        }
+        
+        // Enrichir avec les YML (parfois utilisé comme target dans les quêtes)
+        entities.addAll(collectValuesFromYml("target"));
+        
+        return entities.stream().toList();
+    }
+
+    private List<String> getCustomItemNames() {
+        Set<String> items = new TreeSet<>(getEnumNamesFromSource("src/main/java/fr/miuby/survi/item/ECustomItem.java"));
+        items.addAll(collectValuesFromYml("customItem"));
+        return items.stream().toList();
+    }
+
+    private Set<String> collectValuesFromYml(String key) {
+        Set<String> values = new HashSet<>();
+        try {
+            Path resourcesPath = Paths.get("src/main/resources");
+            if (!Files.exists(resourcesPath)) return values;
+            
+            Files.walk(resourcesPath)
+                .filter(p -> p.toString().endsWith(".yml"))
+                .forEach(p -> {
+                    try {
+                        String content = Files.readString(p);
+                        // Regex pour trouver "key: VALUE" ou "key: 'VALUE'" ou "key: "VALUE""
+                        Pattern pattern = Pattern.compile("(?m)^\\s*" + key + ":\\s*[\"']?([A-Z0-9_]+)[\"']?");
+                        Matcher matcher = pattern.matcher(content);
+                        while (matcher.find()) {
+                            values.add(matcher.group(1).toUpperCase());
+                        }
+                    } catch (IOException _) {
+                        // ignore
+                    }
+                });
+        } catch (IOException _) {
+            // ignore
+        }
+        return values;
+    }
+
+    private List<String> getEnumNamesFromSource(String path) {
+        try {
+            Path p = Paths.get(path);
+            if (!Files.exists(p)) return List.of();
+            
+            String content = Files.readString(p);
+            // Regex simplifiée pour trouver les constantes d'enum
+            // On cherche après l'ouverture de l'enum { et avant le premier ; (ou la fin si pas de ;)
+            int startIndex = content.indexOf("{");
+            // On cherche le dernier ; avant la fin du fichier ou avant les méthodes
+            // Pour être sûr, on prend tout jusqu'à la fin et on filtrera
+            String enumSection = content.substring(startIndex + 1);
+
+            return Arrays.stream(enumSection.split("\\r?\\n"))
+                    .map(String::trim)
+                    .filter(line -> !line.isEmpty() && !line.startsWith("//") && !line.startsWith("/*") && !line.startsWith("@") && !line.startsWith("private") && !line.startsWith("public") && !line.startsWith("static"))
+                    .map(line -> {
+                        // Une constante d'enum commence par un identifiant en majuscule
+                        // et est suivie de ( ou , ou ; ou fin de ligne
+                        Matcher m = Pattern.compile("^([A-Z0-9_]+)(?=[\\s(;,]|$)").matcher(line);
+                        return m.find() ? m.group(1) : null;
+                    })
+                    .filter(Objects::nonNull)
+                    .distinct()
+                    .sorted()
+                    .toList();
+        } catch (IOException _) {
+            return List.of();
+        }
+    }
+
     private String replaceEnum(String content, String propertyName, List<String> values) {
+        if (values.isEmpty()) return content;
+        
         String enumJson = "\"enum\": [\n        " + 
-                values.stream().map(s -> "\"" + s + "\"").collect(Collectors.joining(",\n        ")) + 
+                values.stream().distinct().sorted().map(s -> "\"" + s + "\"").collect(Collectors.joining(",\n        ")) + 
                 "\n      ]";
         
-        Pattern pattern = Pattern.compile("\"" + propertyName + "\":\\s*\\{[^}]*\"enum\":\\s*\\[[^\\]]*\\]");
-        Matcher matcher = pattern.matcher(content);
-        if (matcher.find()) {
-            String match = matcher.group();
-            String replaced = match.replaceAll("\"enum\":\\s*\\[[^\\]]*\\]", Matcher.quoteReplacement(enumJson));
-            return content.replace(match, replaced);
+        // On cherche le bloc de la propriété: "propertyName":
+        // On utilise une regex qui essaie de trouver le bloc le plus petit possible
+        Pattern propertyPattern = Pattern.compile("\"" + propertyName + "\":\\s*\\{[^{}]*\\}");
+        Matcher matcher = propertyPattern.matcher(content);
+        StringBuilder sb = new StringBuilder();
+        int lastEnd = 0;
+        while (matcher.find()) {
+            sb.append(content, lastEnd, matcher.start());
+            String propertyBlock = matcher.group();
+            String updatedBlock;
+            if (propertyBlock.contains("\"enum\":")) {
+                updatedBlock = propertyBlock.replaceAll("\"enum\":\\s*\\[[^\\]]*\\]", Matcher.quoteReplacement(enumJson));
+            } else if (propertyBlock.contains("\"examples\":")) {
+                updatedBlock = propertyBlock.replaceAll("\"examples\":\\s*\\[[^\\]]*\\]", Matcher.quoteReplacement(enumJson));
+            } else {
+                // Insérer enum avant la dernière accolade fermante du bloc
+                updatedBlock = propertyBlock.replaceFirst("\\}\\s*$", ",\n      " + enumJson + "\n    }");
+                // Nettoyage si on a ajouté une virgule après rien (cas particulier)
+                updatedBlock = updatedBlock.replace("{,\n", "{\n");
+            }
+            sb.append(updatedBlock);
+            lastEnd = matcher.end();
         }
-        return content;
+        sb.append(content.substring(lastEnd));
+        return sb.toString();
     }
 }

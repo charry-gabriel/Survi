@@ -63,7 +63,7 @@ recipes:
       material: GHAST_TEAR
       amount: 1
     ingredient:
-      material: DIAMOND
+      customItem: AIR_FORCE
       amount: 2
     message: "Un ingrédient rare pour un cocktail... percutant."
     requiredReputation: 30
