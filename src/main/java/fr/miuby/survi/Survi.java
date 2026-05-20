@@ -10,6 +10,7 @@ import fr.miuby.survi.quest.ReputationCommand;
 import fr.miuby.survi.quest.QuestListener;
 import fr.miuby.survi.role.RoleCommand;
 import fr.miuby.survi.system.command.SystemCommand;
+import fr.miuby.survi.system.log.LogManager;
 import fr.miuby.survi.system.time.TimeManager;
 import fr.miuby.survi.world.VillageZoneManager;
 import fr.miuby.survi.villager.VillagerCommand;
@@ -18,6 +19,13 @@ import fr.miuby.survi.world.WorldCommand;
 import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.Enumeration;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
+import java.util.logging.Level;
 
 public class Survi extends JavaPlugin {
     @Override
@@ -68,35 +76,36 @@ public class Survi extends JavaPlugin {
     }
 
     private void updateResources() {
+        updateFolderResources("villagers");
+        updateFolderResources("traders");
+
         YmlResourceManager.update(this, "config.yml");
         YmlResourceManager.update(this, "quests.yml");
         YmlResourceManager.update(this, "recipes.yml");
-
-        String[] villagerFiles = getVillagerResourcePaths();
-        for (String path : villagerFiles) {
-            YmlResourceManager.update(this, path);
-        }
-
-        String[] traderFiles = getTraderResourcePaths();
-        for (String path : traderFiles) {
-            YmlResourceManager.update(this, path);
-        }
     }
 
-    private String[] getVillagerResourcePaths() {
-        return new String[]{
-                "villagers/survivant.yml",
-                "villagers/nain.yml",
-                "villagers/maddox.yml",
-                "villagers/thomas.yml",
-                "villagers/francois.yml",
-        };
-    }
+    private void updateFolderResources(String folder) {
+        try {
+            File file = getFile();
 
-    private String[] getTraderResourcePaths() {
-        return new String[]{
-                "traders/barman.yml",
-                "traders/goldroger.yml",
-        };
+            try (JarFile jar = new JarFile(file)) {
+                Enumeration<JarEntry> entries = jar.entries();
+
+                while (entries.hasMoreElements()) {
+                    JarEntry entry = entries.nextElement();
+
+                    String name = entry.getName();
+
+                    if (name.startsWith(folder + "/")
+                            && name.endsWith(".yml")
+                            && !entry.isDirectory()) {
+
+                        YmlResourceManager.update(this, name);
+                    }
+                }
+            }
+        } catch (IOException e) {
+            LogManager.getInstance().log (Level.SEVERE, LogManager.ETagLog.SYSTEM, "Failed to load resources from folder: " + folder + " " + e.getMessage());
+        }
     }
 }
