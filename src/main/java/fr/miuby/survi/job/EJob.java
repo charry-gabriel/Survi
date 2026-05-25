@@ -1,5 +1,6 @@
 package fr.miuby.survi.job;
 
+import lombok.Getter;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -10,10 +11,18 @@ import net.kyori.adventure.text.format.NamedTextColor;
  * Contrairement au {@link fr.miuby.survi.role.ERole} (attribué manuellement par un admin),
  * chaque joueur possède TOUS les métiers simultanément avec un niveau individuel.
  * Le niveau d'un métier évolue grâce à la réputation accumulée auprès du Trader associé.
+ *
+ * Niveaux 0–10 (voir config.yml → jobs.levels).
+ * Effets par niveau :
+ *   MINEUR    — multiplicateur de drops sur les minerais  (×0,2 au niv.0 → ×2,0 au niv.10)
+ *   BUCHERON  — multiplicateur de drops sur les bûches    (×0,2 au niv.0 → ×2,0 au niv.10)
+ *   ENCHANTEUR — plafond XP table d'enchantement (niv×3) et niveau max d'enchantement (= niv)
  */
+@Getter
 public enum EJob {
 
     MINEUR        ("Mineur",        NamedTextColor.GRAY),
+    BUCHERON      ("Bûcheron",      NamedTextColor.DARK_GREEN),
     FERMIER       ("Fermier",       NamedTextColor.GREEN),
     COMBATANT     ("Combatant",     NamedTextColor.RED),
     ALCHIMISTE    ("Alchimiste",    NamedTextColor.DARK_PURPLE),
@@ -43,11 +52,5 @@ public enum EJob {
 
     public TextComponent toComponent() {
         return Component.text(displayName).color(color);
-    }
-
-    public TextComponent toLevelComponent(int level) {
-        String levelLabel = JobLevelConfig.getLevelName(level);
-        return Component.text(displayName + " — " + levelLabel + " (niv." + level + ")")
-                .color(color);
     }
 }

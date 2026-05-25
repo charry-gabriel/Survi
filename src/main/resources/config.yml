@@ -56,18 +56,38 @@ reputation:
 jobs:
   # Paliers calculés depuis la réputation accumulée auprès du Trader du métier.
   # Doit rester trié du seuil le plus bas au plus haut.
+  # 11 entrées = niveaux 0 à 10.
+  #
+  # Effets par niveau (voir JobListener.java) :
+  #   MINEUR / BUCHERON  — multiplicateur drops = 0.2 + niveau × 0.18
+  #     niv. 0  → ×0,20   niv. 5  → ×1,10   niv. 10 → ×2,00
+  #   ENCHANTEUR — coût XP max = niveau × 3  |  niveau d'enchantement max = niveau
+  #     niv. 0  → aucun enchantement
+  #     niv. 1  → 3 XP max,  enchantements niv. I max
+  #     niv. 3  → 9 XP max,  enchantements niv. III max (ex. Efficacité III)
+  #     niv. 10 → 30 XP max, enchantements niv. X max (aucune restriction pratique)
   levels:
     - threshold: 0
-      name: "Inconnu"
-    - threshold: 10
+      name: "Débutant"
+    - threshold: 20
+      name: "Novice"
+    - threshold: 50
       name: "Apprenti"
-    - threshold: 30
-      name: "Journalier"
-    - threshold: 60
-      name: "Expert"
     - threshold: 100
+      name: "Adepte"
+    - threshold: 175
+      name: "Confirmé"
+    - threshold: 280
+      name: "Journalier"
+    - threshold: 420
+      name: "Expert"
+    - threshold: 600
+      name: "Artisan"
+    - threshold: 850
       name: "Maître"
-    - threshold: 200
+    - threshold: 1200
+      name: "Grand Maître"
+    - threshold: 1700
       name: "Légendaire"
 
 # ─── Niveau du Monde ────────────────────────────────────────────────────────────

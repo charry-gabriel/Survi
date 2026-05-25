@@ -36,6 +36,11 @@ public class CommandErrors {
                     Component.text("Monde introuvable : " + name)
             ));
 
+    public static final DynamicCommandExceptionType JOB_NOT_FOUND =
+            new DynamicCommandExceptionType(name -> BrigadierHelper.message(
+                    Component.text("Métier introuvable : " + name)
+            ));
+
     public static final SimpleCommandExceptionType NOT_A_LEVEL_VILLAGER =
             new SimpleCommandExceptionType(BrigadierHelper.message(
                     Component.text("Ce villageois n'est pas un a level.")

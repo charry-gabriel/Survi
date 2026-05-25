@@ -3,6 +3,7 @@ package fr.miuby.survi.quest;
 import fr.miuby.survi.GameManager;
 import fr.miuby.survi.player.AlphaPlayer;
 import fr.miuby.survi.system.log.LogManager;
+import fr.miuby.survi.job.EJob;
 import fr.miuby.survi.villager.trader.Trader;
 import lombok.Getter;
 import net.kyori.adventure.key.Key;
@@ -292,7 +293,11 @@ public class QuestManager {
             player.getPlayer().addPotionEffect(effect);
         }
 
-        player.addReputation(trader.getNameId(), quest.getReputationReward());
+        // Résoudre le métier associé au trader et créditer la réputation
+        EJob rewardJob = trader.getJob();
+        if (rewardJob != null) {
+            player.addJobReputation(rewardJob, quest.getReputationReward());
+        }
         player.getPlayer().sendMessage("§aVous avez reçu les récompenses de la quête ! §b+" + quest.getReputationReward() + " réputation §aavec §b" + trader.getNameId());
 
         data.setClaimed(true);

@@ -42,7 +42,7 @@ public class AlphaPlayer extends MLPlayer implements Serializable {
     private final List<Role> subRoles = new ArrayList<>();
 
     @Getter
-    private final Map<String, Integer> reputationByTrader = new HashMap<>();
+    private final Map<EJob, Integer> reputationByJob = new EnumMap<>(EJob.class);
 
     @Getter
     private final Map<EJob, Integer> jobLevels = new EnumMap<>(EJob.class);
@@ -99,10 +99,6 @@ public class AlphaPlayer extends MLPlayer implements Serializable {
     // Helpers quêtes
     // -----------------------------------------------------------------------
 
-    /**
-     * Retourne la quête active en cours (non complétée OU non réclamée) pour la journée.
-     * Utile pour la progression et les messages d'erreur.
-     */
     public PlayerQuestData getCurrentActiveQuest() {
         return activeQuests.stream()
                 .filter(q -> !q.isClaimed())
@@ -110,24 +106,15 @@ public class AlphaPlayer extends MLPlayer implements Serializable {
                 .orElse(null);
     }
 
-    /**
-     * Nombre de quêtes acceptées aujourd'hui (peu importe leur état).
-     */
     public int countTodayQuests() {
         return activeQuests.size();
     }
 
-    /**
-     * Ajoute ou remplace un slot de quête en mémoire.
-     */
     public void putQuest(PlayerQuestData data) {
         activeQuests.removeIf(q -> q.getSlot() == data.getSlot());
         activeQuests.add(data);
     }
 
-    /**
-     * Supprime un slot de quête en mémoire.
-     */
     public void removeQuest(int slot) {
         activeQuests.removeIf(q -> q.getSlot() == slot);
     }
@@ -155,13 +142,21 @@ public class AlphaPlayer extends MLPlayer implements Serializable {
 
         WorldPortalManager.getInstance().sendAllFakePortalBlocks(this.player);
 
-        // Chargement réputation + quêtes
-        this.reputationByTrader.putAll(GameManager.getInstance().getDatabase().quests().getReputation(this.getUuid()));
-        List<PlayerQuestData> loaded = GameManager.getInstance().getDatabase().quests().getPlayerQuests(this.getUuid());
+        // Chargement réputation par métier depuis la DB
+        // La DB stocke job.name() comme clé (ex. "MINEUR"), on convertit en EJob.
+        Map<String, Integer> rawRep = GameManager.getInstance().getDatabase().quests().getReputation(this.getUuid());
+        rawRep.forEach((key, value) -> {
+            try {
+                reputationByJob.put(EJob.valueOf(key), value);
+            } catch (IllegalArgumentException _) {
+                // Ancienne donnée avec un nom de trader — ignorée après migration.
+            }
+        });
 
+        List<PlayerQuestData> loaded = GameManager.getInstance().getDatabase().quests().getPlayerQuests(this.getUuid());
         cleanupExpiredQuestsOnJoin(loaded);
 
-        // Calcul initial des niveaux de métier depuis la réputation chargée
+        // Calcul initial des niveaux de métier
         initJobLevels();
     }
 
@@ -178,11 +173,6 @@ public class AlphaPlayer extends MLPlayer implements Serializable {
         }
     }
 
-    /**
-     * Trie les quêtes chargées depuis la DB :
-     * - Quêtes d'aujourd'hui : conservées en mémoire, buffs réappliqués si réclamées.
-     * - Quêtes d'avant le reset : buffs retirés si réclamées, supprimées de la DB.
-     */
     private void cleanupExpiredQuestsOnJoin(List<PlayerQuestData> loaded) {
         this.activeQuests.clear();
         LocalDate today = LocalDate.now();
@@ -198,14 +188,12 @@ public class AlphaPlayer extends MLPlayer implements Serializable {
             }
         }
 
-        // Supprimer les quêtes expirées de la DB
         for (PlayerQuestData q : expired) {
             GameManager.getInstance().getDatabase().quests().deletePlayerQuestSlot(this.getUuid(), q.getSlot());
             LogManager.getInstance().log(Level.INFO, LogManager.ETagLog.QUEST,
                     "Quête expirée (slot " + q.getSlot() + ") supprimée pour " + this.getPseudo());
         }
 
-        // Retirer les buffs des quêtes expirées qui avaient été réclamées
         List<PotionEffect> effectsToRemove = new ArrayList<>();
         for (PlayerQuestData q : expired) {
             if (q.isClaimed()) {
@@ -223,10 +211,8 @@ public class AlphaPlayer extends MLPlayer implements Serializable {
             }, 2L);
         }
 
-        // Garder les quêtes valides en mémoire
         this.activeQuests.addAll(valid);
 
-        // Réappliquer les buffs des quêtes d'aujourd'hui déjà réclamées
         List<PotionEffect> effectsToReapply = new ArrayList<>();
         for (PlayerQuestData q : valid) {
             if (q.isClaimed()) {
@@ -262,11 +248,6 @@ public class AlphaPlayer extends MLPlayer implements Serializable {
         this.success = success;
         this.getAlphaLife().regenHealth(() -> this.getAlphaLife().setSuccess(success));
         GameManager.getInstance().getAlphaPlayerFactory().getPersistenceService().updateSuccess(this);
-    }
-
-    public void teleport(MLWorld monde) {
-        if (getPlayer() != null)
-            getPlayer().teleport(monde.getWorld().getSpawnLocation());
     }
 
     //region Getters Setters
@@ -327,13 +308,32 @@ public class AlphaPlayer extends MLPlayer implements Serializable {
         return true;
     }
 
+    // -----------------------------------------------------------------------
+    // Réputation
+    // -----------------------------------------------------------------------
+
+    /**
+     * Retourne la réputation du joueur pour le métier lié à ce trader.
+     * Compatibilité ascendante : VillagerListener, TabDisplayManager, VillagerCommand
+     * utilisent cette méthode sans avoir à connaître EJob.
+     * Retourne 0 si le trader n'est associé à aucun métier.
+     */
     public int getReputation(String traderId) {
-        return reputationByTrader.getOrDefault(traderId, 0);
+        return GameManager.getInstance().getVillagerFactory().getTraders().stream()
+                .filter(t -> traderId.equals(t.getNameId()) && t.getJob() != null)
+                .map(t -> reputationByJob.getOrDefault(t.getJob(), 0))
+                .findFirst()
+                .orElse(0);
     }
 
-    /** Somme de toutes les réputations avec tous les Traders. */
+    /** Réputation directe pour un métier donné. */
+    public int getJobReputation(EJob job) {
+        return reputationByJob.getOrDefault(job, 0);
+    }
+
+    /** Somme de toutes les réputations par métier. */
     public int getTotalReputation() {
-        return reputationByTrader.values().stream().mapToInt(Integer::intValue).sum();
+        return reputationByJob.values().stream().mapToInt(Integer::intValue).sum();
     }
 
     /** Rang global calculé à partir de la réputation totale. */
@@ -341,14 +341,23 @@ public class AlphaPlayer extends MLPlayer implements Serializable {
         return GlobalRank.fromReputation(getTotalReputation());
     }
 
-    public void addReputation(String traderId, int amount) {
+    /**
+     * Ajoute de la réputation à un métier.
+     * Tous les traders partageant ce métier contribuent à la même valeur.
+     *
+     * @param job    le métier concerné
+     * @param amount montant à ajouter (peut être négatif pour retirer)
+     */
+    public void addJobReputation(EJob job, int amount) {
         GlobalRank previousRank = getGlobalRank();
-        int newRep = getReputation(traderId) + amount;
-        reputationByTrader.put(traderId, newRep);
-        GameManager.getInstance().getDatabase().quests().updateReputation(this.getUuid(), traderId, newRep);
 
-        // Mise à jour du niveau du métier lié à ce Trader
-        updateJobLevelForTrader(traderId, newRep);
+        int newRep = Math.max(0, getJobReputation(job) + amount);
+        reputationByJob.put(job, newRep);
+
+        // Persistance : on utilise job.name() comme clé dans la colonne trader_id de la DB
+        GameManager.getInstance().getDatabase().quests().updateReputation(this.getUuid(), job.name(), newRep);
+
+        updateJobLevel(job, newRep);
 
         GlobalRank newRank = getGlobalRank();
         if (newRank != previousRank && getPlayer() != null) {
@@ -365,60 +374,51 @@ public class AlphaPlayer extends MLPlayer implements Serializable {
     // -----------------------------------------------------------------------
 
     /**
-     * Initialise tous les niveaux de métier au login, depuis la réputation déjà chargée.
-     * Appelé dans onJoinServer(), après le chargement de reputationByTrader.
+     * Initialise les niveaux de métier depuis la réputation chargée.
+     * Appelé dans onJoinServer(), après le chargement de reputationByJob.
      */
     private void initJobLevels() {
-        for (EJob m : EJob.values()) {
-            jobLevels.put(m, 0);
+        for (EJob job : EJob.values()) {
+            int rep = reputationByJob.getOrDefault(job, 0);
+            jobLevels.put(job, JobLevelConfig.computeLevel(rep));
         }
-        GameManager.getInstance().getVillagerFactory().getTraders().forEach(trader -> {
-            if (trader.getJob() == null) return;
-            int rep = getReputation(trader.getNameId());
-            jobLevels.put(trader.getJob(), JobLevelConfig.computeLevel(rep));
-        });
-        LogManager.getInstance().log(Level.INFO, LogManager.ETagLog.JOB, "Niveaux de métier initialisés pour " + getPseudo());
+        LogManager.getInstance().log(Level.INFO, LogManager.ETagLog.JOB,
+                "Niveaux de métier initialisés pour " + getPseudo());
     }
 
     /**
-     * Recalcule et met à jour le niveau du métier associé au trader indiqué.
+     * Recalcule et met à jour le niveau d'un métier.
      * Envoie un message au joueur en cas de level-up.
      */
-    private void updateJobLevelForTrader(String traderId, int newReputation) {
-        GameManager.getInstance().getVillagerFactory().getTraders().stream()
-                .filter(t -> traderId.equals(t.getNameId()) && t.getJob() != null)
-                .findFirst()
-                .ifPresent(trader -> {
-                    EJob job = trader.getJob();
-                    int oldLevel = jobLevels.getOrDefault(job, 0);
-                    int newLevel = JobLevelConfig.computeLevel(newReputation);
-                    jobLevels.put(job, newLevel);
+    private void updateJobLevel(EJob job, int newReputation) {
+        int oldLevel = jobLevels.getOrDefault(job, 0);
+        int newLevel = JobLevelConfig.computeLevel(newReputation);
+        jobLevels.put(job, newLevel);
 
-                    if (newLevel > oldLevel && getPlayer() != null && getPlayer().isOnline()) {
-                        int nextThreshold = JobLevelConfig.getNextThreshold(newReputation);
-                        String progress = nextThreshold >= 0
-                                ? " (" + newReputation + "/" + nextThreshold + " rep)"
-                                : " (niveau maximum atteint !)";
-                        getPlayer().sendMessage(
-                                Component.text("⚒ Métier ", NamedTextColor.GREEN)
-                                        .append(job.toComponent())
-                                        .append(Component.text(" : ", NamedTextColor.GREEN))
-                                        .append(Component.text(JobLevelConfig.getLevelName(newLevel), NamedTextColor.GOLD))
-                                        .append(Component.text(progress, NamedTextColor.GRAY))
-                        );
-                        LogManager.getInstance().log(Level.INFO, LogManager.ETagLog.JOB,
-                                getPseudo() + " : métier " + job.name()
-                                        + " niv. " + oldLevel + " -> " + newLevel
-                                        + " (rep=" + newReputation + ")");
-                    }
-                });
+        if (newLevel > oldLevel && getPlayer() != null && getPlayer().isOnline()) {
+            int nextThreshold = JobLevelConfig.getNextThreshold(newReputation);
+            String progress = nextThreshold >= 0
+                    ? " (" + newReputation + "/" + nextThreshold + " rep)"
+                    : " (niveau maximum atteint !)";
+            getPlayer().sendMessage(
+                    Component.text("⚒ Métier ", NamedTextColor.GREEN)
+                            .append(job.toComponent())
+                            .append(Component.text(" : ", NamedTextColor.GREEN))
+                            .append(Component.text(JobLevelConfig.getLevelName(newLevel), NamedTextColor.GOLD))
+                            .append(Component.text(progress, NamedTextColor.GRAY))
+            );
+            LogManager.getInstance().log(Level.INFO, LogManager.ETagLog.JOB,
+                    getPseudo() + " : métier " + job.name()
+                            + " niv. " + oldLevel + " -> " + newLevel
+                            + " (rep=" + newReputation + ")");
+        }
     }
 
     /**
      * Retourne le niveau actuel d'un métier pour ce joueur.
      *
      * @param job le métier voulu
-     * @return niveau du metier
+     * @return niveau du métier (0 au minimum)
      */
     public int getJobLevel(EJob job) {
         return jobLevels.getOrDefault(job, 0);
