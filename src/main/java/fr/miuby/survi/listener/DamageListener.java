@@ -20,7 +20,7 @@ import static java.lang.Math.min;
 import static java.lang.Math.round;
 
 public class DamageListener implements Listener {
-    Sound slimeSound = Sound.sound(Key.key("entity.slime.attack"), Sound.Source.AMBIENT, 1f, 1.1f);
+    Sound slimeSound = Sound.sound(Key.key("entity.slime.attack"), Sound.Source.MASTER, 1f, 1.1f);
 
     @EventHandler
     public void onEntityDamageByEntity(EntityDamageByEntityEvent event) {

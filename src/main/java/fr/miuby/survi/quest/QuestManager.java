@@ -5,6 +5,8 @@ import fr.miuby.survi.player.AlphaPlayer;
 import fr.miuby.survi.system.log.LogManager;
 import fr.miuby.survi.villager.trader.Trader;
 import lombok.Getter;
+import net.kyori.adventure.key.Key;
+import net.kyori.adventure.sound.Sound;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Registry;
@@ -328,6 +330,8 @@ public class QuestManager {
         data.setCompleted(true);
         GameManager.getInstance().getDatabase().quests().updatePlayerQuest(player.getUuid(), data);
 
+        Sound myCustomSound = Sound.sound(Key.key("ui.toast.challenge_complete"), Sound.Source.MASTER, 1f, 1.1f);
+        player.getPlayer().playSound(myCustomSound);
         player.getPlayer().sendMessage("§aQuête terminée : §6" + quest.getName());
         player.getPlayer().sendMessage("§7Allez voir le Trader pour obtenir votre récompense !");
     }

@@ -126,7 +126,7 @@ public class VillagerListener implements Listener {
             );
         }
 
-        Sound myCustomSound = Sound.sound(Key.key("ui.toast.challenge_complete"), Sound.Source.AMBIENT, 1f, 1.1f);
+        Sound myCustomSound = Sound.sound(Key.key("ui.toast.challenge_complete"), Sound.Source.MASTER, 1f, 1.1f);
 
         for (Player p : Bukkit.getOnlinePlayers()) {
             p.playSound(myCustomSound);
