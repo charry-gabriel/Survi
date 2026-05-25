@@ -177,11 +177,7 @@ public class TabDisplayManager {
     }
 
     private int getRepForJob(AlphaPlayer player, EJob job) {
-        return GameManager.getInstance().getVillagerFactory().getTraders().stream()
-                .filter(t -> job.equals(t.getJob()))
-                .findFirst()
-                .map(t -> player.getReputation(t.getNameId()))
-                .orElse(0);
+        return player.getJobReputation(job);
     }
 
     private Component formatStat(AlphaPlayer alphaPlayer, Attribute attributeType, String statName) {
