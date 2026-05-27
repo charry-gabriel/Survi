@@ -7,9 +7,9 @@ import java.util.List;
 
 @Getter
 public class LockedArmorItem extends LockedItem {
-    private final LockedArmorType type;
+    private final ELockedArmorType type;
 
-    public LockedArmorItem(List<NamespacedKey> items, LockedArmorType type) {
+    public LockedArmorItem(List<NamespacedKey> items, ELockedArmorType type) {
         super(items);
         this.type = type;
     }

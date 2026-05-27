@@ -14,7 +14,7 @@ import org.bukkit.attribute.Attribute;
  *   <li>{@code potion-effects}   — effets de potion appliqués à l'attaque (ex. araignée)</li>
  * </ul>
  */
-public enum MobStat {
+public enum EMobStat {
 
     MAX_HEALTH          ("max-health",           Attribute.MAX_HEALTH),
     ATTACK_DAMAGE       ("attack-damage",         Attribute.ATTACK_DAMAGE),
@@ -27,7 +27,7 @@ public enum MobStat {
     @Getter private final String    configKey;
     @Getter private final Attribute attribute;
 
-    MobStat(String configKey, Attribute attribute) {
+    EMobStat(String configKey, Attribute attribute) {
         this.configKey = configKey;
         this.attribute = attribute;
     }

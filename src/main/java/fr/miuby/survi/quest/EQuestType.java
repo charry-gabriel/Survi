@@ -1,6 +1,6 @@
 package fr.miuby.survi.quest;
 
-public enum QuestType {
+public enum EQuestType {
     MINE,
     KILL,
     BREED,

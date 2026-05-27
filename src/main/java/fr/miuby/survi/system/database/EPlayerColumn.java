@@ -7,7 +7,7 @@ import lombok.Getter;
  * Prevents SQL injection and makes update sites explicit.
  */
 @Getter
-public enum PlayerColumn {
+public enum EPlayerColumn {
     MORT("mort"),
     SUCCESS("success"),
     ROLE("role"),
@@ -16,7 +16,7 @@ public enum PlayerColumn {
 
     private final String columnName;
 
-    PlayerColumn(String columnName) {
+    EPlayerColumn(String columnName) {
         this.columnName = columnName;
     }
 

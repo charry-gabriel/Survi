@@ -1,11 +1,10 @@
 package fr.miuby.survi.villager;
 
 import fr.miuby.lib.villager.MLVillager;
-import fr.miuby.survi.GameManager;
 import fr.miuby.lib.villager.VillagerRegistry;
 import fr.miuby.survi.item.SimpleItemStack;
 import fr.miuby.survi.player.AlphaPlayer;
-import fr.miuby.survi.quest.QuestDifficulty;
+import fr.miuby.survi.quest.EQuestDifficulty;
 import fr.miuby.survi.villager.trader.Trader;
 import fr.miuby.survi.villager.trader.TraderConfig;
 import fr.miuby.survi.villager.trader.TraderLoader;
@@ -66,7 +65,7 @@ public class VillagerFactory {
                 trader.setJob(EJob.valueOf(config.job.toUpperCase()));
             }
             if (config.questDifficulty != null && !config.questDifficulty.isEmpty()) {
-                trader.setQuestDifficulty(QuestDifficulty.valueOf(config.questDifficulty.toUpperCase()));
+                trader.setQuestDifficulty(EQuestDifficulty.valueOf(config.questDifficulty.toUpperCase()));
             }
 
             // Reputations recipes

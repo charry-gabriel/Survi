@@ -12,8 +12,8 @@ public class Quest {
     private final String id;
     private final String name;
     private final String description;
-    private final QuestType type;
-    private final QuestDifficulty difficulty;
+    private final EQuestType type;
+    private final EQuestDifficulty difficulty;
     
     // Target can be Material (MINE/CRAFT/COLLECT) or EntityType (KILL)
     private final Object target;

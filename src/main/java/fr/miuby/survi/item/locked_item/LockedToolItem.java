@@ -7,9 +7,9 @@ import java.util.List;
 
 @Getter
 public class LockedToolItem extends LockedItem {
-    private final LockedToolType type;
+    private final ELockedToolType type;
 
-    public LockedToolItem(List<NamespacedKey> items, LockedToolType type) {
+    public LockedToolItem(List<NamespacedKey> items, ELockedToolType type) {
         super(items);
         this.type = type;
     }

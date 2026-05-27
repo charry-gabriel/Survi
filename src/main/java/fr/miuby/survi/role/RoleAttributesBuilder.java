@@ -9,10 +9,10 @@ public class RoleAttributesBuilder {
     private final Map<EWorld, List<RoleAttribute>> attributesByWorld = new EnumMap<>(EWorld.class);
     
     public RoleAttributesBuilder add(EWorld world, Attribute attribute, float value) {
-        return add(world, attribute, value, RoleAttribute.Operation.ADD_SCALAR);
+        return add(world, attribute, value, RoleAttribute.EOperation.ADD_SCALAR);
     }
     
-    public RoleAttributesBuilder add(EWorld world, Attribute attribute, float value, RoleAttribute.Operation operation) {
+    public RoleAttributesBuilder add(EWorld world, Attribute attribute, float value, RoleAttribute.EOperation operation) {
         attributesByWorld.computeIfAbsent(world, k -> new ArrayList<>())
                         .add(new RoleAttribute(world, attribute, value, operation));
         return this;

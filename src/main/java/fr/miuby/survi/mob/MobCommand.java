@@ -223,7 +223,7 @@ public class MobCommand {
                         : 0)));
 
         if (cfg != null && storedLevel > 0) {
-            for (MobStat stat : MobStat.values()) {
+            for (EMobStat stat : EMobStat.values()) {
                 double v = cfg.getStatValue(stat, storedLevel);
                 if (v >= 0)
                     player.sendMessage(row(stat.getConfigKey(), String.format("%.3f", v)));
@@ -250,7 +250,7 @@ public class MobCommand {
         }
 
         sender.sendMessage(header("STATS  " + type.name() + "  niv." + level));
-        for (MobStat stat : MobStat.values()) {
+        for (EMobStat stat : EMobStat.values()) {
             double v = cfg.getStatValue(stat, level);
             if (v >= 0)
                 sender.sendMessage(row(stat.getConfigKey(), String.format("%.3f", v)));

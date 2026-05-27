@@ -18,7 +18,7 @@ public class RoleAttribute {
     @Getter
     private final float value;
     @Getter
-    private final Operation operation;
+    private final EOperation operation;
 
     @Getter @Nullable
     private String name;
@@ -26,7 +26,7 @@ public class RoleAttribute {
     private String role;
 
     public RoleAttribute(EWorld world, Attribute attributeType, float value) {
-        this(world, attributeType, value, Operation.ADD_NUMBER);
+        this(world, attributeType, value, EOperation.ADD_NUMBER);
     }
 
     public AttributeModifier createAttributeModifier() {
@@ -43,7 +43,7 @@ public class RoleAttribute {
         return world + "_" + role + "_" + attributeKey;
     }
 
-    public enum Operation {
+    public enum EOperation {
         ADD_NUMBER,
         ADD_SCALAR,
         MULTIPLY_SCALAR_1,

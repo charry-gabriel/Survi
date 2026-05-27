@@ -58,12 +58,20 @@ public class GameManager {
     @Setter @Getter private int dispel = 0;
     @Setter @Getter private boolean isNight;
 
-    private enum InitState {
-        NOT_INITIALIZED,
-        DATABASE_LOADED,
-        WORLDS_LOADED
+    /**
+     * Suit l'ordre d'initialisation obligatoire du plugin.
+     *
+     * Séquence attendue :
+     *   1. {@link #init(Survi)}              → NOT_STARTED → DATABASE_READY
+     *   2. {@link #initAfterWorldsLoad()}    → DATABASE_READY → FULLY_LOADED
+     *      (déclenché par WorldInitializer une fois les mondes prêts)
+     */
+    private enum EInitState {
+        NOT_STARTED,
+        DATABASE_READY,
+        FULLY_LOADED
     }
-    private InitState initState = InitState.NOT_INITIALIZED;
+    private EInitState initState = EInitState.NOT_STARTED;
 
     public static GameManager getInstance() {
         if (instance == null) instance = new GameManager();
@@ -87,28 +95,28 @@ public class GameManager {
     }
 
     private void initDatabase() {
-        if (this.initState != InitState.NOT_INITIALIZED)
+        if (this.initState != EInitState.NOT_STARTED)
             throw new IllegalStateException("Wrong init order !");
 
         LogManager.getInstance().log(Level.INFO, LogManager.ETagLog.SYSTEM, "Chargement de la base de données...");
         this.database = new SQLite();
         this.database.load();
-        this.initState = InitState.DATABASE_LOADED;
+        this.initState = EInitState.DATABASE_READY;
         LogManager.getInstance().log(Level.INFO, LogManager.ETagLog.SYSTEM, "Base de données chargée");
     }
 
     private void initWorlds() {
-        if (this.initState != InitState.DATABASE_LOADED)
+        if (this.initState != EInitState.DATABASE_READY)
             throw new IllegalStateException("Wrong init order !");
 
         LogManager.getInstance().log(Level.INFO, LogManager.ETagLog.WORLD, "Initialisation (si besoin) des mondes...");
-        this.initState = InitState.WORLDS_LOADED;
+        this.initState = EInitState.FULLY_LOADED;
 
         WorldInitializer.initializeIfNeeded();
     }
 
     public void initAfterWorldsLoad() {
-        if (this.initState != InitState.WORLDS_LOADED)
+        if (this.initState != EInitState.FULLY_LOADED)
             throw new IllegalStateException("Wrong init order !");
 
         this.worldLevelManager = new WorldLevelManager();

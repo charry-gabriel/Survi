@@ -1,8 +1,8 @@
 package fr.miuby.survi.villager.villagerlevel.blessing;
 
 import fr.miuby.lib.utils.Rect;
-import fr.miuby.survi.item.locked_item.LockedArmorType;
-import fr.miuby.survi.item.locked_item.LockedToolType;
+import fr.miuby.survi.item.locked_item.ELockedArmorType;
+import fr.miuby.survi.item.locked_item.ELockedToolType;
 import fr.miuby.survi.system.log.LogManager;
 import fr.miuby.survi.world.EWorld;
 import org.bukkit.configuration.ConfigurationSection;
@@ -106,8 +106,8 @@ public class BlessingLoader {
                 case "RESISTANCE"  -> new ResistanceEffect(toFloat(map.get("value"), 1f));
                 case "DAMAGE"      -> new DamageEffect(toFloat(map.get("value"), 1f));
                 case "DISPEL"      -> new DispelEffect(toInt(map.get("value"), 1));
-                case "UNLOCK_TOOL" -> new UnlockToolEffect(LockedToolType.valueOf(String.valueOf(map.get("tool")).toUpperCase()));
-                case "UNLOCK_ARMOR" -> new UnlockArmorEffect(LockedArmorType.valueOf(String.valueOf(map.get("armor")).toUpperCase()));
+                case "UNLOCK_TOOL" -> new UnlockToolEffect(ELockedToolType.valueOf(String.valueOf(map.get("tool")).toUpperCase()));
+                case "UNLOCK_ARMOR" -> new UnlockArmorEffect(ELockedArmorType.valueOf(String.valueOf(map.get("armor")).toUpperCase()));
                 case "LOCK_WORLD" -> new LockWorldEffect(EWorld.valueOf(String.valueOf(map.get("world")).toUpperCase()));
                 case "LOCK_VILLAGER" -> new LockVillagerEffect(Duration.ofDays(toLong(map.get("days"), 1)));
                 case "MESSAGE" -> new MessageEffect(String.valueOf(map.get("text")));

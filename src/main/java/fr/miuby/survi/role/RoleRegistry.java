@@ -7,6 +7,20 @@ import org.bukkit.attribute.Attribute;
 
 import java.util.*;
 
+/**
+ * Registre de tous les rôles disponibles dans le plugin.
+ *
+ * <h3>Architecture — pourquoi les rôles sont en Java et pas en YAML ?</h3>
+ * Les rôles définissent des modificateurs d'attributs Bukkit fortement typés
+ * ({@link org.bukkit.attribute.Attribute}). Les garder en code permet la
+ * vérification à la compilation et évite les erreurs de configuration silencieuses.
+ *
+ * <h3>Ajouter un nouveau rôle</h3>
+ * <ol>
+ *   <li>Ajouter la valeur dans {@link ERole}.</li>
+ *   <li>Ajouter la {@link RoleDefinition} correspondante ici dans le constructeur.</li>
+ * </ol>
+ */
 public class RoleRegistry {
     private static final MultiKeyRegistry<Role> INSTANCE = new MultiKeyRegistry<>();
 
@@ -19,19 +33,19 @@ public class RoleRegistry {
                     .add(EWorld.ALL, Attribute.BLOCK_BREAK_SPEED, 0.1f)
 
                     .add(EWorld.VILLAGE, Attribute.ATTACK_DAMAGE, 0.5f)
-                    .add(EWorld.VILLAGE, Attribute.MOVEMENT_SPEED, 0.1f, RoleAttribute.Operation.ADD_NUMBER)
+                    .add(EWorld.VILLAGE, Attribute.MOVEMENT_SPEED, 0.1f, RoleAttribute.EOperation.ADD_NUMBER)
                     .add(EWorld.VILLAGE, Attribute.SAFE_FALL_DISTANCE, 1f)
 
                     .add(EWorld.WILDERNESS, Attribute.ATTACK_DAMAGE, 0.25f)
-                    .add(EWorld.WILDERNESS, Attribute.MOVEMENT_SPEED, 0.01f, RoleAttribute.Operation.ADD_NUMBER)
+                    .add(EWorld.WILDERNESS, Attribute.MOVEMENT_SPEED, 0.01f, RoleAttribute.EOperation.ADD_NUMBER)
                     .add(EWorld.WILDERNESS, Attribute.SAFE_FALL_DISTANCE, 1f)
 
                     .add(EWorld.NETHER, Attribute.ATTACK_DAMAGE, 0.4f)
-                    .add(EWorld.NETHER, Attribute.MOVEMENT_SPEED, 0.05f, RoleAttribute.Operation.ADD_NUMBER)
+                    .add(EWorld.NETHER, Attribute.MOVEMENT_SPEED, 0.05f, RoleAttribute.EOperation.ADD_NUMBER)
                     .add(EWorld.NETHER, Attribute.SAFE_FALL_DISTANCE, 10f)
 
                     .add(EWorld.END, Attribute.ATTACK_DAMAGE, 0.1f)
-                    .add(EWorld.END, Attribute.MOVEMENT_SPEED, 0.01f, RoleAttribute.Operation.ADD_NUMBER)
+                    .add(EWorld.END, Attribute.MOVEMENT_SPEED, 0.01f, RoleAttribute.EOperation.ADD_NUMBER)
                     .add(EWorld.END, Attribute.SCALE, 0.556f)
                     .add(EWorld.END, Attribute.SAFE_FALL_DISTANCE, 1f)
             ),
@@ -39,26 +53,26 @@ public class RoleRegistry {
             // Loup Garou
             new RoleDefinition(ERole.LOUP_GAROU, "Loup Garou \uD83D\uDC3A", NamedTextColor.DARK_RED, "loup_garou", b -> b
                     .add(EWorld.ALL, Attribute.ARMOR, -0.1f)
-                    .add(EWorld.ALL, Attribute.ATTACK_DAMAGE, 6f, RoleAttribute.Operation.ADD_NUMBER)
-                    .add(EWorld.ALL, Attribute.KNOCKBACK_RESISTANCE, 0.35f, RoleAttribute.Operation.ADD_NUMBER)
+                    .add(EWorld.ALL, Attribute.ATTACK_DAMAGE, 6f, RoleAttribute.EOperation.ADD_NUMBER)
+                    .add(EWorld.ALL, Attribute.KNOCKBACK_RESISTANCE, 0.35f, RoleAttribute.EOperation.ADD_NUMBER)
                     .add(EWorld.ALL, Attribute.ATTACK_SPEED, 1f)
                     .add(EWorld.ALL, Attribute.MAX_HEALTH, -0.05f)
-                    .add(EWorld.ALL, Attribute.STEP_HEIGHT, 0.4f, RoleAttribute.Operation.ADD_NUMBER)
-                    .add(EWorld.ALL, Attribute.ENTITY_INTERACTION_RANGE, -0.5f, RoleAttribute.Operation.ADD_NUMBER)
-                    .add(EWorld.ALL, Attribute.SNEAKING_SPEED, 0.7f, RoleAttribute.Operation.ADD_NUMBER)
+                    .add(EWorld.ALL, Attribute.STEP_HEIGHT, 0.4f, RoleAttribute.EOperation.ADD_NUMBER)
+                    .add(EWorld.ALL, Attribute.ENTITY_INTERACTION_RANGE, -0.5f, RoleAttribute.EOperation.ADD_NUMBER)
+                    .add(EWorld.ALL, Attribute.SNEAKING_SPEED, 0.7f, RoleAttribute.EOperation.ADD_NUMBER)
 
-                    .add(EWorld.VILLAGE, Attribute.MOVEMENT_SPEED, 0.1f, RoleAttribute.Operation.ADD_NUMBER)
+                    .add(EWorld.VILLAGE, Attribute.MOVEMENT_SPEED, 0.1f, RoleAttribute.EOperation.ADD_NUMBER)
                     .add(EWorld.VILLAGE, Attribute.SCALE, 0.056f)
                     .add(EWorld.VILLAGE, Attribute.BLOCK_BREAK_SPEED, 0.1f)
 
-                    .add(EWorld.WILDERNESS, Attribute.MOVEMENT_SPEED, 0.04f, RoleAttribute.Operation.ADD_NUMBER)
+                    .add(EWorld.WILDERNESS, Attribute.MOVEMENT_SPEED, 0.04f, RoleAttribute.EOperation.ADD_NUMBER)
                     .add(EWorld.WILDERNESS, Attribute.SCALE, 0.056f)
 
-                    .add(EWorld.NETHER, Attribute.MOVEMENT_SPEED, 0.04f, RoleAttribute.Operation.ADD_NUMBER)
+                    .add(EWorld.NETHER, Attribute.MOVEMENT_SPEED, 0.04f, RoleAttribute.EOperation.ADD_NUMBER)
                     .add(EWorld.NETHER, Attribute.SCALE, 0.056f)
                     .add(EWorld.NETHER, Attribute.BLOCK_BREAK_SPEED, 0.1f)
 
-                    .add(EWorld.END, Attribute.MOVEMENT_SPEED, 0.04f, RoleAttribute.Operation.ADD_NUMBER)
+                    .add(EWorld.END, Attribute.MOVEMENT_SPEED, 0.04f, RoleAttribute.EOperation.ADD_NUMBER)
                     .add(EWorld.END, Attribute.SCALE, 0.611f)
             ),
 
@@ -69,27 +83,27 @@ public class RoleRegistry {
                     .add(EWorld.ALL, Attribute.BLOCK_BREAK_SPEED, 0.1f)
                     .add(EWorld.ALL, Attribute.SAFE_FALL_DISTANCE, 1f)
                     .add(EWorld.ALL, Attribute.FALL_DAMAGE_MULTIPLIER, -1f)
-                    .add(EWorld.ALL, Attribute.OXYGEN_BONUS, 3f, RoleAttribute.Operation.ADD_NUMBER)
-                    .add(EWorld.ALL, Attribute.WATER_MOVEMENT_EFFICIENCY, 0.25f, RoleAttribute.Operation.ADD_NUMBER)
+                    .add(EWorld.ALL, Attribute.OXYGEN_BONUS, 3f, RoleAttribute.EOperation.ADD_NUMBER)
+                    .add(EWorld.ALL, Attribute.WATER_MOVEMENT_EFFICIENCY, 0.25f, RoleAttribute.EOperation.ADD_NUMBER)
                     .add(EWorld.ALL, Attribute.ENTITY_INTERACTION_RANGE, 2f)
-                    .add(EWorld.ALL, Attribute.MAX_ABSORPTION, 6f, RoleAttribute.Operation.ADD_NUMBER)
+                    .add(EWorld.ALL, Attribute.MAX_ABSORPTION, 6f, RoleAttribute.EOperation.ADD_NUMBER)
 
-                    .add(EWorld.VILLAGE, Attribute.MOVEMENT_SPEED, 0.1f, RoleAttribute.Operation.ADD_NUMBER)
+                    .add(EWorld.VILLAGE, Attribute.MOVEMENT_SPEED, 0.1f, RoleAttribute.EOperation.ADD_NUMBER)
                     .add(EWorld.VILLAGE, Attribute.SCALE, -0.056f)
                     .add(EWorld.VILLAGE, Attribute.GRAVITY, -0.5f)
-                    .add(EWorld.VILLAGE, Attribute.ATTACK_KNOCKBACK, 2f, RoleAttribute.Operation.ADD_NUMBER)
+                    .add(EWorld.VILLAGE, Attribute.ATTACK_KNOCKBACK, 2f, RoleAttribute.EOperation.ADD_NUMBER)
 
-                    .add(EWorld.WILDERNESS, Attribute.MOVEMENT_SPEED, 0.04f, RoleAttribute.Operation.ADD_NUMBER)
+                    .add(EWorld.WILDERNESS, Attribute.MOVEMENT_SPEED, 0.04f, RoleAttribute.EOperation.ADD_NUMBER)
                     .add(EWorld.WILDERNESS, Attribute.SCALE, -0.056f)
                     .add(EWorld.WILDERNESS, Attribute.GRAVITY, -0.5f)
-                    .add(EWorld.WILDERNESS, Attribute.ATTACK_KNOCKBACK, 2f, RoleAttribute.Operation.ADD_NUMBER)
+                    .add(EWorld.WILDERNESS, Attribute.ATTACK_KNOCKBACK, 2f, RoleAttribute.EOperation.ADD_NUMBER)
 
-                    .add(EWorld.NETHER, Attribute.MOVEMENT_SPEED, 0.04f, RoleAttribute.Operation.ADD_NUMBER)
+                    .add(EWorld.NETHER, Attribute.MOVEMENT_SPEED, 0.04f, RoleAttribute.EOperation.ADD_NUMBER)
                     .add(EWorld.NETHER, Attribute.SCALE, -0.056f)
                     .add(EWorld.NETHER, Attribute.GRAVITY, -0.5f)
-                    .add(EWorld.NETHER, Attribute.ATTACK_KNOCKBACK, 3f, RoleAttribute.Operation.ADD_NUMBER)
+                    .add(EWorld.NETHER, Attribute.ATTACK_KNOCKBACK, 3f, RoleAttribute.EOperation.ADD_NUMBER)
 
-                    .add(EWorld.END, Attribute.MOVEMENT_SPEED, 0.04f, RoleAttribute.Operation.ADD_NUMBER)
+                    .add(EWorld.END, Attribute.MOVEMENT_SPEED, 0.04f, RoleAttribute.EOperation.ADD_NUMBER)
                     .add(EWorld.END, Attribute.SCALE, 0.5f)
             ),
 
@@ -99,7 +113,7 @@ public class RoleRegistry {
                     .add(EWorld.ALL, Attribute.ATTACK_DAMAGE, 0.1f)
                     .add(EWorld.ALL, Attribute.MAX_HEALTH, 0.2f)
                     .add(EWorld.ALL, Attribute.BLOCK_BREAK_SPEED, 0.3f)
-                    .add(EWorld.ALL, Attribute.MOVEMENT_SPEED, -0.1f, RoleAttribute.Operation.ADD_NUMBER)
+                    .add(EWorld.ALL, Attribute.MOVEMENT_SPEED, -0.1f, RoleAttribute.EOperation.ADD_NUMBER)
             ),
 
             // Géant
@@ -107,14 +121,14 @@ public class RoleRegistry {
                     .add(EWorld.ALL, Attribute.ARMOR, 0.3f)
                     .add(EWorld.ALL, Attribute.ATTACK_DAMAGE, 0.3f)
                     .add(EWorld.ALL, Attribute.MAX_HEALTH, 0.5f)
-                    .add(EWorld.ALL, Attribute.MOVEMENT_SPEED, -0.2f, RoleAttribute.Operation.ADD_NUMBER)
+                    .add(EWorld.ALL, Attribute.MOVEMENT_SPEED, -0.2f, RoleAttribute.EOperation.ADD_NUMBER)
                     .add(EWorld.ALL, Attribute.SCALE, 0.3f)
             ),
 
             // Novice (rôle par défaut)
             new RoleDefinition(ERole.NOVICE, "❤", NamedTextColor.GRAY, "novice", b ->
                     // Pas de bonus particulier pour les novices
-                    b.add(EWorld.ALL, Attribute.LUCK, 0.1f, RoleAttribute.Operation.ADD_NUMBER)
+                    b.add(EWorld.ALL, Attribute.LUCK, 0.1f, RoleAttribute.EOperation.ADD_NUMBER)
             ),
 
             // Combattant
@@ -127,35 +141,35 @@ public class RoleRegistry {
             // Mineur
             new RoleDefinition(ERole.MINEUR, "⛏", NamedTextColor.GRAY, "metier", b -> b
                     .add(EWorld.ALL, Attribute.BLOCK_BREAK_SPEED, 0.4f)
-                    .add(EWorld.ALL, Attribute.LUCK, 1.0f, RoleAttribute.Operation.ADD_NUMBER)
+                    .add(EWorld.ALL, Attribute.LUCK, 1.0f, RoleAttribute.EOperation.ADD_NUMBER)
                     .add(EWorld.ALL, Attribute.ARMOR, 0.1f)
             ),
 
             // Alchimiste
             new RoleDefinition(ERole.ALCHIMISTE, "⚗", NamedTextColor.DARK_PURPLE, "metier", b -> b
-                    .add(EWorld.ALL, Attribute.LUCK, 1.0f, RoleAttribute.Operation.ADD_NUMBER)
+                    .add(EWorld.ALL, Attribute.LUCK, 1.0f, RoleAttribute.EOperation.ADD_NUMBER)
                     .add(EWorld.ALL, Attribute.MAX_HEALTH, -0.1f)
                     .add(EWorld.VILLAGE, Attribute.BLOCK_BREAK_SPEED, 0.1f)
                     .add(EWorld.NETHER, Attribute.BLOCK_BREAK_SPEED, 0.2f)
-                    .add(EWorld.NETHER, Attribute.MOVEMENT_SPEED, 0.1f, RoleAttribute.Operation.ADD_NUMBER)
+                    .add(EWorld.NETHER, Attribute.MOVEMENT_SPEED, 0.1f, RoleAttribute.EOperation.ADD_NUMBER)
             ),
 
             // Enchanteur
             new RoleDefinition(ERole.ENCHANTEUR, "\uD83E\uDDD9", NamedTextColor.AQUA, "metier", b -> b
-                    .add(EWorld.ALL, Attribute.LUCK, 2.0f, RoleAttribute.Operation.ADD_NUMBER)
+                    .add(EWorld.ALL, Attribute.LUCK, 2.0f, RoleAttribute.EOperation.ADD_NUMBER)
                     .add(EWorld.ALL, Attribute.ARMOR, -0.1f)
                     .add(EWorld.VILLAGE, Attribute.BLOCK_BREAK_SPEED, 0.15f)
                     .add(EWorld.END, Attribute.BLOCK_BREAK_SPEED, 0.25f)
-                    .add(EWorld.END, Attribute.MOVEMENT_SPEED, 0.1f, RoleAttribute.Operation.ADD_NUMBER)
+                    .add(EWorld.END, Attribute.MOVEMENT_SPEED, 0.1f, RoleAttribute.EOperation.ADD_NUMBER)
             ),
 
             // Fermier
             new RoleDefinition(ERole.FERMIER, "\uD83C\uDF3E", NamedTextColor.GREEN, "metier", b -> b
-                .add(EWorld.ALL, Attribute.LUCK, 2.0f, RoleAttribute.Operation.ADD_NUMBER)
+                .add(EWorld.ALL, Attribute.LUCK, 2.0f, RoleAttribute.EOperation.ADD_NUMBER)
                 .add(EWorld.ALL, Attribute.ARMOR, -0.1f)
                 .add(EWorld.VILLAGE, Attribute.BLOCK_BREAK_SPEED, 0.15f)
                 .add(EWorld.END, Attribute.BLOCK_BREAK_SPEED, 0.25f)
-                .add(EWorld.END, Attribute.MOVEMENT_SPEED, 0.1f, RoleAttribute.Operation.ADD_NUMBER)
+                .add(EWorld.END, Attribute.MOVEMENT_SPEED, 0.1f, RoleAttribute.EOperation.ADD_NUMBER)
             )
         );
         

@@ -54,7 +54,7 @@ public class MobTypeConfig {
 
     // ─── Champs ───────────────────────────────────────────────────────────────────
 
-    private final Map<MobStat, LinearStat>       stats         = new EnumMap<>(MobStat.class);
+    private final Map<EMobStat, LinearStat>       stats         = new EnumMap<>(EMobStat.class);
     @Getter
     private final List<MobPotionEffectConfig>    potionEffects = new ArrayList<>();
     @Setter
@@ -65,7 +65,7 @@ public class MobTypeConfig {
 
     // ─── Mutateurs ────────────────────────────────────────────────────────────────
 
-    public void addStat(MobStat stat, LinearStat config) {
+    public void addStat(EMobStat stat, LinearStat config) {
         stats.put(stat, config);
     }
 
@@ -89,7 +89,7 @@ public class MobTypeConfig {
     /**
      * @return valeur calculée pour le niveau donné, ou {@code -1} si la stat est absente.
      */
-    public double getStatValue(MobStat stat, int level) {
+    public double getStatValue(EMobStat stat, int level) {
         LinearStat config = stats.get(stat);
         if (config == null) return -1;
         return config.compute(level);

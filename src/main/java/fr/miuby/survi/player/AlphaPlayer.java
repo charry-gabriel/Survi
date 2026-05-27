@@ -20,15 +20,11 @@ import org.bukkit.World;
 import org.bukkit.attribute.Attribute;
 
 import java.io.Serializable;
-import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
 import fr.miuby.survi.quest.PlayerQuestData;
-import fr.miuby.survi.quest.Quest;
 import java.util.*;
 import java.util.logging.Level;
-
-import org.bukkit.potion.PotionEffect;
 
 public class AlphaPlayer extends MLPlayer implements Serializable {
     @Getter
@@ -152,7 +148,7 @@ public class AlphaPlayer extends MLPlayer implements Serializable {
         });
 
         List<PlayerQuestData> loaded = GameManager.getInstance().getDatabase().quests().getPlayerQuests(this.getUuid());
-        cleanupExpiredQuestsOnJoin(loaded);
+        GameManager.getInstance().getQuestManager().restoreQuestsOnJoin(this, loaded);
 
         // Calcul initial des niveaux de métier
         initJobLevels();
@@ -168,64 +164,6 @@ public class AlphaPlayer extends MLPlayer implements Serializable {
             World village = WorldRegistry.get(EWorld.VILLAGE).getWorld();
             Location safeSpawn = village.getSpawnLocation();
             getPlayer().teleport(safeSpawn);
-        }
-    }
-
-    private void cleanupExpiredQuestsOnJoin(List<PlayerQuestData> loaded) {
-        this.activeQuests.clear();
-        LocalDate today = LocalDate.now();
-
-        List<PlayerQuestData> expired = new ArrayList<>();
-        List<PlayerQuestData> valid = new ArrayList<>();
-
-        for (PlayerQuestData quest : loaded) {
-            if (today.isEqual(quest.getLastAccepted())) {
-                valid.add(quest);
-            } else {
-                expired.add(quest);
-            }
-        }
-
-        for (PlayerQuestData q : expired) {
-            GameManager.getInstance().getDatabase().quests().deletePlayerQuestSlot(this.getUuid(), q.getSlot());
-            LogManager.getInstance().log(Level.INFO, LogManager.ETagLog.QUEST,
-                    "Quête expirée (slot " + q.getSlot() + ") supprimée pour " + this.getPseudo());
-        }
-
-        List<PotionEffect> effectsToRemove = new ArrayList<>();
-        for (PlayerQuestData q : expired) {
-            if (q.isClaimed()) {
-                Quest questDef = GameManager.getInstance().getQuestManager().getQuest(q.getQuestId());
-                if (questDef != null) effectsToRemove.addAll(questDef.getRewards());
-            }
-        }
-
-        if (!effectsToRemove.isEmpty()) {
-            GameManager.getInstance().getScheduler().runTaskLater(GameManager.getInstance().getPlugin(), () -> {
-                if (!this.getPlayer().isOnline()) return;
-                for (PotionEffect effect : effectsToRemove) {
-                    this.getPlayer().removePotionEffect(effect.getType());
-                }
-            }, 2L);
-        }
-
-        this.activeQuests.addAll(valid);
-
-        List<PotionEffect> effectsToReapply = new ArrayList<>();
-        for (PlayerQuestData q : valid) {
-            if (q.isClaimed()) {
-                Quest questDef = GameManager.getInstance().getQuestManager().getQuest(q.getQuestId());
-                if (questDef != null) effectsToReapply.addAll(questDef.getRewards());
-            }
-        }
-
-        if (!effectsToReapply.isEmpty()) {
-            GameManager.getInstance().getScheduler().runTaskLater(GameManager.getInstance().getPlugin(), () -> {
-                if (!this.getPlayer().isOnline()) return;
-                for (PotionEffect effect : effectsToReapply) {
-                    this.getPlayer().addPotionEffect(effect);
-                }
-            }, 5L);
         }
     }
 
@@ -312,10 +250,14 @@ public class AlphaPlayer extends MLPlayer implements Serializable {
 
     /**
      * Retourne la réputation du joueur pour le métier lié à ce trader.
-     * Compatibilité ascendante : VillagerListener, TabDisplayManager, VillagerCommand
-     * utilisent cette méthode sans avoir à connaître EJob.
-     * Retourne 0 si le trader n'est associé à aucun métier.
+     *
+     * @deprecated Crée une dépendance AlphaPlayer → VillagerFactory.
+     *             Préférer {@link #getJobReputation(EJob)} en résolvant
+     *             le job en amont (depuis le Trader ou le contexte d'appel).
+     *             Cette méthode sera supprimée dès que VillagerListener,
+     *             TabDisplayManager et VillagerCommand auront migré vers EJob.
      */
+    @Deprecated(forRemoval = true)
     public int getReputation(String traderId) {
         return GameManager.getInstance().getVillagerFactory().getTraders().stream()
                 .filter(t -> traderId.equals(t.getNameId()) && t.getJob() != null)
@@ -335,8 +277,8 @@ public class AlphaPlayer extends MLPlayer implements Serializable {
     }
 
     /** Rang global calculé à partir de la réputation totale. */
-    public GlobalRank getGlobalRank() {
-        return GlobalRank.fromReputation(getTotalReputation());
+    public EGlobalRank getGlobalRank() {
+        return EGlobalRank.fromReputation(getTotalReputation());
     }
 
     /**
@@ -347,7 +289,7 @@ public class AlphaPlayer extends MLPlayer implements Serializable {
      * @param amount montant à ajouter (peut être négatif pour retirer)
      */
     public void addJobReputation(EJob job, int amount) {
-        GlobalRank previousRank = getGlobalRank();
+        EGlobalRank previousRank = getGlobalRank();
 
         int newRep = Math.max(0, getJobReputation(job) + amount);
         reputationByJob.put(job, newRep);
@@ -357,7 +299,7 @@ public class AlphaPlayer extends MLPlayer implements Serializable {
 
         updateJobLevel(job, newRep);
 
-        GlobalRank newRank = getGlobalRank();
+        EGlobalRank newRank = getGlobalRank();
         if (newRank != previousRank && getPlayer() != null) {
             getPlayer().sendMessage(
                     Component.text("✦ Nouveau rang atteint : ", NamedTextColor.GOLD)

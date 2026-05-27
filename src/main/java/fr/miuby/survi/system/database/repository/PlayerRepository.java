@@ -4,7 +4,7 @@ import fr.miuby.survi.GameManager;
 import fr.miuby.survi.player.AlphaPlayer;
 import fr.miuby.survi.role.ERole;
 import fr.miuby.survi.role.Role;
-import fr.miuby.survi.system.database.PlayerColumn;
+import fr.miuby.survi.system.database.EPlayerColumn;
 import fr.miuby.survi.system.log.LogManager;
 import org.bukkit.entity.Player;
 
@@ -71,7 +71,7 @@ public class PlayerRepository {
         );
     }
 
-    public void update(UUID uuid, PlayerColumn column, String value) {
+    public void update(UUID uuid, EPlayerColumn column, String value) {
         GameManager.getInstance().getScheduler().runTaskAsynchronously(
                 GameManager.getInstance().getPlugin(), () -> {
                     try (Connection conn = GameManager.getInstance().getDatabase().getSQLConnection();

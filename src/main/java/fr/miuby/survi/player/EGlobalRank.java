@@ -16,7 +16,7 @@ import net.kyori.adventure.text.format.NamedTextColor;
  * d'enum (ex : {@code MAITRE} → {@link #MAITRE}).
  */
 @Getter
-public enum GlobalRank {
+public enum EGlobalRank {
 
     INCONNU    (NamedTextColor.DARK_GRAY),
     NOVICE     (NamedTextColor.GRAY),
@@ -32,7 +32,7 @@ public enum GlobalRank {
 
     private final NamedTextColor color;
 
-    GlobalRank(NamedTextColor color) {
+    EGlobalRank(NamedTextColor color) {
         // Valeurs par défaut en attendant l'appel à initFromConfig()
         this.displayName = name().charAt(0) + name().substring(1).toLowerCase();
         this.threshold   = 0;
@@ -48,7 +48,7 @@ public enum GlobalRank {
     public static void initFromConfig(SurviConfig config) {
         for (SurviConfig.RankEntry entry : config.getRankEntries()) {
             try {
-                GlobalRank rank = GlobalRank.valueOf(entry.id());
+                EGlobalRank rank = EGlobalRank.valueOf(entry.id());
                 rank.displayName = entry.display();
                 rank.threshold   = entry.threshold();
             } catch (IllegalArgumentException e) {
@@ -64,9 +64,9 @@ public enum GlobalRank {
     }
 
     /** Retourne le rang correspondant à {@code total} points de réputation. */
-    public static GlobalRank fromReputation(int total) {
-        GlobalRank result = INCONNU;
-        for (GlobalRank rank : values()) {
+    public static EGlobalRank fromReputation(int total) {
+        EGlobalRank result = INCONNU;
+        for (EGlobalRank rank : values()) {
             if (total >= rank.threshold) result = rank;
         }
         return result;

@@ -64,8 +64,8 @@ public class QuestManager {
                 String id = (String) map.get("id");
                 String name = (String) map.get("name");
                 String description = (String) map.get("description");
-                QuestType type = QuestType.valueOf((String) map.get("type"));
-                QuestDifficulty difficulty = QuestDifficulty.valueOf((String) map.get("difficulty"));
+                EQuestType type = EQuestType.valueOf((String) map.get("type"));
+                EQuestDifficulty difficulty = EQuestDifficulty.valueOf((String) map.get("difficulty"));
 
                 int goal = ((Number) map.get("goal")).intValue();
                 int reputationReward = ((Number) map.get("reputation_reward")).intValue();
@@ -73,9 +73,9 @@ public class QuestManager {
                 Object targetObj = null;
                 String targetStr = (String) map.get("target");
                 if (targetStr != null) {
-                    if (type == QuestType.MINE || type == QuestType.CRAFT || type == QuestType.SMELT) {
+                    if (type == EQuestType.MINE || type == EQuestType.CRAFT || type == EQuestType.SMELT) {
                         targetObj = Material.valueOf(targetStr);
-                    } else if (type == QuestType.KILL || type == QuestType.SHEAR || type == QuestType.BREED) {
+                    } else if (type == EQuestType.KILL || type == EQuestType.SHEAR || type == EQuestType.BREED) {
                         targetObj = EntityType.valueOf(targetStr);
                     }
                 }
@@ -128,7 +128,7 @@ public class QuestManager {
      * Retourne une quête aléatoire de la difficulté donnée en évitant de répéter
      * la dernière quête attribuée au joueur (persistée en DB, résiste aux restarts).
      */
-    public Quest getRandomQuest(QuestDifficulty difficulty, UUID playerUuid) {
+    public Quest getRandomQuest(EQuestDifficulty difficulty, UUID playerUuid) {
         List<Quest> filtered = questPool.stream()
                 .filter(q -> q.getDifficulty() == difficulty)
                 .toList();
@@ -154,13 +154,75 @@ public class QuestManager {
      *
      * @see WorldLevelManager#getQuestDifficultyWeights()
      */
-    public QuestDifficulty getRandomDifficulty() {
+    public EQuestDifficulty getRandomDifficulty() {
         int[] weights = GameManager.getInstance().getWorldLevelManager().getQuestDifficultyWeights();
         // weights = { commonWeight, rareWeight, legendaryWeight }, sum = 100
         int roll = random.nextInt(100);
-        if (roll < weights[2])                   return QuestDifficulty.LEGENDARY;
-        if (roll < weights[2] + weights[1])      return QuestDifficulty.RARE;
-        return QuestDifficulty.COMMON;
+        if (roll < weights[2])                   return EQuestDifficulty.LEGENDARY;
+        if (roll < weights[2] + weights[1])      return EQuestDifficulty.RARE;
+        return EQuestDifficulty.COMMON;
+    }
+
+    /**
+     * Appelé à la connexion d'un joueur : restaure ses quêtes du jour et supprime
+     * les expirées (date ≠ aujourd'hui). Ré-applique ou retire les effets de
+     * potion selon l'état de chaque quête.
+     *
+     * <p>Extrait d'AlphaPlayer pour garder toute la logique métier de quête ici.
+     */
+    public void restoreQuestsOnJoin(AlphaPlayer player, List<PlayerQuestData> loaded) {
+        player.getActiveQuests().clear();
+        java.time.LocalDate today = java.time.LocalDate.now();
+
+        List<PlayerQuestData> expired = new ArrayList<>();
+        List<PlayerQuestData> valid   = new ArrayList<>();
+
+        for (PlayerQuestData quest : loaded) {
+            if (today.isEqual(quest.getLastAccepted())) valid.add(quest);
+            else                                         expired.add(quest);
+        }
+
+        // Nettoyage des quêtes expirées
+        for (PlayerQuestData q : expired) {
+            GameManager.getInstance().getDatabase().quests().deletePlayerQuestSlot(player.getUuid(), q.getSlot());
+            LogManager.getInstance().log(Level.INFO, LogManager.ETagLog.QUEST,
+                    "Quête expirée (slot " + q.getSlot() + ") supprimée pour " + player.getPseudo());
+        }
+
+        // Retrait des effets des quêtes expirées réclamées
+        List<org.bukkit.potion.PotionEffect> effectsToRemove = new ArrayList<>();
+        for (PlayerQuestData q : expired) {
+            if (q.isClaimed()) {
+                Quest questDef = getQuest(q.getQuestId());
+                if (questDef != null) effectsToRemove.addAll(questDef.getRewards());
+            }
+        }
+        if (!effectsToRemove.isEmpty()) {
+            GameManager.getInstance().getScheduler().runTaskLater(GameManager.getInstance().getPlugin(), () -> {
+                if (!player.getPlayer().isOnline()) return;
+                for (org.bukkit.potion.PotionEffect effect : effectsToRemove)
+                    player.getPlayer().removePotionEffect(effect.getType());
+            }, 2L);
+        }
+
+        // Chargement des quêtes valides
+        player.getActiveQuests().addAll(valid);
+
+        // Ré-application des effets des quêtes valides déjà réclamées
+        List<org.bukkit.potion.PotionEffect> effectsToReapply = new ArrayList<>();
+        for (PlayerQuestData q : valid) {
+            if (q.isClaimed()) {
+                Quest questDef = getQuest(q.getQuestId());
+                if (questDef != null) effectsToReapply.addAll(questDef.getRewards());
+            }
+        }
+        if (!effectsToReapply.isEmpty()) {
+            GameManager.getInstance().getScheduler().runTaskLater(GameManager.getInstance().getPlugin(), () -> {
+                if (!player.getPlayer().isOnline()) return;
+                for (org.bukkit.potion.PotionEffect effect : effectsToReapply)
+                    player.getPlayer().addPotionEffect(effect);
+            }, 5L);
+        }
     }
 
     /**
@@ -219,7 +281,7 @@ public class QuestManager {
             return;
         }
 
-        QuestDifficulty difficulty = getRandomDifficulty();
+        EQuestDifficulty difficulty = getRandomDifficulty();
         Quest quest = getRandomQuest(difficulty, player.getUuid());
         if (quest == null) return;
 
@@ -300,14 +362,14 @@ public class QuestManager {
     /**
      * Incrémente la progression de la quête active en cours (non complétée).
      */
-    public void progressQuest(AlphaPlayer player, QuestType type, Object target, int amount) {
+    public void progressQuest(AlphaPlayer player, EQuestType type, Object target, int amount) {
         PlayerQuestData data = player.getCurrentActiveQuest();
         if (data == null || data.isCompleted()) return;
 
         Quest quest = getQuest(data.getQuestId());
         if (quest == null || quest.getType() != type) return;
 
-        boolean targetOk = (type == QuestType.FISH) || (quest.getTarget() == null) || quest.getTarget().equals(target);
+        boolean targetOk = (type == EQuestType.FISH) || (quest.getTarget() == null) || quest.getTarget().equals(target);
         if (!targetOk) return;
 
         data.setProgress(data.getProgress() + amount);

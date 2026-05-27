@@ -1,6 +1,6 @@
 package fr.miuby.survi.system;
 
-import fr.miuby.survi.player.GlobalRank;
+import fr.miuby.survi.player.EGlobalRank;
 import fr.miuby.survi.world.config.VillageZoneConfig;
 import fr.miuby.survi.system.log.LogManager;
 import lombok.Getter;
@@ -117,7 +117,7 @@ public class SurviConfig {
         questLegendaryMax          = cfg.getInt("world-level.quest-weights.legendary.max",            30);
         questLegendaryPerLevelGain = cfg.getInt("world-level.quest-weights.legendary.per-level-gain",  1);
 
-        GlobalRank.initFromConfig(this);
+        EGlobalRank.initFromConfig(this);
 
         // ─── Zone Village ────────────────────────────────────────────────────────────
         int centerX = cfg.getInt("village-zone.center.x", 0);

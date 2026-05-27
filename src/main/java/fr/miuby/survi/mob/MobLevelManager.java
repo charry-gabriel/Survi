@@ -100,7 +100,7 @@ public class MobLevelManager {
             // ── Stats classiques (attributs Bukkit) ──────────────────────────────
             ConfigurationSection statsSec = mobSec.getConfigurationSection("stats");
             if (statsSec != null) {
-                for (MobStat stat : MobStat.values()) {
+                for (EMobStat stat : EMobStat.values()) {
                     ConfigurationSection ss = statsSec.getConfigurationSection(stat.getConfigKey());
                     if (ss == null) continue;
                     typeConfig.addStat(stat, new MobTypeConfig.LinearStat(
@@ -207,7 +207,7 @@ public class MobLevelManager {
                 : level;
 
         // ── Attributs Bukkit ─────────────────────────────────────────────────────
-        for (MobStat stat : MobStat.values()) {
+        for (EMobStat stat : EMobStat.values()) {
             double value = typeConfig.getStatValue(stat, effectiveLevel);
             if (value < 0) continue;
 
@@ -221,7 +221,7 @@ public class MobLevelManager {
                 inst.setBaseValue(clamped);
 
                 // Synchronise la vie actuelle après avoir changé la vie max
-                if (stat == MobStat.MAX_HEALTH) {
+                if (stat == EMobStat.MAX_HEALTH) {
                     entity.setHealth(clamped);
                 }
             } catch (Exception _) {

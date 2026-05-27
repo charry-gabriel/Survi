@@ -18,42 +18,42 @@ public class LockedItemsFactory {
         leatherItems.add(Material.LEATHER_CHESTPLATE.getKey());
         leatherItems.add(Material.LEATHER_LEGGINGS.getKey());
         leatherItems.add(Material.LEATHER_BOOTS.getKey());
-        armorItems.add(new LockedArmorItem(leatherItems, LockedArmorType.LEATHER));
+        armorItems.add(new LockedArmorItem(leatherItems, ELockedArmorType.LEATHER));
 
         List<NamespacedKey> goldItems = new ArrayList<>();
         goldItems.add(Material.GOLDEN_HELMET.getKey());
         goldItems.add(Material.GOLDEN_CHESTPLATE.getKey());
         goldItems.add(Material.GOLDEN_LEGGINGS.getKey());
         goldItems.add(Material.GOLDEN_BOOTS.getKey());
-        armorItems.add(new LockedArmorItem(goldItems, LockedArmorType.GOLD));
+        armorItems.add(new LockedArmorItem(goldItems, ELockedArmorType.GOLD));
 
         List<NamespacedKey> mailleItems = new ArrayList<>();
         mailleItems.add(Material.CHAINMAIL_HELMET.getKey());
         mailleItems.add(Material.CHAINMAIL_CHESTPLATE.getKey());
         mailleItems.add(Material.CHAINMAIL_LEGGINGS.getKey());
         mailleItems.add(Material.CHAINMAIL_BOOTS.getKey());
-        armorItems.add(new LockedArmorItem(mailleItems, LockedArmorType.CHAINMAIL));
+        armorItems.add(new LockedArmorItem(mailleItems, ELockedArmorType.CHAINMAIL));
 
         List<NamespacedKey> ironItems = new ArrayList<>();
         ironItems.add(Material.IRON_HELMET.getKey());
         ironItems.add(Material.IRON_CHESTPLATE.getKey());
         ironItems.add(Material.IRON_LEGGINGS.getKey());
         ironItems.add(Material.IRON_BOOTS.getKey());
-        armorItems.add(new LockedArmorItem(ironItems, LockedArmorType.IRON));
+        armorItems.add(new LockedArmorItem(ironItems, ELockedArmorType.IRON));
 
         List<NamespacedKey> diamondItems = new ArrayList<>();
         diamondItems.add(Material.DIAMOND_HELMET.getKey());
         diamondItems.add(Material.DIAMOND_CHESTPLATE.getKey());
         diamondItems.add(Material.DIAMOND_LEGGINGS.getKey());
         diamondItems.add(Material.DIAMOND_BOOTS.getKey());
-        armorItems.add(new LockedArmorItem(diamondItems, LockedArmorType.DIAMOND));
+        armorItems.add(new LockedArmorItem(diamondItems, ELockedArmorType.DIAMOND));
 
         List<NamespacedKey> netheriteItems = new ArrayList<>();
         netheriteItems.add(Material.NETHERITE_HELMET.getKey());
         netheriteItems.add(Material.NETHERITE_CHESTPLATE.getKey());
         netheriteItems.add(Material.NETHERITE_LEGGINGS.getKey());
         netheriteItems.add(Material.NETHERITE_BOOTS.getKey());
-        armorItems.add(new LockedArmorItem(netheriteItems, LockedArmorType.NETHERITE));
+        armorItems.add(new LockedArmorItem(netheriteItems, ELockedArmorType.NETHERITE));
 
         List<NamespacedKey> woodToolItems = new ArrayList<>();
         woodToolItems.add(Material.WOODEN_AXE.getKey());
@@ -61,7 +61,7 @@ public class LockedItemsFactory {
         woodToolItems.add(Material.WOODEN_PICKAXE.getKey());
         woodToolItems.add(Material.WOODEN_SHOVEL.getKey());
         woodToolItems.add(Material.WOODEN_SWORD.getKey());
-        toolItems.add(new LockedToolItem(woodToolItems, LockedToolType.WOOD));
+        toolItems.add(new LockedToolItem(woodToolItems, ELockedToolType.WOOD));
 
         List<NamespacedKey> stoneToolItems = new ArrayList<>();
         stoneToolItems.add(Material.STONE_AXE.getKey());
@@ -69,7 +69,7 @@ public class LockedItemsFactory {
         stoneToolItems.add(Material.STONE_PICKAXE.getKey());
         stoneToolItems.add(Material.STONE_SHOVEL.getKey());
         stoneToolItems.add(Material.STONE_SWORD.getKey());
-        toolItems.add(new LockedToolItem(stoneToolItems, LockedToolType.STONE));
+        toolItems.add(new LockedToolItem(stoneToolItems, ELockedToolType.STONE));
 
         List<NamespacedKey> ironToolItems = new ArrayList<>();
         ironToolItems.add(Material.IRON_AXE.getKey());
@@ -77,7 +77,7 @@ public class LockedItemsFactory {
         ironToolItems.add(Material.IRON_PICKAXE.getKey());
         ironToolItems.add(Material.IRON_SHOVEL.getKey());
         ironToolItems.add(Material.IRON_SWORD.getKey());
-        toolItems.add(new LockedToolItem(ironToolItems, LockedToolType.IRON));
+        toolItems.add(new LockedToolItem(ironToolItems, ELockedToolType.IRON));
 
         List<NamespacedKey> goldToolItems = new ArrayList<>();
         goldToolItems.add(Material.GOLDEN_AXE.getKey());
@@ -85,7 +85,7 @@ public class LockedItemsFactory {
         goldToolItems.add(Material.GOLDEN_PICKAXE.getKey());
         goldToolItems.add(Material.GOLDEN_SHOVEL.getKey());
         goldToolItems.add(Material.GOLDEN_SWORD.getKey());
-        toolItems.add(new LockedToolItem(goldToolItems, LockedToolType.GOLD));
+        toolItems.add(new LockedToolItem(goldToolItems, ELockedToolType.GOLD));
 
         List<NamespacedKey> diamondToolItems = new ArrayList<>();
         diamondToolItems.add(Material.DIAMOND_AXE.getKey());
@@ -93,7 +93,7 @@ public class LockedItemsFactory {
         diamondToolItems.add(Material.DIAMOND_PICKAXE.getKey());
         diamondToolItems.add(Material.DIAMOND_SHOVEL.getKey());
         diamondToolItems.add(Material.DIAMOND_SWORD.getKey());
-        toolItems.add(new LockedToolItem(diamondToolItems, LockedToolType.DIAMOND));
+        toolItems.add(new LockedToolItem(diamondToolItems, ELockedToolType.DIAMOND));
     }
 
     public boolean isLocked(NamespacedKey item) {
@@ -112,7 +112,7 @@ public class LockedItemsFactory {
         return false;
     }
 
-    public void unlockArmorItem(AlphaPlayer player, LockedArmorType itemType) {
+    public void unlockArmorItem(AlphaPlayer player, ELockedArmorType itemType) {
         for (LockedArmorItem lockedItem : armorItems) {
             if (lockedItem.getType() == itemType) {
                 lockedItem.unlock();
@@ -124,7 +124,7 @@ public class LockedItemsFactory {
         player.getPlayer().discoverRecipes(GameManager.getInstance().getCustomRecipeFactory().getNewRecipes().keySet());
     }
 
-    public void unlockToolItem(AlphaPlayer player, LockedToolType itemType) {
+    public void unlockToolItem(AlphaPlayer player, ELockedToolType itemType) {
         for (LockedToolItem lockedItem : toolItems) {
             if (lockedItem.getType() == itemType) {
                 lockedItem.unlock();

@@ -75,7 +75,7 @@ public final class PlayerAttributeService {
         if (attributeModifier != null)
             playerAttribute.removeModifier(attributeModifier);
 
-        if (roleAttribute.getOperation() == RoleAttribute.Operation.REMOVE) {
+        if (roleAttribute.getOperation() == RoleAttribute.EOperation.REMOVE) {
             playerAttribute.setBaseValue(roleAttribute.getValue());
             alphaPlayer.getBaseAttributes().put(roleAttribute.getAttributeType(), (double) roleAttribute.getValue());
         } else {

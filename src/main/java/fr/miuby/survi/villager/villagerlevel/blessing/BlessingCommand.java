@@ -6,8 +6,8 @@ import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import fr.miuby.lib.world.MLWorld;
-import fr.miuby.survi.item.locked_item.LockedArmorType;
-import fr.miuby.survi.item.locked_item.LockedToolType;
+import fr.miuby.survi.item.locked_item.ELockedArmorType;
+import fr.miuby.survi.item.locked_item.ELockedToolType;
 import fr.miuby.survi.player.AlphaPlayer;
 import fr.miuby.survi.system.command.argument.AlphaPlayerArgument;
 import fr.miuby.survi.system.command.argument.WorldArgument;
@@ -107,7 +107,7 @@ public class BlessingCommand {
                                 .then(Commands.argument("type", StringArgumentType.word())
                                         .suggests((ctx, builder) -> {
                                             String rem = builder.getRemaining().toLowerCase();
-                                            Arrays.stream(LockedArmorType.values())
+                                            Arrays.stream(ELockedArmorType.values())
                                                     .map(Enum::name)
                                                     .filter(s -> s.toLowerCase().startsWith(rem))
                                                     .forEach(builder::suggest);
@@ -116,9 +116,9 @@ public class BlessingCommand {
                                         .executes(ctx -> {
                                             AlphaPlayer target = AlphaPlayerArgument.getAlphaPlayer(ctx, playerArgument);
                                             String typeStr = StringArgumentType.getString(ctx, "type").toUpperCase();
-                                            LockedArmorType armorType;
+                                            ELockedArmorType armorType;
                                             try {
-                                                armorType = LockedArmorType.valueOf(typeStr);
+                                                armorType = ELockedArmorType.valueOf(typeStr);
                                             } catch (IllegalArgumentException e) {
                                                 ctx.getSource().getSender().sendMessage(
                                                         Component.text("Type invalide : " + typeStr, NamedTextColor.RED));
@@ -136,7 +136,7 @@ public class BlessingCommand {
                                 .then(Commands.argument("type", StringArgumentType.word())
                                         .suggests((ctx, builder) -> {
                                             String rem = builder.getRemaining().toLowerCase();
-                                            Arrays.stream(LockedToolType.values())
+                                            Arrays.stream(ELockedToolType.values())
                                                     .map(Enum::name)
                                                     .filter(s -> s.toLowerCase().startsWith(rem))
                                                     .forEach(builder::suggest);
@@ -145,9 +145,9 @@ public class BlessingCommand {
                                         .executes(ctx -> {
                                             AlphaPlayer target = AlphaPlayerArgument.getAlphaPlayer(ctx, playerArgument);
                                             String typeStr = StringArgumentType.getString(ctx, "type").toUpperCase();
-                                            LockedToolType toolType;
+                                            ELockedToolType toolType;
                                             try {
-                                                toolType = LockedToolType.valueOf(typeStr);
+                                                toolType = ELockedToolType.valueOf(typeStr);
                                             } catch (IllegalArgumentException e) {
                                                 ctx.getSource().getSender().sendMessage(
                                                         Component.text("Type invalide : " + typeStr, NamedTextColor.RED));

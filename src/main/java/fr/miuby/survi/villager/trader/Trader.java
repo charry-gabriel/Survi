@@ -1,7 +1,7 @@
 package fr.miuby.survi.villager.trader;
 
 import fr.miuby.survi.job.EJob;
-import fr.miuby.survi.quest.QuestDifficulty;
+import fr.miuby.survi.quest.EQuestDifficulty;
 import fr.miuby.survi.villager.AVillager;
 import lombok.Getter;
 import lombok.Setter;
@@ -24,7 +24,7 @@ public class Trader extends AVillager {
 
     @Getter
     @Setter
-    private QuestDifficulty questDifficulty = QuestDifficulty.COMMON;
+    private EQuestDifficulty questDifficulty = EQuestDifficulty.COMMON;
 
     @Getter
     @Setter

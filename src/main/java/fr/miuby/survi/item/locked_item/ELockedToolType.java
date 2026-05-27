@@ -1,6 +1,6 @@
 package fr.miuby.survi.item.locked_item;
 
-public enum LockedToolType {
+public enum ELockedToolType {
     WOOD,
     STONE,
     IRON,

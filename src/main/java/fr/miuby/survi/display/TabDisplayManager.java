@@ -14,7 +14,7 @@ import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.entity.Player;
 
 import fr.miuby.survi.job.EJob;
-import fr.miuby.survi.player.GlobalRank;
+import fr.miuby.survi.player.EGlobalRank;
 import java.text.DecimalFormat;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -38,7 +38,7 @@ public class TabDisplayManager {
     }
 
     private Component buildHeader(AlphaPlayer alphaPlayer) {
-        GlobalRank rank = alphaPlayer.getGlobalRank();
+        EGlobalRank rank = alphaPlayer.getGlobalRank();
         int totalRep = alphaPlayer.getTotalReputation();
 
         return Component.text("\nServeur Survi | ", NamedTextColor.GOLD)
