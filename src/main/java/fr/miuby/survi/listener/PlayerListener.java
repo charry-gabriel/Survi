@@ -7,13 +7,11 @@ import fr.miuby.survi.GameManager;
 import fr.miuby.survi.player.AlphaPlayer;
 import fr.miuby.survi.role.RoleAttribute;
 import fr.miuby.survi.world.EWorld;
-import fr.miuby.survi.world.VillageZoneManager;
 import io.papermc.paper.advancement.AdvancementDisplay;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import fr.miuby.survi.quest.PlayerQuestData;
 import fr.miuby.survi.quest.Quest;
-import fr.miuby.survi.quest.QuestManager;
 
 import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
@@ -52,7 +50,7 @@ public class PlayerListener implements Listener {
         MLWorld villageWorld = WorldRegistry.get(EWorld.VILLAGE);
         MLWorld wildernessWorld = WorldRegistry.get(EWorld.WILDERNESS);
 
-        if ((worldName.equals(villageWorld.getName()) && VillageZoneManager.getInstance().isLocationOutOfBounds(event.getTo()))
+        if ((worldName.equals(villageWorld.getName()) && GameManager.getInstance().getVillageZoneManager().isLocationOutOfBounds(event.getTo()))
             || (worldName.equals(wildernessWorld.getName()) && wildernessWorld.isPlayerOutOfLimit(player))) {
                 blockMovement(event);
                 warn(player);
@@ -133,7 +131,7 @@ public class PlayerListener implements Listener {
         List<PotionEffect> effectsToReapply = new ArrayList<>();
         for (PlayerQuestData questData : alphaPlayer.getActiveQuests()) {
             if (questData.isClaimed()) {
-                Quest quest = QuestManager.getInstance().getQuest(questData.getQuestId());
+                Quest quest = GameManager.getInstance().getQuestManager().getQuest(questData.getQuestId());
                 if (quest != null) {
                     effectsToReapply.addAll(quest.getRewards());
                 }

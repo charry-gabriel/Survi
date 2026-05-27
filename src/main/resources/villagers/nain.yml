@@ -57,3 +57,20 @@ levels:
     tribute: []
     message: "Félicitation, thèth beau travail, je pense que vouth êteth assez résistant, je peux tidndre ma onatraite. Merci à vouth."
     recap: "Résistance V débloqué !"
+
+blessings:
+  "0":
+    effects:
+      - { type: RESISTANCE, value: 0.4 }
+  "1":
+    effects:
+      - { type: RESISTANCE, value: 0.6 }
+  "2":
+    effects:
+      - { type: RESISTANCE, value: 1.0 }
+  "3":
+    effects:
+      - { type: RESISTANCE, value: 1.2 }
+  "4":
+    effects:
+      - { type: RESISTANCE, value: 1.4 }

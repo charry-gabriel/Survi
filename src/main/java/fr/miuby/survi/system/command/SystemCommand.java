@@ -5,6 +5,7 @@ import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import fr.miuby.survi.GameManager;
 import fr.miuby.survi.system.SurviConfig;
+import fr.miuby.survi.world.config.VillageZoneConfig;
 import fr.miuby.survi.system.log.LogManager;
 import fr.miuby.survi.system.time.TimeManager;
 import fr.miuby.survi.world.VillageZoneManager;
@@ -304,7 +305,7 @@ public class SystemCommand {
                         .then(Commands.literal("start")
                                 .executes(ctx -> {
                                     var sender = ctx.getSource().getSender();
-                                    boolean ok = VillageZoneManager.getInstance().start();
+                                    boolean ok = GameManager.getInstance().getVillageZoneManager().start();
                                     if (ok) {
                                         sender.sendMessage(Component.text(
                                                 "✓ Partie démarrée ! Zone village active (palier 0).",
@@ -321,10 +322,10 @@ public class SystemCommand {
                         // /survi zone reset — remet le timer à zéro (tests)
                         .then(Commands.literal("reset")
                                 .executes(ctx -> {
-                                    VillageZoneManager.getInstance().reset();
+                                    GameManager.getInstance().getVillageZoneManager().reset();
                                     ctx.getSource().getSender().sendMessage(Component.text(
                                             "✓ Timer réinitialisé — palier 0 restauré (rayon "
-                                                    + VillageZoneManager.getInstance().getCurrentRadius()
+                                                    + GameManager.getInstance().getVillageZoneManager().getCurrentRadius()
                                                     + " blocs).",
                                             NamedTextColor.GREEN));
                                     return Command.SINGLE_SUCCESS;
@@ -335,8 +336,8 @@ public class SystemCommand {
                         .then(Commands.literal("status")
                                 .executes(ctx -> {
                                     var sender = ctx.getSource().getSender();
-                                    VillageZoneManager vzm = VillageZoneManager.getInstance();
-                                    SurviConfig.VillageZoneConfig cfg =
+                                    VillageZoneManager vzm = GameManager.getInstance().getVillageZoneManager();
+                                    VillageZoneConfig cfg =
                                             SurviConfig.getInstance().getVillageZoneConfig();
 
                                     sender.sendMessage(Component.text("╔═══════════════════════════════╗", NamedTextColor.GOLD));

@@ -16,7 +16,7 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
-import fr.miuby.survi.system.WorldLevelManager;
+import fr.miuby.survi.world.WorldLevelManager;
 
 import java.io.File;
 import java.time.LocalDate;
@@ -24,7 +24,6 @@ import java.util.*;
 import java.util.logging.Level;
 
 public class QuestManager {
-    private static QuestManager instance;
 
     /**
      * Nombre maximum de quêtes qu'un joueur peut accepter par jour.
@@ -35,13 +34,6 @@ public class QuestManager {
     @Getter
     private final List<Quest> questPool = new ArrayList<>();
     private final Random random = new Random();
-
-    public static QuestManager getInstance() {
-        if (instance == null) {
-            instance = new QuestManager();
-        }
-        return instance;
-    }
 
     public QuestManager() {
         loadQuests();
@@ -163,7 +155,7 @@ public class QuestManager {
      * @see WorldLevelManager#getQuestDifficultyWeights()
      */
     public QuestDifficulty getRandomDifficulty() {
-        int[] weights = WorldLevelManager.getInstance().getQuestDifficultyWeights();
+        int[] weights = GameManager.getInstance().getWorldLevelManager().getQuestDifficultyWeights();
         // weights = { commonWeight, rareWeight, legendaryWeight }, sum = 100
         int roll = random.nextInt(100);
         if (roll < weights[2])                   return QuestDifficulty.LEGENDARY;

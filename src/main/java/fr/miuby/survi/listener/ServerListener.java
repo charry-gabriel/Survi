@@ -5,8 +5,6 @@ import fr.miuby.survi.system.database.Errors;
 import fr.miuby.survi.player.AlphaPlayer;
 import fr.miuby.survi.quest.PlayerQuestData;
 import fr.miuby.survi.quest.Quest;
-import fr.miuby.survi.quest.QuestManager;
-import fr.miuby.survi.world.WorldResetManager;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.EnderDragon;
 import org.bukkit.event.EventHandler;
@@ -47,7 +45,7 @@ public class ServerListener implements Listener {
 
     @EventHandler
     public void onDailyReset(DailyResetEvent event) {
-        WorldResetManager.getInstance().checkAndPerformResets();
+        GameManager.getInstance().getWorldResetManager().checkAndPerformResets();
 
         LogManager.getInstance().log(Level.INFO, LogManager.ETagLog.QUEST, "Reset des quêtes journalières...");
 
@@ -61,7 +59,7 @@ public class ServerListener implements Listener {
             if (isOnline) {
                 for (PlayerQuestData questData : player.getActiveQuests()) {
                     if (questData.isClaimed()) {
-                        Quest quest = QuestManager.getInstance().getQuest(questData.getQuestId());
+                        Quest quest = GameManager.getInstance().getQuestManager().getQuest(questData.getQuestId());
                         if (quest != null) {
                             for (PotionEffect effect : quest.getRewards()) {
                                 player.getPlayer().removePotionEffect(effect.getType());

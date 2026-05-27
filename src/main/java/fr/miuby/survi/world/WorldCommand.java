@@ -3,6 +3,7 @@ package fr.miuby.survi.world;
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import fr.miuby.lib.world.MLWorld;
+import fr.miuby.survi.GameManager;
 import fr.miuby.survi.system.command.argument.AlphaPlayerArgument;
 import fr.miuby.survi.system.command.argument.WorldArgument;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
@@ -23,7 +24,7 @@ public class WorldCommand {
         return Commands.literal("worldreset")
                 .requires(source -> source.getSender().isOp())
                 .executes(ctx -> {
-                    WorldResetManager.getInstance().performReset();
+                    GameManager.getInstance().getWorldResetManager().performReset();
                     return Command.SINGLE_SUCCESS;
                 });
     }

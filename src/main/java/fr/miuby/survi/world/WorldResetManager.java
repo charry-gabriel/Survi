@@ -13,14 +13,7 @@ import java.util.logging.Level;
 
 public class WorldResetManager {
 
-    private static WorldResetManager instance;
-
-    private WorldResetManager() {}
-
-    public static WorldResetManager getInstance() {
-        if (instance == null) instance = new WorldResetManager();
-        return instance;
-    }
+    public WorldResetManager() {}
 
     // -------------------------------------------------------------------------
     // Vérification quotidienne
@@ -65,7 +58,7 @@ public class WorldResetManager {
         teleportPlayersToVillage(currentEndName,    safeSpawn);
 
         // 2. Désenregistrer le portail Wilderness avant unload
-        WorldPortalManager.getInstance().unregisterWildernessPortal(currentWildName);
+        GameManager.getInstance().getWorldPortalManager().unregisterWildernessPortal(currentWildName);
 
         // 3. Unload sans sauvegarde
         unloadWorld(currentWildName);
@@ -140,7 +133,7 @@ public class WorldResetManager {
         Location min = new Location(world, bx,     by + 1, bz);
         Location max = new Location(world, bx + 1, by + 3, bz);
 
-        WorldPortalManager.getInstance().registerWildernessPortal(worldName, min, max);
+        GameManager.getInstance().getWorldPortalManager().registerWildernessPortal(worldName, min, max);
 
         LogManager.getInstance().log(Level.INFO, LogManager.ETagLog.WORLD, "Portail Wilderness construit dans " + worldName + " (Y=" + by + ")");
     }

@@ -78,3 +78,35 @@ levels:
     tribute: []
     message: "Toutes vos morts sont annulées"
     recap: "Toutes les morts sont annulées !"
+
+blessings:
+  "0":
+    effects:
+      - { type: DISPEL, value: 1 }
+  "1":
+    effects:
+      - { type: DISPEL, value: 2 }
+  "2":
+    effects:
+      - { type: DISPEL, value: 3 }
+  "3":
+    effects:
+      - { type: DISPEL, value: 4 }
+  "4":
+    effects:
+      - { type: DISPEL, value: 5 }
+  "5":
+    effects:
+      - { type: DISPEL, value: 6 }
+  "6":
+    effects:
+      - { type: DISPEL, value: 7 }
+  "7":
+    effects:
+      - { type: DISPEL, value: 8 }
+  "8":
+    effects:
+      - { type: DISPEL, value: 9 }
+  "9":
+    effects:
+      - { type: DISPEL, value: 100 }

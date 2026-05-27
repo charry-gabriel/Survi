@@ -43,3 +43,20 @@ levels:
     tribute: []
     message: "C'est fini, tu tapes beaucoup trop fort maintenant !"
     recap: "Force V débloqué !"
+
+blessings:
+  "0":
+    effects:
+      - { type: DAMAGE, value: 0.4 }
+  "1":
+    effects:
+      - { type: DAMAGE, value: 0.6 }
+  "2":
+    effects:
+      - { type: DAMAGE, value: 0.8 }
+  "3":
+    effects:
+      - { type: DAMAGE, value: 1.0 }
+  "4":
+    effects:
+      - { type: DAMAGE, value: 1.5 }

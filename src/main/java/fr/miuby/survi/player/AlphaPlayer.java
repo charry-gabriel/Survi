@@ -11,7 +11,6 @@ import fr.miuby.survi.system.log.LogManager;
 import fr.miuby.survi.world.EWorld;
 import fr.miuby.lib.world.MLWorld;
 import fr.miuby.survi.world.WorldInitializer;
-import fr.miuby.survi.world.WorldPortalManager;
 import lombok.Getter;
 import lombok.Setter;
 import net.kyori.adventure.text.Component;
@@ -26,7 +25,6 @@ import java.util.HashMap;
 import java.util.Map;
 import fr.miuby.survi.quest.PlayerQuestData;
 import fr.miuby.survi.quest.Quest;
-import fr.miuby.survi.quest.QuestManager;
 import java.util.*;
 import java.util.logging.Level;
 
@@ -140,7 +138,7 @@ public class AlphaPlayer extends MLPlayer implements Serializable {
 
         this.player.discoverRecipes(GameManager.getInstance().getCustomRecipeFactory().getNewRecipes().keySet());
 
-        WorldPortalManager.getInstance().sendAllFakePortalBlocks(this.player);
+        GameManager.getInstance().getWorldPortalManager().sendAllFakePortalBlocks(this.player);
 
         // Chargement réputation par métier depuis la DB
         // La DB stocke job.name() comme clé (ex. "MINEUR"), on convertit en EJob.
@@ -197,7 +195,7 @@ public class AlphaPlayer extends MLPlayer implements Serializable {
         List<PotionEffect> effectsToRemove = new ArrayList<>();
         for (PlayerQuestData q : expired) {
             if (q.isClaimed()) {
-                Quest questDef = QuestManager.getInstance().getQuest(q.getQuestId());
+                Quest questDef = GameManager.getInstance().getQuestManager().getQuest(q.getQuestId());
                 if (questDef != null) effectsToRemove.addAll(questDef.getRewards());
             }
         }
@@ -216,7 +214,7 @@ public class AlphaPlayer extends MLPlayer implements Serializable {
         List<PotionEffect> effectsToReapply = new ArrayList<>();
         for (PlayerQuestData q : valid) {
             if (q.isClaimed()) {
-                Quest questDef = QuestManager.getInstance().getQuest(q.getQuestId());
+                Quest questDef = GameManager.getInstance().getQuestManager().getQuest(q.getQuestId());
                 if (questDef != null) effectsToReapply.addAll(questDef.getRewards());
             }
         }

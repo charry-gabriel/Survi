@@ -1,6 +1,6 @@
 package fr.miuby.survi.listener;
 
-import fr.miuby.survi.grave.GraveManager;
+import fr.miuby.survi.GameManager;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.event.EventHandler;
@@ -17,7 +17,7 @@ public class GraveListener implements Listener {
 
     @EventHandler
     public void onPlayerDeath(PlayerDeathEvent event) {
-        boolean created = GraveManager.getInstance().createGrave(event.getEntity());
+        boolean created = GameManager.getInstance().getGraveManager().createGrave(event.getEntity());
         if (created) {
             event.getDrops().clear();
         }
@@ -28,14 +28,14 @@ public class GraveListener implements Listener {
         if (event.getAction() != Action.RIGHT_CLICK_BLOCK || event.getClickedBlock() == null)
             return;
 
-        if (GraveManager.getInstance().collectGrave(event.getPlayer(), event.getClickedBlock().getLocation())) {
+        if (GameManager.getInstance().getGraveManager().collectGrave(event.getPlayer(), event.getClickedBlock().getLocation())) {
             event.setCancelled(true);
         }
     }
 
     @EventHandler
     public void onBlockBreak(BlockBreakEvent event) {
-        if (GraveManager.getInstance().isGrave(event.getBlock().getLocation())) {
+        if (GameManager.getInstance().getGraveManager().isGrave(event.getBlock().getLocation())) {
             event.setCancelled(true);
             event.getPlayer().sendMessage(Component.text("Cette tombe est indestructible !").color(NamedTextColor.RED));
         }
@@ -43,11 +43,11 @@ public class GraveListener implements Listener {
 
     @EventHandler
     public void onBlockExplode(BlockExplodeEvent event) {
-        event.blockList().removeIf(block -> GraveManager.getInstance().isGrave(block.getLocation()));
+        event.blockList().removeIf(block -> GameManager.getInstance().getGraveManager().isGrave(block.getLocation()));
     }
 
     @EventHandler
     public void onEntityExplode(EntityExplodeEvent event) {
-        event.blockList().removeIf(block -> GraveManager.getInstance().isGrave(block.getLocation()));
+        event.blockList().removeIf(block -> GameManager.getInstance().getGraveManager().isGrave(block.getLocation()));
     }
 }

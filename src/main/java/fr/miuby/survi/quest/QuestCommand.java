@@ -73,7 +73,7 @@ public class QuestCommand {
         Trader trader = TraderArgument.getTrader(ctx, villagerArgument);
 
         if (alphaPlayer.getCurrentActiveQuest() == null) {
-            QuestManager.getInstance().assignQuest(alphaPlayer, trader, true);
+            GameManager.getInstance().getQuestManager().assignQuest(alphaPlayer, trader, true);
         } else {
             ctx.getSource().getSender().sendMessage(Component.text("Une quête existe déjà pour " + alphaPlayer.getPseudo()).color(NamedTextColor.RED));
         }
@@ -87,7 +87,7 @@ public class QuestCommand {
     private static int removeQuest(CommandContext<CommandSourceStack> ctx) {
         AlphaPlayer alphaPlayer = AlphaPlayerArgument.getAlphaPlayer(ctx, playerArgument);
 
-        if (QuestManager.getInstance().resetQuest(alphaPlayer)) {
+        if (GameManager.getInstance().getQuestManager().resetQuest(alphaPlayer)) {
             ctx.getSource().getSender().sendMessage(
                     Component.text("Quête en cours réinitialisée pour " + alphaPlayer.getPseudo() + ". Il peut en accepter une nouvelle.").color(NamedTextColor.GREEN));
         } else {
@@ -113,7 +113,7 @@ public class QuestCommand {
         // Retirer les buffs de toutes les quêtes réclamées
         for (PlayerQuestData data : alphaPlayer.getActiveQuests()) {
             if (data.isClaimed() && alphaPlayer.getPlayer() != null) {
-                var quest = QuestManager.getInstance().getQuest(data.getQuestId());
+                var quest = GameManager.getInstance().getQuestManager().getQuest(data.getQuestId());
                 if (quest != null) {
                     quest.getRewards().forEach(e -> alphaPlayer.getPlayer().removePotionEffect(e.getType()));
                 }
@@ -139,7 +139,7 @@ public class QuestCommand {
         AlphaPlayer alphaPlayer = AlphaPlayerArgument.getAlphaPlayer(ctx, playerArgument);
         Quest quest = QuestArgument.getQuest(ctx, questArgument);
 
-        QuestManager.getInstance().assignSpecificQuest(alphaPlayer, quest);
+        GameManager.getInstance().getQuestManager().assignSpecificQuest(alphaPlayer, quest);
 
         ctx.getSource().getSender().sendMessage(
                 Component.text("[TEST] Quête « " + quest.getName() + " » assignée à " + alphaPlayer.getPseudo() + ".").color(NamedTextColor.YELLOW));
@@ -153,7 +153,7 @@ public class QuestCommand {
         AlphaPlayer alphaPlayer = AlphaPlayerArgument.getAlphaPlayer(ctx, playerArgument);
         Trader trader = TraderArgument.getTrader(ctx, villagerArgument);
 
-        if (QuestManager.getInstance().completeQuest(alphaPlayer, trader, true)) {
+        if (GameManager.getInstance().getQuestManager().completeQuest(alphaPlayer, trader, true)) {
             ctx.getSource().getSender().sendMessage(
                     Component.text("Quête complétée pour " + alphaPlayer.getPseudo()).color(NamedTextColor.GREEN));
         } else {

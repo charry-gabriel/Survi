@@ -1,5 +1,6 @@
 package fr.miuby.survi.listener;
 
+import fr.miuby.survi.GameManager;
 import fr.miuby.survi.mob.MobLevelManager;
 import fr.miuby.survi.mob.MobPotionEffectConfig;
 import fr.miuby.survi.mob.MobTypeConfig;
@@ -53,15 +54,15 @@ public class MobSpawnListener implements Listener {
     public void onCreatureSpawn(CreatureSpawnEvent event) {
         // On ne scale que les mobs qui ont une config active
         LivingEntity entity = event.getEntity();
-        if (!MobLevelManager.getInstance().isManaged(entity.getType())) return;
+        if (!GameManager.getInstance().getMobLevelManager().isManaged(entity.getType())) return;
 
         // Seuls les spawns "naturels" sont scalés ; exclure les spawns de
         // commande /summon sauf si tu veux les inclure aussi.
         CreatureSpawnEvent.SpawnReason reason = event.getSpawnReason();
         if (reason == CreatureSpawnEvent.SpawnReason.COMMAND) return;
 
-        int level = MobLevelManager.getInstance().rollMobLevel();
-        MobLevelManager.getInstance().applyLevel(entity, level);
+        int level = GameManager.getInstance().getMobLevelManager().rollMobLevel();
+        GameManager.getInstance().getMobLevelManager().applyLevel(entity, level);
     }
 
     // ─── Attaque + effets de potion ────────────────────────────────────────────
@@ -78,7 +79,7 @@ public class MobSpawnListener implements Listener {
         // L'attaquant doit être un mob scalé
         if (!(event.getDamager() instanceof LivingEntity attacker)) return;
 
-        int storedLevel = MobLevelManager.getInstance().getStoredLevel(attacker);
+        int storedLevel = GameManager.getInstance().getMobLevelManager().getStoredLevel(attacker);
         if (storedLevel < 0) return; // mob non scalé
 
         // La cible doit aussi être une entité vivante
@@ -86,7 +87,7 @@ public class MobSpawnListener implements Listener {
 
         // Récupère la config du type pour les effets de potion
         EntityType type = attacker.getType();
-        MobTypeConfig typeConfig = MobLevelManager.getInstance().getConfig(type);
+        MobTypeConfig typeConfig = GameManager.getInstance().getMobLevelManager().getConfig(type);
         if (typeConfig == null) return;
 
         List<MobPotionEffectConfig> potionEffects = typeConfig.getPotionEffects();

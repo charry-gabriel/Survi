@@ -73,3 +73,39 @@ levels:
         amount: 640
     message: "C'est fini y a plus rien !"
     recap: "End débloqué et limite Wilderness infinie !"
+
+blessings:
+  "0":
+    effects:
+      - { type: LOCK_VILLAGER, days: 3 }
+      - { type: MESSAGE, text: "Niveau I réussi !" }
+  "1":
+    effects:
+      - { type: LOCK_VILLAGER, days: 3 }
+      - { type: MESSAGE, text: "Niveau II disponible pour Thomas Pesquet !" }
+  "2":
+    effects:
+      - { type: LOCK_WORLD, world: NETHER }
+      - { type: MESSAGE, text: "Niveau II réussi !" }
+  "3":
+    effects:
+      - { type: LOCK_VILLAGER, days: 3 }
+      - { type: MESSAGE, text: "Niveau III disponible pour Thomas Pesquet !" }
+  "4":
+    effects:
+      - { type: LIMIT_WORLD, world: WILDERNESS, min-x: -10000, max-x: 10000, min-y: -2147483648, max-y: 2147483647, min-z: -10000, max-z: 10000 }
+  "5":
+    effects:
+      - { type: LOCK_VILLAGER, days: 3 }
+      - { type: MESSAGE, text: "Niveau VI disponible pour Thomas Pesquet !" }
+  "6":
+    effects:
+      - { type: LOCK_WORLD, world: END }
+      - { type: MESSAGE, text: "Niveau VI réussi !" }
+  "7":
+    effects:
+      - { type: LOCK_VILLAGER, days: 3 }
+      - { type: MESSAGE, text: "Niveau V disponible pour Thomas Pesquet !" }
+  "8":
+    effects:
+      - { type: LIMIT_WORLD, world: WILDERNESS, min-x: -2147483648, max-x: 2147483647, min-y: -2147483648, max-y: 2147483647, min-z: -2147483648, max-z: 2147483647 }

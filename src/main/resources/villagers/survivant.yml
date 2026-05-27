@@ -204,3 +204,52 @@ levels:
     message: "C'est fini y a plus rien !"
     recap: ""
     tribute: []
+
+blessings:
+  "0":
+    effects:
+      - { type: MAX_HEALTH, value: -20 }
+  "1":
+    effects:
+      - { type: MAX_HEALTH, value: -18 }
+      - { type: UNLOCK_TOOL, tool: WOOD }
+  "2":
+    effects:
+      - { type: MAX_HEALTH, value: -16 }
+      - { type: UNLOCK_ARMOR, armor: LEATHER }
+      - { type: UNLOCK_TOOL, tool: STONE }
+  "3":
+    effects:
+      - { type: MAX_HEALTH, value: -14 }
+      - { type: UNLOCK_ARMOR, armor: CHAINMAIL }
+      - { type: UNLOCK_TOOL, tool: IRON }
+  "4":
+    effects:
+      - { type: MAX_HEALTH, value: -12 }
+      - { type: UNLOCK_ARMOR, armor: IRON }
+  "5":
+    effects:
+      - { type: MAX_HEALTH, value: -10 }
+      - { type: UNLOCK_ARMOR, armor: GOLD }
+      - { type: UNLOCK_TOOL, tool: GOLD }
+  "6":
+    effects:
+      - { type: MAX_HEALTH, value: -8 }
+      - { type: UNLOCK_ARMOR, armor: DIAMOND }
+      - { type: UNLOCK_TOOL, tool: DIAMOND }
+      - { type: UNLOCK_ARMOR, armor: NETHERITE }
+  "7":
+    effects:
+      - { type: MAX_HEALTH, value: -6 }
+  "8":
+    effects:
+      - { type: MAX_HEALTH, value: -4 }
+  "9":
+    effects:
+      - { type: MAX_HEALTH, value: -2 }
+  "10":
+    effects:
+      - { type: MAX_HEALTH, value: 0 }
+  "11":
+    effects:
+      - { type: MAX_HEALTH, value: 2 }

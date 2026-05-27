@@ -4,6 +4,7 @@ import com.mojang.brigadier.Command;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
+import fr.miuby.survi.GameManager;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
 import io.papermc.paper.command.brigadier.Commands;
 import net.kyori.adventure.text.Component;
@@ -78,7 +79,7 @@ public class MobCommand {
                             EntityType type = parseType(ctx.getSource().getSender(),
                                     StringArgumentType.getString(ctx, ARG_TYPE));
                             if (type == null) return Command.SINGLE_SUCCESS;
-                            int level = MobLevelManager.getInstance().rollMobLevel();
+                            int level = GameManager.getInstance().getMobLevelManager().rollMobLevel();
                             return spawnMob(ctx.getSource(), type, level);
                         })
 
@@ -160,7 +161,7 @@ public class MobCommand {
                                 .executes(ctx -> {
                                     CommandSender sender = ctx.getSource().getSender();
                                     int tier  = IntegerArgumentType.getInteger(ctx, "tier");
-                                    int lpt   = MobLevelManager.getInstance().getLevelsPerTier();
+                                    int lpt   = GameManager.getInstance().getMobLevelManager().getLevelsPerTier();
                                     int level = tier * lpt + 1;
 
                                     EntityType type = parseType(sender,
@@ -196,7 +197,7 @@ public class MobCommand {
             return Command.SINGLE_SUCCESS;
         }
 
-        MobLevelManager.getInstance().applyLevel(living, level);
+        GameManager.getInstance().getMobLevelManager().applyLevel(living, level);
 
         sender.sendMessage(Component.text()
                 .append(Component.text("Spawné : ", NamedTextColor.GRAY))
@@ -209,8 +210,8 @@ public class MobCommand {
     }
 
     private static void sendMobInfo(Player player, LivingEntity target) {
-        int storedLevel = MobLevelManager.getInstance().getStoredLevel(target);
-        MobTypeConfig cfg = MobLevelManager.getInstance().getConfig(target.getType());
+        int storedLevel = GameManager.getInstance().getMobLevelManager().getStoredLevel(target);
+        MobTypeConfig cfg = GameManager.getInstance().getMobLevelManager().getConfig(target.getType());
 
         player.sendMessage(header("MOB INFO"));
         player.sendMessage(row("Type",   target.getType().name()));
@@ -241,7 +242,7 @@ public class MobCommand {
     }
 
     private static void sendMobStats(CommandSender sender, EntityType type, int level) {
-        MobTypeConfig cfg = MobLevelManager.getInstance().getConfig(type);
+        MobTypeConfig cfg = GameManager.getInstance().getMobLevelManager().getConfig(type);
         if (cfg == null) {
             sender.sendMessage(Component.text(
                     type.name() + " n'est pas configuré dans monsters.yml.", NamedTextColor.RED));
@@ -283,7 +284,7 @@ public class MobCommand {
      */
     private static void suggestConfiguredMobs(
             com.mojang.brigadier.suggestion.SuggestionsBuilder builder) {
-        for (EntityType et : MobLevelManager.getInstance().getConfiguredTypes()) {
+        for (EntityType et : GameManager.getInstance().getMobLevelManager().getConfiguredTypes()) {
             builder.suggest(et.name().toLowerCase());
         }
     }

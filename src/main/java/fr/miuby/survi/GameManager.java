@@ -1,10 +1,12 @@
 package fr.miuby.survi;
 
 import fr.miuby.lib.MiubyLib;
+import fr.miuby.survi.grave.GraveManager;
 import fr.miuby.survi.mob.MobLevelManager;
 import fr.miuby.survi.mob.MobNametagTask;
 import fr.miuby.survi.world.crops.PlantedCropsManager;
 import fr.miuby.survi.display.TabDisplayManager;
+import fr.miuby.survi.quest.QuestManager;
 import fr.miuby.survi.role.RoleManagementService;
 import fr.miuby.survi.system.database.Database;
 import fr.miuby.survi.system.database.SQLite;
@@ -16,9 +18,10 @@ import fr.miuby.survi.player.AlphaPlayerFactory;
 import fr.miuby.survi.role.RoleRegistry;
 import fr.miuby.survi.system.time.TimeManager;
 import fr.miuby.survi.villager.VillagerFactory;
+import fr.miuby.survi.world.WorldLevelManager;
 import fr.miuby.survi.world.WorldPortalManager;
+import fr.miuby.survi.world.WorldResetManager;
 import fr.miuby.survi.world.VillageZoneManager;
-import fr.miuby.survi.system.WorldLevelManager;
 import fr.miuby.survi.system.SurviConfig;
 import fr.miuby.survi.world.WorldInitializer;
 import fr.miuby.survi.system.log.LogManager;
@@ -44,6 +47,13 @@ public class GameManager {
     @Getter private TabDisplayManager tabDisplayManager;
     @Getter private TimeManager timeManager;
     @Getter private RoleManagementService roleManagementService;
+    @Getter private QuestManager questManager;
+    @Getter private GraveManager graveManager;
+    @Getter private WorldLevelManager worldLevelManager;
+    @Getter private MobLevelManager mobLevelManager;
+    @Getter private WorldPortalManager worldPortalManager;
+    @Getter private WorldResetManager worldResetManager;
+    @Getter private VillageZoneManager villageZoneManager;
 
     @Setter @Getter private int dispel = 0;
     @Setter @Getter private boolean isNight;
@@ -101,11 +111,19 @@ public class GameManager {
         if (this.initState != InitState.WORLDS_LOADED)
             throw new IllegalStateException("Wrong init order !");
 
-        WorldLevelManager.getInstance().load();
+        this.worldLevelManager = new WorldLevelManager();
+        this.worldLevelManager.load();
 
-        WorldPortalManager.getInstance().init();
-        VillageZoneManager.getInstance().init();
-        MobLevelManager.getInstance().init();
+        this.worldPortalManager = new WorldPortalManager();
+        this.worldPortalManager.init();
+
+        this.villageZoneManager = new VillageZoneManager();
+        this.villageZoneManager.init();
+
+        this.worldResetManager = new WorldResetManager();
+
+        this.mobLevelManager = new MobLevelManager();
+        this.mobLevelManager.init();
         new MobNametagTask().runTaskTimer(this.plugin, 0L, MobNametagTask.PERIOD_TICKS);
 
         LogManager.getInstance().log(Level.INFO, LogManager.ETagLog.PLAYER, "Initialisation des joueurs...");
@@ -116,6 +134,10 @@ public class GameManager {
 
         LogManager.getInstance().log(Level.INFO, LogManager.ETagLog.ITEM, "Initialisation des items/recettes...");
         this.initItems();
+
+        this.questManager = new QuestManager();
+
+        this.graveManager = new GraveManager();
 
         this.plantedCropsManager = new PlantedCropsManager(database);
         this.plantedCropsManager.load();

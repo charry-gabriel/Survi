@@ -3,6 +3,7 @@ package fr.miuby.survi.listener;
 import fr.miuby.lib.villager.MLVillager;
 import fr.miuby.lib.villager.VillagerLoadedEvent;
 import fr.miuby.lib.villager.VillagerRegistry;
+import fr.miuby.survi.GameManager;
 import fr.miuby.survi.player.AlphaPlayer;
 import fr.miuby.survi.quest.PlayerQuestData;
 import fr.miuby.survi.quest.QuestManager;
@@ -65,7 +66,7 @@ public class VillagerListener implements Listener {
                             .orElse(null);
 
                     if (completedUnclaimed != null) {
-                        QuestManager.getInstance().completeQuest(alphaPlayer, trader, false);
+                        GameManager.getInstance().getQuestManager().completeQuest(alphaPlayer, trader, false);
                         event.setCancelled(true);
                         return;
                     }
@@ -78,7 +79,7 @@ public class VillagerListener implements Listener {
                     if (canAcceptNewQuest) {
                         Component questMessage = Component.text("\n[Quête] ", NamedTextColor.GOLD)
                                 .append(Component.text("Cliquez ici pour accepter une quête !", NamedTextColor.YELLOW)
-                                        .clickEvent(ClickEvent.callback(audience -> QuestManager.getInstance().assignQuest(alphaPlayer, trader)))
+                                        .clickEvent(ClickEvent.callback(audience -> GameManager.getInstance().getQuestManager().assignQuest(alphaPlayer, trader)))
                                         .hoverEvent(HoverEvent.showText(Component.text("Accepter la quête", NamedTextColor.GREEN))))
                                 .append(Component.text("\n"));
                         player.sendMessage(questMessage);

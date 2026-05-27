@@ -1,7 +1,6 @@
 package fr.miuby.survi.mob;
 
 import fr.miuby.survi.GameManager;
-import fr.miuby.survi.system.WorldLevelManager;
 import fr.miuby.survi.system.log.LogManager;
 import lombok.Getter;
 import net.kyori.adventure.text.Component;
@@ -51,18 +50,7 @@ import java.util.stream.Collectors;
  * Le fichier {@code monsters.yml} est copié depuis le jar s'il n'existe pas.
  */
 public class MobLevelManager {
-
-    // ─── Singleton ────────────────────────────────────────────────────────────────
-
-    private static MobLevelManager instance;
-
-    public static MobLevelManager getInstance() {
-        if (instance == null)
-            instance = new MobLevelManager();
-        return instance;
-    }
-
-    private MobLevelManager() {}
+    public MobLevelManager() {}
 
     // ─── Clé PDC ─────────────────────────────────────────────────────────────────
 
@@ -168,7 +156,7 @@ public class MobLevelManager {
      * {@code weight(i) = (levelsPerTier - i) ^ spawnWeightExponent}
      */
     public int rollMobLevel() {
-        int worldLevel = WorldLevelManager.getInstance().getLevel();
+        int worldLevel = GameManager.getInstance().getWorldLevelManager().getLevel();
         int tierStart  = worldLevel * levelsPerTier + 1;
 
         double[] weights = new double[levelsPerTier];
@@ -191,7 +179,7 @@ public class MobLevelManager {
      * Renvoie le niveau maximum du palier actuel (utilisé pour l'EnderDragon).
      */
     public int getMaxLevelForCurrentTier() {
-        int worldLevel = WorldLevelManager.getInstance().getLevel();
+        int worldLevel = GameManager.getInstance().getWorldLevelManager().getLevel();
         return (worldLevel + 1) * levelsPerTier;
     }
 
@@ -306,7 +294,7 @@ public class MobLevelManager {
      * </pre>
      */
     private NamedTextColor getLevelColor(int level) {
-        int worldLevel = WorldLevelManager.getInstance().getLevel();
+        int worldLevel = GameManager.getInstance().getWorldLevelManager().getLevel();
         int tierStart  = worldLevel * levelsPerTier + 1;
         int offset     = Math.max(0, level - tierStart);
         double ratio   = levelsPerTier > 1 ? (double) offset / (levelsPerTier - 1) : 0;

@@ -1,6 +1,7 @@
 package fr.miuby.survi.system;
 
 import fr.miuby.survi.player.GlobalRank;
+import fr.miuby.survi.world.config.VillageZoneConfig;
 import fr.miuby.survi.system.log.LogManager;
 import lombok.Getter;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -28,33 +29,8 @@ public class SurviConfig {
 
     private SurviConfig() {}
 
-    // ─── Modèles de données ──────────────────────────────────────────────────────
-
     public record RankEntry(String id, int threshold, String display) {}
     public record JobLevelEntry(int threshold, String name) {}
-
-    /** Coordonnées du portail village pour un palier donné. */
-    public record VillageZonePortal(int minX, int minY, int minZ, int maxX, int maxY, int maxZ) {}
-
-    /** Spawn du village pour un palier donné. */
-    public record VillageZoneSpawn(int x, int y, int z, float yaw, float pitch) {}
-
-    /**
-     * Un palier de zone village.
-     * @param afterHours Nombre d'heures réelles après le début de partie à partir duquel ce palier s'active.
-     * @param radius     Rayon autorisé en blocs depuis le centre.
-     * @param spawn      Point de spawn du village pour ce palier.
-     * @param portal     Position du portail village pour ce palier.
-     */
-    public record VillageZoneStage(float afterHours, int radius, VillageZoneSpawn spawn, VillageZonePortal portal) {}
-
-    /**
-     * Configuration complète de la zone village.
-     * @param centerX Coordonnée X du centre du village.
-     * @param centerZ Coordonnée Z du centre du village.
-     * @param stages  Liste des paliers triés par {@code afterHours} croissant.
-     */
-    public record VillageZoneConfig(int centerX, int centerZ, List<VillageZoneStage> stages) {}
 
     // ─── Champs ──────────────────────────────────────────────────────────────────
 
@@ -147,7 +123,7 @@ public class SurviConfig {
         int centerX = cfg.getInt("village-zone.center.x", 0);
         int centerZ = cfg.getInt("village-zone.center.z", 0);
 
-        List<VillageZoneStage> zoneStages = new ArrayList<>();
+        List<VillageZoneConfig.VillageZoneStage> zoneStages = new ArrayList<>();
         List<?> rawStages = cfg.getList("village-zone.stages");
         if (rawStages != null) {
             for (Object obj : rawStages) {
@@ -158,7 +134,7 @@ public class SurviConfig {
                     @SuppressWarnings("unchecked")
                     java.util.Map<String, Object> spawnMap =
                             (java.util.Map<String, Object>) stageMap.get("spawn");
-                    VillageZoneSpawn spawn = new VillageZoneSpawn(
+                    VillageZoneConfig.VillageZoneSpawn spawn = new VillageZoneConfig.VillageZoneSpawn(
                             ((Number) spawnMap.get("x")).intValue(),
                             ((Number) spawnMap.get("y")).intValue(),
                             ((Number) spawnMap.get("z")).intValue(),
@@ -170,7 +146,7 @@ public class SurviConfig {
                     java.util.Map<String, Object> portalMap =
                             (java.util.Map<String, Object>) stageMap.get("portal");
 
-                    VillageZonePortal portal = new VillageZonePortal(
+                    VillageZoneConfig.VillageZonePortal portal = new VillageZoneConfig.VillageZonePortal(
                             ((Number) portalMap.get("min-x")).intValue(),
                             ((Number) portalMap.get("min-y")).intValue(),
                             ((Number) portalMap.get("min-z")).intValue(),
@@ -178,7 +154,7 @@ public class SurviConfig {
                             ((Number) portalMap.get("max-y")).intValue(),
                             ((Number) portalMap.get("max-z")).intValue()
                     );
-                    zoneStages.add(new VillageZoneStage(afterHours, radius, spawn, portal));
+                    zoneStages.add(new VillageZoneConfig.VillageZoneStage(afterHours, radius, spawn, portal));
                 }
             }
         }

@@ -12,7 +12,6 @@ import fr.miuby.survi.role.RoleCommand;
 import fr.miuby.survi.system.command.SystemCommand;
 import fr.miuby.survi.system.log.LogManager;
 import fr.miuby.survi.system.time.TimeManager;
-import fr.miuby.survi.world.VillageZoneManager;
 import fr.miuby.survi.villager.VillagerCommand;
 import fr.miuby.survi.villager.villagerlevel.blessing.BlessingCommand;
 import fr.miuby.survi.world.WorldCommand;
@@ -74,7 +73,7 @@ public class Survi extends JavaPlugin {
         if (tm != null) {
             tm.stop();
         }
-        VillageZoneManager.getInstance().stop();
+        GameManager.getInstance().getVillageZoneManager().stop();
     }
 
     private void updateResources() {

@@ -17,21 +17,12 @@ import java.util.*;
 import java.util.logging.Level;
 
 public class GraveManager {
-    private static GraveManager instance = null;
     private static final Material GRAVE_MATERIAL = Material.CHEST;
 
     private final File gravesFolder;
     private final Map<Location, GraveData> graveLocations = new HashMap<>();
 
-
-    public static GraveManager getInstance() {
-        if (instance == null) {
-            instance = new GraveManager();
-        }
-        return instance;
-    }
-
-    private GraveManager() {
+    public GraveManager() {
         this.gravesFolder = new File(GameManager.getInstance().getPlugin().getDataFolder(), "graves");
 
         if (!gravesFolder.exists() && !gravesFolder.mkdirs())

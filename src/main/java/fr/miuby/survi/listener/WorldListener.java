@@ -48,7 +48,7 @@ public class WorldListener implements Listener {
      */
     @EventHandler
     public void onPlayerChangedWorld(PlayerChangedWorldEvent event) {
-        WorldPortalManager.getInstance().sendFakePortalBlocksIfNeeded(event.getPlayer());
+        GameManager.getInstance().getWorldPortalManager().sendFakePortalBlocksIfNeeded(event.getPlayer());
 
         AlphaPlayer alphaPlayer = AlphaPlayer.get(event.getPlayer().getUniqueId());
         if (alphaPlayer == null) return;
@@ -76,6 +76,6 @@ public class WorldListener implements Listener {
         Location to        = event.getTo();
         String   worldName = to.getWorld().getName();
 
-        WorldPortalManager.getInstance().teleportTowWorld(player, to, worldName);
+        GameManager.getInstance().getWorldPortalManager().teleportTowWorld(player, to, worldName);
     }
 }

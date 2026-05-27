@@ -30,14 +30,7 @@ public class WorldPortalManager {
     // Anti-spam téléportation (cooldown 1 s)
     private final Set<UUID> teleporting = new HashSet<>();
 
-    private static WorldPortalManager instance;
-
-    private WorldPortalManager() {}
-
-    public static WorldPortalManager getInstance() {
-        if (instance == null) instance = new WorldPortalManager();
-        return instance;
-    }
+    public WorldPortalManager() {}
 
     // -------------------------------------------------------------------------
     // Initialisation

@@ -2,6 +2,7 @@ package fr.miuby.survi.world;
 
 import fr.miuby.survi.GameManager;
 import fr.miuby.survi.system.SurviConfig;
+import fr.miuby.survi.world.config.VillageZoneConfig;
 import fr.miuby.survi.system.log.LogManager;
 import lombok.Getter;
 import org.bukkit.Bukkit;
@@ -33,16 +34,7 @@ public class VillageZoneManager {
 
     /** Intervalle de vérification de changement de palier (en ticks). */
     private static final long CHECK_INTERVAL_TICKS = 20L * 60; // toutes les minutes
-
-    // ─── Singleton ───────────────────────────────────────────────────────────────
-    private static VillageZoneManager instance;
-
-    public static VillageZoneManager getInstance() {
-        if (instance == null) instance = new VillageZoneManager();
-        return instance;
-    }
-
-    private VillageZoneManager() {}
+    public VillageZoneManager() {}
 
     // ─── État ────────────────────────────────────────────────────────────────────
 
@@ -135,7 +127,7 @@ public class VillageZoneManager {
      */
     public int getCurrentRadius() {
         if (!started) return Integer.MAX_VALUE;
-        List<SurviConfig.VillageZoneStage> stages = SurviConfig.getInstance().getVillageZoneConfig().stages();
+        List<VillageZoneConfig.VillageZoneStage> stages = SurviConfig.getInstance().getVillageZoneConfig().stages();
         if (stages.isEmpty()) return Integer.MAX_VALUE;
         return stages.get(computeStageIndex()).radius();
     }
@@ -152,10 +144,10 @@ public class VillageZoneManager {
             return world != null ? world.getSpawnLocation() : null;
         }
 
-        List<SurviConfig.VillageZoneStage> stages = SurviConfig.getInstance().getVillageZoneConfig().stages();
+        List<VillageZoneConfig.VillageZoneStage> stages = SurviConfig.getInstance().getVillageZoneConfig().stages();
         if (stages.isEmpty()) return world.getSpawnLocation();
 
-        SurviConfig.VillageZoneSpawn s = stages.get(computeStageIndex()).spawn();
+        VillageZoneConfig.VillageZoneSpawn s = stages.get(computeStageIndex()).spawn();
         return new Location(world, s.x() + 0.5, s.y(), s.z() + 0.5, s.yaw(), s.pitch());
     }
 
@@ -166,7 +158,7 @@ public class VillageZoneManager {
     public boolean isLocationOutOfBounds(Location loc) {
         if (!started) return false;
 
-        SurviConfig.VillageZoneConfig cfg = SurviConfig.getInstance().getVillageZoneConfig();
+        VillageZoneConfig cfg = SurviConfig.getInstance().getVillageZoneConfig();
         if (cfg.stages().isEmpty()) return false;
 
         double dx = Math.abs(loc.getX() - cfg.centerX());
@@ -207,7 +199,7 @@ public class VillageZoneManager {
      */
     private int computeStageIndex() {
         float elapsedMinutes = getElapsedMinutes() / 60f;
-        List<SurviConfig.VillageZoneStage> stages = SurviConfig.getInstance().getVillageZoneConfig().stages();
+        List<VillageZoneConfig.VillageZoneStage> stages = SurviConfig.getInstance().getVillageZoneConfig().stages();
 
         int best = 0;
         for (int i = 0; i < stages.size(); i++) {
@@ -227,10 +219,10 @@ public class VillageZoneManager {
         if (!force && newIndex == currentStageIndex) return;
         currentStageIndex = newIndex;
 
-        List<SurviConfig.VillageZoneStage> stages = SurviConfig.getInstance().getVillageZoneConfig().stages();
+        List<VillageZoneConfig.VillageZoneStage> stages = SurviConfig.getInstance().getVillageZoneConfig().stages();
         if (stages.isEmpty()) return;
 
-        SurviConfig.VillageZoneStage stage = stages.get(currentStageIndex);
+        VillageZoneConfig.VillageZoneStage stage = stages.get(currentStageIndex);
 
         String villageName = WorldInitializer.getWorlds().get(EWorld.VILLAGE);
         if (villageName == null) return;
@@ -238,14 +230,14 @@ public class VillageZoneManager {
         if (world == null) return;
 
         // ── Mise à jour du spawn monde ─────────────────────────────────────────────
-        SurviConfig.VillageZoneSpawn sp = stage.spawn();
+        VillageZoneConfig.VillageZoneSpawn sp = stage.spawn();
         world.setSpawnLocation(sp.x(), sp.y(), sp.z());
 
         // ── Mise à jour du portail (fakeblocks) ────────────────────────────────────
-        SurviConfig.VillageZonePortal portalCfg = stage.portal();
+        VillageZoneConfig.VillageZonePortal portalCfg = stage.portal();
         Location min = new Location(world, portalCfg.minX(), portalCfg.minY(), portalCfg.minZ());
         Location max = new Location(world, portalCfg.maxX(), portalCfg.maxY(), portalCfg.maxZ());
-        WorldPortalManager.getInstance().updateVillagePortal(villageName, min, max);
+        GameManager.getInstance().getWorldPortalManager().updateVillagePortal(villageName, min, max);
 
         LogManager.getInstance().log(Level.INFO, LogManager.ETagLog.WORLD,
                 "[VillageZoneManager] Palier " + currentStageIndex

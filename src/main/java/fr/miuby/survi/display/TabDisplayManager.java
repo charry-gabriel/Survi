@@ -1,12 +1,10 @@
 package fr.miuby.survi.display;
 
-import fr.miuby.survi.system.WorldLevelManager;
 import fr.miuby.lib.villager.VillagerRegistry;
 import fr.miuby.survi.GameManager;
 import fr.miuby.survi.player.AlphaPlayer;
 import fr.miuby.survi.quest.PlayerQuestData;
 import fr.miuby.survi.quest.Quest;
-import fr.miuby.survi.quest.QuestManager;
 import fr.miuby.survi.villager.villagerlevel.VillagerLevel;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -46,7 +44,7 @@ public class TabDisplayManager {
         return Component.text("\nServeur Survi | ", NamedTextColor.GOLD)
                 .appendNewline()
                 .append(Component.text("Difficulté : ", NamedTextColor.RED))
-                .append(Component.text(WorldLevelManager.getInstance().getDisplayName(), NamedTextColor.YELLOW))
+                .append(Component.text(GameManager.getInstance().getWorldLevelManager().getDisplayName(), NamedTextColor.YELLOW))
                 .appendNewline()
                 .append(rank.displayComponent())
                 .append(Component.text("  (Rép. : ", NamedTextColor.GRAY))
@@ -102,7 +100,7 @@ public class TabDisplayManager {
             return Component.empty();
         }
 
-        Quest quest = QuestManager.getInstance().getQuest(data.getQuestId());
+        Quest quest = GameManager.getInstance().getQuestManager().getQuest(data.getQuestId());
         if (quest == null) {
             return Component.empty();
         }

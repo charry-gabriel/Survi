@@ -6,8 +6,8 @@ import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
+import fr.miuby.survi.GameManager;
 import fr.miuby.survi.quest.Quest;
-import fr.miuby.survi.quest.QuestManager;
 import fr.miuby.survi.system.command.CommandErrors;
 import io.papermc.paper.command.brigadier.argument.CustomArgumentType;
 import org.jspecify.annotations.NonNull;
@@ -22,7 +22,7 @@ public class QuestArgument implements CustomArgumentType.Converted<Quest, String
 
     @Override
     public Quest convert(String nativeType) throws CommandSyntaxException {
-        Quest quest = QuestManager.getInstance().getQuest(nativeType);
+        Quest quest = GameManager.getInstance().getQuestManager().getQuest(nativeType);
 
         if (quest == null) {
             throw CommandErrors.QUEST_NOT_FOUND.create(nativeType);
@@ -40,7 +40,7 @@ public class QuestArgument implements CustomArgumentType.Converted<Quest, String
     public <S> @NonNull CompletableFuture<Suggestions> listSuggestions(@NonNull CommandContext<S> context, SuggestionsBuilder builder) {
         String remaining = builder.getRemaining().toLowerCase();
 
-        QuestManager.getInstance().getQuestPool().stream()
+        GameManager.getInstance().getQuestManager().getQuestPool().stream()
                 .map(Quest::getId)
                 .filter(id -> id.toLowerCase().startsWith(remaining))
                 .forEach(builder::suggest);

@@ -1,8 +1,9 @@
 package fr.miuby.survi.villager.villagerlevel.blessing;
 
+import fr.miuby.survi.GameManager;
 import fr.miuby.survi.player.AlphaPlayer;
 import fr.miuby.survi.villager.villagerlevel.VillagerLevel;
-import fr.miuby.survi.system.WorldLevelManager;
+import fr.miuby.survi.world.WorldLevelManager;
 import lombok.Getter;
 
 /**
@@ -40,12 +41,12 @@ public class WorldLevelEffect extends BlessingEffect {
 
     @Override
     public void applyEffect(VillagerLevel villager, AlphaPlayer player) {
-        WorldLevelManager.getInstance().increment(levelsGained);
+        GameManager.getInstance().getWorldLevelManager().increment(levelsGained);
 
         if (player.getPlayer() != null) {
             player.getPlayer().sendMessage(
                     "§6[Monde] §eLe niveau du monde est passé à §b"
-                            + WorldLevelManager.getInstance().getLevel()
+                            + GameManager.getInstance().getWorldLevelManager().getLevel()
                             + "§e. Les monstres et récompenses s'adaptent !"
             );
         }
