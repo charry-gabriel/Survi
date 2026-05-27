@@ -107,8 +107,7 @@ public class MobLevelManager {
             ConfigurationSection mobSec = mobsSection.getConfigurationSection(key);
             if (mobSec == null) continue;
 
-            boolean enabled = mobSec.getBoolean("enabled", true);
-            MobTypeConfig typeConfig = new MobTypeConfig(enabled);
+            MobTypeConfig typeConfig = new MobTypeConfig();
 
             // ── Stats classiques (attributs Bukkit) ──────────────────────────────
             ConfigurationSection statsSec = mobSec.getConfigurationSection("stats");
@@ -116,8 +115,7 @@ public class MobLevelManager {
                 for (MobStat stat : MobStat.values()) {
                     ConfigurationSection ss = statsSec.getConfigurationSection(stat.getConfigKey());
                     if (ss == null) continue;
-                    typeConfig.addStat(stat, new MobStatConfig(
-                            ss.getBoolean("enabled", false),
+                    typeConfig.addStat(stat, new MobTypeConfig.LinearStat(
                             ss.getDouble("base", 0),
                             ss.getDouble("per-level", 0)
                     ));
@@ -127,8 +125,7 @@ public class MobLevelManager {
             // ── Rayon d'explosion Creeper ─────────────────────────────────────────
             ConfigurationSection expSec = mobSec.getConfigurationSection("explosion-radius");
             if (expSec != null) {
-                typeConfig.setExplosionRadius(new MobStatConfig(
-                        expSec.getBoolean("enabled", false),
+                typeConfig.setExplosionRadius(new MobTypeConfig.LinearStat(
                         expSec.getDouble("base", 3),
                         expSec.getDouble("per-level", 0)
                 ));
@@ -138,7 +135,6 @@ public class MobLevelManager {
             ConfigurationSection fuseSec = mobSec.getConfigurationSection("fuse-ticks");
             if (fuseSec != null) {
                 typeConfig.setFuseTicks(
-                        fuseSec.getBoolean("enabled", false),
                         fuseSec.getDouble("base", 30),
                         fuseSec.getDouble("per-level", 0),
                         fuseSec.getInt("min", 5)
@@ -215,7 +211,7 @@ public class MobLevelManager {
     public void applyLevel(LivingEntity entity, int level) {
         EntityType type = entity.getType();
         MobTypeConfig typeConfig = configs.get(type);
-        if (typeConfig == null || !typeConfig.isEnabled()) return;
+        if (typeConfig == null) return;
 
         // L'EnderDragon est un boss : il reçoit toujours le niveau MAX du palier
         int effectiveLevel = (entity instanceof EnderDragon)
@@ -267,15 +263,15 @@ public class MobLevelManager {
 
         // ── Creeper : explosion radius ────────────────────────────────────────────
         if (entity instanceof Creeper creeper) {
-            MobStatConfig expCfg = typeConfig.getExplosionRadius();
-            if (expCfg != null && expCfg.enabled()) {
+            MobTypeConfig.LinearStat expCfg = typeConfig.getExplosionRadius();
+            if (expCfg != null) {
                 int radius = (int) Math.round(expCfg.compute(level));
                 creeper.setExplosionRadius(Math.clamp(radius, 1, 15));
             }
 
             // ── Creeper : fuse-ticks (vitesse d'explosion) ────────────────────────
-            MobFuseConfig fuseCfg = typeConfig.getFuseTicks();
-            if (fuseCfg != null && fuseCfg.enabled()) {
+            MobTypeConfig.FuseStat fuseCfg = typeConfig.getFuseTicks();
+            if (fuseCfg != null) {
                 int ticks = (int) Math.round(fuseCfg.compute(level));
                 ticks = Math.max(fuseCfg.min(), ticks);
                 creeper.setFuseTicks(ticks);
@@ -326,7 +322,7 @@ public class MobLevelManager {
     /** @return {@code true} si le type est configuré et activé. */
     public boolean isManaged(EntityType type) {
         MobTypeConfig cfg = configs.get(type);
-        return cfg != null && cfg.isEnabled();
+        return cfg != null;
     }
 
     /** @return le niveau stocké dans le PDC du mob, ou {@code -1} s'il n'en a pas. */

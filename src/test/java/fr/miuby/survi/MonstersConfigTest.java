@@ -5,6 +5,9 @@ import org.yaml.snakeyaml.LoaderOptions;
 import org.yaml.snakeyaml.Yaml;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.List;
@@ -20,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * <ul>
  *   <li>Paramètres globaux : {@code levels-per-world-tier} et {@code spawn-weight-exponent}.</li>
  *   <li>Section {@code mobs} non vide, clés = noms d'EntityType valides.</li>
- *   <li>Pour chaque mob : {@code enabled}, section {@code stats} avec formule linéaire.</li>
+ *   <li>Pour chaque mob : section {@code stats} avec formule linéaire (présence = activé).</li>
  *   <li>Champs spéciaux {@code explosion-radius} et {@code fuse-ticks} (Creeper).</li>
  *   <li>Chaque entrée {@code potion-effects} : champs requis, plages de valeurs cohérentes.</li>
  * </ul>
@@ -35,17 +38,27 @@ class MonstersConfigTest {
             "scale", "follow-range", "armor", "knockback-resistance"
     );
 
-    /** Types d'effets de potion connus (PotionEffectType.getName()). */
-    private static final Set<String> VALID_POTION_TYPES = Set.of(
-            "ABSORPTION", "BAD_OMEN", "BLINDNESS", "CONDUIT_POWER", "DARKNESS",
-            "DOLPHINS_GRACE", "FIRE_RESISTANCE", "GLOWING", "HASTE", "HEALTH_BOOST",
-            "HERO_OF_THE_VILLAGE", "HUNGER", "INSTANT_DAMAGE", "INSTANT_HEALTH",
-            "INVISIBILITY", "JUMP_BOOST", "LEVITATION", "LUCK", "MINING_FATIGUE",
-            "NAUSEA", "NIGHT_VISION", "POISON", "REGENERATION", "RESISTANCE",
-            "SATURATION", "SLOW_FALLING", "SLOWNESS", "SPEED", "STRENGTH",
-            "TRIAL_OMEN", "UNLUCK", "WATER_BREATHING", "WEAKNESS", "WIND_CHARGED",
-            "WITHER"
-    );
+    /**
+     * Lit les types de potion valides depuis le schéma JSON généré par SchemaGeneratorTest.
+     * SnakeYAML accepte le JSON (JSON est du YAML valide), pas besoin de lib externe.
+     * La source de vérité est l'API Bukkit, pas monsters.yml lui-même.
+     */
+    @SuppressWarnings("unchecked")
+    private static Set<String> validPotionTypes() {
+        try {
+            String json = Files.readString(Paths.get("src/main/resources/schema/monsters-schema.json"));
+            Yaml yaml = new Yaml(new LoaderOptions());
+            Map<String, Object> schema = (Map<String, Object>) yaml.load(json);
+            Map<String, Object> defs   = (Map<String, Object>) schema.get("definitions");
+            Map<String, Object> pec    = (Map<String, Object>) defs.get("potionEffectConfig");
+            Map<String, Object> props  = (Map<String, Object>) pec.get("properties");
+            Map<String, Object> type   = (Map<String, Object>) props.get("type");
+            List<String> values        = (List<String>) type.get("enum");
+            if (values != null && !values.isEmpty())
+                return new java.util.LinkedHashSet<>(values);
+        } catch (IOException | ClassCastException ignored) {}
+        return Set.of();
+    }
 
     // ─── Tests ────────────────────────────────────────────────────────────────────
 
@@ -154,11 +167,6 @@ class MonstersConfigTest {
     private void assertMobConfig(String mobKey, Map<String, Object> mob) {
         String ctx = "Mob '" + mobKey + "'";
 
-        // enabled : optionnel, mais si présent doit être un booléen
-        if (mob.containsKey("enabled")) {
-            assertInstanceOf(Boolean.class, mob.get("enabled"), ctx + " : 'enabled' doit être un booléen");
-        }
-
         // stats : optionnelle, mais si présente doit être une Map avec des clés valides
         if (mob.containsKey("stats")) {
             Object statsRaw = mob.get("stats");
@@ -194,11 +202,9 @@ class MonstersConfigTest {
         assertInstanceOf(Map.class, raw, ctx + " : doit être un objet YAML");
         Map<String, Object> stat = (Map<String, Object>) raw;
 
-        assertTrue(stat.containsKey("enabled"),   ctx + " : champ 'enabled' manquant");
         assertTrue(stat.containsKey("base"),       ctx + " : champ 'base' manquant");
         assertTrue(stat.containsKey("per-level"),  ctx + " : champ 'per-level' manquant");
 
-        assertInstanceOf(Boolean.class, stat.get("enabled"),  ctx + " : 'enabled' doit être un booléen");
         assertInstanceOf(Number.class,  stat.get("base"),     ctx + " : 'base' doit être un nombre");
         assertInstanceOf(Number.class,  stat.get("per-level"),ctx + " : 'per-level' doit être un nombre");
 
@@ -212,11 +218,9 @@ class MonstersConfigTest {
         assertInstanceOf(Map.class, raw, ctx + " : doit être un objet YAML");
         Map<String, Object> fuse = (Map<String, Object>) raw;
 
-        assertTrue(fuse.containsKey("enabled"),   ctx + " : champ 'enabled' manquant");
         assertTrue(fuse.containsKey("base"),       ctx + " : champ 'base' manquant");
         assertTrue(fuse.containsKey("per-level"),  ctx + " : champ 'per-level' manquant");
 
-        assertInstanceOf(Boolean.class, fuse.get("enabled"),   ctx + " : 'enabled' doit être un booléen");
         assertInstanceOf(Number.class,  fuse.get("base"),      ctx + " : 'base' doit être un nombre");
         assertInstanceOf(Number.class,  fuse.get("per-level"), ctx + " : 'per-level' doit être un nombre");
 
@@ -245,8 +249,8 @@ class MonstersConfigTest {
 
         // Validité du type de potion
         String type = (String) effect.get("type");
-        assertTrue(VALID_POTION_TYPES.contains(type.toUpperCase()),
-                ctx + " : type de potion inconnu '" + type + "'. Types valides : " + VALID_POTION_TYPES);
+        assertTrue(validPotionTypes().contains(type.toUpperCase()),
+                ctx + " : type de potion inconnu '" + type + "'. Types valides : " + validPotionTypes());
 
         // Plages de valeurs
         int minMobLevel = (Integer) effect.get("min-mob-level");

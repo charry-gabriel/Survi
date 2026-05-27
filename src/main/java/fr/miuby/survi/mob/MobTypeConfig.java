@@ -13,61 +13,71 @@ import java.util.Map;
  *
  * <p>Contient :
  * <ul>
- *   <li>Les stats classiques (via {@link MobStat} / {@link MobStatConfig})</li>
+ *   <li>Les stats classiques scalées linéairement ({@link LinearStat})</li>
  *   <li>Le rayon d'explosion du Creeper ({@code explosionRadius})</li>
- *   <li>La durée de mèche du Creeper ({@code fuseTicks}) — vitesse d'explosion</li>
- *   <li>Les effets de potion à l'attaque ({@code potionEffects}), ex. araignée</li>
+ *   <li>La durée de mèche du Creeper ({@code fuseTicks})</li>
+ *   <li>Les effets de potion à l'attaque ({@code potionEffects})</li>
  * </ul>
+ *
+ * <h3>Formule linéaire</h3>
+ * {@code valeur = base + (level - 1) * perLevel}
  */
 public class MobTypeConfig {
 
-    @Getter
-    private final boolean enabled;
-    private final Map<MobStat, MobStatConfig>  stats         = new EnumMap<>(MobStat.class);
+    // ─── Inner types ──────────────────────────────────────────────────────────────
+
     /**
-     * -- GETTER --
-     * Liste des effets de potion appliqués à l'attaque (peut être vide).
+     * Stat scalée linéairement : {@code valeur = base + (level - 1) * perLevel}.
+     *
+     * @param base     valeur au niveau 1 (≈ vanilla)
+     * @param perLevel incrément par niveau supplémentaire (peut être négatif)
      */
-    @Getter
-    private final List<MobPotionEffectConfig>   potionEffects = new ArrayList<>();
-
-    /** Rayon d'explosion scalé (Creeper uniquement). Null si non configuré.
-     * -- GETTER --
-     * Rayon d'explosion du Creeper, ou
-     *  si non configuré.
-     */
-    @Getter
-    @Setter
-    private MobStatConfig explosionRadius = null;
-
-    /** Durée de mèche scalée (Creeper uniquement). Null si non configuré.
-     * -- GETTER --
-     * Config de la mèche du Creeper, ou
-     *  si non configurée.
-     */
-    @Getter
-    private MobFuseConfig fuseTicks = null;
-
-    public MobTypeConfig(boolean enabled) {
-        this.enabled = enabled;
+    public record LinearStat(double base, double perLevel) {
+        public double compute(int level) {
+            return base + (level - 1) * perLevel;
+        }
     }
+
+    /**
+     * Durée de mèche du Creeper avec plancher de sécurité.
+     * Formule : {@code max(min, base + (level - 1) * perLevel)}
+     *
+     * @param base     durée de base en ticks (vanilla = 30)
+     * @param perLevel variation par niveau (négatif = explosion plus rapide)
+     * @param min      durée minimale en ticks
+     */
+    public record FuseStat(double base, double perLevel, int min) {
+        public double compute(int level) {
+            return Math.max(min, base + (level - 1) * perLevel);
+        }
+    }
+
+    // ─── Champs ───────────────────────────────────────────────────────────────────
+
+    private final Map<MobStat, LinearStat>       stats         = new EnumMap<>(MobStat.class);
+    @Getter
+    private final List<MobPotionEffectConfig>    potionEffects = new ArrayList<>();
+    @Setter
+    @Getter
+    private LinearStat                           explosionRadius = null;
+    @Getter
+    private FuseStat                             fuseTicks       = null;
 
     // ─── Mutateurs ────────────────────────────────────────────────────────────────
 
-    public void addStat(MobStat stat, MobStatConfig config) {
+    public void addStat(MobStat stat, LinearStat config) {
         stats.put(stat, config);
     }
 
     /**
      * Configure la durée de mèche du Creeper.
      *
-     * @param enabled   activé ou non
-     * @param base      durée de base en ticks (vanilla = 30)
-     * @param perLevel  variation par niveau (négatif = plus court à haut niveau)
-     * @param min       durée minimale en ticks (plancher de sécurité)
+     * @param base     durée de base en ticks (vanilla = 30)
+     * @param perLevel variation par niveau (négatif = plus court à haut niveau)
+     * @param min      durée minimale en ticks (plancher de sécurité)
      */
-    public void setFuseTicks(boolean enabled, double base, double perLevel, int min) {
-        this.fuseTicks = new MobFuseConfig(enabled, base, perLevel, min);
+    public void setFuseTicks(double base, double perLevel, int min) {
+        this.fuseTicks = new FuseStat(base, perLevel, min);
     }
 
     public void addPotionEffect(MobPotionEffectConfig effect) {
@@ -77,10 +87,10 @@ public class MobTypeConfig {
     // ─── Accesseurs ───────────────────────────────────────────────────────────────
 
     /**
-     * @return valeur calculée pour le niveau donné, ou {@code -1} si la stat est absente / désactivée.
+     * @return valeur calculée pour le niveau donné, ou {@code -1} si la stat est absente.
      */
     public double getStatValue(MobStat stat, int level) {
-        MobStatConfig config = stats.get(stat);
+        LinearStat config = stats.get(stat);
         if (config == null) return -1;
         return config.compute(level);
     }

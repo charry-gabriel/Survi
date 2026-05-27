@@ -227,10 +227,10 @@ public class MobCommand {
                 if (v >= 0)
                     player.sendMessage(row(stat.getConfigKey(), String.format("%.3f", v)));
             }
-            if (cfg.getExplosionRadius() != null && cfg.getExplosionRadius().enabled())
+            if (cfg.getExplosionRadius() != null)
                 player.sendMessage(row("explosion-radius",
                         String.format("%.1f", cfg.getExplosionRadius().compute(storedLevel))));
-            if (cfg.getFuseTicks() != null && cfg.getFuseTicks().enabled())
+            if (cfg.getFuseTicks() != null)
                 player.sendMessage(row("fuse-ticks",
                         String.format("%.1f", cfg.getFuseTicks().compute(storedLevel))));
             if (!cfg.getPotionEffects().isEmpty())
@@ -254,10 +254,10 @@ public class MobCommand {
             if (v >= 0)
                 sender.sendMessage(row(stat.getConfigKey(), String.format("%.3f", v)));
         }
-        if (cfg.getExplosionRadius() != null && cfg.getExplosionRadius().enabled())
+        if (cfg.getExplosionRadius() != null)
             sender.sendMessage(row("explosion-radius",
                     String.format("%.1f", cfg.getExplosionRadius().compute(level))));
-        if (cfg.getFuseTicks() != null && cfg.getFuseTicks().enabled())
+        if (cfg.getFuseTicks() != null)
             sender.sendMessage(row("fuse-ticks",
                     String.format("%.1f ticks (%.2f s)",
                             cfg.getFuseTicks().compute(level),

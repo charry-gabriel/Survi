@@ -3,24 +3,23 @@
   "title": "MonstersConfig",
   "description": "Configuration du système de niveaux de monstres — monsters.yml (plugin Survi).",
   "type": "object",
-  "required": ["mobs"],
+  "required": [
+    "mobs"
+  ],
   "additionalProperties": false,
   "properties": {
-
     "levels-per-world-tier": {
       "type": "integer",
       "description": "Nombre de niveaux par palier du monde. level min du palier N = N * levelsPerTier + 1.",
       "minimum": 1,
       "default": 10
     },
-
     "spawn-weight-exponent": {
       "type": "number",
       "description": "Exposant du tirage pondéré. Plus la valeur est grande, plus les hauts niveaux sont rares. Recommandé : 1.5 – 2.5.",
       "minimum": 0,
       "default": 1.8
     },
-
     "mobs": {
       "type": "object",
       "description": "Map EntityType → configuration du mob. Seuls les types listés ici sont scalés par MobLevelManager.",
@@ -206,81 +205,115 @@
         "ZOMBIFIED_PIGLIN"
       ]
       },
-      "additionalProperties": { "$ref": "#/definitions/mobConfig" }
+      "additionalProperties": {
+        "$ref": "#/definitions/mobConfig"
+      }
     }
   },
-
   "definitions": {
-
     "mobConfig": {
       "type": "object",
       "description": "Configuration complète d'un type de mob.",
       "additionalProperties": false,
       "properties": {
-
-        "enabled": {
-          "type": "boolean",
-          "description": "Active ou désactive le scaling pour ce mob. Si false, le mob spawne en vanilla.",
-          "default": true
-        },
-
         "stats": {
           "type": "object",
           "description": "Stats scalables via des attributs Bukkit. Formule : valeur = base + (level - 1) * per-level.",
           "additionalProperties": false,
           "properties": {
-            "max-health":           { "$ref": "#/definitions/statConfig", "description": "PV max. Vanilla zombie = 20." },
-            "attack-damage":        { "$ref": "#/definitions/statConfig", "description": "Dégâts de base par frappe." },
-            "movement-speed":       { "$ref": "#/definitions/statConfig", "description": "Vitesse de déplacement. Vanilla zombie ≈ 0.23." },
-            "scale":                { "$ref": "#/definitions/statConfig", "description": "Taille relative. 1.0 = normal, 2.0 = deux fois plus grand." },
-            "follow-range":         { "$ref": "#/definitions/statConfig", "description": "Distance de détection du joueur en blocs." },
-            "armor":                { "$ref": "#/definitions/statConfig", "description": "Points d'armure naturels." },
-            "knockback-resistance": { "$ref": "#/definitions/statConfig", "description": "Résistance au recul (0.0 à 1.0)." }
+            "max-health": {
+              "$ref": "#/definitions/statConfig",
+              "description": "PV max. Vanilla zombie = 20."
+            },
+            "attack-damage": {
+              "$ref": "#/definitions/statConfig",
+              "description": "Dégâts de base par frappe."
+            },
+            "movement-speed": {
+              "$ref": "#/definitions/statConfig",
+              "description": "Vitesse de déplacement. Vanilla zombie ≈ 0.23."
+            },
+            "scale": {
+              "$ref": "#/definitions/statConfig",
+              "description": "Taille relative. 1.0 = normal, 2.0 = deux fois plus grand."
+            },
+            "follow-range": {
+              "$ref": "#/definitions/statConfig",
+              "description": "Distance de détection du joueur en blocs."
+            },
+            "armor": {
+              "$ref": "#/definitions/statConfig",
+              "description": "Points d'armure naturels."
+            },
+            "knockback-resistance": {
+              "$ref": "#/definitions/statConfig",
+              "description": "Résistance au recul (0.0 à 1.0)."
+            }
           }
         },
-
         "explosion-radius": {
-          "allOf": [{ "$ref": "#/definitions/statConfig" }],
+          "allOf": [
+            {
+              "$ref": "#/definitions/statConfig"
+            }
+          ],
           "description": "Rayon d'explosion scalé (Creeper uniquement). Vanilla = 3."
         },
-
         "fuse-ticks": {
           "$ref": "#/definitions/fuseConfig"
         },
-
         "potion-effects": {
           "type": "array",
           "description": "Effets de potion appliqués à chaque attaque du mob scalé.",
-          "items": { "$ref": "#/definitions/potionEffectConfig" }
+          "items": {
+            "$ref": "#/definitions/potionEffectConfig"
+          }
         }
       }
     },
-
     "statConfig": {
       "type": "object",
       "description": "Stat linéaire : valeur = base + (level - 1) * per-level.",
-      "required": ["enabled", "base", "per-level"],
+      "required": [
+        "base",
+        "per-level"
+      ],
       "additionalProperties": false,
       "properties": {
-        "enabled":   { "type": "boolean", "description": "Active ou désactive cette stat." },
-        "base":      { "type": "number",  "description": "Valeur au niveau 1 (≈ vanilla)." },
-        "per-level": { "type": "number",  "description": "Incrément ajouté par niveau supplémentaire. Peut être négatif." }
+        "base": {
+          "type": "number",
+          "description": "Valeur au niveau 1 (≈ vanilla)."
+        },
+        "per-level": {
+          "type": "number",
+          "description": "Incrément ajouté par niveau supplémentaire. Peut être négatif."
+        }
       }
     },
-
     "fuseConfig": {
       "type": "object",
       "description": "Durée de mèche du Creeper. Formule : max(min, base + (level - 1) * per-level). Vanilla = 30 ticks.",
-      "required": ["enabled", "base", "per-level"],
+      "required": [
+        "base",
+        "per-level"
+      ],
       "additionalProperties": false,
       "properties": {
-        "enabled":   { "type": "boolean" },
-        "base":      { "type": "number",  "description": "Durée de base en ticks. Vanilla = 30." },
-        "per-level": { "type": "number",  "description": "Variation par niveau. Valeur négative = explosion plus rapide." },
-        "min":       { "type": "integer", "description": "Plancher de sécurité en ticks (jamais moins).", "minimum": 1 }
+        "base": {
+          "type": "number",
+          "description": "Durée de base en ticks. Vanilla = 30."
+        },
+        "per-level": {
+          "type": "number",
+          "description": "Variation par niveau. Valeur négative = explosion plus rapide."
+        },
+        "min": {
+          "type": "integer",
+          "description": "Plancher de sécurité en ticks (jamais moins).",
+          "minimum": 1
+        }
       }
     },
-
     "potionEffectConfig": {
       "type": "object",
       "description": "Effet de potion appliqué à l'attaque d'un mob scalé.",
@@ -296,84 +329,76 @@
       ],
       "additionalProperties": false,
       "properties": {
-
         "type": {
           "type": "string",
           "description": "Nom de l'effet de potion (PotionEffectType, ex : POISON, WITHER, BLINDNESS).",
           "enum": [
-        "ABSORPTION",
-        "BAD_OMEN",
-        "BLINDNESS",
-        "CONDUIT_POWER",
-        "DARKNESS",
-        "DOLPHINS_GRACE",
-        "FIRE_RESISTANCE",
-        "GLOWING",
-        "HASTE",
-        "HEALTH_BOOST",
-        "HERO_OF_THE_VILLAGE",
-        "HUNGER",
-        "INSTANT_DAMAGE",
-        "INSTANT_HEALTH",
-        "INVISIBILITY",
-        "JUMP_BOOST",
-        "LEVITATION",
-        "LUCK",
-        "MINING_FATIGUE",
-        "NAUSEA",
-        "NIGHT_VISION",
-        "POISON",
-        "REGENERATION",
-        "RESISTANCE",
-        "SATURATION",
-        "SLOWNESS",
-        "SLOW_FALLING",
-        "SPEED",
-        "STRENGTH",
-        "TRIAL_OMEN",
-        "UNLUCK",
-        "WATER_BREATHING",
-        "WEAKNESS",
-        "WIND_CHARGED",
-        "WITHER"
-      ]
+            "ABSORPTION",
+            "BAD_OMEN",
+            "BLINDNESS",
+            "CONDUIT_POWER",
+            "DARKNESS",
+            "DOLPHINS_GRACE",
+            "FIRE_RESISTANCE",
+            "GLOWING",
+            "HASTE",
+            "HEALTH_BOOST",
+            "HERO_OF_THE_VILLAGE",
+            "HUNGER",
+            "INSTANT_DAMAGE",
+            "INSTANT_HEALTH",
+            "INVISIBILITY",
+            "JUMP_BOOST",
+            "LEVITATION",
+            "LUCK",
+            "MINING_FATIGUE",
+            "NAUSEA",
+            "NIGHT_VISION",
+            "POISON",
+            "REGENERATION",
+            "RESISTANCE",
+            "SATURATION",
+            "SLOWNESS",
+            "SLOW_FALLING",
+            "SPEED",
+            "STRENGTH",
+            "TRIAL_OMEN",
+            "UNLUCK",
+            "WATER_BREATHING",
+            "WEAKNESS",
+            "WIND_CHARGED",
+            "WITHER"
+          ]
         },
-
         "min-mob-level": {
           "type": "integer",
           "description": "Niveau minimal du mob à partir duquel l'effet est actif.",
           "minimum": 1
         },
-
         "duration-base": {
           "type": "integer",
           "description": "Durée de base de l'effet en ticks (20 ticks = 1 s).",
           "minimum": 0
         },
-
         "duration-per-level": {
           "type": "number",
           "description": "Ticks supplémentaires ajoutés par niveau du mob."
         },
-
         "amplifier-upgrade-every": {
           "type": "integer",
           "description": "Tous les N niveaux, l'amplificateur augmente de 1 (niveau I → II → III…).",
           "minimum": 1
         },
-
         "chance-base": {
           "type": "number",
           "description": "Probabilité de base d'appliquer l'effet (0.0 à 1.0).",
           "minimum": 0,
           "maximum": 1
         },
-
         "chance-per-level": {
           "type": "number",
           "description": "Augmentation de la probabilité par niveau (peut être 0)."
         },
-
         "max-chance": {
           "type": "number",
           "description": "Probabilité maximale plafond (0.0 à 1.0).",

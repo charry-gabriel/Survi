@@ -2,6 +2,7 @@ package fr.miuby.survi;
 
 import org.bukkit.Material;
 import org.bukkit.entity.EntityType;
+import org.bukkit.potion.PotionEffectType;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -35,12 +36,10 @@ class SchemaGeneratorTest {
         String content = Files.readString(path);
 
         // Update Villager Type enum
-        List<String> types = List.of("DESERT", "JUNGLE", "PLAINS", "SAVANNA", "SNOW", "SWAMP", "TAIGA");
-        content = replaceEnum(content, "type", types);
+        content = replaceEnum(content, "type", getVillagerTypeNames());
 
         // Update Villager Profession enum
-        List<String> professions = List.of("ARMORER", "BUTCHER", "CARTOGRAPHER", "CLERIC", "FARMER", "FISHERMAN", "FLETCHER", "LEATHERWORKER", "LIBRARIAN", "MASON", "NITWIT", "NONE", "SHEPHERD", "TOOLSMITH", "WEAPONSMITH");
-        content = replaceEnum(content, "profession", professions);
+        content = replaceEnum(content, "profession", getVillagerProfessionNames());
 
         // Update Material enum (for tributes)
         content = replaceEnum(content, "material", getMaterialNames());
@@ -64,7 +63,7 @@ class SchemaGeneratorTest {
                 .map(m -> "minecraft:" + m.toLowerCase())
                 .sorted()
                 .toList();
-        
+
         // Regex to find "old_recipes" and its items block
         Pattern oldRecipesPattern = Pattern.compile("\"old_recipes\":\\s*\\{[^}]*\"items\":\\s*\\{[^{}]*\\}");
         Matcher oldMatcher = oldRecipesPattern.matcher(content);
@@ -94,8 +93,8 @@ class SchemaGeneratorTest {
 
         // Update Quest Type (distinct from reward type)
         List<String> questTypes = getEnumNamesFromSource("src/main/java/fr/miuby/survi/quest/QuestType.java");
-        String questTypeEnumJson = "\"enum\": [\n              " + 
-                questTypes.stream().map(s -> "\"" + s + "\"").collect(Collectors.joining(",\n              ")) + 
+        String questTypeEnumJson = "\"enum\": [\n              " +
+                questTypes.stream().map(s -> "\"" + s + "\"").collect(Collectors.joining(",\n              ")) +
                 "\n            ]";
         // Regex matching only the first "type" which is the quest type (no description)
         Pattern questTypePattern = Pattern.compile("\"type\":\\s*\\{\\s*\"type\":\\s*\"string\",\\s*\"enum\":\\s*\\[[^\\]]*\\]\\s*\\}");
@@ -105,16 +104,13 @@ class SchemaGeneratorTest {
         content = replaceEnum(content, "difficulty", getEnumNamesFromSource("src/main/java/fr/miuby/survi/quest/QuestDifficulty.java"));
 
         // Update Reward Potion Effects
-        List<String> potionEffects = Stream.of(
-            "speed", "slowness", "haste", "mining_fatigue", "strength", "instant_health", "instant_damage",
-            "jump_boost", "regeneration", "resistance", "fire_resistance", "water_breathing", "invisibility",
-            "blindness", "night_vision", "hunger", "weakness", "poison", "wither", "health_boost",
-            "absorption", "saturation", "glowing", "levitation", "luck", "unluck", "slow_falling",
-            "conduit_power", "dolphins_grace", "bad_omen", "hero_of_the_village", "darkness"
-        ).sorted().toList();
-        
-        String potionEnumJson = "\"enum\": [\n                    " + 
-                potionEffects.stream().map(s -> "\"" + s + "\"").collect(Collectors.joining(",\n                    ")) + 
+        List<String> potionEffects = getPotionEffectTypeNames().stream()
+                .map(String::toLowerCase)
+                .sorted()
+                .toList();
+
+        String potionEnumJson = "\"enum\": [\n                    " +
+                potionEffects.stream().map(s -> "\"" + s + "\"").collect(Collectors.joining(",\n                    ")) +
                 "\n                  ]";
         // Regex matching the type with description
         Pattern potionTypePattern = Pattern.compile("\"type\":\\s*\\{\\s*\"type\":\\s*\"string\",\\s*\"description\":\\s*\"Nom de l'effet de potion[^\"]*\",\\s*\"enum\":\\s*\\[[^\\]]*\\]\\s*\\}");
@@ -125,13 +121,13 @@ class SchemaGeneratorTest {
                 .distinct()
                 .sorted()
                 .toList();
-        
+
         // Replace target type with enum if it matches the pattern
         Pattern targetPattern = Pattern.compile("\"target\":\\s*\\{\\s*\"type\":\\s*\\[\"string\",\\s*\"null\"\\][^{}]*\\}");
-        String targetEnumJson = "\"target\": {\n            \"type\": [\"string\", \"null\"],\n            \"enum\": [\n              null,\n              " + 
-                allTargets.stream().map(s -> "\"" + s + "\"").collect(Collectors.joining(",\n              ")) + 
+        String targetEnumJson = "\"target\": {\n            \"type\": [\"string\", \"null\"],\n            \"enum\": [\n              null,\n              " +
+                allTargets.stream().map(s -> "\"" + s + "\"").collect(Collectors.joining(",\n              ")) +
                 "\n            ]\n          }";
-        
+
         if (targetPattern.matcher(content).find()) {
             content = targetPattern.matcher(content).replaceAll(Matcher.quoteReplacement(targetEnumJson));
         } else {
@@ -149,12 +145,10 @@ class SchemaGeneratorTest {
         String content = Files.readString(path);
 
         // Update Villager Type enum
-        List<String> types = List.of("DESERT", "JUNGLE", "PLAINS", "SAVANNA", "SNOW", "SWAMP", "TAIGA");
-        content = replaceEnum(content, "type", types);
+        content = replaceEnum(content, "type", getVillagerTypeNames());
 
         // Update Villager Profession enum
-        List<String> professions = List.of("ARMORER", "BUTCHER", "CARTOGRAPHER", "CLERIC", "FARMER", "FISHERMAN", "FLETCHER", "LEATHERWORKER", "LIBRARIAN", "MASON", "NITWIT", "NONE", "SHEPHERD", "TOOLSMITH", "WEAPONSMITH");
-        content = replaceEnum(content, "profession", professions);
+        content = replaceEnum(content, "profession", getVillagerProfessionNames());
 
         // Update Jobs
         content = replaceEnum(content, "job", getEnumNamesFromSource("src/main/java/fr/miuby/survi/job/EJob.java"));
@@ -182,27 +176,15 @@ class SchemaGeneratorTest {
 
         String content = Files.readString(path);
 
-        // Met à jour l'enum des clés de mobs valides (propertyNames → EntityType alive, sans PLAYER).
+        // Met à jour l'enum des clés de mobs valides (propertyNames → EntityType, sans PLAYER/UNKNOWN).
         List<String> mobTypes = getEntityTypeNames().stream()
                 .filter(name -> !name.equals("PLAYER") && !name.equals("UNKNOWN"))
                 .sorted()
                 .toList();
         content = replaceEnum(content, "propertyNames", mobTypes);
 
-        // Met à jour l'enum des effets de potion (section type dans potionEffectConfig).
-        // La regex cible uniquement "type": { ... "enum": [...] } — les "type": "string" / "object"
-        // sont des valeurs scalaires, pas des objets, et ne sont donc pas matchés.
-        List<String> potionEffects = List.of(
-                "ABSORPTION", "BAD_OMEN", "BLINDNESS", "CONDUIT_POWER", "DARKNESS",
-                "DOLPHINS_GRACE", "FIRE_RESISTANCE", "GLOWING", "HASTE", "HEALTH_BOOST",
-                "HERO_OF_THE_VILLAGE", "HUNGER", "INSTANT_DAMAGE", "INSTANT_HEALTH",
-                "INVISIBILITY", "JUMP_BOOST", "LEVITATION", "LUCK", "MINING_FATIGUE",
-                "NAUSEA", "NIGHT_VISION", "POISON", "REGENERATION", "RESISTANCE",
-                "SATURATION", "SLOW_FALLING", "SLOWNESS", "SPEED", "STRENGTH",
-                "TRIAL_OMEN", "UNLUCK", "WATER_BREATHING", "WEAKNESS", "WIND_CHARGED",
-                "WITHER"
-        );
-        content = replaceEnum(content, "type", potionEffects);
+        // Met à jour l'enum des effets de potion depuis l'API Bukkit — se met à jour tout seul.
+        content = replaceEnum(content, "type", getPotionEffectTypeNames());
 
         Files.writeString(path, content);
     }
@@ -218,10 +200,10 @@ class SchemaGeneratorTest {
             // Fallback si Material.values() échoue
             materials.addAll(List.of("AIR", "STONE", "GRASS_BLOCK", "DIRT", "COBBLESTONE", "OAK_PLANKS", "EMERALD", "DIAMOND", "IRON_INGOT", "GOLD_INGOT"));
         }
-        
+
         // Enrichir avec les YML
         materials.addAll(collectValuesFromYml("material"));
-        
+
         return materials.stream().toList();
     }
 
@@ -235,11 +217,59 @@ class SchemaGeneratorTest {
         } catch (Throwable _) {
             entities.addAll(List.of("PLAYER", "ZOMBIE", "SKELETON", "CREEPER", "COW", "SHEEP", "PIG", "CHICKEN"));
         }
-        
+
         // Enrichir avec les YML (parfois utilisé comme target dans les quêtes)
         entities.addAll(collectValuesFromYml("target"));
-        
+
         return entities.stream().toList();
+    }
+
+
+    private List<String> getVillagerTypeNames() {
+        try {
+            return org.bukkit.Registry.VILLAGER_TYPE.stream()
+                    .map(e -> e.getKey().getKey().toUpperCase())
+                    .sorted()
+                    .toList();
+        } catch (Throwable ignored) {
+            return List.of("DESERT", "JUNGLE", "PLAINS", "SAVANNA", "SNOW", "SWAMP", "TAIGA");
+        }
+    }
+
+    private List<String> getVillagerProfessionNames() {
+        try {
+            return org.bukkit.Registry.VILLAGER_PROFESSION.stream()
+                    .map(e -> e.getKey().getKey().toUpperCase())
+                    .sorted()
+                    .toList();
+        } catch (Throwable ignored) {
+            return List.of("ARMORER", "BUTCHER", "CARTOGRAPHER", "CLERIC", "FARMER",
+                    "FISHERMAN", "FLETCHER", "LEATHERWORKER", "LIBRARIAN", "MASON",
+                    "NITWIT", "NONE", "SHEPHERD", "TOOLSMITH", "WEAPONSMITH");
+        }
+    }
+
+    private List<String> getPotionEffectTypeNames() {
+        Set<String> effects = new TreeSet<>();
+        try {
+            // Paper 1.20.3+ expose un Registry itérable pour les effets de potion
+            org.bukkit.Registry.EFFECT.stream()
+                    .map(e -> e.getKey().getKey().toUpperCase())
+                    .forEach(effects::add);
+        } catch (Throwable ignored) {
+            // Fallback : PotionEffectType avait une méthode values() dans les anciennes API
+        }
+        if (effects.isEmpty()) {
+            try {
+                // Ancienne API Paper / CraftBukkit
+                java.lang.reflect.Method m = PotionEffectType.class.getMethod("values");
+                PotionEffectType[] types = (PotionEffectType[]) m.invoke(null);
+                for (PotionEffectType t : types) {
+                    if (t != null) effects.add(t.getName().toUpperCase());
+                }
+            } catch (Throwable ignored) {}
+        }
+        return effects.stream().toList();
     }
 
     private List<String> getCustomItemNames() {
@@ -253,22 +283,22 @@ class SchemaGeneratorTest {
         try {
             Path resourcesPath = Paths.get("src/main/resources");
             if (!Files.exists(resourcesPath)) return values;
-            
+
             Files.walk(resourcesPath)
-                .filter(p -> p.toString().endsWith(".yml"))
-                .forEach(p -> {
-                    try {
-                        String content = Files.readString(p);
-                        // Regex pour trouver "key: VALUE" ou "key: 'VALUE'" ou "key: "VALUE""
-                        Pattern pattern = Pattern.compile("(?m)^\\s*" + key + ":\\s*[\"']?([A-Z0-9_]+)[\"']?");
-                        Matcher matcher = pattern.matcher(content);
-                        while (matcher.find()) {
-                            values.add(matcher.group(1).toUpperCase());
+                    .filter(p -> p.toString().endsWith(".yml"))
+                    .forEach(p -> {
+                        try {
+                            String content = Files.readString(p);
+                            // Regex pour trouver "key: VALUE" ou "key: 'VALUE'" ou "key: "VALUE""
+                            Pattern pattern = Pattern.compile("(?m)^\\s*" + key + ":\\s*[\"']?([A-Z0-9_]+)[\"']?");
+                            Matcher matcher = pattern.matcher(content);
+                            while (matcher.find()) {
+                                values.add(matcher.group(1).toUpperCase());
+                            }
+                        } catch (IOException _) {
+                            // ignore
                         }
-                    } catch (IOException _) {
-                        // ignore
-                    }
-                });
+                    });
         } catch (IOException _) {
             // ignore
         }
@@ -279,7 +309,7 @@ class SchemaGeneratorTest {
         try {
             Path p = Paths.get(path);
             if (!Files.exists(p)) return List.of();
-            
+
             String content = Files.readString(p);
             // Regex simplifiée pour trouver les constantes d'enum
             // On cherche après l'ouverture de l'enum { et avant le premier ; (ou la fin si pas de ;)
@@ -308,11 +338,11 @@ class SchemaGeneratorTest {
 
     private String replaceEnum(String content, String propertyName, List<String> values) {
         if (values.isEmpty()) return content;
-        
-        String enumJson = "\"enum\": [\n        " + 
-                values.stream().distinct().sorted().map(s -> "\"" + s + "\"").collect(Collectors.joining(",\n        ")) + 
+
+        String enumJson = "\"enum\": [\n        " +
+                values.stream().distinct().sorted().map(s -> "\"" + s + "\"").collect(Collectors.joining(",\n        ")) +
                 "\n      ]";
-        
+
         // On cherche le bloc de la propriété: "propertyName":
         // On utilise une regex qui essaie de trouver le bloc le plus petit possible
         Pattern propertyPattern = Pattern.compile("\"" + propertyName + "\":\\s*\\{[^{}]*\\}");
