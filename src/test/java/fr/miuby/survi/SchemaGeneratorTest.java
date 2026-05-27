@@ -24,6 +24,7 @@ class SchemaGeneratorTest {
             updateRecipesSchema();
             updateQuestsSchema();
             updateTradersSchema();
+            updateMonstersSchema();
         });
     }
 
@@ -171,6 +172,37 @@ class SchemaGeneratorTest {
         List<String> allItems = Stream.concat(getMaterialNames().stream(), getCustomItemNames().stream())
                 .distinct().sorted().toList();
         content = replaceEnum(content, "mainHandItem", allItems);
+
+        Files.writeString(path, content);
+    }
+
+    private void updateMonstersSchema() throws IOException {
+        Path path = Paths.get("src/main/resources/schema/monsters-schema.json");
+        if (!Files.exists(path)) return;
+
+        String content = Files.readString(path);
+
+        // Met à jour l'enum des clés de mobs valides (propertyNames → EntityType alive, sans PLAYER).
+        List<String> mobTypes = getEntityTypeNames().stream()
+                .filter(name -> !name.equals("PLAYER") && !name.equals("UNKNOWN"))
+                .sorted()
+                .toList();
+        content = replaceEnum(content, "propertyNames", mobTypes);
+
+        // Met à jour l'enum des effets de potion (section type dans potionEffectConfig).
+        // La regex cible uniquement "type": { ... "enum": [...] } — les "type": "string" / "object"
+        // sont des valeurs scalaires, pas des objets, et ne sont donc pas matchés.
+        List<String> potionEffects = List.of(
+                "ABSORPTION", "BAD_OMEN", "BLINDNESS", "CONDUIT_POWER", "DARKNESS",
+                "DOLPHINS_GRACE", "FIRE_RESISTANCE", "GLOWING", "HASTE", "HEALTH_BOOST",
+                "HERO_OF_THE_VILLAGE", "HUNGER", "INSTANT_DAMAGE", "INSTANT_HEALTH",
+                "INVISIBILITY", "JUMP_BOOST", "LEVITATION", "LUCK", "MINING_FATIGUE",
+                "NAUSEA", "NIGHT_VISION", "POISON", "REGENERATION", "RESISTANCE",
+                "SATURATION", "SLOW_FALLING", "SLOWNESS", "SPEED", "STRENGTH",
+                "TRIAL_OMEN", "UNLUCK", "WATER_BREATHING", "WEAKNESS", "WIND_CHARGED",
+                "WITHER"
+        );
+        content = replaceEnum(content, "type", potionEffects);
 
         Files.writeString(path, content);
     }
