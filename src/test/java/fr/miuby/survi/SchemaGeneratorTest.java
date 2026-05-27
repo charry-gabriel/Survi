@@ -47,6 +47,25 @@ class SchemaGeneratorTest {
         // Update CustomItem enum
         content = replaceEnum(content, "customItem", getCustomItemNames());
 
+        // Update blessing effect type enum
+        content = replaceEnum(content, "type", getEnumNamesFromSource("src/main/java/fr/miuby/survi/villager/villagerlevel/blessing/BlessingLoader.java")
+                .isEmpty()
+                ? List.of("DAMAGE", "DISPEL", "FLY", "GAME_MODE", "ITEM", "LIMIT_WORLD", "LOCK_VILLAGER",
+                          "LOCK_WORLD", "MAX_HEALTH", "MESSAGE", "RANDOM_ITEM", "REGEN",
+                          "RESISTANCE", "UNLOCK_ARMOR", "UNLOCK_TOOL", "WORLD_LEVEL", "WORLD_RESET")
+                : List.of("DAMAGE", "DISPEL", "FLY", "GAME_MODE", "ITEM", "LIMIT_WORLD", "LOCK_VILLAGER",
+                          "LOCK_WORLD", "MAX_HEALTH", "MESSAGE", "RANDOM_ITEM", "REGEN",
+                          "RESISTANCE", "UNLOCK_ARMOR", "UNLOCK_TOOL", "WORLD_LEVEL", "WORLD_RESET"));
+
+        // Update tool enum (LockedToolType)
+        content = replaceEnum(content, "tool", getEnumNamesFromSource("src/main/java/fr/miuby/survi/item/locked_item/LockedToolType.java"));
+
+        // Update armor enum (LockedArmorType)
+        content = replaceEnum(content, "armor", getEnumNamesFromSource("src/main/java/fr/miuby/survi/item/locked_item/LockedArmorType.java"));
+
+        // Update world enum (EWorld)
+        content = replaceEnum(content, "world", getEnumNamesFromSource("src/main/java/fr/miuby/survi/world/EWorld.java"));
+
         Files.writeString(path, content);
     }
 

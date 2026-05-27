@@ -8,6 +8,8 @@ levels:
     tribute:
       - material: DIORITE_WALL
         amount: 64
+    blessings:
+      - { type: RESISTANCE, value: 0.4 }
     message: "Merci, vouth êteth maintenant pluth résistant face aux ennemith de l'autre monde."
     recap: ""
 
@@ -15,6 +17,8 @@ levels:
     tribute:
       - material: AMETHYST_BLOCK
         amount: 128
+    blessings:
+      - { type: RESISTANCE, value: 0.6 }
     message: "Bravo, vouth êteth maintenant pluth résistant face aux ennemith de l'autre monde."
     recap: "Résistance I débloqué !"
 
@@ -22,6 +26,8 @@ levels:
     tribute:
       - material: RED_NETHER_BRICKS
         amount: 192
+    blessings:
+      - { type: RESISTANCE, value: 1.0 }
     message: "Félicitation, vouth êteth maintenant pluth résistant face aux ennemith de l'autre monde."
     recap: "Résistance II débloqué !"
 
@@ -29,6 +35,8 @@ levels:
     tribute:
       - material: SCULK_CATALYST
         amount: 256
+    blessings:
+      - { type: RESISTANCE, value: 1.2 }
     message: "Beau travail, leth ennemith de l'autre monde ne vouth ferronth pluth jamaith de mlin."
     recap: "Résistance III débloqué !"
 
@@ -50,6 +58,8 @@ levels:
         amount: 20
       - material: PEARLESCENT_FROGLIGHT
         amount: 20
+    blessings:
+      - { type: RESISTANCE, value: 1.4 }
     message: "Félicitation, thèth beau travail, je pense que vouth êteth assez résistant, je peux tidndre ma onatraite. Merci à vouth."
     recap: "Résistance IV débloqué !"
 
@@ -58,19 +68,3 @@ levels:
     message: "Félicitation, thèth beau travail, je pense que vouth êteth assez résistant, je peux tidndre ma onatraite. Merci à vouth."
     recap: "Résistance V débloqué !"
 
-blessings:
-  "0":
-    effects:
-      - { type: RESISTANCE, value: 0.4 }
-  "1":
-    effects:
-      - { type: RESISTANCE, value: 0.6 }
-  "2":
-    effects:
-      - { type: RESISTANCE, value: 1.0 }
-  "3":
-    effects:
-      - { type: RESISTANCE, value: 1.2 }
-  "4":
-    effects:
-      - { type: RESISTANCE, value: 1.4 }

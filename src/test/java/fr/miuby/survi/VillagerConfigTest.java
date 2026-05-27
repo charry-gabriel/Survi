@@ -10,6 +10,7 @@ import org.yaml.snakeyaml.constructor.Constructor;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -42,6 +43,23 @@ class VillagerConfigTest {
                     assertNotNull(level.message, file.getName() + " : level[" + i + "] message manquant");
                     assertNotNull(level.recap, file.getName() + " : level[" + i + "] recap manquant");
                     assertNotNull(level.tribute, file.getName() + " : level[" + i + "] tribute manquant");
+
+                    // Validation des blessings si présents
+                    if (level.blessings != null) {
+                        assertFalse(level.blessings.isEmpty(),
+                                file.getName() + " : level[" + i + "] blessings est une liste vide (supprimer la clé si vide)");
+
+                        for (int j = 0; j < level.blessings.size(); j++) {
+                            Map<String, Object> effect = level.blessings.get(j);
+                            assertNotNull(effect, file.getName() + " : level[" + i + "] blessing[" + j + "] est null");
+                            assertTrue(effect.containsKey("type"),
+                                    file.getName() + " : level[" + i + "] blessing[" + j + "] manque le champ 'type'");
+                            Object type = effect.get("type");
+                            assertNotNull(type, file.getName() + " : level[" + i + "] blessing[" + j + "] type est null");
+                            assertFalse(type.toString().isBlank(),
+                                    file.getName() + " : level[" + i + "] blessing[" + j + "] type est vide");
+                        }
+                    }
                 }
             } catch (Exception e) {
                 fail("Erreur de parsing YAML dans " + file.getName() + " : " + e.getMessage());

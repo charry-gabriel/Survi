@@ -37,6 +37,33 @@ import java.util.logging.Level;
 public class BlessingLoader {
 
     /**
+     * Charge un unique {@link Blessing} depuis une liste d'effets bruts (format POJO SnakeYAML).
+     *
+     * <p>Format attendu dans le YAML pour un level :
+     * <pre>
+     * blessings:
+     *   - type: MAX_HEALTH
+     *     value: -20
+     *   - type: UNLOCK_TOOL
+     *     tool: WOOD
+     * </pre>
+     *
+     * @param villagerId identifiant du villageois (pour les messages de log)
+     * @param rawEffects liste de maps représentant les effets (peut être null)
+     * @return un {@link Blessing} prêt à l'emploi, ou {@code null} si la liste est vide/null
+     */
+    public static Blessing loadFromList(String villagerId, java.util.List<java.util.Map<String, Object>> rawEffects) {
+        if (rawEffects == null || rawEffects.isEmpty()) return null;
+        List<BlessingEffect> effects = new ArrayList<>();
+        for (java.util.Map<String, Object> map : rawEffects) {
+            BlessingEffect effect = parseEffect(villagerId, map);
+            if (effect != null) effects.add(effect);
+        }
+        if (effects.isEmpty()) return null;
+        return new Blessing(effects.toArray(BlessingEffect[]::new));
+    }
+
+    /**
      * Charge les blessings depuis une section YAML {@code blessings}.
      *
      * @param villagerId identifiant du villageois (pour les messages de log)

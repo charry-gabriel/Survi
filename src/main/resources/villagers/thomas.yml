@@ -8,6 +8,9 @@ levels:
     tribute:
       - material: DIRT
         amount: 640
+    blessings:
+      - { type: LOCK_VILLAGER, days: 3 }
+      - { type: MESSAGE, text: "Niveau I réussi !" }
     message: "Merci, revenez dans 24h pour la suite."
     recap: ""
 
@@ -15,6 +18,9 @@ levels:
     tribute:
       - material: DIRT
         amount: 640
+    blessings:
+      - { type: LOCK_VILLAGER, days: 3 }
+      - { type: MESSAGE, text: "Niveau II disponible pour Thomas Pesquet !" }
     message: "Venez me voir."
     recap: ""
 
@@ -22,6 +28,9 @@ levels:
     tribute:
       - material: BEDROCK
         amount: 1
+    blessings:
+      - { type: LOCK_WORLD, world: NETHER }
+      - { type: MESSAGE, text: "Niveau II réussi !" }
     message: "Merci, revenez dans 48h pour la suite. Vous pouvez maintenant explorer le nether !"
     recap: ""
 
@@ -29,6 +38,9 @@ levels:
     tribute:
       - material: DIRT
         amount: 640
+    blessings:
+      - { type: LOCK_VILLAGER, days: 3 }
+      - { type: MESSAGE, text: "Niveau III disponible pour Thomas Pesquet !" }
     message: "Venez me voir."
     recap: "Nether débloqué !"
 
@@ -36,6 +48,8 @@ levels:
     tribute:
       - material: DIAMOND
         amount: 32
+    blessings:
+      - { type: LIMIT_WORLD, world: WILDERNESS, min-x: -10000, max-x: 10000, min-y: -2147483648, max-y: 2147483647, min-z: -10000, max-z: 10000 }
     message: "Merci, revenez dans 72h pour la suite. Vous pouvez maintenant explorer un peu plus le Wilderness"
     recap: "Nether débloqué !"
 
@@ -43,6 +57,9 @@ levels:
     tribute:
       - material: DIRT
         amount: 640
+    blessings:
+      - { type: LOCK_VILLAGER, days: 3 }
+      - { type: MESSAGE, text: "Niveau VI disponible pour Thomas Pesquet !" }
     message: "Venez me voir."
     recap: "Nether débloqué et limite Wilderness augmenté !"
 
@@ -50,6 +67,9 @@ levels:
     tribute:
       - material: WITHER_SKELETON_SKULL
         amount: 10
+    blessings:
+      - { type: LOCK_WORLD, world: END }
+      - { type: MESSAGE, text: "Niveau VI réussi !" }
     message: "Merci, revenez dans 100h pour la suite. Vous pouvez maintenant explorer l'end !"
     recap: "Nether débloqué et limite Wilderness augmenté !"
 
@@ -57,6 +77,9 @@ levels:
     tribute:
       - material: DIRT
         amount: 640
+    blessings:
+      - { type: LOCK_VILLAGER, days: 3 }
+      - { type: MESSAGE, text: "Niveau V disponible pour Thomas Pesquet !" }
     message: "Venez me voir."
     recap: "End débloqué et limite Wilderness augmenté !"
 
@@ -64,6 +87,8 @@ levels:
     tribute:
       - material: DRAGON_EGG
         amount: 1
+    blessings:
+      - { type: LIMIT_WORLD, world: WILDERNESS, min-x: -2147483648, max-x: 2147483647, min-y: -2147483648, max-y: 2147483647, min-z: -2147483648, max-z: 2147483647 }
     message: "Merci pour cet objet unique. Vous pouvez maintenant explorer le Wilderness à l'infini."
     recap: "End débloqué et limite Wilderness augmenté !"
 
@@ -74,38 +99,3 @@ levels:
     message: "C'est fini y a plus rien !"
     recap: "End débloqué et limite Wilderness infinie !"
 
-blessings:
-  "0":
-    effects:
-      - { type: LOCK_VILLAGER, days: 3 }
-      - { type: MESSAGE, text: "Niveau I réussi !" }
-  "1":
-    effects:
-      - { type: LOCK_VILLAGER, days: 3 }
-      - { type: MESSAGE, text: "Niveau II disponible pour Thomas Pesquet !" }
-  "2":
-    effects:
-      - { type: LOCK_WORLD, world: NETHER }
-      - { type: MESSAGE, text: "Niveau II réussi !" }
-  "3":
-    effects:
-      - { type: LOCK_VILLAGER, days: 3 }
-      - { type: MESSAGE, text: "Niveau III disponible pour Thomas Pesquet !" }
-  "4":
-    effects:
-      - { type: LIMIT_WORLD, world: WILDERNESS, min-x: -10000, max-x: 10000, min-y: -2147483648, max-y: 2147483647, min-z: -10000, max-z: 10000 }
-  "5":
-    effects:
-      - { type: LOCK_VILLAGER, days: 3 }
-      - { type: MESSAGE, text: "Niveau VI disponible pour Thomas Pesquet !" }
-  "6":
-    effects:
-      - { type: LOCK_WORLD, world: END }
-      - { type: MESSAGE, text: "Niveau VI réussi !" }
-  "7":
-    effects:
-      - { type: LOCK_VILLAGER, days: 3 }
-      - { type: MESSAGE, text: "Niveau V disponible pour Thomas Pesquet !" }
-  "8":
-    effects:
-      - { type: LIMIT_WORLD, world: WILDERNESS, min-x: -2147483648, max-x: 2147483647, min-y: -2147483648, max-y: 2147483647, min-z: -2147483648, max-z: 2147483647 }

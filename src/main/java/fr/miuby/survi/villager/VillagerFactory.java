@@ -14,7 +14,6 @@ import fr.miuby.survi.villager.villagerlevel.VillagerLevel;
 import fr.miuby.survi.villager.villagerlevel.VillagerLevelLoader;
 import fr.miuby.survi.villager.villagerlevel.blessing.*;
 import fr.miuby.survi.villager.villagerlevel.blessing.BlessingLoader;
-import org.bukkit.configuration.file.YamlConfiguration;
 import lombok.Getter;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
@@ -99,11 +98,11 @@ public class VillagerFactory {
         TextComponent[] recap = config.levels.stream().map(level -> Component.text(level.recap)).toArray(TextComponent[]::new);
         Tribute[] tributes = config.levels.stream().map(level -> new Tribute(level.tribute.stream().map(SimpleItemStack::toItemStack).toArray(ItemStack[]::new))).toArray(Tribute[]::new);
 
-        // Blessings chargées depuis le yml (section "blessings")
-        java.io.File ymlFile = new java.io.File(
-                GameManager.getInstance().getPlugin().getDataFolder(), "villagers/" + id + ".yml");
-        YamlConfiguration yml = YamlConfiguration.loadConfiguration(ymlFile);
-        Blessing[] blessings = BlessingLoader.load(id, yml.getConfigurationSection("blessings"));
+        // Blessings chargées depuis chaque level (champ "blessings" de VillagerLevelConfig)
+        Blessing[] blessings = config.levels.stream()
+                .map(level -> BlessingLoader.loadFromList(id, level.blessings))
+                .map(b -> b != null ? b : new Blessing(new BlessingEffect[0]))
+                .toArray(Blessing[]::new);
 
         MLVillager.spawn(() -> new VillagerLevel(config.name, type, profession, blessings, messages, tributes, names, recap));
     }

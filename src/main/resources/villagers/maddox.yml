@@ -8,6 +8,8 @@ levels:
     tribute:
       - material: ARROW
         amount: 256
+    blessings:
+      - { type: DAMAGE, value: 0.4 }
     message: "Vous avez tué 3 poulets et vous voulez une récompense ? D'accord.. vous êtes un peu plus fort maintenant mais pas autant que moi quand même."
     recap: ""
 
@@ -15,6 +17,8 @@ levels:
     tribute:
       - material: TNT
         amount: 64
+    blessings:
+      - { type: DAMAGE, value: 0.6 }
     message: "Vous voulez une récompense pour 4 creepers en moins sur la map ? N'importe quoi.. vous êtes un peu plus fort maintenant mais pas autant que moi quand même."
     recap: "Force I débloqué !"
 
@@ -22,6 +26,8 @@ levels:
     tribute:
       - material: FERMENTED_SPIDER_EYE
         amount: 300
+    blessings:
+      - { type: DAMAGE, value: 0.8 }
     message: "Comment on fait un oeil fermenté ? Avec un oeil... et tu le fermentes."
     recap: "Force II débloqué !"
 
@@ -29,6 +35,8 @@ levels:
     tribute:
       - material: GHAST_TEAR
         amount: 64
+    blessings:
+      - { type: DAMAGE, value: 1.0 }
     message: "Pour les 6 ghasts en moins dans ce monde, je vous offre un peu plus de force."
     recap: "Force III débloqué !"
 
@@ -36,6 +44,8 @@ levels:
     tribute:
       - material: DRAGON_HEAD
         amount: 10
+    blessings:
+      - { type: DAMAGE, value: 1.5 }
     message: "C'est bon ? Vous avez fini de voyager ? Enfin... j'aurais été plus vite tout seul. Vous êtes maintenant assez fort. Mais toujours pas autant que moi."
     recap: "Force IV débloqué !"
 
@@ -44,19 +54,3 @@ levels:
     message: "C'est fini, tu tapes beaucoup trop fort maintenant !"
     recap: "Force V débloqué !"
 
-blessings:
-  "0":
-    effects:
-      - { type: DAMAGE, value: 0.4 }
-  "1":
-    effects:
-      - { type: DAMAGE, value: 0.6 }
-  "2":
-    effects:
-      - { type: DAMAGE, value: 0.8 }
-  "3":
-    effects:
-      - { type: DAMAGE, value: 1.0 }
-  "4":
-    effects:
-      - { type: DAMAGE, value: 1.5 }

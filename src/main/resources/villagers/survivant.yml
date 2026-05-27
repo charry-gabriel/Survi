@@ -10,6 +10,8 @@ levels:
     tribute:
       - material: DIRT
         amount: 1
+    blessings:
+      - { type: MAX_HEALTH, value: -20 }
 
   - name: "Survivant II"
     message: "Vous pouvez maintenant avoir des outils en bois !"
@@ -17,6 +19,9 @@ levels:
     tribute:
       - material: WHEAT_SEEDS
         amount: 32
+    blessings:
+      - { type: MAX_HEALTH, value: -18 }
+      - { type: UNLOCK_TOOL, tool: WOOD }
 
   - name: "Survivant III"
     message: "Vous pouvez maintenant avoir des outils en pierre et une armure en cuir !"
@@ -28,6 +33,10 @@ levels:
         amount: 32
       - material: SUGAR_CANE
         amount: 64
+    blessings:
+      - { type: MAX_HEALTH, value: -16 }
+      - { type: UNLOCK_ARMOR, armor: LEATHER }
+      - { type: UNLOCK_TOOL, tool: STONE }
 
   - name: "Survivant IV"
     message: "Vous pouvez maintenant avoir des outils en fer et une armure en maille !"
@@ -47,6 +56,10 @@ levels:
         amount: 16
       - material: WAXED_OXIDIZED_COPPER
         amount: 16
+    blessings:
+      - { type: MAX_HEALTH, value: -14 }
+      - { type: UNLOCK_ARMOR, armor: CHAINMAIL }
+      - { type: UNLOCK_TOOL, tool: IRON }
 
   - name: "Survivant V"
     message: "Vous pouvez maintenant avoir une armure en fer !"
@@ -62,6 +75,9 @@ levels:
         amount: 32
       - material: PUMPKIN_PIE
         amount: 64
+    blessings:
+      - { type: MAX_HEALTH, value: -12 }
+      - { type: UNLOCK_ARMOR, armor: IRON }
 
   - name: "Survivant VI"
     message: "Vous pouvez maintenant avoir des outils en or et une armure en or !"
@@ -79,6 +95,10 @@ levels:
         amount: 64
       - material: ROTTEN_FLESH
         amount: 64
+    blessings:
+      - { type: MAX_HEALTH, value: -10 }
+      - { type: UNLOCK_ARMOR, armor: GOLD }
+      - { type: UNLOCK_TOOL, tool: GOLD }
 
   - name: "Survivant VII"
     message: "Vous pouvez maintenant avoir des outils en diamant et une armure en diamant !"
@@ -92,6 +112,11 @@ levels:
         amount: 64
       - material: RESIN_BLOCK
         amount: 64
+    blessings:
+      - { type: MAX_HEALTH, value: -8 }
+      - { type: UNLOCK_ARMOR, armor: DIAMOND }
+      - { type: UNLOCK_TOOL, tool: DIAMOND }
+      - { type: UNLOCK_ARMOR, armor: NETHERITE }
 
   - name: "Survivant VIII"
     message: "Un peu de vie pour vous !"
@@ -115,6 +140,8 @@ levels:
         amount: 64
       - material: STRIPPED_BIRCH_LOG
         amount: 64
+    blessings:
+      - { type: MAX_HEALTH, value: -6 }
 
   - name: "Survivant IX"
     message: "Un peu de vie pour vous !"
@@ -138,6 +165,8 @@ levels:
         amount: 64
       - material: STRIPPED_DARK_OAK_LOG
         amount: 64
+    blessings:
+      - { type: MAX_HEALTH, value: -4 }
 
   - name: "Survivant X"
     message: "Un peu de vie pour vous !"
@@ -161,6 +190,8 @@ levels:
         amount: 64
       - material: STRIPPED_PALE_OAK_LOG
         amount: 64
+    blessings:
+      - { type: MAX_HEALTH, value: -2 }
 
   - name: "Survivant XI"
     message: "Un peu de vie pour vous !"
@@ -176,6 +207,8 @@ levels:
         amount: 64
       - material: CAKE
         amount: 1
+    blessings:
+      - { type: MAX_HEALTH, value: 0 }
 
   - name: "Survivant XII"
     message: "La quête était si simple en vrai.. fin bref, voici un coeur pour vous."
@@ -199,57 +232,11 @@ levels:
         amount: 16
       - material: NETHERITE_BLOCK
         amount: 8
+    blessings:
+      - { type: MAX_HEALTH, value: 2 }
 
   - name: "Survivant MAX"
     message: "C'est fini y a plus rien !"
     recap: ""
     tribute: []
 
-blessings:
-  "0":
-    effects:
-      - { type: MAX_HEALTH, value: -20 }
-  "1":
-    effects:
-      - { type: MAX_HEALTH, value: -18 }
-      - { type: UNLOCK_TOOL, tool: WOOD }
-  "2":
-    effects:
-      - { type: MAX_HEALTH, value: -16 }
-      - { type: UNLOCK_ARMOR, armor: LEATHER }
-      - { type: UNLOCK_TOOL, tool: STONE }
-  "3":
-    effects:
-      - { type: MAX_HEALTH, value: -14 }
-      - { type: UNLOCK_ARMOR, armor: CHAINMAIL }
-      - { type: UNLOCK_TOOL, tool: IRON }
-  "4":
-    effects:
-      - { type: MAX_HEALTH, value: -12 }
-      - { type: UNLOCK_ARMOR, armor: IRON }
-  "5":
-    effects:
-      - { type: MAX_HEALTH, value: -10 }
-      - { type: UNLOCK_ARMOR, armor: GOLD }
-      - { type: UNLOCK_TOOL, tool: GOLD }
-  "6":
-    effects:
-      - { type: MAX_HEALTH, value: -8 }
-      - { type: UNLOCK_ARMOR, armor: DIAMOND }
-      - { type: UNLOCK_TOOL, tool: DIAMOND }
-      - { type: UNLOCK_ARMOR, armor: NETHERITE }
-  "7":
-    effects:
-      - { type: MAX_HEALTH, value: -6 }
-  "8":
-    effects:
-      - { type: MAX_HEALTH, value: -4 }
-  "9":
-    effects:
-      - { type: MAX_HEALTH, value: -2 }
-  "10":
-    effects:
-      - { type: MAX_HEALTH, value: 0 }
-  "11":
-    effects:
-      - { type: MAX_HEALTH, value: 2 }

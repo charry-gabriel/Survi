@@ -15,13 +15,23 @@
     "type": {
       "type": "string",
       "enum": [
-        "DESERT",
-        "JUNGLE",
-        "PLAINS",
-        "SAVANNA",
-        "SNOW",
-        "SWAMP",
-        "TAIGA"
+        "DAMAGE",
+        "DISPEL",
+        "FLY",
+        "GAME_MODE",
+        "ITEM",
+        "LIMIT_WORLD",
+        "LOCK_VILLAGER",
+        "LOCK_WORLD",
+        "MAX_HEALTH",
+        "MESSAGE",
+        "RANDOM_ITEM",
+        "REGEN",
+        "RESISTANCE",
+        "UNLOCK_ARMOR",
+        "UNLOCK_TOOL",
+        "WORLD_LEVEL",
+        "WORLD_RESET"
       ]
     },
     "profession": {
@@ -69,7 +79,16 @@
           },
           "tribute": {
             "type": "array",
-            "items": { "$ref": "#/definitions/item" }
+            "items": {
+              "$ref": "#/definitions/item"
+            }
+          },
+          "blessings": {
+            "type": "array",
+            "description": "Effets appliqués au joueur lorsque ce palier est atteint.",
+            "items": {
+              "$ref": "#/definitions/blessingEffect"
+            }
           }
         }
       }
@@ -1785,9 +1804,129 @@
         }
       },
       "oneOf": [
-        { "required": ["customItem"] },
-        { "required": ["material"] }
+        {
+          "required": [
+            "customItem"
+          ]
+        },
+        {
+          "required": [
+            "material"
+          ]
+        }
       ]
+    },
+    "blessingEffect": {
+      "type": "object",
+      "required": [
+        "type"
+      ],
+      "properties": {
+        "type": {
+          "type": "string",
+          "description": "Type d'effet de blessing.",
+          "enum": [
+        "DAMAGE",
+        "DISPEL",
+        "FLY",
+        "GAME_MODE",
+        "ITEM",
+        "LIMIT_WORLD",
+        "LOCK_VILLAGER",
+        "LOCK_WORLD",
+        "MAX_HEALTH",
+        "MESSAGE",
+        "RANDOM_ITEM",
+        "REGEN",
+        "RESISTANCE",
+        "UNLOCK_ARMOR",
+        "UNLOCK_TOOL",
+        "WORLD_LEVEL",
+        "WORLD_RESET"
+      ]
+        },
+        "value": {
+          "type": "number",
+          "description": "Valeur numérique (utilisée par MAX_HEALTH, RESISTANCE, DAMAGE, DISPEL)."
+        },
+        "tool": {
+          "type": "string",
+          "description": "Tier d'outil à débloquer (UNLOCK_TOOL).",
+          "enum": [
+        "DIAMOND",
+        "GOLD",
+        "IRON",
+        "STONE",
+        "WOOD"
+      ]
+        },
+        "armor": {
+          "type": "string",
+          "description": "Tier d'armure à débloquer (UNLOCK_ARMOR).",
+          "enum": [
+        "CHAINMAIL",
+        "DIAMOND",
+        "GOLD",
+        "IRON",
+        "LEATHER",
+        "NETHERITE"
+      ]
+        },
+        "world": {
+          "type": "string",
+          "description": "Monde concerné (LOCK_WORLD, LIMIT_WORLD).",
+          "enum": [
+        "ALL",
+        "END",
+        "NETHER",
+        "VILLAGE",
+        "WILDERNESS"
+      ]
+        },
+        "days": {
+          "type": "integer",
+          "description": "Durée en jours (LOCK_VILLAGER).",
+          "minimum": 1
+        },
+        "text": {
+          "type": "string",
+          "description": "Texte du message (MESSAGE)."
+        },
+        "levels": {
+          "type": "integer",
+          "description": "Nombre de niveaux de monde à accorder (WORLD_LEVEL).",
+          "minimum": 1
+        },
+        "frequency": {
+          "type": "integer",
+          "description": "Fréquence de réinitialisation en jours (WORLD_RESET).",
+          "minimum": 1
+        },
+        "min-x": {
+          "type": "integer",
+          "description": "Limite X min du monde (LIMIT_WORLD)."
+        },
+        "max-x": {
+          "type": "integer",
+          "description": "Limite X max du monde (LIMIT_WORLD)."
+        },
+        "min-y": {
+          "type": "integer",
+          "description": "Limite Y min du monde (LIMIT_WORLD)."
+        },
+        "max-y": {
+          "type": "integer",
+          "description": "Limite Y max du monde (LIMIT_WORLD)."
+        },
+        "min-z": {
+          "type": "integer",
+          "description": "Limite Z min du monde (LIMIT_WORLD)."
+        },
+        "max-z": {
+          "type": "integer",
+          "description": "Limite Z max du monde (LIMIT_WORLD)."
+        }
+      }
     }
   }
 }
