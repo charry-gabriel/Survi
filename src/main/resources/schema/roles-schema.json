@@ -1,0 +1,127 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "RolesConfig",
+  "description": "Configuration des attributs de gameplay par rôle — roles.yml (plugin Survi).",
+  "type": "object",
+  "required": ["roles"],
+  "additionalProperties": false,
+  "properties": {
+    "roles": {
+      "type": "object",
+      "description": "Map ERole → configuration des attributs du rôle.",
+      "propertyNames": {
+        "description": "Nom d'un ERole valide.",
+        "type": "string",
+        "enum": [
+        "ALCHIMISTE",
+        "COMBATANT",
+        "DRAGON",
+        "ENCHANTEUR",
+        "FEE",
+        "FERMIER",
+        "GEANT",
+        "LOUP_GAROU",
+        "MINEUR",
+        "NAIN",
+        "NOVICE"
+      ]
+      },
+      "additionalProperties": {
+        "$ref": "#/definitions/roleConfig"
+      }
+    }
+  },
+  "definitions": {
+    "roleConfig": {
+      "type": "object",
+      "description": "Configuration d'un rôle : identifiant de groupe et liste d'attributs.",
+      "required": ["roleId", "attributes"],
+      "additionalProperties": false,
+      "properties": {
+        "roleId": {
+          "type": "string",
+          "description": "Identifiant de groupe du rôle (ex: 'metier', 'dragon'). Utilisé comme préfixe dans les noms d'AttributeModifier."
+        },
+        "attributes": {
+          "type": "array",
+          "description": "Liste des modificateurs d'attributs Bukkit appliqués au joueur.",
+          "items": {
+            "$ref": "#/definitions/roleAttribute"
+          }
+        }
+      }
+    },
+    "roleAttribute": {
+      "type": "object",
+      "description": "Modificateur d'attribut Bukkit appliqué dans un monde donné.",
+      "required": ["world", "attribute", "value"],
+      "additionalProperties": false,
+      "properties": {
+        "world": {
+          "type": "string",
+          "description": "Monde dans lequel l'attribut est actif.",
+          "enum": [
+        "ALL",
+        "END",
+        "NETHER",
+        "VILLAGE",
+        "WILDERNESS"
+      ]
+        },
+        "attribute": {
+          "type": "string",
+          "description": "Nom de l'attribut Bukkit (ex: ARMOR, MAX_HEALTH, MOVEMENT_SPEED).",
+          "enum": [
+            "ARMOR",
+            "ARMOR_TOUGHNESS",
+            "ATTACK_DAMAGE",
+            "ATTACK_KNOCKBACK",
+            "ATTACK_SPEED",
+            "BLOCK_BREAK_SPEED",
+            "BLOCK_INTERACTION_RANGE",
+            "BURNING_TIME",
+            "ENTITY_INTERACTION_RANGE",
+            "EXPLOSION_KNOCKBACK_RESISTANCE",
+            "FALL_DAMAGE_MULTIPLIER",
+            "FLYING_SPEED",
+            "FOLLOW_RANGE",
+            "GRAVITY",
+            "JUMP_STRENGTH",
+            "KNOCKBACK_RESISTANCE",
+            "LUCK",
+            "MAX_ABSORPTION",
+            "MAX_HEALTH",
+            "MINING_EFFICIENCY",
+            "MOVEMENT_EFFICIENCY",
+            "MOVEMENT_SPEED",
+            "OXYGEN_BONUS",
+            "SAFE_FALL_DISTANCE",
+            "SCALE",
+            "SNEAKING_SPEED",
+            "SPAWN_REINFORCEMENTS",
+            "STEP_HEIGHT",
+            "SUBMERGED_MINING_SPEED",
+            "SWEEPING_DAMAGE_RATIO",
+            "TEMPT_RANGE",
+            "WATER_MOVEMENT_EFFICIENCY"
+          ]
+        },
+        "value": {
+          "type": "number",
+          "description": "Valeur du modificateur. Peut être négative."
+        },
+        "operation": {
+          "type": "string",
+          "description": "Type d'opération. ADD_SCALAR par défaut.",
+          "enum": [
+            "ADD_NUMBER",
+            "ADD_SCALAR",
+            "MULTIPLY_SCALAR_1",
+            "REMOVE"
+          ],
+          "default": "ADD_SCALAR"
+        }
+      }
+    }
+  }
+}

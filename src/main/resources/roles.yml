@@ -1,0 +1,144 @@
+# roles.yml — Attributs de gameplay par rôle.
+# Les displayName et couleurs sont définis dans ERole.java.
+# Chaque attribut suit la structure :
+#   world: ALL | VILLAGE | WILDERNESS | NETHER | END
+#   attribute: nom de l'attribut Bukkit (ex: ARMOR, MAX_HEALTH, MOVEMENT_SPEED…)
+#   value: valeur flottante (positive ou négative)
+#   operation: ADD_SCALAR (défaut) | ADD_NUMBER | MULTIPLY_SCALAR_1 | REMOVE
+#
+# roleId est utilisé pour identifier le groupe (ex: "metier" pour les métiers).
+
+roles:
+
+  DRAGON:
+    roleId: dragon
+    attributes:
+      - { world: ALL,        attribute: ARMOR,                  value:  0.5 }
+      - { world: ALL,        attribute: MAX_HEALTH,             value:  1.0 }
+      - { world: ALL,        attribute: BLOCK_BREAK_SPEED,      value:  0.1 }
+      - { world: VILLAGE,    attribute: ATTACK_DAMAGE,          value:  0.5 }
+      - { world: VILLAGE,    attribute: MOVEMENT_SPEED,         value:  0.1,  operation: ADD_NUMBER }
+      - { world: VILLAGE,    attribute: SAFE_FALL_DISTANCE,     value:  1.0 }
+      - { world: WILDERNESS, attribute: ATTACK_DAMAGE,          value:  0.25 }
+      - { world: WILDERNESS, attribute: MOVEMENT_SPEED,         value:  0.01, operation: ADD_NUMBER }
+      - { world: WILDERNESS, attribute: SAFE_FALL_DISTANCE,     value:  1.0 }
+      - { world: NETHER,     attribute: ATTACK_DAMAGE,          value:  0.4 }
+      - { world: NETHER,     attribute: MOVEMENT_SPEED,         value:  0.05, operation: ADD_NUMBER }
+      - { world: NETHER,     attribute: SAFE_FALL_DISTANCE,     value: 10.0 }
+      - { world: END,        attribute: ATTACK_DAMAGE,          value:  0.1 }
+      - { world: END,        attribute: MOVEMENT_SPEED,         value:  0.01, operation: ADD_NUMBER }
+      - { world: END,        attribute: SCALE,                  value:  0.556 }
+      - { world: END,        attribute: SAFE_FALL_DISTANCE,     value:  1.0 }
+
+  LOUP_GAROU:
+    roleId: loup_garou
+    attributes:
+      - { world: ALL,        attribute: ARMOR,                     value: -0.1 }
+      - { world: ALL,        attribute: ATTACK_DAMAGE,             value:  6.0,  operation: ADD_NUMBER }
+      - { world: ALL,        attribute: KNOCKBACK_RESISTANCE,      value:  0.35, operation: ADD_NUMBER }
+      - { world: ALL,        attribute: ATTACK_SPEED,              value:  1.0 }
+      - { world: ALL,        attribute: MAX_HEALTH,                value: -0.05 }
+      - { world: ALL,        attribute: STEP_HEIGHT,               value:  0.4,  operation: ADD_NUMBER }
+      - { world: ALL,        attribute: ENTITY_INTERACTION_RANGE,  value: -0.5,  operation: ADD_NUMBER }
+      - { world: ALL,        attribute: SNEAKING_SPEED,            value:  0.7,  operation: ADD_NUMBER }
+      - { world: VILLAGE,    attribute: MOVEMENT_SPEED,            value:  0.1,  operation: ADD_NUMBER }
+      - { world: VILLAGE,    attribute: SCALE,                     value:  0.056 }
+      - { world: VILLAGE,    attribute: BLOCK_BREAK_SPEED,         value:  0.1 }
+      - { world: WILDERNESS, attribute: MOVEMENT_SPEED,            value:  0.04, operation: ADD_NUMBER }
+      - { world: WILDERNESS, attribute: SCALE,                     value:  0.056 }
+      - { world: NETHER,     attribute: MOVEMENT_SPEED,            value:  0.04, operation: ADD_NUMBER }
+      - { world: NETHER,     attribute: SCALE,                     value:  0.056 }
+      - { world: NETHER,     attribute: BLOCK_BREAK_SPEED,         value:  0.1 }
+      - { world: END,        attribute: MOVEMENT_SPEED,            value:  0.04, operation: ADD_NUMBER }
+      - { world: END,        attribute: SCALE,                     value:  0.611 }
+
+  FEE:
+    roleId: fee
+    attributes:
+      - { world: ALL,        attribute: ARMOR,                     value: -0.3 }
+      - { world: ALL,        attribute: MAX_HEALTH,                value: -0.3 }
+      - { world: ALL,        attribute: BLOCK_BREAK_SPEED,         value:  0.1 }
+      - { world: ALL,        attribute: SAFE_FALL_DISTANCE,        value:  1.0 }
+      - { world: ALL,        attribute: FALL_DAMAGE_MULTIPLIER,    value: -1.0 }
+      - { world: ALL,        attribute: OXYGEN_BONUS,              value:  3.0,  operation: ADD_NUMBER }
+      - { world: ALL,        attribute: WATER_MOVEMENT_EFFICIENCY, value:  0.25, operation: ADD_NUMBER }
+      - { world: ALL,        attribute: ENTITY_INTERACTION_RANGE,  value:  2.0 }
+      - { world: ALL,        attribute: MAX_ABSORPTION,            value:  6.0,  operation: ADD_NUMBER }
+      - { world: VILLAGE,    attribute: MOVEMENT_SPEED,            value:  0.1,  operation: ADD_NUMBER }
+      - { world: VILLAGE,    attribute: SCALE,                     value: -0.056 }
+      - { world: VILLAGE,    attribute: GRAVITY,                   value: -0.5 }
+      - { world: VILLAGE,    attribute: ATTACK_KNOCKBACK,          value:  2.0,  operation: ADD_NUMBER }
+      - { world: WILDERNESS, attribute: MOVEMENT_SPEED,            value:  0.04, operation: ADD_NUMBER }
+      - { world: WILDERNESS, attribute: SCALE,                     value: -0.056 }
+      - { world: WILDERNESS, attribute: GRAVITY,                   value: -0.5 }
+      - { world: WILDERNESS, attribute: ATTACK_KNOCKBACK,          value:  2.0,  operation: ADD_NUMBER }
+      - { world: NETHER,     attribute: MOVEMENT_SPEED,            value:  0.04, operation: ADD_NUMBER }
+      - { world: NETHER,     attribute: SCALE,                     value: -0.056 }
+      - { world: NETHER,     attribute: GRAVITY,                   value: -0.5 }
+      - { world: NETHER,     attribute: ATTACK_KNOCKBACK,          value:  3.0,  operation: ADD_NUMBER }
+      - { world: END,        attribute: MOVEMENT_SPEED,            value:  0.04, operation: ADD_NUMBER }
+      - { world: END,        attribute: SCALE,                     value:  0.5 }
+
+  NAIN:
+    roleId: nain
+    attributes:
+      - { world: ALL,        attribute: ARMOR,             value:  0.2 }
+      - { world: ALL,        attribute: ATTACK_DAMAGE,     value:  0.1 }
+      - { world: ALL,        attribute: MAX_HEALTH,        value:  0.2 }
+      - { world: ALL,        attribute: BLOCK_BREAK_SPEED, value:  0.3 }
+      - { world: ALL,        attribute: MOVEMENT_SPEED,    value: -0.1, operation: ADD_NUMBER }
+
+  GEANT:
+    roleId: geant
+    attributes:
+      - { world: ALL,        attribute: ARMOR,          value:  0.3 }
+      - { world: ALL,        attribute: ATTACK_DAMAGE,  value:  0.3 }
+      - { world: ALL,        attribute: MAX_HEALTH,     value:  0.5 }
+      - { world: ALL,        attribute: MOVEMENT_SPEED, value: -0.2, operation: ADD_NUMBER }
+      - { world: ALL,        attribute: SCALE,          value:  0.3 }
+
+  NOVICE:
+    roleId: novice
+    attributes:
+      - { world: ALL,        attribute: LUCK, value: 0.1, operation: ADD_NUMBER }
+
+  COMBATANT:
+    roleId: metier
+    attributes:
+      - { world: ALL,        attribute: ATTACK_DAMAGE, value: 0.4 }
+      - { world: ALL,        attribute: ATTACK_SPEED,  value: 0.2 }
+      - { world: ALL,        attribute: ARMOR,         value: 0.2 }
+
+  MINEUR:
+    roleId: metier
+    attributes:
+      - { world: ALL,        attribute: BLOCK_BREAK_SPEED, value: 0.4 }
+      - { world: ALL,        attribute: LUCK,              value: 1.0, operation: ADD_NUMBER }
+      - { world: ALL,        attribute: ARMOR,             value: 0.1 }
+
+  ALCHIMISTE:
+    roleId: metier
+    attributes:
+      - { world: ALL,        attribute: LUCK,              value:  1.0, operation: ADD_NUMBER }
+      - { world: ALL,        attribute: MAX_HEALTH,        value: -0.1 }
+      - { world: VILLAGE,    attribute: BLOCK_BREAK_SPEED, value:  0.1 }
+      - { world: NETHER,     attribute: BLOCK_BREAK_SPEED, value:  0.2 }
+      - { world: NETHER,     attribute: MOVEMENT_SPEED,    value:  0.1, operation: ADD_NUMBER }
+
+  ENCHANTEUR:
+    roleId: metier
+    attributes:
+      - { world: ALL,        attribute: LUCK,              value:  2.0, operation: ADD_NUMBER }
+      - { world: ALL,        attribute: ARMOR,             value: -0.1 }
+      - { world: VILLAGE,    attribute: BLOCK_BREAK_SPEED, value:  0.15 }
+      - { world: END,        attribute: BLOCK_BREAK_SPEED, value:  0.25 }
+      - { world: END,        attribute: MOVEMENT_SPEED,    value:  0.1, operation: ADD_NUMBER }
+
+  FERMIER:
+    roleId: metier
+    attributes:
+      - { world: ALL,        attribute: LUCK,              value:  2.0, operation: ADD_NUMBER }
+      - { world: ALL,        attribute: ARMOR,             value: -0.1 }
+      - { world: VILLAGE,    attribute: BLOCK_BREAK_SPEED, value:  0.15 }
+      - { world: END,        attribute: BLOCK_BREAK_SPEED, value:  0.25 }
+      - { world: END,        attribute: MOVEMENT_SPEED,    value:  0.1, operation: ADD_NUMBER }

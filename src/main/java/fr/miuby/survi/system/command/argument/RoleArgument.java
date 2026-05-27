@@ -22,7 +22,7 @@ public class RoleArgument implements CustomArgumentType.Converted<Role, String> 
 
     @Override
     public Role convert(String nativeType) throws CommandSyntaxException {
-        Role role = GameManager.getInstance().getRoleRegistry().getRole(nativeType);
+        Role role = GameManager.getInstance().getRoleLoader().getRole(nativeType);
 
         if (role == null) {
             throw CommandErrors.ROLE_NOT_FOUND.create(nativeType);
@@ -40,7 +40,7 @@ public class RoleArgument implements CustomArgumentType.Converted<Role, String> 
     public <S> @NonNull CompletableFuture<Suggestions> listSuggestions(@NonNull CommandContext<S> context, SuggestionsBuilder builder) {
         String remaining = builder.getRemaining().toLowerCase();
 
-        GameManager.getInstance().getRoleRegistry().getRoles().stream().map(r -> r.type().toString()).filter(name -> name.toLowerCase().startsWith(remaining)).forEach(builder::suggest);
+        GameManager.getInstance().getRoleLoader().getRoles().stream().map(r -> r.type().toString()).filter(name -> name.toLowerCase().startsWith(remaining)).forEach(builder::suggest);
 
         return builder.buildFuture();
     }

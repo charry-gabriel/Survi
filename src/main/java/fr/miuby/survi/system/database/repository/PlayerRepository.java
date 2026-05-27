@@ -29,7 +29,7 @@ public class PlayerRepository {
             while (rs.next()) {
                 UUID uuid = UUID.fromString(rs.getString("uuid"));
                 String pseudo = rs.getString("pseudo");
-                Role role = GameManager.getInstance().getRoleRegistry()
+                Role role = GameManager.getInstance().getRoleLoader()
                         .getRole(ERole.valueOf(rs.getString("role")));
 
                 AlphaPlayer alphaPlayer = GameManager.getInstance()
@@ -43,7 +43,7 @@ public class PlayerRepository {
                 if (subRoles != null && !subRoles.isEmpty()) {
                     for (String subRole : subRoles.split(",")) {
                         alphaPlayer.addSubRole(GameManager.getInstance()
-                                .getRoleRegistry()
+                                .getRoleLoader()
                                 .getRole(ERole.valueOf(subRole)));
                     }
                 }
@@ -61,7 +61,7 @@ public class PlayerRepository {
 
                         ps.setString(1, player.getUniqueId().toString());
                         ps.setString(2, player.getName());
-                        ps.setString(3, GameManager.getInstance().getRoleRegistry().getDefaultRole().type().toString());
+                        ps.setString(3, GameManager.getInstance().getRoleLoader().getDefaultRole().type().toString());
                         ps.executeUpdate();
 
                     } catch (SQLException ex) {

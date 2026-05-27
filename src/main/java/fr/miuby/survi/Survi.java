@@ -84,6 +84,7 @@ public class Survi extends JavaPlugin {
         YmlResourceManager.update(this, "quests.yml");
         YmlResourceManager.update(this, "recipes.yml");
         YmlResourceManager.update(this, "monsters.yml");
+        YmlResourceManager.update(this, "roles.yml");
     }
 
     private void updateFolderResources(String folder) {

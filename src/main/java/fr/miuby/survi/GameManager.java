@@ -15,7 +15,7 @@ import fr.miuby.survi.item.CustomRecipe;
 import fr.miuby.survi.item.growth_item.GrowthItems;
 import fr.miuby.survi.item.locked_item.LockedItemsFactory;
 import fr.miuby.survi.player.AlphaPlayerFactory;
-import fr.miuby.survi.role.RoleRegistry;
+import fr.miuby.survi.role.RoleLoader;
 import fr.miuby.survi.system.time.TimeManager;
 import fr.miuby.survi.villager.VillagerFactory;
 import fr.miuby.survi.world.WorldLevelManager;
@@ -41,7 +41,7 @@ public class GameManager {
     @Getter private LockedItemsFactory lockedItemsFactory;
     @Getter private CustomRecipeFactory customRecipeFactory;
     @Getter private Database database;
-    @Getter private RoleRegistry roleRegistry;
+    @Getter private RoleLoader roleLoader;
     @Getter private AlphaPlayerFactory alphaPlayerFactory;
     @Getter private PlantedCropsManager plantedCropsManager;
     @Getter private TabDisplayManager tabDisplayManager;
@@ -156,7 +156,7 @@ public class GameManager {
     }
 
     private void initPlayers() {
-        this.roleRegistry = new RoleRegistry();
+        this.roleLoader = new RoleLoader();
         this.alphaPlayerFactory = new AlphaPlayerFactory();
         this.database.players().createAlphaPlayers();
 

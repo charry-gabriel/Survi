@@ -62,7 +62,7 @@ Migrer les appelants vers `getJobReputation(EJob)`.
 ## Ajouter un rôle
 
 1. `ERole` — ajouter la valeur enum.
-2. `RoleRegistry` — ajouter la `RoleDefinition` dans le constructeur.
+2. `RoleLoader` — ajouter la `RoleDefinition` dans le constructeur.
 
 Les rôles sont intentionnellement en Java (pas en YAML) pour bénéficier
 de la vérification à la compilation sur les `Attribute` Bukkit.

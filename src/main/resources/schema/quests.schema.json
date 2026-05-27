@@ -13,13 +13,7 @@
           "type": {
             "type": "string",
             "enum": [
-              "BREED",
-              "CRAFT",
-              "FISH",
-              "KILL",
-              "MINE",
-              "SHEAR",
-              "SMELT"
+              
             ]
           },
           "difficulty": {

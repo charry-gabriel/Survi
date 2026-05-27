@@ -26,6 +26,7 @@ class SchemaGeneratorTest {
             updateQuestsSchema();
             updateTradersSchema();
             updateMonstersSchema();
+            updateRolesSchema();
         });
     }
 
@@ -185,6 +186,21 @@ class SchemaGeneratorTest {
         List<String> allItems = Stream.concat(getMaterialNames().stream(), getCustomItemNames().stream())
                 .distinct().sorted().toList();
         content = replaceEnum(content, "mainHandItem", allItems);
+
+        Files.writeString(path, content);
+    }
+
+    private void updateRolesSchema() throws IOException {
+        Path path = Paths.get("src/main/resources/schema/roles-schema.json");
+        if (!Files.exists(path)) return;
+
+        String content = Files.readString(path);
+
+        // Met à jour l'enum des rôles valides (propertyNames → ERole)
+        content = replaceEnum(content, "propertyNames", getEnumNamesFromSource("src/main/java/fr/miuby/survi/role/ERole.java"));
+
+        // Met à jour l'enum des mondes valides (EWorld)
+        content = replaceEnum(content, "world", getEnumNamesFromSource("src/main/java/fr/miuby/survi/world/EWorld.java"));
 
         Files.writeString(path, content);
     }

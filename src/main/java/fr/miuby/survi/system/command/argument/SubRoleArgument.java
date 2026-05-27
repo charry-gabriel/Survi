@@ -25,7 +25,7 @@ public class SubRoleArgument implements CustomArgumentType.Converted<Role, Strin
 
     @Override
     public Role convert(String nativeType) throws CommandSyntaxException {
-        Role role = GameManager.getInstance().getRoleRegistry().getRole(nativeType);
+        Role role = GameManager.getInstance().getRoleLoader().getRole(nativeType);
 
         if (role == null) {
             throw CommandErrors.ROLE_NOT_FOUND.create(nativeType);
@@ -53,7 +53,7 @@ public class SubRoleArgument implements CustomArgumentType.Converted<Role, Strin
     private static List<String> getSubRoleSuggestions(AlphaPlayer alphaPlayer, boolean isAdd) {
         List<String> roles = new ArrayList<>();
         if (isAdd) {
-            roles.addAll(GameManager.getInstance().getRoleRegistry().getRoles().stream().map(r -> r.type().toString()).toList());
+            roles.addAll(GameManager.getInstance().getRoleLoader().getRoles().stream().map(r -> r.type().toString()).toList());
             roles.removeAll(alphaPlayer.getSubRoles().stream().map(r -> r.type().toString()).toList());
             if (alphaPlayer.getRole() != null) {
                 roles.remove(alphaPlayer.getRole().type().toString());
