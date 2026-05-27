@@ -1,6 +1,7 @@
 package fr.miuby.survi;
 
 import fr.miuby.survi.job.ReputationCommand;
+import fr.miuby.survi.mob.MobCommand;
 import fr.miuby.survi.system.YmlResourceManager;
 import fr.miuby.survi.system.database.SqlCommand;
 import fr.miuby.survi.item.CustomItemCommand;
@@ -44,6 +45,7 @@ public class Survi extends JavaPlugin {
         pluginManager.registerEvents(new QuestListener(), this);
         pluginManager.registerEvents(new GraveListener(), this);
         pluginManager.registerEvents(new JobListener(), this);
+        pluginManager.registerEvents(new MobSpawnListener(), this);
 
         getConfig().options().copyDefaults(true);
         saveConfig();
@@ -60,6 +62,7 @@ public class Survi extends JavaPlugin {
             commands.registrar().register(BlessingCommand.createCommand().build());
             commands.registrar().register(WorldCommand.createWorldResetCommand().build());
             commands.registrar().register(WorldCommand.createTeleportToCommand().build());
+            commands.registrar().register(MobCommand.createCommand().build());
         });
 
         GameManager.getInstance().init(this);
@@ -81,6 +84,7 @@ public class Survi extends JavaPlugin {
         YmlResourceManager.update(this, "config.yml");
         YmlResourceManager.update(this, "quests.yml");
         YmlResourceManager.update(this, "recipes.yml");
+        YmlResourceManager.update(this, "monsters.yml");
     }
 
     private void updateFolderResources(String folder) {

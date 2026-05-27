@@ -1,6 +1,8 @@
 package fr.miuby.survi;
 
 import fr.miuby.lib.MiubyLib;
+import fr.miuby.survi.mob.MobLevelManager;
+import fr.miuby.survi.mob.MobNametagTask;
 import fr.miuby.survi.world.crops.PlantedCropsManager;
 import fr.miuby.survi.display.TabDisplayManager;
 import fr.miuby.survi.role.RoleManagementService;
@@ -103,6 +105,8 @@ public class GameManager {
 
         WorldPortalManager.getInstance().init();
         VillageZoneManager.getInstance().init();
+        MobLevelManager.getInstance().init();
+        new MobNametagTask().runTaskTimer(this.plugin, 0L, MobNametagTask.PERIOD_TICKS);
 
         LogManager.getInstance().log(Level.INFO, LogManager.ETagLog.PLAYER, "Initialisation des joueurs...");
         this.initPlayers();

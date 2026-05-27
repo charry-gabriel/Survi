@@ -1,0 +1,787 @@
+# ══════════════════════════════════════════════════════════════════════════════
+#  monsters.yml  —  Configuration du système de niveaux de monstres
+# ══════════════════════════════════════════════════════════════════════════════
+#
+#  PRINCIPE GÉNÉRAL
+#  ─────────────────
+#  • Chaque palier du monde (world level N) donne des monstres niveau
+#    [N*levelsPerTier+1 … (N+1)*levelsPerTier].
+#  • Les stats évoluent LINÉAIREMENT :  valeur = base + (level - 1) * per-level
+#    → level 1  ≈ vanilla (base seul)
+#    → level 10 = base + 9  * per-level   (fin du palier 0)
+#    → level 100= base + 99 * per-level   (très puissant)
+#
+#  TIRAGE DU NIVEAU À L'APPARITION
+#  ────────────────────────────────
+#  La probabilité décroît exponentiellement avec le niveau dans le palier.
+#  Formule du poids pour l'offset i (0 = niveau le plus bas du palier) :
+#       weight(i) = (levelsPerTier - i) ^ spawn-weight-exponent
+#  Plus l'exposant est grand, plus les élites hauts niveaux sont rares.
+#  Valeur recommandée : 1.5 – 2.5
+#
+# ══════════════════════════════════════════════════════════════════════════════
+
+levels-per-world-tier: 10
+spawn-weight-exponent: 1.8
+
+# ──────────────────────────────────────────────────────────────────────────────
+#  STATS DISPONIBLES (section "stats" de chaque mob)
+# ──────────────────────────────────────────────────────────────────────────────
+#  max-health           — Points de vie maximum (cœurs × 2)
+#  attack-damage        — Dégâts de base par frappe
+#  movement-speed       — Vitesse de déplacement (vanilla zombie ≈ 0.23)
+#  scale                — Taille relative (1.0 = normal, 2.0 = deux fois plus grand)
+#  follow-range         — Distance de détection du joueur (en blocs)
+#  armor                — Valeur d'armure naturelle
+#  knockback-resistance — Résistance au recul (0.0–1.0)
+#
+#  STATS SPÉCIALES (hors section "stats")
+#  explosion-radius     — Rayon d'explosion du Creeper  (entier, via setExplosionRadius)
+#  fuse-ticks           — Durée de mèche du Creeper en ticks (< 30 = explosion rapide)
+#  potion-effects       — Effets appliqués à l'attaque (Spider, CaveSpider…)
+# ──────────────────────────────────────────────────────────────────────────────
+
+mobs:
+
+  # ════════════════════════════════════════════════
+  #  ZOMBIE  —  taille + vitesse
+  # ════════════════════════════════════════════════
+  ZOMBIE:
+    enabled: true
+    stats:
+      max-health:
+        enabled: true
+        base: 20.0          # vanilla = 20
+        per-level: 4.0      # level 100 → 416 PV
+      attack-damage:
+        enabled: true
+        base: 3.0           # vanilla = 3
+        per-level: 0.25     # level 100 → 27.75
+      movement-speed:
+        enabled: true
+        base: 0.23          # vanilla = 0.23
+        per-level: 0.004    # level 100 → 0.627  (max ≈ sprint joueur = 0.32 + sprint)
+      scale:
+        enabled: true
+        base: 1.0           # taille normale
+        per-level: 0.015    # level 100 → 2.5× (géant menaçant)
+      follow-range:
+        enabled: true
+        base: 35.0          # vanilla = 35
+        per-level: 0.5      # level 100 → 84.5 blocs
+      armor:
+        enabled: true
+        base: 0.0
+        per-level: 0.04     # level 100 → 4 points d'armure
+
+  # ════════════════════════════════════════════════
+  #  ZOMBIE_VILLAGER
+  # ════════════════════════════════════════════════
+  ZOMBIE_VILLAGER:
+    enabled: true
+    stats:
+      max-health:
+        enabled: true
+        base: 20.0
+        per-level: 4.0
+      attack-damage:
+        enabled: true
+        base: 3.0
+        per-level: 0.25
+      movement-speed:
+        enabled: true
+        base: 0.23
+        per-level: 0.004
+      scale:
+        enabled: true
+        base: 1.0
+        per-level: 0.012
+      follow-range:
+        enabled: true
+        base: 35.0
+        per-level: 0.5
+
+  # ════════════════════════════════════════════════
+  #  HUSK  (zombie désert)
+  # ════════════════════════════════════════════════
+  HUSK:
+    enabled: true
+    stats:
+      max-health:
+        enabled: true
+        base: 20.0
+        per-level: 4.0
+      attack-damage:
+        enabled: true
+        base: 3.0
+        per-level: 0.30
+      movement-speed:
+        enabled: true
+        base: 0.23
+        per-level: 0.004
+      scale:
+        enabled: true
+        base: 1.0
+        per-level: 0.013
+      armor:
+        enabled: true
+        base: 2.0
+        per-level: 0.04
+
+  # ════════════════════════════════════════════════
+  #  DROWNED
+  # ════════════════════════════════════════════════
+  DROWNED:
+    enabled: true
+    stats:
+      max-health:
+        enabled: true
+        base: 20.0
+        per-level: 4.0
+      attack-damage:
+        enabled: true
+        base: 3.0
+        per-level: 0.25
+      movement-speed:
+        enabled: true
+        base: 0.25
+        per-level: 0.004
+
+  # ════════════════════════════════════════════════
+  #  SKELETON  —  portée de tir augmentée via follow-range
+  # ════════════════════════════════════════════════
+  #  Note : follow-range contrôle la distance à laquelle le squelette
+  #  "voit" le joueur et commence à tirer. Un follow-range élevé =
+  #  le squelette commence à tirer de plus loin.
+  # ════════════════════════════════════════════════
+  SKELETON:
+    enabled: true
+    stats:
+      max-health:
+        enabled: true
+        base: 20.0          # vanilla = 20
+        per-level: 3.0      # level 100 → 317 PV
+      attack-damage:
+        enabled: true
+        base: 2.0           # dégâts de la flèche (via attribut)
+        per-level: 0.15
+      movement-speed:
+        enabled: true
+        base: 0.25
+        per-level: 0.003
+      follow-range:
+        enabled: true
+        base: 16.0          # vanilla = 16
+        per-level: 0.6      # level 100 → 75.4 blocs de portée de tir !
+
+  # ════════════════════════════════════════════════
+  #  STRAY  (squelette de glace)
+  # ════════════════════════════════════════════════
+  STRAY:
+    enabled: true
+    stats:
+      max-health:
+        enabled: true
+        base: 20.0
+        per-level: 3.0
+      attack-damage:
+        enabled: true
+        base: 2.0
+        per-level: 0.15
+      movement-speed:
+        enabled: true
+        base: 0.25
+        per-level: 0.003
+      follow-range:
+        enabled: true
+        base: 16.0
+        per-level: 0.6
+
+  # ════════════════════════════════════════════════
+  #  WITHER_SKELETON
+  # ════════════════════════════════════════════════
+  WITHER_SKELETON:
+    enabled: true
+    stats:
+      max-health:
+        enabled: true
+        base: 20.0
+        per-level: 5.0
+      attack-damage:
+        enabled: true
+        base: 7.0           # vanilla = 7
+        per-level: 0.4
+      movement-speed:
+        enabled: true
+        base: 0.25
+        per-level: 0.004
+      armor:
+        enabled: true
+        base: 0.0
+        per-level: 0.06
+
+  # ════════════════════════════════════════════════
+  #  CREEPER  —  vitesse + rayon d'explosion + mèche
+  # ════════════════════════════════════════════════
+  CREEPER:
+    enabled: true
+    stats:
+      max-health:
+        enabled: true
+        base: 20.0          # vanilla = 20
+        per-level: 3.0
+      movement-speed:
+        enabled: true
+        base: 0.25          # vanilla = 0.25
+        per-level: 0.005    # level 100 → 0.745 (très rapide)
+      follow-range:
+        enabled: true
+        base: 16.0
+        per-level: 0.3
+
+    # Rayon de l'explosion (vanilla = 3)
+    explosion-radius:
+      enabled: true
+      base: 3.0
+      per-level: 0.08       # level 100 → 10.92  (énorme mais clampé à ~10 en pratique)
+
+    # Durée de mèche en ticks avant explosion (vanilla = 30 ticks)
+    # Géré par MobLevelManager via Creeper#setFuseTicks()
+    fuse-ticks:
+      enabled: true
+      base: 30.0            # vanilla = 30 ticks
+      per-level: -0.2       # level 100 → 10.2 ticks (explosion quasi-instantanée)
+      min: 5                # jamais moins de 5 ticks (0.25 s) pour rester jouable
+
+  # ════════════════════════════════════════════════
+  #  SPIDER  —  taille + effets de potion à l'attaque
+  # ════════════════════════════════════════════════
+  SPIDER:
+    enabled: true
+    stats:
+      max-health:
+        enabled: true
+        base: 16.0          # vanilla = 16
+        per-level: 2.5
+      attack-damage:
+        enabled: true
+        base: 2.0           # vanilla = 2
+        per-level: 0.15
+      movement-speed:
+        enabled: true
+        base: 0.30          # vanilla = 0.30
+        per-level: 0.004
+      scale:
+        enabled: true
+        base: 1.0
+        per-level: 0.015    # level 100 → 2.5× (araignée géante)
+      follow-range:
+        enabled: true
+        base: 16.0
+        per-level: 0.3
+
+    # Effets de potion appliqués à chaque attaque
+    potion-effects:
+      - type: POISON
+        min-mob-level: 1          # actif dès le niveau 1
+        duration-base: 40         # 2 secondes au niveau 1
+        duration-per-level: 4.0   # +4 ticks/niveau → level 100 = 436 ticks (≈21 s)
+        amplifier-upgrade-every: 20  # niveau I → II à lvl 21, II → III à lvl 41…
+        chance-base: 0.10         # 10% au niveau 1
+        chance-per-level: 0.005   # +0.5%/niveau → level 100 = 60%
+        max-chance: 0.75
+
+      - type: WITHER               # seulement à partir du niveau 30
+        min-mob-level: 30
+        duration-base: 20          # 1 seconde
+        duration-per-level: 3.0
+        amplifier-upgrade-every: 30
+        chance-base: 0.05
+        chance-per-level: 0.004
+        max-chance: 0.50
+
+  # ════════════════════════════════════════════════
+  #  CAVE_SPIDER  —  venin plus fort que la Spider normale
+  # ════════════════════════════════════════════════
+  CAVE_SPIDER:
+    enabled: true
+    stats:
+      max-health:
+        enabled: true
+        base: 12.0          # vanilla = 12
+        per-level: 2.0
+      attack-damage:
+        enabled: true
+        base: 2.0
+        per-level: 0.12
+      movement-speed:
+        enabled: true
+        base: 0.30
+        per-level: 0.005
+      scale:
+        enabled: true
+        base: 1.0
+        per-level: 0.012
+
+    potion-effects:
+      - type: POISON
+        min-mob-level: 1
+        duration-base: 60           # 3 s — cave spider empoisonne plus
+        duration-per-level: 5.0
+        amplifier-upgrade-every: 15
+        chance-base: 0.20           # 20% dès le départ
+        chance-per-level: 0.006
+        max-chance: 0.90
+
+      - type: BLINDNESS
+        min-mob-level: 20
+        duration-base: 40
+        duration-per-level: 2.0
+        amplifier-upgrade-every: 50
+        chance-base: 0.08
+        chance-per-level: 0.003
+        max-chance: 0.40
+
+  # ════════════════════════════════════════════════
+  #  PHANTOM  —  vitesse de vol
+  # ════════════════════════════════════════════════
+  PHANTOM:
+    enabled: true
+    stats:
+      max-health:
+        enabled: true
+        base: 20.0          # vanilla = 20
+        per-level: 2.5
+      attack-damage:
+        enabled: true
+        base: 6.0           # vanilla = 6
+        per-level: 0.30
+      movement-speed:
+        enabled: true
+        base: 0.95          # vitesse de vol vanilla ≈ 0.9–1.0
+        per-level: 0.015    # level 100 → 2.435 (très rapide, difficile à esquiver)
+      follow-range:
+        enabled: true
+        base: 16.0
+        per-level: 0.4
+
+  # ════════════════════════════════════════════════
+  #  ENDERMAN  —  taille (+ téléportation gérée en code)
+  # ════════════════════════════════════════════════
+  #  Note : la téléportation aléatoire défensive et la prise de blocs
+  #  sont gérées dans MobLevelManager#applyLevel() via des mécaniques
+  #  spéciales (voir code Java), pas ici.
+  # ════════════════════════════════════════════════
+  ENDERMAN:
+    enabled: true
+    stats:
+      max-health:
+        enabled: true
+        base: 40.0          # vanilla = 40
+        per-level: 5.0      # level 100 → 535 PV
+      attack-damage:
+        enabled: true
+        base: 7.0           # vanilla = 7
+        per-level: 0.35     # level 100 → 41.65
+      movement-speed:
+        enabled: true
+        base: 0.30          # vanilla ≈ 0.30
+        per-level: 0.004
+      scale:
+        enabled: true
+        base: 1.0
+        per-level: 0.02     # level 100 → 3.0× (enderman immense)
+      follow-range:
+        enabled: true
+        base: 64.0
+        per-level: 0.5
+      knockback-resistance:
+        enabled: true
+        base: 0.0
+        per-level: 0.005    # level 100 → 0.495 (quasi-résistant au recul)
+
+  # ════════════════════════════════════════════════
+  #  ENDER_DRAGON  —  boss, palier max uniquement
+  # ════════════════════════════════════════════════
+  #  Note : l'EnderDragon est appliqué au NIVEAU MAX du palier courant
+  #  (getMaxLevelForCurrentTier()). Les stats ci-dessous sont calibrées
+  #  pour refléter un boss qui évolue avec le monde.
+  # ════════════════════════════════════════════════
+  ENDER_DRAGON:
+    enabled: true
+    stats:
+      max-health:
+        enabled: true
+        base: 200.0         # vanilla = 200 (= 100 cœurs)
+        per-level: 15.0     # level 10  → 335  (palier 0)
+          # level 20  → 485  (palier 1)
+        # level 100 → 1685 PV (boss de fin de partie)
+      attack-damage:
+        enabled: true
+        base: 6.0           # vanilla ≈ 6 (contact) — la balle acide n'est pas scalée ici
+        per-level: 0.8      # level 100 → 85.2
+
+  # ════════════════════════════════════════════════
+  #  WITCH
+  # ════════════════════════════════════════════════
+  WITCH:
+    enabled: true
+    stats:
+      max-health:
+        enabled: true
+        base: 26.0          # vanilla = 26
+        per-level: 3.0
+      movement-speed:
+        enabled: true
+        base: 0.25
+        per-level: 0.003
+      follow-range:
+        enabled: true
+        base: 16.0
+        per-level: 0.5
+
+  # ════════════════════════════════════════════════
+  #  PILLAGER
+  # ════════════════════════════════════════════════
+  PILLAGER:
+    enabled: true
+    stats:
+      max-health:
+        enabled: true
+        base: 24.0          # vanilla = 24
+        per-level: 3.0
+      attack-damage:
+        enabled: true
+        base: 4.0
+        per-level: 0.2
+      movement-speed:
+        enabled: true
+        base: 0.35
+        per-level: 0.003
+      follow-range:
+        enabled: true
+        base: 64.0
+        per-level: 0.5
+
+  # ════════════════════════════════════════════════
+  #  RAVAGER
+  # ════════════════════════════════════════════════
+  RAVAGER:
+    enabled: true
+    stats:
+      max-health:
+        enabled: true
+        base: 100.0         # vanilla = 100
+        per-level: 8.0
+      attack-damage:
+        enabled: true
+        base: 12.0          # vanilla = 12
+        per-level: 0.6
+      movement-speed:
+        enabled: true
+        base: 0.30
+        per-level: 0.003
+      armor:
+        enabled: true
+        base: 0.0
+        per-level: 0.08
+      knockback-resistance:
+        enabled: true
+        base: 0.5           # vanilla = 0.5
+        per-level: 0.004    # level 100 → 0.896
+
+  # ════════════════════════════════════════════════
+  #  BLAZE
+  # ════════════════════════════════════════════════
+  BLAZE:
+    enabled: true
+    stats:
+      max-health:
+        enabled: true
+        base: 20.0          # vanilla = 20
+        per-level: 3.0
+      attack-damage:
+        enabled: true
+        base: 6.0           # boule de feu vanilla = 5 dégâts feu
+        per-level: 0.25
+      movement-speed:
+        enabled: true
+        base: 0.23
+        per-level: 0.003
+      follow-range:
+        enabled: true
+        base: 48.0
+        per-level: 0.5
+
+  # ════════════════════════════════════════════════
+  #  GHAST
+  # ════════════════════════════════════════════════
+  GHAST:
+    enabled: true
+    stats:
+      max-health:
+        enabled: true
+        base: 10.0          # vanilla = 10
+        per-level: 2.0
+      attack-damage:
+        enabled: true
+        base: 6.0
+        per-level: 0.3
+      movement-speed:
+        enabled: true
+        base: 0.40
+        per-level: 0.005
+      follow-range:
+        enabled: true
+        base: 100.0
+        per-level: 1.0
+
+  # ════════════════════════════════════════════════
+  #  PIGLIN / PIGLIN_BRUTE
+  # ════════════════════════════════════════════════
+  PIGLIN:
+    enabled: true
+    stats:
+      max-health:
+        enabled: true
+        base: 16.0
+        per-level: 2.5
+      attack-damage:
+        enabled: true
+        base: 5.0
+        per-level: 0.2
+      movement-speed:
+        enabled: true
+        base: 0.35
+        per-level: 0.003
+
+  PIGLIN_BRUTE:
+    enabled: true
+    stats:
+      max-health:
+        enabled: true
+        base: 50.0          # vanilla = 50
+        per-level: 5.0
+      attack-damage:
+        enabled: true
+        base: 7.5           # vanilla = 7.5
+        per-level: 0.45
+      movement-speed:
+        enabled: true
+        base: 0.35
+        per-level: 0.004
+      armor:
+        enabled: true
+        base: 0.0
+        per-level: 0.06
+      knockback-resistance:
+        enabled: true
+        base: 0.0
+        per-level: 0.005
+
+  # ════════════════════════════════════════════════
+  #  HOGLIN
+  # ════════════════════════════════════════════════
+  HOGLIN:
+    enabled: true
+    stats:
+      max-health:
+        enabled: true
+        base: 40.0
+        per-level: 4.0
+      attack-damage:
+        enabled: true
+        base: 8.0
+        per-level: 0.5
+      movement-speed:
+        enabled: true
+        base: 0.30
+        per-level: 0.003
+      knockback-resistance:
+        enabled: true
+        base: 0.6
+        per-level: 0.003
+
+  # ════════════════════════════════════════════════
+  #  WITHER (boss)
+  # ════════════════════════════════════════════════
+  WITHER:
+    enabled: true
+    stats:
+      max-health:
+        enabled: true
+        base: 300.0         # vanilla = 300
+        per-level: 20.0     # level 10 → 480, level 50 → 1280, level 100 → 2280
+      attack-damage:
+        enabled: true
+        base: 8.0
+        per-level: 0.8
+      movement-speed:
+        enabled: true
+        base: 0.60
+        per-level: 0.005
+      armor:
+        enabled: true
+        base: 4.0           # vanilla = 4
+        per-level: 0.04
+
+  # ════════════════════════════════════════════════
+  #  VINDICATOR
+  # ════════════════════════════════════════════════
+  VINDICATOR:
+    enabled: true
+    stats:
+      max-health:
+        enabled: true
+        base: 24.0
+        per-level: 3.0
+      attack-damage:
+        enabled: true
+        base: 8.0           # vanilla hache = 8
+        per-level: 0.35
+      movement-speed:
+        enabled: true
+        base: 0.35
+        per-level: 0.004
+
+  # ════════════════════════════════════════════════
+  #  SILVERFISH
+  # ════════════════════════════════════════════════
+  SILVERFISH:
+    enabled: true
+    stats:
+      max-health:
+        enabled: true
+        base: 8.0
+        per-level: 1.0
+      attack-damage:
+        enabled: true
+        base: 1.0
+        per-level: 0.08
+      movement-speed:
+        enabled: true
+        base: 0.25
+        per-level: 0.005
+      scale:
+        enabled: true
+        base: 1.0
+        per-level: 0.010
+
+  # ════════════════════════════════════════════════
+  #  SLIME  /  MAGMA_CUBE
+  # ════════════════════════════════════════════════
+  SLIME:
+    enabled: true
+    stats:
+      max-health:
+        enabled: true
+        base: 4.0           # grand slime vanilla = 16 (taille × 4 PV)
+        per-level: 1.0
+      attack-damage:
+        enabled: true
+        base: 3.0
+        per-level: 0.1
+
+  MAGMA_CUBE:
+    enabled: true
+    stats:
+      max-health:
+        enabled: true
+        base: 4.0
+        per-level: 1.2
+      attack-damage:
+        enabled: true
+        base: 3.0
+        per-level: 0.15
+      armor:
+        enabled: true
+        base: 0.0
+        per-level: 0.05
+
+  # ════════════════════════════════════════════════
+  #  GUARDIAN  /  ELDER_GUARDIAN
+  # ════════════════════════════════════════════════
+  GUARDIAN:
+    enabled: true
+    stats:
+      max-health:
+        enabled: true
+        base: 30.0          # vanilla = 30
+        per-level: 3.0
+      attack-damage:
+        enabled: true
+        base: 6.0
+        per-level: 0.25
+      armor:
+        enabled: true
+        base: 0.0
+        per-level: 0.05
+
+  ELDER_GUARDIAN:
+    enabled: true
+    stats:
+      max-health:
+        enabled: true
+        base: 80.0          # vanilla = 80
+        per-level: 8.0
+      attack-damage:
+        enabled: true
+        base: 8.0
+        per-level: 0.6
+      armor:
+        enabled: true
+        base: 0.0
+        per-level: 0.08
+
+  # ════════════════════════════════════════════════
+  #  SHULKER
+  # ════════════════════════════════════════════════
+  SHULKER:
+    enabled: true
+    stats:
+      max-health:
+        enabled: true
+        base: 30.0          # vanilla = 30
+        per-level: 3.0
+      armor:
+        enabled: true
+        base: 20.0          # vanilla = 20 (fermé)
+        per-level: 0.0
+
+  # ════════════════════════════════════════════════
+  #  ZOGLIN
+  # ════════════════════════════════════════════════
+  ZOGLIN:
+    enabled: true
+    stats:
+      max-health:
+        enabled: true
+        base: 40.0
+        per-level: 4.0
+      attack-damage:
+        enabled: true
+        base: 6.0
+        per-level: 0.4
+      movement-speed:
+        enabled: true
+        base: 0.30
+        per-level: 0.003
+
+  # ════════════════════════════════════════════════
+  #  ZOMBIFIED_PIGLIN
+  # ════════════════════════════════════════════════
+  ZOMBIFIED_PIGLIN:
+    enabled: true
+    stats:
+      max-health:
+        enabled: true
+        base: 20.0
+        per-level: 3.0
+      attack-damage:
+        enabled: true
+        base: 5.0
+        per-level: 0.25
+      movement-speed:
+        enabled: true
+        base: 0.23
+        per-level: 0.003
