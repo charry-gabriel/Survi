@@ -1,3 +1,4 @@
+# yaml-language-server: $schema=./schema/roles-schema.json
 # roles.yml — Attributs de gameplay par rôle.
 # Les displayName et couleurs sont définis dans ERole.java.
 # Chaque attribut suit la structure :
