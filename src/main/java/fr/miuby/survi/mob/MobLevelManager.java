@@ -202,8 +202,6 @@ public class MobLevelManager {
         EntityType type = entity.getType();
         MobTypeConfig typeConfig = configs.get(type);
         if (typeConfig == null) return;
-        LogManager.getInstance().log(Level.FINE, LogManager.ETagLog.SYSTEM,
-                "[MobLevel] applyLevel " + type + " niv=" + level + " entityId=" + entity.getEntityId());
 
         // L'EnderDragon est un boss : il reçoit toujours le niveau MAX du palier
         int effectiveLevel = (entity instanceof EnderDragon)

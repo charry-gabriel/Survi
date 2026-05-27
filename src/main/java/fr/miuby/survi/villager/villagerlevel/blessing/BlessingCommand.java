@@ -6,6 +6,7 @@ import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import fr.miuby.lib.world.MLWorld;
+import fr.miuby.survi.GameManager;
 import fr.miuby.survi.item.locked_item.ELockedArmorType;
 import fr.miuby.survi.item.locked_item.ELockedToolType;
 import fr.miuby.survi.player.AlphaPlayer;
@@ -196,6 +197,26 @@ public class BlessingCommand {
                                     AlphaPlayer target = AlphaPlayerArgument.getAlphaPlayer(ctx, playerArgument);
 
                                     new WorldResetEffect(1).applyEffect(null, target);
+                                    return Command.SINGLE_SUCCESS;
+                                })
+                        )
+
+                        // ── world_level ─────────────────────────────────
+                        .then(Commands.literal("world_level")
+                                .executes(ctx -> {
+                                    AlphaPlayer target = AlphaPlayerArgument.getAlphaPlayer(ctx, playerArgument);
+                                    new WorldLevelEffect(1).applyEffect(null, target);
+                                    feedback(ctx, target, "World level +1 → " + GameManager.getInstance().getWorldLevelManager().getLevel());
+                                    return Command.SINGLE_SUCCESS;
+                                })
+                        )
+
+                        // ── world_level_reset ────────────────────────────
+                        .then(Commands.literal("world_level_reset")
+                                .executes(ctx -> {
+                                    GameManager.getInstance().getWorldLevelManager().reset();
+                                    AlphaPlayer target = AlphaPlayerArgument.getAlphaPlayer(ctx, playerArgument);
+                                    feedback(ctx, target, "World level remis à 0");
                                     return Command.SINGLE_SUCCESS;
                                 })
                         )

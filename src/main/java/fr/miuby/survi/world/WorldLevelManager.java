@@ -41,6 +41,18 @@ public class WorldLevelManager {
                 "[WorldLevel] Niveau du monde : " + worldLevel + " (+" + delta + ")");
     }
 
+    /**
+     * Remet le niveau du monde à zéro et persiste la valeur.
+     * Réservé aux admins (tests, corrections manuelles).
+     */
+    public void reset() {
+        worldLevel = 0;
+        persist();
+        LogManager.getInstance().log(Level.INFO, LogManager.ETagLog.SYSTEM,
+                "[WorldLevel] Niveau du monde réinitialisé à 0");
+    }
+
+
     private void persist() {
         GameManager.getInstance().getDatabase().system().saveWorldLevel(worldLevel);
     }
