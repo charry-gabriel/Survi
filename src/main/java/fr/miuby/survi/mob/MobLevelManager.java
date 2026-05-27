@@ -142,6 +142,8 @@ public class MobLevelManager {
             configs.put(type, typeConfig);
         }
 
+        new MobNametagTask().runTaskTimer(GameManager.getInstance().getPlugin(), 0L, MobNametagTask.PERIOD_TICKS);
+
         LogManager.getInstance().log(Level.INFO, LogManager.ETagLog.SYSTEM,
                 "[MobLevel] " + configs.size() + " types de mobs chargés (levelsPerTier="
                         + levelsPerTier + ", weightExp=" + spawnWeightExponent + ")");
@@ -200,6 +202,8 @@ public class MobLevelManager {
         EntityType type = entity.getType();
         MobTypeConfig typeConfig = configs.get(type);
         if (typeConfig == null) return;
+        LogManager.getInstance().log(Level.FINE, LogManager.ETagLog.SYSTEM,
+                "[MobLevel] applyLevel " + type + " niv=" + level + " entityId=" + entity.getEntityId());
 
         // L'EnderDragon est un boss : il reçoit toujours le niveau MAX du palier
         int effectiveLevel = (entity instanceof EnderDragon)
@@ -366,7 +370,7 @@ public class MobLevelManager {
             );
         } catch (Exception e) {
             LogManager.getInstance().log(Level.WARNING, LogManager.ETagLog.SYSTEM,
-                    "[MobLevel] Erreur lors du parsing d'un effet de potion : " + e.getMessage());
+                    "[MobLevel] Erreur lors du parsing d'un effet de potion", e);
             return null;
         }
     }

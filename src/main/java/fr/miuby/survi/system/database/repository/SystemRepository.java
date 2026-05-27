@@ -28,7 +28,7 @@ public class SystemRepository {
                 return rs.getString("value");
             }
         } catch (SQLException e) {
-            LogManager.getInstance().log(Level.SEVERE, LogManager.ETagLog.SYSTEM, "Erreur getServerData: " + key + " (" + e.getMessage() + ")");
+            LogManager.getInstance().log(Level.SEVERE, LogManager.ETagLog.SYSTEM, "Erreur getServerData: " + key, e);
         }
         return null;
     }
@@ -41,7 +41,7 @@ public class SystemRepository {
             ps.executeUpdate();
 
         } catch (SQLException e) {
-            LogManager.getInstance().log(Level.SEVERE, LogManager.ETagLog.SYSTEM, "Erreur saveServerData: " + key + " (" + e.getMessage() + ")");
+            LogManager.getInstance().log(Level.SEVERE, LogManager.ETagLog.SYSTEM, "Erreur saveServerData: " + key, e);
         }
     }
 

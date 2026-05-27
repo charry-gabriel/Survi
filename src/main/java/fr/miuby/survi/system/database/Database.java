@@ -88,7 +88,7 @@ public abstract class Database {
             }
 
         } catch (SQLException ex) {
-            LogManager.getInstance().log(Level.SEVERE, LogManager.ETagLog.SYSTEM, "Failed to execute request: " + sql + " (" + ex.getMessage() + ")");
+            LogManager.getInstance().log(Level.SEVERE, LogManager.ETagLog.SYSTEM, "Failed to execute request: " + sql, ex);
             return "Error: " + ex.getMessage();
         } finally {
             closeResources(conn, ps);
@@ -102,7 +102,7 @@ public abstract class Database {
             if (conn != null)
                 conn.close();
         } catch (SQLException ex) {
-            LogManager.getInstance().log(Level.SEVERE, LogManager.ETagLog.SYSTEM, "Failed to close database resources (" + ex.getMessage() + ")");
+            LogManager.getInstance().log(Level.SEVERE, LogManager.ETagLog.SYSTEM, "Failed to close database resources", ex);
         }
     }
 }

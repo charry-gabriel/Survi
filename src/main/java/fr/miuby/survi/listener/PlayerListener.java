@@ -12,6 +12,8 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import fr.miuby.survi.quest.PlayerQuestData;
 import fr.miuby.survi.quest.Quest;
+import fr.miuby.survi.system.log.LogManager;
+import java.util.logging.Level;
 
 import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
@@ -86,6 +88,8 @@ public class PlayerListener implements Listener {
 
         String category = advancement.getKey().getKey().split("/")[0];
         if (advancementProgress.isDone() && advancementDisplay != null && !category.equals("recipes")) {
+            LogManager.getInstance().log(Level.FINE, LogManager.ETagLog.PLAYER,
+                    "[Advancement] " + player.getName() + " — " + advancement.getKey());
             if (advancementDisplay.frame() == AdvancementDisplay.Frame.CHALLENGE) {
                 AlphaPlayer.get(player.getUniqueId()).gainOneSuccess(true);
             }
@@ -94,6 +98,8 @@ public class PlayerListener implements Listener {
 
     @EventHandler
     public void onPlayerArmorChange(PlayerArmorChangeEvent event) {
+        LogManager.getInstance().log(Level.FINE, LogManager.ETagLog.PLAYER,
+                "[ArmorChange] " + event.getPlayer().getName() + " slot=" + event.getSlotType());
         boolean malus = false;
         for (ItemStack item : event.getPlayer().getInventory().getArmorContents()) {
             if (item != null && GameManager.getInstance().getLockedItemsFactory().isLocked(item.getType().getKey())) {
@@ -106,6 +112,9 @@ public class PlayerListener implements Listener {
     @EventHandler
     public void onPlayerDeath(PlayerDeathEvent event) {
         final Player player = event.getEntity();
+        LogManager.getInstance().log(Level.FINE, LogManager.ETagLog.PLAYER,
+                "[PlayerDeath] " + player.getName() + " mort en " + player.getLocation().getWorld().getName()
+                        + " x=" + player.getLocation().getBlockX() + " y=" + player.getLocation().getBlockY() + " z=" + player.getLocation().getBlockZ());
 
         final ItemStack[] armor = player.getInventory().getArmorContents();
         GameManager.getInstance().getScheduler().scheduleSyncDelayedTask(GameManager.getInstance().getPlugin(), () -> player.getInventory().setArmorContents(armor));
@@ -118,6 +127,8 @@ public class PlayerListener implements Listener {
     @EventHandler
     public void onPlayerRespawn(PlayerRespawnEvent event) {
         Player player = event.getPlayer();
+        LogManager.getInstance().log(Level.FINE, LogManager.ETagLog.PLAYER,
+                "[PlayerRespawn] " + player.getName());
         AlphaPlayer alphaPlayer = AlphaPlayer.get(player.getUniqueId());
         alphaPlayer.getAlphaLife().actualizeDeath();
 

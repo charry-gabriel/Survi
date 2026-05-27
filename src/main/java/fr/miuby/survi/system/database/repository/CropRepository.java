@@ -33,7 +33,7 @@ public class CropRepository {
 
             return true;
         } catch (SQLException ex) {
-            LogManager.getInstance().log(Level.SEVERE, LogManager.ETagLog.WORLD, "Failed to load planted crops (" + ex.getMessage() + ")");
+            LogManager.getInstance().log(Level.SEVERE, LogManager.ETagLog.WORLD, "Failed to load planted crops", ex);
             return false;
         }
     }
@@ -51,7 +51,7 @@ public class CropRepository {
                         ps.executeUpdate();
 
                     } catch (SQLException ex) {
-                        LogManager.getInstance().log(Level.SEVERE, LogManager.ETagLog.WORLD, "Failed to save planted crop (" + ex.getMessage() + ")");
+                        LogManager.getInstance().log(Level.SEVERE, LogManager.ETagLog.WORLD, "Failed to save planted crop", ex);
                     }
                 }
         );
@@ -70,7 +70,7 @@ public class CropRepository {
                         ps.executeUpdate();
 
                     } catch (SQLException ex) {
-                        LogManager.getInstance().log(Level.SEVERE, LogManager.ETagLog.WORLD, "Failed to remove planted crop (" + ex.getMessage() + ")");
+                        LogManager.getInstance().log(Level.SEVERE, LogManager.ETagLog.WORLD, "Failed to remove planted crop", ex);
                     }
                 }
         );

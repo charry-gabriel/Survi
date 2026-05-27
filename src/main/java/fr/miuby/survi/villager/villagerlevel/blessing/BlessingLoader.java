@@ -120,7 +120,7 @@ public class BlessingLoader {
                 }
             };
         } catch (Exception e) {
-            LogManager.getInstance().log(Level.WARNING, LogManager.ETagLog.VILLAGER, "[BlessingLoader] Erreur parsing effet '" + type + "' pour " + villagerId + ": " + e.getMessage());
+            LogManager.getInstance().log(Level.WARNING, LogManager.ETagLog.VILLAGER, "[BlessingLoader] Erreur parsing effet '" + type + "' pour " + villagerId, e);
             return null;
         }
     }

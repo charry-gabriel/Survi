@@ -49,7 +49,7 @@ public class PlayerRepository {
                 }
             }
         } catch (SQLException ex) {
-            LogManager.getInstance().log(Level.SEVERE, LogManager.ETagLog.PLAYER, "Failed to load players (" + ex.getMessage() + ")");
+            LogManager.getInstance().log(Level.SEVERE, LogManager.ETagLog.PLAYER, "Failed to load players", ex);
         }
     }
 
@@ -65,7 +65,7 @@ public class PlayerRepository {
                         ps.executeUpdate();
 
                     } catch (SQLException ex) {
-                        LogManager.getInstance().log(Level.SEVERE, LogManager.ETagLog.PLAYER,  "Failed to create player (" + ex.getMessage() + ")");
+                        LogManager.getInstance().log(Level.SEVERE, LogManager.ETagLog.PLAYER, "Failed to create player", ex);
                     }
                 }
         );
@@ -82,7 +82,7 @@ public class PlayerRepository {
                         ps.executeUpdate();
 
                     } catch (SQLException ex) {
-                        LogManager.getInstance().log(Level.SEVERE, LogManager.ETagLog.PLAYER, "Failed to update player (" + ex.getMessage() + ")");
+                        LogManager.getInstance().log(Level.SEVERE, LogManager.ETagLog.PLAYER, "Failed to update player", ex);
                     }
                 }
         );

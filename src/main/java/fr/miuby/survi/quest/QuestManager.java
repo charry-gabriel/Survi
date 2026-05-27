@@ -113,7 +113,7 @@ public class QuestManager {
                         .build());
 
             } catch (Exception e) {
-                LogManager.getInstance().log(Level.WARNING, LogManager.ETagLog.QUEST, "Erreur lors du chargement d'une quête dans quests.yml : " + e.getMessage());
+                LogManager.getInstance().log(Level.WARNING, LogManager.ETagLog.QUEST, "Erreur lors du chargement d'une quête dans quests.yml", e);
             }
         }
 
@@ -294,6 +294,8 @@ public class QuestManager {
         // Mémoriser cette quête comme dernière attribuée pour l'anti-répétition
         GameManager.getInstance().getDatabase().quests().setLastQuestId(player.getUuid(), quest.getId());
 
+        LogManager.getInstance().log(Level.FINE, LogManager.ETagLog.QUEST,
+                "[AssignQuest] " + player.getPseudo() + " → " + quest.getId() + " (" + difficulty + ") slot=" + nextSlot);
         player.getPlayer().sendMessage("§aNouvelle quête acceptée auprès de §b" + trader.getNameId() + " §a: §6" + quest.getName());
         player.getPlayer().sendMessage("§7" + quest.getDescription());
         player.getPlayer().sendMessage("§8Quête " + (nextSlot + 1) + "/" + DAILY_QUEST_LIMIT + " du jour.");
@@ -373,6 +375,8 @@ public class QuestManager {
         if (!targetOk) return;
 
         data.setProgress(data.getProgress() + amount);
+        LogManager.getInstance().log(Level.FINE, LogManager.ETagLog.QUEST,
+                "[QuestProgress] " + player.getPseudo() + " — " + data.getQuestId() + " : " + data.getProgress() + "/" + quest.getGoal());
 
         if (data.getProgress() >= quest.getGoal()) {
             completeQuestInternal(player, quest);
@@ -387,6 +391,8 @@ public class QuestManager {
 
         data.setProgress(quest.getGoal());
         data.setCompleted(true);
+        LogManager.getInstance().log(Level.INFO, LogManager.ETagLog.QUEST,
+                "[QuestComplete] " + player.getPseudo() + " — " + quest.getId());
         GameManager.getInstance().getDatabase().quests().updatePlayerQuest(player.getUuid(), data);
 
         Sound myCustomSound = Sound.sound(Key.key("ui.toast.challenge_complete"), Sound.Source.MASTER, 1f, 1.1f);

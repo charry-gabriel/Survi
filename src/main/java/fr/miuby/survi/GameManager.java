@@ -132,7 +132,6 @@ public class GameManager {
 
         this.mobLevelManager = new MobLevelManager();
         this.mobLevelManager.init();
-        new MobNametagTask().runTaskTimer(this.plugin, 0L, MobNametagTask.PERIOD_TICKS);
 
         LogManager.getInstance().log(Level.INFO, LogManager.ETagLog.PLAYER, "Initialisation des joueurs...");
         this.initPlayers();

@@ -23,22 +23,28 @@ public class ServerListener implements Listener {
 
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
+        LogManager.getInstance().log(Level.FINE, LogManager.ETagLog.PLAYER,
+                "[Join] " + event.getPlayer().getName() + " (" + event.getPlayer().getUniqueId() + ")");
         GameManager.getInstance().getAlphaPlayerFactory().onPlayerJoin(event.getPlayer());
     }
 
     @EventHandler
     public void onPlayerQuit(PlayerQuitEvent event) {
+        LogManager.getInstance().log(Level.FINE, LogManager.ETagLog.PLAYER,
+                "[Quit] " + event.getPlayer().getName());
         AlphaPlayer.get(event.getPlayer().getUniqueId()).resetPlayer();
     }
 
     @EventHandler
     public void onEntitySpawn(EntitySpawnEvent event) {
         if (event.getEntity() instanceof EnderDragon dragon) {
+            LogManager.getInstance().log(Level.FINE, LogManager.ETagLog.WORLD,
+                    "[EntitySpawn] EnderDragon spawned at " + dragon.getLocation());
             try {
                 Objects.requireNonNull(dragon.getAttribute(Attribute.MAX_HEALTH)).setBaseValue(2000);
                 dragon.setHealth(2000);
             } catch (Exception exception) {
-                LogManager.getInstance().log(Level.SEVERE, LogManager.ETagLog.WORLD, Errors.nullException + " (" + exception.getMessage() + ")");
+                LogManager.getInstance().log(Level.SEVERE, LogManager.ETagLog.WORLD, Errors.nullException + " (EnderDragon)", exception);
             }
         }
     }

@@ -307,7 +307,7 @@ public class TimeManager {
             logger.log(Level.SEVERE, LogManager.ETagLog.SYSTEM,"╔════════════════════════════════════╗");
             logger.log(Level.SEVERE, LogManager.ETagLog.SYSTEM,"║ ERREUR CHARGEMENT RESET !          ║");
             logger.log(Level.SEVERE, LogManager.ETagLog.SYSTEM,"╠════════════════════════════════════╣");
-            logger.log(Level.SEVERE, LogManager.ETagLog.SYSTEM,"║ " + e.getMessage());
+            logger.log(Level.SEVERE, LogManager.ETagLog.SYSTEM, "Erreur chargement reset", e);
             logger.log(Level.SEVERE, LogManager.ETagLog.SYSTEM,"║ → Fallback : force un reset        ║");
             logger.log(Level.SEVERE, LogManager.ETagLog.SYSTEM,"╚════════════════════════════════════╝");
 
@@ -322,7 +322,7 @@ public class TimeManager {
             String data = lastResetTimestamp + ":" + lastResetDay;
             GameManager.getInstance().getDatabase().system().saveServerData("last_daily_reset", data);
         } catch (Exception e) {
-            logger.log(Level.SEVERE, LogManager.ETagLog.SYSTEM,"ERREUR lors de la sauvegarde du reset : " + e.getMessage());
+            logger.log(Level.SEVERE, LogManager.ETagLog.SYSTEM, "ERREUR lors de la sauvegarde du reset", e);
         }
     }
     //endregion

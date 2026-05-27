@@ -107,7 +107,7 @@ public class Survi extends JavaPlugin {
                 }
             }
         } catch (IOException e) {
-            LogManager.getInstance().log (Level.SEVERE, LogManager.ETagLog.SYSTEM, "Failed to load resources from folder: " + folder + " " + e.getMessage());
+            LogManager.getInstance().log(Level.SEVERE, LogManager.ETagLog.SYSTEM, "Failed to load resources from folder: " + folder, e);
         }
     }
 }

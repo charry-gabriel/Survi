@@ -55,7 +55,7 @@ public class GraveManager {
                         LogManager.getInstance().log(Level.WARNING, LogManager.ETagLog.GRAVE, "Impossible de supprimer le fichier corrompu : " + file.getName());
                 }
             } catch (Exception e) {
-                LogManager.getInstance().log(Level.WARNING, LogManager.ETagLog.GRAVE, "Fichier corrompu ignoré : " + file.getName() + e.getMessage());
+                LogManager.getInstance().log(Level.WARNING, LogManager.ETagLog.GRAVE, "Fichier corrompu ignoré : " + file.getName(), e);
             }
         }
 
@@ -88,6 +88,8 @@ public class GraveManager {
         saveGraveFile(grave, items);
         graveLocations.put(loc, grave);
         loc.getBlock().setType(GRAVE_MATERIAL);
+        LogManager.getInstance().log(Level.FINE, LogManager.ETagLog.GRAVE,
+                "[CreateGrave] " + player.getName() + " → " + graveId + " en " + loc.getWorld().getName() + " " + loc.getBlockX() + "," + loc.getBlockY() + "," + loc.getBlockZ());
 
         // Vide uniquement les 36 slots de l'inventaire, pas l'armure
         player.getInventory().setStorageContents(new ItemStack[36]);
@@ -144,6 +146,8 @@ public class GraveManager {
         }
 
         removeGrave(grave);
+        LogManager.getInstance().log(Level.FINE, LogManager.ETagLog.GRAVE,
+                "[CollectGrave] " + player.getName() + " a récupéré la tombe " + grave.id());
         player.sendMessage(Component.text("Vous avez récupéré votre tombe.").color(NamedTextColor.GREEN));
         return true;
     }
@@ -182,7 +186,7 @@ public class GraveManager {
         try {
             cfg.save(file);
         } catch (IOException e) {
-            LogManager.getInstance().log(Level.SEVERE, LogManager.ETagLog.GRAVE, "Impossible de sauvegarder " + file.getName() + e.getMessage());
+            LogManager.getInstance().log(Level.SEVERE, LogManager.ETagLog.GRAVE, "Impossible de sauvegarder " + file.getName(), e);
         }
     }
 

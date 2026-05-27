@@ -266,7 +266,7 @@ public class VillageZoneManager {
                     "[VillageZoneManager] Timestamp chargé depuis DB : " + startTimestamp);
         } catch (NumberFormatException e) {
             LogManager.getInstance().log(Level.WARNING, LogManager.ETagLog.WORLD,
-                    "[VillageZoneManager] Timestamp DB invalide, ignoré." + e.getMessage());
+                    "[VillageZoneManager] Timestamp DB invalide, ignoré", e);
         }
     }
 

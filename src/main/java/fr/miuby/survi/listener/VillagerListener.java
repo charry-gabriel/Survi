@@ -58,6 +58,8 @@ public class VillagerListener implements Listener {
                 }
                 case Trader trader -> {
                     AlphaPlayer alphaPlayer = AlphaPlayer.get(player.getUniqueId());
+                    LogManager.getInstance().log(Level.FINE, LogManager.ETagLog.VILLAGER,
+                            "[VillagerInteract] " + player.getName() + " → Trader " + trader.getNameId());
 
                     // Priorité 1 : une quête complétée mais non réclamée est en attente → on la réclame
                     PlayerQuestData completedUnclaimed = alphaPlayer.getActiveQuests().stream()
@@ -110,6 +112,8 @@ public class VillagerListener implements Listener {
     @EventHandler
     public void onVillagerLoaded(VillagerLoadedEvent event) {
         MLVillager villager = event.getVillager();
+        LogManager.getInstance().log(Level.FINE, LogManager.ETagLog.VILLAGER,
+                "[VillagerLoaded] " + villager.getNameId());
         VillagerRegistry.register(villager);
         VillagerPostLoadActions.executeAndClear(villager);
     }
@@ -117,6 +121,8 @@ public class VillagerListener implements Listener {
     @EventHandler
     public void onVillagerLevelUp(VillagerLevelUpEvent event) {
         VillagerLevel villager = event.getVillagerLevel();
+        LogManager.getInstance().log(Level.INFO, LogManager.ETagLog.VILLAGER,
+                "[VillagerLevelUp] " + villager.getNameId() + " → niveau " + villager.getLevel());
         Component message = villager.getMessage();
 
         if (message != null && !PlainTextComponentSerializer.plainText().serialize(message).isBlank()) {

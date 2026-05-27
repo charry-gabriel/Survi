@@ -39,7 +39,7 @@ public class QuestRepository {
                 }
             }
         } catch (SQLException ex) {
-            LogManager.getInstance().log(Level.SEVERE, LogManager.ETagLog.REPUTATION, "Failed to get reputation (" + ex.getMessage() + ")");
+            LogManager.getInstance().log(Level.SEVERE, LogManager.ETagLog.REPUTATION, "Failed to get reputation", ex);
         }
         return reputations;
     }
@@ -57,7 +57,7 @@ public class QuestRepository {
                         ps.executeUpdate();
 
                     } catch (SQLException ex) {
-                        LogManager.getInstance().log(Level.SEVERE, LogManager.ETagLog.REPUTATION, "Failed to update reputation (" + ex.getMessage() + ")");
+                        LogManager.getInstance().log(Level.SEVERE, LogManager.ETagLog.REPUTATION, "Failed to update reputation", ex);
                     }
                 }
         );
@@ -92,7 +92,7 @@ public class QuestRepository {
                 }
             }
         } catch (SQLException ex) {
-            LogManager.getInstance().log(Level.SEVERE, LogManager.ETagLog.QUEST, "Failed to get player quests (" + ex.getMessage() + ")");
+            LogManager.getInstance().log(Level.SEVERE, LogManager.ETagLog.QUEST, "Failed to get player quests", ex);
         }
         return quests;
     }
@@ -124,7 +124,7 @@ public class QuestRepository {
                         ps.executeUpdate();
 
                     } catch (SQLException ex) {
-                        LogManager.getInstance().log(Level.SEVERE, LogManager.ETagLog.QUEST, "Failed to update player quest (" + ex.getMessage() + ")");
+                        LogManager.getInstance().log(Level.SEVERE, LogManager.ETagLog.QUEST, "Failed to update player quest", ex);
                     }
                 }
         );
@@ -145,7 +145,7 @@ public class QuestRepository {
                         ps.executeUpdate();
 
                     } catch (SQLException ex) {
-                        LogManager.getInstance().log(Level.SEVERE, LogManager.ETagLog.QUEST, "Failed to delete player quest slot (" + ex.getMessage() + ")");
+                        LogManager.getInstance().log(Level.SEVERE, LogManager.ETagLog.QUEST, "Failed to delete player quest slot", ex);
                     }
                 }
         );
@@ -165,7 +165,7 @@ public class QuestRepository {
                         ps.executeUpdate();
 
                     } catch (SQLException ex) {
-                        LogManager.getInstance().log(Level.SEVERE, LogManager.ETagLog.QUEST, "Failed to clear all player quests (" + ex.getMessage() + ")");
+                        LogManager.getInstance().log(Level.SEVERE, LogManager.ETagLog.QUEST, "Failed to clear all player quests", ex);
                     }
                 }
         );
@@ -188,7 +188,7 @@ public class QuestRepository {
                 if (rs.next()) return rs.getString("last_quest_id");
             }
         } catch (SQLException ex) {
-            LogManager.getInstance().log(Level.SEVERE, LogManager.ETagLog.QUEST, "Failed to get last quest id (" + ex.getMessage() + ")");
+            LogManager.getInstance().log(Level.SEVERE, LogManager.ETagLog.QUEST, "Failed to get last quest id", ex);
         }
         return null;
     }
@@ -208,7 +208,7 @@ public class QuestRepository {
                         ps.executeUpdate();
 
                     } catch (SQLException ex) {
-                        LogManager.getInstance().log(Level.SEVERE, LogManager.ETagLog.QUEST, "Failed to set last quest id (" + ex.getMessage() + ")");
+                        LogManager.getInstance().log(Level.SEVERE, LogManager.ETagLog.QUEST, "Failed to set last quest id", ex);
                     }
                 }
         );

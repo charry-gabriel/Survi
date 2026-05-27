@@ -54,7 +54,7 @@ public class VillagerRepository {
                 return new AlphaVillagerData(uuid, nameId, location, givenItems, level, unlockToEpochMilli);
             }
         } catch (SQLException ex) {
-            LogManager.getInstance().log(Level.SEVERE, LogManager.ETagLog.VILLAGER, "Failed to load villager: " + nameId + " (" + ex.getMessage() + ")");
+            LogManager.getInstance().log(Level.SEVERE, LogManager.ETagLog.VILLAGER, "Failed to load villager: " + nameId, ex);
             return null;
         }
     }
@@ -76,7 +76,7 @@ public class VillagerRepository {
                         insertPs.executeUpdate();
 
                     } catch (SQLException ex) {
-                        LogManager.getInstance().log(Level.SEVERE, LogManager.ETagLog.VILLAGER, "Failed to create villager (" + ex.getMessage() + ")");
+                        LogManager.getInstance().log(Level.SEVERE, LogManager.ETagLog.VILLAGER, "Failed to create villager", ex);
                     }
                 }
         );
@@ -93,7 +93,7 @@ public class VillagerRepository {
                         ps.executeUpdate();
 
                     } catch (SQLException ex) {
-                        LogManager.getInstance().log(Level.SEVERE, LogManager.ETagLog.VILLAGER, "Failed to update villager level (" + ex.getMessage() + ")");
+                        LogManager.getInstance().log(Level.SEVERE, LogManager.ETagLog.VILLAGER, "Failed to update villager level", ex);
                     }
                 }
         );
@@ -114,7 +114,7 @@ public class VillagerRepository {
                         ps.executeUpdate();
 
                     } catch (SQLException ex) {
-                        LogManager.getInstance().log(Level.SEVERE, LogManager.ETagLog.VILLAGER, "Failed to update villager location (" + ex.getMessage() + ")");
+                        LogManager.getInstance().log(Level.SEVERE, LogManager.ETagLog.VILLAGER, "Failed to update villager location", ex);
                     }
                 }
         );
@@ -132,7 +132,7 @@ public class VillagerRepository {
                         ps.executeUpdate();
 
                     } catch (SQLException ex) {
-                        LogManager.getInstance().log(Level.SEVERE, LogManager.ETagLog.VILLAGER, "Failed to update villager given items (" + ex.getMessage() + ")");
+                        LogManager.getInstance().log(Level.SEVERE, LogManager.ETagLog.VILLAGER, "Failed to update villager given items", ex);
                     }
                 }
         );
@@ -153,7 +153,7 @@ public class VillagerRepository {
                         ps.executeUpdate();
 
                     } catch (SQLException ex) {
-                        LogManager.getInstance().log(Level.SEVERE, LogManager.ETagLog.VILLAGER, "Failed to update villager lock (" + ex.getMessage() + ")");
+                        LogManager.getInstance().log(Level.SEVERE, LogManager.ETagLog.VILLAGER, "Failed to update villager lock", ex);
                     }
                 }
         );
