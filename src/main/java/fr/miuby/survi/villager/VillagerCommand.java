@@ -90,7 +90,7 @@ public class VillagerCommand {
         } else if (villager instanceof Trader trader) {
             text = text
                     .appendNewline()
-                    .append(Component.text("Reputation : " + GameManager.getInstance().getAlphaPlayerFactory().getAlphaPlayer(ctx.getSource().getSender().getName()).getReputation(trader.getNameId())));
+                    .append(Component.text("Job : " + trader.getJob()));
         }
         ctx.getSource().getSender().sendMessage(text);
         return Command.SINGLE_SUCCESS;

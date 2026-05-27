@@ -248,24 +248,6 @@ public class AlphaPlayer extends MLPlayer implements Serializable {
     // Réputation
     // -----------------------------------------------------------------------
 
-    /**
-     * Retourne la réputation du joueur pour le métier lié à ce trader.
-     *
-     * @deprecated Crée une dépendance AlphaPlayer → VillagerFactory.
-     *             Préférer {@link #getJobReputation(EJob)} en résolvant
-     *             le job en amont (depuis le Trader ou le contexte d'appel).
-     *             Cette méthode sera supprimée dès que VillagerListener,
-     *             TabDisplayManager et VillagerCommand auront migré vers EJob.
-     */
-    @Deprecated(forRemoval = true)
-    public int getReputation(String traderId) {
-        return GameManager.getInstance().getVillagerFactory().getTraders().stream()
-                .filter(t -> traderId.equals(t.getNameId()) && t.getJob() != null)
-                .map(t -> reputationByJob.getOrDefault(t.getJob(), 0))
-                .findFirst()
-                .orElse(0);
-    }
-
     /** Réputation directe pour un métier donné. */
     public int getJobReputation(EJob job) {
         return reputationByJob.getOrDefault(job, 0);

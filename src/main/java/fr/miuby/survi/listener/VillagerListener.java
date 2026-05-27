@@ -88,7 +88,7 @@ public class VillagerListener implements Listener {
                     }
 
                     // Update recipes based on reputation
-                    int reputation = alphaPlayer.getReputation(trader.getNameId());
+                    int reputation = alphaPlayer.getJobReputation(trader.getJob());
                     List<MerchantRecipe> recipes = trader.getRecipesForPlayer(reputation);
                     trader.getVillager().setRecipes(recipes);
 
