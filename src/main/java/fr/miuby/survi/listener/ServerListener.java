@@ -5,6 +5,7 @@ import fr.miuby.survi.system.database.Errors;
 import fr.miuby.survi.player.AlphaPlayer;
 import fr.miuby.survi.quest.PlayerQuestData;
 import fr.miuby.survi.quest.Quest;
+import fr.miuby.survi.display.TutorialBookService;   // ← AJOUT
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.EnderDragon;
 import org.bukkit.event.EventHandler;
@@ -25,7 +26,18 @@ public class ServerListener implements Listener {
     public void onPlayerJoin(PlayerJoinEvent event) {
         LogManager.getInstance().log(Level.FINE, LogManager.ETagLog.PLAYER,
                 "[Join] " + event.getPlayer().getName() + " (" + event.getPlayer().getUniqueId() + ")");
+
         GameManager.getInstance().getAlphaPlayerFactory().onPlayerJoin(event.getPlayer());
+
+        // ── Livre de tutoriel pour les nouveaux joueurs ───────────────────────
+        // giveTutorialBookIfNew vérifie player.hasPlayedBefore() en interne.
+        // Le scheduler décale d'un tick pour s'assurer que l'inventaire est prêt.
+        GameManager.getInstance().getPlugin().getServer().getScheduler()
+                .runTaskLater(
+                        GameManager.getInstance().getPlugin(),
+                        () -> TutorialBookService.giveTutorialBookIfNew(event.getPlayer()),
+                        1L
+                );
     }
 
     @EventHandler
@@ -44,7 +56,8 @@ public class ServerListener implements Listener {
                 Objects.requireNonNull(dragon.getAttribute(Attribute.MAX_HEALTH)).setBaseValue(2000);
                 dragon.setHealth(2000);
             } catch (Exception exception) {
-                LogManager.getInstance().log(Level.SEVERE, LogManager.ETagLog.WORLD, Errors.nullException + " (EnderDragon)", exception);
+                LogManager.getInstance().log(Level.SEVERE, LogManager.ETagLog.WORLD,
+                        Errors.nullException + " (EnderDragon)", exception);
             }
         }
     }
