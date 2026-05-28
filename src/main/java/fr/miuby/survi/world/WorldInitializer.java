@@ -7,10 +7,7 @@ import fr.miuby.survi.GameManager;
 import fr.miuby.survi.system.log.LogManager;
 import lombok.Getter;
 import net.kyori.adventure.text.format.NamedTextColor;
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.World;
-import org.bukkit.WorldCreator;
+import org.bukkit.*;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -80,13 +77,15 @@ public class WorldInitializer {
         mvVillage.setLimit(new Rect(512,-512,512,50,512,-512));
         mvVillage.getWorld().setSpawnLocation(new Location(mvVillage.getWorld(), -24, 158, -30));
         WorldRegistry.register(mvVillage);
+        village.setGameRule(GameRules.ADVANCE_TIME, false);
+        village.setGameRule(GameRules.MOB_GRIEFING, false);
 
         // --- Wilderness (NORMAL, réinitialisable) ---
         String wildName = worlds.get(EWorld.WILDERNESS);
-        World wild = loadOrCreate(wildName, World.Environment.NORMAL);
-        MLWorld mvWild = new MLWorld(wild, "Wilderness", NamedTextColor.GOLD, EWorld.WILDERNESS);
-        mvWild.setLimit(new Rect(2000,-2000, Integer.MAX_VALUE, Integer.MIN_VALUE,2000,-2000));
+        World wilderness = loadOrCreate(wildName, World.Environment.NORMAL);
+        MLWorld mvWild = new MLWorld(wilderness, "Wilderness", NamedTextColor.GOLD, EWorld.WILDERNESS);
         WorldRegistry.register(mvWild);
+        wilderness.setGameRule(GameRules.NATURAL_HEALTH_REGENERATION, false);
 
         // --- Nether (NETHER, réinitialisable, verrouillé par défaut) ---
         String netherName = worlds.get(EWorld.NETHER);
@@ -94,6 +93,7 @@ public class WorldInitializer {
         MLWorld mvNether = new MLWorld(nether, "Nether", NamedTextColor.RED, EWorld.NETHER);
         mvNether.setLocked(true);
         WorldRegistry.register(mvNether);
+        nether.setGameRule(GameRules.NATURAL_HEALTH_REGENERATION, false);
 
         // --- End (THE_END, réinitialisable, verrouillé par défaut) ---
         String endName = worlds.get(EWorld.END);
@@ -101,6 +101,7 @@ public class WorldInitializer {
         MLWorld mvEnd = new MLWorld(end, "End", NamedTextColor.YELLOW, EWorld.END);
         mvEnd.setLocked(true);
         WorldRegistry.register(mvEnd);
+        end.setGameRule(GameRules.NATURAL_HEALTH_REGENERATION, false);
     }
 
     // -------------------------------------------------------------------------
@@ -182,6 +183,7 @@ public class WorldInitializer {
             // On ne cache pas l'erreur avec un if : on la lève explicitement.
             throw new IllegalStateException("Échec de la création du monde : " + name + " (" + env + ")");
         }
+        created.setGameRule(GameRules.NATURAL_HEALTH_REGENERATION, false);
         return created;
     }
 

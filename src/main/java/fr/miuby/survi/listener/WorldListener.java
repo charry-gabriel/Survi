@@ -7,7 +7,7 @@ import fr.miuby.survi.player.AlphaPlayer;
 import fr.miuby.survi.system.log.LogManager;
 import fr.miuby.survi.world.EWorld;
 import fr.miuby.survi.world.WorldInitializer;
-import fr.miuby.survi.world.WorldPortalManager;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
@@ -16,6 +16,8 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.event.player.PlayerPortalEvent;
+import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.event.world.PortalCreateEvent;
 
 import java.util.logging.Level;
@@ -59,6 +61,7 @@ public class WorldListener implements Listener {
                     "onPlayerChangedWorld : monde non enregistré pour "
                             + event.getPlayer().getName()
                             + " → " + event.getPlayer().getWorld().getName()
+                            + " (uid=" + event.getPlayer().getWorld().getUID() + ")"  // ← uid utile pour debug
                             + ". AlphaPlayer.world non mis à jour.");
             return;
         }
@@ -68,7 +71,7 @@ public class WorldListener implements Listener {
         GameManager.getInstance().getAlphaPlayerFactory().getAttributeService().reapplyAllRoleAttributes(alphaPlayer);
     }
 
-@EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onPlayerMove(PlayerMoveEvent event) {
         if (!event.hasChangedBlock()) return;
 
@@ -76,6 +79,40 @@ public class WorldListener implements Listener {
         Location to        = event.getTo();
         String   worldName = to.getWorld().getName();
 
-        GameManager.getInstance().getWorldPortalManager().teleportTowWorld(player, to, worldName);
+        GameManager.getInstance().getWorldPortalManager().teleportToWorld(player, to, worldName);
+    }
+
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
+    public void onPlayerPortal(PlayerPortalEvent event) {
+        if (event.getCause() != PlayerTeleportEvent.TeleportCause.NETHER_PORTAL) return;
+
+        Player player = event.getPlayer();
+        String fromWorld = player.getWorld().getName();
+
+        String wildName   = WorldInitializer.getWorlds().get(EWorld.WILDERNESS);
+        String netherName = WorldInitializer.getWorlds().get(EWorld.NETHER);
+
+        // Wilderness → Nether
+        if (fromWorld.equals(wildName)) {
+            World nether = Bukkit.getWorld(netherName);
+            if (nether == null) { event.setCancelled(true); return; }
+
+            Location from = player.getLocation();
+            event.setTo(new Location(nether, from.getX() / 8.0, from.getY(), from.getZ() / 8.0));
+            return;
+        }
+
+        // Nether → Wilderness
+        if (fromWorld.equals(netherName)) {
+            World wild = Bukkit.getWorld(wildName);
+            if (wild == null) { event.setCancelled(true); return; }
+
+            Location from = player.getLocation();
+            event.setTo(new Location(wild, from.getX() * 8.0, from.getY(), from.getZ() * 8.0));
+            return;
+        }
+
+        // Tout autre monde (Village, End...) → bloquer le portail nether vanilla
+        event.setCancelled(true);
     }
 }

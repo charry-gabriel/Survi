@@ -224,7 +224,7 @@ public class WorldPortalManager {
     // Téléportation — PlayerMoveEvent
     // -------------------------------------------------------------------------
 
-    public void teleportTowWorld(Player player, Location to, String worldName) {
+    public void teleportToWorld(Player player, Location to, String worldName) {
         Location[] zone = portalZones.get(worldName);
         if (zone == null) return;
         if (!isInPortalZone(to, zone[0], zone[1])) return;
@@ -232,11 +232,14 @@ public class WorldPortalManager {
 
         String villageName = WorldInitializer.getWorlds().get(EWorld.VILLAGE);
         String wildName    = WorldInitializer.getWorlds().get(EWorld.WILDERNESS);
+        String netherName  = WorldInitializer.getWorlds().get(EWorld.NETHER);
 
         if (worldName.equals(villageName)) {
-            triggerTeleport(player, EWorld.WILDERNESS, "§6[Portail] §eVous entrez dans la Wilderness !");
+            triggerTeleport(player, EWorld.WILDERNESS);
         } else if (worldName.equals(wildName)) {
-            triggerTeleport(player, EWorld.VILLAGE, "§6[Portail] §eRetour au Village !");
+            triggerTeleport(player, EWorld.VILLAGE);
+        } else if (worldName.equals(netherName)) {
+            triggerTeleport(player, EWorld.WILDERNESS);
         }
     }
 
@@ -272,7 +275,7 @@ public class WorldPortalManager {
         }
     }
 
-    private void triggerTeleport(Player player, EWorld destination, String message) {
+    private void triggerTeleport(Player player, EWorld destination) {
         teleporting.add(player.getUniqueId());
 
         var mlWorld = WorldRegistry.get(destination);
@@ -283,7 +286,6 @@ public class WorldPortalManager {
         }
 
         player.teleport(mlWorld.getWorld().getSpawnLocation());
-        player.sendMessage(message);
 
         Bukkit.getScheduler().runTaskLater(GameManager.getInstance().getPlugin(), () -> teleporting.remove(player.getUniqueId()), 20L);
     }

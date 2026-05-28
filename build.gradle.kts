@@ -20,8 +20,8 @@ repositories {
 }
 
 dependencies {
-    compileOnly("io.papermc.paper:paper-api:26.1.2.build.5-alpha")
-    testImplementation("io.papermc.paper:paper-api:26.1.2.build.5-alpha")
+    compileOnly("io.papermc.paper:paper-api:26.1.2.build.66-stable")
+    testImplementation("io.papermc.paper:paper-api:26.1.2.build.66-stable")
 
     compileOnly("org.projectlombok:lombok:1.18.38")
     annotationProcessor("org.projectlombok:lombok:1.18.38")

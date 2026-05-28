@@ -4,8 +4,10 @@ import com.destroystokyo.paper.event.player.PlayerArmorChangeEvent;
 import fr.miuby.lib.world.MLWorld;
 import fr.miuby.lib.world.WorldRegistry;
 import fr.miuby.survi.GameManager;
+import fr.miuby.survi.job.EJob;
 import fr.miuby.survi.player.AlphaPlayer;
 import fr.miuby.survi.role.RoleAttribute;
+import fr.miuby.survi.system.SurviConfig;
 import fr.miuby.survi.world.EWorld;
 import io.papermc.paper.advancement.AdvancementDisplay;
 import net.kyori.adventure.text.Component;
@@ -51,12 +53,54 @@ public class PlayerListener implements Listener {
         String worldName = player.getWorld().getName();
         MLWorld villageWorld = WorldRegistry.get(EWorld.VILLAGE);
         MLWorld wildernessWorld = WorldRegistry.get(EWorld.WILDERNESS);
+        MLWorld netherWorld = WorldRegistry.get(EWorld.NETHER);
 
-        if ((worldName.equals(villageWorld.getName()) && GameManager.getInstance().getVillageZoneManager().isLocationOutOfBounds(event.getTo()))
-            || (worldName.equals(wildernessWorld.getName()) && wildernessWorld.isPlayerOutOfLimit(player))) {
-                blockMovement(event);
-                warn(player);
+        boolean outOfBounds = false;
+
+        // --- Village : limite gérée par la zone évolutive ---
+        if (worldName.equals(villageWorld.getName())
+                && GameManager.getInstance().getVillageZoneManager().isLocationOutOfBounds(event.getTo())) {
+            outOfBounds = true;
         }
+
+        // --- Wilderness : limite dynamique selon niveau Aventurier ---
+        if (!outOfBounds && wildernessWorld != null && worldName.equals(wildernessWorld.getWorld().getName())) {
+            outOfBounds = isOutOfAdventureLimit(event.getPlayer(), event.getTo(), false);
+        }
+
+        // --- Nether : même limite divisée par 8 ---
+        if (!outOfBounds && netherWorld != null && worldName.equals(netherWorld.getWorld().getName())) {
+            outOfBounds = isOutOfAdventureLimit(event.getPlayer(), event.getTo(), true);
+        }
+
+        if (outOfBounds) {
+            blockMovement(event);
+            warn(player);
+        }
+    }
+
+    /**
+     * Vérifie si le joueur dépasse la limite d'exploration liée à son niveau Aventurier.
+     *
+     * @param player  le joueur à tester
+     * @param to      la destination du mouvement
+     * @param isNether {@code true} pour le Nether (rayon divisé par 8)
+     * @return {@code true} si la position est hors des limites autorisées
+     */
+    private boolean isOutOfAdventureLimit(Player player, Location to, boolean isNether) {
+        AlphaPlayer alphaPlayer = AlphaPlayer.get(player.getUniqueId());
+        if (alphaPlayer == null) return false;
+
+        int aventurierLevel = alphaPlayer.getJobLevel(EJob.AVENTURIER);
+        List<Integer> radii = SurviConfig.getInstance().getAdventureWildernessRadii();
+
+        int idx = Math.min(aventurierLevel, radii.size() - 1);
+        int radius = radii.get(idx);
+        if (isNether) radius = radius / 8;
+
+        double absX = Math.abs(to.getX());
+        double absZ = Math.abs(to.getZ());
+        return absX > radius || absZ > radius;
     }
 
     private void blockMovement(PlayerMoveEvent event) {

@@ -83,42 +83,21 @@ public class WorldResetManager {
         }, 20L * 5);
     }
 
-    // -------------------------------------------------------------------------
-    // Portail Wilderness — cadre obsidienne 4L×5H, intérieur 2×3 en verre
-    //
-    // Vue de face (Z fixe, axe X = largeur — on entre par Nord/Sud) :
-    //
-    //   O O O O   h=4  toit
-    //   O G G O   h=3  intérieur
-    //   O G G O   h=2  intérieur
-    //   O G G O   h=1  intérieur  ← min = (bx, by+1, bz), max = (bx+1, by+3, bz)
-    //   O O O O   h=0  sol
-    //   w: -1 0 1 2
-    //
-    // G = GLASS (verre, affiché en NETHER_PORTAL côté client par WorldPortalManager)
-    // O = OBSIDIAN
-    //
-    // Axe du faux portail : Axis.X (min.Z == max.Z, détecté automatiquement).
-    // -------------------------------------------------------------------------
-
     void buildWorldPortal(String worldName) {
         World world = Bukkit.getWorld(worldName);
         if (world == null) return;
 
-        Location spawn = world.getSpawnLocation();
-        int bx     = spawn.getBlockX() + 4;
-        int bz     = spawn.getBlockZ() + 4;
-        int groundY = world.getHighestBlockYAt(bx, bz);
-        int by      = groundY; // h=0 (sol du cadre) est à groundY, intérieur commence à groundY+1
+        // Portail fixe en 0,0 — facile à retrouver
+        int bx = 0;
+        int bz = 0;
+        int by = world.getHighestBlockYAt(bx, bz);
 
-        // Plateforme obsidienne sous le portail
+        // Plateforme
         for (int x = -1; x <= 2; x++)
             for (int z = -1; z <= 1; z++)
                 world.getBlockAt(bx + x, by - 1, bz + z).setType(Material.STONE_BRICKS);
 
         // Cadre + intérieur
-        // w va de -1 à 2 (largeur 4 blocs), intérieur à w=0 et w=1
-        // h va de 0 à 4 (hauteur 5 blocs), intérieur à h=1, h=2, h=3
         for (int h = 0; h <= 4; h++) {
             for (int w = -1; w <= 2; w++) {
                 boolean isBorder = (h == 0 || h == 4 || w == -1 || w == 2);
@@ -127,15 +106,17 @@ public class WorldResetManager {
             }
         }
 
-        // min = coin bas-gauche de l'intérieur (h=1, w=0)
-        // max = coin haut-droit de l'intérieur (h=3, w=1)
-        // Z identique → detectAxis() retournera Axis.X
         Location min = new Location(world, bx,     by + 1, bz);
         Location max = new Location(world, bx + 1, by + 3, bz);
 
+        // Spawn juste à côté du portail (quelques blocs devant)
+        int newZ = bz + 6;
+        int newY = world.getHighestBlockYAt(bx, newZ);
+        world.setSpawnLocation(new Location(world, bx, newY + 1, newZ));
+
         GameManager.getInstance().getWorldPortalManager().registerWildernessPortal(worldName, min, max);
 
-        LogManager.getInstance().log(Level.INFO, LogManager.ETagLog.WORLD, "Portail Wilderness construit dans " + worldName + " (Y=" + by + ")");
+        LogManager.getInstance().log(Level.INFO, LogManager.ETagLog.WORLD, "Portail Wilderness construit dans " + worldName + " en 0,0 (Y=" + by + ")");
     }
 
     // -------------------------------------------------------------------------

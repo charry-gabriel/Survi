@@ -113,6 +113,28 @@ world-level:
       per-level-gain: 1
     # rare = 100 − common − legendary (calculé automatiquement, non configurable)
 
+# ─── Limites Aventurier ──────────────────────────────────────────────────────────
+# Rayon autorisé dans la Wilderness (et dans le Nether = rayon ÷ 8) par niveau
+# du métier Aventurier (niveaux 0 à 10, doit correspondre à jobs.levels).
+# Le Nether utilise le même palier divisé par 8 pour rester cohérent avec le
+# ratio de coordonnées Overworld/Nether (1 bloc Nether = 8 blocs Overworld).
+# L'End n'a aucune limite.
+adventure-limits:
+  # Rayon Wilderness en blocs (XZ) pour chaque niveau Aventurier.
+  # 11 entrées = niveaux 0 → 10.
+  wilderness-radius-per-level:
+    - 500      # niveau  0 — Débutant
+    - 750      # niveau  1 — Novice
+    - 1000     # niveau  2 — Apprenti
+    - 1500     # niveau  3 — Adepte
+    - 2000     # niveau  4 — Confirmé
+    - 3000     # niveau  5 — Journalier
+    - 4000     # niveau  6 — Expert
+    - 6000     # niveau  7 — Artisan
+    - 8000     # niveau  8 — Maître
+    - 12000    # niveau  9 — Grand Maître
+    - 200000    # niveau 10 — Légendaire
+
 # ─── Zone Village ────────────────────────────────────────────────────────────────
 village-zone:
   # Centre du village (coordonnées XZ). Le rayon est mesuré depuis ce point.

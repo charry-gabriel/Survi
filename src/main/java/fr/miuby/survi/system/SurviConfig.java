@@ -62,6 +62,9 @@ public class SurviConfig {
 
     @Getter private VillageZoneConfig villageZoneConfig;
 
+    /** Rayon Wilderness (en blocs XZ) autorisé par niveau Aventurier (index 0–10). */
+    @Getter private List<Integer> adventureWildernessRadii;
+
     // ─── Initialisation ──────────────────────────────────────────────────────────
 
     public void init(JavaPlugin plugin) {
@@ -118,6 +121,21 @@ public class SurviConfig {
         questLegendaryPerLevelGain = cfg.getInt("world-level.quest-weights.legendary.per-level-gain",  1);
 
         EGlobalRank.initFromConfig(this);
+
+        // ─── Limites Aventurier ──────────────────────────────────────────────────────
+        adventureWildernessRadii = new ArrayList<>();
+        List<?> rawRadii = cfg.getList("adventure-limits.wilderness-radius-per-level");
+        if (rawRadii != null) {
+            for (Object obj : rawRadii) {
+                if (obj instanceof Number n) {
+                    adventureWildernessRadii.add(n.intValue());
+                }
+            }
+        }
+        if (adventureWildernessRadii.isEmpty()) {
+            // Valeurs de secours si la clé est absente du config.yml
+            adventureWildernessRadii = List.of(500, 750, 1000, 1500, 2000, 3000, 4000, 6000, 8000, 12000, 200000);
+        }
 
         // ─── Zone Village ────────────────────────────────────────────────────────────
         int centerX = cfg.getInt("village-zone.center.x", 0);
