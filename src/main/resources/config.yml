@@ -183,9 +183,9 @@ village-zone:
     - after-hours: 24      # après 24 h de jeu réel
       radius: 200
       spawn:
-        x: 30
-        y: 64
-        z: 30
+        x: -76
+        y: 73
+        z: -83
         yaw: 0.0
         pitch: 0.0
       portal:
