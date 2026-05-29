@@ -6,13 +6,16 @@ import fr.miuby.survi.player.AlphaPlayer;
 import fr.miuby.survi.quest.PlayerQuestData;
 import fr.miuby.survi.quest.Quest;
 import fr.miuby.survi.display.TutorialBookService;   // ← AJOUT
+import org.bukkit.NamespacedKey;
 import org.bukkit.attribute.Attribute;
+import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.entity.EnderDragon;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntitySpawnEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.inventory.EquipmentSlotGroup;
 import org.bukkit.potion.PotionEffect;
 import fr.miuby.survi.system.log.LogManager;
 import fr.miuby.survi.system.time.event.DailyResetEvent;
@@ -50,11 +53,16 @@ public class ServerListener implements Listener {
     @EventHandler
     public void onEntitySpawn(EntitySpawnEvent event) {
         if (event.getEntity() instanceof EnderDragon dragon) {
-            LogManager.getInstance().log(Level.FINE, LogManager.ETagLog.WORLD,
-                    "[EntitySpawn] EnderDragon spawned at " + dragon.getLocation());
             try {
-                Objects.requireNonNull(dragon.getAttribute(Attribute.MAX_HEALTH)).setBaseValue(2000);
-                dragon.setHealth(2000);
+                var attr = Objects.requireNonNull(dragon.getAttribute(Attribute.MAX_HEALTH));
+                attr.setBaseValue(1024);
+                attr.addModifier(new AttributeModifier(
+                        new NamespacedKey("survi", "dragon_hp_bonus"),
+                        1024,
+                        AttributeModifier.Operation.ADD_NUMBER,
+                        EquipmentSlotGroup.ANY
+                ));
+                dragon.setHealth(attr.getValue());
             } catch (Exception exception) {
                 LogManager.getInstance().log(Level.SEVERE, LogManager.ETagLog.WORLD,
                         Errors.nullException + " (EnderDragon)", exception);
