@@ -14,7 +14,7 @@ import fr.miuby.survi.system.command.SystemCommand;
 import fr.miuby.survi.system.log.LogManager;
 import fr.miuby.survi.system.time.TimeManager;
 import fr.miuby.survi.villager.VillagerCommand;
-import fr.miuby.survi.villager.villagerlevel.blessing.BlessingCommand;
+import fr.miuby.survi.blessing.BlessingCommand;
 import fr.miuby.survi.world.WorldCommand;
 import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
 import org.bukkit.plugin.PluginManager;

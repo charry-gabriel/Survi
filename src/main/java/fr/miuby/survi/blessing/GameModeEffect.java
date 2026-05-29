@@ -1,7 +1,6 @@
-package fr.miuby.survi.villager.villagerlevel.blessing;
+package fr.miuby.survi.blessing;
 
 import fr.miuby.survi.player.AlphaPlayer;
-import fr.miuby.survi.villager.villagerlevel.VillagerLevel;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.GameMode;
 
@@ -10,7 +9,7 @@ public class GameModeEffect extends BlessingEffect {
     private final GameMode gameMode;
 
     @Override
-    public void applyEffect(VillagerLevel villager, AlphaPlayer player) {
+    public void applyEffect(AlphaPlayer player) {
         player.getPlayer().setGameMode(this.gameMode);
     }
 }

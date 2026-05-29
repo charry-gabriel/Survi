@@ -11,5 +11,6 @@ public class VillagerLevelConfig {
     public String recap = "";
     public List<SimpleItemStack> tribute;
     public List<Map<String, Object>> blessings;
+    /** Durée de lock en jours après avoir complété ce niveau. Null = pas de lock. */
+    public Integer lock;
 }
-

@@ -12,7 +12,7 @@ import fr.miuby.survi.villager.AVillager;
 import fr.miuby.survi.villager.trader.Trader;
 import fr.miuby.survi.villager.villagerlevel.VillagerLevel;
 import fr.miuby.survi.villager.VillagerPostLoadActions;
-import fr.miuby.survi.villager.villagerlevel.blessing.BlessingEffect;
+import fr.miuby.survi.blessing.BlessingEffect;
 import fr.miuby.survi.villager.villagerlevel.event.VillagerLevelUpEvent;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.sound.Sound;
@@ -139,7 +139,7 @@ public class VillagerListener implements Listener {
             p.playSound(myCustomSound);
 
             for (BlessingEffect effect : villager.getBlessing().blessingEffects()) {
-                effect.applyEffect(villager, AlphaPlayer.get(p.getUniqueId()));
+                effect.applyEffect(AlphaPlayer.get(p.getUniqueId()));
             }
         }
     }

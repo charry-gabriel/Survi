@@ -1,9 +1,8 @@
-package fr.miuby.survi.villager.villagerlevel.blessing;
+package fr.miuby.survi.blessing;
 
 import fr.miuby.lib.world.WorldRegistry;
 import fr.miuby.lib.utils.Rect;
 import fr.miuby.survi.player.AlphaPlayer;
-import fr.miuby.survi.villager.villagerlevel.VillagerLevel;
 import fr.miuby.survi.world.EWorld;
 
 public class LimitWorldEffect extends BlessingEffect {
@@ -16,12 +15,12 @@ public class LimitWorldEffect extends BlessingEffect {
     }
 
     @Override
-    public void applyEffect(VillagerLevel villager, AlphaPlayer player) {
+    public void applyEffect(AlphaPlayer player) {
         WorldRegistry.get(worldType).setLimit(this.rect);
     }
 
     @Override
-    public void resetEffect(VillagerLevel villager, AlphaPlayer player) {
+    public void resetEffect(AlphaPlayer player) {
         WorldRegistry.get(worldType).setLimit(null);
     }
 }

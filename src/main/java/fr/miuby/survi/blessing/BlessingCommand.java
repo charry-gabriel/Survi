@@ -1,4 +1,4 @@
-package fr.miuby.survi.villager.villagerlevel.blessing;
+package fr.miuby.survi.blessing;
 
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.arguments.FloatArgumentType;
@@ -56,7 +56,7 @@ public class BlessingCommand {
                                         .executes(ctx -> {
                                             AlphaPlayer target = AlphaPlayerArgument.getAlphaPlayer(ctx, playerArgument);
                                             float value = FloatArgumentType.getFloat(ctx, valueArgument);
-                                            new DamageEffect(value).applyEffect(null, target);
+                                            new DamageEffect(value).applyEffect(target);
                                             feedback(ctx, target, "Damage modifier → " + value);
                                             return Command.SINGLE_SUCCESS;
                                         })
@@ -69,7 +69,7 @@ public class BlessingCommand {
                                         .executes(ctx -> {
                                             AlphaPlayer target = AlphaPlayerArgument.getAlphaPlayer(ctx, playerArgument);
                                             float value = FloatArgumentType.getFloat(ctx, valueArgument);
-                                            new ResistanceEffect(value).applyEffect(null, target);
+                                            new ResistanceEffect(value).applyEffect(target);
                                             feedback(ctx, target, "Resistance modifier → " + value);
                                             return Command.SINGLE_SUCCESS;
                                         })
@@ -82,7 +82,7 @@ public class BlessingCommand {
                                         .executes(ctx -> {
                                             AlphaPlayer target = AlphaPlayerArgument.getAlphaPlayer(ctx, playerArgument);
                                             int value = IntegerArgumentType.getInteger(ctx, valueArgument);
-                                            new MaxHealthEffect(value).applyEffect(null, target);
+                                            new MaxHealthEffect(value).applyEffect(target);
                                             feedback(ctx, target, "Max health bonus → " + value);
                                             return Command.SINGLE_SUCCESS;
                                         })
@@ -96,7 +96,7 @@ public class BlessingCommand {
                                         .executes(ctx -> {
                                             AlphaPlayer target = AlphaPlayerArgument.getAlphaPlayer(ctx, playerArgument);
                                             MLWorld world = WorldArgument.getWorld(ctx, "world");
-                                            new LockWorldEffect((EWorld) world.getType()).applyEffect(null, target);
+                                            new LockWorldEffect((EWorld) world.getType()).applyEffect(target);
                                             feedback(ctx, target, "Monde déverrouillé → " + world.getName());
                                             return Command.SINGLE_SUCCESS;
                                         })
@@ -125,7 +125,7 @@ public class BlessingCommand {
                                                         Component.text("Type invalide : " + typeStr, NamedTextColor.RED));
                                                 return 0;
                                             }
-                                            new UnlockArmorEffect(armorType).applyEffect(null, target);
+                                            new UnlockArmorEffect(armorType).applyEffect(target);
                                             feedback(ctx, target, "Armure déverrouillée → " + armorType.name());
                                             return Command.SINGLE_SUCCESS;
                                         })
@@ -154,7 +154,7 @@ public class BlessingCommand {
                                                         Component.text("Type invalide : " + typeStr, NamedTextColor.RED));
                                                 return 0;
                                             }
-                                            new UnlockToolEffect(toolType).applyEffect(null, target);
+                                            new UnlockToolEffect(toolType).applyEffect(target);
                                             feedback(ctx, target, "Outil déverrouillé → " + toolType.name());
                                             return Command.SINGLE_SUCCESS;
                                         })
@@ -165,7 +165,7 @@ public class BlessingCommand {
                         .then(Commands.literal("fly")
                                 .executes(ctx -> {
                                     AlphaPlayer target = AlphaPlayerArgument.getAlphaPlayer(ctx, playerArgument);
-                                    new FlyEffect().applyEffect(null, target);
+                                    new FlyEffect().applyEffect(target);
                                     feedback(ctx, target, "Vol activé");
                                     return Command.SINGLE_SUCCESS;
                                 })
@@ -175,7 +175,7 @@ public class BlessingCommand {
                         .then(Commands.literal("regen")
                                 .executes(ctx -> {
                                     AlphaPlayer target = AlphaPlayerArgument.getAlphaPlayer(ctx, playerArgument);
-                                    new RegenEffect().applyEffect(null, target);
+                                    new RegenEffect().applyEffect(target);
                                     feedback(ctx, target, "Régénération naturelle activée en Wilderness");
                                     return Command.SINGLE_SUCCESS;
                                 })
@@ -185,7 +185,7 @@ public class BlessingCommand {
                         .then(Commands.literal("dispel")
                                 .executes(ctx -> {
                                     AlphaPlayer target = AlphaPlayerArgument.getAlphaPlayer(ctx, playerArgument);
-                                    new DispelEffect(10).applyEffect(null, target);
+                                    new DispelEffect(10).applyEffect(target);
                                     feedback(ctx, target, "Dispel appliqué");
                                     return Command.SINGLE_SUCCESS;
                                 })
@@ -196,7 +196,7 @@ public class BlessingCommand {
                                 .executes(ctx -> {
                                     AlphaPlayer target = AlphaPlayerArgument.getAlphaPlayer(ctx, playerArgument);
 
-                                    new WorldResetEffect(1).applyEffect(null, target);
+                                    new WorldResetEffect(1).applyEffect(target);
                                     return Command.SINGLE_SUCCESS;
                                 })
                         )
@@ -205,7 +205,7 @@ public class BlessingCommand {
                         .then(Commands.literal("world_level")
                                 .executes(ctx -> {
                                     AlphaPlayer target = AlphaPlayerArgument.getAlphaPlayer(ctx, playerArgument);
-                                    new WorldLevelEffect(1).applyEffect(null, target);
+                                    new WorldLevelEffect(1).applyEffect(target);
                                     feedback(ctx, target, "World level +1 → " + GameManager.getInstance().getWorldLevelManager().getLevel());
                                     return Command.SINGLE_SUCCESS;
                                 })

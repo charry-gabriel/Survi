@@ -1,3 +1,3 @@
-package fr.miuby.survi.villager.villagerlevel.blessing;
+package fr.miuby.survi.blessing;
 
 public record Blessing(BlessingEffect... blessingEffects) { }

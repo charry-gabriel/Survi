@@ -1,7 +1,6 @@
-package fr.miuby.survi.villager.villagerlevel.blessing;
+package fr.miuby.survi.blessing;
 
 import fr.miuby.survi.player.AlphaPlayer;
-import fr.miuby.survi.villager.villagerlevel.VillagerLevel;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.inventory.ItemStack;
 
@@ -14,7 +13,7 @@ public class RandomItemEffect extends BlessingEffect {
     private final Random random = new Random();
 
     @Override
-    public void applyEffect(VillagerLevel villager, AlphaPlayer player) {
+    public void applyEffect(AlphaPlayer player) {
         int rand = random.nextInt(100);
         int sum = 0;
         ItemStack item = null;

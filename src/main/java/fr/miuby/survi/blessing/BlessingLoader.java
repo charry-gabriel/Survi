@@ -1,4 +1,4 @@
-package fr.miuby.survi.villager.villagerlevel.blessing;
+package fr.miuby.survi.blessing;
 
 import fr.miuby.lib.utils.Rect;
 import fr.miuby.survi.item.locked_item.ELockedArmorType;
@@ -7,7 +7,6 @@ import fr.miuby.survi.system.log.LogManager;
 import fr.miuby.survi.world.EWorld;
 import org.bukkit.configuration.ConfigurationSection;
 
-import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -31,7 +30,7 @@ import java.util.logging.Level;
  * </pre>
  *
  * <p>Types d'effets supportés : MAX_HEALTH, RESISTANCE, DAMAGE, DISPEL,
- * UNLOCK_TOOL, UNLOCK_ARMOR, LOCK_WORLD, LOCK_VILLAGER, MESSAGE, WORLD_LEVEL,
+ * UNLOCK_TOOL, UNLOCK_ARMOR, LOCK_WORLD, MESSAGE, WORLD_LEVEL,
  * WORLD_RESET, LIMIT_WORLD.
  */
 public class BlessingLoader {
@@ -74,9 +73,7 @@ public class BlessingLoader {
         if (blessingsSection == null) return new Blessing[0];
 
         List<Blessing> blessings = new ArrayList<>();
-        List<?> rawList = blessingsSection.getList("");
 
-        // ConfigurationSection.getList("") doesn't work — iterate keys instead
         for (String key : blessingsSection.getKeys(false)) {
             ConfigurationSection blessingSection = blessingsSection.getConfigurationSection(key);
             if (blessingSection == null) continue;
@@ -102,18 +99,17 @@ public class BlessingLoader {
         String type = String.valueOf(map.get("type")).toUpperCase();
         try {
             return switch (type) {
-                case "MAX_HEALTH" -> new MaxHealthEffect(toInt(map.get("value"), 0));
-                case "RESISTANCE"  -> new ResistanceEffect(toFloat(map.get("value"), 1f));
-                case "DAMAGE"      -> new DamageEffect(toFloat(map.get("value"), 1f));
-                case "DISPEL"      -> new DispelEffect(toInt(map.get("value"), 1));
-                case "UNLOCK_TOOL" -> new UnlockToolEffect(ELockedToolType.valueOf(String.valueOf(map.get("tool")).toUpperCase()));
+                case "MAX_HEALTH"   -> new MaxHealthEffect(toInt(map.get("value"), 0));
+                case "RESISTANCE"   -> new ResistanceEffect(toFloat(map.get("value"), 1f));
+                case "DAMAGE"       -> new DamageEffect(toFloat(map.get("value"), 1f));
+                case "DISPEL"       -> new DispelEffect(toInt(map.get("value"), 1));
+                case "UNLOCK_TOOL"  -> new UnlockToolEffect(ELockedToolType.valueOf(String.valueOf(map.get("tool")).toUpperCase()));
                 case "UNLOCK_ARMOR" -> new UnlockArmorEffect(ELockedArmorType.valueOf(String.valueOf(map.get("armor")).toUpperCase()));
-                case "LOCK_WORLD" -> new LockWorldEffect(EWorld.valueOf(String.valueOf(map.get("world")).toUpperCase()));
-                case "LOCK_VILLAGER" -> new LockVillagerEffect(Duration.ofDays(toLong(map.get("days"), 1)));
-                case "MESSAGE" -> new MessageEffect(String.valueOf(map.get("text")));
-                case "WORLD_LEVEL" -> new WorldLevelEffect(toInt(map.get("levels"), 1));
-                case "WORLD_RESET" -> new WorldResetEffect(toInt(map.get("frequency"), 7));
-                case "LIMIT_WORLD" -> parseLimitWorld(map);
+                case "LOCK_WORLD"   -> new LockWorldEffect(EWorld.valueOf(String.valueOf(map.get("world")).toUpperCase()));
+                case "MESSAGE"      -> new MessageEffect(String.valueOf(map.get("text")));
+                case "WORLD_LEVEL"  -> new WorldLevelEffect(toInt(map.get("levels"), 1));
+                case "WORLD_RESET"  -> new WorldResetEffect(toInt(map.get("frequency"), 7));
+                case "LIMIT_WORLD"  -> parseLimitWorld(map);
                 default -> {
                     LogManager.getInstance().log(Level.WARNING, LogManager.ETagLog.VILLAGER, "[BlessingLoader] Type d'effet inconnu '" + type + "' pour " + villagerId);
                     yield null;
@@ -138,5 +134,4 @@ public class BlessingLoader {
 
     private static int   toInt  (Object v, int   def) { return v instanceof Number n ? n.intValue()   : def; }
     private static float toFloat(Object v, float def) { return v instanceof Number n ? n.floatValue() : def; }
-    private static long  toLong (Object v, long  def) { return v instanceof Number n ? n.longValue()  : def; }
 }

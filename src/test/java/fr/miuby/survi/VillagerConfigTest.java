@@ -44,6 +44,12 @@ class VillagerConfigTest {
                     assertNotNull(level.recap, file.getName() + " : level[" + i + "] recap manquant");
                     assertNotNull(level.tribute, file.getName() + " : level[" + i + "] tribute manquant");
 
+                    // Validation du lock si présent
+                    if (level.lock != null) {
+                        assertTrue(level.lock >= 1,
+                                file.getName() + " : level[" + i + "] lock doit être >= 1 (valeur : " + level.lock + ")");
+                    }
+
                     // Validation des blessings si présents
                     if (level.blessings != null) {
                         assertFalse(level.blessings.isEmpty(),

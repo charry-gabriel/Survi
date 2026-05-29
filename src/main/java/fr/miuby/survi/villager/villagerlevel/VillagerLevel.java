@@ -6,8 +6,8 @@ import fr.miuby.survi.GameManager;
 import fr.miuby.survi.system.log.LogManager;
 import fr.miuby.survi.system.time.TimeManager;
 import fr.miuby.survi.villager.AVillager;
-import fr.miuby.survi.villager.villagerlevel.blessing.Blessing;
-import fr.miuby.survi.villager.villagerlevel.blessing.BlessingEffect;
+import fr.miuby.survi.blessing.Blessing;
+import fr.miuby.survi.blessing.BlessingEffect;
 import fr.miuby.survi.villager.villagerlevel.event.VillagerLevelUpEvent;
 import fr.miuby.survi.world.WorldInitializer;
 import lombok.Getter;
@@ -36,6 +36,8 @@ public class VillagerLevel extends AVillager {
     private final TextComponent[] names;
     private final TextComponent[] recapMessages;
     private final Blessing[] blessings;
+    /** Lock par niveau : locks[N] est appliqué quand le niveau N est complété. Null = pas de lock. */
+    private final Duration[] locks;
 
     @Getter
     @Setter
@@ -43,9 +45,10 @@ public class VillagerLevel extends AVillager {
     private final List<ItemStack> givenItems = new ArrayList<>();
     private Instant unlockedInstant = Instant.EPOCH;
 
-    public VillagerLevel(String nameId, Villager.Type type, Villager.Profession profession, Blessing[] blessings, TextComponent[] messages, Tribute[] tributes, TextComponent[] names, TextComponent[] recap) {
+    public VillagerLevel(String nameId, Villager.Type type, Villager.Profession profession, Blessing[] blessings, Duration[] locks, TextComponent[] messages, Tribute[] tributes, TextComponent[] names, TextComponent[] recap) {
         super(nameId, type, profession, messages);
         this.blessings = blessings;
+        this.locks = locks;
         this.tributes = tributes;
         this.names = names;
         this.recapMessages = recap;
@@ -90,11 +93,11 @@ public class VillagerLevel extends AVillager {
      * qui avaient été appliqués. Appelé depuis la commande /villager <id> reset.
      */
     public void resetLevel() {
-        // 2. Reset les blessings pour tout les joueurs
+        // 1. Reset les blessings pour tous les joueurs
         for (Player p : Bukkit.getOnlinePlayers()) {
             for (Blessing blessing : getCurrentBlessings()) {
                 for (BlessingEffect effect : blessing.blessingEffects()) {
-                    effect.resetEffect(this, AlphaPlayer.get(p.getUniqueId()));
+                    effect.resetEffect(AlphaPlayer.get(p.getUniqueId()));
                 }
             }
         }
@@ -124,6 +127,8 @@ public class VillagerLevel extends AVillager {
             return false;
         }
 
+        int completedLevel = this.level;
+
         VillagerLevelUpEvent event = new VillagerLevelUpEvent(this, this.level + 1);
         Bukkit.getPluginManager().callEvent(event);
 
@@ -135,6 +140,11 @@ public class VillagerLevel extends AVillager {
 
         this.givenItems.clear();
         GameManager.getInstance().getDatabase().villagers().updateGivenItems(getVillager().getUniqueId(), this.givenItems);
+
+        // Applique le lock configuré pour le niveau qui vient d'être complété
+        if (locks != null && completedLevel < locks.length && locks[completedLevel] != null) {
+            lock(locks[completedLevel]);
+        }
 
         return true;
     }
@@ -168,11 +178,11 @@ public class VillagerLevel extends AVillager {
         }
     }
 
-    public void applyAllCurrentBlessing(VillagerLevel villager, AlphaPlayer player) {
+    public void applyAllCurrentBlessing(AlphaPlayer player) {
         player.getAlphaLife().regenHealth(() -> {
             for (Blessing blessing : getCurrentBlessings()) {
                 for (BlessingEffect effect : blessing.blessingEffects()) {
-                    effect.applyEffect(villager, player);
+                    effect.applyEffect(player);
                 }
             }
         });

@@ -1,8 +1,7 @@
-package fr.miuby.survi.villager.villagerlevel.blessing;
+package fr.miuby.survi.blessing;
 
 import fr.miuby.survi.item.ECustomItem;
 import fr.miuby.survi.player.AlphaPlayer;
-import fr.miuby.survi.villager.villagerlevel.VillagerLevel;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.inventory.ItemStack;
 
@@ -12,7 +11,7 @@ public class ItemEffect extends BlessingEffect{
     private final int amount = 1;
 
     @Override
-    public void applyEffect(VillagerLevel villager, AlphaPlayer player) {
+    public void applyEffect(AlphaPlayer player) {
         ItemStack item = this.itemStack.getItemStack();
         item.setAmount(this.amount);
         player.getPlayer().getInventory().addItem(item);

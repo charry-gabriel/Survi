@@ -8,8 +8,8 @@ levels:
     tribute:
       - material: DIRT
         amount: 640
+    lock: 3
     blessings:
-      - { type: LOCK_VILLAGER, days: 3 }
       - { type: MESSAGE, text: "Niveau I réussi !" }
     message: "Merci, revenez dans 24h pour la suite."
     recap: ""
@@ -18,8 +18,8 @@ levels:
     tribute:
       - material: DIRT
         amount: 640
+    lock: 3
     blessings:
-      - { type: LOCK_VILLAGER, days: 3 }
       - { type: MESSAGE, text: "Niveau II disponible pour Thomas Pesquet !" }
     message: "Venez me voir."
     recap: ""
@@ -38,8 +38,8 @@ levels:
     tribute:
       - material: DIRT
         amount: 640
+    lock: 3
     blessings:
-      - { type: LOCK_VILLAGER, days: 3 }
       - { type: MESSAGE, text: "Niveau III disponible pour Thomas Pesquet !" }
     message: "Venez me voir."
     recap: "Nether débloqué !"
@@ -57,8 +57,8 @@ levels:
     tribute:
       - material: DIRT
         amount: 640
+    lock: 3
     blessings:
-      - { type: LOCK_VILLAGER, days: 3 }
       - { type: MESSAGE, text: "Niveau VI disponible pour Thomas Pesquet !" }
     message: "Venez me voir."
     recap: "Nether débloqué et limite Wilderness augmenté !"
@@ -77,8 +77,8 @@ levels:
     tribute:
       - material: DIRT
         amount: 640
+    lock: 3
     blessings:
-      - { type: LOCK_VILLAGER, days: 3 }
       - { type: MESSAGE, text: "Niveau V disponible pour Thomas Pesquet !" }
     message: "Venez me voir."
     recap: "End débloqué et limite Wilderness augmenté !"
@@ -98,4 +98,3 @@ levels:
         amount: 640
     message: "C'est fini y a plus rien !"
     recap: "End débloqué et limite Wilderness infinie !"
-

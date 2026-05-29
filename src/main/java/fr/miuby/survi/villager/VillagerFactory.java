@@ -2,6 +2,8 @@ package fr.miuby.survi.villager;
 
 import fr.miuby.lib.villager.MLVillager;
 import fr.miuby.lib.villager.VillagerRegistry;
+import fr.miuby.survi.blessing.Blessing;
+import fr.miuby.survi.blessing.BlessingEffect;
 import fr.miuby.survi.item.SimpleItemStack;
 import fr.miuby.survi.player.AlphaPlayer;
 import fr.miuby.survi.quest.EQuestDifficulty;
@@ -11,8 +13,7 @@ import fr.miuby.survi.villager.trader.TraderLoader;
 import fr.miuby.survi.villager.villagerlevel.Tribute;
 import fr.miuby.survi.villager.villagerlevel.VillagerLevel;
 import fr.miuby.survi.villager.villagerlevel.VillagerLevelLoader;
-import fr.miuby.survi.villager.villagerlevel.blessing.*;
-import fr.miuby.survi.villager.villagerlevel.blessing.BlessingLoader;
+import fr.miuby.survi.blessing.BlessingLoader;
 import lombok.Getter;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
@@ -24,6 +25,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.MerchantRecipe;
 
 import fr.miuby.survi.job.EJob;
+import java.time.Duration;
 import java.util.List;
 
 @Getter
@@ -97,13 +99,16 @@ public class VillagerFactory {
         TextComponent[] recap = config.levels.stream().map(level -> Component.text(level.recap)).toArray(TextComponent[]::new);
         Tribute[] tributes = config.levels.stream().map(level -> new Tribute(level.tribute.stream().map(SimpleItemStack::toItemStack).toArray(ItemStack[]::new))).toArray(Tribute[]::new);
 
-        // Blessings chargées depuis chaque level (champ "blessings" de VillagerLevelConfig)
         Blessing[] blessings = config.levels.stream()
                 .map(level -> BlessingLoader.loadFromList(id, level.blessings))
                 .map(b -> b != null ? b : new Blessing(new BlessingEffect[0]))
                 .toArray(Blessing[]::new);
 
-        MLVillager.spawn(() -> new VillagerLevel(config.name, type, profession, blessings, messages, tributes, names, recap));
+        Duration[] locks = config.levels.stream()
+                .map(level -> level.lock != null ? Duration.ofDays(level.lock) : null)
+                .toArray(Duration[]::new);
+
+        MLVillager.spawn(() -> new VillagerLevel(config.name, type, profession, blessings, locks, messages, tributes, names, recap));
     }
 
     /**
@@ -124,7 +129,7 @@ public class VillagerFactory {
             if (!(villager instanceof VillagerLevel villagerLevel))
                 continue;
 
-            villagerLevel.applyAllCurrentBlessing(villagerLevel, player);
+            villagerLevel.applyAllCurrentBlessing(player);
 
             Component recap = villagerLevel.getRecapMessage();
             if (recap != null && !PlainTextComponentSerializer.plainText().serialize(recap).isBlank()) {

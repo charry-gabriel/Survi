@@ -52,12 +52,12 @@ class SchemaGeneratorTest {
         // Update blessing effect type enum
         content = replaceEnum(content, "type", getEnumNamesFromSource("src/main/java/fr/miuby/survi/villager/villagerlevel/blessing/BlessingLoader.java")
                 .isEmpty()
-                ? List.of("DAMAGE", "DISPEL", "FLY", "GAME_MODE", "ITEM", "LIMIT_WORLD", "LOCK_VILLAGER",
-                          "LOCK_WORLD", "MAX_HEALTH", "MESSAGE", "RANDOM_ITEM", "REGEN",
-                          "RESISTANCE", "UNLOCK_ARMOR", "UNLOCK_TOOL", "WORLD_LEVEL", "WORLD_RESET")
-                : List.of("DAMAGE", "DISPEL", "FLY", "GAME_MODE", "ITEM", "LIMIT_WORLD", "LOCK_VILLAGER",
-                          "LOCK_WORLD", "MAX_HEALTH", "MESSAGE", "RANDOM_ITEM", "REGEN",
-                          "RESISTANCE", "UNLOCK_ARMOR", "UNLOCK_TOOL", "WORLD_LEVEL", "WORLD_RESET"));
+                ? List.of("DAMAGE", "DISPEL", "FLY", "GAME_MODE", "ITEM", "LIMIT_WORLD",
+                    "LOCK_WORLD", "MAX_HEALTH", "MESSAGE", "RANDOM_ITEM", "REGEN",
+                    "RESISTANCE", "UNLOCK_ARMOR", "UNLOCK_TOOL", "WORLD_LEVEL", "WORLD_RESET")
+                : List.of("DAMAGE", "DISPEL", "FLY", "GAME_MODE", "ITEM", "LIMIT_WORLD",
+                    "LOCK_WORLD", "MAX_HEALTH", "MESSAGE", "RANDOM_ITEM", "REGEN",
+                    "RESISTANCE", "UNLOCK_ARMOR", "UNLOCK_TOOL", "WORLD_LEVEL", "WORLD_RESET"));
 
         // Update tool enum (LockedToolType)
         content = replaceEnum(content, "tool", getEnumNamesFromSource("src/main/java/fr/miuby/survi/item/locked_item/LockedToolType.java"));

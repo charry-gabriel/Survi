@@ -21,7 +21,6 @@
         "GAME_MODE",
         "ITEM",
         "LIMIT_WORLD",
-        "LOCK_VILLAGER",
         "LOCK_WORLD",
         "MAX_HEALTH",
         "MESSAGE",
@@ -89,6 +88,11 @@
             "items": {
               "$ref": "#/definitions/blessingEffect"
             }
+          },
+          "lock": {
+            "type": "integer",
+            "description": "Durée de lock en jours après avoir complété ce niveau. Optionnel.",
+            "minimum": 1
           }
         }
       }
@@ -1832,7 +1836,6 @@
         "GAME_MODE",
         "ITEM",
         "LIMIT_WORLD",
-        "LOCK_VILLAGER",
         "LOCK_WORLD",
         "MAX_HEALTH",
         "MESSAGE",
@@ -1853,24 +1856,24 @@
           "type": "string",
           "description": "Tier d'outil à débloquer (UNLOCK_TOOL).",
           "enum": [
-        "DIAMOND",
-        "GOLD",
-        "IRON",
-        "STONE",
-        "WOOD"
-      ]
+            "DIAMOND",
+            "GOLD",
+            "IRON",
+            "STONE",
+            "WOOD"
+          ]
         },
         "armor": {
           "type": "string",
           "description": "Tier d'armure à débloquer (UNLOCK_ARMOR).",
           "enum": [
-        "CHAINMAIL",
-        "DIAMOND",
-        "GOLD",
-        "IRON",
-        "LEATHER",
-        "NETHERITE"
-      ]
+            "CHAINMAIL",
+            "DIAMOND",
+            "GOLD",
+            "IRON",
+            "LEATHER",
+            "NETHERITE"
+          ]
         },
         "world": {
           "type": "string",
@@ -1882,11 +1885,6 @@
         "VILLAGE",
         "WILDERNESS"
       ]
-        },
-        "days": {
-          "type": "integer",
-          "description": "Durée en jours (LOCK_VILLAGER).",
-          "minimum": 1
         },
         "text": {
           "type": "string",
