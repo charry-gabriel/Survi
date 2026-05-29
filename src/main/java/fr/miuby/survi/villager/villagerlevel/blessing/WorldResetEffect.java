@@ -22,4 +22,10 @@ public class WorldResetEffect extends BlessingEffect {
             LogManager.getInstance().log(Level.INFO, LogManager.ETagLog.WORLD, "Fréquence de reset des mondes mise à jour à " + newFrequency + " jour(s).");
         }
     }
+
+    @Override
+    public void resetEffect(VillagerLevel villager, AlphaPlayer player) {
+        GameManager.getInstance().getWorldResetManager().setResetFrequency(0);
+        LogManager.getInstance().log(Level.INFO, LogManager.ETagLog.WORLD, "Fréquence de reset des mondes remise à 0 (reset villager).");
+    }
 }

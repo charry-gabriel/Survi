@@ -14,4 +14,10 @@ public class DispelEffect extends BlessingEffect{
         GameManager.getInstance().setDispel(dispel);
         player.getAlphaLife().actualizeDeath();
     }
+
+    @Override
+    public void resetEffect(VillagerLevel villager, AlphaPlayer player) {
+        GameManager.getInstance().setDispel(0);
+        player.getAlphaLife().actualizeDeath();
+    }
 }

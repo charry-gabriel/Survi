@@ -12,4 +12,9 @@ public class RegenEffect extends BlessingEffect {
     public void applyEffect(VillagerLevel villager, AlphaPlayer player) {
         WorldRegistry.get(EWorld.WILDERNESS).getWorld().setGameRule(GameRules.NATURAL_HEALTH_REGENERATION, true);
     }
+
+    @Override
+    public void resetEffect(VillagerLevel villager, AlphaPlayer player) {
+        WorldRegistry.get(EWorld.WILDERNESS).getWorld().setGameRule(GameRules.NATURAL_HEALTH_REGENERATION, false);
+    }
 }

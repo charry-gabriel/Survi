@@ -16,4 +16,9 @@ public class LockWorldEffect extends BlessingEffect {
     public void applyEffect(VillagerLevel villager, AlphaPlayer player) {
         WorldRegistry.get(worldType).setLocked(false);
     }
+
+    @Override
+    public void resetEffect(VillagerLevel villager, AlphaPlayer player) {
+        WorldRegistry.get(worldType).setLocked(true);
+    }
 }

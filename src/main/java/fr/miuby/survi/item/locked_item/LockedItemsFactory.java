@@ -135,4 +135,20 @@ public class LockedItemsFactory {
 
         player.getPlayer().discoverRecipes(GameManager.getInstance().getCustomRecipeFactory().getNewRecipes().keySet());
     }
+
+    public void lockArmorItem(ELockedArmorType itemType) {
+        for (LockedArmorItem lockedItem : armorItems) {
+            if (lockedItem.getType() == itemType) {
+                lockedItem.lock();
+            }
+        }
+    }
+
+    public void lockToolItem(ELockedToolType itemType) {
+        for (LockedToolItem lockedItem : toolItems) {
+            if (lockedItem.getType() == itemType) {
+                lockedItem.lock();
+            }
+        }
+    }
 }

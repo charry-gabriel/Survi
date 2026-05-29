@@ -51,4 +51,9 @@ public class WorldLevelEffect extends BlessingEffect {
             );
         }
     }
+
+    @Override
+    public void resetEffect(VillagerLevel villager, AlphaPlayer player) {
+        GameManager.getInstance().getWorldLevelManager().increment(-levelsGained);
+    }
 }

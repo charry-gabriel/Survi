@@ -32,37 +32,56 @@ public class VillagerCommand {
     @SuppressWarnings("UnstableApiUsage")
     public static LiteralArgumentBuilder<CommandSourceStack> createCommand() {
         return Commands.literal("villager")
-            .requires(sender -> sender.getSender().isOp())
-            .then(Commands.argument(villagerArgument, VillagerArgument.villager())
-                .then(Commands.literal("teleport")
-                    .executes(ctx -> VillagerCommand.villagerExecuteTeleport(ctx, ctx.getSource().getLocation()))
-                    .then(Commands.argument(playerArgument, ArgumentTypes.player())
-                        .executes(ctx -> VillagerCommand.villagerExecuteTeleport(ctx, ctx.getArgument(playerArgument, PlayerSelectorArgumentResolver.class).resolve(ctx.getSource()).getFirst().getLocation()))
-                    )
-                    .then(Commands.argument(locationArgument, ArgumentTypes.finePosition(true))
-                        .executes(ctx -> VillagerCommand.villagerExecuteTeleport(ctx, ctx.getArgument(locationArgument, FinePositionResolver.class).resolve(ctx.getSource()).toLocation(WorldInitializer.getDefaultWorld())))
-                        .then(Commands.argument("yaw", DoubleArgumentType.doubleArg(0, 360))
-                            .then(Commands.argument("pitch", DoubleArgumentType.doubleArg(0, 360))
-                                .executes(ctx -> {
-                                    Location location = ctx.getArgument(locationArgument, FinePositionResolver.class).resolve(ctx.getSource()).toLocation(WorldInitializer.getDefaultWorld());
-                                    location.setYaw((float) DoubleArgumentType.getDouble(ctx, "yaw"));
-                                    location.setPitch((float) DoubleArgumentType.getDouble(ctx, "pitch"));
-                                    return VillagerCommand.villagerExecuteTeleport(ctx, location);
-                                })
-                            )
+                .requires(sender -> sender.getSender().isOp())
+                .then(Commands.argument(villagerArgument, VillagerArgument.villager())
+                        .then(Commands.literal("teleport")
+                                .executes(ctx -> VillagerCommand.villagerExecuteTeleport(ctx, ctx.getSource().getLocation()))
+                                .then(Commands.argument(playerArgument, ArgumentTypes.player())
+                                        .executes(ctx -> VillagerCommand.villagerExecuteTeleport(ctx, ctx.getArgument(playerArgument, PlayerSelectorArgumentResolver.class).resolve(ctx.getSource()).getFirst().getLocation()))
+                                )
+                                .then(Commands.argument(locationArgument, ArgumentTypes.finePosition(true))
+                                        .executes(ctx -> VillagerCommand.villagerExecuteTeleport(ctx, ctx.getArgument(locationArgument, FinePositionResolver.class).resolve(ctx.getSource()).toLocation(WorldInitializer.getDefaultWorld())))
+                                        .then(Commands.argument("yaw", DoubleArgumentType.doubleArg(0, 360))
+                                                .then(Commands.argument("pitch", DoubleArgumentType.doubleArg(0, 360))
+                                                        .executes(ctx -> {
+                                                            Location location = ctx.getArgument(locationArgument, FinePositionResolver.class).resolve(ctx.getSource()).toLocation(WorldInitializer.getDefaultWorld());
+                                                            location.setYaw((float) DoubleArgumentType.getDouble(ctx, "yaw"));
+                                                            location.setPitch((float) DoubleArgumentType.getDouble(ctx, "pitch"));
+                                                            return VillagerCommand.villagerExecuteTeleport(ctx, location);
+                                                        })
+                                                )
+                                        )
+                                )
                         )
-                    )
-                )
-                .then(Commands.literal("levelup")
-                    .executes(VillagerCommand::villagerExecuteLevelUp)
-                )
-                .then(Commands.literal("info")
-                    .executes(VillagerCommand::villagerExecuteInfo)
-                )
-                .then(Commands.literal("unlock")
-                        .executes(VillagerCommand::villagerExecuteUnlock)
-                )
-            );
+                        .then(Commands.literal("levelup")
+                                .executes(VillagerCommand::villagerExecuteLevelUp)
+                        )
+                        .then(Commands.literal("info")
+                                .executes(VillagerCommand::villagerExecuteInfo)
+                        )
+                        .then(Commands.literal("unlock")
+                                .executes(VillagerCommand::villagerExecuteUnlock)
+                        )
+                        .then(Commands.literal("reset")
+                                .executes(VillagerCommand::villagerExecuteReset)
+                        )
+                );
+    }
+
+    private static int villagerExecuteReset(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
+        AVillager villager = VillagerArgument.getVillager(ctx, villagerArgument);
+
+        if (!(villager instanceof VillagerLevel villagerLevel)) {
+            throw CommandErrors.NOT_A_LEVEL_VILLAGER.create();
+        }
+
+        villagerLevel.resetLevel();
+
+        ctx.getSource().getSender().sendMessage(
+                Component.text("Villager ")
+                        .append(villagerLevel.getDisplayName())
+                        .append(Component.text(" reset au niveau 0 !").color(NamedTextColor.GREEN)));
+        return Command.SINGLE_SUCCESS;
     }
 
     private static int villagerExecuteUnlock(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {

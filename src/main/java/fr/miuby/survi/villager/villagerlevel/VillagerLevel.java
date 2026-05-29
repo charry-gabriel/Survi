@@ -85,6 +85,39 @@ public class VillagerLevel extends AVillager {
         ) - 1;
     }
 
+    /**
+     * Remet le villager au niveau 0 et annule tous les effets de blessings
+     * qui avaient été appliqués. Appelé depuis la commande /villager <id> reset.
+     */
+    public void resetLevel() {
+        // 2. Reset les blessings pour tout les joueurs
+        for (Player p : Bukkit.getOnlinePlayers()) {
+            for (Blessing blessing : getCurrentBlessings()) {
+                for (BlessingEffect effect : blessing.blessingEffects()) {
+                    effect.resetEffect(this, AlphaPlayer.get(p.getUniqueId()));
+                }
+            }
+        }
+
+        // 2. Remettre le level à 0
+        this.level = 0;
+        GameManager.getInstance().getDatabase().villagers().updateLevel(getVillager().getUniqueId(), 0);
+
+        // 3. Vider les items donnés
+        this.givenItems.clear();
+        GameManager.getInstance().getDatabase().villagers().updateGivenItems(getVillager().getUniqueId(), this.givenItems);
+
+        // 4. Remettre le lock à zéro
+        this.unlockedInstant = Instant.EPOCH;
+        GameManager.getInstance().getDatabase().villagers().updateLock(getVillager().getUniqueId(), null);
+
+        // 5. Mettre à jour le nom affiché et l'inventaire
+        getVillager().customName(getDisplayName());
+        updateInventory();
+
+        LogManager.getInstance().log(Level.INFO, LogManager.ETagLog.VILLAGER, nameId + " a été reset au niveau 0.");
+    }
+
     public boolean levelUp() {
         if (isMaxLevel()) {
             LogManager.getInstance().log(Level.INFO, LogManager.ETagLog.VILLAGER, nameId + " est déjà au niveau maximum");

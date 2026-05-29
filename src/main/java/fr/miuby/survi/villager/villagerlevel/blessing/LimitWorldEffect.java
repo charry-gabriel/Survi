@@ -19,4 +19,9 @@ public class LimitWorldEffect extends BlessingEffect {
     public void applyEffect(VillagerLevel villager, AlphaPlayer player) {
         WorldRegistry.get(worldType).setLimit(this.rect);
     }
+
+    @Override
+    public void resetEffect(VillagerLevel villager, AlphaPlayer player) {
+        WorldRegistry.get(worldType).setLimit(null);
+    }
 }

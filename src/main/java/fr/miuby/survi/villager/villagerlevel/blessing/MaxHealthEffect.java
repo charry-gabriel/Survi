@@ -12,4 +12,9 @@ public class MaxHealthEffect extends BlessingEffect {
     public void applyEffect(VillagerLevel villager, AlphaPlayer player) {
         player.getAlphaLife().setBlessing(maxHealth);
     }
+
+    @Override
+    public void resetEffect(VillagerLevel villager, AlphaPlayer player) {
+        player.getAlphaLife().setBlessing(0);
+    }
 }

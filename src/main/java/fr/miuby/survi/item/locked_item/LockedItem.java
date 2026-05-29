@@ -19,4 +19,8 @@ public class LockedItem {
     public void unlock() {
         isLocked = false;
     }
+
+    public void lock() {
+        isLocked = true;
+    }
 }

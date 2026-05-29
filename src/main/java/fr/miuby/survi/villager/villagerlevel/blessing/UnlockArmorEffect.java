@@ -14,4 +14,9 @@ public class UnlockArmorEffect extends BlessingEffect{
     public void applyEffect(VillagerLevel villager, AlphaPlayer player) {
         GameManager.getInstance().getLockedItemsFactory().unlockArmorItem(player, itemType);
     }
+
+    @Override
+    public void resetEffect(VillagerLevel villager, AlphaPlayer player) {
+        GameManager.getInstance().getLockedItemsFactory().lockArmorItem(itemType);
+    }
 }
