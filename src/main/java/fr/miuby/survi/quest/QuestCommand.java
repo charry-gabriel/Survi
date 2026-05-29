@@ -115,7 +115,7 @@ public class QuestCommand {
             if (data.isClaimed() && alphaPlayer.getPlayer() != null) {
                 var quest = GameManager.getInstance().getQuestManager().getQuest(data.getQuestId());
                 if (quest != null) {
-                    quest.getRewards().forEach(e -> alphaPlayer.getPlayer().removePotionEffect(e.getType()));
+                    quest.getPotionRewards().forEach(e -> alphaPlayer.getPlayer().removePotionEffect(e.getType()));
                 }
             }
         }

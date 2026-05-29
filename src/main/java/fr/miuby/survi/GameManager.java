@@ -3,9 +3,9 @@ package fr.miuby.survi;
 import fr.miuby.lib.MiubyLib;
 import fr.miuby.survi.grave.GraveManager;
 import fr.miuby.survi.mob.MobLevelManager;
-import fr.miuby.survi.mob.MobNametagTask;
 import fr.miuby.survi.world.crops.PlantedCropsManager;
 import fr.miuby.survi.display.TabDisplayManager;
+import fr.miuby.survi.quest.GlobalQuestManager;
 import fr.miuby.survi.quest.QuestManager;
 import fr.miuby.survi.role.RoleManagementService;
 import fr.miuby.survi.system.database.Database;
@@ -48,6 +48,7 @@ public class GameManager {
     @Getter private TimeManager timeManager;
     @Getter private RoleManagementService roleManagementService;
     @Getter private QuestManager questManager;
+    @Getter private GlobalQuestManager globalQuestManager;
     @Getter private GraveManager graveManager;
     @Getter private WorldLevelManager worldLevelManager;
     @Getter private MobLevelManager mobLevelManager;
@@ -143,6 +144,7 @@ public class GameManager {
         this.initItems();
 
         this.questManager = new QuestManager();
+        this.globalQuestManager = new GlobalQuestManager();
 
         this.graveManager = new GraveManager();
 

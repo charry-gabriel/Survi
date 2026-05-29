@@ -24,6 +24,7 @@ class SchemaGeneratorTest {
             updateVillagersSchema();
             updateRecipesSchema();
             updateQuestsSchema();
+            updateGlobalQuestsSchema();
             updateTradersSchema();
             updateMonstersSchema();
             updateRolesSchema();
@@ -154,6 +155,46 @@ class SchemaGeneratorTest {
             // Try to update existing enum if already present
             content = replaceEnum(content, "target", allTargets);
         }
+
+        Files.writeString(path, content);
+    }
+
+    private void updateGlobalQuestsSchema() throws IOException {
+        Path path = Paths.get("src/main/resources/schema/global-quests-schema.json");
+        if (!Files.exists(path)) return;
+
+        String content = Files.readString(path);
+
+        // Update quest type enum (MINE, KILL, etc.)
+        List<String> questTypes = getEnumNamesFromSource("src/main/java/fr/miuby/survi/quest/EQuestType.java");
+        if (!questTypes.isEmpty()) {
+            content = replaceEnum(content, "type", questTypes);
+        }
+
+        // Update target enum (Material + EntityType)
+        List<String> allTargets = Stream.concat(getMaterialNames().stream(), getEntityTypeNames().stream())
+                .distinct()
+                .sorted()
+                .toList();
+        Pattern targetPattern = Pattern.compile("\"target\":\\s*\\{\\s*\"type\":\\s*\\[\"string\",\\s*\"null\"\\][^{}]*\\}");
+        String targetEnumJson = "\"target\": {\n            \"type\": [\"string\", \"null\"],\n            \"description\": \"Matériau (MINE/CRAFT/SMELT) ou EntityType (KILL/SHEAR/BREED). Null pour FISH ou pour tout type.\",\n            \"enum\": [\n              null,\n              " +
+                allTargets.stream().map(s -> "\"" + s + "\"").collect(java.util.stream.Collectors.joining(",\n              ")) +
+                "\n            ]\n          }";
+        if (targetPattern.matcher(content).find()) {
+            content = targetPattern.matcher(content).replaceAll(java.util.regex.Matcher.quoteReplacement(targetEnumJson));
+        } else {
+            content = replaceEnum(content, "target", allTargets);
+        }
+
+        // Update job enum from EJob
+        content = replaceEnum(content, "job", getEnumNamesFromSource("src/main/java/fr/miuby/survi/job/EJob.java"));
+
+        // Update potion effect type enum
+        List<String> potionEffects = getPotionEffectTypeNames().stream()
+                .map(String::toLowerCase)
+                .sorted()
+                .toList();
+        content = replaceEnum(content, "type", potionEffects);
 
         Files.writeString(path, content);
     }

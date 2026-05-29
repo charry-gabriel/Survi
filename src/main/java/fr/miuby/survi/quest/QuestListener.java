@@ -21,6 +21,7 @@ public class QuestListener implements Listener {
         AlphaPlayer player = AlphaPlayer.get(event.getPlayer().getUniqueId());
         if (player != null) {
             GameManager.getInstance().getQuestManager().progressQuest(player, EQuestType.MINE, event.getBlock().getType(), 1);
+            GameManager.getInstance().getGlobalQuestManager().progressGlobalQuest(player, EQuestType.MINE, event.getBlock().getType(), 1);
         }
     }
 
@@ -30,6 +31,7 @@ public class QuestListener implements Listener {
             AlphaPlayer player = AlphaPlayer.get(event.getEntity().getKiller().getUniqueId());
             if (player != null) {
                 GameManager.getInstance().getQuestManager().progressQuest(player, EQuestType.KILL, event.getEntity().getType(), 1);
+                GameManager.getInstance().getGlobalQuestManager().progressGlobalQuest(player, EQuestType.KILL, event.getEntity().getType(), 1);
             }
         }
     }
@@ -40,6 +42,7 @@ public class QuestListener implements Listener {
             AlphaPlayer player = AlphaPlayer.get(killer.getUniqueId());
             if (player != null) {
                 GameManager.getInstance().getQuestManager().progressQuest(player, EQuestType.BREED, event.getEntityType(), 1);
+                GameManager.getInstance().getGlobalQuestManager().progressGlobalQuest(player, EQuestType.BREED, event.getEntityType(), 1);
             }
         }
     }
@@ -50,6 +53,7 @@ public class QuestListener implements Listener {
             AlphaPlayer player = AlphaPlayer.get(event.getPlayer().getUniqueId());
             if (player != null) {
                 GameManager.getInstance().getQuestManager().progressQuest(player, EQuestType.FISH, null, 1);
+                GameManager.getInstance().getGlobalQuestManager().progressGlobalQuest(player, EQuestType.FISH, null, 1);
             }
         }
     }
@@ -60,6 +64,7 @@ public class QuestListener implements Listener {
             AlphaPlayer player = AlphaPlayer.get(killer.getUniqueId());
             if (player != null) {
                 GameManager.getInstance().getQuestManager().progressQuest(player, EQuestType.CRAFT, event.getRecipe().getResult().getType(), 1);
+                GameManager.getInstance().getGlobalQuestManager().progressGlobalQuest(player, EQuestType.CRAFT, event.getRecipe().getResult().getType(), 1);
             }
         }
     }
@@ -69,6 +74,7 @@ public class QuestListener implements Listener {
         AlphaPlayer player = AlphaPlayer.get(event.getPlayer().getUniqueId());
         if (player != null) {
             GameManager.getInstance().getQuestManager().progressQuest(player, EQuestType.SMELT, event.getItemType(), event.getItemAmount());
+            GameManager.getInstance().getGlobalQuestManager().progressGlobalQuest(player, EQuestType.SMELT, event.getItemType(), event.getItemAmount());
         }
     }
 
@@ -77,6 +83,7 @@ public class QuestListener implements Listener {
         AlphaPlayer player = AlphaPlayer.get(event.getPlayer().getUniqueId());
         if (player != null) {
             GameManager.getInstance().getQuestManager().progressQuest(player, EQuestType.SHEAR, event.getEntity().getType(), 1);
+            GameManager.getInstance().getGlobalQuestManager().progressGlobalQuest(player, EQuestType.SHEAR, event.getEntity().getType(), 1);
         }
     }
 }

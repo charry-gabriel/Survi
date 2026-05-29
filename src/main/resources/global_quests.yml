@@ -1,0 +1,189 @@
+# yaml-language-server: $schema=./schema/global-quests-schema.json
+global_quests:
+
+  # ─── Combat ───────────────────────────────────────────────────────────────
+
+  - id: "global_kill_enderman"
+    name: "Grande Chasse aux Endermen"
+    description: "Ensemble, tuez 200 Endermen dans l'End !"
+    type: "KILL"
+    target: "ENDERMAN"
+    goal: 200
+    time_limit: 3600
+    job_rewards:
+      - job: "COMBATANT"
+        reputation: 60
+      - job: "CHASSEUR"
+        reputation: 40
+    potion_rewards:
+      - type: "strength"
+        duration: 1728000
+        amplifier: 1
+      - type: "resistance"
+        duration: 1728000
+        amplifier: 0
+
+  - id: "global_kill_wither_skeleton"
+    name: "Armée des Wither Squelettes"
+    description: "Éliminez 80 Wither Squelettes du Nether !"
+    type: "KILL"
+    target: "WITHER_SKELETON"
+    goal: 80
+    time_limit: 5400
+    job_rewards:
+      - job: "COMBATANT"
+        reputation: 80
+      - job: "CHASSEUR"
+        reputation: 50
+      - job: "AVENTURIER"
+        reputation: 30
+    potion_rewards:
+      - type: "fire_resistance"
+        duration: 1728000
+        amplifier: 0
+      - type: "strength"
+        duration: 1728000
+        amplifier: 1
+
+  - id: "global_kill_blaze"
+    name: "Extinction des Blazes"
+    description: "Éteignez 150 Blazes dans les forteresses du Nether !"
+    type: "KILL"
+    target: "BLAZE"
+    goal: 150
+    time_limit: 4800
+    job_rewards:
+      - job: "COMBATANT"
+        reputation: 70
+      - job: "ALCHIMISTE"
+        reputation: 40
+    potion_rewards:
+      - type: "fire_resistance"
+        duration: 1728000
+        amplifier: 0
+      - type: "haste"
+        duration: 1728000
+        amplifier: 1
+
+  - id: "global_kill_guardian"
+    name: "Terreur des Abysses"
+    description: "Tuez 100 Gardiens dans les temples sous-marins !"
+    type: "KILL"
+    target: "GUARDIAN"
+    goal: 100
+    time_limit: 5400
+    job_rewards:
+      - job: "COMBATANT"
+        reputation: 75
+      - job: "PECHEUR"
+        reputation: 40
+      - job: "AVENTURIER"
+        reputation: 25
+    potion_rewards:
+      - type: "water_breathing"
+        duration: 1728000
+        amplifier: 0
+      - type: "strength"
+        duration: 1728000
+        amplifier: 1
+
+  # ─── Minage ───────────────────────────────────────────────────────────────
+
+  - id: "global_mine_ancient_debris"
+    name: "Ruée vers la Nétherite"
+    description: "Extrayez ensemble 50 Ancient Debris !"
+    type: "MINE"
+    target: "ANCIENT_DEBRIS"
+    goal: 50
+    time_limit: 7200
+    job_rewards:
+      - job: "MINEUR"
+        reputation: 100
+      - job: "FORGERON"
+        reputation: 60
+    potion_rewards:
+      - type: "haste"
+        duration: 1728000
+        amplifier: 2
+      - type: "fire_resistance"
+        duration: 1728000
+        amplifier: 0
+
+  - id: "global_mine_obsidian"
+    name: "Chantier d'Obsidienne"
+    description: "Minez 500 blocs d'obsidienne !"
+    type: "MINE"
+    target: "OBSIDIAN"
+    goal: 500
+    time_limit: 5400
+    job_rewards:
+      - job: "MINEUR"
+        reputation: 80
+      - job: "BATISSEUR"
+        reputation: 50
+    potion_rewards:
+      - type: "haste"
+        duration: 1728000
+        amplifier: 1
+
+  # ─── Pêche ────────────────────────────────────────────────────────────────
+
+  - id: "global_fish_marathon"
+    name: "Marathon de Pêche"
+    description: "Pêchez collectivement 300 poissons !"
+    type: "FISH"
+    target: null
+    goal: 300
+    time_limit: 5400
+    job_rewards:
+      - job: "PECHEUR"
+        reputation: 80
+      - job: "FERMIER"
+        reputation: 30
+    potion_rewards:
+      - type: "luck"
+        duration: 1728000
+        amplifier: 2
+
+  # ─── Élevage ──────────────────────────────────────────────────────────────
+
+  - id: "global_breed_farming"
+    name: "Grande Ferme Commune"
+    description: "Faites se reproduire 100 animaux ensemble !"
+    type: "BREED"
+    target: null
+    goal: 100
+    time_limit: 5400
+    job_rewards:
+      - job: "FERMIER"
+        reputation: 80
+      - job: "MARCHAND"
+        reputation: 40
+    potion_rewards:
+      - type: "saturation"
+        duration: 1728000
+        amplifier: 1
+
+  # ─── Craft / Forge ────────────────────────────────────────────────────────
+
+  - id: "global_smelt_iron"
+    name: "Grande Fonderie"
+    description: "Fondez ensemble 1000 lingots de fer !"
+    type: "SMELT"
+    target: "IRON_INGOT"
+    goal: 1000
+    time_limit: 7200
+    job_rewards:
+      - job: "FORGERON"
+        reputation: 90
+      - job: "MINEUR"
+        reputation: 40
+      - job: "MARCHAND"
+        reputation: 30
+    potion_rewards:
+      - type: "haste"
+        duration: 1728000
+        amplifier: 1
+      - type: "fire_resistance"
+        duration: 1728000
+        amplifier: 0

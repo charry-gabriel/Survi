@@ -1,25 +1,16 @@
 package fr.miuby.survi.quest;
 
-import lombok.Builder;
 import lombok.Getter;
-import org.bukkit.potion.PotionEffect;
+import lombok.experimental.SuperBuilder;
 
-import java.util.List;
-
+/**
+ * Quête journalière individuelle.
+ * Hérite des champs communs de {@link BaseQuest} (id, name, type, target,
+ * goal, potionRewards) et ajoute uniquement ce qui lui est propre.
+ */
 @Getter
-@Builder
-public class Quest {
-    private final String id;
-    private final String name;
-    private final String description;
-    private final EQuestType type;
+@SuperBuilder
+public class Quest extends BaseQuest {
     private final EQuestDifficulty difficulty;
-    
-    // Target can be Material (MINE/CRAFT/COLLECT) or EntityType (KILL)
-    private final Object target;
-    private final int goal;
-    
-    // Rewards
-    private final List<PotionEffect> rewards;
     private final int reputationReward;
 }

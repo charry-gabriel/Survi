@@ -188,7 +188,7 @@ public class PlayerListener implements Listener {
             if (questData.isClaimed()) {
                 Quest quest = GameManager.getInstance().getQuestManager().getQuest(questData.getQuestId());
                 if (quest != null) {
-                    effectsToReapply.addAll(quest.getRewards());
+                    effectsToReapply.addAll(quest.getPotionRewards());
                 }
             }
         }

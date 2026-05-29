@@ -88,7 +88,7 @@ public class ServerListener implements Listener {
                     if (questData.isClaimed()) {
                         Quest quest = GameManager.getInstance().getQuestManager().getQuest(questData.getQuestId());
                         if (quest != null) {
-                            for (PotionEffect effect : quest.getRewards()) {
+                            for (PotionEffect effect : quest.getPotionRewards()) {
                                 player.getPlayer().removePotionEffect(effect.getType());
                             }
                         }

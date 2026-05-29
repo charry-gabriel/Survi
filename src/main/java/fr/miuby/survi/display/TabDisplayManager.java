@@ -3,6 +3,8 @@ package fr.miuby.survi.display;
 import fr.miuby.lib.villager.VillagerRegistry;
 import fr.miuby.survi.GameManager;
 import fr.miuby.survi.player.AlphaPlayer;
+import fr.miuby.survi.quest.GlobalQuest;
+import fr.miuby.survi.quest.GlobalQuestManager;
 import fr.miuby.survi.quest.PlayerQuestData;
 import fr.miuby.survi.quest.Quest;
 import fr.miuby.survi.villager.villagerlevel.VillagerLevel;
@@ -77,6 +79,12 @@ public class TabDisplayManager {
             footer = footer.append(questLine);
         }
 
+        Component globalQuestLine = buildGlobalQuestLine();
+        if (!globalQuestLine.equals(Component.empty())) {
+            footer = footer.append(Component.newline());
+            footer = footer.append(globalQuestLine);
+        }
+
         // Lignes des niveaux de métier
         footer = footer
                 .appendNewline()
@@ -87,6 +95,29 @@ public class TabDisplayManager {
                 .append(buildJobLine(alphaPlayer, 5, EJob.values().length));
 
         return footer.appendNewline();
+    }
+
+    private Component buildGlobalQuestLine() {
+        GlobalQuestManager gm = GameManager.getInstance().getGlobalQuestManager();
+        GlobalQuest gq = gm.getActiveQuest();
+        if (gq == null) return Component.empty();
+
+        int progress  = gm.getProgress();
+        int goal      = gq.getGoal();
+        long remaining = gm.getRemainingSeconds();
+        String timeStr = GlobalQuestManager.formatSeconds(remaining);
+
+        // Barre de progression (10 caractères)
+        int filled = goal > 0 ? Math.min(10, progress * 10 / goal) : 0;
+        String bar = "█".repeat(filled) + "░".repeat(10 - filled);
+
+        return Component.text("⚔ Quête Globale: ", NamedTextColor.GOLD)
+                .append(Component.text(gq.getName(), NamedTextColor.YELLOW))
+                .append(Component.text(" [", NamedTextColor.DARK_GRAY))
+                .append(Component.text(bar, NamedTextColor.GREEN))
+                .append(Component.text("] ", NamedTextColor.DARK_GRAY))
+                .append(Component.text(progress + "/" + goal, NamedTextColor.AQUA))
+                .append(Component.text(" ⏰ " + timeStr, NamedTextColor.GRAY));
     }
 
     private Component buildQuestLine(AlphaPlayer alphaPlayer) {

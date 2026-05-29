@@ -8,13 +8,8 @@ import fr.miuby.survi.villager.trader.Trader;
 import lombok.Getter;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.sound.Sound;
-import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
-import org.bukkit.Registry;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.entity.EntityType;
 import org.bukkit.potion.PotionEffect;
-import org.bukkit.potion.PotionEffectType;
 
 import fr.miuby.survi.world.WorldLevelManager;
 
@@ -61,55 +56,20 @@ public class QuestManager {
             Map<String, Object> map = (Map<String, Object>) rawMap;
 
             try {
-                String id = (String) map.get("id");
-                String name = (String) map.get("name");
-                String description = (String) map.get("description");
-                EQuestType type = EQuestType.valueOf((String) map.get("type"));
-                EQuestDifficulty difficulty = EQuestDifficulty.valueOf((String) map.get("difficulty"));
-
-                int goal = ((Number) map.get("goal")).intValue();
-                int reputationReward = ((Number) map.get("reputation_reward")).intValue();
-
-                Object targetObj = null;
-                String targetStr = (String) map.get("target");
-                if (targetStr != null) {
-                    if (type == EQuestType.MINE || type == EQuestType.CRAFT || type == EQuestType.SMELT) {
-                        targetObj = Material.valueOf(targetStr);
-                    } else if (type == EQuestType.KILL || type == EQuestType.SHEAR || type == EQuestType.BREED) {
-                        targetObj = EntityType.valueOf(targetStr);
-                    }
-                }
-
-                List<PotionEffect> rewards = new ArrayList<>();
-                List<?> rewardsList = (List<?>) map.get("rewards");
-                if (rewardsList != null) {
-                    for (Object rewardObj : rewardsList) {
-                        if (rewardObj instanceof Map<?, ?> rawReward) {
-                            @SuppressWarnings("unchecked")
-                            Map<String, Object> rewardMap = (Map<String, Object>) rawReward;
-                            String potionType = ((String) rewardMap.get("type")).toLowerCase();
-                            NamespacedKey key = NamespacedKey.minecraft(potionType);
-                            PotionEffectType effectType = Registry.POTION_EFFECT_TYPE.get(key);
-
-                            int duration = ((Number) rewardMap.get("duration")).intValue();
-                            int amplifier = ((Number) rewardMap.get("amplifier")).intValue();
-                            if (effectType != null) {
-                                rewards.add(new PotionEffect(effectType, duration, amplifier));
-                            }
-                        }
-                    }
-                }
+                QuestYamlLoader.BaseFields base = QuestYamlLoader.parseBase(map);
+                EQuestDifficulty difficulty   = EQuestDifficulty.valueOf((String) map.get("difficulty"));
+                int reputationReward          = ((Number) map.get("reputation_reward")).intValue();
 
                 questPool.add(Quest.builder()
-                        .id(id)
-                        .name(name)
-                        .description(description)
-                        .type(type)
+                        .id(base.id())
+                        .name(base.name())
+                        .description(base.description())
+                        .type(base.type())
+                        .target(base.target())
+                        .goal(base.goal())
+                        .potionRewards(base.potionRewards())
                         .difficulty(difficulty)
-                        .target(targetObj)
-                        .goal(goal)
                         .reputationReward(reputationReward)
-                        .rewards(rewards)
                         .build());
 
             } catch (Exception e) {
@@ -194,7 +154,7 @@ public class QuestManager {
         for (PlayerQuestData q : expired) {
             if (q.isClaimed()) {
                 Quest questDef = getQuest(q.getQuestId());
-                if (questDef != null) effectsToRemove.addAll(questDef.getRewards());
+                if (questDef != null) effectsToRemove.addAll(questDef.getPotionRewards());
             }
         }
         if (!effectsToRemove.isEmpty()) {
@@ -213,7 +173,7 @@ public class QuestManager {
         for (PlayerQuestData q : valid) {
             if (q.isClaimed()) {
                 Quest questDef = getQuest(q.getQuestId());
-                if (questDef != null) effectsToReapply.addAll(questDef.getRewards());
+                if (questDef != null) effectsToReapply.addAll(questDef.getPotionRewards());
             }
         }
         if (!effectsToReapply.isEmpty()) {
@@ -238,7 +198,7 @@ public class QuestManager {
         if (current.isCompleted() && player.getPlayer() != null) {
             Quest quest = getQuest(current.getQuestId());
             if (quest != null) {
-                for (PotionEffect effect : quest.getRewards()) {
+                for (PotionEffect effect : quest.getPotionRewards()) {
                     player.getPlayer().removePotionEffect(effect.getType());
                 }
             }
@@ -345,7 +305,7 @@ public class QuestManager {
         Quest quest = getQuest(data.getQuestId());
         if (quest == null) return false;
 
-        for (PotionEffect effect : quest.getRewards()) {
+        for (PotionEffect effect : quest.getPotionRewards()) {
             player.getPlayer().addPotionEffect(effect);
         }
 
@@ -369,10 +329,7 @@ public class QuestManager {
         if (data == null || data.isCompleted()) return;
 
         Quest quest = getQuest(data.getQuestId());
-        if (quest == null || quest.getType() != type) return;
-
-        boolean targetOk = (type == EQuestType.FISH) || (quest.getTarget() == null) || quest.getTarget().equals(target);
-        if (!targetOk) return;
+        if (quest == null || !quest.matchesAction(type, target)) return;
 
         data.setProgress(data.getProgress() + amount);
         LogManager.getInstance().log(Level.FINE, LogManager.ETagLog.QUEST,
