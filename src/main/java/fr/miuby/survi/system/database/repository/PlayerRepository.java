@@ -57,7 +57,7 @@ public class PlayerRepository {
     public void create(Player player) {
         GameManager.getInstance().getScheduler().runTaskAsynchronously(
                 GameManager.getInstance().getPlugin(), () -> {
-                    try (Connection conn = GameManager.getInstance().getDatabase().getSQLConnection();
+                    try (Connection conn = GameManager.getInstance().getDatabase().getConnection();
                          PreparedStatement ps = conn.prepareStatement("INSERT INTO player (uuid, mort, success, pseudo, role) VALUES (?, 0, 0, ?, ?)")) {
 
                         ps.setString(1, player.getUniqueId().toString());
@@ -75,7 +75,7 @@ public class PlayerRepository {
     public void update(UUID uuid, EPlayerColumn column, String value) {
         GameManager.getInstance().getScheduler().runTaskAsynchronously(
                 GameManager.getInstance().getPlugin(), () -> {
-                    try (Connection conn = GameManager.getInstance().getDatabase().getSQLConnection();
+                    try (Connection conn = GameManager.getInstance().getDatabase().getConnection();
                          PreparedStatement ps = conn.prepareStatement("UPDATE player SET " + column.getColumnName() + " = ? WHERE uuid = ?")) {
 
                         ps.setString(1, value);

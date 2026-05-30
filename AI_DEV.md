@@ -362,6 +362,83 @@ MyConfig cfg = MLResourceManager.loadPojo(plugin, "villagers", id, MyConfig.clas
 
 ---
 
+### `MLSQLite` — base abstraite SQLite
+
+Classe abstraite dans `fr.miuby.lib.sqlite`. Gère l'ouverture du fichier `.db`, le versionnage
+du schéma via `PRAGMA user_version` et l'orchestration des migrations.
+Chaque plugin implémente seulement `createTables()`, `runMigrations(int)` et `getTargetVersion()`.
+
+**Chaîne d'héritage dans Survi :**
+```
+MLSQLite  (MiubyLib) — connexion, PRAGMA user_version, load() final
+   ↑
+Database  (Survi, abstract) — repositories + délégués, onLoaded() init repos
+   ↑
+SQLite    (Survi, concrete) — SQL des tables, runMigrations(), getTargetVersion()
+```
+
+**Méthodes abstraites à implémenter :**
+```java
+protected abstract int getTargetVersion();                          // version cible du schéma
+protected abstract void createTables() throws SQLException;        // CREATE TABLE IF NOT EXISTS
+protected abstract void runMigrations(int currentVersion) throws SQLException; // migrations
+```
+
+**Hook :**
+```java
+@Override
+protected void onLoaded() {
+    super.onLoaded();   // toujours appeler super en premier (init repos du parent)
+    myRepo = new MyRepository(getConnection());
+}
+```
+
+**Utilitaires protégés disponibles dans les sous-classes :**
+```java
+getConnection()                           // connexion (cache server thread, new si async)
+getCurrentVersion()                       // lit PRAGMA user_version
+setVersion(int version)                   // écrit PRAGMA user_version — appelé auto par load()
+hasColumn(String table, String column)    // utile pour ALTER TABLE idempotent dans runMigrations()
+```
+
+**`load()` est finale** — ne pas surcharger. Séquence fixe : `createTables()` → vérif version →
+si outdated : `runMigrations()` → `setVersion()` → `onLoaded()`.
+
+**Créer un nouveau plugin avec SQLite :**
+```java
+public class MyDatabase extends MLSQLite {
+    private static final int TARGET_VERSION = 1;
+    private MyRepository myRepo;
+
+    public MyDatabase(JavaPlugin plugin) {
+        super(plugin.getConfig().getString("db", "myplugin"));
+    }
+
+    @Override protected int getTargetVersion() { return TARGET_VERSION; }
+
+    @Override
+    protected void createTables() throws SQLException {
+        try (Statement s = getConnection().createStatement()) {
+            s.executeUpdate("CREATE TABLE IF NOT EXISTS player (uuid TEXT PRIMARY KEY, name TEXT NOT NULL)");
+        }
+    }
+
+    @Override
+    protected void runMigrations(int currentVersion) throws SQLException {
+        // try (Statement s = getConnection().createStatement()) { if (currentVersion < 2) { ... } }
+    }
+
+    @Override
+    protected void onLoaded() {
+        myRepo = new MyRepository(getConnection());
+    }
+
+    public MyRepository myRepo() { return myRepo; }
+}
+```
+
+---
+
 ## 3. Point d'entrée — GameManager
 
 Singleton. Tout accès aux services passe par là :
@@ -498,7 +575,9 @@ player.sendMessage("texte brut")
 
 ## 8. Base de données
 
-SQLite via repositories :
+Hiérarchie : `SQLite extends Database extends MLSQLite` (voir section 2 MiubyLib).
+
+Accès via repositories :
 
 ```java
 GameManager.getInstance().getDatabase().players()    // PlayerRepository
@@ -509,6 +588,10 @@ GameManager.getInstance().getDatabase().system()     // SystemRepository (logs, 
 ```
 
 Le SQL va **uniquement** dans les repositories. Jamais inline dans un Listener ou Command.
+
+Pour ajouter une migration : incrémenter `CURRENT_DB_VERSION` dans `SQLite`, ajouter
+`createXxxTable()` dans `createTables()`, et ajouter `if (currentVersion < N) { ... }` dans
+`runMigrations()`. Ne jamais appeler `setVersion()` manuellement — c'est géré par `MLSQLite.load()`.
 
 ---
 
@@ -664,7 +747,7 @@ Respecter le schéma correspondant quand on génère du contenu :
 | Mondes | `WorldInitializer`, `WorldLevelManager`, `WorldResetManager`, `EWorld` |
 | Items | `ECustomItem`, `CustomItemBuilder`, `CustomRecipeFactory`, `recipes.yml` |
 | Métiers | `EJob`, `JobLevelConfig`, `JobListener` |
-| DB | `Database`, `SQLite`, repositories dans `system/database/repository/` |
+| DB | `MLSQLite` (MiubyLib), `Database`, `SQLite`, repositories dans `system/database/repository/` |
 
 ---
 

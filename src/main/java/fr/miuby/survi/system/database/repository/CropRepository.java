@@ -42,7 +42,7 @@ public class CropRepository {
     public void save(PlantedCrop crop) {
         GameManager.getInstance().getScheduler().runTaskAsynchronously(
                 GameManager.getInstance().getPlugin(), () -> {
-                    try (Connection conn = GameManager.getInstance().getDatabase().getSQLConnection();
+                    try (Connection conn = GameManager.getInstance().getDatabase().getConnection();
                          PreparedStatement ps = conn.prepareStatement("INSERT OR IGNORE INTO planted_crops (world_uid, x, y, z) VALUES (?, ?, ?, ?)")) {
 
                         ps.setString(1, crop.getWorldUid());
@@ -61,7 +61,7 @@ public class CropRepository {
     public void remove(PlantedCrop crop) {
         GameManager.getInstance().getScheduler().runTaskAsynchronously(
                 GameManager.getInstance().getPlugin(), () -> {
-                    try (Connection conn = GameManager.getInstance().getDatabase().getSQLConnection();
+                    try (Connection conn = GameManager.getInstance().getDatabase().getConnection();
                          PreparedStatement ps = conn.prepareStatement("DELETE FROM planted_crops WHERE world_uid = ? AND x = ? AND y = ? AND z = ?")) {
 
                         ps.setString(1, crop.getWorldUid());

@@ -1,77 +1,48 @@
 package fr.miuby.survi.system.database;
 
-import fr.miuby.survi.GameManager;
-import fr.miuby.survi.system.database.repository.*;
 import fr.miuby.lib.log.MLLogManager;
-
+import fr.miuby.survi.GameManager;
 import fr.miuby.survi.system.log.ELogTag;
-import org.jetbrains.annotations.Nullable;
-import java.io.File;
-import java.io.IOException;
+
 import java.sql.*;
 import java.util.logging.Level;
 
 public class SQLite extends Database {
-    private final String dbname;
     private static final int CURRENT_DB_VERSION = 9;
 
     public SQLite() {
-        dbname = GameManager.getInstance().getPlugin().getConfig().getString("SQLite.Filename", "minecraft");
+        super(GameManager.getInstance().getPlugin().getConfig().getString("SQLite.Filename", "minecraft"));
     }
 
-    @Nullable
-    public Connection getSQLConnection() {
-        File dataFolder = new File(GameManager.getInstance().getPlugin().getDataFolder(), dbname + ".db");
-        if (!dataFolder.exists()) {
-            try {
-                dataFolder.createNewFile();
-            } catch (IOException e) {
-                MLLogManager.getInstance().log(Level.SEVERE, ELogTag.SYSTEM, "File write error: " + dbname + ".db", e);
-            }
-        }
+    // =========================================================================
+    // Cycle de vie
+    // =========================================================================
 
-        try {
-            if (connection != null && !connection.isClosed() && Thread.currentThread().getName().equals("Server thread")) {
-                return connection;
+    @Override
+    protected int getTargetVersion() {
+        return CURRENT_DB_VERSION;
+    }
+
+    @Override
+    protected void onLoaded() {
+        super.onLoaded(); // init repositories
+        try (PreparedStatement ps = getConnection().prepareStatement("SELECT * FROM player WHERE pseudo = ?")) {
+            ps.setString(1, "Miuby");
+            try (ResultSet rs = ps.executeQuery()) {
+                MLLogManager.getInstance().log(Level.INFO, ELogTag.SYSTEM, "Database connexion succeeded !");
             }
-            Class.forName("org.sqlite.JDBC");
-            return DriverManager.getConnection("jdbc:sqlite:" + dataFolder);
         } catch (SQLException ex) {
-            MLLogManager.getInstance().log(Level.SEVERE, ELogTag.SYSTEM, "SQLite exception on initialize", ex);
-        } catch (ClassNotFoundException ex) {
-            MLLogManager.getInstance().log(Level.SEVERE, ELogTag.SYSTEM, "You need the SQLite JBDC library. Google it. Put it in /lib folder.", ex);
+            MLLogManager.getInstance().log(Level.SEVERE, ELogTag.SYSTEM, "No SQL connection", ex);
         }
-        return null;
     }
 
-    public void load() {
-        connection = getSQLConnection();
-        if (connection == null) return;
+    // =========================================================================
+    // Création des tables
+    // =========================================================================
 
-        try {
-            createTables();
-
-            int current = getCurrentVersion(connection);
-            if (current < CURRENT_DB_VERSION) {
-                runMigration(connection, current);
-            }
-
-            // Init repositories
-            playerRepository = new PlayerRepository(connection);
-            villagerRepository = new VillagerRepository(connection);
-            cropRepository = new CropRepository(connection);
-            questRepository = new QuestRepository(connection);
-            systemRepository = new SystemRepository(connection);
-
-        } catch (SQLException e) {
-            MLLogManager.getInstance().log(Level.SEVERE, ELogTag.SYSTEM, "Erreur SQL lors du chargement de la DB", e);
-        }
-
-        initialize();
-    }
-
-    private void createTables() throws SQLException {
-        try (Statement s = connection.createStatement()) {
+    @Override
+    protected void createTables() throws SQLException {
+        try (Statement s = getConnection().createStatement()) {
             s.executeUpdate(createPlayerTable());
             s.executeUpdate(createVillagerTable());
             s.executeUpdate(createCropTable());
@@ -83,19 +54,6 @@ public class SQLite extends Database {
         }
     }
 
-    public void initialize() {
-        try (PreparedStatement ps = connection.prepareStatement("SELECT * FROM player WHERE pseudo = ?")) {
-
-            ps.setString(1, "Miuby");
-            try (ResultSet rs = ps.executeQuery()) {
-                MLLogManager.getInstance().log(Level.INFO, ELogTag.SYSTEM, "Database connexion succeeded !");
-            }
-        } catch (SQLException ex) {
-            MLLogManager.getInstance().log(Level.SEVERE, ELogTag.SYSTEM, "No SQL connection", ex);
-        }
-    }
-
-    //region table creation
     private String createPlayerTable() {
         return "CREATE TABLE IF NOT EXISTS player (" +
                 "`uuid` varchar(255) NOT NULL," +
@@ -181,43 +139,16 @@ public class SQLite extends Database {
                 "data TEXT" +
                 ");";
     }
-    //endregion
 
-    //region retrocompatibility
-    private int getCurrentVersion(Connection conn) {
-        try (Statement s = conn.createStatement();
-             ResultSet rs = s.executeQuery("PRAGMA user_version")) {
-            return rs.next() ? rs.getInt(1) : 0;
-        } catch (SQLException e) {
-            MLLogManager.getInstance().log(Level.WARNING, ELogTag.SYSTEM, "Could not read DB version, assuming 0", e);
-            return 0;
-        }
-    }
+    // =========================================================================
+    // Migrations
+    // =========================================================================
 
-    private void setVersion(Connection conn, int version) throws SQLException {
-        try (Statement s = conn.createStatement()) {
-            s.execute("PRAGMA user_version = " + version);
-        }
-    }
-
-    private boolean hasColumn(Connection conn, String table, String column) throws SQLException {
-        try (Statement s = conn.createStatement();
-             ResultSet rs = s.executeQuery("PRAGMA table_info(" + table + ")")) {
-            while (rs.next()) {
-                if (column.equalsIgnoreCase(rs.getString("name"))) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
-    private void runMigration(Connection conn, int currentVersion) throws SQLException {
-        MLLogManager.getInstance().log(Level.INFO, ELogTag.SYSTEM, "Database schema " + currentVersion + " -> " + CURRENT_DB_VERSION + ", running migration.");
-
-        try (Statement s = conn.createStatement()) {
+    @Override
+    protected void runMigrations(int currentVersion) throws SQLException {
+        try (Statement s = getConnection().createStatement()) {
             if (currentVersion < 2) {
-                if (!hasColumn(conn, "player", "subroles")) {
+                if (!hasColumn("player", "subroles")) {
                     s.executeUpdate("ALTER TABLE player ADD COLUMN subroles varchar(255)");
                 }
             }
@@ -226,12 +157,12 @@ public class SQLite extends Database {
                 s.executeUpdate(createPlayerQuestTable());
             }
             if (currentVersion < 4) {
-                if (!hasColumn(conn, "player_quest", "trader_id")) {
+                if (!hasColumn("player_quest", "trader_id")) {
                     s.executeUpdate("ALTER TABLE player_quest ADD COLUMN trader_id varchar(255) NOT NULL DEFAULT ''");
                 }
             }
             if (currentVersion < 5) {
-                if (!hasColumn(conn, "player_quest", "claimed")) {
+                if (!hasColumn("player_quest", "claimed")) {
                     s.executeUpdate("ALTER TABLE player_quest ADD COLUMN claimed boolean NOT NULL DEFAULT 0");
                 }
             }
@@ -242,7 +173,7 @@ public class SQLite extends Database {
                 s.executeUpdate(createDelayedEffectsTable());
             }
             if (currentVersion < 8) {
-                if (!hasColumn(conn, "villager", "unlockedDate")) {
+                if (!hasColumn("villager", "unlockedDate")) {
                     s.executeUpdate("ALTER TABLE villager ADD COLUMN unlockedDate BIGINT DEFAULT 0");
                 }
             }
@@ -250,17 +181,12 @@ public class SQLite extends Database {
                 s.executeUpdate("ALTER TABLE player_quest RENAME TO player_quest_old");
                 s.executeUpdate(createPlayerQuestTable());
                 s.executeUpdate("INSERT INTO player_quest (player_uuid, slot, quest_id, progress, last_accepted, is_completed, trader_id, claimed) " +
-                                "SELECT player_uuid, 0, quest_id, progress, last_accepted, is_completed, trader_id, claimed FROM player_quest_old"
-                );
+                        "SELECT player_uuid, 0, quest_id, progress, last_accepted, is_completed, trader_id, claimed FROM player_quest_old");
                 s.executeUpdate("DROP TABLE player_quest_old");
-
                 s.executeUpdate(createPlayerQuestMetaTable());
                 s.executeUpdate("INSERT OR IGNORE INTO player_quest_meta (player_uuid, last_quest_id) " +
-                                "SELECT player_uuid, quest_id FROM player_quest WHERE slot = 0"
-                );
+                        "SELECT player_uuid, quest_id FROM player_quest WHERE slot = 0");
             }
-            setVersion(conn, CURRENT_DB_VERSION);
         }
     }
-    //endregion
 }

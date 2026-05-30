@@ -48,7 +48,7 @@ public class QuestRepository {
     public void updateReputation(UUID playerUuid, String traderId, int reputation) {
         GameManager.getInstance().getScheduler().runTaskAsynchronously(
                 GameManager.getInstance().getPlugin(), () -> {
-                    try (Connection conn = GameManager.getInstance().getDatabase().getSQLConnection();
+                    try (Connection conn = GameManager.getInstance().getDatabase().getConnection();
                          PreparedStatement ps = conn.prepareStatement(
                                  "INSERT OR REPLACE INTO player_reputation (player_uuid, trader_id, reputation) VALUES (?, ?, ?)")) {
 
@@ -108,7 +108,7 @@ public class QuestRepository {
     public void updatePlayerQuest(UUID playerUuid, PlayerQuestData questData) {
         GameManager.getInstance().getScheduler().runTaskAsynchronously(
                 GameManager.getInstance().getPlugin(), () -> {
-                    try (Connection conn = GameManager.getInstance().getDatabase().getSQLConnection();
+                    try (Connection conn = GameManager.getInstance().getDatabase().getConnection();
                          PreparedStatement ps = conn.prepareStatement(
                                  "INSERT OR REPLACE INTO player_quest " +
                                          "(player_uuid, slot, quest_id, progress, last_accepted, is_completed, trader_id, claimed) " +
@@ -137,7 +137,7 @@ public class QuestRepository {
     public void deletePlayerQuestSlot(UUID playerUuid, int slot) {
         GameManager.getInstance().getScheduler().runTaskAsynchronously(
                 GameManager.getInstance().getPlugin(), () -> {
-                    try (Connection conn = GameManager.getInstance().getDatabase().getSQLConnection();
+                    try (Connection conn = GameManager.getInstance().getDatabase().getConnection();
                          PreparedStatement ps = conn.prepareStatement(
                                  "DELETE FROM player_quest WHERE player_uuid = ? AND slot = ?")) {
 
@@ -158,7 +158,7 @@ public class QuestRepository {
     public void clearAllPlayerQuests(UUID playerUuid) {
         GameManager.getInstance().getScheduler().runTaskAsynchronously(
                 GameManager.getInstance().getPlugin(), () -> {
-                    try (Connection conn = GameManager.getInstance().getDatabase().getSQLConnection();
+                    try (Connection conn = GameManager.getInstance().getDatabase().getConnection();
                          PreparedStatement ps = conn.prepareStatement(
                                  "DELETE FROM player_quest WHERE player_uuid = ?")) {
 
@@ -200,7 +200,7 @@ public class QuestRepository {
     public void setLastQuestId(UUID playerUuid, String questId) {
         GameManager.getInstance().getScheduler().runTaskAsynchronously(
                 GameManager.getInstance().getPlugin(), () -> {
-                    try (Connection conn = GameManager.getInstance().getDatabase().getSQLConnection();
+                    try (Connection conn = GameManager.getInstance().getDatabase().getConnection();
                          PreparedStatement ps = conn.prepareStatement(
                                  "INSERT OR REPLACE INTO player_quest_meta (player_uuid, last_quest_id) VALUES (?, ?)")) {
 

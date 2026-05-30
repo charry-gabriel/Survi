@@ -63,7 +63,7 @@ public class VillagerRepository {
     public void create(String name, UUID uuid) {
         GameManager.getInstance().getScheduler().runTaskAsynchronously(
                 GameManager.getInstance().getPlugin(), () -> {
-                    try (Connection conn = GameManager.getInstance().getDatabase().getSQLConnection();
+                    try (Connection conn = GameManager.getInstance().getDatabase().getConnection();
                          PreparedStatement deletePs = conn.prepareStatement("DELETE FROM villager WHERE name = ?");
                          PreparedStatement insertPs = conn.prepareStatement(
                                  "INSERT INTO villager (uuid, level, name, givenItems, locationX, locationY, locationZ, locationYaw, locationPitch, unlockedDate) " +
@@ -86,7 +86,7 @@ public class VillagerRepository {
     public void updateLevel(UUID uuid, int level) {
         GameManager.getInstance().getScheduler().runTaskAsynchronously(
                 GameManager.getInstance().getPlugin(), () -> {
-                    try (Connection conn = GameManager.getInstance().getDatabase().getSQLConnection();
+                    try (Connection conn = GameManager.getInstance().getDatabase().getConnection();
                          PreparedStatement ps = conn.prepareStatement("UPDATE villager SET level = ? WHERE uuid = ?")) {
 
                         ps.setInt(1, level);
@@ -103,7 +103,7 @@ public class VillagerRepository {
     public void updateLocation(UUID uuid, Location location) {
         GameManager.getInstance().getScheduler().runTaskAsynchronously(
                 GameManager.getInstance().getPlugin(), () -> {
-                    try (Connection conn = GameManager.getInstance().getDatabase().getSQLConnection();
+                    try (Connection conn = GameManager.getInstance().getDatabase().getConnection();
                          PreparedStatement ps = conn.prepareStatement("UPDATE villager SET locationX = ?, locationY = ?, locationZ = ?, locationYaw = ?, locationPitch = ? WHERE uuid = ?")) {
 
                         ps.setDouble(1, location.getX());
@@ -124,7 +124,7 @@ public class VillagerRepository {
     public void updateGivenItems(UUID uuid, List<ItemStack> givenItems) {
         GameManager.getInstance().getScheduler().runTaskAsynchronously(
                 GameManager.getInstance().getPlugin(), () -> {
-                    try (Connection conn = GameManager.getInstance().getDatabase().getSQLConnection();
+                    try (Connection conn = GameManager.getInstance().getDatabase().getConnection();
                          PreparedStatement ps = conn.prepareStatement("UPDATE villager SET givenItems = ? WHERE uuid = ?")) {
 
                         String givenItemsString = Base64.getEncoder().encodeToString(ItemStack.serializeItemsAsBytes(givenItems));
@@ -142,7 +142,7 @@ public class VillagerRepository {
     public void updateLock(UUID uuid, Long unlockedDate) {
         GameManager.getInstance().getScheduler().runTaskAsynchronously(
                 GameManager.getInstance().getPlugin(), () -> {
-                    try (Connection conn = GameManager.getInstance().getDatabase().getSQLConnection();
+                    try (Connection conn = GameManager.getInstance().getDatabase().getConnection();
                          PreparedStatement ps = conn.prepareStatement("UPDATE villager SET unlockedDate = ? WHERE uuid = ?")) {
 
                         if (unlockedDate != null) {
