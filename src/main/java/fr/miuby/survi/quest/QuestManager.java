@@ -37,6 +37,52 @@ public class QuestManager {
         loadQuests();
     }
 
+    /**
+     * Recharge le pool de quêtes depuis {@code quests.yml} à chaud, sans redémarrage.
+     *
+     * <h3>Comportement sur les quêtes en cours</h3>
+     * <ul>
+     *   <li><b>Quête modifiée (même id, champs changés)</b> — la nouvelle définition
+     *       s'applique immédiatement : si la progression actuelle du joueur dépasse
+     *       le nouveau goal, la prochaine action déclenchante complètera la quête.</li>
+     *   <li><b>Quête supprimée (id absent du nouveau fichier)</b> — la quête orpheline
+     *       ne peut plus progresser (aucun match possible), reste en DB et expire
+     *       naturellement à minuit. Un avertissement est loggé par joueur concerné.</li>
+     *   <li><b>Quête réclamée (claimed)</b> — les effets de potion déjà appliqués
+     *       persistent jusqu'à leur expiration naturelle ; aucune action requise.</li>
+     * </ul>
+     *
+     * @return le nombre de quêtes présentes dans le pool après rechargement
+     */
+    public int reload() {
+        loadQuests();
+
+        // Inspecter les joueurs connectés dont une quête active n'existe plus dans le nouveau pool
+        int orphanCount = 0;
+        for (AlphaPlayer player : GameManager.getInstance().getAlphaPlayerFactory().getAlphaPlayers()) {
+            // Ignorer les joueurs hors ligne : leur état ne change pas en temps réel
+            if (player.getPlayer() == null) continue;
+
+            for (PlayerQuestData data : player.getActiveQuests()) {
+                if (!data.isClaimed() && getQuest(data.getQuestId()) == null) {
+                    orphanCount++;
+                    MLLogManager.getInstance().log(Level.WARNING, ELogTag.QUEST,
+                            "[Reload] " + player.getPseudo() + " a une quête active orpheline : "
+                                    + data.getQuestId() + " (progression " + data.getProgress()
+                                    + " conservée en DB, expire à minuit)");
+                }
+            }
+        }
+
+        if (orphanCount > 0) {
+            MLLogManager.getInstance().log(Level.WARNING, ELogTag.QUEST,
+                    "[Reload] " + orphanCount + " quête(s) active(s) orpheline(s) détectée(s). "
+                            + "Elles ne progresseront plus et seront nettoyées à minuit.");
+        }
+
+        return questPool.size();
+    }
+
     private void loadQuests() {
         File questFile = new File(GameManager.getInstance().getPlugin().getDataFolder(), "quests.yml");
         YamlConfiguration config = YamlConfiguration.loadConfiguration(questFile);

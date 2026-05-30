@@ -27,6 +27,10 @@ public class QuestCommand {
 
     public static LiteralArgumentBuilder<CommandSourceStack> createCommand() {
         return Commands.literal("quest")
+                .then(Commands.literal("reload")
+                        .requires(source -> source.getSender().isOp())
+                        .executes(QuestCommand::reloadQuests)
+                )
                 .then(Commands.literal("give")
                         .requires(source -> source.getSender().isOp())
                         .then(Commands.argument(playerArgument, AlphaPlayerArgument.alphaPlayer())
@@ -161,6 +165,27 @@ public class QuestCommand {
                     Component.text("Impossible de compléter la quête pour " + alphaPlayer.getPseudo()
                             + " (aucune quête en cours ou déjà réclamée)").color(NamedTextColor.RED));
         }
+        return Command.SINGLE_SUCCESS;
+    }
+
+    /**
+     * Recharge quests.yml à chaud sans redémarrage.
+     * Les quêtes en cours des joueurs connectés sont préservées.
+     * Si un questId actif n'existe plus dans le nouveau fichier, un avertissement
+     * est loggé en console mais aucune donnée joueur n'est supprimée.
+     */
+    private static int reloadQuests(CommandContext<CommandSourceStack> ctx) {
+        ctx.getSource().getSender().sendMessage(
+                Component.text("Rechargement de quests.yml en cours...").color(NamedTextColor.GRAY));
+
+        int loaded = GameManager.getInstance().getQuestManager().reload();
+
+        ctx.getSource().getSender().sendMessage(
+                Component.text("✔ ").color(NamedTextColor.GREEN)
+                        .append(Component.text(loaded + " quête(s) rechargée(s) depuis quests.yml.").color(NamedTextColor.WHITE)));
+        ctx.getSource().getSender().sendMessage(
+                Component.text("Les quêtes en cours des joueurs connectés sont conservées. "
+                        + "Consultez la console pour d'éventuelles quêtes orphelines.").color(NamedTextColor.GRAY));
         return Command.SINGLE_SUCCESS;
     }
 }
