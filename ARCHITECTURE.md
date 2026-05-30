@@ -55,10 +55,6 @@ AlphaPlayer → GameManager     ✓ (inévitable en Minecraft)
 AlphaPlayer → VillagerFactory ✗ (éviter : couplage circulaire)
 ```
 
-La méthode `AlphaPlayer.getReputation(String traderId)` est marquée
-`@Deprecated(forRemoval = true)` car elle viole cette règle.
-Migrer les appelants vers `getJobReputation(EJob)`.
-
 ## Ajouter un rôle
 
 1. `ERole` — ajouter la valeur enum.

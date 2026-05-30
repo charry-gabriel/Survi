@@ -270,9 +270,6 @@ AlphaPlayer → GameManager          ✓  (inévitable en Minecraft)
 AlphaPlayer → VillagerFactory      ✗  (couplage circulaire — interdit)
 ```
 
-`AlphaPlayer.getReputation(String traderId)` est `@Deprecated(forRemoval = true)`.
-Utiliser `getJobReputation(EJob)` à la place.
-
 ---
 
 ## 6. Commandes Brigadier
