@@ -4,7 +4,7 @@ plugins {
 }
 
 group = "fr.miuby.survi"
-version = "4.0"
+version = "4.1"
 
 java {
     toolchain {

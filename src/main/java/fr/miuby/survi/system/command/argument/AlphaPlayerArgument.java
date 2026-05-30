@@ -1,48 +1,30 @@
 package fr.miuby.survi.system.command.argument;
 
-import com.mojang.brigadier.arguments.ArgumentType;
-import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
-import com.mojang.brigadier.suggestion.Suggestions;
-import com.mojang.brigadier.suggestion.SuggestionsBuilder;
+import fr.miuby.lib.command.MLStringArgument;
 import fr.miuby.survi.GameManager;
 import fr.miuby.survi.player.AlphaPlayer;
 import fr.miuby.survi.system.command.CommandErrors;
-import io.papermc.paper.command.brigadier.argument.CustomArgumentType;
-import org.jspecify.annotations.NonNull;
 
-import java.util.concurrent.CompletableFuture;
+import java.util.Collection;
 
-public class AlphaPlayerArgument implements CustomArgumentType.Converted<AlphaPlayer, String> {
+public class AlphaPlayerArgument extends MLStringArgument<AlphaPlayer> {
 
     public static AlphaPlayerArgument alphaPlayer() {
         return new AlphaPlayerArgument();
     }
 
     @Override
-    public AlphaPlayer convert(String nativeType) throws CommandSyntaxException {
-        AlphaPlayer alphaPlayer = GameManager.getInstance().getAlphaPlayerFactory().getAlphaPlayer(nativeType);
-
-        if (alphaPlayer == null) {
-            throw CommandErrors.PLAYER_NOT_FOUND.create(nativeType);
-        }
-
-        return alphaPlayer;
+    public AlphaPlayer convert(String value) throws CommandSyntaxException {
+        AlphaPlayer player = GameManager.getInstance().getAlphaPlayerFactory().getAlphaPlayer(value);
+        if (player == null) throw CommandErrors.PLAYER_NOT_FOUND.create(value);
+        return player;
     }
 
     @Override
-    public @NonNull ArgumentType<String> getNativeType() {
-        return StringArgumentType.word();
-    }
-
-    @Override
-    public <S> @NonNull CompletableFuture<Suggestions> listSuggestions(@NonNull CommandContext<S> context, SuggestionsBuilder builder) {
-        String remaining = builder.getRemaining().toLowerCase();
-
-        GameManager.getInstance().getAlphaPlayerFactory().getAllPseudo().stream().filter(name -> name.toLowerCase().startsWith(remaining)).forEach(builder::suggest);
-
-        return builder.buildFuture();
+    protected Collection<String> suggestions() {
+        return GameManager.getInstance().getAlphaPlayerFactory().getAllPseudo();
     }
 
     public static AlphaPlayer getAlphaPlayer(CommandContext<?> ctx, String name) {

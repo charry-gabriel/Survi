@@ -1,51 +1,31 @@
 package fr.miuby.survi.system.command.argument;
 
-import com.mojang.brigadier.arguments.ArgumentType;
-import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
-import com.mojang.brigadier.suggestion.Suggestions;
-import com.mojang.brigadier.suggestion.SuggestionsBuilder;
+import fr.miuby.lib.command.MLStringArgument;
 import fr.miuby.survi.GameManager;
 import fr.miuby.survi.quest.Quest;
 import fr.miuby.survi.system.command.CommandErrors;
-import io.papermc.paper.command.brigadier.argument.CustomArgumentType;
-import org.jspecify.annotations.NonNull;
 
-import java.util.concurrent.CompletableFuture;
+import java.util.Collection;
 
-public class QuestArgument implements CustomArgumentType.Converted<Quest, String> {
+public class QuestArgument extends MLStringArgument<Quest> {
 
     public static QuestArgument quest() {
         return new QuestArgument();
     }
 
     @Override
-    public Quest convert(String nativeType) throws CommandSyntaxException {
-        Quest quest = GameManager.getInstance().getQuestManager().getQuest(nativeType);
-
-        if (quest == null) {
-            throw CommandErrors.QUEST_NOT_FOUND.create(nativeType);
-        }
-
+    public Quest convert(String value) throws CommandSyntaxException {
+        Quest quest = GameManager.getInstance().getQuestManager().getQuest(value);
+        if (quest == null) throw CommandErrors.QUEST_NOT_FOUND.create(value);
         return quest;
     }
 
     @Override
-    public @NonNull ArgumentType<String> getNativeType() {
-        return StringArgumentType.word();
-    }
-
-    @Override
-    public <S> @NonNull CompletableFuture<Suggestions> listSuggestions(@NonNull CommandContext<S> context, SuggestionsBuilder builder) {
-        String remaining = builder.getRemaining().toLowerCase();
-
-        GameManager.getInstance().getQuestManager().getQuestPool().stream()
-                .map(Quest::getId)
-                .filter(id -> id.toLowerCase().startsWith(remaining))
-                .forEach(builder::suggest);
-
-        return builder.buildFuture();
+    protected Collection<String> suggestions() {
+        return GameManager.getInstance().getQuestManager().getQuestPool()
+                .stream().map(Quest::getId).toList();
     }
 
     public static Quest getQuest(CommandContext<?> ctx, String name) {

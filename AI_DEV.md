@@ -8,7 +8,8 @@ Ce fichier est destiné à Claude pour générer du code cohérent avec ce proje
 ## 0. Instructions pour Claude
 
 - Ne jamais écrire de résumé de ce qui a été créé ou modifié. Fournir les fichiers directement, c'est suffisant.
-- Mettre à jour `AI_DEV.md` et `ARCHITECTURE.md` si une modification touche grandement un système existant (nouveau sous-système, changement de convention, nouveau pattern d'architecture).
+- Mettre à jour `AI_DEV.md` si une modification touche grandement un système existant (nouveau sous-système, changement de convention, nouveau pattern d'architecture).
+- **Longueur de ligne** : ne pas couper les lignes de code artificiellement. L'écran est large — une ligne peut facilement dépasser 120 caractères sans problème. Ne couper que si la ligne est vraiment trop longue pour être lisible d'un bloc (150+ caractères), pas par convention "80 colonnes".
 
 ---
 
@@ -205,10 +206,124 @@ public interface WorldType {}
 
 `EWorld` implémente `WorldType`. Toujours utiliser `EWorld` côté Survi.
 
+### `MLLogManager` — logging par tags et par niveaux
+
+Singleton. Un message est émis seulement si son tag **et** son level sont tous les deux activés.
+
+**Setup (ordre obligatoire dans `GameManager.init()`) :**
+```java
+MiubyLib.init(plugin);                                         // 1. MiubyLib d'abord
+MLLogManager.getInstance().registerTags(ELogTag.values());     // 2. enregistrer les tags du plugin
+// ... initialiser la DB ...
+MLLogManager.getInstance().initialize(new LogPersistence(db)); // 3. initialiser avec persistence
+// ou sans persistence :
+MLLogManager.getInstance().initialize();
+```
+
+**Logging :**
+```java
+MLLogManager.getInstance().log(Level.INFO,    ELogTag.SYSTEM,  "Message");
+MLLogManager.getInstance().log(Level.WARNING, ELogTag.PLAYER,  "Message");
+MLLogManager.getInstance().log(Level.SEVERE,  ELogTag.QUEST,   "Message", exception); // avec stacktrace
+```
+
+**Gestion runtime (via `/survi log`) :**
+```java
+MLLogManager.getInstance().toggleTag(ELogTag.QUEST);          // active/désactive un tag
+MLLogManager.getInstance().setTagEnabled(ELogTag.WORLD, false);
+MLLogManager.getInstance().toggleLevel(Level.FINE);
+MLLogManager.getInstance().setProductionMode();               // seulement WARNING + SEVERE
+MLLogManager.getInstance().setDebugMode();                    // tout activé
+MLLogManager.getInstance().setQuietMode();                    // seulement SEVERE
+MLLogManager.getInstance().getAllTagStates();                  // Map<String, Boolean>
+MLLogManager.getInstance().getAllLevelStates();                // Map<Level, Boolean>
+```
+
+**Sorties fichiers** (dans `plugins/<Plugin>/logs/`) :
+- `*-debug.log` — tout, stacktraces incluses
+- `*-info.log` — INFO+
+- `*-warn.log` — WARNING+
+- Console — WARNING+ uniquement
+
+**`ILogTag`** — interface marqueur pour les enums de tags :
+```java
+public enum ELogTag implements ILogTag { PLAYER, VILLAGER, QUEST, ... }
+```
+
+**`MLLogPersistence`** — interface à implémenter pour brancher la DB :
+```java
+public class LogPersistence implements MLLogPersistence {
+    @Override public Boolean getTagState(String name) { return repo.getLogTagState(name); }
+    @Override public void saveTagState(String name, boolean e) { repo.saveLogTagState(name, e); }
+    @Override public Boolean getLevelState(String name) { return repo.getLogLevelState(name); }
+    @Override public void saveLevelState(String name, boolean e) { repo.saveLogLevelState(name, e); }
+}
+```
+`LogPersistence` (Survi) branche sur `SystemRepository` (table `server_data`).
+
+---
+
+### `Cooldown<K>` — cooldown générique basé sur le temps
+
+```java
+private final Cooldown<UUID> warnCooldown = new Cooldown<>(6_000L); // 6 secondes
+
+if (!warnCooldown.isOnCooldown(player.getUniqueId())) {
+    warnCooldown.set(player.getUniqueId());
+    player.sendMessage("...");
+}
+
+warnCooldown.remaining(key); // millisecondes restantes (0 si pas en cooldown)
+warnCooldown.reset(key);     // force la fin du cooldown
+warnCooldown.clear();        // efface tous les cooldowns
+```
+
+---
+
+### `MLBrigadierHelper` — utilitaire Brigadier
+
+```java
+// Convertit un Component Adventure en Message Brigadier (pour les CommandExceptionType)
+MLBrigadierHelper.message(Component.text("Joueur introuvable : " + name))
+```
+
+Utilisé dans `CommandErrors` de Survi. À importer dans tout plugin qui déclare des erreurs Brigadier.
+
+---
+
+### `MLStringArgument<T>` — base générique pour les arguments custom Brigadier
+
+Élimine le boilerplate des arguments basés sur une correspondance `String → T`.
+
+```java
+public class MonArgument extends MLStringArgument<MonType> {
+    public static MonArgument monType() { return new MonArgument(); }
+
+    @Override
+    public MonType convert(String value) throws CommandSyntaxException {
+        MonType result = registry.get(value);
+        if (result == null) throw CommandErrors.MON_ERREUR.create(value);
+        return result;
+    }
+
+    @Override
+    protected Collection<String> suggestions() {
+        return registry.getAll().stream().map(MonType::getId).toList();
+    }
+
+    public static MonType get(CommandContext<?> ctx, String name) {
+        return ctx.getArgument(name, MonType.class);
+    }
+}
+```
+
+Si les suggestions dépendent du contexte (ex : `SubRoleArgument`), surcharger directement `listSuggestions` — `suggestions()` peut être ignoré.
+
+---
+
 ### `MLResourceManager` — déploiement YAML et chargement POJO
 
 Classe utilitaire (`fr.miuby.lib.resource`) pour tout ce qui touche aux fichiers YAML d'un plugin.
-Remplace `YmlResourceManager` (supprimé de Survi) et les anciens loaders statiques.
 
 **Déploiement (JAR → disque)** — peut être appelé *avant* `MiubyLib.init()` :
 ```java
@@ -344,9 +459,14 @@ getLifecycleManager().registerEventHandler(LifecycleEvents.COMMANDS, commands ->
 **Erreurs** : utiliser `CommandErrors` (PLAYER_NOT_FOUND, VILLAGER_NOT_FOUND, ROLE_NOT_FOUND,
 QUEST_NOT_FOUND, CUSTOM_ITEM_NOT_FOUND, WORLD_NOT_FOUND, JOB_NOT_FOUND, NOT_A_LEVEL_VILLAGER).
 
-**Arguments custom disponibles** dans `system/command/argument/` :
+**Arguments custom disponibles** dans `system/command/argument/` — tous étendent `MLStringArgument<T>` :
 `AlphaPlayerArgument`, `VillagerArgument`, `TraderArgument`, `RoleArgument`, `SubRoleArgument`,
-`JobArgument`, `QuestArgument`, `CustomItemArgument`, `WorldArgument`.
+`JobArgument`, `QuestArgument`, `GlobalQuestArgument`, `CustomItemArgument`, `WorldArgument`.
+
+**Créer un nouvel argument** → étendre `MLStringArgument<T>` (voir section 2 MiubyLib).
+
+**Erreurs Brigadier** → `MLBrigadierHelper.message(Component)` dans MiubyLib.
+`CommandErrors` utilise directement `MLBrigadierHelper`.
 
 **Autocomplétion** (exemple depuis `SystemCommand`) :
 
@@ -399,9 +519,8 @@ File file = new File(GameManager.getInstance().getPlugin().getDataFolder(), "mon
 YamlConfiguration config = YamlConfiguration.loadConfiguration(file);
 ```
 
-Les fichiers sont copiés depuis le JAR au démarrage via `YmlResourceManager.update()`.
-Les sous-dossiers (`villagers/`, `traders/`) sont gérés via `updateFolderResources()` dans `Survi`.
-Ne pas appeler `saveResource()` directement.
+Les fichiers sont déployés depuis le JAR au démarrage via `MLResourceManager.deploy()` / `MLResourceManager.deployFolder()`
+(appelés dans `Survi.onEnable()` avant `GameManager.init()`). Ne pas appeler `saveResource()` directement.
 
 ### Modifier un fichier YAML — workflow obligatoire
 
@@ -432,14 +551,16 @@ version Paper et seront écrasées au prochain run du test de toute façon.
 ## 10. Logging
 
 ```java
-LogManager.getInstance().log(Level.INFO,    LogManager.ETagLog.QUEST,    "Message");
-LogManager.getInstance().log(Level.WARNING, LogManager.ETagLog.VILLAGER, "Message", exception);
+MLLogManager.getInstance().log(Level.INFO,    ELogTag.QUEST,    "Message");
+MLLogManager.getInstance().log(Level.WARNING, ELogTag.VILLAGER, "Message", exception);
 ```
 
 Jamais `System.out.println` ni `plugin.getLogger().info(...)`.
 
-Tags disponibles : `PLAYER`, `VILLAGER`, `QUEST`, `REPUTATION`, `ITEM`, `ROLE`, `JOB`,
-`WORLD`, `SYSTEM`, `GRAVE`.
+Tags disponibles (`ELogTag implements ILogTag`) : `PLAYER`, `VILLAGER`, `QUEST`, `REPUTATION`,
+`ITEM`, `ROLE`, `JOB`, `WORLD`, `SYSTEM`, `GRAVE`.
+
+Voir section 2 MiubyLib pour le setup complet (`registerTags`, `initialize`, `MLLogPersistence`).
 
 ---
 
@@ -523,7 +644,7 @@ Respecter le schéma correspondant quand on génère du contenu :
 - Appeler `initAfterWorldsLoad()` manuellement (c'est `WorldInitializer` qui le déclenche)
 - Accéder à `VillagerFactory` depuis `AlphaPlayer`
 - Écrire du SQL hors d'un Repository
-- `System.out.println` ou `plugin.getLogger()` — utiliser `LogManager`
+- `System.out.println` ou `plugin.getLogger()` — utiliser `MLLogManager`
 - Créer un `new Manager()` hors de `GameManager.initAfterWorldsLoad()`
 - Instancier un `MLVillager` avec `new` — toujours `MLVillager.spawn(() -> new ...)`
 - Utiliser `player.sendMessage(String)` — toujours `player.sendMessage(Component)`
@@ -555,9 +676,47 @@ Respecter le schéma correspondant quand on génère du contenu :
   toujours passer par `WorldRegistry` / `AlphaPlayer.get(uuid)`.
 - Jamais de scan d'entités (`world.getEntitiesByType(...)`) dans un listener
   répétitif — utiliser un registry ou un cache local.
-- Les `runTaskTimer` répétitifs ne doivent jamais accéder à la DB — async si besoin.
+- **DB toujours async, sans exception.** Toute I/O base de données depuis n'importe quel
+  contexte (listener, command, timer) doit passer par `runTaskAsynchronously`. La règle vaut
+  aussi pour les events ponctuels (`onDailyReset`, `onPlayerQuit`…) — le thread principal
+  ne doit jamais attendre SQLite.
 - Ne pas allouer d'objets inutiles dans les listeners chauds (`new ArrayList<>()` à chaque event).
 - `ignoreCancelled = true` sur tous les `@EventHandler` sauf cas explicite.
+- **Pré-cacher les références stables dans les champs du listener.** Les appels
+  `WorldRegistry.get(EWorld.XXX)`, `GameManager.getInstance().getXxxManager()`, etc. dans
+  `onPlayerMove` ou `onEntityDamage` s'exécutent des milliers de fois par seconde — stocker
+  ces références en champs privés `final`, initialisés dans le constructeur du listener.
+  ```java
+  // ❌ Interdit dans un handler chaud
+  public void onPlayerMove(PlayerMoveEvent e) {
+      MLWorld village = WorldRegistry.get(EWorld.VILLAGE); // lookup à chaque move
+  }
+
+  // ✓ Correct
+  public class PlayerListener implements Listener {
+      private final MLWorld villageWorld;
+      private final MLWorld wildernessWorld;
+
+      public PlayerListener() {
+          this.villageWorld   = WorldRegistry.get(EWorld.VILLAGE);
+          this.wildernessWorld = WorldRegistry.get(EWorld.WILDERNESS);
+      }
+  }
+  ```
+- **Jamais `getAlphaPlayers()` / `getAll()` dans un hot path.** Itérer le registry complet
+  à chaque event de damage ou de move est équivalent à `world.getEntitiesByType()` — même
+  interdiction. Pour des états rares (joueurs ayant un rôle spécifique, un flag actif…),
+  maintenir un `Set<UUID>` dédié mis à jour sur l'event de changement d'état correspondant
+  (`AlphaPlayerRoleChangeEvent`, etc.), pas recalculé à chaque event.
+  ```java
+  // ❌ Interdit
+  for (AlphaPlayer p : factory.getAlphaPlayers()) { // scan complet à chaque damage
+      if (p.getRole().type() == ERole.FEE) { ... }
+  }
+
+  // ✓ Correct — cache maintenu sur AlphaPlayerRoleChangeEvent
+  private final Set<UUID> feePlayers = new HashSet<>();
+  ```
 
 ---
 
@@ -568,7 +727,7 @@ Respecter le schéma correspondant quand on génère du contenu :
 3. Données : classe `MonVillagerData extends MLVillagerData` si état custom
 4. Enregistrement dans `VillagerFactory` (map `nameId → Constructor`)
 5. Blessings éventuels → `BlessingLoader`
-6. Log `LogManager` avec `ETagLog.VILLAGER` dans `onInitialized()`
+6. Log `MLLogManager` avec `ELogTag.VILLAGER` dans `onInitialized()`
 
 ---
 
@@ -580,4 +739,4 @@ Respecter le schéma correspondant quand on génère du contenu :
 4. `XxxManager` ou `XxxService` selon qu'il y a un état runtime
 5. Listener fin qui délègue au service — jamais de logique métier dans le listener
 6. Persistence en repository si données joueur concernées
-7. Logs via `LogManager` avec le bon `ETagLog`
+7. Logs via `MLLogManager` avec le bon `ELogTag`
