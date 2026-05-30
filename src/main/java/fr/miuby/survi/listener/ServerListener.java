@@ -6,6 +6,7 @@ import fr.miuby.survi.player.AlphaPlayer;
 import fr.miuby.survi.quest.PlayerQuestData;
 import fr.miuby.survi.quest.Quest;
 import fr.miuby.survi.display.TutorialBookService;   // ← AJOUT
+import fr.miuby.survi.system.log.ELogTag;
 import org.bukkit.NamespacedKey;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
@@ -19,7 +20,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.EquipmentSlotGroup;
 import org.bukkit.potion.PotionEffect;
-import fr.miuby.survi.system.log.LogManager;
+import fr.miuby.lib.log.MLLogManager;
 import fr.miuby.survi.system.time.event.DailyResetEvent;
 
 import java.util.Objects;
@@ -29,7 +30,7 @@ public class ServerListener implements Listener {
 
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
-        LogManager.getInstance().log(Level.FINE, LogManager.ETagLog.PLAYER,
+        MLLogManager.getInstance().log(Level.FINE, ELogTag.PLAYER,
                 "[Join] " + event.getPlayer().getName() + " (" + event.getPlayer().getUniqueId() + ")");
 
         GameManager.getInstance().getAlphaPlayerFactory().onPlayerJoin(event.getPlayer());
@@ -47,7 +48,7 @@ public class ServerListener implements Listener {
 
     @EventHandler
     public void onPlayerQuit(PlayerQuitEvent event) {
-        LogManager.getInstance().log(Level.FINE, LogManager.ETagLog.PLAYER,
+        MLLogManager.getInstance().log(Level.FINE, ELogTag.PLAYER,
                 "[Quit] " + event.getPlayer().getName());
         AlphaPlayer.get(event.getPlayer().getUniqueId()).resetPlayer();
     }
@@ -66,7 +67,7 @@ public class ServerListener implements Listener {
                 ));
                 dragon.setHealth(attr.getValue());
             } catch (Exception exception) {
-                LogManager.getInstance().log(Level.SEVERE, LogManager.ETagLog.WORLD,
+                MLLogManager.getInstance().log(Level.SEVERE, ELogTag.WORLD,
                         Errors.nullException + " (EnderDragon)", exception);
             }
         }
@@ -76,7 +77,7 @@ public class ServerListener implements Listener {
     public void onDailyReset(DailyResetEvent event) {
         GameManager.getInstance().getWorldResetManager().checkAndPerformResets();
 
-        LogManager.getInstance().log(Level.INFO, LogManager.ETagLog.QUEST, "Reset des quêtes journalières...");
+        MLLogManager.getInstance().log(Level.INFO, ELogTag.QUEST, "Reset des quêtes journalières...");
 
         int resetCount = 0;
 
@@ -107,6 +108,6 @@ public class ServerListener implements Listener {
             resetCount++;
         }
 
-        LogManager.getInstance().log(Level.INFO, LogManager.ETagLog.QUEST, resetCount + " joueurs réinitialisés !");
+        MLLogManager.getInstance().log(Level.INFO, ELogTag.QUEST, resetCount + " joueurs réinitialisés !");
     }
 }

@@ -1,6 +1,7 @@
 package fr.miuby.survi.system.database;
 
-import fr.miuby.survi.system.log.LogManager;
+import fr.miuby.lib.log.MLLogManager;
+import fr.miuby.survi.system.log.ELogTag;
 
 import java.util.logging.Level;
 
@@ -20,7 +21,7 @@ public class Error {
      * @param ex the exception encountered while attempting to execute the MySQL statement
      */
     public static void execute(Exception ex){
-        LogManager.getInstance().log(Level.SEVERE, LogManager.ETagLog.SYSTEM, "Couldn't execute MySQL statement: " + ex.getMessage());
+        MLLogManager.getInstance().log(Level.SEVERE, ELogTag.SYSTEM, "Couldn't execute MySQL statement: " + ex.getMessage());
     }
 
     /**
@@ -29,6 +30,6 @@ public class Error {
      * @param ex the exception encountered while attempting to close the MySQL connection
      */
     public static void close(Exception ex){
-        LogManager.getInstance().log(Level.SEVERE, LogManager.ETagLog.SYSTEM, "Failed to close MySQL connection: " + ex.getMessage());
+        MLLogManager.getInstance().log(Level.SEVERE, ELogTag.SYSTEM, "Failed to close MySQL connection: " + ex.getMessage());
     }
 }

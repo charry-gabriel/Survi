@@ -1,8 +1,9 @@
 package fr.miuby.survi.system.database.repository;
 
 import fr.miuby.survi.GameManager;
+import fr.miuby.survi.system.log.ELogTag;
 import fr.miuby.survi.world.crops.PlantedCrop;
-import fr.miuby.survi.system.log.LogManager;
+import fr.miuby.lib.log.MLLogManager;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -33,7 +34,7 @@ public class CropRepository {
 
             return true;
         } catch (SQLException ex) {
-            LogManager.getInstance().log(Level.SEVERE, LogManager.ETagLog.WORLD, "Failed to load planted crops", ex);
+            MLLogManager.getInstance().log(Level.SEVERE, ELogTag.WORLD, "Failed to load planted crops", ex);
             return false;
         }
     }
@@ -51,7 +52,7 @@ public class CropRepository {
                         ps.executeUpdate();
 
                     } catch (SQLException ex) {
-                        LogManager.getInstance().log(Level.SEVERE, LogManager.ETagLog.WORLD, "Failed to save planted crop", ex);
+                        MLLogManager.getInstance().log(Level.SEVERE, ELogTag.WORLD, "Failed to save planted crop", ex);
                     }
                 }
         );
@@ -70,7 +71,7 @@ public class CropRepository {
                         ps.executeUpdate();
 
                     } catch (SQLException ex) {
-                        LogManager.getInstance().log(Level.SEVERE, LogManager.ETagLog.WORLD, "Failed to remove planted crop", ex);
+                        MLLogManager.getInstance().log(Level.SEVERE, ELogTag.WORLD, "Failed to remove planted crop", ex);
                     }
                 }
         );

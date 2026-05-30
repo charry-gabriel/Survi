@@ -8,13 +8,14 @@ import fr.miuby.survi.job.EJob;
 import fr.miuby.survi.player.AlphaPlayer;
 import fr.miuby.survi.role.RoleAttribute;
 import fr.miuby.survi.system.SurviConfig;
+import fr.miuby.survi.system.log.ELogTag;
 import fr.miuby.survi.world.EWorld;
 import io.papermc.paper.advancement.AdvancementDisplay;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import fr.miuby.survi.quest.PlayerQuestData;
 import fr.miuby.survi.quest.Quest;
-import fr.miuby.survi.system.log.LogManager;
+import fr.miuby.lib.log.MLLogManager;
 import java.util.logging.Level;
 
 import org.bukkit.Location;
@@ -132,7 +133,7 @@ public class PlayerListener implements Listener {
 
         String category = advancement.getKey().getKey().split("/")[0];
         if (advancementProgress.isDone() && advancementDisplay != null && !category.equals("recipes")) {
-            LogManager.getInstance().log(Level.FINE, LogManager.ETagLog.PLAYER,
+            MLLogManager.getInstance().log(Level.FINE, ELogTag.PLAYER,
                     "[Advancement] " + player.getName() + " — " + advancement.getKey());
             if (advancementDisplay.frame() == AdvancementDisplay.Frame.CHALLENGE) {
                 AlphaPlayer.get(player.getUniqueId()).gainOneSuccess(true);
@@ -142,7 +143,7 @@ public class PlayerListener implements Listener {
 
     @EventHandler
     public void onPlayerArmorChange(PlayerArmorChangeEvent event) {
-        LogManager.getInstance().log(Level.FINE, LogManager.ETagLog.PLAYER,
+        MLLogManager.getInstance().log(Level.FINE, ELogTag.PLAYER,
                 "[ArmorChange] " + event.getPlayer().getName() + " slot=" + event.getSlotType());
         boolean malus = false;
         for (ItemStack item : event.getPlayer().getInventory().getArmorContents()) {
@@ -156,7 +157,7 @@ public class PlayerListener implements Listener {
     @EventHandler
     public void onPlayerDeath(PlayerDeathEvent event) {
         final Player player = event.getEntity();
-        LogManager.getInstance().log(Level.FINE, LogManager.ETagLog.PLAYER,
+        MLLogManager.getInstance().log(Level.FINE, ELogTag.PLAYER,
                 "[PlayerDeath] " + player.getName() + " mort en " + player.getLocation().getWorld().getName()
                         + " x=" + player.getLocation().getBlockX() + " y=" + player.getLocation().getBlockY() + " z=" + player.getLocation().getBlockZ());
 
@@ -171,7 +172,7 @@ public class PlayerListener implements Listener {
     @EventHandler
     public void onPlayerRespawn(PlayerRespawnEvent event) {
         Player player = event.getPlayer();
-        LogManager.getInstance().log(Level.FINE, LogManager.ETagLog.PLAYER,
+        MLLogManager.getInstance().log(Level.FINE, ELogTag.PLAYER,
                 "[PlayerRespawn] " + player.getName());
         AlphaPlayer alphaPlayer = AlphaPlayer.get(player.getUniqueId());
         alphaPlayer.getAlphaLife().actualizeDeath();

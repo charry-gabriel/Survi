@@ -2,8 +2,9 @@ package fr.miuby.survi.system.database;
 
 import fr.miuby.survi.GameManager;
 import fr.miuby.survi.system.database.repository.*;
-import fr.miuby.survi.system.log.LogManager;
+import fr.miuby.lib.log.MLLogManager;
 
+import fr.miuby.survi.system.log.ELogTag;
 import org.jetbrains.annotations.Nullable;
 import java.io.File;
 import java.io.IOException;
@@ -25,7 +26,7 @@ public class SQLite extends Database {
             try {
                 dataFolder.createNewFile();
             } catch (IOException e) {
-                LogManager.getInstance().log(Level.SEVERE, LogManager.ETagLog.SYSTEM, "File write error: " + dbname + ".db", e);
+                MLLogManager.getInstance().log(Level.SEVERE, ELogTag.SYSTEM, "File write error: " + dbname + ".db", e);
             }
         }
 
@@ -36,9 +37,9 @@ public class SQLite extends Database {
             Class.forName("org.sqlite.JDBC");
             return DriverManager.getConnection("jdbc:sqlite:" + dataFolder);
         } catch (SQLException ex) {
-            LogManager.getInstance().log(Level.SEVERE, LogManager.ETagLog.SYSTEM, "SQLite exception on initialize", ex);
+            MLLogManager.getInstance().log(Level.SEVERE, ELogTag.SYSTEM, "SQLite exception on initialize", ex);
         } catch (ClassNotFoundException ex) {
-            LogManager.getInstance().log(Level.SEVERE, LogManager.ETagLog.SYSTEM, "You need the SQLite JBDC library. Google it. Put it in /lib folder.", ex);
+            MLLogManager.getInstance().log(Level.SEVERE, ELogTag.SYSTEM, "You need the SQLite JBDC library. Google it. Put it in /lib folder.", ex);
         }
         return null;
     }
@@ -63,7 +64,7 @@ public class SQLite extends Database {
             systemRepository = new SystemRepository(connection);
 
         } catch (SQLException e) {
-            LogManager.getInstance().log(Level.SEVERE, LogManager.ETagLog.SYSTEM, "Erreur SQL lors du chargement de la DB", e);
+            MLLogManager.getInstance().log(Level.SEVERE, ELogTag.SYSTEM, "Erreur SQL lors du chargement de la DB", e);
         }
 
         initialize();
@@ -87,10 +88,10 @@ public class SQLite extends Database {
 
             ps.setString(1, "Miuby");
             try (ResultSet rs = ps.executeQuery()) {
-                LogManager.getInstance().log(Level.INFO, LogManager.ETagLog.SYSTEM, "Database connexion succeeded !");
+                MLLogManager.getInstance().log(Level.INFO, ELogTag.SYSTEM, "Database connexion succeeded !");
             }
         } catch (SQLException ex) {
-            LogManager.getInstance().log(Level.SEVERE, LogManager.ETagLog.SYSTEM, "No SQL connection", ex);
+            MLLogManager.getInstance().log(Level.SEVERE, ELogTag.SYSTEM, "No SQL connection", ex);
         }
     }
 
@@ -188,7 +189,7 @@ public class SQLite extends Database {
              ResultSet rs = s.executeQuery("PRAGMA user_version")) {
             return rs.next() ? rs.getInt(1) : 0;
         } catch (SQLException e) {
-            LogManager.getInstance().log(Level.WARNING, LogManager.ETagLog.SYSTEM, "Could not read DB version, assuming 0", e);
+            MLLogManager.getInstance().log(Level.WARNING, ELogTag.SYSTEM, "Could not read DB version, assuming 0", e);
             return 0;
         }
     }
@@ -212,7 +213,7 @@ public class SQLite extends Database {
     }
 
     private void runMigration(Connection conn, int currentVersion) throws SQLException {
-        LogManager.getInstance().log(Level.INFO, LogManager.ETagLog.SYSTEM, "Database schema " + currentVersion + " -> " + CURRENT_DB_VERSION + ", running migration.");
+        MLLogManager.getInstance().log(Level.INFO, ELogTag.SYSTEM, "Database schema " + currentVersion + " -> " + CURRENT_DB_VERSION + ", running migration.");
 
         try (Statement s = conn.createStatement()) {
             if (currentVersion < 2) {

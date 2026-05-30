@@ -5,8 +5,9 @@ import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import fr.miuby.survi.GameManager;
 import fr.miuby.survi.system.SurviConfig;
+import fr.miuby.survi.system.log.ELogTag;
 import fr.miuby.survi.world.config.VillageZoneConfig;
-import fr.miuby.survi.system.log.LogManager;
+import fr.miuby.lib.log.MLLogManager;
 import fr.miuby.survi.system.time.TimeManager;
 import fr.miuby.survi.world.VillageZoneManager;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
@@ -36,7 +37,7 @@ public class SystemCommand {
                         .then(Commands.literal("status")
                                 .executes(ctx -> {
                                     var sender = ctx.getSource().getSender();
-                                    var lm = LogManager.getInstance();
+                                    var lm = MLLogManager.getInstance();
 
                                     sender.sendMessage(Component.text("╔═══════════════════════════╗", NamedTextColor.GOLD));
                                     sender.sendMessage(Component.text("║    LOG STATUS             ║", NamedTextColor.GOLD));
@@ -49,7 +50,7 @@ public class SystemCommand {
                                         String icon = Boolean.TRUE.equals(entry.getValue()) ? "✓" : "✗";
                                         sender.sendMessage(
                                                 Component.text("║   " + icon + " ", color)
-                                                        .append(Component.text(entry.getKey().name(), NamedTextColor.WHITE))
+                                                        .append(Component.text(entry.getKey(), NamedTextColor.WHITE))
                                         );
                                     }
 
@@ -76,15 +77,15 @@ public class SystemCommand {
                                 .then(Commands.literal("toggle")
                                         .then(Commands.argument("tag", StringArgumentType.word())
                                                 .suggests((context, builder) -> {
-                                                    EnumSet.allOf(LogManager.ETagLog.class)
+                                                    EnumSet.allOf(ELogTag.class)
                                                             .forEach(tag -> builder.suggest(tag.name()));
                                                     return builder.buildFuture();
                                                 })
                                                 .executes(ctx -> {
                                                     String tagName = StringArgumentType.getString(ctx, "tag");
-                                                    LogManager.ETagLog tag = LogManager.ETagLog.valueOf(tagName);
-                                                    LogManager.getInstance().toggleTag(tag);
-                                                    boolean enabled = LogManager.getInstance().isTagEnabled(tag);
+                                                    ELogTag tag = ELogTag.valueOf(tagName);
+                                                    MLLogManager.getInstance().toggleTag(tag);
+                                                    boolean enabled = MLLogManager.getInstance().isTagEnabled(tag);
 
                                                     ctx.getSource().getSender().sendMessage(
                                                             Component.text("Tag [" + tag + "] ", NamedTextColor.YELLOW)
@@ -98,14 +99,14 @@ public class SystemCommand {
                                 .then(Commands.literal("enable")
                                         .then(Commands.argument("tag", StringArgumentType.word())
                                                 .suggests((context, builder) -> {
-                                                    EnumSet.allOf(LogManager.ETagLog.class)
+                                                    EnumSet.allOf(ELogTag.class)
                                                             .forEach(tag -> builder.suggest(tag.name()));
                                                     return builder.buildFuture();
                                                 })
                                                 .executes(ctx -> {
                                                     String tagName = StringArgumentType.getString(ctx, "tag");
-                                                    LogManager.ETagLog tag = LogManager.ETagLog.valueOf(tagName);
-                                                    LogManager.getInstance().setTagEnabled(tag, true);
+                                                    ELogTag tag = ELogTag.valueOf(tagName);
+                                                    MLLogManager.getInstance().setTagEnabled(tag, true);
 
                                                     ctx.getSource().getSender().sendMessage(
                                                             Component.text("Tag [" + tag + "] activé", NamedTextColor.GREEN)
@@ -117,14 +118,14 @@ public class SystemCommand {
                                 .then(Commands.literal("disable")
                                         .then(Commands.argument("tag", StringArgumentType.word())
                                                 .suggests((context, builder) -> {
-                                                    EnumSet.allOf(LogManager.ETagLog.class)
+                                                    EnumSet.allOf(ELogTag.class)
                                                             .forEach(tag -> builder.suggest(tag.name()));
                                                     return builder.buildFuture();
                                                 })
                                                 .executes(ctx -> {
                                                     String tagName = StringArgumentType.getString(ctx, "tag");
-                                                    LogManager.ETagLog tag = LogManager.ETagLog.valueOf(tagName);
-                                                    LogManager.getInstance().setTagEnabled(tag, false);
+                                                    ELogTag tag = ELogTag.valueOf(tagName);
+                                                    MLLogManager.getInstance().setTagEnabled(tag, false);
 
                                                     ctx.getSource().getSender().sendMessage(
                                                             Component.text("Tag [" + tag + "] désactivé", NamedTextColor.RED)
@@ -152,8 +153,8 @@ public class SystemCommand {
                                                 .executes(ctx -> {
                                                     String levelName = StringArgumentType.getString(ctx, levelArgument);
                                                     Level level = Level.parse(levelName);
-                                                    LogManager.getInstance().toggleLevel(level);
-                                                    boolean enabled = LogManager.getInstance().isLevelEnabled(level);
+                                                    MLLogManager.getInstance().toggleLevel(level);
+                                                    boolean enabled = MLLogManager.getInstance().isLevelEnabled(level);
 
                                                     ctx.getSource().getSender().sendMessage(
                                                             Component.text("Level [" + level.getName() + "] ", NamedTextColor.YELLOW)
@@ -175,7 +176,7 @@ public class SystemCommand {
                                                 .executes(ctx -> {
                                                     String levelName = StringArgumentType.getString(ctx, levelArgument);
                                                     Level level = Level.parse(levelName);
-                                                    LogManager.getInstance().setLevelEnabled(level, true);
+                                                    MLLogManager.getInstance().setLevelEnabled(level, true);
 
                                                     ctx.getSource().getSender().sendMessage(
                                                             Component.text("Level [" + level.getName() + "] activé", NamedTextColor.GREEN)
@@ -195,7 +196,7 @@ public class SystemCommand {
                                                 .executes(ctx -> {
                                                     String levelName = StringArgumentType.getString(ctx, levelArgument);
                                                     Level level = Level.parse(levelName);
-                                                    LogManager.getInstance().setLevelEnabled(level, false);
+                                                    MLLogManager.getInstance().setLevelEnabled(level, false);
 
                                                     ctx.getSource().getSender().sendMessage(
                                                             Component.text("Level [" + level.getName() + "] désactivé", NamedTextColor.RED)
@@ -210,7 +211,7 @@ public class SystemCommand {
                         .then(Commands.literal("mode")
                                 .then(Commands.literal("production")
                                         .executes(ctx -> {
-                                            LogManager.getInstance().setProductionMode();
+                                            MLLogManager.getInstance().setProductionMode();
                                             ctx.getSource().getSender().sendMessage(
                                                     Component.text("Mode PRODUCTION activé (WARNING + SEVERE)", NamedTextColor.GREEN)
                                             );
@@ -219,7 +220,7 @@ public class SystemCommand {
                                 )
                                 .then(Commands.literal("debug")
                                         .executes(ctx -> {
-                                            LogManager.getInstance().setDebugMode();
+                                            MLLogManager.getInstance().setDebugMode();
                                             ctx.getSource().getSender().sendMessage(
                                                     Component.text("Mode DEBUG activé (tout)", NamedTextColor.GREEN)
                                             );
@@ -228,7 +229,7 @@ public class SystemCommand {
                                 )
                                 .then(Commands.literal("quiet")
                                         .executes(ctx -> {
-                                            LogManager.getInstance().setQuietMode();
+                                            MLLogManager.getInstance().setQuietMode();
                                             ctx.getSource().getSender().sendMessage(
                                                     Component.text("Mode QUIET activé (seulement SEVERE)", NamedTextColor.RED)
                                             );

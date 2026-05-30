@@ -3,7 +3,8 @@ package fr.miuby.survi.villager.villagerlevel;
 import fr.miuby.lib.villager.MLVillagerData;
 import fr.miuby.survi.player.AlphaPlayer;
 import fr.miuby.survi.GameManager;
-import fr.miuby.survi.system.log.LogManager;
+import fr.miuby.lib.log.MLLogManager;
+import fr.miuby.survi.system.log.ELogTag;
 import fr.miuby.survi.system.time.TimeManager;
 import fr.miuby.survi.villager.AVillager;
 import fr.miuby.survi.blessing.Blessing;
@@ -118,12 +119,12 @@ public class VillagerLevel extends AVillager {
         getVillager().customName(getDisplayName());
         updateInventory();
 
-        LogManager.getInstance().log(Level.INFO, LogManager.ETagLog.VILLAGER, nameId + " a été reset au niveau 0.");
+        MLLogManager.getInstance().log(Level.INFO, ELogTag.VILLAGER, nameId + " a été reset au niveau 0.");
     }
 
     public boolean levelUp() {
         if (isMaxLevel()) {
-            LogManager.getInstance().log(Level.INFO, LogManager.ETagLog.VILLAGER, nameId + " est déjà au niveau maximum");
+            MLLogManager.getInstance().log(Level.INFO, ELogTag.VILLAGER, nameId + " est déjà au niveau maximum");
             return false;
         }
 
@@ -193,7 +194,7 @@ public class VillagerLevel extends AVillager {
 
         for (ItemStack tributeItem : inventory.getContents()) {
             if (tributeItem != null && tributeItem.isSimilar(item)) {
-                LogManager.getInstance().log(Level.INFO, LogManager.ETagLog.VILLAGER, this.nameId + " recupere " + item.getAmount() + " de " + item.getType().name());
+                MLLogManager.getInstance().log(Level.INFO, ELogTag.VILLAGER, this.nameId + " recupere " + item.getAmount() + " de " + item.getType().name());
 
                 if (item.getAmount() < tributeItem.getAmount()) {
                     tributeItem.setAmount(tributeItem.getAmount() - item.getAmount());
@@ -214,7 +215,7 @@ public class VillagerLevel extends AVillager {
 
         for (ItemStack tributeItem : inventory.getContents()) {
             if (tributeItem != null && tributeItem.isSimilar(item)) {
-                LogManager.getInstance().log(Level.INFO, LogManager.ETagLog.VILLAGER, this.nameId + " recupere " + item.getAmount() + " de " + item.getType().name());
+                MLLogManager.getInstance().log(Level.INFO, ELogTag.VILLAGER, this.nameId + " recupere " + item.getAmount() + " de " + item.getType().name());
                 this.givenItems.add(new ItemStack(item));
                 GameManager.getInstance().getDatabase().villagers().updateGivenItems(getVillager().getUniqueId(), this.givenItems);
 
@@ -239,7 +240,7 @@ public class VillagerLevel extends AVillager {
 
         if (tributes[this.level].getItemStacks().isEmpty()) {
             if (this.level + 1 != tributes.length)
-                LogManager.getInstance().log(Level.WARNING, LogManager.ETagLog.VILLAGER, "Le niveau " + this.level + " de " + this.nameId + " n'a pas de tributes !");
+                MLLogManager.getInstance().log(Level.WARNING, ELogTag.VILLAGER, "Le niveau " + this.level + " de " + this.nameId + " n'a pas de tributes !");
 
             return null;
         }
@@ -282,7 +283,7 @@ public class VillagerLevel extends AVillager {
 
     public boolean unlock() {
         if (isUnlocked()) {
-            LogManager.getInstance().log(Level.WARNING, LogManager.ETagLog.VILLAGER, getNameId() + " déjà débloqué");
+            MLLogManager.getInstance().log(Level.WARNING, ELogTag.VILLAGER, getNameId() + " déjà débloqué");
             return false;
         }
 

@@ -2,7 +2,8 @@ package fr.miuby.survi.world;
 
 import fr.miuby.lib.world.WorldRegistry;
 import fr.miuby.survi.GameManager;
-import fr.miuby.survi.system.log.LogManager;
+import fr.miuby.lib.log.MLLogManager;
+import fr.miuby.survi.system.log.ELogTag;
 import org.bukkit.*;
 import org.bukkit.block.data.Orientable;
 import org.bukkit.entity.Player;
@@ -39,7 +40,7 @@ public class WorldPortalManager {
     public void init() {
         loadWildernessPortalFromDB();
 
-        LogManager.getInstance().log(Level.INFO, LogManager.ETagLog.WORLD, "WorldPortalManager initialisé.");
+        MLLogManager.getInstance().log(Level.INFO, ELogTag.WORLD, "WorldPortalManager initialisé.");
     }
 
     // -------------------------------------------------------------------------
@@ -60,7 +61,7 @@ public class WorldPortalManager {
             world.getPlayers().forEach(p -> sendFakePortalBlocksAsync(p, min, max));
         }
 
-        LogManager.getInstance().log(Level.INFO, LogManager.ETagLog.WORLD,
+        MLLogManager.getInstance().log(Level.INFO, ELogTag.WORLD,
                 "Portail Wilderness enregistré : " + worldName + " " + fmt(min) + " → " + fmt(max) + " (axe : " + detectAxis(min, max) + ")");
     }
 
@@ -87,7 +88,7 @@ public class WorldPortalManager {
             world.getPlayers().forEach(p -> sendFakePortalBlocksAsync(p, min, max));
         }
 
-        LogManager.getInstance().log(Level.INFO, LogManager.ETagLog.WORLD,
+        MLLogManager.getInstance().log(Level.INFO, ELogTag.WORLD,
                 "Portail Village mis à jour : " + fmt(min) + " → " + fmt(max)
                         + " (axe : " + detectAxis(min, max) + ")");
     }
@@ -95,7 +96,7 @@ public class WorldPortalManager {
     /** Retire la zone du portail Wilderness avant unload (reset). */
     public void unregisterWildernessPortal(String worldName) {
         if (portalZones.remove(worldName) != null) {
-            LogManager.getInstance().log(Level.INFO, LogManager.ETagLog.WORLD, "Portail Wilderness désenregistré : " + worldName);
+            MLLogManager.getInstance().log(Level.INFO, ELogTag.WORLD, "Portail Wilderness désenregistré : " + worldName);
         }
     }
 
@@ -158,7 +159,7 @@ public class WorldPortalManager {
                     if (!player.isOnline()) return;
                     if (!player.getWorld().equals(world)) return; // changement de monde entre-temps
 
-                    LogManager.getInstance().log(Level.INFO, LogManager.ETagLog.WORLD,
+                    MLLogManager.getInstance().log(Level.INFO, ELogTag.WORLD,
                             "Envoi faux blocs portail à " + player.getName() + " dans " + world.getName());
                     sendFakePortalBlocks(player, min, max);
                 }, CLIENT_CHUNK_RECEIVE_DELAY)
@@ -177,7 +178,7 @@ public class WorldPortalManager {
 
         iterateZone(min, max, (world, x, y, z) -> {
             player.sendBlockChange(new Location(world, x, y, z), fakePortal);
-            LogManager.getInstance().log(Level.INFO, LogManager.ETagLog.WORLD,
+            MLLogManager.getInstance().log(Level.INFO, ELogTag.WORLD,
                     world.getName() + " : " + x + "," + y + "," + z + " -> FAKE_NETHER_PORTAL");
         });
     }
@@ -192,7 +193,7 @@ public class WorldPortalManager {
             Location loc = new Location(world, x, y, z);
             // On renvoie le vrai bloc serveur — annule le fake sans toucher au décor réel
             player.sendBlockChange(loc, world.getBlockAt(loc).getBlockData());
-            LogManager.getInstance().log(Level.INFO, LogManager.ETagLog.WORLD,
+            MLLogManager.getInstance().log(Level.INFO, ELogTag.WORLD,
                     world.getName() + " : " + x + "," + y + "," + z + " -> CLEAR_FAKE_PORTAL");
         });
     }
@@ -280,7 +281,7 @@ public class WorldPortalManager {
 
         var mlWorld = WorldRegistry.get(destination);
         if (mlWorld == null) {
-            LogManager.getInstance().log(Level.SEVERE, LogManager.ETagLog.WORLD, "triggerTeleport : monde non enregistré → " + destination);
+            MLLogManager.getInstance().log(Level.SEVERE, ELogTag.WORLD, "triggerTeleport : monde non enregistré → " + destination);
             teleporting.remove(player.getUniqueId());
             return;
         }
@@ -306,14 +307,14 @@ public class WorldPortalManager {
 
         if (worldName == null || sMinX == null || sMinY == null || sMinZ == null
                 || sMaxX == null || sMaxY == null || sMaxZ == null) {
-            LogManager.getInstance().log(Level.INFO, LogManager.ETagLog.WORLD,
+            MLLogManager.getInstance().log(Level.INFO, ELogTag.WORLD,
                     "Aucun portail Wilderness en DB (premier démarrage ou avant le 1er reset).");
             return;
         }
 
         World world = Bukkit.getWorld(worldName);
         if (world == null) {
-            LogManager.getInstance().log(Level.WARNING, LogManager.ETagLog.WORLD,
+            MLLogManager.getInstance().log(Level.WARNING, ELogTag.WORLD,
                     "loadWildernessPortalFromDB : monde introuvable → " + worldName);
             return;
         }
@@ -322,7 +323,7 @@ public class WorldPortalManager {
         Location max = new Location(world, Integer.parseInt(sMaxX), Integer.parseInt(sMaxY), Integer.parseInt(sMaxZ));
         portalZones.put(worldName, new Location[]{ min, max });
 
-        LogManager.getInstance().log(Level.INFO, LogManager.ETagLog.WORLD,
+        MLLogManager.getInstance().log(Level.INFO, ELogTag.WORLD,
                 "Portail Wilderness chargé depuis DB : " + worldName + " " + fmt(min) + " → " + fmt(max));
     }
 

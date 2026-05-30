@@ -2,7 +2,8 @@ package fr.miuby.survi.world;
 
 import fr.miuby.survi.GameManager;
 import fr.miuby.survi.system.SurviConfig;
-import fr.miuby.survi.system.log.LogManager;
+import fr.miuby.lib.log.MLLogManager;
+import fr.miuby.survi.system.log.ELogTag;
 
 import java.util.logging.Level;
 
@@ -27,7 +28,7 @@ public class WorldLevelManager {
 
     public void load() {
         this.worldLevel = GameManager.getInstance().getDatabase().system().getWorldLevel();
-        LogManager.getInstance().log(Level.INFO, LogManager.ETagLog.SYSTEM,
+        MLLogManager.getInstance().log(Level.INFO, ELogTag.SYSTEM,
                 "[WorldLevel] Niveau du monde chargé : " + worldLevel);
     }
 
@@ -37,7 +38,7 @@ public class WorldLevelManager {
         if (delta <= 0) return;
         worldLevel += delta;
         persist();
-        LogManager.getInstance().log(Level.INFO, LogManager.ETagLog.SYSTEM,
+        MLLogManager.getInstance().log(Level.INFO, ELogTag.SYSTEM,
                 "[WorldLevel] Niveau du monde : " + worldLevel + " (+" + delta + ")");
     }
 
@@ -48,7 +49,7 @@ public class WorldLevelManager {
     public void reset() {
         worldLevel = 0;
         persist();
-        LogManager.getInstance().log(Level.INFO, LogManager.ETagLog.SYSTEM,
+        MLLogManager.getInstance().log(Level.INFO, ELogTag.SYSTEM,
                 "[WorldLevel] Niveau du monde réinitialisé à 0");
     }
 

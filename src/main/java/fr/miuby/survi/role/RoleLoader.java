@@ -2,13 +2,13 @@ package fr.miuby.survi.role;
 
 import fr.miuby.lib.utils.MultiKeyRegistry;
 import fr.miuby.survi.GameManager;
-import fr.miuby.survi.system.log.LogManager;
+import fr.miuby.lib.log.MLLogManager;
+import fr.miuby.survi.system.log.ELogTag;
 import fr.miuby.survi.world.EWorld;
 import org.bukkit.Registry;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -39,7 +39,7 @@ public class RoleLoader {
 
         ConfigurationSection rolesSection = config.getConfigurationSection("roles");
         if (rolesSection == null) {
-            LogManager.getInstance().log(Level.SEVERE, LogManager.ETagLog.ROLE,
+            MLLogManager.getInstance().log(Level.SEVERE, ELogTag.ROLE,
                     "[RoleLoader] Section 'roles' introuvable dans roles.yml !");
             return;
         }
@@ -49,7 +49,7 @@ public class RoleLoader {
             try {
                 eRole = ERole.valueOf(key);
             } catch (IllegalArgumentException e) {
-                LogManager.getInstance().log(Level.WARNING, LogManager.ETagLog.ROLE,
+                MLLogManager.getInstance().log(Level.WARNING, ELogTag.ROLE,
                         "[RoleLoader] Rôle inconnu dans roles.yml : " + key, e);
                 continue;
             }
@@ -91,7 +91,7 @@ public class RoleLoader {
             float  value        = map.containsKey("value")     ? ((Number) map.get("value")).floatValue() : 0f;
 
             if (attributeStr == null) {
-                LogManager.getInstance().log(Level.WARNING, LogManager.ETagLog.ROLE,
+                MLLogManager.getInstance().log(Level.WARNING, ELogTag.ROLE,
                         "[RoleLoader] Attribut manquant dans un élément de la liste 'attributes'");
                 continue;
             }
@@ -100,7 +100,7 @@ public class RoleLoader {
             try {
                 world = EWorld.valueOf(worldStr.toUpperCase());
             } catch (IllegalArgumentException e) {
-                LogManager.getInstance().log(Level.WARNING, LogManager.ETagLog.ROLE,
+                MLLogManager.getInstance().log(Level.WARNING, ELogTag.ROLE,
                         "[RoleLoader] World inconnu : " + worldStr, e);
                 continue;
             }
@@ -109,7 +109,7 @@ public class RoleLoader {
                     org.bukkit.NamespacedKey.minecraft(attributeStr.toLowerCase())
             );
             if (attribute == null) {
-                LogManager.getInstance().log(Level.WARNING, LogManager.ETagLog.ROLE,
+                MLLogManager.getInstance().log(Level.WARNING, ELogTag.ROLE,
                         "[RoleLoader] Attribut Bukkit inconnu : " + attributeStr);
                 continue;
             }

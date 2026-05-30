@@ -2,8 +2,9 @@ package fr.miuby.survi.world;
 
 import fr.miuby.survi.GameManager;
 import fr.miuby.survi.system.SurviConfig;
+import fr.miuby.survi.system.log.ELogTag;
 import fr.miuby.survi.world.config.VillageZoneConfig;
-import fr.miuby.survi.system.log.LogManager;
+import fr.miuby.lib.log.MLLogManager;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -64,12 +65,12 @@ public class VillageZoneManager {
         if (started) {
             applyCurrentStage(true);
             startStageCheckTimer();
-            LogManager.getInstance().log(Level.INFO, LogManager.ETagLog.WORLD,
+            MLLogManager.getInstance().log(Level.INFO, ELogTag.WORLD,
                     "[VillageZoneManager] Reprise depuis DB — palier=" + currentStageIndex
                             + " rayon=" + getCurrentRadius() + " blocs"
                             + " écoulé=" + String.format("%.2f", getElapsedMinutes() / 60f) + "h");
         } else {
-            LogManager.getInstance().log(Level.INFO, LogManager.ETagLog.WORLD,
+            MLLogManager.getInstance().log(Level.INFO, ELogTag.WORLD,
                     "[VillageZoneManager] Initialisé — en attente de /survi zone start");
         }
     }
@@ -95,7 +96,7 @@ public class VillageZoneManager {
         applyCurrentStage(true);
         startStageCheckTimer();
 
-        LogManager.getInstance().log(Level.INFO, LogManager.ETagLog.WORLD,
+        MLLogManager.getInstance().log(Level.INFO, ELogTag.WORLD,
                 "[VillageZoneManager] Partie démarrée — timestamp=" + startTimestamp);
         return true;
     }
@@ -115,7 +116,7 @@ public class VillageZoneManager {
         applyCurrentStage(true);
         startStageCheckTimer();
 
-        LogManager.getInstance().log(Level.INFO, LogManager.ETagLog.WORLD,
+        MLLogManager.getInstance().log(Level.INFO, ELogTag.WORLD,
                 "[VillageZoneManager] Timer réinitialisé — palier 0 restauré");
     }
 
@@ -239,7 +240,7 @@ public class VillageZoneManager {
         Location max = new Location(world, portalCfg.maxX(), portalCfg.maxY(), portalCfg.maxZ());
         GameManager.getInstance().getWorldPortalManager().updateVillagePortal(villageName, min, max);
 
-        LogManager.getInstance().log(Level.INFO, LogManager.ETagLog.WORLD,
+        MLLogManager.getInstance().log(Level.INFO, ELogTag.WORLD,
                 "[VillageZoneManager] Palier " + currentStageIndex
                         + " — rayon=" + stage.radius() + " blocs"
                         + " | spawn=(" + sp.x() + "," + sp.y() + "," + sp.z() + ")"
@@ -254,7 +255,7 @@ public class VillageZoneManager {
         String stored = db.getServerData(DB_KEY_START);
 
         if (stored == null) {
-            LogManager.getInstance().log(Level.INFO, LogManager.ETagLog.WORLD,
+            MLLogManager.getInstance().log(Level.INFO, ELogTag.WORLD,
                     "[VillageZoneManager] Aucun timestamp en DB — en attente de /survi zone start");
             return;
         }
@@ -262,10 +263,10 @@ public class VillageZoneManager {
         try {
             startTimestamp = Long.parseLong(stored);
             started        = true;
-            LogManager.getInstance().log(Level.INFO, LogManager.ETagLog.WORLD,
+            MLLogManager.getInstance().log(Level.INFO, ELogTag.WORLD,
                     "[VillageZoneManager] Timestamp chargé depuis DB : " + startTimestamp);
         } catch (NumberFormatException e) {
-            LogManager.getInstance().log(Level.WARNING, LogManager.ETagLog.WORLD,
+            MLLogManager.getInstance().log(Level.WARNING, ELogTag.WORLD,
                     "[VillageZoneManager] Timestamp DB invalide, ignoré", e);
         }
     }

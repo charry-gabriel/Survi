@@ -1,6 +1,7 @@
 package fr.miuby.survi.system.database.repository;
 
-import fr.miuby.survi.system.log.LogManager;
+import fr.miuby.lib.log.MLLogManager;
+import fr.miuby.survi.system.log.ELogTag;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -28,7 +29,7 @@ public class SystemRepository {
                 return rs.getString("value");
             }
         } catch (SQLException e) {
-            LogManager.getInstance().log(Level.SEVERE, LogManager.ETagLog.SYSTEM, "Erreur getServerData: " + key, e);
+            MLLogManager.getInstance().log(Level.SEVERE, ELogTag.SYSTEM, "Erreur getServerData: " + key, e);
         }
         return null;
     }
@@ -41,7 +42,7 @@ public class SystemRepository {
             ps.executeUpdate();
 
         } catch (SQLException e) {
-            LogManager.getInstance().log(Level.SEVERE, LogManager.ETagLog.SYSTEM, "Erreur saveServerData: " + key, e);
+            MLLogManager.getInstance().log(Level.SEVERE, ELogTag.SYSTEM, "Erreur saveServerData: " + key, e);
         }
     }
 

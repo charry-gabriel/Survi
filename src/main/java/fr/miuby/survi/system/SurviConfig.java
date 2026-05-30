@@ -1,8 +1,9 @@
 package fr.miuby.survi.system;
 
 import fr.miuby.survi.player.EGlobalRank;
+import fr.miuby.survi.system.log.ELogTag;
 import fr.miuby.survi.world.config.VillageZoneConfig;
-import fr.miuby.survi.system.log.LogManager;
+import fr.miuby.lib.log.MLLogManager;
 import lombok.Getter;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -178,7 +179,7 @@ public class SurviConfig {
         }
         villageZoneConfig = new VillageZoneConfig(centerX, centerZ, zoneStages);
 
-        LogManager.getInstance().log(Level.INFO, LogManager.ETagLog.SYSTEM,
+        MLLogManager.getInstance().log(Level.INFO, ELogTag.SYSTEM,
                 "[SurviConfig] Configuration chargée (" + rankEntries.size() + " rangs, "
                         + jobLevelEntries.size() + " niveaux de métier, "
                         + zoneStages.size() + " paliers de zone village)");

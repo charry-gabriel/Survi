@@ -1,6 +1,7 @@
 package fr.miuby.survi.quest;
 
-import fr.miuby.survi.system.log.LogManager;
+import fr.miuby.lib.log.MLLogManager;
+import fr.miuby.survi.system.log.ELogTag;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Registry;
@@ -100,7 +101,7 @@ public final class QuestYamlLoader {
                 NamespacedKey key = NamespacedKey.minecraft(typeStr);
                 PotionEffectType effectType = Registry.POTION_EFFECT_TYPE.get(key);
                 if (effectType == null) {
-                    LogManager.getInstance().log(Level.WARNING, LogManager.ETagLog.QUEST,
+                    MLLogManager.getInstance().log(Level.WARNING, ELogTag.QUEST,
                             "Type de potion inconnu : " + typeStr);
                     continue;
                 }
@@ -108,7 +109,7 @@ public final class QuestYamlLoader {
                 int amplifier = ((Number) entry.get("amplifier")).intValue();
                 result.add(new PotionEffect(effectType, duration, amplifier));
             } catch (Exception e) {
-                LogManager.getInstance().log(Level.WARNING, LogManager.ETagLog.QUEST,
+                MLLogManager.getInstance().log(Level.WARNING, ELogTag.QUEST,
                         "Erreur lors du parsing d'une récompense de potion", e);
             }
         }

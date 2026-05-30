@@ -7,7 +7,8 @@ import fr.miuby.survi.GameManager;
 import fr.miuby.survi.player.AlphaPlayer;
 import fr.miuby.survi.quest.PlayerQuestData;
 import fr.miuby.survi.quest.QuestManager;
-import fr.miuby.survi.system.log.LogManager;
+import fr.miuby.lib.log.MLLogManager;
+import fr.miuby.survi.system.log.ELogTag;
 import fr.miuby.survi.villager.AVillager;
 import fr.miuby.survi.villager.trader.Trader;
 import fr.miuby.survi.villager.villagerlevel.VillagerLevel;
@@ -58,7 +59,7 @@ public class VillagerListener implements Listener {
                 }
                 case Trader trader -> {
                     AlphaPlayer alphaPlayer = AlphaPlayer.get(player.getUniqueId());
-                    LogManager.getInstance().log(Level.FINE, LogManager.ETagLog.VILLAGER,
+                    MLLogManager.getInstance().log(Level.FINE, ELogTag.VILLAGER,
                             "[VillagerInteract] " + player.getName() + " → Trader " + trader.getNameId());
 
                     // Priorité 1 : une quête complétée mais non réclamée est en attente → on la réclame
@@ -102,7 +103,7 @@ public class VillagerListener implements Listener {
                 }
                 case null, default -> {
                     event.setCancelled(true);
-                    LogManager.getInstance().log(Level.SEVERE, LogManager.ETagLog.VILLAGER, "Villager interacted with an unknown entity: " + event.getRightClicked().getType());
+                    MLLogManager.getInstance().log(Level.SEVERE, ELogTag.VILLAGER, "Villager interacted with an unknown entity: " + event.getRightClicked().getType());
                 }
             }
         }
@@ -115,7 +116,7 @@ public class VillagerListener implements Listener {
     @EventHandler
     public void onVillagerLoaded(VillagerLoadedEvent event) {
         MLVillager villager = event.getVillager();
-        LogManager.getInstance().log(Level.FINE, LogManager.ETagLog.VILLAGER,
+        MLLogManager.getInstance().log(Level.FINE, ELogTag.VILLAGER,
                 "[VillagerLoaded] " + villager.getNameId());
         VillagerRegistry.register(villager);
         VillagerPostLoadActions.executeAndClear(villager);
@@ -124,7 +125,7 @@ public class VillagerListener implements Listener {
     @EventHandler
     public void onVillagerLevelUp(VillagerLevelUpEvent event) {
         VillagerLevel villager = event.getVillagerLevel();
-        LogManager.getInstance().log(Level.INFO, LogManager.ETagLog.VILLAGER,
+        MLLogManager.getInstance().log(Level.INFO, ELogTag.VILLAGER,
                 "[VillagerLevelUp] " + villager.getNameId() + " → niveau " + villager.getLevel());
         Component message = villager.getMessage();
 

@@ -1,8 +1,11 @@
 package fr.miuby.survi;
 
 import fr.miuby.lib.MiubyLib;
+import fr.miuby.lib.log.MLLogManager;
 import fr.miuby.survi.grave.GraveManager;
 import fr.miuby.survi.mob.MobLevelManager;
+import fr.miuby.survi.system.log.ELogTag;
+import fr.miuby.survi.system.log.LogPersistence;
 import fr.miuby.survi.world.crops.PlantedCropsManager;
 import fr.miuby.survi.display.TabDisplayManager;
 import fr.miuby.survi.quest.GlobalQuestManager;
@@ -24,7 +27,6 @@ import fr.miuby.survi.world.WorldResetManager;
 import fr.miuby.survi.world.VillageZoneManager;
 import fr.miuby.survi.system.SurviConfig;
 import fr.miuby.survi.world.WorldInitializer;
-import fr.miuby.survi.system.log.LogManager;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.event.Event;
@@ -86,11 +88,16 @@ public class GameManager {
         this.plugin = plugin;
         this.scheduler = this.plugin.getServer().getScheduler();
 
-        LogManager.getInstance().log(Level.INFO, LogManager.ETagLog.SYSTEM, "Initialisation du plugin...");
+        // MiubyLib doit être initialisé avant MLLogManager (setupHandlers en a besoin)
+        MiubyLib.init(plugin);
+        fr.miuby.lib.log.MLLogManager.getInstance().registerTags(ELogTag.values());
+
+        fr.miuby.lib.log.MLLogManager.getInstance().log(Level.INFO, ELogTag.SYSTEM, "Initialisation du plugin...");
 
         this.initDatabase();
-        MiubyLib.init(plugin);
-        LogManager.getInstance().initialize();
+
+        // Initialisation complète du log après la DB pour brancher la persistence
+        fr.miuby.lib.log.MLLogManager.getInstance().initialize(new LogPersistence(database.system()));
 
         this.initWorlds();
     }
@@ -99,18 +106,18 @@ public class GameManager {
         if (this.initState != EInitState.NOT_STARTED)
             throw new IllegalStateException("Wrong init order !");
 
-        LogManager.getInstance().log(Level.INFO, LogManager.ETagLog.SYSTEM, "Chargement de la base de données...");
+        MLLogManager.getInstance().log(Level.INFO, ELogTag.SYSTEM, "Chargement de la base de données...");
         this.database = new SQLite();
         this.database.load();
         this.initState = EInitState.DATABASE_READY;
-        LogManager.getInstance().log(Level.INFO, LogManager.ETagLog.SYSTEM, "Base de données chargée");
+        MLLogManager.getInstance().log(Level.INFO, ELogTag.SYSTEM, "Base de données chargée");
     }
 
     private void initWorlds() {
         if (this.initState != EInitState.DATABASE_READY)
             throw new IllegalStateException("Wrong init order !");
 
-        LogManager.getInstance().log(Level.INFO, LogManager.ETagLog.WORLD, "Initialisation (si besoin) des mondes...");
+        MLLogManager.getInstance().log(Level.INFO, ELogTag.WORLD, "Initialisation (si besoin) des mondes...");
         this.initState = EInitState.FULLY_LOADED;
 
         WorldInitializer.initializeIfNeeded();
@@ -134,13 +141,13 @@ public class GameManager {
         this.mobLevelManager = new MobLevelManager();
         this.mobLevelManager.init();
 
-        LogManager.getInstance().log(Level.INFO, LogManager.ETagLog.PLAYER, "Initialisation des joueurs...");
+        MLLogManager.getInstance().log(Level.INFO, ELogTag.PLAYER, "Initialisation des joueurs...");
         this.initPlayers();
 
-        LogManager.getInstance().log(Level.INFO, LogManager.ETagLog.VILLAGER, "Initialisation des villageois...");
+        MLLogManager.getInstance().log(Level.INFO, ELogTag.VILLAGER, "Initialisation des villageois...");
         this.villagerFactory = new VillagerFactory();
 
-        LogManager.getInstance().log(Level.INFO, LogManager.ETagLog.ITEM, "Initialisation des items/recettes...");
+        MLLogManager.getInstance().log(Level.INFO, ELogTag.ITEM, "Initialisation des items/recettes...");
         this.initItems();
 
         this.questManager = new QuestManager();
@@ -154,7 +161,7 @@ public class GameManager {
         this.timeManager = new TimeManager();
         timeManager.start();
 
-        LogManager.getInstance().log(Level.INFO, LogManager.ETagLog.SYSTEM, "Plugin entièrement initialisé !");
+        MLLogManager.getInstance().log(Level.INFO, ELogTag.SYSTEM, "Plugin entièrement initialisé !");
     }
 
     private void initPlayers() {

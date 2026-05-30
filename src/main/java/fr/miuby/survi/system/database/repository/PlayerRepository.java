@@ -5,7 +5,8 @@ import fr.miuby.survi.player.AlphaPlayer;
 import fr.miuby.survi.role.ERole;
 import fr.miuby.survi.role.Role;
 import fr.miuby.survi.system.database.EPlayerColumn;
-import fr.miuby.survi.system.log.LogManager;
+import fr.miuby.lib.log.MLLogManager;
+import fr.miuby.survi.system.log.ELogTag;
 import org.bukkit.entity.Player;
 
 import java.sql.Connection;
@@ -49,7 +50,7 @@ public class PlayerRepository {
                 }
             }
         } catch (SQLException ex) {
-            LogManager.getInstance().log(Level.SEVERE, LogManager.ETagLog.PLAYER, "Failed to load players", ex);
+            MLLogManager.getInstance().log(Level.SEVERE, ELogTag.PLAYER, "Failed to load players", ex);
         }
     }
 
@@ -65,7 +66,7 @@ public class PlayerRepository {
                         ps.executeUpdate();
 
                     } catch (SQLException ex) {
-                        LogManager.getInstance().log(Level.SEVERE, LogManager.ETagLog.PLAYER, "Failed to create player", ex);
+                        MLLogManager.getInstance().log(Level.SEVERE, ELogTag.PLAYER, "Failed to create player", ex);
                     }
                 }
         );
@@ -82,7 +83,7 @@ public class PlayerRepository {
                         ps.executeUpdate();
 
                     } catch (SQLException ex) {
-                        LogManager.getInstance().log(Level.SEVERE, LogManager.ETagLog.PLAYER, "Failed to update player", ex);
+                        MLLogManager.getInstance().log(Level.SEVERE, ELogTag.PLAYER, "Failed to update player", ex);
                     }
                 }
         );

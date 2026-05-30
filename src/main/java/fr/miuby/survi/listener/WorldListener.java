@@ -4,7 +4,8 @@ import fr.miuby.lib.world.MLWorld;
 import fr.miuby.lib.world.WorldRegistry;
 import fr.miuby.survi.GameManager;
 import fr.miuby.survi.player.AlphaPlayer;
-import fr.miuby.survi.system.log.LogManager;
+import fr.miuby.lib.log.MLLogManager;
+import fr.miuby.survi.system.log.ELogTag;
 import fr.miuby.survi.world.EWorld;
 import fr.miuby.survi.world.WorldInitializer;
 import net.kyori.adventure.text.Component;
@@ -65,7 +66,7 @@ public class WorldListener implements Listener {
         World destination = getPortalDestination(event.getPlayer().getWorld().getName());
 
         if (destination == null) {
-            LogManager.getInstance().log(Level.SEVERE, LogManager.ETagLog.WORLD, "onPlayerPortal : destination inconnue pour " + event.getPlayer().getName());
+            MLLogManager.getInstance().log(Level.SEVERE, ELogTag.WORLD, "onPlayerPortal : destination inconnue pour " + event.getPlayer().getName());
             event.setCancelled(true);
             return;
         }
@@ -109,7 +110,7 @@ public class WorldListener implements Listener {
 
         World endWorld = endMLWorld != null ? endMLWorld.getWorld() : null;
         if (endWorld == null) {
-            LogManager.getInstance().log(Level.SEVERE, LogManager.ETagLog.WORLD, "onEndPortalEnter : monde End introuvable dans le registry");
+            MLLogManager.getInstance().log(Level.SEVERE, ELogTag.WORLD, "onEndPortalEnter : monde End introuvable dans le registry");
             return;
         }
 
@@ -132,7 +133,7 @@ public class WorldListener implements Listener {
 
         MLWorld mlWorld = WorldRegistry.get(event.getPlayer().getWorld().getUID());
         if (mlWorld == null) {
-            LogManager.getInstance().log(Level.WARNING, LogManager.ETagLog.WORLD,
+            MLLogManager.getInstance().log(Level.WARNING, ELogTag.WORLD,
                     "onPlayerChangedWorld : monde non enregistré pour " + event.getPlayer().getName()
                             + " → " + event.getPlayer().getWorld().getName()
                             + " (uid=" + event.getPlayer().getWorld().getUID() + "). AlphaPlayer.world non mis à jour.");

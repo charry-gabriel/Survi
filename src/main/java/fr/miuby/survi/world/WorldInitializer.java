@@ -4,7 +4,8 @@ import fr.miuby.lib.utils.Rect;
 import fr.miuby.lib.world.MLWorld;
 import fr.miuby.lib.world.WorldRegistry;
 import fr.miuby.survi.GameManager;
-import fr.miuby.survi.system.log.LogManager;
+import fr.miuby.lib.log.MLLogManager;
+import fr.miuby.survi.system.log.ELogTag;
 import lombok.Getter;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.*;
@@ -36,7 +37,7 @@ public class WorldInitializer {
     public static void initializeIfNeeded() {
         if (initialized) return;
 
-        LogManager.getInstance().log(Level.INFO, LogManager.ETagLog.WORLD, "Chargement des mondes...");
+        MLLogManager.getInstance().log(Level.INFO, ELogTag.WORLD, "Chargement des mondes...");
 
         // Village : nom fixe, ne change jamais
         worlds.put(EWorld.VILLAGE, "Village");
@@ -47,9 +48,9 @@ public class WorldInitializer {
         if (wildName == null) {
             wildName = "Wilderness_1";
             saveWorldName(EWorld.WILDERNESS, wildName);
-            LogManager.getInstance().log(Level.INFO, LogManager.ETagLog.WORLD, "Nouveau monde créé : " + wildName);
+            MLLogManager.getInstance().log(Level.INFO, ELogTag.WORLD, "Nouveau monde créé : " + wildName);
         } else {
-            LogManager.getInstance().log(Level.INFO, LogManager.ETagLog.WORLD, "Monde existant chargé : " + wildName);
+            MLLogManager.getInstance().log(Level.INFO, ELogTag.WORLD, "Monde existant chargé : " + wildName);
         }
         worlds.put(EWorld.WILDERNESS, wildName);
 
@@ -62,7 +63,7 @@ public class WorldInitializer {
         initializeWorlds();
         initialized = true;
 
-        LogManager.getInstance().log(Level.INFO, LogManager.ETagLog.WORLD, "Tous les mondes sont prêts.");
+        MLLogManager.getInstance().log(Level.INFO, ELogTag.WORLD, "Tous les mondes sont prêts.");
         GameManager.getInstance().initAfterWorldsLoad();
     }
 
@@ -129,7 +130,7 @@ public class WorldInitializer {
         registerUpdatedWorld(EWorld.NETHER,     newNetherName, NamedTextColor.RED,  true);
         registerUpdatedWorld(EWorld.END,         newEndName, NamedTextColor.YELLOW, true);
 
-        LogManager.getInstance().log(Level.INFO, LogManager.ETagLog.WORLD,
+        MLLogManager.getInstance().log(Level.INFO, ELogTag.WORLD,
                 "WorldRegistry mis à jour : " + oldWildName + " → " + newWildName
                         + ", " + oldNetherName + " → " + newNetherName
                         + ", " + oldEndName   + " → " + newEndName);
@@ -138,7 +139,7 @@ public class WorldInitializer {
     private static void registerUpdatedWorld(EWorld eWorld, String worldName, NamedTextColor color, boolean locked) {
         World world = Bukkit.getWorld(worldName);
         if (world == null) {
-            LogManager.getInstance().log(Level.SEVERE, LogManager.ETagLog.WORLD,
+            MLLogManager.getInstance().log(Level.SEVERE, ELogTag.WORLD,
                     "updateWorldNames : monde introuvable après reset : " + worldName);
             // On ne masque pas l'erreur, le jeu doit crasher proprement ici.
             throw new IllegalStateException("Monde introuvable après reset : " + worldName);
@@ -176,7 +177,7 @@ public class WorldInitializer {
     public static World loadOrCreate(String name, World.Environment env) {
         World existing = Bukkit.getWorld(name);
         if (existing != null) return existing;
-        LogManager.getInstance().log(Level.INFO, LogManager.ETagLog.WORLD,
+        MLLogManager.getInstance().log(Level.INFO, ELogTag.WORLD,
                 "Création du monde : " + name + " (" + env + ")");
         World created = new WorldCreator(name).environment(env).createWorld();
         if (created == null) {

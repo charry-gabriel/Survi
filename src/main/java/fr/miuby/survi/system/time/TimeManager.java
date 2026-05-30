@@ -3,7 +3,8 @@ package fr.miuby.survi.system.time;
 import fr.miuby.lib.world.WorldRegistry;
 import fr.miuby.survi.GameManager;
 import fr.miuby.survi.system.SurviConfig;
-import fr.miuby.survi.system.log.LogManager;
+import fr.miuby.lib.log.MLLogManager;
+import fr.miuby.survi.system.log.ELogTag;
 import fr.miuby.survi.system.time.event.DailyResetEvent;
 import fr.miuby.survi.world.EWorld;
 import lombok.Getter;
@@ -19,7 +20,7 @@ public class TimeManager {
 
     private static final int MC_FULL_DAY = 24000;
 
-    private final LogManager logger = LogManager.getInstance();
+    private final MLLogManager logger = MLLogManager.getInstance();
     @Getter
     private final ZoneId serverTimezone;
 
@@ -56,11 +57,11 @@ public class TimeManager {
                 RESET_CHECK_INTERVAL_TICKS
         );
 
-        logger.log(Level.INFO, LogManager.ETagLog.SYSTEM, "TimeManager démarré");
-        logger.log(Level.INFO, LogManager.ETagLog.SYSTEM, "  ├─ Timezone: " + serverTimezone.getId());
-        logger.log(Level.INFO, LogManager.ETagLog.SYSTEM, "  ├─ Village: synchro temps réel ACTIVE");
-        logger.log(Level.INFO, LogManager.ETagLog.SYSTEM, "  ├─ Reset quotidien: " + SurviConfig.getInstance().getDailyResetHour() + "h00");
-        logger.log(Level.INFO, LogManager.ETagLog.SYSTEM, "  └─ Prochain reset: " + getNextResetTime().format(
+        logger.log(Level.INFO, ELogTag.SYSTEM, "TimeManager démarré");
+        logger.log(Level.INFO, ELogTag.SYSTEM, "  ├─ Timezone: " + serverTimezone.getId());
+        logger.log(Level.INFO, ELogTag.SYSTEM, "  ├─ Village: synchro temps réel ACTIVE");
+        logger.log(Level.INFO, ELogTag.SYSTEM, "  ├─ Reset quotidien: " + SurviConfig.getInstance().getDailyResetHour() + "h00");
+        logger.log(Level.INFO, ELogTag.SYSTEM, "  └─ Prochain reset: " + getNextResetTime().format(
                 java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy à HH:mm")));
     }
 
@@ -74,7 +75,7 @@ public class TimeManager {
             resetCheckTask = null;
         }
         saveLastReset();
-        logger.log(Level.INFO, LogManager.ETagLog.SYSTEM,"TimeManager arrêté");
+        logger.log(Level.INFO, ELogTag.SYSTEM,"TimeManager arrêté");
     }
 
     //region real time
@@ -200,16 +201,16 @@ public class TimeManager {
         int currentDay = getCurrentDay(now);
 
         if (currentDay > lastResetDay && now.getHour() >= SurviConfig.getInstance().getDailyResetHour()) {
-            logger.log(Level.WARNING, LogManager.ETagLog.SYSTEM,"╔════════════════════════════════════╗");
-            logger.log(Level.WARNING, LogManager.ETagLog.SYSTEM,"║   RESET MANQUÉ DÉTECTÉ !           ");
-            logger.log(Level.WARNING, LogManager.ETagLog.SYSTEM,"╠════════════════════════════════════╣");
-            logger.log(Level.WARNING, LogManager.ETagLog.SYSTEM,"║ Dernier reset : jour " + lastResetDay);
-            logger.log(Level.WARNING, LogManager.ETagLog.SYSTEM,"║ Jour actuel   : jour " + currentDay);
-            logger.log(Level.WARNING, LogManager.ETagLog.SYSTEM,"║ → Reset immédiat déclenché         ");
-            logger.log(Level.WARNING, LogManager.ETagLog.SYSTEM,"╚════════════════════════════════════╝");
+            logger.log(Level.WARNING, ELogTag.SYSTEM,"╔════════════════════════════════════╗");
+            logger.log(Level.WARNING, ELogTag.SYSTEM,"║   RESET MANQUÉ DÉTECTÉ !           ");
+            logger.log(Level.WARNING, ELogTag.SYSTEM,"╠════════════════════════════════════╣");
+            logger.log(Level.WARNING, ELogTag.SYSTEM,"║ Dernier reset : jour " + lastResetDay);
+            logger.log(Level.WARNING, ELogTag.SYSTEM,"║ Jour actuel   : jour " + currentDay);
+            logger.log(Level.WARNING, ELogTag.SYSTEM,"║ → Reset immédiat déclenché         ");
+            logger.log(Level.WARNING, ELogTag.SYSTEM,"╚════════════════════════════════════╝");
             performDailyReset(now);
         } else {
-            logger.log(Level.INFO, LogManager.ETagLog.SYSTEM,"Aucun reset manqué (dernier reset : jour " + lastResetDay + ")");
+            logger.log(Level.INFO, ELogTag.SYSTEM,"Aucun reset manqué (dernier reset : jour " + lastResetDay + ")");
         }
     }
 
@@ -217,12 +218,12 @@ public class TimeManager {
         int currentDay = getCurrentDay(now);
         long timestamp = now.toInstant().toEpochMilli();
 
-        logger.log(Level.INFO, LogManager.ETagLog.SYSTEM,"╔═══════════════════════════════════════════════╗");
-        logger.log(Level.INFO, LogManager.ETagLog.SYSTEM,"║         RESET QUOTIDIEN - 6H00                ");
-        logger.log(Level.INFO, LogManager.ETagLog.SYSTEM,"╠═══════════════════════════════════════════════╣");
-        logger.log(Level.INFO, LogManager.ETagLog.SYSTEM,"║ Jour : " + currentDay + " (précédent : " + lastResetDay + ")");
-        logger.log(Level.INFO, LogManager.ETagLog.SYSTEM,"║ Heure : " + now.format(java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy à HH:mm:ss")));
-        logger.log(Level.INFO, LogManager.ETagLog.SYSTEM,"╚═══════════════════════════════════════════════╝");
+        logger.log(Level.INFO, ELogTag.SYSTEM,"╔═══════════════════════════════════════════════╗");
+        logger.log(Level.INFO, ELogTag.SYSTEM,"║         RESET QUOTIDIEN - 6H00                ");
+        logger.log(Level.INFO, ELogTag.SYSTEM,"╠═══════════════════════════════════════════════╣");
+        logger.log(Level.INFO, ELogTag.SYSTEM,"║ Jour : " + currentDay + " (précédent : " + lastResetDay + ")");
+        logger.log(Level.INFO, ELogTag.SYSTEM,"║ Heure : " + now.format(java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy à HH:mm:ss")));
+        logger.log(Level.INFO, ELogTag.SYSTEM,"╚═══════════════════════════════════════════════╝");
 
         // Update l'état
         this.lastResetTimestamp = timestamp;
@@ -233,13 +234,13 @@ public class TimeManager {
         DailyResetEvent event = new DailyResetEvent(timestamp, currentDay);
         GameManager.getInstance().callEvent(event);
 
-        logger.log(Level.INFO, LogManager.ETagLog.SYSTEM,"Reset quotidien terminé !");
+        logger.log(Level.INFO, ELogTag.SYSTEM,"Reset quotidien terminé !");
     }
 
     public void forceReset() {
-        logger.log(Level.INFO, LogManager.ETagLog.SYSTEM,"╔═══════════════════════════════════════════════╗");
-        logger.log(Level.INFO, LogManager.ETagLog.SYSTEM,"║      RESET FORCÉ MANUELLEMENT                 ");
-        logger.log(Level.INFO, LogManager.ETagLog.SYSTEM,"╚═══════════════════════════════════════════════╝");
+        logger.log(Level.INFO, ELogTag.SYSTEM,"╔═══════════════════════════════════════════════╗");
+        logger.log(Level.INFO, ELogTag.SYSTEM,"║      RESET FORCÉ MANUELLEMENT                 ");
+        logger.log(Level.INFO, ELogTag.SYSTEM,"╚═══════════════════════════════════════════════╝");
         performDailyReset(ZonedDateTime.now(serverTimezone));
     }
     //endregion
@@ -289,9 +290,9 @@ public class TimeManager {
                 Instant instant = Instant.ofEpochMilli(lastResetTimestamp);
                 ZonedDateTime resetTime = ZonedDateTime.ofInstant(instant, serverTimezone);
 
-                logger.log(Level.INFO, LogManager.ETagLog.SYSTEM,"Dernier reset chargé depuis DB :");
-                logger.log(Level.INFO, LogManager.ETagLog.SYSTEM,"  ├─ Jour : " + lastResetDay);
-                logger.log(Level.INFO, LogManager.ETagLog.SYSTEM,"  └─ Date : " + resetTime.format(
+                logger.log(Level.INFO, ELogTag.SYSTEM,"Dernier reset chargé depuis DB :");
+                logger.log(Level.INFO, ELogTag.SYSTEM,"  ├─ Jour : " + lastResetDay);
+                logger.log(Level.INFO, ELogTag.SYSTEM,"  └─ Date : " + resetTime.format(
                         java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy à HH:mm")));
             } else {
                 // Premier démarrage - pas de reset enregistré
@@ -300,16 +301,16 @@ public class TimeManager {
                 this.lastResetDay = getCurrentDay(now);
                 saveLastReset();
 
-                logger.log(Level.INFO, LogManager.ETagLog.SYSTEM,"Premier démarrage du TimeManager");
-                logger.log(Level.INFO, LogManager.ETagLog.SYSTEM,"  └─ Initialisation du système de reset");
+                logger.log(Level.INFO, ELogTag.SYSTEM,"Premier démarrage du TimeManager");
+                logger.log(Level.INFO, ELogTag.SYSTEM,"  └─ Initialisation du système de reset");
             }
         } catch (Exception e) {
-            logger.log(Level.SEVERE, LogManager.ETagLog.SYSTEM,"╔════════════════════════════════════╗");
-            logger.log(Level.SEVERE, LogManager.ETagLog.SYSTEM,"║ ERREUR CHARGEMENT RESET !          ║");
-            logger.log(Level.SEVERE, LogManager.ETagLog.SYSTEM,"╠════════════════════════════════════╣");
-            logger.log(Level.SEVERE, LogManager.ETagLog.SYSTEM, "Erreur chargement reset", e);
-            logger.log(Level.SEVERE, LogManager.ETagLog.SYSTEM,"║ → Fallback : force un reset        ║");
-            logger.log(Level.SEVERE, LogManager.ETagLog.SYSTEM,"╚════════════════════════════════════╝");
+            logger.log(Level.SEVERE, ELogTag.SYSTEM,"╔════════════════════════════════════╗");
+            logger.log(Level.SEVERE, ELogTag.SYSTEM,"║ ERREUR CHARGEMENT RESET !          ║");
+            logger.log(Level.SEVERE, ELogTag.SYSTEM,"╠════════════════════════════════════╣");
+            logger.log(Level.SEVERE, ELogTag.SYSTEM, "Erreur chargement reset", e);
+            logger.log(Level.SEVERE, ELogTag.SYSTEM,"║ → Fallback : force un reset        ║");
+            logger.log(Level.SEVERE, ELogTag.SYSTEM,"╚════════════════════════════════════╝");
 
             // Fallback : force un reset aujourd'hui
             ZonedDateTime now = ZonedDateTime.now(serverTimezone);
@@ -322,7 +323,7 @@ public class TimeManager {
             String data = lastResetTimestamp + ":" + lastResetDay;
             GameManager.getInstance().getDatabase().system().saveServerData("last_daily_reset", data);
         } catch (Exception e) {
-            logger.log(Level.SEVERE, LogManager.ETagLog.SYSTEM, "ERREUR lors de la sauvegarde du reset", e);
+            logger.log(Level.SEVERE, ELogTag.SYSTEM, "ERREUR lors de la sauvegarde du reset", e);
         }
     }
     //endregion

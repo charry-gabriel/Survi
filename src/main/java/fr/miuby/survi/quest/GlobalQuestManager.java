@@ -3,7 +3,8 @@ package fr.miuby.survi.quest;
 import fr.miuby.survi.GameManager;
 import fr.miuby.survi.player.AlphaPlayer;
 import fr.miuby.survi.player.AlphaPlayerFactory;
-import fr.miuby.survi.system.log.LogManager;
+import fr.miuby.lib.log.MLLogManager;
+import fr.miuby.survi.system.log.ELogTag;
 import lombok.Getter;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.sound.Sound;
@@ -53,7 +54,7 @@ public class GlobalQuestManager {
         YamlConfiguration config = YamlConfiguration.loadConfiguration(questFile);
 
         if (!config.contains("global_quests")) {
-            LogManager.getInstance().log(Level.WARNING, LogManager.ETagLog.QUEST,
+            MLLogManager.getInstance().log(Level.WARNING, ELogTag.QUEST,
                     "Impossible de charger les quêtes globales depuis global_quests.yml !");
             return;
         }
@@ -83,7 +84,7 @@ public class GlobalQuestManager {
                             int reputation = ((Number) jr.get("reputation")).intValue();
                             jobRewards.add(new GlobalQuestJobReward(job, reputation));
                         } catch (Exception e) {
-                            LogManager.getInstance().log(Level.WARNING, LogManager.ETagLog.QUEST,
+                            MLLogManager.getInstance().log(Level.WARNING, ELogTag.QUEST,
                                     "Erreur dans job_rewards pour la quête globale " + base.id(), e);
                         }
                     }
@@ -102,12 +103,12 @@ public class GlobalQuestManager {
                         .build());
 
             } catch (Exception e) {
-                LogManager.getInstance().log(Level.WARNING, LogManager.ETagLog.QUEST,
+                MLLogManager.getInstance().log(Level.WARNING, ELogTag.QUEST,
                         "Erreur lors du chargement d'une quête globale dans global_quests.yml", e);
             }
         }
 
-        LogManager.getInstance().log(Level.INFO, LogManager.ETagLog.QUEST,
+        MLLogManager.getInstance().log(Level.INFO, ELogTag.QUEST,
                 questPool.size() + " quêtes globales chargées depuis global_quests.yml");
     }
 
@@ -144,7 +145,7 @@ public class GlobalQuestManager {
                 (long) quest.getTimeLimitSeconds() * 20L
         );
 
-        LogManager.getInstance().log(Level.INFO, LogManager.ETagLog.QUEST,
+        MLLogManager.getInstance().log(Level.INFO, ELogTag.QUEST,
                 "[GlobalQuest] Quête démarrée : " + quest.getId());
         return true;
     }
@@ -165,7 +166,7 @@ public class GlobalQuestManager {
         broadcastMessage(Component.text("⚔ Quête Globale ", NamedTextColor.RED, TextDecoration.BOLD)
                 .append(Component.text("« " + name + " » annulée par un administrateur. Aucune récompense.", NamedTextColor.YELLOW)));
 
-        LogManager.getInstance().log(Level.INFO, LogManager.ETagLog.QUEST,
+        MLLogManager.getInstance().log(Level.INFO, ELogTag.QUEST,
                 "[GlobalQuest] Quête annulée par admin : " + name);
     }
 
@@ -230,7 +231,7 @@ public class GlobalQuestManager {
             }
         }
 
-        LogManager.getInstance().log(Level.INFO, LogManager.ETagLog.QUEST,
+        MLLogManager.getInstance().log(Level.INFO, ELogTag.QUEST,
                 "[GlobalQuest] Quête complétée : " + quest.getId()
                         + " | participants=" + winners.size());
     }
@@ -251,7 +252,7 @@ public class GlobalQuestManager {
                         .append(Component.text(" non complétée dans les temps ! Aucune récompense.", NamedTextColor.RED))
         );
 
-        LogManager.getInstance().log(Level.INFO, LogManager.ETagLog.QUEST,
+        MLLogManager.getInstance().log(Level.INFO, ELogTag.QUEST,
                 "[GlobalQuest] Quête expirée : " + name);
     }
 

@@ -1,6 +1,7 @@
 package fr.miuby.survi.system;
 
-import fr.miuby.survi.system.log.LogManager;
+import fr.miuby.lib.log.MLLogManager;
+import fr.miuby.survi.system.log.ELogTag;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
@@ -42,7 +43,7 @@ public class YmlResourceManager {
         // Vérifier que la ressource existe dans le jar
         InputStream jarStream = plugin.getResource(resourcePath);
         if (jarStream == null) {
-            LogManager.getInstance().log(Level.SEVERE, LogManager.ETagLog.SYSTEM,
+            MLLogManager.getInstance().log(Level.SEVERE, ELogTag.SYSTEM,
                     "[YmlResourceManager] Ressource introuvable dans le jar : " + resourcePath);
             return;
         }
@@ -51,7 +52,7 @@ public class YmlResourceManager {
         if (!diskFile.exists()) {
             diskFile.getParentFile().mkdirs();
             plugin.saveResource(resourcePath, false);
-            LogManager.getInstance().log(Level.INFO, LogManager.ETagLog.SYSTEM,
+            MLLogManager.getInstance().log(Level.INFO, ELogTag.SYSTEM,
                     "[YmlResourceManager] Créé : " + resourcePath);
             return;
         }
@@ -63,12 +64,12 @@ public class YmlResourceManager {
 
             if (!MessageDigest.isEqual(jarHash, diskHash)) {
                 plugin.saveResource(resourcePath, true); // true = écraser
-                LogManager.getInstance().log(Level.INFO, LogManager.ETagLog.SYSTEM,
+                MLLogManager.getInstance().log(Level.INFO, ELogTag.SYSTEM,
                         "[YmlResourceManager] Mis à jour (contenu modifié) : " + resourcePath);
             }
             // Si identique, on ne touche rien
         } catch (IOException | NoSuchAlgorithmException e) {
-            LogManager.getInstance().log(Level.SEVERE, LogManager.ETagLog.SYSTEM,
+            MLLogManager.getInstance().log(Level.SEVERE, ELogTag.SYSTEM,
                     "[YmlResourceManager] Erreur lors de la comparaison de " + resourcePath + " : " + e.getMessage());
         }
     }

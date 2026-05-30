@@ -1,7 +1,8 @@
 package fr.miuby.survi.mob;
 
 import fr.miuby.survi.GameManager;
-import fr.miuby.survi.system.log.LogManager;
+import fr.miuby.lib.log.MLLogManager;
+import fr.miuby.survi.system.log.ELogTag;
 import lombok.Getter;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -83,7 +84,7 @@ public class MobLevelManager {
 
         ConfigurationSection mobsSection = cfg.getConfigurationSection("mobs");
         if (mobsSection == null) {
-            LogManager.getInstance().log(Level.WARNING, LogManager.ETagLog.SYSTEM,
+            MLLogManager.getInstance().log(Level.WARNING, ELogTag.SYSTEM,
                     "[MobLevel] Aucune section 'mobs' dans monsters.yml — aucun mob scalé.");
             return;
         }
@@ -144,7 +145,7 @@ public class MobLevelManager {
 
         new MobNametagTask().runTaskTimer(GameManager.getInstance().getPlugin(), 0L, MobNametagTask.PERIOD_TICKS);
 
-        LogManager.getInstance().log(Level.INFO, LogManager.ETagLog.SYSTEM,
+        MLLogManager.getInstance().log(Level.INFO, ELogTag.SYSTEM,
                 "[MobLevel] " + configs.size() + " types de mobs chargés (levelsPerTier="
                         + levelsPerTier + ", weightExp=" + spawnWeightExponent + ")");
     }
@@ -340,7 +341,7 @@ public class MobLevelManager {
         try {
             return EntityType.valueOf(key.toUpperCase());
         } catch (IllegalArgumentException _) {
-            LogManager.getInstance().log(Level.WARNING, LogManager.ETagLog.SYSTEM,
+            MLLogManager.getInstance().log(Level.WARNING, ELogTag.SYSTEM,
                     "[MobLevel] Type de mob inconnu dans monsters.yml : '" + key + "' — ignoré.");
             return null;
         }
@@ -352,7 +353,7 @@ public class MobLevelManager {
             Map<String, Object> map = (Map<String, Object>) rawMap;
             PotionEffectType pet = PotionEffectType.getByName(String.valueOf(map.get("type")));
             if (pet == null) {
-                LogManager.getInstance().log(Level.WARNING, LogManager.ETagLog.SYSTEM,
+                MLLogManager.getInstance().log(Level.WARNING, ELogTag.SYSTEM,
                         "[MobLevel] PotionEffectType inconnu : " + map.get("type"));
                 return null;
             }
@@ -367,7 +368,7 @@ public class MobLevelManager {
                     toDouble(map.get("max-chance"),              0.80)
             );
         } catch (Exception e) {
-            LogManager.getInstance().log(Level.WARNING, LogManager.ETagLog.SYSTEM,
+            MLLogManager.getInstance().log(Level.WARNING, ELogTag.SYSTEM,
                     "[MobLevel] Erreur lors du parsing d'un effet de potion", e);
             return null;
         }

@@ -1,5 +1,6 @@
 package fr.miuby.survi;
 
+import fr.miuby.lib.log.MLLogManager;
 import fr.miuby.survi.job.ReputationCommand;
 import fr.miuby.survi.mob.MobCommand;
 import fr.miuby.survi.system.YmlResourceManager;
@@ -11,7 +12,7 @@ import fr.miuby.survi.quest.QuestCommand;
 import fr.miuby.survi.quest.QuestListener;
 import fr.miuby.survi.role.RoleCommand;
 import fr.miuby.survi.system.command.SystemCommand;
-import fr.miuby.survi.system.log.LogManager;
+import fr.miuby.survi.system.log.ELogTag;
 import fr.miuby.survi.system.time.TimeManager;
 import fr.miuby.survi.villager.VillagerCommand;
 import fr.miuby.survi.blessing.BlessingCommand;
@@ -111,7 +112,7 @@ public class Survi extends JavaPlugin {
                 }
             }
         } catch (IOException e) {
-            LogManager.getInstance().log(Level.SEVERE, LogManager.ETagLog.SYSTEM, "Failed to load resources from folder: " + folder, e);
+            MLLogManager.getInstance().log(Level.SEVERE, ELogTag.SYSTEM, "Failed to load resources from folder: " + folder, e);
         }
     }
 }

@@ -1,7 +1,8 @@
 package fr.miuby.survi.item;
 
 import fr.miuby.survi.GameManager;
-import fr.miuby.survi.system.log.LogManager;
+import fr.miuby.lib.log.MLLogManager;
+import fr.miuby.survi.system.log.ELogTag;
 import lombok.Getter;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -62,7 +63,7 @@ public class CustomRecipeFactory {
                         ECustomItem custom = ECustomItem.valueOf(resultStr);
                         resultItem = custom.getItemStack();
                     } catch (IllegalArgumentException customEx) {
-                        LogManager.getInstance().log(Level.WARNING, LogManager.ETagLog.ITEM, "Recipe " + key + " : unknown result '" + resultStr + "'. Skipped");
+                        MLLogManager.getInstance().log(Level.WARNING, ELogTag.ITEM, "Recipe " + key + " : unknown result '" + resultStr + "'. Skipped");
                         continue;
                     }
                 }
@@ -74,13 +75,13 @@ public class CustomRecipeFactory {
                 if (!shapeLines.isEmpty() && keySec != null) {
                     // parse shape definition
                     if (shapeLines.size() > 3) {
-                        LogManager.getInstance().log(Level.WARNING, LogManager.ETagLog.ITEM, "Recipe " + key + " has more than 3 shape lines. Skipped");
+                        MLLogManager.getInstance().log(Level.WARNING, ELogTag.ITEM, "Recipe " + key + " has more than 3 shape lines. Skipped");
                         continue;
                     }
                     for (int r = 0; r < shapeLines.size(); r++) {
                         String line = shapeLines.get(r);
                         if (line.length() > 3) {
-                            LogManager.getInstance().log(Level.WARNING, LogManager.ETagLog.ITEM, "Recipe " + key + " shape line too long. Skipped");
+                            MLLogManager.getInstance().log(Level.WARNING, ELogTag.ITEM, "Recipe " + key + " shape line too long. Skipped");
                             continue;
                         }
                         for (int c = 0; c < line.length(); c++) {
@@ -88,14 +89,14 @@ public class CustomRecipeFactory {
                             if (sym == ' ') continue;
                             String matStr = keySec.getString(String.valueOf(sym));
                             if (matStr == null) {
-                                LogManager.getInstance().log(Level.WARNING, LogManager.ETagLog.ITEM, "Recipe " + key + " missing key mapping for symbol " + sym + ". Skipped");
+                                MLLogManager.getInstance().log(Level.WARNING, ELogTag.ITEM, "Recipe " + key + " missing key mapping for symbol " + sym + ". Skipped");
                                 continue;
                             }
                             Material mat;
                             try {
                                 mat = Material.valueOf(matStr);
                             } catch (IllegalArgumentException ex) {
-                                LogManager.getInstance().log(Level.WARNING, LogManager.ETagLog.ITEM, "Recipe " + key + " unknown material " + matStr + ". Skipped");
+                                MLLogManager.getInstance().log(Level.WARNING, ELogTag.ITEM, "Recipe " + key + " unknown material " + matStr + ". Skipped");
                                 continue;
                             }
                             int index = r * 3 + c;
@@ -106,7 +107,7 @@ public class CustomRecipeFactory {
                     // fallback to old 9-element list
                     List<String> list = newSec.getStringList(key + ".ingredients");
                     if (list.size() != 9) {
-                        LogManager.getInstance().log(Level.WARNING, LogManager.ETagLog.ITEM, "Recipe " + key + " has not 9 ingredients. Skipped");
+                        MLLogManager.getInstance().log(Level.WARNING, ELogTag.ITEM, "Recipe " + key + " has not 9 ingredients. Skipped");
                         continue;
                     }
                     for (int i = 0; i < 9; i++) {

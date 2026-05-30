@@ -2,7 +2,8 @@ package fr.miuby.survi.world;
 
 import fr.miuby.lib.world.WorldRegistry;
 import fr.miuby.survi.GameManager;
-import fr.miuby.survi.system.log.LogManager;
+import fr.miuby.lib.log.MLLogManager;
+import fr.miuby.survi.system.log.ELogTag;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
@@ -22,7 +23,7 @@ public class WorldResetManager {
     // -------------------------------------------------------------------------
 
     public void checkAndPerformResets() {
-        LogManager.getInstance().log(Level.INFO, LogManager.ETagLog.WORLD, "Vérification du reset des mondes...");
+        MLLogManager.getInstance().log(Level.INFO, ELogTag.WORLD, "Vérification du reset des mondes...");
 
         int frequency = getResetFrequency();
         if (frequency <= 0) return;
@@ -48,7 +49,7 @@ public class WorldResetManager {
         String newNetherName = newWildName + "_nether";
         String newEndName    = newWildName + "_the_end";
 
-        LogManager.getInstance().log(Level.INFO, LogManager.ETagLog.WORLD,
+        MLLogManager.getInstance().log(Level.INFO, ELogTag.WORLD,
                 "Reset : " + currentWildName + " -> " + newWildName + " | " + currentNetherName + " -> " + newNetherName + " | " + currentEndName    + " -> " + newEndName);
 
         World village      = WorldRegistry.get(EWorld.VILLAGE).getWorld();
@@ -80,7 +81,7 @@ public class WorldResetManager {
             setLastResetDate(LocalDate.now());
             buildWorldPortal(newWildName);
 
-            LogManager.getInstance().log(Level.INFO, LogManager.ETagLog.WORLD,
+            MLLogManager.getInstance().log(Level.INFO, ELogTag.WORLD,
                     "Reset terminé. Mondes actifs : " + newWildName + ", " + newNetherName + ", " + newEndName);
         }, 20L * 5);
     }
@@ -118,7 +119,7 @@ public class WorldResetManager {
 
         GameManager.getInstance().getWorldPortalManager().registerWildernessPortal(worldName, min, max);
 
-        LogManager.getInstance().log(Level.INFO, LogManager.ETagLog.WORLD, "Portail Wilderness construit dans " + worldName + " en 0,0 (Y=" + by + ")");
+        MLLogManager.getInstance().log(Level.INFO, ELogTag.WORLD, "Portail Wilderness construit dans " + worldName + " en 0,0 (Y=" + by + ")");
     }
 
     // -------------------------------------------------------------------------
@@ -139,7 +140,7 @@ public class WorldResetManager {
         World world = Bukkit.getWorld(worldName);
         if (world == null) return;
         Bukkit.unloadWorld(world, false);
-        LogManager.getInstance().log(Level.INFO, LogManager.ETagLog.WORLD, "Monde déchargé : " + worldName);
+        MLLogManager.getInstance().log(Level.INFO, ELogTag.WORLD, "Monde déchargé : " + worldName);
     }
 
     // -------------------------------------------------------------------------

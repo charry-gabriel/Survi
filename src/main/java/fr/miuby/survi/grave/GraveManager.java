@@ -1,7 +1,8 @@
 package fr.miuby.survi.grave;
 
 import fr.miuby.survi.GameManager;
-import fr.miuby.survi.system.log.LogManager;
+import fr.miuby.lib.log.MLLogManager;
+import fr.miuby.survi.system.log.ELogTag;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
@@ -26,7 +27,7 @@ public class GraveManager {
         this.gravesFolder = new File(GameManager.getInstance().getPlugin().getDataFolder(), "graves");
 
         if (!gravesFolder.exists() && !gravesFolder.mkdirs())
-            LogManager.getInstance().log(Level.WARNING, LogManager.ETagLog.GRAVE, "Impossible de créer le dossier de tombes.");
+            MLLogManager.getInstance().log(Level.WARNING, ELogTag.GRAVE, "Impossible de créer le dossier de tombes.");
 
         loadFromDisk();
     }
@@ -52,15 +53,15 @@ public class GraveManager {
                     loaded++;
                 } else {
                     if (!file.delete())
-                        LogManager.getInstance().log(Level.WARNING, LogManager.ETagLog.GRAVE, "Impossible de supprimer le fichier corrompu : " + file.getName());
+                        MLLogManager.getInstance().log(Level.WARNING, ELogTag.GRAVE, "Impossible de supprimer le fichier corrompu : " + file.getName());
                 }
             } catch (Exception e) {
-                LogManager.getInstance().log(Level.WARNING, LogManager.ETagLog.GRAVE, "Fichier corrompu ignoré : " + file.getName(), e);
+                MLLogManager.getInstance().log(Level.WARNING, ELogTag.GRAVE, "Fichier corrompu ignoré : " + file.getName(), e);
             }
         }
 
         if (loaded > 0)
-            LogManager.getInstance().log(Level.INFO, LogManager.ETagLog.GRAVE, loaded + " tombe(s) chargée(s) depuis le disque.");
+            MLLogManager.getInstance().log(Level.INFO, ELogTag.GRAVE, loaded + " tombe(s) chargée(s) depuis le disque.");
     }
 
     // -------------------------------------------------------------------------
@@ -76,7 +77,7 @@ public class GraveManager {
     public boolean createGrave(Player player) {
         Location loc = findAvailableLocation(player.getLocation().getBlock().getLocation());
         if (loc == null) {
-            LogManager.getInstance().log(Level.WARNING, LogManager.ETagLog.GRAVE, "Impossible de placer la tombe de " + player.getName() + " : emplacement obstrué.");
+            MLLogManager.getInstance().log(Level.WARNING, ELogTag.GRAVE, "Impossible de placer la tombe de " + player.getName() + " : emplacement obstrué.");
             return false;
         }
 
@@ -88,7 +89,7 @@ public class GraveManager {
         saveGraveFile(grave, items);
         graveLocations.put(loc, grave);
         loc.getBlock().setType(GRAVE_MATERIAL);
-        LogManager.getInstance().log(Level.FINE, LogManager.ETagLog.GRAVE,
+        MLLogManager.getInstance().log(Level.FINE, ELogTag.GRAVE,
                 "[CreateGrave] " + player.getName() + " → " + graveId + " en " + loc.getWorld().getName() + " " + loc.getBlockX() + "," + loc.getBlockY() + "," + loc.getBlockZ());
 
         // Vide uniquement les 36 slots de l'inventaire, pas l'armure
@@ -146,7 +147,7 @@ public class GraveManager {
         }
 
         removeGrave(grave);
-        LogManager.getInstance().log(Level.FINE, LogManager.ETagLog.GRAVE,
+        MLLogManager.getInstance().log(Level.FINE, ELogTag.GRAVE,
                 "[CollectGrave] " + player.getName() + " a récupéré la tombe " + grave.id());
         player.sendMessage(Component.text("Vous avez récupéré votre tombe.").color(NamedTextColor.GREEN));
         return true;
@@ -186,7 +187,7 @@ public class GraveManager {
         try {
             cfg.save(file);
         } catch (IOException e) {
-            LogManager.getInstance().log(Level.SEVERE, LogManager.ETagLog.GRAVE, "Impossible de sauvegarder " + file.getName(), e);
+            MLLogManager.getInstance().log(Level.SEVERE, ELogTag.GRAVE, "Impossible de sauvegarder " + file.getName(), e);
         }
     }
 
@@ -195,7 +196,7 @@ public class GraveManager {
         if (grave.location().getBlock().getType() == GRAVE_MATERIAL)
             grave.location().getBlock().setType(Material.AIR);
         if (!getGraveFile(grave).delete())
-            LogManager.getInstance().log(Level.WARNING, LogManager.ETagLog.GRAVE, "Impossible de supprimer le fichier de " + grave.id());
+            MLLogManager.getInstance().log(Level.WARNING, ELogTag.GRAVE, "Impossible de supprimer le fichier de " + grave.id());
     }
 
     private File getGraveFile(GraveData grave) {

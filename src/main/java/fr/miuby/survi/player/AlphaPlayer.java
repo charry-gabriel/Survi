@@ -7,7 +7,8 @@ import fr.miuby.survi.job.JobLevelConfig;
 import fr.miuby.survi.GameManager;
 import fr.miuby.survi.system.SurviConfig;
 import fr.miuby.survi.role.*;
-import fr.miuby.survi.system.log.LogManager;
+import fr.miuby.lib.log.MLLogManager;
+import fr.miuby.survi.system.log.ELogTag;
 import fr.miuby.survi.world.EWorld;
 import fr.miuby.lib.world.MLWorld;
 import fr.miuby.survi.world.WorldInitializer;
@@ -304,7 +305,7 @@ public class AlphaPlayer extends MLPlayer implements Serializable {
             int rep = reputationByJob.getOrDefault(job, 0);
             jobLevels.put(job, JobLevelConfig.computeLevel(rep));
         }
-        LogManager.getInstance().log(Level.INFO, LogManager.ETagLog.JOB,
+        MLLogManager.getInstance().log(Level.INFO, ELogTag.JOB,
                 "Niveaux de métier initialisés pour " + getPseudo());
     }
 
@@ -329,7 +330,7 @@ public class AlphaPlayer extends MLPlayer implements Serializable {
                             .append(Component.text(JobLevelConfig.getLevelName(newLevel), NamedTextColor.GOLD))
                             .append(Component.text(progress, NamedTextColor.GRAY))
             );
-            LogManager.getInstance().log(Level.INFO, LogManager.ETagLog.JOB,
+            MLLogManager.getInstance().log(Level.INFO, ELogTag.JOB,
                     getPseudo() + " : métier " + job.name()
                             + " niv. " + oldLevel + " -> " + newLevel
                             + " (rep=" + newReputation + ")");

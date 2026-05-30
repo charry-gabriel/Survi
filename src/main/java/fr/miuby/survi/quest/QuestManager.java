@@ -2,8 +2,9 @@ package fr.miuby.survi.quest;
 
 import fr.miuby.survi.GameManager;
 import fr.miuby.survi.player.AlphaPlayer;
-import fr.miuby.survi.system.log.LogManager;
+import fr.miuby.lib.log.MLLogManager;
 import fr.miuby.survi.job.EJob;
+import fr.miuby.survi.system.log.ELogTag;
 import fr.miuby.survi.villager.trader.Trader;
 import lombok.Getter;
 import net.kyori.adventure.key.Key;
@@ -40,7 +41,7 @@ public class QuestManager {
         File questFile = new File(GameManager.getInstance().getPlugin().getDataFolder(), "quests.yml");
         YamlConfiguration config = YamlConfiguration.loadConfiguration(questFile);
         if (!config.contains("quests")) {
-            LogManager.getInstance().log(Level.SEVERE, LogManager.ETagLog.QUEST, "Impossible de charger les quêtes depuis quests.yml !");
+            MLLogManager.getInstance().log(Level.SEVERE, ELogTag.QUEST, "Impossible de charger les quêtes depuis quests.yml !");
             return;
         }
 
@@ -48,7 +49,7 @@ public class QuestManager {
 
         List<?> questsList = config.getList("quests");
         if (questsList == null) {
-            LogManager.getInstance().log(Level.WARNING, LogManager.ETagLog.QUEST, "La liste 'quests' est absente ou vide dans quests.yml");
+            MLLogManager.getInstance().log(Level.WARNING, ELogTag.QUEST, "La liste 'quests' est absente ou vide dans quests.yml");
             return;
         }
 
@@ -75,11 +76,11 @@ public class QuestManager {
                         .build());
 
             } catch (Exception e) {
-                LogManager.getInstance().log(Level.WARNING, LogManager.ETagLog.QUEST, "Erreur lors du chargement d'une quête dans quests.yml", e);
+                MLLogManager.getInstance().log(Level.WARNING, ELogTag.QUEST, "Erreur lors du chargement d'une quête dans quests.yml", e);
             }
         }
 
-        LogManager.getInstance().log(Level.INFO, LogManager.ETagLog.QUEST, questPool.size() + " quêtes chargées depuis quests.yml");
+        MLLogManager.getInstance().log(Level.INFO, ELogTag.QUEST, questPool.size() + " quêtes chargées depuis quests.yml");
     }
 
     public Quest getQuest(String id) {
@@ -147,7 +148,7 @@ public class QuestManager {
         // Nettoyage des quêtes expirées
         for (PlayerQuestData q : expired) {
             GameManager.getInstance().getDatabase().quests().deletePlayerQuestSlot(player.getUuid(), q.getSlot());
-            LogManager.getInstance().log(Level.INFO, LogManager.ETagLog.QUEST,
+            MLLogManager.getInstance().log(Level.INFO, ELogTag.QUEST,
                     "Quête expirée (slot " + q.getSlot() + ") supprimée pour " + player.getPseudo());
         }
 
@@ -258,7 +259,7 @@ public class QuestManager {
         // Mémoriser cette quête comme dernière attribuée pour l'anti-répétition
         GameManager.getInstance().getDatabase().quests().setLastQuestId(player.getUuid(), quest.getId());
 
-        LogManager.getInstance().log(Level.FINE, LogManager.ETagLog.QUEST,
+        MLLogManager.getInstance().log(Level.FINE, ELogTag.QUEST,
                 "[AssignQuest] " + player.getPseudo() + " → " + quest.getId() + " (" + difficulty + ") slot=" + nextSlot);
         player.getPlayer().sendMessage(Component.text("Nouvelle quête acceptée auprès de ", NamedTextColor.GREEN)
                 .append(Component.text(trader.getNameId(), NamedTextColor.AQUA))
@@ -344,7 +345,7 @@ public class QuestManager {
         if (quest == null || !quest.matchesAction(type, target)) return;
 
         data.setProgress(data.getProgress() + amount);
-        LogManager.getInstance().log(Level.FINE, LogManager.ETagLog.QUEST,
+        MLLogManager.getInstance().log(Level.FINE, ELogTag.QUEST,
                 "[QuestProgress] " + player.getPseudo() + " — " + data.getQuestId() + " : " + data.getProgress() + "/" + quest.getGoal());
 
         if (data.getProgress() >= quest.getGoal()) {
@@ -360,7 +361,7 @@ public class QuestManager {
 
         data.setProgress(quest.getGoal());
         data.setCompleted(true);
-        LogManager.getInstance().log(Level.INFO, LogManager.ETagLog.QUEST,
+        MLLogManager.getInstance().log(Level.INFO, ELogTag.QUEST,
                 "[QuestComplete] " + player.getPseudo() + " — " + quest.getId());
         GameManager.getInstance().getDatabase().quests().updatePlayerQuest(player.getUuid(), data);
 

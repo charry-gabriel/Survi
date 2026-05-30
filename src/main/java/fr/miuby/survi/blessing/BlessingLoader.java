@@ -3,7 +3,8 @@ package fr.miuby.survi.blessing;
 import fr.miuby.lib.utils.Rect;
 import fr.miuby.survi.item.locked_item.ELockedArmorType;
 import fr.miuby.survi.item.locked_item.ELockedToolType;
-import fr.miuby.survi.system.log.LogManager;
+import fr.miuby.lib.log.MLLogManager;
+import fr.miuby.survi.system.log.ELogTag;
 import fr.miuby.survi.world.EWorld;
 import org.bukkit.configuration.ConfigurationSection;
 
@@ -111,12 +112,12 @@ public class BlessingLoader {
                 case "WORLD_RESET"  -> new WorldResetEffect(toInt(map.get("frequency"), 7));
                 case "LIMIT_WORLD"  -> parseLimitWorld(map);
                 default -> {
-                    LogManager.getInstance().log(Level.WARNING, LogManager.ETagLog.VILLAGER, "[BlessingLoader] Type d'effet inconnu '" + type + "' pour " + villagerId);
+                    MLLogManager.getInstance().log(Level.WARNING, ELogTag.VILLAGER, "[BlessingLoader] Type d'effet inconnu '" + type + "' pour " + villagerId);
                     yield null;
                 }
             };
         } catch (Exception e) {
-            LogManager.getInstance().log(Level.WARNING, LogManager.ETagLog.VILLAGER, "[BlessingLoader] Erreur parsing effet '" + type + "' pour " + villagerId, e);
+            MLLogManager.getInstance().log(Level.WARNING, ELogTag.VILLAGER, "[BlessingLoader] Erreur parsing effet '" + type + "' pour " + villagerId, e);
             return null;
         }
     }

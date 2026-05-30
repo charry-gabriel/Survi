@@ -2,7 +2,8 @@ package fr.miuby.survi.system.database.repository;
 
 import fr.miuby.lib.world.WorldRegistry;
 import fr.miuby.survi.GameManager;
-import fr.miuby.survi.system.log.LogManager;
+import fr.miuby.lib.log.MLLogManager;
+import fr.miuby.survi.system.log.ELogTag;
 import fr.miuby.survi.villager.villagerlevel.AlphaVillagerData;
 import fr.miuby.survi.world.EWorld;
 import org.bukkit.Location;
@@ -54,7 +55,7 @@ public class VillagerRepository {
                 return new AlphaVillagerData(uuid, nameId, location, givenItems, level, unlockToEpochMilli);
             }
         } catch (SQLException ex) {
-            LogManager.getInstance().log(Level.SEVERE, LogManager.ETagLog.VILLAGER, "Failed to load villager: " + nameId, ex);
+            MLLogManager.getInstance().log(Level.SEVERE, ELogTag.VILLAGER, "Failed to load villager: " + nameId, ex);
             return null;
         }
     }
@@ -76,7 +77,7 @@ public class VillagerRepository {
                         insertPs.executeUpdate();
 
                     } catch (SQLException ex) {
-                        LogManager.getInstance().log(Level.SEVERE, LogManager.ETagLog.VILLAGER, "Failed to create villager", ex);
+                        MLLogManager.getInstance().log(Level.SEVERE, ELogTag.VILLAGER, "Failed to create villager", ex);
                     }
                 }
         );
@@ -93,7 +94,7 @@ public class VillagerRepository {
                         ps.executeUpdate();
 
                     } catch (SQLException ex) {
-                        LogManager.getInstance().log(Level.SEVERE, LogManager.ETagLog.VILLAGER, "Failed to update villager level", ex);
+                        MLLogManager.getInstance().log(Level.SEVERE, ELogTag.VILLAGER, "Failed to update villager level", ex);
                     }
                 }
         );
@@ -114,7 +115,7 @@ public class VillagerRepository {
                         ps.executeUpdate();
 
                     } catch (SQLException ex) {
-                        LogManager.getInstance().log(Level.SEVERE, LogManager.ETagLog.VILLAGER, "Failed to update villager location", ex);
+                        MLLogManager.getInstance().log(Level.SEVERE, ELogTag.VILLAGER, "Failed to update villager location", ex);
                     }
                 }
         );
@@ -132,7 +133,7 @@ public class VillagerRepository {
                         ps.executeUpdate();
 
                     } catch (SQLException ex) {
-                        LogManager.getInstance().log(Level.SEVERE, LogManager.ETagLog.VILLAGER, "Failed to update villager given items", ex);
+                        MLLogManager.getInstance().log(Level.SEVERE, ELogTag.VILLAGER, "Failed to update villager given items", ex);
                     }
                 }
         );
@@ -153,7 +154,7 @@ public class VillagerRepository {
                         ps.executeUpdate();
 
                     } catch (SQLException ex) {
-                        LogManager.getInstance().log(Level.SEVERE, LogManager.ETagLog.VILLAGER, "Failed to update villager lock", ex);
+                        MLLogManager.getInstance().log(Level.SEVERE, ELogTag.VILLAGER, "Failed to update villager lock", ex);
                     }
                 }
         );

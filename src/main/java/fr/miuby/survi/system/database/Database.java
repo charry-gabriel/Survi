@@ -1,7 +1,8 @@
 package fr.miuby.survi.system.database;
 
 import fr.miuby.survi.system.database.repository.*;
-import fr.miuby.survi.system.log.LogManager;
+import fr.miuby.lib.log.MLLogManager;
+import fr.miuby.survi.system.log.ELogTag;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -88,7 +89,7 @@ public abstract class Database {
             }
 
         } catch (SQLException ex) {
-            LogManager.getInstance().log(Level.SEVERE, LogManager.ETagLog.SYSTEM, "Failed to execute request: " + sql, ex);
+            MLLogManager.getInstance().log(Level.SEVERE, ELogTag.SYSTEM, "Failed to execute request: " + sql, ex);
             return "Error: " + ex.getMessage();
         } finally {
             closeResources(conn, ps);
@@ -102,7 +103,7 @@ public abstract class Database {
             if (conn != null)
                 conn.close();
         } catch (SQLException ex) {
-            LogManager.getInstance().log(Level.SEVERE, LogManager.ETagLog.SYSTEM, "Failed to close database resources", ex);
+            MLLogManager.getInstance().log(Level.SEVERE, ELogTag.SYSTEM, "Failed to close database resources", ex);
         }
     }
 }
