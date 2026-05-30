@@ -13,6 +13,8 @@ import org.bukkit.entity.EnderDragon;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntitySpawnEvent;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.EquipmentSlotGroup;
@@ -50,7 +52,7 @@ public class ServerListener implements Listener {
         AlphaPlayer.get(event.getPlayer().getUniqueId()).resetPlayer();
     }
 
-    @EventHandler
+    @EventHandler(ignoreCancelled = true)
     public void onEntitySpawn(EntitySpawnEvent event) {
         if (event.getEntity() instanceof EnderDragon dragon) {
             try {
@@ -96,7 +98,8 @@ public class ServerListener implements Listener {
                 }
                 player.getActiveQuests().clear();
                 GameManager.getInstance().getDatabase().quests().clearAllPlayerQuests(player.getUuid());
-                player.getPlayer().sendMessage("§6[Quêtes] §eVos quêtes du jour ont expiré.");
+                player.getPlayer().sendMessage(Component.text("[Quêtes] ", NamedTextColor.GOLD)
+                        .append(Component.text("Vos quêtes du jour ont expiré.", NamedTextColor.YELLOW)));
             } else {
                 player.getActiveQuests().clear();
             }

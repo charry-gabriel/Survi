@@ -7,7 +7,8 @@ import fr.miuby.survi.player.AlphaPlayer;
 import fr.miuby.survi.system.log.LogManager;
 import fr.miuby.survi.world.EWorld;
 import fr.miuby.survi.world.WorldInitializer;
-import org.bukkit.Bukkit;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -34,7 +35,7 @@ public class WorldListener implements Listener {
      * Bloque la création de portails Nether au Village.
      * Wilderness/Nether : comportement vanilla. End : géré via onEndPortalEnter.
      */
-    @EventHandler
+    @EventHandler(ignoreCancelled = true)
     public void onPortalCreate(PortalCreateEvent event) {
         if (event.getReason() != PortalCreateEvent.CreateReason.FIRE) return;
         if (event.getWorld().getName().equals(WorldInitializer.getWorlds().get(EWorld.VILLAGE))) {
@@ -57,7 +58,7 @@ public class WorldListener implements Listener {
 
         if (WorldRegistry.get(EWorld.NETHER).isLocked()) {
             event.setCancelled(true);
-            event.getPlayer().sendMessage("§c✖ Ce monde n'est pas encore accessible !");
+            event.getPlayer().sendMessage(Component.text("✖ Ce monde n'est pas encore accessible !", NamedTextColor.RED));
             return;
         }
 
@@ -74,14 +75,15 @@ public class WorldListener implements Listener {
     }
 
     private @Nullable World getPortalDestination(String currentWorld) {
-        String wildernessName = WorldInitializer.getWorlds().get(EWorld.WILDERNESS);
-        String netherName = WorldInitializer.getWorlds().get(EWorld.NETHER);
+        MLWorld wildernessMLWorld = WorldRegistry.get(EWorld.WILDERNESS);
+        MLWorld netherMLWorld    = WorldRegistry.get(EWorld.NETHER);
+        if (wildernessMLWorld == null || netherMLWorld == null) return null;
 
-        if (currentWorld.equals(wildernessName))
-            return Bukkit.getWorld(netherName);
+        if (currentWorld.equals(wildernessMLWorld.getWorld().getName()))
+            return netherMLWorld.getWorld();
 
-        if (currentWorld.equals(netherName))
-            return Bukkit.getWorld(wildernessName);
+        if (currentWorld.equals(netherMLWorld.getWorld().getName()))
+            return wildernessMLWorld.getWorld();
 
         return null;
     }
@@ -99,16 +101,15 @@ public class WorldListener implements Listener {
         if (!player.getWorld().getName().equals(wild)) return;
         if (player.getLocation().getBlock().getType() != Material.END_PORTAL) return;
 
-        String endName = WorldInitializer.getWorlds().get(EWorld.END);
         MLWorld endMLWorld = WorldRegistry.get(EWorld.END);
         if (endMLWorld != null && endMLWorld.isLocked()) {
-            player.sendMessage("§c✖ Ce monde n'est pas encore accessible !");
+            player.sendMessage(Component.text("✖ Ce monde n'est pas encore accessible !", NamedTextColor.RED));
             return;
         }
 
-        World endWorld = Bukkit.getWorld(endName);
+        World endWorld = endMLWorld != null ? endMLWorld.getWorld() : null;
         if (endWorld == null) {
-            LogManager.getInstance().log(Level.SEVERE, LogManager.ETagLog.WORLD, "onEndPortalEnter : monde End introuvable → " + endName);
+            LogManager.getInstance().log(Level.SEVERE, LogManager.ETagLog.WORLD, "onEndPortalEnter : monde End introuvable dans le registry");
             return;
         }
 

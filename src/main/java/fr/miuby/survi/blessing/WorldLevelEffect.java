@@ -4,6 +4,8 @@ import fr.miuby.survi.GameManager;
 import fr.miuby.survi.player.AlphaPlayer;
 import fr.miuby.survi.world.WorldLevelManager;
 import lombok.Getter;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 
 /**
  * Blessing effect that raises the global world level by a fixed amount.
@@ -44,9 +46,10 @@ public class WorldLevelEffect extends BlessingEffect {
 
         if (player.getPlayer() != null) {
             player.getPlayer().sendMessage(
-                    "§6[Monde] §eLe niveau du monde est passé à §b"
-                            + GameManager.getInstance().getWorldLevelManager().getLevel()
-                            + "§e. Les monstres et récompenses s'adaptent !"
+                    Component.text("[Monde] ", NamedTextColor.GOLD)
+                            .append(Component.text("Le niveau du monde est passé à ", NamedTextColor.YELLOW))
+                            .append(Component.text(String.valueOf(GameManager.getInstance().getWorldLevelManager().getLevel()), NamedTextColor.AQUA))
+                            .append(Component.text(". Les monstres et récompenses s'adaptent !", NamedTextColor.YELLOW))
             );
         }
     }

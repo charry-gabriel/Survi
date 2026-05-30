@@ -199,8 +199,13 @@ public class JobListener implements Listener {
         }
 
         // Annule si l'un des enchantements dépasse le niveau métier
-        boolean tooHigh = event.getEnchantsToAdd().entrySet().stream()
-                .anyMatch(e -> e.getValue() > jobLevel);
+        boolean tooHigh = false;
+        for (Map.Entry<Enchantment, Integer> entry : event.getEnchantsToAdd().entrySet()) {
+            if (entry.getValue() > jobLevel) {
+                tooHigh = true;
+                break;
+            }
+        }
 
         if (tooHigh) {
             event.setCancelled(true);

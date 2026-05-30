@@ -5,6 +5,7 @@ import fr.miuby.survi.world.crops.PlantedCropUtils;
 import fr.miuby.survi.world.crops.PlantedCropsManager;
 import fr.miuby.survi.player.AlphaPlayer;
 import fr.miuby.survi.role.ERole;
+import fr.miuby.survi.role.Role;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.event.EventHandler;
@@ -37,7 +38,10 @@ public class CropGrowthListener implements Listener {
         if (!PlantedCropUtils.isPlantable(itemType))
             return false;
 
-        return AlphaPlayer.get(event.getPlayer().getUniqueId()).getSubRoles().stream().anyMatch(role -> role.type() == ERole.FERMIER);
+        for (Role role : AlphaPlayer.get(event.getPlayer().getUniqueId()).getSubRoles()) {
+            if (role.type() == ERole.FERMIER) return true;
+        }
+        return false;
     }
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)

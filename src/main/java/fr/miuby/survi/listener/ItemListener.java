@@ -54,17 +54,20 @@ public class ItemListener implements Listener {
         // Vérification des permissions par tags
         List<String> roles = customRecipe.getRoles();
         if (roles != null && !roles.isEmpty()) {
-            boolean hasPermission = alpha.getSubRoles().stream()
-                    .map(Role::type)
-                    .map(Enum::name)
-                    .anyMatch(roles::contains);
+            boolean hasPermission = false;
+            for (Role r : alpha.getSubRoles()) {
+                if (roles.contains(r.type().name())) {
+                    hasPermission = true;
+                    break;
+                }
+            }
 
             if (!hasPermission)
                 event.getInventory().setResult(new ItemStack(Material.AIR));
         }
     }
 
-    @EventHandler
+    @EventHandler(ignoreCancelled = true)
     public void onCrafterCraft(CrafterCraftEvent event) {
         //block ancien craft
         if (GameManager.getInstance().getLockedItemsFactory().isLocked(event.getResult().getType().getKey())
@@ -85,7 +88,7 @@ public class ItemListener implements Listener {
         }
     }
 
-    @EventHandler
+    @EventHandler(ignoreCancelled = true)
     public void onInventoryClick(InventoryClickEvent event) {
         if (event.getClickedInventory() == null || event.getClickedInventory().getType() == InventoryType.MERCHANT || event.getInventory().getType() == InventoryType.MERCHANT)
             return;
@@ -109,7 +112,7 @@ public class ItemListener implements Listener {
         }
     }
 
-    @EventHandler
+    @EventHandler(ignoreCancelled = true)
     public void onPlayerTrade(PlayerTradeEvent event) {
         Trader villager = (Trader) VillagerRegistry.get(event.getVillager().getUniqueId());
         if (villager == null)

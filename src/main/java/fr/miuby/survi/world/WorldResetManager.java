@@ -3,6 +3,8 @@ package fr.miuby.survi.world;
 import fr.miuby.lib.world.WorldRegistry;
 import fr.miuby.survi.GameManager;
 import fr.miuby.survi.system.log.LogManager;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -128,7 +130,8 @@ public class WorldResetManager {
         if (world == null) return;
         for (var player : world.getPlayers()) {
             player.teleport(destination);
-            player.sendMessage("§6[Monde] §eLe monde est en cours de réinitialisation. Retour au Village.");
+            player.sendMessage(Component.text("[Monde] ", NamedTextColor.GOLD)
+                    .append(Component.text("Le monde est en cours de réinitialisation. Retour au Village.", NamedTextColor.YELLOW)));
         }
     }
 

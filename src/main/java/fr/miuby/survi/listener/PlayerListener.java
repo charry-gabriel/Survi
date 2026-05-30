@@ -43,7 +43,7 @@ public class PlayerListener implements Listener {
     private static final long WARN_COOLDOWN_MS = 6_000L;
     private final Map<UUID, Long> lastWarnTime = new HashMap<>();
 
-    @EventHandler
+    @EventHandler(ignoreCancelled = true)
     public void onPlayerMove(PlayerMoveEvent event) {
         Player player = event.getPlayer();
 
@@ -200,7 +200,7 @@ public class PlayerListener implements Listener {
         }
     }
 
-    @EventHandler
+    @EventHandler(ignoreCancelled = true)
     public void onPlayerRecipeDiscover(PlayerRecipeDiscoverEvent event) {
         for (NamespacedKey nsKey : GameManager.getInstance().getCustomRecipeFactory().getOldRecipes()) {
             if (nsKey.toString().equals(event.getRecipe().toString()))

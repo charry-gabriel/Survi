@@ -8,6 +8,8 @@ import fr.miuby.survi.villager.trader.Trader;
 import lombok.Getter;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.sound.Sound;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.potion.PotionEffect;
 
@@ -208,7 +210,7 @@ public class QuestManager {
         GameManager.getInstance().getDatabase().quests().deletePlayerQuestSlot(player.getUuid(), current.getSlot());
 
         if (player.getPlayer() != null) {
-            player.getPlayer().sendMessage("§eVotre quête a été réinitialisée par un administrateur. Vous pouvez en accepter une nouvelle !");
+            player.getPlayer().sendMessage(Component.text("Votre quête a été réinitialisée par un administrateur. Vous pouvez en accepter une nouvelle !", NamedTextColor.YELLOW));
         }
         return true;
     }
@@ -228,16 +230,18 @@ public class QuestManager {
         PlayerQuestData current = player.getCurrentActiveQuest();
         if (current != null) {
             if (current.isCompleted()) {
-                player.getPlayer().sendMessage("§cVous avez déjà une quête terminée à réclamer !");
+                player.getPlayer().sendMessage(Component.text("Vous avez déjà une quête terminée à réclamer !", NamedTextColor.RED));
             } else {
-                player.getPlayer().sendMessage("§cVous avez déjà une quête en cours. Terminez-la d'abord !");
+                player.getPlayer().sendMessage(Component.text("Vous avez déjà une quête en cours. Terminez-la d'abord !", NamedTextColor.RED));
             }
             return;
         }
 
         // Vérifier la limite journalière
         if (!force && player.countTodayQuests() >= DAILY_QUEST_LIMIT) {
-            player.getPlayer().sendMessage("§cVous avez atteint votre limite de §6" + DAILY_QUEST_LIMIT + " quête(s) aujourd'hui§c. Revenez demain !");
+            player.getPlayer().sendMessage(Component.text("Vous avez atteint votre limite de ", NamedTextColor.RED)
+                    .append(Component.text(String.valueOf(DAILY_QUEST_LIMIT), NamedTextColor.GOLD))
+                    .append(Component.text(" quête(s) aujourd'hui. Revenez demain !", NamedTextColor.RED)));
             return;
         }
 
@@ -256,9 +260,12 @@ public class QuestManager {
 
         LogManager.getInstance().log(Level.FINE, LogManager.ETagLog.QUEST,
                 "[AssignQuest] " + player.getPseudo() + " → " + quest.getId() + " (" + difficulty + ") slot=" + nextSlot);
-        player.getPlayer().sendMessage("§aNouvelle quête acceptée auprès de §b" + trader.getNameId() + " §a: §6" + quest.getName());
-        player.getPlayer().sendMessage("§7" + quest.getDescription());
-        player.getPlayer().sendMessage("§8Quête " + (nextSlot + 1) + "/" + DAILY_QUEST_LIMIT + " du jour.");
+        player.getPlayer().sendMessage(Component.text("Nouvelle quête acceptée auprès de ", NamedTextColor.GREEN)
+                .append(Component.text(trader.getNameId(), NamedTextColor.AQUA))
+                .append(Component.text(" : ", NamedTextColor.GREEN))
+                .append(Component.text(quest.getName(), NamedTextColor.GOLD)));
+        player.getPlayer().sendMessage(Component.text(quest.getDescription(), NamedTextColor.GRAY));
+        player.getPlayer().sendMessage(Component.text("Quête " + (nextSlot + 1) + "/" + DAILY_QUEST_LIMIT + " du jour.", NamedTextColor.DARK_GRAY));
     }
 
     /**
@@ -282,9 +289,10 @@ public class QuestManager {
         GameManager.getInstance().getDatabase().quests().setLastQuestId(player.getUuid(), quest.getId());
 
         if (player.getPlayer() != null) {
-            player.getPlayer().sendMessage("§e[TEST] Quête de test assignée : §6" + quest.getName());
-            player.getPlayer().sendMessage("§7" + quest.getDescription());
-            player.getPlayer().sendMessage("§8Objectif : " + quest.getGoal() + " | Difficulté : " + quest.getDifficulty().name());
+            player.getPlayer().sendMessage(Component.text("[TEST] Quête de test assignée : ", NamedTextColor.YELLOW)
+                    .append(Component.text(quest.getName(), NamedTextColor.GOLD)));
+            player.getPlayer().sendMessage(Component.text(quest.getDescription(), NamedTextColor.GRAY));
+            player.getPlayer().sendMessage(Component.text("Objectif : " + quest.getGoal() + " | Difficulté : " + quest.getDifficulty().name(), NamedTextColor.DARK_GRAY));
         }
     }
 
@@ -298,7 +306,8 @@ public class QuestManager {
             return false;
 
         if (data.getTraderId() != null && !data.getTraderId().equals(trader.getNameId())) {
-            player.getPlayer().sendMessage("§cCette quête doit être validée auprès de §b" + data.getTraderId());
+            player.getPlayer().sendMessage(Component.text("Cette quête doit être validée auprès de ", NamedTextColor.RED)
+                    .append(Component.text(data.getTraderId(), NamedTextColor.AQUA)));
             return false;
         }
 
@@ -314,7 +323,10 @@ public class QuestManager {
         if (rewardJob != null) {
             player.addJobReputation(rewardJob, quest.getReputationReward());
         }
-        player.getPlayer().sendMessage("§aVous avez reçu les récompenses de la quête ! §b+" + quest.getReputationReward() + " réputation §aavec §b" + trader.getNameId());
+        player.getPlayer().sendMessage(Component.text("Vous avez reçu les récompenses de la quête ! ", NamedTextColor.GREEN)
+                .append(Component.text("+" + quest.getReputationReward() + " réputation ", NamedTextColor.AQUA))
+                .append(Component.text("avec ", NamedTextColor.GREEN))
+                .append(Component.text(trader.getNameId(), NamedTextColor.AQUA)));
 
         data.setClaimed(true);
         GameManager.getInstance().getDatabase().quests().updatePlayerQuest(player.getUuid(), data);
@@ -354,7 +366,8 @@ public class QuestManager {
 
         Sound myCustomSound = Sound.sound(Key.key("ui.toast.challenge_complete"), Sound.Source.MASTER, 1f, 1.1f);
         player.getPlayer().playSound(myCustomSound);
-        player.getPlayer().sendMessage("§aQuête terminée : §6" + quest.getName());
-        player.getPlayer().sendMessage("§7Allez voir le Trader pour obtenir votre récompense !");
+        player.getPlayer().sendMessage(Component.text("Quête terminée : ", NamedTextColor.GREEN)
+                .append(Component.text(quest.getName(), NamedTextColor.GOLD)));
+        player.getPlayer().sendMessage(Component.text("Allez voir le Trader pour obtenir votre récompense !", NamedTextColor.GRAY));
     }
 }

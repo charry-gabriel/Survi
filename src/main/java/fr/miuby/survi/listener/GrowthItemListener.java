@@ -6,7 +6,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 
 public class GrowthItemListener  implements Listener {
-    @EventHandler
+    @EventHandler(ignoreCancelled = true)
     public void onBlockBreak(BlockBreakEvent event) {
         GrowthItems.IncrementUses(event.getPlayer(), "BlockBreakEvent");
     }

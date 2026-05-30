@@ -23,7 +23,7 @@ public class GraveListener implements Listener {
         }
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST)
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onPlayerInteract(PlayerInteractEvent event) {
         if (event.getAction() != Action.RIGHT_CLICK_BLOCK || event.getClickedBlock() == null)
             return;
@@ -33,7 +33,7 @@ public class GraveListener implements Listener {
         }
     }
 
-    @EventHandler
+    @EventHandler(ignoreCancelled = true)
     public void onBlockBreak(BlockBreakEvent event) {
         if (GameManager.getInstance().getGraveManager().isGrave(event.getBlock().getLocation())) {
             event.setCancelled(true);
@@ -41,12 +41,12 @@ public class GraveListener implements Listener {
         }
     }
 
-    @EventHandler
+    @EventHandler(ignoreCancelled = true)
     public void onBlockExplode(BlockExplodeEvent event) {
         event.blockList().removeIf(block -> GameManager.getInstance().getGraveManager().isGrave(block.getLocation()));
     }
 
-    @EventHandler
+    @EventHandler(ignoreCancelled = true)
     public void onEntityExplode(EntityExplodeEvent event) {
         event.blockList().removeIf(block -> GameManager.getInstance().getGraveManager().isGrave(block.getLocation()));
     }

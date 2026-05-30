@@ -36,7 +36,7 @@ import java.util.logging.Level;
 
 public class VillagerListener implements Listener {
     @SuppressWarnings("UnstableApiUsage")
-    @EventHandler
+    @EventHandler(ignoreCancelled = true)
     public void onPlayerInteractEntity(PlayerInteractEntityEvent event) {
         Player player = event.getPlayer();
 
@@ -49,7 +49,7 @@ public class VillagerListener implements Listener {
                 case VillagerLevel level when level.getTribute() == null || !level.isUnlocked() -> {
                     player.sendMessage(Component.text("<", NamedTextColor.AQUA).append(level.getDisplayName()).append(Component.text("> ", NamedTextColor.AQUA)).append(level.getMessage()));
                     if (!level.isUnlocked())
-                        player.sendMessage("§e" + villager.getName() + " §eest indisponible pendant encore " + level.getRemainingLock());
+                        player.sendMessage(Component.text(villager.getName() + " est indisponible pendant encore " + level.getRemainingLock(), NamedTextColor.YELLOW));
                     event.setCancelled(true);
                 }
                 case VillagerLevel level -> {
@@ -62,10 +62,13 @@ public class VillagerListener implements Listener {
                             "[VillagerInteract] " + player.getName() + " → Trader " + trader.getNameId());
 
                     // Priorité 1 : une quête complétée mais non réclamée est en attente → on la réclame
-                    PlayerQuestData completedUnclaimed = alphaPlayer.getActiveQuests().stream()
-                            .filter(q -> q.isCompleted() && !q.isClaimed())
-                            .findFirst()
-                            .orElse(null);
+                    PlayerQuestData completedUnclaimed = null;
+                    for (PlayerQuestData q : alphaPlayer.getActiveQuests()) {
+                        if (q.isCompleted() && !q.isClaimed()) {
+                            completedUnclaimed = q;
+                            break;
+                        }
+                    }
 
                     if (completedUnclaimed != null) {
                         GameManager.getInstance().getQuestManager().completeQuest(alphaPlayer, trader, false);

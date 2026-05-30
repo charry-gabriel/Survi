@@ -22,7 +22,7 @@ import static java.lang.Math.round;
 public class DamageListener implements Listener {
     Sound slimeSound = Sound.sound(Key.key("entity.slime.attack"), Sound.Source.MASTER, 1f, 1.1f);
 
-    @EventHandler
+    @EventHandler(ignoreCancelled = true)
     public void onEntityDamageByEntity(EntityDamageByEntityEvent event) {
         //si on tape
         if(event.getDamager().getType() == EntityType.PLAYER) {
@@ -38,7 +38,7 @@ public class DamageListener implements Listener {
         }
     }
 
-    @EventHandler
+    @EventHandler(ignoreCancelled = true)
     public void onEntityDamage(EntityDamageEvent event) {
         if (event.getEntityType() == EntityType.VILLAGER) {
             Villager villager = (Villager) event.getEntity();

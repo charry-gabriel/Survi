@@ -124,7 +124,7 @@ public class QuestCommand {
         GameManager.getInstance().getDatabase().quests().clearAllPlayerQuests(alphaPlayer.getUuid());
 
         if (alphaPlayer.getPlayer() != null) {
-            alphaPlayer.getPlayer().sendMessage("§eToutes vos quêtes du jour ont été réinitialisées par un administrateur.");
+            alphaPlayer.getPlayer().sendMessage(Component.text("Toutes vos quêtes du jour ont été réinitialisées par un administrateur.", NamedTextColor.YELLOW));
         }
         ctx.getSource().getSender().sendMessage(
                 Component.text("Toutes les quêtes du jour réinitialisées pour " + alphaPlayer.getPseudo() + ".").color(NamedTextColor.GREEN));

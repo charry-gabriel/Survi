@@ -14,7 +14,7 @@ import org.bukkit.persistence.PersistentDataContainer;
 
 public class AlphaPlayerListener implements Listener {
 
-    @EventHandler
+    @EventHandler(ignoreCancelled = true)
     public void onAlphaPlayerRoleChange(AlphaPlayerRoleChangeEvent event) {
         if (!event.getAlphaPlayer().getPlayer().isOnline())
             return;
@@ -22,7 +22,7 @@ public class AlphaPlayerListener implements Listener {
                 event.getAlphaPlayer(), event.getOldRole(), event.getNewRole());
     }
 
-    @EventHandler
+    @EventHandler(ignoreCancelled = true)
     public void onPlayerItemConsume(PlayerItemConsumeEvent event) {
         ItemStack item = event.getItem();
         PersistentDataContainer pdc = item.getItemMeta().getPersistentDataContainer();
