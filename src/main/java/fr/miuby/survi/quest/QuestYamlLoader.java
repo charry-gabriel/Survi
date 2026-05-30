@@ -1,15 +1,13 @@
 package fr.miuby.survi.quest;
 
 import fr.miuby.lib.log.MLLogManager;
+import fr.miuby.survi.blessing.Blessing;
+import fr.miuby.survi.blessing.BlessingEffect;
+import fr.miuby.survi.blessing.BlessingLoader;
 import fr.miuby.survi.system.log.ELogTag;
 import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
-import org.bukkit.Registry;
 import org.bukkit.entity.EntityType;
-import org.bukkit.potion.PotionEffect;
-import org.bukkit.potion.PotionEffectType;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
@@ -37,7 +35,7 @@ public final class QuestYamlLoader {
             EQuestType type,
             Object target,
             int goal,
-            List<PotionEffect> potionRewards
+            Blessing rewards
     ) {}
 
     // -------------------------------------------------------------------------
@@ -47,8 +45,22 @@ public final class QuestYamlLoader {
     /**
      * Parse les champs communs d'un bloc quête.
      *
+     * <p>Les récompenses sont définies sous la clé {@code rewards} comme une
+     * liste de BlessingEffects :
+     * <pre>
+     * rewards:
+     *   - type: REPUTATION
+     *     job: MINEUR
+     *     value: 50
+     *   - type: POTION
+     *     potion: haste
+     *     duration: 1728000
+     *     amplifier: 0
+     * </pre>
+     *
      * @throws Exception si un champ obligatoire est absent ou invalide
      */
+    @SuppressWarnings("unchecked")
     public static BaseFields parseBase(Map<String, Object> map) {
         String id          = (String) map.get("id");
         String name        = (String) map.get("name");
@@ -56,8 +68,15 @@ public final class QuestYamlLoader {
         EQuestType type    = EQuestType.valueOf((String) map.get("type"));
         int goal           = ((Number) map.get("goal")).intValue();
 
-        Object target          = parseTarget(map, type);
-        List<PotionEffect> rewards = parsePotionRewards(map);
+        Object target = parseTarget(map, type);
+
+        List<Map<String, Object>> rawRewards = (List<Map<String, Object>>) map.get("rewards");
+        Blessing rewards = BlessingLoader.loadFromList(id, rawRewards);
+        if (rewards == null) {
+            MLLogManager.getInstance().log(Level.WARNING, ELogTag.QUEST,
+                    "[QuestYamlLoader] Aucune récompense définie pour la quête '" + id + "'");
+            rewards = new Blessing(new BlessingEffect[0]);
+        }
 
         return new BaseFields(id, name, description, type, target, goal, rewards);
     }
@@ -75,44 +94,5 @@ public final class QuestYamlLoader {
             case KILL, SHEAR, BREED -> EntityType.valueOf(targetStr);
             default -> null;
         };
-    }
-
-    /**
-     * Parse les récompenses en effets de potion.
-     * Accepte les deux clés YAML utilisées dans le projet :
-     * <ul>
-     *   <li>{@code rewards} — quêtes journalières (quests.yml)</li>
-     *   <li>{@code potion_rewards} — quêtes globales (global_quests.yml)</li>
-     * </ul>
-     */
-    @SuppressWarnings("unchecked")
-    public static List<PotionEffect> parsePotionRewards(Map<String, Object> map) {
-        List<PotionEffect> result = new ArrayList<>();
-
-        List<?> raw = (List<?>) map.get("rewards");
-        if (raw == null) raw = (List<?>) map.get("potion_rewards");
-        if (raw == null) return result;
-
-        for (Object obj : raw) {
-            if (!(obj instanceof Map<?, ?> rawEntry)) continue;
-            Map<String, Object> entry = (Map<String, Object>) rawEntry;
-            try {
-                String typeStr = ((String) entry.get("type")).toLowerCase();
-                NamespacedKey key = NamespacedKey.minecraft(typeStr);
-                PotionEffectType effectType = Registry.POTION_EFFECT_TYPE.get(key);
-                if (effectType == null) {
-                    MLLogManager.getInstance().log(Level.WARNING, ELogTag.QUEST,
-                            "Type de potion inconnu : " + typeStr);
-                    continue;
-                }
-                int duration  = ((Number) entry.get("duration")).intValue();
-                int amplifier = ((Number) entry.get("amplifier")).intValue();
-                result.add(new PotionEffect(effectType, duration, amplifier));
-            } catch (Exception e) {
-                MLLogManager.getInstance().log(Level.WARNING, ELogTag.QUEST,
-                        "Erreur lors du parsing d'une récompense de potion", e);
-            }
-        }
-        return result;
     }
 }

@@ -107,54 +107,41 @@ class SchemaGeneratorTest {
     }
 
     private void updateQuestsSchema() throws IOException {
-        Path path = Paths.get("src/main/resources/schema/quests.schema.json");
+        Path path = Paths.get("src/main/resources/schema/quests-schema.json");
         if (!Files.exists(path)) return;
 
         String content = Files.readString(path);
 
-        // Update Quest Type (distinct from reward type)
-        List<String> questTypes = getEnumNamesFromSource("src/main/java/fr/miuby/survi/quest/QuestType.java");
-        String questTypeEnumJson = "\"enum\": [\n              " +
-                questTypes.stream().map(s -> "\"" + s + "\"").collect(Collectors.joining(",\n              ")) +
-                "\n            ]";
-        // Regex matching only the first "type" which is the quest type (no description)
-        Pattern questTypePattern = Pattern.compile("\"type\":\\s*\\{\\s*\"type\":\\s*\"string\",\\s*\"enum\":\\s*\\[[^\\]]*\\]\\s*\\}");
-        content = questTypePattern.matcher(content).replaceFirst(Matcher.quoteReplacement("\"type\": {\n            \"type\": \"string\",\n            " + questTypeEnumJson + "\n          }"));
+        // Update Quest Type enum (MINE, KILL, …)
+        content = replaceEnum(content, "type", getEnumNamesFromSource("src/main/java/fr/miuby/survi/quest/EQuestType.java"));
 
         // Update Quest Difficulty
-        content = replaceEnum(content, "difficulty", getEnumNamesFromSource("src/main/java/fr/miuby/survi/quest/QuestDifficulty.java"));
+        content = replaceEnum(content, "difficulty", getEnumNamesFromSource("src/main/java/fr/miuby/survi/quest/EQuestDifficulty.java"));
 
-        // Update Reward Potion Effects
-        List<String> potionEffects = getPotionEffectTypeNames().stream()
-                .map(String::toLowerCase)
-                .sorted()
-                .toList();
-
-        String potionEnumJson = "\"enum\": [\n                    " +
-                potionEffects.stream().map(s -> "\"" + s + "\"").collect(Collectors.joining(",\n                    ")) +
-                "\n                  ]";
-        // Regex matching the type with description
-        Pattern potionTypePattern = Pattern.compile("\"type\":\\s*\\{\\s*\"type\":\\s*\"string\",\\s*\"description\":\\s*\"Nom de l'effet de potion[^\"]*\",\\s*\"enum\":\\s*\\[[^\\]]*\\]\\s*\\}");
-        content = potionTypePattern.matcher(content).replaceFirst(Matcher.quoteReplacement("\"type\": {\n                  \"type\": \"string\",\n                  \"description\": \"Nom de l'effet de potion (ex: speed, haste, strength)\",\n                  " + potionEnumJson + "\n                }"));
-
-        // Update target enum
+        // Update target enum (Material + EntityType)
         List<String> allTargets = Stream.concat(getMaterialNames().stream(), getEntityTypeNames().stream())
                 .distinct()
                 .sorted()
                 .toList();
-
-        // Replace target type with enum if it matches the pattern
         Pattern targetPattern = Pattern.compile("\"target\":\\s*\\{\\s*\"type\":\\s*\\[\"string\",\\s*\"null\"\\][^{}]*\\}");
         String targetEnumJson = "\"target\": {\n            \"type\": [\"string\", \"null\"],\n            \"enum\": [\n              null,\n              " +
                 allTargets.stream().map(s -> "\"" + s + "\"").collect(Collectors.joining(",\n              ")) +
                 "\n            ]\n          }";
-
         if (targetPattern.matcher(content).find()) {
             content = targetPattern.matcher(content).replaceAll(Matcher.quoteReplacement(targetEnumJson));
         } else {
-            // Try to update existing enum if already present
             content = replaceEnum(content, "target", allTargets);
         }
+
+        // Update job enum in rewards > REPUTATION effect
+        content = replaceEnum(content, "job", getEnumNamesFromSource("src/main/java/fr/miuby/survi/job/EJob.java"));
+
+        // Update potion enum in rewards > POTION effect
+        List<String> potionEffects = getPotionEffectTypeNames().stream()
+                .map(String::toLowerCase)
+                .sorted()
+                .toList();
+        content = replaceEnum(content, "potion", potionEffects);
 
         Files.writeString(path, content);
     }
@@ -165,11 +152,8 @@ class SchemaGeneratorTest {
 
         String content = Files.readString(path);
 
-        // Update quest type enum (MINE, KILL, etc.)
-        List<String> questTypes = getEnumNamesFromSource("src/main/java/fr/miuby/survi/quest/EQuestType.java");
-        if (!questTypes.isEmpty()) {
-            content = replaceEnum(content, "type", questTypes);
-        }
+        // Update quest type enum (MINE, KILL, …)
+        content = replaceEnum(content, "type", getEnumNamesFromSource("src/main/java/fr/miuby/survi/quest/EQuestType.java"));
 
         // Update target enum (Material + EntityType)
         List<String> allTargets = Stream.concat(getMaterialNames().stream(), getEntityTypeNames().stream())
@@ -186,15 +170,15 @@ class SchemaGeneratorTest {
             content = replaceEnum(content, "target", allTargets);
         }
 
-        // Update job enum from EJob
+        // Update job enum in rewards > REPUTATION effect
         content = replaceEnum(content, "job", getEnumNamesFromSource("src/main/java/fr/miuby/survi/job/EJob.java"));
 
-        // Update potion effect type enum
+        // Update potion enum in rewards > POTION effect
         List<String> potionEffects = getPotionEffectTypeNames().stream()
                 .map(String::toLowerCase)
                 .sorted()
                 .toList();
-        content = replaceEnum(content, "type", potionEffects);
+        content = replaceEnum(content, "potion", potionEffects);
 
         Files.writeString(path, content);
     }

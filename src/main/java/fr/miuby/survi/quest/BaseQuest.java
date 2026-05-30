@@ -1,10 +1,8 @@
 package fr.miuby.survi.quest;
 
+import fr.miuby.survi.blessing.Blessing;
 import lombok.Getter;
 import lombok.experimental.SuperBuilder;
-import org.bukkit.potion.PotionEffect;
-
-import java.util.List;
 
 /**
  * Classe de base commune aux quêtes journalières ({@link Quest})
@@ -22,7 +20,9 @@ public abstract class BaseQuest {
     /** Material (MINE/CRAFT/SMELT), EntityType (KILL/SHEAR/BREED) ou null (FISH). */
     private final Object target;
     private final int goal;
-    private final List<PotionEffect> potionRewards;
+
+    /** Effets à appliquer en récompense. Jamais null (tableau vide si aucun effet). */
+    private final Blessing rewards;
 
     /**
      * Vérifie si une action de jeu correspond à cette quête.

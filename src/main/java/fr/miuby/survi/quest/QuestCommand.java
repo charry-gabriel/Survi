@@ -3,6 +3,8 @@ package fr.miuby.survi.quest;
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
+import fr.miuby.survi.blessing.BlessingEffect;
+import fr.miuby.survi.blessing.PotionsEffect;
 import fr.miuby.survi.player.AlphaPlayer;
 import fr.miuby.survi.system.command.argument.AlphaPlayerArgument;
 import fr.miuby.survi.system.command.argument.QuestArgument;
@@ -119,7 +121,9 @@ public class QuestCommand {
             if (data.isClaimed() && alphaPlayer.getPlayer() != null) {
                 var quest = GameManager.getInstance().getQuestManager().getQuest(data.getQuestId());
                 if (quest != null) {
-                    quest.getPotionRewards().forEach(e -> alphaPlayer.getPlayer().removePotionEffect(e.getType()));
+                    for (BlessingEffect effect : quest.getRewards().blessingEffects()) {
+                        if (effect instanceof PotionsEffect) effect.resetEffect(alphaPlayer);
+                    }
                 }
             }
         }

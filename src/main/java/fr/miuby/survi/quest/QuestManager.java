@@ -1,9 +1,10 @@
 package fr.miuby.survi.quest;
 
-import fr.miuby.survi.GameManager;
-import fr.miuby.survi.player.AlphaPlayer;
 import fr.miuby.lib.log.MLLogManager;
-import fr.miuby.survi.job.EJob;
+import fr.miuby.survi.GameManager;
+import fr.miuby.survi.blessing.BlessingEffect;
+import fr.miuby.survi.blessing.PotionsEffect;
+import fr.miuby.survi.player.AlphaPlayer;
 import fr.miuby.survi.system.log.ELogTag;
 import fr.miuby.survi.villager.trader.Trader;
 import lombok.Getter;
@@ -12,7 +13,6 @@ import net.kyori.adventure.sound.Sound;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.potion.PotionEffect;
 
 import fr.miuby.survi.world.WorldLevelManager;
 
@@ -106,8 +106,7 @@ public class QuestManager {
 
             try {
                 QuestYamlLoader.BaseFields base = QuestYamlLoader.parseBase(map);
-                EQuestDifficulty difficulty   = EQuestDifficulty.valueOf((String) map.get("difficulty"));
-                int reputationReward          = ((Number) map.get("reputation_reward")).intValue();
+                EQuestDifficulty difficulty = EQuestDifficulty.valueOf((String) map.get("difficulty"));
 
                 questPool.add(Quest.builder()
                         .id(base.id())
@@ -116,9 +115,8 @@ public class QuestManager {
                         .type(base.type())
                         .target(base.target())
                         .goal(base.goal())
-                        .potionRewards(base.potionRewards())
+                        .rewards(base.rewards())
                         .difficulty(difficulty)
-                        .reputationReward(reputationReward)
                         .build());
 
             } catch (Exception e) {
@@ -165,7 +163,6 @@ public class QuestManager {
      */
     public EQuestDifficulty getRandomDifficulty() {
         int[] weights = GameManager.getInstance().getWorldLevelManager().getQuestDifficultyWeights();
-        // weights = { commonWeight, rareWeight, legendaryWeight }, sum = 100
         int roll = random.nextInt(100);
         if (roll < weights[2])                   return EQuestDifficulty.LEGENDARY;
         if (roll < weights[2] + weights[1])      return EQuestDifficulty.RARE;
@@ -198,46 +195,51 @@ public class QuestManager {
                     "Quête expirée (slot " + q.getSlot() + ") supprimée pour " + player.getPseudo());
         }
 
-        // Retrait des effets des quêtes expirées réclamées
-        List<org.bukkit.potion.PotionEffect> effectsToRemove = new ArrayList<>();
+        // Retrait des effets de potion des quêtes expirées réclamées
+        List<BlessingEffect> effectsToRemove = new ArrayList<>();
         for (PlayerQuestData q : expired) {
             if (q.isClaimed()) {
                 Quest questDef = getQuest(q.getQuestId());
-                if (questDef != null) effectsToRemove.addAll(questDef.getPotionRewards());
+                if (questDef != null) {
+                    for (BlessingEffect effect : questDef.getRewards().blessingEffects()) {
+                        if (effect instanceof PotionsEffect) effectsToRemove.add(effect);
+                    }
+                }
             }
         }
         if (!effectsToRemove.isEmpty()) {
             GameManager.getInstance().getScheduler().runTaskLater(GameManager.getInstance().getPlugin(), () -> {
                 if (!player.getPlayer().isOnline()) return;
-                for (org.bukkit.potion.PotionEffect effect : effectsToRemove)
-                    player.getPlayer().removePotionEffect(effect.getType());
+                for (BlessingEffect effect : effectsToRemove) effect.resetEffect(player);
             }, 2L);
         }
 
         // Chargement des quêtes valides
         player.getActiveQuests().addAll(valid);
 
-        // Ré-application des effets des quêtes valides déjà réclamées
-        List<org.bukkit.potion.PotionEffect> effectsToReapply = new ArrayList<>();
+        // Ré-application des effets de potion des quêtes valides déjà réclamées
+        List<BlessingEffect> effectsToReapply = new ArrayList<>();
         for (PlayerQuestData q : valid) {
             if (q.isClaimed()) {
                 Quest questDef = getQuest(q.getQuestId());
-                if (questDef != null) effectsToReapply.addAll(questDef.getPotionRewards());
+                if (questDef != null) {
+                    for (BlessingEffect effect : questDef.getRewards().blessingEffects()) {
+                        if (effect instanceof PotionsEffect) effectsToReapply.add(effect);
+                    }
+                }
             }
         }
         if (!effectsToReapply.isEmpty()) {
             GameManager.getInstance().getScheduler().runTaskLater(GameManager.getInstance().getPlugin(), () -> {
                 if (!player.getPlayer().isOnline()) return;
-                for (org.bukkit.potion.PotionEffect effect : effectsToReapply)
-                    player.getPlayer().addPotionEffect(effect);
+                for (BlessingEffect effect : effectsToReapply) effect.applyEffect(player);
             }, 5L);
         }
     }
 
     /**
-     * Reset admin : supprime la quête en cours (non encore réclamée) du joueur,
-     * ce qui lui libère un slot pour en accepter une nouvelle.
-     * Retourne false s'il n'y a rien à reset.
+     * Reset admin : supprime la quête en cours et retire les effets de potion
+     * si elle était déjà complétée. Libère un slot pour une nouvelle quête.
      */
     public boolean resetQuest(AlphaPlayer player) {
         PlayerQuestData current = player.getCurrentActiveQuest();
@@ -247,8 +249,8 @@ public class QuestManager {
         if (current.isCompleted() && player.getPlayer() != null) {
             Quest quest = getQuest(current.getQuestId());
             if (quest != null) {
-                for (PotionEffect effect : quest.getPotionRewards()) {
-                    player.getPlayer().removePotionEffect(effect.getType());
+                for (BlessingEffect effect : quest.getRewards().blessingEffects()) {
+                    if (effect instanceof PotionsEffect) effect.resetEffect(player);
                 }
             }
         }
@@ -361,20 +363,10 @@ public class QuestManager {
         Quest quest = getQuest(data.getQuestId());
         if (quest == null) return false;
 
-        for (PotionEffect effect : quest.getPotionRewards()) {
-            player.getPlayer().addPotionEffect(effect);
+        for (BlessingEffect effect : quest.getRewards().blessingEffects()) {
+            effect.applyEffect(player);
         }
-
-        // Résoudre le métier associé au trader et créditer la réputation
-        EJob rewardJob = trader.getJob();
-        if (rewardJob != null) {
-            player.addJobReputation(rewardJob, quest.getReputationReward());
-        }
-        player.getPlayer().sendMessage(Component.text("Vous avez reçu les récompenses de la quête ! ", NamedTextColor.GREEN)
-                .append(Component.text("+" + quest.getReputationReward() + " réputation ", NamedTextColor.AQUA))
-                .append(Component.text("avec ", NamedTextColor.GREEN))
-                .append(Component.text(trader.getNameId(), NamedTextColor.AQUA)));
-
+        player.getPlayer().sendMessage(Component.text("Vous avez reçu les récompenses de la quête ! ", NamedTextColor.GREEN));
         data.setClaimed(true);
         GameManager.getInstance().getDatabase().quests().updatePlayerQuest(player.getUuid(), data);
         return true;

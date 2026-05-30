@@ -12,18 +12,18 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * Valide la structure du fichier global_quests.yml contre le schéma
- * global-quests-schema.json.
+ * Valide la structure du fichier global_quests.yml.
  *
  * Vérifications :
  *  - présence de la clé racine "global_quests"
- *  - champs obligatoires : id, name, description, type, goal, time_limit, job_rewards
+ *  - champs obligatoires : id, name, description, type, goal, time_limit, rewards
  *  - unicité des ids
  *  - type ∈ {MINE, KILL, BREED, FISH, SHEAR, CRAFT, SMELT}
  *  - goal ≥ 1
  *  - time_limit ≥ 60
- *  - job_rewards non vide et chaque job ∈ EJob valides
- *  - reputation ≥ 1 dans chaque job_reward
+ *  - rewards non vide : chaque entrée a un type ∈ {REPUTATION, POTION}
+ *  - entrée REPUTATION : job ∈ EJob valides, value ≥ 1
+ *  - entrée POTION : potion présent, duration ≥ 1, amplifier ≥ 0
  */
 class GlobalQuestConfigTest {
 
@@ -37,6 +37,8 @@ class GlobalQuestConfigTest {
             "AVENTURIER", "BATISSEUR"
     );
 
+    private static final Set<String> VALID_EFFECT_TYPES = Set.of("REPUTATION", "POTION");
+
     @Test
     void globalQuestsYmlIsValid() throws IOException {
         Path path = Paths.get("src/main/resources/global_quests.yml");
@@ -46,28 +48,25 @@ class GlobalQuestConfigTest {
         Assertions.assertTrue(content.contains("global_quests:"),
                 "global_quests.yml doit contenir la clé racine 'global_quests'");
 
-        // Extraire les ids
+        // ── IDs ──────────────────────────────────────────────────────────────
         List<String> ids = extractValues(content, "id");
         Assertions.assertFalse(ids.isEmpty(), "Aucune quête globale trouvée dans global_quests.yml");
 
-        // Unicité des ids
         Set<String> seenIds = new HashSet<>();
         for (String id : ids) {
-            Assertions.assertTrue(seenIds.add(id),
-                    "ID de quête globale en double : " + id);
+            Assertions.assertTrue(seenIds.add(id), "ID de quête globale en double : " + id);
         }
 
-        // Vérification des types
+        // ── Type de quête (MINE, KILL, …) — majuscules uniquement ────────────
         List<String> types = extractValues(content, "type");
         for (String type : types) {
-            // On ignore les types de potions (minuscules) — on filtre sur MAJUSCULES
-            if (type.equals(type.toUpperCase())) {
+            if (type.equals(type.toUpperCase()) && !VALID_EFFECT_TYPES.contains(type)) {
                 Assertions.assertTrue(VALID_QUEST_TYPES.contains(type),
                         "Type de quête invalide : " + type + " — doit être l'un de " + VALID_QUEST_TYPES);
             }
         }
 
-        // Vérification des goals
+        // ── Goal ─────────────────────────────────────────────────────────────
         List<String> goals = extractValues(content, "goal");
         for (String goalStr : goals) {
             try {
@@ -78,41 +77,68 @@ class GlobalQuestConfigTest {
             }
         }
 
-        // Vérification des time_limits
+        // ── Time limit ───────────────────────────────────────────────────────
         List<String> timeLimits = extractValues(content, "time_limit");
         for (String tlStr : timeLimits) {
             try {
                 int tl = Integer.parseInt(tlStr);
-                Assertions.assertTrue(tl >= 60,
-                        "time_limit doit être ≥ 60 secondes, trouvé : " + tl);
+                Assertions.assertTrue(tl >= 60, "time_limit doit être ≥ 60 secondes, trouvé : " + tl);
             } catch (NumberFormatException e) {
                 Assertions.fail("time_limit doit être un entier, trouvé : " + tlStr);
             }
         }
 
-        // Vérification des jobs
+        // ── BlessingEffect types ──────────────────────────────────────────────
+        // On cherche tous les blocs "- type: REPUTATION/POTION" dans rewards
+        List<String> effectTypes = extractValues(content, "type");
+        for (String t : effectTypes) {
+            if (VALID_EFFECT_TYPES.contains(t)) {
+                Assertions.assertTrue(VALID_EFFECT_TYPES.contains(t),
+                        "Type d'effet invalide : " + t + " — doit être l'un de " + VALID_EFFECT_TYPES);
+            }
+        }
+
+        // ── REPUTATION : job ∈ EJob, value ≥ 1 ───────────────────────────────
         List<String> jobs = extractValues(content, "job");
         for (String job : jobs) {
             Assertions.assertTrue(VALID_JOBS.contains(job),
-                    "Métier invalide dans job_rewards : " + job + " — doit être l'un de " + VALID_JOBS);
+                    "Métier invalide dans rewards : " + job + " — doit être l'un de " + VALID_JOBS);
         }
 
-        // Vérification des reputations
-        List<String> reputations = extractValues(content, "reputation");
-        for (String repStr : reputations) {
+        List<String> values = extractValues(content, "value");
+        for (String valStr : values) {
             try {
-                int rep = Integer.parseInt(repStr);
-                Assertions.assertTrue(rep >= 1,
-                        "reputation doit être ≥ 1, trouvé : " + rep);
+                int val = Integer.parseInt(valStr);
+                Assertions.assertTrue(val >= 1, "value (réputation) doit être ≥ 1, trouvé : " + val);
             } catch (NumberFormatException e) {
-                Assertions.fail("reputation doit être un entier, trouvé : " + repStr);
+                Assertions.fail("value doit être un entier, trouvé : " + valStr);
+            }
+        }
+
+        // ── POTION : duration ≥ 1, amplifier ≥ 0 ────────────────────────────
+        List<String> durations = extractValues(content, "duration");
+        for (String durStr : durations) {
+            try {
+                int dur = Integer.parseInt(durStr);
+                Assertions.assertTrue(dur >= 1, "duration doit être ≥ 1, trouvé : " + dur);
+            } catch (NumberFormatException e) {
+                Assertions.fail("duration doit être un entier, trouvé : " + durStr);
+            }
+        }
+
+        List<String> amplifiers = extractValues(content, "amplifier");
+        for (String ampStr : amplifiers) {
+            try {
+                int amp = Integer.parseInt(ampStr);
+                Assertions.assertTrue(amp >= 0, "amplifier doit être ≥ 0, trouvé : " + amp);
+            } catch (NumberFormatException e) {
+                Assertions.fail("amplifier doit être un entier, trouvé : " + ampStr);
             }
         }
     }
 
     private List<String> extractValues(String content, String key) {
         List<String> values = new ArrayList<>();
-        // (?:-\s+)? handles YAML list items: "  - id: ..." as well as "    id: ..."
         Pattern pattern = Pattern.compile("(?m)^\\s*(?:-\\s+)?" + key + ":\\s*[\"']?([A-Z0-9_a-z]+)[\"']?");
         Matcher matcher = pattern.matcher(content);
         while (matcher.find()) {

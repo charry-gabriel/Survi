@@ -13,6 +13,8 @@ import fr.miuby.survi.world.EWorld;
 import io.papermc.paper.advancement.AdvancementDisplay;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import fr.miuby.survi.blessing.BlessingEffect;
+import fr.miuby.survi.blessing.PotionsEffect;
 import fr.miuby.survi.quest.PlayerQuestData;
 import fr.miuby.survi.quest.Quest;
 import fr.miuby.lib.log.MLLogManager;
@@ -184,19 +186,21 @@ public class PlayerListener implements Listener {
             }
         }
 
-        List<PotionEffect> effectsToReapply = new ArrayList<>();
+        List<BlessingEffect> effectsToReapply = new ArrayList<>();
         for (PlayerQuestData questData : alphaPlayer.getActiveQuests()) {
             if (questData.isClaimed()) {
                 Quest quest = GameManager.getInstance().getQuestManager().getQuest(questData.getQuestId());
                 if (quest != null) {
-                    effectsToReapply.addAll(quest.getPotionRewards());
+                    for (BlessingEffect effect : quest.getRewards().blessingEffects()) {
+                        if (effect instanceof PotionsEffect) effectsToReapply.add(effect);
+                    }
                 }
             }
         }
 
         if (!effectsToReapply.isEmpty()) {
             GameManager.getInstance().getScheduler().runTaskLater(GameManager.getInstance().getPlugin(), () -> {
-                if (player.isOnline()) effectsToReapply.forEach(player::addPotionEffect);
+                if (player.isOnline()) effectsToReapply.forEach(e -> e.applyEffect(alphaPlayer));
             }, 5L);
         }
     }

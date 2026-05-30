@@ -6,7 +6,15 @@
       "type": "array",
       "items": {
         "type": "object",
-        "required": ["id", "name", "description", "type", "goal", "time_limit", "job_rewards"],
+        "required": [
+          "id",
+          "name",
+          "description",
+          "type",
+          "goal",
+          "time_limit",
+          "rewards"
+        ],
         "additionalProperties": false,
         "properties": {
           "id": {
@@ -25,17 +33,20 @@
             "type": "string",
             "description": "Type d'action requis pour progresser",
             "enum": [
-        "BREED",
-        "CRAFT",
-        "FISH",
-        "KILL",
-        "MINE",
-        "SHEAR",
-        "SMELT"
-      ]
+              "BREED",
+              "CRAFT",
+              "FISH",
+              "KILL",
+              "MINE",
+              "SHEAR",
+              "SMELT"
+            ]
           },
           "target": {
-            "type": ["string", "null"],
+            "type": [
+              "string",
+              "null"
+            ],
             "description": "Matériau (MINE/CRAFT/SMELT) ou EntityType (KILL/SHEAR/BREED). Null pour FISH ou pour tout type.",
             "enum": [
               null,
@@ -1819,73 +1830,69 @@
             "minimum": 60,
             "description": "Durée maximale en secondes pour compléter la quête"
           },
-          "job_rewards": {
+          "rewards": {
             "type": "array",
-            "minItems": 1,
-            "description": "Réputation accordée dans chaque métier à tous les participants",
+            "description": "Récompenses appliquées via BlessingEffect (REPUTATION et/ou POTION).",
             "items": {
               "type": "object",
-              "required": ["job", "reputation"],
-              "additionalProperties": false,
-              "properties": {
-                "job": {
-                  "type": "string",
-                  "description": "Nom du métier (EJob)",
-                  "enum": [
-        "ALCHIMISTE",
-        "AVENTURIER",
-        "BATISSEUR",
-        "BUCHERON",
-        "CHASSEUR",
-        "COMBATANT",
-        "ENCHANTEUR",
-        "FERMIER",
-        "FORGERON",
-        "MARCHAND",
-        "MINEUR",
-        "PECHEUR"
-      ]
+              "oneOf": [
+                {
+                  "description": "Réputation accordée dans un métier.",
+                  "properties": {
+                    "type": {
+                      "type": "string",
+                      "const": "REPUTATION"
+                    },
+                    "job": {
+                      "type": "string",
+                      "description": "Métier (EJob)",
+                      "enum": []
+                    },
+                    "value": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "description": "Quantité de réputation accordée"
+                    }
+                  },
+                  "required": [
+                    "type",
+                    "job",
+                    "value"
+                  ],
+                  "additionalProperties": false
                 },
-                "reputation": {
-                  "type": "integer",
-                  "minimum": 1,
-                  "description": "Quantité de réputation accordée"
+                {
+                  "description": "Effet de potion accordé.",
+                  "properties": {
+                    "type": {
+                      "type": "string",
+                      "const": "POTION"
+                    },
+                    "potion": {
+                      "type": "string",
+                      "description": "Nom de l'effet de potion (ex: speed, haste, strength)",
+                      "enum": []
+                    },
+                    "duration": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "description": "Durée de l'effet en ticks (20 ticks = 1 seconde)"
+                    },
+                    "amplifier": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "description": "Niveau de l'effet (0 = niveau I, 1 = niveau II, ...)"
+                    }
+                  },
+                  "required": [
+                    "type",
+                    "potion",
+                    "duration",
+                    "amplifier"
+                  ],
+                  "additionalProperties": false
                 }
-              }
-            }
-          },
-          "potion_rewards": {
-            "type": "array",
-            "description": "Effets de potion accordés à tous les participants",
-            "items": {
-              "type": "object",
-              "required": ["type", "duration", "amplifier"],
-              "additionalProperties": false,
-              "properties": {
-                "type": {
-                  "type": "string",
-                  "description": "Nom de l'effet de potion (ex: speed, haste, strength)",
-                  "enum": [
-        "BREED",
-        "CRAFT",
-        "FISH",
-        "KILL",
-        "MINE",
-        "SHEAR",
-        "SMELT"
-      ]
-                },
-                "duration": {
-                  "type": "integer",
-                  "minimum": 1,
-                  "description": "Durée de l'effet en ticks (20 ticks = 1 seconde)"
-                },
-                "amplifier": {
-                  "type": "integer",
-                  "minimum": 0,
-                  "description": "Niveau de l'effet (0 = niveau I, 1 = niveau II, ...)"
-                }
-              }
+              ]
             }
           }
         }
