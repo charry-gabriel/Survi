@@ -205,6 +205,46 @@ public interface WorldType {}
 
 `EWorld` implémente `WorldType`. Toujours utiliser `EWorld` côté Survi.
 
+### `MLResourceManager` — déploiement YAML et chargement POJO
+
+Classe utilitaire (`fr.miuby.lib.resource`) pour tout ce qui touche aux fichiers YAML d'un plugin.
+Remplace `YmlResourceManager` (supprimé de Survi) et les anciens loaders statiques.
+
+**Déploiement (JAR → disque)** — peut être appelé *avant* `MiubyLib.init()` :
+```java
+// Un fichier unique (MD5 check : crée si absent, écrase si modifié, rien si identique)
+MLResourceManager.deploy(this, "config.yml");
+MLResourceManager.deploy(this, "villagers/bob.yml");
+
+// Tous les .yml d'un dossier embarqué dans le JAR
+MLResourceManager.deployFolder(this, "villagers");
+MLResourceManager.deployFolder(this, "traders");
+```
+
+**Chargement POJO via SnakeYAML (résultats mis en cache)** :
+```java
+// Un seul fichier : traders/barman.yml → TraderConfig
+TraderConfig cfg = MLResourceManager.loadPojo(plugin, "traders", "barman", TraderConfig.class);
+
+// Tout le dossier traders/ → List<TraderConfig>
+List<TraderConfig> all = MLResourceManager.loadPojoAll(plugin, "traders", TraderConfig.class);
+
+// Cache global — appels répétés retournent la même instance sans relire le disque
+MLResourceManager.clearCache(); // à appeler dans onDisable() si rechargement à chaud
+```
+
+Pattern dans `onEnable()` de Survi (et de tout nouveau plugin MiubyLib) :
+```java
+// 1. Déploiement (avant MiubyLib.init())
+MLResourceManager.deployFolder(this, "villagers");
+MLResourceManager.deploy(this, "config.yml");
+
+// 2. Chargement (après MiubyLib.init(), dans les factories/managers)
+MyConfig cfg = MLResourceManager.loadPojo(plugin, "villagers", id, MyConfig.class);
+```
+
+`VillagerLevelLoader` et `TraderLoader` dans Survi sont désormais de simples délégations vers `MLResourceManager` — les appels existants (`VillagerLevelLoader.load(id)`, `TraderLoader.loadAll()`) restent inchangés.
+
 ---
 
 ## 3. Point d'entrée — GameManager
@@ -282,13 +322,13 @@ public class MonCommand {
 
     public static LiteralArgumentBuilder<CommandSourceStack> createCommand() {
         return Commands.literal("macommande")
-            .requires(sender -> sender.getSender().isOp())
-            .then(Commands.literal("sub")
-                .executes(ctx -> {
-                    var sender = ctx.getSource().getSender();
-                    // logique ici
-                    return Command.SINGLE_SUCCESS;
-                }));
+                .requires(sender -> sender.getSender().isOp())
+                .then(Commands.literal("sub")
+                        .executes(ctx -> {
+                            var sender = ctx.getSource().getSender();
+                            // logique ici
+                            return Command.SINGLE_SUCCESS;
+                        }));
     }
 }
 ```
