@@ -7,25 +7,32 @@
       "items": {
         "type": "object",
         "properties": {
-          "id": { "type": "string" },
-          "name": { "type": "string" },
-          "description": { "type": "string" },
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
           "type": {
             "type": "string",
-            "enum": [
-              
-            ]
+            "enum": []
           },
           "difficulty": {
             "type": "string",
             "enum": [
-        "COMMON",
-        "LEGENDARY",
-        "RARE"
-      ]
+              "COMMON",
+              "LEGENDARY",
+              "RARE"
+            ]
           },
           "target": {
-            "type": ["string", "null"],
+            "type": [
+              "string",
+              "null"
+            ],
             "enum": [
               null,
               "ACACIA_BOAT",
@@ -1798,30 +1805,160 @@
               "ZOMBIFIED_PIGLIN_SPAWN_EGG"
             ]
           },
-          "goal": { "type": "integer", "minimum": 1 },
-          "reputation_reward": { "type": "integer", "minimum": 0 },
+          "goal": {
+            "type": "integer",
+            "minimum": 1
+          },
           "rewards": {
             "type": "array",
+            "description": "Récompenses appliquées via BlessingEffect. Tous les types supportés par BlessingLoader.",
             "items": {
               "type": "object",
-              "properties": {
-                "type": {
-                  "type": "string",
-                  "description": "Nom de l'effet de potion (ex: speed, haste, strength)",
-                  "enum": [
-                    
-                  ]
+              "oneOf": [
+                {
+                  "description": "Bonus de points de vie maximaux.",
+                  "properties": {
+                    "type": { "type": "string", "const": "MAX_HEALTH" },
+                    "value": { "type": "integer", "description": "Bonus HP (positif = bonus, négatif = malus)" }
+                  },
+                  "required": ["type", "value"],
+                  "additionalProperties": false
                 },
-                "duration": { "type": "integer", "minimum": 1, "description": "Durée en ticks (20 ticks = 1 seconde)" },
-                "amplifier": { "type": "integer", "minimum": 0, "description": "Niveau de l'effet (0 = Niveau I)" }
-              },
-              "required": ["type", "duration", "amplifier"]
+                {
+                  "description": "Modificateur de résistance aux dégâts reçus.",
+                  "properties": {
+                    "type": { "type": "string", "const": "RESISTANCE" },
+                    "value": { "type": "number", "description": "Multiplicateur de résistance (ex: 0.5 = 50%)" }
+                  },
+                  "required": ["type", "value"],
+                  "additionalProperties": false
+                },
+                {
+                  "description": "Modificateur de dégâts infligés.",
+                  "properties": {
+                    "type": { "type": "string", "const": "DAMAGE" },
+                    "value": { "type": "number", "description": "Multiplicateur de dégâts (ex: 1.5 = 150%)" }
+                  },
+                  "required": ["type", "value"],
+                  "additionalProperties": false
+                },
+                {
+                  "description": "Modifie le nombre de vies (dispel).",
+                  "properties": {
+                    "type": { "type": "string", "const": "DISPEL" },
+                    "value": { "type": "integer", "minimum": 1, "description": "Nombre de dispel" }
+                  },
+                  "required": ["type", "value"],
+                  "additionalProperties": false
+                },
+                {
+                  "description": "Déverrouille un type d'outil.",
+                  "properties": {
+                    "type": { "type": "string", "const": "UNLOCK_TOOL" },
+                    "tool": { "type": "string", "description": "Type d'outil (ELockedToolType)", "enum": [] }
+                  },
+                  "required": ["type", "tool"],
+                  "additionalProperties": false
+                },
+                {
+                  "description": "Déverrouille un type d'armure.",
+                  "properties": {
+                    "type": { "type": "string", "const": "UNLOCK_ARMOR" },
+                    "armor": { "type": "string", "description": "Type d'armure (ELockedArmorType)", "enum": [] }
+                  },
+                  "required": ["type", "armor"],
+                  "additionalProperties": false
+                },
+                {
+                  "description": "Déverrouille l'accès à un monde (malgré le nom 'LOCK').",
+                  "properties": {
+                    "type": { "type": "string", "const": "LOCK_WORLD" },
+                    "world": { "type": "string", "description": "Monde à déverrouiller (EWorld)", "enum": [] }
+                  },
+                  "required": ["type", "world"],
+                  "additionalProperties": false
+                },
+                {
+                  "description": "Envoie un message broadcast.",
+                  "properties": {
+                    "type": { "type": "string", "const": "MESSAGE" },
+                    "text": { "type": "string", "description": "Texte du message" }
+                  },
+                  "required": ["type", "text"],
+                  "additionalProperties": false
+                },
+                {
+                  "description": "Augmente le niveau global du monde.",
+                  "properties": {
+                    "type": { "type": "string", "const": "WORLD_LEVEL" },
+                    "levels": { "type": "integer", "minimum": 1, "description": "Nombre de niveaux gagnés" }
+                  },
+                  "required": ["type", "levels"],
+                  "additionalProperties": false
+                },
+                {
+                  "description": "Modifie la fréquence de reset des mondes.",
+                  "properties": {
+                    "type": { "type": "string", "const": "WORLD_RESET" },
+                    "frequency": { "type": "integer", "minimum": 0, "description": "Fréquence en jours (0 = désactivé)" }
+                  },
+                  "required": ["type", "frequency"],
+                  "additionalProperties": false
+                },
+                {
+                  "description": "Définit une limite géographique pour un monde.",
+                  "properties": {
+                    "type": { "type": "string", "const": "LIMIT_WORLD" },
+                    "world": { "type": "string", "description": "Monde concerné (EWorld)", "enum": [] },
+                    "min-x": { "type": "integer" },
+                    "max-x": { "type": "integer" },
+                    "min-y": { "type": "integer" },
+                    "max-y": { "type": "integer" },
+                    "min-z": { "type": "integer" },
+                    "max-z": { "type": "integer" }
+                  },
+                  "required": ["type", "world"],
+                  "additionalProperties": false
+                },
+                {
+                  "description": "Réputation accordée dans un métier.",
+                  "properties": {
+                    "type": { "type": "string", "const": "REPUTATION" },
+                    "job": { "type": "string", "description": "Métier (EJob)", "enum": [] },
+                    "value": { "type": "integer", "minimum": 1, "description": "Quantité de réputation accordée" }
+                  },
+                  "required": ["type", "job", "value"],
+                  "additionalProperties": false
+                },
+                {
+                  "description": "Effet de potion accordé.",
+                  "properties": {
+                    "type": { "type": "string", "const": "POTION" },
+                    "potion": { "type": "string", "description": "Nom de l'effet de potion (ex: speed, haste, strength)", "enum": [] },
+                    "duration": { "type": "integer", "minimum": 1, "description": "Durée en ticks (20 ticks = 1 seconde)" },
+                    "amplifier": { "type": "integer", "minimum": 0, "description": "Niveau de l'effet (0 = Niveau I)" }
+                  },
+                  "required": ["type", "potion", "duration", "amplifier"],
+                  "additionalProperties": false
+                }
+              ]
             }
           }
         },
-        "required": ["id", "name", "description", "type", "difficulty", "goal", "reputation_reward", "rewards"]
+        "required": [
+          "id",
+          "name",
+          "description",
+          "type",
+          "difficulty",
+          "target",
+          "goal",
+          "rewards"
+        ]
       }
     }
   },
-  "required": ["quests"]
+  "required": [
+    "quests"
+  ]
 }

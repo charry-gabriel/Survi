@@ -1,6 +1,8 @@
 package fr.miuby.survi.listener;
 
 import fr.miuby.survi.GameManager;
+import fr.miuby.survi.blessing.BlessingEffect;
+import fr.miuby.survi.blessing.PotionsEffect;
 import fr.miuby.survi.system.database.Errors;
 import fr.miuby.survi.player.AlphaPlayer;
 import fr.miuby.survi.quest.PlayerQuestData;
@@ -19,7 +21,6 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.EquipmentSlotGroup;
-import org.bukkit.potion.PotionEffect;
 import fr.miuby.lib.log.MLLogManager;
 import fr.miuby.survi.system.time.event.DailyResetEvent;
 
@@ -91,8 +92,8 @@ public class ServerListener implements Listener {
                     if (questData.isClaimed()) {
                         Quest quest = GameManager.getInstance().getQuestManager().getQuest(questData.getQuestId());
                         if (quest != null) {
-                            for (PotionEffect effect : quest.getPotionRewards()) {
-                                player.getPlayer().removePotionEffect(effect.getType());
+                            for (BlessingEffect effect : quest.getRewards().blessingEffects()) {
+                                if (effect instanceof PotionsEffect) effect.resetEffect(player);
                             }
                         }
                     }

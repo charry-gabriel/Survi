@@ -10,16 +10,19 @@ global_quests:
     target: "ENDERMAN"
     goal: 200
     time_limit: 3600
-    job_rewards:
-      - job: "COMBATANT"
-        reputation: 60
-      - job: "CHASSEUR"
-        reputation: 40
-    potion_rewards:
-      - type: "strength"
+    rewards:
+      - type: REPUTATION
+        job: COMBATANT
+        value: 60
+      - type: REPUTATION
+        job: CHASSEUR
+        value: 40
+      - type: POTION
+        potion: strength
         duration: 1728000
         amplifier: 1
-      - type: "resistance"
+      - type: POTION
+        potion: resistance
         duration: 1728000
         amplifier: 0
 
@@ -30,18 +33,22 @@ global_quests:
     target: "WITHER_SKELETON"
     goal: 80
     time_limit: 5400
-    job_rewards:
-      - job: "COMBATANT"
-        reputation: 80
-      - job: "CHASSEUR"
-        reputation: 50
-      - job: "AVENTURIER"
-        reputation: 30
-    potion_rewards:
-      - type: "fire_resistance"
+    rewards:
+      - type: REPUTATION
+        job: COMBATANT
+        value: 80
+      - type: REPUTATION
+        job: CHASSEUR
+        value: 50
+      - type: REPUTATION
+        job: AVENTURIER
+        value: 30
+      - type: POTION
+        potion: fire_resistance
         duration: 1728000
         amplifier: 0
-      - type: "strength"
+      - type: POTION
+        potion: strength
         duration: 1728000
         amplifier: 1
 
@@ -52,16 +59,19 @@ global_quests:
     target: "BLAZE"
     goal: 150
     time_limit: 4800
-    job_rewards:
-      - job: "COMBATANT"
-        reputation: 70
-      - job: "ALCHIMISTE"
-        reputation: 40
-    potion_rewards:
-      - type: "fire_resistance"
+    rewards:
+      - type: REPUTATION
+        job: COMBATANT
+        value: 70
+      - type: REPUTATION
+        job: ALCHIMISTE
+        value: 40
+      - type: POTION
+        potion: fire_resistance
         duration: 1728000
         amplifier: 0
-      - type: "haste"
+      - type: POTION
+        potion: haste
         duration: 1728000
         amplifier: 1
 
@@ -72,18 +82,22 @@ global_quests:
     target: "GUARDIAN"
     goal: 100
     time_limit: 5400
-    job_rewards:
-      - job: "COMBATANT"
-        reputation: 75
-      - job: "PECHEUR"
-        reputation: 40
-      - job: "AVENTURIER"
-        reputation: 25
-    potion_rewards:
-      - type: "water_breathing"
+    rewards:
+      - type: REPUTATION
+        job: COMBATANT
+        value: 75
+      - type: REPUTATION
+        job: PECHEUR
+        value: 40
+      - type: REPUTATION
+        job: AVENTURIER
+        value: 25
+      - type: POTION
+        potion: water_breathing
         duration: 1728000
         amplifier: 0
-      - type: "strength"
+      - type: POTION
+        potion: strength
         duration: 1728000
         amplifier: 1
 
@@ -96,16 +110,19 @@ global_quests:
     target: "ANCIENT_DEBRIS"
     goal: 50
     time_limit: 7200
-    job_rewards:
-      - job: "MINEUR"
-        reputation: 100
-      - job: "FORGERON"
-        reputation: 60
-    potion_rewards:
-      - type: "haste"
+    rewards:
+      - type: REPUTATION
+        job: MINEUR
+        value: 100
+      - type: REPUTATION
+        job: FORGERON
+        value: 60
+      - type: POTION
+        potion: haste
         duration: 1728000
         amplifier: 2
-      - type: "fire_resistance"
+      - type: POTION
+        potion: fire_resistance
         duration: 1728000
         amplifier: 0
 
@@ -116,13 +133,15 @@ global_quests:
     target: "OBSIDIAN"
     goal: 500
     time_limit: 5400
-    job_rewards:
-      - job: "MINEUR"
-        reputation: 80
-      - job: "BATISSEUR"
-        reputation: 50
-    potion_rewards:
-      - type: "haste"
+    rewards:
+      - type: REPUTATION
+        job: MINEUR
+        value: 80
+      - type: REPUTATION
+        job: BATISSEUR
+        value: 50
+      - type: POTION
+        potion: haste
         duration: 1728000
         amplifier: 1
 
@@ -135,13 +154,15 @@ global_quests:
     target: null
     goal: 300
     time_limit: 5400
-    job_rewards:
-      - job: "PECHEUR"
-        reputation: 80
-      - job: "FERMIER"
-        reputation: 30
-    potion_rewards:
-      - type: "luck"
+    rewards:
+      - type: REPUTATION
+        job: PECHEUR
+        value: 80
+      - type: REPUTATION
+        job: FERMIER
+        value: 30
+      - type: POTION
+        potion: luck
         duration: 1728000
         amplifier: 2
 
@@ -154,13 +175,15 @@ global_quests:
     target: null
     goal: 100
     time_limit: 5400
-    job_rewards:
-      - job: "FERMIER"
-        reputation: 80
-      - job: "MARCHAND"
-        reputation: 40
-    potion_rewards:
-      - type: "saturation"
+    rewards:
+      - type: REPUTATION
+        job: FERMIER
+        value: 80
+      - type: REPUTATION
+        job: MARCHAND
+        value: 40
+      - type: POTION
+        potion: saturation
         duration: 1728000
         amplifier: 1
 
@@ -173,17 +196,21 @@ global_quests:
     target: "IRON_INGOT"
     goal: 1000
     time_limit: 7200
-    job_rewards:
-      - job: "FORGERON"
-        reputation: 90
-      - job: "MINEUR"
-        reputation: 40
-      - job: "MARCHAND"
-        reputation: 30
-    potion_rewards:
-      - type: "haste"
+    rewards:
+      - type: REPUTATION
+        job: FORGERON
+        value: 90
+      - type: REPUTATION
+        job: MINEUR
+        value: 40
+      - type: REPUTATION
+        job: MARCHAND
+        value: 30
+      - type: POTION
+        potion: haste
         duration: 1728000
         amplifier: 1
-      - type: "fire_resistance"
+      - type: POTION
+        potion: fire_resistance
         duration: 1728000
         amplifier: 0

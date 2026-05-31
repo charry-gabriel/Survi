@@ -1,12 +1,17 @@
 package fr.miuby.survi.blessing;
 
+import fr.miuby.lib.log.MLLogManager;
 import fr.miuby.lib.utils.Rect;
 import fr.miuby.survi.item.locked_item.ELockedArmorType;
 import fr.miuby.survi.item.locked_item.ELockedToolType;
-import fr.miuby.lib.log.MLLogManager;
+import fr.miuby.survi.job.EJob;
 import fr.miuby.survi.system.log.ELogTag;
 import fr.miuby.survi.world.EWorld;
+import org.bukkit.NamespacedKey;
+import org.bukkit.Registry;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,48 +20,38 @@ import java.util.logging.Level;
 
 /**
  * Charge la liste de {@link Blessing} depuis la section {@code blessings} d'un
- * fichier villager YAML.
- *
- * <p>Format attendu dans le YAML pour chaque palier :
- * <pre>
- * blessings:
- *   - effects:
- *       - type: MAX_HEALTH
- *         value: -20
- *   - effects:
- *       - type: MAX_HEALTH
- *         value: -18
- *       - type: UNLOCK_TOOL
- *         tool: WOOD
- * </pre>
+ * fichier villager YAML, ou depuis une liste de maps pour les quêtes.
  *
  * <p>Types d'effets supportés : MAX_HEALTH, RESISTANCE, DAMAGE, DISPEL,
  * UNLOCK_TOOL, UNLOCK_ARMOR, LOCK_WORLD, MESSAGE, WORLD_LEVEL,
- * WORLD_RESET, LIMIT_WORLD.
+ * WORLD_RESET, LIMIT_WORLD, REPUTATION, POTION.
  */
 public class BlessingLoader {
 
     /**
      * Charge un unique {@link Blessing} depuis une liste d'effets bruts (format POJO SnakeYAML).
      *
-     * <p>Format attendu dans le YAML pour un level :
+     * <p>Format attendu dans le YAML :
      * <pre>
-     * blessings:
-     *   - type: MAX_HEALTH
-     *     value: -20
-     *   - type: UNLOCK_TOOL
-     *     tool: WOOD
+     * rewards:
+     *   - type: REPUTATION
+     *     job: MINEUR
+     *     value: 50
+     *   - type: POTION
+     *     potion: haste
+     *     duration: 1728000
+     *     amplifier: 0
      * </pre>
      *
-     * @param villagerId identifiant du villageois (pour les messages de log)
+     * @param contextId identifiant du contexte (villageois, quête…) pour les messages de log
      * @param rawEffects liste de maps représentant les effets (peut être null)
      * @return un {@link Blessing} prêt à l'emploi, ou {@code null} si la liste est vide/null
      */
-    public static Blessing loadFromList(String villagerId, java.util.List<java.util.Map<String, Object>> rawEffects) {
+    public static Blessing loadFromList(String contextId, java.util.List<java.util.Map<String, Object>> rawEffects) {
         if (rawEffects == null || rawEffects.isEmpty()) return null;
         List<BlessingEffect> effects = new ArrayList<>();
         for (java.util.Map<String, Object> map : rawEffects) {
-            BlessingEffect effect = parseEffect(villagerId, map);
+            BlessingEffect effect = parseEffect(contextId, map);
             if (effect != null) effects.add(effect);
         }
         if (effects.isEmpty()) return null;
@@ -96,7 +91,7 @@ public class BlessingLoader {
         return blessings.toArray(Blessing[]::new);
     }
 
-    private static BlessingEffect parseEffect(String villagerId, Map<String, Object> map) {
+    private static BlessingEffect parseEffect(String contextId, Map<String, Object> map) {
         String type = String.valueOf(map.get("type")).toUpperCase();
         try {
             return switch (type) {
@@ -111,15 +106,39 @@ public class BlessingLoader {
                 case "WORLD_LEVEL"  -> new WorldLevelEffect(toInt(map.get("levels"), 1));
                 case "WORLD_RESET"  -> new WorldResetEffect(toInt(map.get("frequency"), 7));
                 case "LIMIT_WORLD"  -> parseLimitWorld(map);
+                case "REPUTATION"   -> parseReputation(map);
+                case "POTION"       -> parsePotion(contextId, map);
                 default -> {
-                    MLLogManager.getInstance().log(Level.WARNING, ELogTag.VILLAGER, "[BlessingLoader] Type d'effet inconnu '" + type + "' pour " + villagerId);
+                    MLLogManager.getInstance().log(Level.WARNING, ELogTag.VILLAGER,
+                            "[BlessingLoader] Type d'effet inconnu '" + type + "' pour " + contextId);
                     yield null;
                 }
             };
         } catch (Exception e) {
-            MLLogManager.getInstance().log(Level.WARNING, ELogTag.VILLAGER, "[BlessingLoader] Erreur parsing effet '" + type + "' pour " + villagerId, e);
+            MLLogManager.getInstance().log(Level.WARNING, ELogTag.VILLAGER,
+                    "[BlessingLoader] Erreur parsing effet '" + type + "' pour " + contextId, e);
             return null;
         }
+    }
+
+    private static ReputationEffect parseReputation(Map<String, Object> map) {
+        EJob job = EJob.valueOf(String.valueOf(map.get("job")).toUpperCase());
+        int value = toInt(map.get("value"), 0);
+        return new ReputationEffect(job, value);
+    }
+
+    private static PotionsEffect parsePotion(String contextId, Map<String, Object> map) {
+        String potionType = String.valueOf(map.get("potion")).toLowerCase();
+        NamespacedKey key = NamespacedKey.minecraft(potionType);
+        PotionEffectType effectType = Registry.POTION_EFFECT_TYPE.get(key);
+        if (effectType == null) {
+            MLLogManager.getInstance().log(Level.WARNING, ELogTag.VILLAGER,
+                    "[BlessingLoader] Type de potion inconnu : " + potionType + " pour " + contextId);
+            return null;
+        }
+        int duration  = toInt(map.get("duration"), 600);
+        int amplifier = toInt(map.get("amplifier"), 0);
+        return new PotionsEffect(new PotionEffect(effectType, duration, amplifier));
     }
 
     private static LimitWorldEffect parseLimitWorld(Map<String, Object> map) {

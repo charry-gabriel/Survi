@@ -2,7 +2,9 @@ package fr.miuby.survi.blessing;
 
 import fr.miuby.survi.job.EJob;
 import fr.miuby.survi.player.AlphaPlayer;
+import lombok.Getter;
 
+@Getter
 public class ReputationEffect extends BlessingEffect {
     private final EJob job;
     private final int reputation;

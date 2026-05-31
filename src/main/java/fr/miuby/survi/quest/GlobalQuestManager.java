@@ -1,9 +1,11 @@
 package fr.miuby.survi.quest;
 
+import fr.miuby.lib.log.MLLogManager;
 import fr.miuby.survi.GameManager;
+import fr.miuby.survi.blessing.BlessingEffect;
+import fr.miuby.survi.blessing.ReputationEffect;
 import fr.miuby.survi.player.AlphaPlayer;
 import fr.miuby.survi.player.AlphaPlayerFactory;
-import fr.miuby.lib.log.MLLogManager;
 import fr.miuby.survi.system.log.ELogTag;
 import lombok.Getter;
 import net.kyori.adventure.key.Key;
@@ -14,7 +16,6 @@ import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
-import org.bukkit.potion.PotionEffect;
 import org.bukkit.scheduler.BukkitTask;
 
 import java.io.File;
@@ -26,15 +27,12 @@ public class GlobalQuestManager {
     @Getter
     private final List<GlobalQuest> questPool = new ArrayList<>();
 
-    /** Quête globale actuellement en cours, null si aucune. */
     @Getter
     private GlobalQuest activeQuest = null;
 
-    /** Progression cumulée de tous les joueurs sur la quête en cours. */
     @Getter
     private int progress = 0;
 
-    /** UUIDs des joueurs ayant contribué à au moins une action. */
     @Getter
     private final Set<UUID> participants = new HashSet<>();
 
@@ -73,23 +71,6 @@ public class GlobalQuestManager {
                 QuestYamlLoader.BaseFields base = QuestYamlLoader.parseBase(map);
                 int timeLimit = ((Number) map.get("time_limit")).intValue();
 
-                // job_rewards
-                List<GlobalQuestJobReward> jobRewards = new ArrayList<>();
-                @SuppressWarnings("unchecked")
-                List<Map<String, Object>> rawJobRewards = (List<Map<String, Object>>) map.get("job_rewards");
-                if (rawJobRewards != null) {
-                    for (Map<String, Object> jr : rawJobRewards) {
-                        try {
-                            fr.miuby.survi.job.EJob job = fr.miuby.survi.job.EJob.valueOf((String) jr.get("job"));
-                            int reputation = ((Number) jr.get("reputation")).intValue();
-                            jobRewards.add(new GlobalQuestJobReward(job, reputation));
-                        } catch (Exception e) {
-                            MLLogManager.getInstance().log(Level.WARNING, ELogTag.QUEST,
-                                    "Erreur dans job_rewards pour la quête globale " + base.id(), e);
-                        }
-                    }
-                }
-
                 questPool.add(GlobalQuest.builder()
                         .id(base.id())
                         .name(base.name())
@@ -97,9 +78,8 @@ public class GlobalQuestManager {
                         .type(base.type())
                         .target(base.target())
                         .goal(base.goal())
-                        .potionRewards(base.potionRewards())
+                        .rewards(base.rewards())
                         .timeLimitSeconds(timeLimit)
-                        .jobRewards(jobRewards)
                         .build());
 
             } catch (Exception e) {
@@ -120,10 +100,6 @@ public class GlobalQuestManager {
         return questPool.stream().filter(q -> q.getId().equals(id)).findFirst().orElse(null);
     }
 
-    /**
-     * Démarre une quête globale.
-     * @return false si une quête est déjà en cours ou si l'id est introuvable.
-     */
     public boolean startQuest(String questId) {
         if (activeQuest != null) return false;
 
@@ -135,10 +111,8 @@ public class GlobalQuestManager {
         participants.clear();
         endTime = System.currentTimeMillis() + quest.getTimeLimitSeconds() * 1000L;
 
-        // Annonce globale
         broadcastQuestStart(quest);
 
-        // Timer
         timerTask = GameManager.getInstance().getScheduler().runTaskLater(
                 GameManager.getInstance().getPlugin(),
                 this::onTimeout,
@@ -150,9 +124,6 @@ public class GlobalQuestManager {
         return true;
     }
 
-    /**
-     * Annule la quête en cours sans récompenses.
-     */
     public void cancelQuest() {
         if (activeQuest == null) return;
         if (timerTask != null) { timerTask.cancel(); timerTask = null; }
@@ -170,10 +141,6 @@ public class GlobalQuestManager {
                 "[GlobalQuest] Quête annulée par admin : " + name);
     }
 
-    /**
-     * Incrémente la progression de la quête globale et enregistre le participant.
-     * Appelé depuis QuestListener.
-     */
     public void progressGlobalQuest(AlphaPlayer player, EQuestType type, Object target, int amount) {
         if (activeQuest == null) return;
         if (!activeQuest.matchesAction(type, target)) return;
@@ -186,7 +153,6 @@ public class GlobalQuestManager {
         }
     }
 
-    /** Secondes restantes, 0 si aucune quête active. */
     public long getRemainingSeconds() {
         if (activeQuest == null) return 0L;
         return Math.max(0L, (endTime - System.currentTimeMillis()) / 1000L);
@@ -202,7 +168,6 @@ public class GlobalQuestManager {
         GlobalQuest quest = activeQuest;
         Set<UUID> winners = new HashSet<>(participants);
 
-        // Reset avant la distribution (évite les doubles appels)
         activeQuest = null;
         progress    = 0;
         endTime     = 0L;
@@ -210,23 +175,18 @@ public class GlobalQuestManager {
 
         broadcastQuestComplete(quest, winners.size());
 
-        // Distribuer les récompenses à tous les participants
         AlphaPlayerFactory factory = GameManager.getInstance().getAlphaPlayerFactory();
         for (UUID uuid : winners) {
             AlphaPlayer ap = factory.getAlphaPlayer(uuid);
             if (ap == null) continue;
 
-            // Réputation par métier
-            for (GlobalQuestJobReward jr : quest.getJobRewards()) {
-                ap.addJobReputation(jr.getJob(), jr.getReputation());
+            // Applique tous les BlessingEffects (REPUTATION + POTION)
+            for (BlessingEffect effect : quest.getRewards().blessingEffects()) {
+                effect.applyEffect(ap);
             }
 
-            // Effets de potion (uniquement si en ligne)
             Player p = ap.getPlayer();
-            if (p != null && !quest.getPotionRewards().isEmpty()) {
-                for (PotionEffect effect : quest.getPotionRewards()) {
-                    p.addPotionEffect(effect);
-                }
+            if (p != null) {
                 p.sendMessage(buildRewardMessage(quest));
             }
         }
@@ -277,12 +237,14 @@ public class GlobalQuestManager {
                 .append(Component.text("| Temps : ", NamedTextColor.GRAY))
                 .append(Component.text(timeStr, NamedTextColor.AQUA))
                 .appendNewline()
-                .append(Component.text("  Récompenses par métier :", NamedTextColor.GRAY));
+                .append(Component.text("  Récompenses :", NamedTextColor.GRAY));
 
-        for (GlobalQuestJobReward jr : quest.getJobRewards()) {
-            msg = msg.appendNewline()
-                    .append(Component.text("    +" + jr.getReputation() + " rép. ", NamedTextColor.GREEN))
-                    .append(jr.getJob().toComponent());
+        for (BlessingEffect effect : quest.getRewards().blessingEffects()) {
+            if (effect instanceof ReputationEffect re) {
+                msg = msg.appendNewline()
+                        .append(Component.text("    +" + re.getReputation() + " rép. ", NamedTextColor.GREEN))
+                        .append(re.getJob().toComponent());
+            }
         }
 
         msg = msg.appendNewline()
@@ -319,10 +281,12 @@ public class GlobalQuestManager {
     private Component buildRewardMessage(GlobalQuest quest) {
         Component msg = Component.text("[Quête Globale] ", NamedTextColor.GOLD, TextDecoration.BOLD)
                 .append(Component.text("Récompenses reçues :", NamedTextColor.GREEN));
-        for (GlobalQuestJobReward jr : quest.getJobRewards()) {
-            msg = msg.append(Component.text(" +" + jr.getReputation(), NamedTextColor.GREEN))
-                    .append(Component.text(" rép. ", NamedTextColor.GRAY))
-                    .append(jr.getJob().toComponent());
+        for (BlessingEffect effect : quest.getRewards().blessingEffects()) {
+            if (effect instanceof ReputationEffect re) {
+                msg = msg.append(Component.text(" +" + re.getReputation(), NamedTextColor.GREEN))
+                        .append(Component.text(" rép. ", NamedTextColor.GRAY))
+                        .append(re.getJob().toComponent());
+            }
         }
         return msg;
     }

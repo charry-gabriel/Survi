@@ -1,4 +1,4 @@
-# yaml-language-server: $schema=./schema/quests.schema.json
+# yaml-language-server: $schema=./schema/quests-schema.json
 quests:
 
   # ─────────────────── COMMON (17 quêtes) ───────────────────
@@ -10,9 +10,12 @@ quests:
     difficulty: "COMMON"
     target: "COBBLESTONE"
     goal: 300
-    reputation_reward: 10
     rewards:
-      - type: "haste"
+      - type: REPUTATION
+        job: MINEUR
+        value: 10
+      - type: POTION
+        potion: haste
         duration: 1728000
         amplifier: 0
 
@@ -23,9 +26,12 @@ quests:
     difficulty: "COMMON"
     target: "DIRT"
     goal: 400
-    reputation_reward: 8
     rewards:
-      - type: "haste"
+      - type: REPUTATION
+        job: MINEUR
+        value: 8
+      - type: POTION
+        potion: haste
         duration: 1728000
         amplifier: 0
 
@@ -36,9 +42,12 @@ quests:
     difficulty: "COMMON"
     target: "SAND"
     goal: 250
-    reputation_reward: 8
     rewards:
-      - type: "speed"
+      - type: REPUTATION
+        job: MINEUR
+        value: 8
+      - type: POTION
+        potion: speed
         duration: 1728000
         amplifier: 0
 
@@ -49,9 +58,12 @@ quests:
     difficulty: "COMMON"
     target: "GRAVEL"
     goal: 250
-    reputation_reward: 8
     rewards:
-      - type: "luck"
+      - type: REPUTATION
+        job: MINEUR
+        value: 8
+      - type: POTION
+        potion: luck
         duration: 1728000
         amplifier: 0
 
@@ -62,9 +74,12 @@ quests:
     difficulty: "COMMON"
     target: "OAK_LOG"
     goal: 80
-    reputation_reward: 10
     rewards:
-      - type: "haste"
+      - type: REPUTATION
+        job: BUCHERON
+        value: 10
+      - type: POTION
+        potion: haste
         duration: 1728000
         amplifier: 0
 
@@ -75,9 +90,12 @@ quests:
     difficulty: "COMMON"
     target: "BIRCH_LOG"
     goal: 80
-    reputation_reward: 10
     rewards:
-      - type: "speed"
+      - type: REPUTATION
+        job: BUCHERON
+        value: 10
+      - type: POTION
+        potion: speed
         duration: 1728000
         amplifier: 0
 
@@ -88,9 +106,12 @@ quests:
     difficulty: "COMMON"
     target: "SPRUCE_LOG"
     goal: 80
-    reputation_reward: 10
     rewards:
-      - type: "speed"
+      - type: REPUTATION
+        job: BUCHERON
+        value: 10
+      - type: POTION
+        potion: speed
         duration: 1728000
         amplifier: 0
 
@@ -101,9 +122,12 @@ quests:
     difficulty: "COMMON"
     target: "ZOMBIE"
     goal: 25
-    reputation_reward: 10
     rewards:
-      - type: "strength"
+      - type: REPUTATION
+        job: COMBATANT
+        value: 10
+      - type: POTION
+        potion: strength
         duration: 1728000
         amplifier: 0
 
@@ -114,9 +138,12 @@ quests:
     difficulty: "COMMON"
     target: "SKELETON"
     goal: 20
-    reputation_reward: 10
     rewards:
-      - type: "speed"
+      - type: REPUTATION
+        job: COMBATANT
+        value: 10
+      - type: POTION
+        potion: speed
         duration: 1728000
         amplifier: 0
 
@@ -127,9 +154,12 @@ quests:
     difficulty: "COMMON"
     target: "SPIDER"
     goal: 25
-    reputation_reward: 9
     rewards:
-      - type: "speed"
+      - type: REPUTATION
+        job: COMBATANT
+        value: 9
+      - type: POTION
+        potion: speed
         duration: 1728000
         amplifier: 0
 
@@ -140,9 +170,12 @@ quests:
     difficulty: "COMMON"
     target: "CREEPER"
     goal: 15
-    reputation_reward: 12
     rewards:
-      - type: "resistance"
+      - type: REPUTATION
+        job: COMBATANT
+        value: 12
+      - type: POTION
+        potion: resistance
         duration: 1728000
         amplifier: 0
 
@@ -153,9 +186,12 @@ quests:
     difficulty: "COMMON"
     target: null
     goal: 10
-    reputation_reward: 12
     rewards:
-      - type: "luck"
+      - type: REPUTATION
+        job: PECHEUR
+        value: 12
+      - type: POTION
+        potion: luck
         duration: 1728000
         amplifier: 0
 
@@ -166,9 +202,12 @@ quests:
     difficulty: "COMMON"
     target: "SHEEP"
     goal: 20
-    reputation_reward: 10
     rewards:
-      - type: "speed"
+      - type: REPUTATION
+        job: FERMIER
+        value: 10
+      - type: POTION
+        potion: speed
         duration: 1728000
         amplifier: 0
 
@@ -179,9 +218,12 @@ quests:
     difficulty: "COMMON"
     target: "COW"
     goal: 10
-    reputation_reward: 10
     rewards:
-      - type: "saturation"
+      - type: REPUTATION
+        job: FERMIER
+        value: 10
+      - type: POTION
+        potion: saturation
         duration: 1728000
         amplifier: 0
 
@@ -192,9 +234,12 @@ quests:
     difficulty: "COMMON"
     target: "CHICKEN"
     goal: 15
-    reputation_reward: 9
     rewards:
-      - type: "saturation"
+      - type: REPUTATION
+        job: FERMIER
+        value: 9
+      - type: POTION
+        potion: saturation
         duration: 1728000
         amplifier: 0
 
@@ -205,9 +250,12 @@ quests:
     difficulty: "COMMON"
     target: "TORCH"
     goal: 64
-    reputation_reward: 8
     rewards:
-      - type: "night_vision"
+      - type: REPUTATION
+        job: FORGERON
+        value: 8
+      - type: POTION
+        potion: night_vision
         duration: 1728000
         amplifier: 0
 
@@ -218,9 +266,12 @@ quests:
     difficulty: "COMMON"
     target: "STONE"
     goal: 128
-    reputation_reward: 9
     rewards:
-      - type: "haste"
+      - type: REPUTATION
+        job: FORGERON
+        value: 9
+      - type: POTION
+        potion: haste
         duration: 1728000
         amplifier: 0
 
@@ -233,12 +284,16 @@ quests:
     difficulty: "RARE"
     target: "IRON_ORE"
     goal: 80
-    reputation_reward: 25
     rewards:
-      - type: "haste"
+      - type: REPUTATION
+        job: MINEUR
+        value: 25
+      - type: POTION
+        potion: haste
         duration: 1728000
         amplifier: 1
-      - type: "night_vision"
+      - type: POTION
+        potion: night_vision
         duration: 1728000
         amplifier: 0
 
@@ -249,9 +304,12 @@ quests:
     difficulty: "RARE"
     target: "DEEPSLATE_IRON_ORE"
     goal: 60
-    reputation_reward: 28
     rewards:
-      - type: "haste"
+      - type: REPUTATION
+        job: MINEUR
+        value: 28
+      - type: POTION
+        potion: haste
         duration: 1728000
         amplifier: 1
 
@@ -262,9 +320,12 @@ quests:
     difficulty: "RARE"
     target: "COAL_ORE"
     goal: 200
-    reputation_reward: 22
     rewards:
-      - type: "haste"
+      - type: REPUTATION
+        job: MINEUR
+        value: 22
+      - type: POTION
+        potion: haste
         duration: 1728000
         amplifier: 1
 
@@ -275,9 +336,12 @@ quests:
     difficulty: "RARE"
     target: "COPPER_ORE"
     goal: 100
-    reputation_reward: 25
     rewards:
-      - type: "haste"
+      - type: REPUTATION
+        job: MINEUR
+        value: 25
+      - type: POTION
+        potion: haste
         duration: 1728000
         amplifier: 1
 
@@ -288,12 +352,16 @@ quests:
     difficulty: "RARE"
     target: "DROWNED"
     goal: 30
-    reputation_reward: 30
     rewards:
-      - type: "water_breathing"
+      - type: REPUTATION
+        job: COMBATANT
+        value: 30
+      - type: POTION
+        potion: water_breathing
         duration: 1728000
         amplifier: 0
-      - type: "strength"
+      - type: POTION
+        potion: strength
         duration: 1728000
         amplifier: 0
 
@@ -304,12 +372,16 @@ quests:
     difficulty: "RARE"
     target: "WITCH"
     goal: 10
-    reputation_reward: 35
     rewards:
-      - type: "luck"
+      - type: REPUTATION
+        job: CHASSEUR
+        value: 35
+      - type: POTION
+        potion: luck
         duration: 1728000
         amplifier: 1
-      - type: "regeneration"
+      - type: POTION
+        potion: regeneration
         duration: 1728000
         amplifier: 0
 
@@ -320,12 +392,16 @@ quests:
     difficulty: "RARE"
     target: "PILLAGER"
     goal: 20
-    reputation_reward: 30
     rewards:
-      - type: "strength"
+      - type: REPUTATION
+        job: COMBATANT
+        value: 30
+      - type: POTION
+        potion: strength
         duration: 1728000
         amplifier: 0
-      - type: "resistance"
+      - type: POTION
+        potion: resistance
         duration: 1728000
         amplifier: 0
 
@@ -336,9 +412,12 @@ quests:
     difficulty: "RARE"
     target: null
     goal: 20
-    reputation_reward: 28
     rewards:
-      - type: "saturation"
+      - type: REPUTATION
+        job: FERMIER
+        value: 28
+      - type: POTION
+        potion: saturation
         duration: 1728000
         amplifier: 0
 
@@ -349,9 +428,12 @@ quests:
     difficulty: "RARE"
     target: "BREAD"
     goal: 32
-    reputation_reward: 25
     rewards:
-      - type: "regeneration"
+      - type: REPUTATION
+        job: FERMIER
+        value: 25
+      - type: POTION
+        potion: regeneration
         duration: 1728000
         amplifier: 0
 
@@ -362,9 +444,12 @@ quests:
     difficulty: "RARE"
     target: "IRON_SWORD"
     goal: 5
-    reputation_reward: 30
     rewards:
-      - type: "strength"
+      - type: REPUTATION
+        job: FORGERON
+        value: 30
+      - type: POTION
+        potion: strength
         duration: 1728000
         amplifier: 0
 
@@ -375,9 +460,12 @@ quests:
     difficulty: "RARE"
     target: "IRON_INGOT"
     goal: 200
-    reputation_reward: 38
     rewards:
-      - type: "fire_resistance"
+      - type: REPUTATION
+        job: FORGERON
+        value: 38
+      - type: POTION
+        potion: fire_resistance
         duration: 1728000
         amplifier: 0
 
@@ -388,9 +476,12 @@ quests:
     difficulty: "RARE"
     target: "COPPER_INGOT"
     goal: 150
-    reputation_reward: 32
     rewards:
-      - type: "haste"
+      - type: REPUTATION
+        job: FORGERON
+        value: 32
+      - type: POTION
+        potion: haste
         duration: 1728000
         amplifier: 1
 
@@ -401,9 +492,12 @@ quests:
     difficulty: "RARE"
     target: null
     goal: 30
-    reputation_reward: 28
     rewards:
-      - type: "luck"
+      - type: REPUTATION
+        job: PECHEUR
+        value: 28
+      - type: POTION
+        potion: luck
         duration: 1728000
         amplifier: 1
 
@@ -414,9 +508,12 @@ quests:
     difficulty: "RARE"
     target: "SHEEP"
     goal: 50
-    reputation_reward: 26
     rewards:
-      - type: "speed"
+      - type: REPUTATION
+        job: FERMIER
+        value: 26
+      - type: POTION
+        potion: speed
         duration: 1728000
         amplifier: 1
 
@@ -429,15 +526,20 @@ quests:
     difficulty: "LEGENDARY"
     target: "ENDERMAN"
     goal: 50
-    reputation_reward: 100
     rewards:
-      - type: "strength"
+      - type: REPUTATION
+        job: COMBATANT
+        value: 100
+      - type: POTION
+        potion: strength
         duration: 1728000
         amplifier: 1
-      - type: "speed"
+      - type: POTION
+        potion: speed
         duration: 1728000
         amplifier: 1
-      - type: "resistance"
+      - type: POTION
+        potion: resistance
         duration: 1728000
         amplifier: 0
 
@@ -448,12 +550,16 @@ quests:
     difficulty: "LEGENDARY"
     target: "WITHER_SKELETON"
     goal: 10
-    reputation_reward: 140
     rewards:
-      - type: "strength"
+      - type: REPUTATION
+        job: COMBATANT
+        value: 140
+      - type: POTION
+        potion: strength
         duration: 1728000
         amplifier: 1
-      - type: "resistance"
+      - type: POTION
+        potion: resistance
         duration: 1728000
         amplifier: 1
 
@@ -464,12 +570,16 @@ quests:
     difficulty: "LEGENDARY"
     target: "BLAZE"
     goal: 30
-    reputation_reward: 120
     rewards:
-      - type: "fire_resistance"
+      - type: REPUTATION
+        job: COMBATANT
+        value: 120
+      - type: POTION
+        potion: fire_resistance
         duration: 1728000
         amplifier: 0
-      - type: "strength"
+      - type: POTION
+        potion: strength
         duration: 1728000
         amplifier: 1
 
@@ -480,12 +590,16 @@ quests:
     difficulty: "LEGENDARY"
     target: "GUARDIAN"
     goal: 20
-    reputation_reward: 130
     rewards:
-      - type: "water_breathing"
+      - type: REPUTATION
+        job: COMBATANT
+        value: 130
+      - type: POTION
+        potion: water_breathing
         duration: 1728000
         amplifier: 0
-      - type: "strength"
+      - type: POTION
+        potion: strength
         duration: 1728000
         amplifier: 1
 
@@ -496,9 +610,12 @@ quests:
     difficulty: "LEGENDARY"
     target: "OBSIDIAN"
     goal: 150
-    reputation_reward: 160
     rewards:
-      - type: "haste"
+      - type: REPUTATION
+        job: MINEUR
+        value: 160
+      - type: POTION
+        potion: haste
         duration: 1728000
         amplifier: 2
 
@@ -509,12 +626,16 @@ quests:
     difficulty: "LEGENDARY"
     target: "ANCIENT_DEBRIS"
     goal: 10
-    reputation_reward: 200
     rewards:
-      - type: "haste"
+      - type: REPUTATION
+        job: MINEUR
+        value: 200
+      - type: POTION
+        potion: haste
         duration: 1728000
         amplifier: 2
-      - type: "fire_resistance"
+      - type: POTION
+        potion: fire_resistance
         duration: 1728000
         amplifier: 0
 
@@ -525,12 +646,16 @@ quests:
     difficulty: "LEGENDARY"
     target: "GOLD_INGOT"
     goal: 128
-    reputation_reward: 120
     rewards:
-      - type: "fire_resistance"
+      - type: REPUTATION
+        job: FORGERON
+        value: 120
+      - type: POTION
+        potion: fire_resistance
         duration: 1728000
         amplifier: 0
-      - type: "luck"
+      - type: POTION
+        potion: luck
         duration: 1728000
         amplifier: 1
 
@@ -541,8 +666,11 @@ quests:
     difficulty: "LEGENDARY"
     target: null
     goal: 60
-    reputation_reward: 110
     rewards:
-      - type: "luck"
+      - type: REPUTATION
+        job: PECHEUR
+        value: 110
+      - type: POTION
+        potion: luck
         duration: 1728000
         amplifier: 2
