@@ -37,7 +37,15 @@ class GlobalQuestConfigTest {
             "AVENTURIER", "BATISSEUR"
     );
 
-    private static final Set<String> VALID_EFFECT_TYPES = Set.of("REPUTATION", "POTION");
+    /** Tous les types d'effets supportés par BlessingLoader. */
+    private static final Set<String> VALID_EFFECT_TYPES = Set.of(
+            "DAMAGE", "DISPEL", "LIMIT_WORLD", "LOCK_WORLD", "MAX_HEALTH",
+            "MESSAGE", "POTION", "REPUTATION", "RESISTANCE",
+            "UNLOCK_ARMOR", "UNLOCK_TOOL", "WORLD_LEVEL", "WORLD_RESET"
+    );
+
+    /** Types d'effets dont le champ `value` doit être un entier >= 1. */
+    private static final Set<String> EFFECTS_WITH_POSITIVE_INT_VALUE = Set.of("REPUTATION", "DISPEL");
 
     @Test
     void globalQuestsYmlIsValid() throws IOException {
@@ -105,13 +113,18 @@ class GlobalQuestConfigTest {
                     "Métier invalide dans rewards : " + job + " — doit être l'un de " + VALID_JOBS);
         }
 
+        // `value` est utilisé par plusieurs types d'effets :
+        //  - REPUTATION / DISPEL : entier >= 1
+        //  - MAX_HEALTH : entier (peut être négatif)
+        //  - RESISTANCE / DAMAGE : nombre (float possible)
+        // extractValues capturant [A-Za-z0-9_]+ seulement, les floats comme 0.5 sont
+        // tronqués à leur partie entière. On vérifie uniquement la parseabilité.
         List<String> values = extractValues(content, "value");
         for (String valStr : values) {
             try {
-                int val = Integer.parseInt(valStr);
-                Assertions.assertTrue(val >= 1, "value (réputation) doit être ≥ 1, trouvé : " + val);
+                Integer.parseInt(valStr);
             } catch (NumberFormatException e) {
-                Assertions.fail("value doit être un entier, trouvé : " + valStr);
+                Assertions.fail("value doit être un entier (ou un float dont la partie entière est extraite), trouvé : " + valStr);
             }
         }
 
@@ -133,6 +146,28 @@ class GlobalQuestConfigTest {
                 Assertions.assertTrue(amp >= 0, "amplifier doit être ≥ 0, trouvé : " + amp);
             } catch (NumberFormatException e) {
                 Assertions.fail("amplifier doit être un entier, trouvé : " + ampStr);
+            }
+        }
+
+        // ── WORLD_LEVEL : levels ≥ 1 ─────────────────────────────────────────
+        List<String> levels = extractValues(content, "levels");
+        for (String lvlStr : levels) {
+            try {
+                int lvl = Integer.parseInt(lvlStr);
+                Assertions.assertTrue(lvl >= 1, "levels (WORLD_LEVEL) doit être ≥ 1, trouvé : " + lvl);
+            } catch (NumberFormatException e) {
+                Assertions.fail("levels doit être un entier, trouvé : " + lvlStr);
+            }
+        }
+
+        // ── WORLD_RESET : frequency ≥ 0 ─────────────────────────────────────
+        List<String> frequencies = extractValues(content, "frequency");
+        for (String freqStr : frequencies) {
+            try {
+                int freq = Integer.parseInt(freqStr);
+                Assertions.assertTrue(freq >= 0, "frequency (WORLD_RESET) doit être ≥ 0, trouvé : " + freq);
+            } catch (NumberFormatException e) {
+                Assertions.fail("frequency doit être un entier, trouvé : " + freqStr);
             }
         }
     }
