@@ -1,5 +1,7 @@
 package fr.miuby.survi.system.database.repository;
 
+import fr.miuby.lib.sqlite.MLRepository;
+import fr.miuby.lib.sqlite.MLSQLite;
 import fr.miuby.lib.log.MLLogManager;
 import fr.miuby.survi.system.log.ELogTag;
 
@@ -12,22 +14,17 @@ import java.util.logging.Level;
 /**
  * Repository pour les données système : server_data, logs, config, etc.
  */
-public class SystemRepository {
-    private final Connection connection;
+public class SystemRepository extends MLRepository {
 
-    public SystemRepository(Connection connection) {
-        this.connection = connection;
+    public SystemRepository(Connection connection, MLSQLite db) {
+        super(connection, db);
     }
 
     public String getServerData(String key) {
         try (PreparedStatement ps = connection.prepareStatement("SELECT value FROM server_data WHERE key = ?")) {
-
             ps.setString(1, key);
             ResultSet rs = ps.executeQuery();
-
-            if (rs.next()) {
-                return rs.getString("value");
-            }
+            if (rs.next()) return rs.getString("value");
         } catch (SQLException e) {
             MLLogManager.getInstance().log(Level.SEVERE, ELogTag.SYSTEM, "Erreur getServerData: " + key, e);
         }
@@ -36,11 +33,9 @@ public class SystemRepository {
 
     public void saveServerData(String key, String value) {
         try (PreparedStatement ps = connection.prepareStatement("INSERT OR REPLACE INTO server_data (key, value) VALUES (?, ?)")) {
-
             ps.setString(1, key);
             ps.setString(2, value);
             ps.executeUpdate();
-
         } catch (SQLException e) {
             MLLogManager.getInstance().log(Level.SEVERE, ELogTag.SYSTEM, "Erreur saveServerData: " + key, e);
         }
@@ -60,42 +55,28 @@ public class SystemRepository {
     }
 
     //region log
-    /**
-     * Récupère l'état d'un tag de log (VILLAGER, QUEST, etc.).
-     * @return true/false ou null si pas trouvé
-     */
+
+    /** Récupère l'état d'un tag de log (VILLAGER, QUEST, etc.). @return true/false ou null si pas trouvé */
     public Boolean getLogTagState(String tagName) {
-        String key = "log_tag_" + tagName.toLowerCase();
-        String value = getServerData(key);
+        String value = getServerData("log_tag_" + tagName.toLowerCase());
         return value != null ? Boolean.parseBoolean(value) : null;
     }
 
-    /**
-     * Sauvegarde l'état d'un tag de log.
-     */
+    /** Sauvegarde l'état d'un tag de log. */
     public void saveLogTagState(String tagName, boolean enabled) {
-        String key = "log_tag_" + tagName.toLowerCase();
-        saveServerData(key, String.valueOf(enabled));
+        saveServerData("log_tag_" + tagName.toLowerCase(), String.valueOf(enabled));
     }
 
-    // === LOG LEVEL STATE ===
-
-    /**
-     * Récupère l'état d'un level de log (INFO, WARNING, SEVERE).
-     * @return true/false ou null si pas trouvé
-     */
+    /** Récupère l'état d'un level de log (INFO, WARNING, SEVERE). @return true/false ou null si pas trouvé */
     public Boolean getLogLevelState(String levelName) {
-        String key = "log_level_" + levelName.toLowerCase();
-        String value = getServerData(key);
+        String value = getServerData("log_level_" + levelName.toLowerCase());
         return value != null ? Boolean.parseBoolean(value) : null;
     }
 
-    /**
-     * Sauvegarde l'état d'un level de log.
-     */
+    /** Sauvegarde l'état d'un level de log. */
     public void saveLogLevelState(String levelName, boolean enabled) {
-        String key = "log_level_" + levelName.toLowerCase();
-        saveServerData(key, String.valueOf(enabled));
+        saveServerData("log_level_" + levelName.toLowerCase(), String.valueOf(enabled));
     }
+
     //endregion
 }

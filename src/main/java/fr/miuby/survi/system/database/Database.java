@@ -1,15 +1,9 @@
 package fr.miuby.survi.system.database;
 
-import fr.miuby.lib.log.MLLogManager;
 import fr.miuby.lib.sqlite.MLSQLite;
 import fr.miuby.survi.system.database.repository.*;
-import fr.miuby.survi.system.log.ELogTag;
 
 import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.logging.Level;
 
 /**
  * Classe abstraite représentant la base de données de Survi.
@@ -40,82 +34,20 @@ public abstract class Database extends MLSQLite {
     @Override
     protected void onLoaded() {
         Connection conn = getConnection();
-        playerRepository   = new PlayerRepository(conn);
-        villagerRepository = new VillagerRepository(conn);
-        cropRepository     = new CropRepository(conn);
-        questRepository    = new QuestRepository(conn);
-        systemRepository   = new SystemRepository(conn);
+        playerRepository   = new PlayerRepository(conn, this);
+        villagerRepository = new VillagerRepository(conn, this);
+        cropRepository     = new CropRepository(conn, this);
+        questRepository    = new QuestRepository(conn, this);
+        systemRepository   = new SystemRepository(conn, this);
     }
 
     // =========================================================================
     // Délégués aux repositories
     // =========================================================================
 
-    public PlayerRepository players() {
-        return playerRepository;
-    }
-
-    public VillagerRepository villagers() {
-        return villagerRepository;
-    }
-
-    public CropRepository crops() {
-        return cropRepository;
-    }
-
-    public QuestRepository quests() {
-        return questRepository;
-    }
-
-    public SystemRepository system() {
-        return systemRepository;
-    }
-
-    // =========================================================================
-    // Utilitaire SQL brut (usage debug — /sql query)
-    // =========================================================================
-
-    public String Request(String sql) {
-        Connection conn = null;
-        PreparedStatement ps = null;
-
-        try {
-            conn = getConnection();
-            ps = conn.prepareStatement(sql);
-
-            if (sql.trim().split("\\s+")[0].equalsIgnoreCase("select")) {
-                ResultSet rs = ps.executeQuery();
-                int column = rs.getMetaData().getColumnCount();
-                StringBuilder result = new StringBuilder();
-
-                while (rs.next()) {
-                    for (int i = 1; i <= column; i++) {
-                        result.append(rs.getString(i));
-                        if (i != column) result.append(", ");
-                    }
-                    result.append("\n");
-                }
-
-                return result.toString();
-            } else {
-                ps.executeUpdate();
-                return "Query executed !";
-            }
-
-        } catch (SQLException ex) {
-            MLLogManager.getInstance().log(Level.SEVERE, ELogTag.SYSTEM, "Failed to execute request: " + sql, ex);
-            return "Error: " + ex.getMessage();
-        } finally {
-            closeResources(conn, ps);
-        }
-    }
-
-    protected void closeResources(Connection conn, PreparedStatement ps) {
-        try {
-            if (ps != null) ps.close();
-            if (conn != null) conn.close();
-        } catch (SQLException ex) {
-            MLLogManager.getInstance().log(Level.SEVERE, ELogTag.SYSTEM, "Failed to close database resources", ex);
-        }
-    }
+    public PlayerRepository players()     { return playerRepository; }
+    public VillagerRepository villagers() { return villagerRepository; }
+    public CropRepository crops()         { return cropRepository; }
+    public QuestRepository quests()       { return questRepository; }
+    public SystemRepository system()      { return systemRepository; }
 }

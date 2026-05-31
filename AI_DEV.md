@@ -45,6 +45,7 @@ donc tout ce qui suit est la référence autoritaire.
 ```java
 MiubyLib.init(plugin);                        // appelé une seule fois dans GameManager.init()
 MiubyLib.runLater(Runnable task, long delay); // equivalent BukkitScheduler.runTaskLater
+MiubyLib.runAsync(Runnable task);             // equivalent BukkitScheduler.runTaskAsynchronously
 MiubyLib.getLogger();                         // Logger du plugin
 MiubyLib.callEvent(Event event);              // Bukkit.getPluginManager().callEvent()
 ```
@@ -227,16 +228,16 @@ MLLogManager.getInstance().log(Level.WARNING, ELogTag.PLAYER,  "Message");
 MLLogManager.getInstance().log(Level.SEVERE,  ELogTag.QUEST,   "Message", exception); // avec stacktrace
 ```
 
-**Gestion runtime (via `/survi log`) :**
+**Gestion runtime — overloads `ILogTag` et `String` disponibles :**
 ```java
-MLLogManager.getInstance().toggleTag(ELogTag.QUEST);          // active/désactive un tag
+MLLogManager.getInstance().toggleTag(ELogTag.QUEST);           // via ILogTag
+MLLogManager.getInstance().toggleTag("QUEST");                  // via String (utilisé par MLLogCommand)
 MLLogManager.getInstance().setTagEnabled(ELogTag.WORLD, false);
-MLLogManager.getInstance().toggleLevel(Level.FINE);
-MLLogManager.getInstance().setProductionMode();               // seulement WARNING + SEVERE
-MLLogManager.getInstance().setDebugMode();                    // tout activé
-MLLogManager.getInstance().setQuietMode();                    // seulement SEVERE
-MLLogManager.getInstance().getAllTagStates();                  // Map<String, Boolean>
-MLLogManager.getInstance().getAllLevelStates();                // Map<Level, Boolean>
+MLLogManager.getInstance().setProductionMode();                 // seulement WARNING + SEVERE
+MLLogManager.getInstance().setDebugMode();                      // tout activé
+MLLogManager.getInstance().setQuietMode();                      // seulement SEVERE
+MLLogManager.getInstance().getAllTagStates();                    // Map<String, Boolean>
+MLLogManager.getInstance().getAllLevelStates();                  // Map<Level, Boolean>
 ```
 
 **Sorties fichiers** (dans `plugins/<Plugin>/logs/`) :
@@ -263,6 +264,22 @@ public class LogPersistence implements MLLogPersistence {
 
 ---
 
+### `MLLogCommand` — sous-commande générique de gestion des logs
+
+Sous-arbre Brigadier prêt à l'emploi. Expose `/xxx log status|tag|level|mode` pour n'importe quel plugin.
+
+```java
+// Dans la commande principale du plugin :
+return Commands.literal("monplugin")
+        .requires(s -> s.getSender().isOp())
+        .then(MLLogCommand.create())   // ajoute /monplugin log ...
+        .then(...);
+```
+
+Survi l'utilise dans `SystemCommand` : `.then(MLLogCommand.create())` remplace les ~200 lignes de gestion des logs qui s'y trouvaient.
+
+---
+
 ### `Cooldown<K>` — cooldown générique basé sur le temps
 
 ```java
@@ -283,11 +300,13 @@ warnCooldown.clear();        // efface tous les cooldowns
 ### `MLBrigadierHelper` — utilitaire Brigadier
 
 ```java
-// Convertit un Component Adventure en Message Brigadier (pour les CommandExceptionType)
+// Conversion Component → Message (usage bas niveau)
 MLBrigadierHelper.message(Component.text("Joueur introuvable : " + name))
-```
 
-Utilisé dans `CommandErrors` de Survi. À importer dans tout plugin qui déclare des erreurs Brigadier.
+// Factory methods (usage recommandé — voir CommandErrors)
+MLBrigadierHelper.notFound("Joueur")     // → DynamicCommandExceptionType "Joueur introuvable : {name}"
+MLBrigadierHelper.simpleError("Message") // → SimpleCommandExceptionType
+```
 
 ---
 
@@ -389,7 +408,7 @@ protected abstract void runMigrations(int currentVersion) throws SQLException; /
 @Override
 protected void onLoaded() {
     super.onLoaded();   // toujours appeler super en premier (init repos du parent)
-    myRepo = new MyRepository(getConnection());
+    myRepo = new MyRepository(getConnection(), this); // passer this (MLSQLite) au repo
 }
 ```
 
@@ -399,6 +418,7 @@ getConnection()                           // connexion (cache server thread, new
 getCurrentVersion()                       // lit PRAGMA user_version
 setVersion(int version)                   // écrit PRAGMA user_version — appelé auto par load()
 hasColumn(String table, String column)    // utile pour ALTER TABLE idempotent dans runMigrations()
+executeRaw(String sql)                    // debug/admin uniquement — retourne String formatée
 ```
 
 **`load()` est finale** — ne pas surcharger. Séquence fixe : `createTables()` → vérif version →
@@ -430,12 +450,55 @@ public class MyDatabase extends MLSQLite {
 
     @Override
     protected void onLoaded() {
-        myRepo = new MyRepository(getConnection());
+        myRepo = new MyRepository(getConnection(), this); // toujours passer this
     }
 
     public MyRepository myRepo() { return myRepo; }
 }
 ```
+
+---
+
+### `MLRepository` — classe de base pour les repositories SQLite
+
+Classe abstraite dans `fr.miuby.lib.sqlite`. Fournit le pattern async sans boilerplate.
+
+```java
+public class MyRepository extends MLRepository {
+    public MyRepository(Connection connection, MLSQLite db) {
+        super(connection, db);
+    }
+
+    // Lecture sync — utilise this.connection
+    public String load(String id) {
+        try (PreparedStatement ps = connection.prepareStatement("SELECT name FROM my_table WHERE id = ?")) {
+            ps.setString(1, id);
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next() ? rs.getString("name") : null;
+            }
+        } catch (SQLException ex) {
+            MLLogManager.getInstance().log(Level.SEVERE, ELogTag.SYSTEM, "Failed to load", ex);
+            return null;
+        }
+    }
+
+    // Écriture async — runAsync ouvre une connexion fraîche et la ferme automatiquement
+    public void save(String id, String name) {
+        runAsync(conn -> {
+            try (PreparedStatement ps = conn.prepareStatement("INSERT OR REPLACE INTO my_table (id, name) VALUES (?, ?)")) {
+                ps.setString(1, id);
+                ps.setString(2, name);
+                ps.executeUpdate();
+            }
+        }, ELogTag.SYSTEM, "Failed to save");
+    }
+}
+```
+
+**Règles :**
+- Toujours passer `(Connection connection, MLSQLite db)` au constructeur — `db` est utilisé par `runAsync` pour ouvrir les connexions async.
+- Les lectures qui ont lieu au démarrage (thread principal) utilisent `this.connection` directement avec try-with-resources sur le `PreparedStatement` uniquement (la connexion reste ouverte).
+- Les écritures sont toujours via `runAsync` — jamais de `GameManager.getInstance().getScheduler().runTaskAsynchronously(...)` dans un repository.
 
 ---
 
@@ -542,8 +605,8 @@ QUEST_NOT_FOUND, CUSTOM_ITEM_NOT_FOUND, WORLD_NOT_FOUND, JOB_NOT_FOUND, NOT_A_LE
 
 **Créer un nouvel argument** → étendre `MLStringArgument<T>` (voir section 2 MiubyLib).
 
-**Erreurs Brigadier** → `MLBrigadierHelper.message(Component)` dans MiubyLib.
-`CommandErrors` utilise directement `MLBrigadierHelper`.
+**Erreurs Brigadier** → `MLBrigadierHelper.notFound("Label")` ou `MLBrigadierHelper.simpleError("Message")`.
+`CommandErrors` utilise ces factory methods directement.
 
 **Autocomplétion** (exemple depuis `SystemCommand`) :
 
@@ -588,6 +651,10 @@ GameManager.getInstance().getDatabase().system()     // SystemRepository (logs, 
 ```
 
 Le SQL va **uniquement** dans les repositories. Jamais inline dans un Listener ou Command.
+
+**Tous les repositories étendent `MLRepository`** — ne jamais copier le boilerplate `GameManager.getInstance().getScheduler().runTaskAsynchronously(...)`. Utiliser `runAsync(conn -> { ... }, ELogTag.XXX, "message")`.
+
+**Debug SQL admin** : `GameManager.getInstance().getDatabase().executeRaw(sql)` — retourne une String formatée. Utilisé par `SqlCommand`. Ne pas appeler depuis du code métier.
 
 Pour ajouter une migration : incrémenter `CURRENT_DB_VERSION` dans `SQLite`, ajouter
 `createXxxTable()` dans `createTables()`, et ajouter `if (currentVersion < N) { ... }` dans
@@ -680,10 +747,11 @@ scheduler.runTaskTimer(plugin, () -> { }, 0L, 20L);    // répété chaque secon
 scheduler.runTaskAsynchronously(plugin, () -> { });    // I/O, DB
 // ou via MiubyLib :
 MiubyLib.runLater(task, delay);
+MiubyLib.runAsync(task);   // préférer MiubyLib.runAsync dans les nouveaux managers
 ```
 
 Accès Bukkit (entités, worlds, inventaires) = **thread principal uniquement**.
-DB = peut être async.
+DB = peut être async. Dans les repositories, toujours via `runAsync(...)` de `MLRepository`.
 
 ---
 
@@ -732,6 +800,9 @@ Respecter le schéma correspondant quand on génère du contenu :
 - Instancier un `MLVillager` avec `new` — toujours `MLVillager.spawn(() -> new ...)`
 - Utiliser `player.sendMessage(String)` — toujours `player.sendMessage(Component)`
 - Générer du code avec des APIs Bukkit deprecated dans Paper 26.1
+- Utiliser `GameManager.getInstance().getScheduler().runTaskAsynchronously(...)` dans un repository — utiliser `runAsync(...)` de `MLRepository`
+- Passer uniquement `Connection` au constructeur d'un repository — toujours passer `(Connection, MLSQLite)` pour que `runAsync` fonctionne
+- Appeler `Database.Request(...)` (supprimé) — utiliser `database.executeRaw(sql)` pour le debug admin
 
 ---
 
@@ -747,7 +818,7 @@ Respecter le schéma correspondant quand on génère du contenu :
 | Mondes | `WorldInitializer`, `WorldLevelManager`, `WorldResetManager`, `EWorld` |
 | Items | `ECustomItem`, `CustomItemBuilder`, `CustomRecipeFactory`, `recipes.yml` |
 | Métiers | `EJob`, `JobLevelConfig`, `JobListener` |
-| DB | `MLSQLite` (MiubyLib), `Database`, `SQLite`, repositories dans `system/database/repository/` |
+| DB | `MLSQLite` + `MLRepository` (MiubyLib), `Database`, `SQLite`, repositories dans `system/database/repository/` |
 
 ---
 
@@ -760,7 +831,7 @@ Respecter le schéma correspondant quand on génère du contenu :
 - Jamais de scan d'entités (`world.getEntitiesByType(...)`) dans un listener
   répétitif — utiliser un registry ou un cache local.
 - **DB toujours async, sans exception.** Toute I/O base de données depuis n'importe quel
-  contexte (listener, command, timer) doit passer par `runTaskAsynchronously`. La règle vaut
+  contexte (listener, command, timer) doit passer par `runAsync` de `MLRepository`. La règle vaut
   aussi pour les events ponctuels (`onDailyReset`, `onPlayerQuit`…) — le thread principal
   ne doit jamais attendre SQLite.
 - Ne pas allouer d'objets inutiles dans les listeners chauds (`new ArrayList<>()` à chaque event).
@@ -821,5 +892,5 @@ Respecter le schéma correspondant quand on génère du contenu :
 3. `XxxLoader` qui lit le YAML et retourne les configs
 4. `XxxManager` ou `XxxService` selon qu'il y a un état runtime
 5. Listener fin qui délègue au service — jamais de logique métier dans le listener
-6. Persistence en repository si données joueur concernées
+6. Persistence en repository si données joueur concernées — étendre `MLRepository`
 7. Logs via `MLLogManager` avec le bon `ELogTag`
