@@ -1,10 +1,6 @@
 package fr.miuby.survi.display;
 
-import com.mojang.authlib.GameProfile;
-import fr.miuby.lib.villager.VillagerRegistry;
 import fr.miuby.survi.GameManager;
-import fr.miuby.survi.job.EJob;
-import fr.miuby.survi.job.JobLevelConfig;
 import fr.miuby.survi.player.AlphaPlayer;
 import fr.miuby.survi.player.EGlobalRank;
 import fr.miuby.survi.quest.GlobalQuest;
@@ -12,67 +8,121 @@ import fr.miuby.survi.quest.GlobalQuestManager;
 import fr.miuby.survi.quest.PlayerQuestData;
 import fr.miuby.survi.quest.Quest;
 import fr.miuby.survi.role.Role;
-import fr.miuby.survi.villager.villagerlevel.VillagerLevel;
-import io.papermc.paper.adventure.PaperAdventure;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.minecraft.network.protocol.game.ClientboundPlayerInfoRemovePacket;
 import net.minecraft.network.protocol.game.ClientboundPlayerInfoUpdatePacket;
-import net.minecraft.world.level.GameType;
 import org.bukkit.Bukkit;
 import org.bukkit.attribute.Attribute;
+import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.craftbukkit.entity.CraftPlayer;
 import org.bukkit.entity.Player;
+import org.bukkit.scoreboard.Scoreboard;
+import org.bukkit.scoreboard.Team;
 
+import java.text.DecimalFormat;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.EnumSet;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
+/**
+ * Gère le tab list :
+ * <ul>
+ *   <li><b>Header</b> — serveur + identité du joueur</li>
+ *   <li><b>Colonne gauche</b> — vrais joueurs (ordre naturel Minecraft)</li>
+ *   <li><b>Colonne droite</b> — faux joueurs : villageois + métiers (via {@link TabInfoColumn})</li>
+ *   <li><b>Footer</b> — stats + quêtes actives</li>
+ * </ul>
+ *
+ * <h3>Mécanisme de tri sans listOrder</h3>
+ * {@code listOrder} est ignoré dans Paper 26.1.  Le tri du tab repose sur les clés
+ * d'équipe scoreboard ({@code teamName\0profileName}).  Les vrais joueurs sont dans des
+ * équipes AlphaTeam nommées {@code "PseudoJoueur<random>"} (ex. "Miuby-845123").
+ * Les faux joueurs d'info sont mis dans l'équipe {@value #SORT_TEAM} dont le nom
+ * commence par {@code '~'} (ASCII 126 > {@code 'z'} = 122), garantissant qu'ils
+ * trient <em>après</em> tout pseudo possible → colonne droite.
+ *
+ * <h3>Garantie 2 colonnes</h3>
+ * {@link TabInfoColumn#build(AlphaPlayer, int)} envoie {@code (40 − N)} faux joueurs
+ * (padding + contenu), de sorte que N joueurs réels + (40 − N) faux = 40 entrées au total,
+ * soit exactement 2 colonnes de 20 lignes.
+ */
 public class TabDisplayManager {
 
-    // ─── UUIDs fixes — 20 spacers (col. gauche) + 20 infos (col. droite) ─────────
+    /**
+     * Nom de l'équipe scoreboard utilisée pour trier les faux joueurs après les vrais.
+     * '~' (126) > 'z' (122) > toute lettre/chiffre de pseudo Minecraft → tri garanti en dernier.
+     */
+    private static final String SORT_TEAM = "~~tabsurvi";
 
-    private static final int COLUMN_HEIGHT = 20;
-
-    private static final List<UUID> SPACER_UUIDS;
-    private static final List<UUID> INFO_UUIDS;
-    private static final List<UUID> ALL_FAKE_UUIDS;
-
-    static {
-        SPACER_UUIDS = new ArrayList<>(COLUMN_HEIGHT);
-        INFO_UUIDS   = new ArrayList<>(COLUMN_HEIGHT);
-        for (int i = 0; i < COLUMN_HEIGHT; i++) {
-            SPACER_UUIDS.add(new UUID(0xAAAAAAAAAL, i));
-            INFO_UUIDS  .add(new UUID(0xBBBBBBBBBL, i));
-        }
-        ALL_FAKE_UUIDS = new ArrayList<>(COLUMN_HEIGHT * 2);
-        ALL_FAKE_UUIDS.addAll(SPACER_UUIDS);
-        ALL_FAKE_UUIDS.addAll(INFO_UUIDS);
-    }
+    private static final EnumSet<ClientboundPlayerInfoUpdatePacket.Action> ADD_ACTIONS =
+            EnumSet.of(
+                    ClientboundPlayerInfoUpdatePacket.Action.ADD_PLAYER,
+                    ClientboundPlayerInfoUpdatePacket.Action.UPDATE_DISPLAY_NAME,
+                    ClientboundPlayerInfoUpdatePacket.Action.UPDATE_LISTED
+            );
 
     private static final Component SEP = Component.text("  ·  ", NamedTextColor.DARK_GRAY);
+
+    /** Joueurs pour lesquels l'équipe de tri a déjà été créée cette session. */
+    private final Set<UUID> teamInitialized = new HashSet<>();
+
+    private final DecimalFormat df = new DecimalFormat("#.##");
 
     // ─── Init ─────────────────────────────────────────────────────────────────────
 
     public TabDisplayManager() {
-        Bukkit.getScheduler().runTaskTimer(GameManager.getInstance().getPlugin(), this::updateTabList, 0L, 20L);
+        Bukkit.getScheduler().runTaskTimer(
+                GameManager.getInstance().getPlugin(), this::updateTabList, 0L, 20L
+        );
     }
 
-    // ─── Mise à jour toutes les secondes ─────────────────────────────────────────
+    // ─── Boucle principale (1 Hz) ─────────────────────────────────────────────────
 
     private void updateTabList() {
-        int onlineCount = Bukkit.getOnlinePlayers().size();
-        int spacerCount = Math.max(0, COLUMN_HEIGHT - onlineCount);
-
+        int playerCount = Bukkit.getOnlinePlayers().size();
         for (Player player : Bukkit.getOnlinePlayers()) {
             AlphaPlayer ap = AlphaPlayer.get(player.getUniqueId());
             if (ap == null || ap.getPlayer() == null) continue;
 
-            player.sendPlayerListHeaderAndFooter(buildHeader(ap), Component.empty());
-            pushFakeEntries(player, ap, spacerCount);
+            // Création lazye de l'équipe de tri (une seule fois par session)
+            if (!teamInitialized.contains(player.getUniqueId())) {
+                setupSortingTeam(player);
+                teamInitialized.add(player.getUniqueId());
+            }
+
+            player.sendPlayerListHeaderAndFooter(buildHeader(ap), buildFooter(ap));
+
+            // Supprime tous les anciens faux joueurs possibles, puis renvoie les nouveaux
+            sendPacket(player, new ClientboundPlayerInfoRemovePacket(TabInfoColumn.FAKE_UUIDS));
+            sendPacket(player, new ClientboundPlayerInfoUpdatePacket(
+                    ADD_ACTIONS, TabInfoColumn.build(ap, playerCount)
+            ));
+        }
+    }
+
+    // ─── Équipe de tri ────────────────────────────────────────────────────────────
+
+    /**
+     * Crée l'équipe {@value #SORT_TEAM} dans le scoreboard du joueur et y ajoute
+     * les {@link TabInfoColumn#MAX_FAKE} noms de profil ({@code "s00".."s39"}).
+     *
+     * Le client Minecraft trie les entrées du tab par clé {@code teamName\0profileName}.
+     * Comme {@value #SORT_TEAM} commence par {@code '~'}, ces entrées apparaissent
+     * après tous les vrais joueurs (dont les équipes AlphaTeam commencent par des lettres).
+     */
+    private void setupSortingTeam(Player player) {
+        Scoreboard sb = player.getScoreboard();
+        if (sb.getTeam(SORT_TEAM) != null) return;
+
+        Team team = sb.registerNewTeam(SORT_TEAM);
+        team.setOption(Team.Option.NAME_TAG_VISIBILITY, Team.OptionStatus.NEVER);
+        team.setOption(Team.Option.COLLISION_RULE, Team.OptionStatus.NEVER);
+        for (String name : TabInfoColumn.PROFILE_NAMES) {
+            team.addEntry(name);
         }
     }
 
@@ -90,11 +140,12 @@ public class TabDisplayManager {
 
         // Zone · Difficulté · Morts · Succès
         header = header
-                .append(Component.text("Zone : ", NamedTextColor.GRAY))
-                .append(Component.text(zoneName(ap), NamedTextColor.YELLOW))
+                .append(Component.text("Monde : ", NamedTextColor.GRAY))
+                .append(Component.text(ap.getWorld().getName(), ap.getWorld().getColor()))
                 .append(SEP)
-                .append(Component.text("Diff. : ", NamedTextColor.GRAY))
-                .append(Component.text("Niv. " + worldLevel, worldLevel >= 5 ? NamedTextColor.RED : NamedTextColor.GOLD))
+                .append(Component.text("Difficulté : ", NamedTextColor.GRAY))
+                .append(Component.text("Niv. " + worldLevel,
+                        worldLevel >= 5 ? NamedTextColor.RED : NamedTextColor.GOLD))
                 .append(SEP)
                 .append(Component.text("☠ " + ap.getMort(), NamedTextColor.DARK_RED))
                 .append(SEP)
@@ -107,7 +158,7 @@ public class TabDisplayManager {
                 .append(Component.text("  (" + ap.getTotalReputation() + " rép.)", rank.getColor()))
                 .appendNewline();
 
-        // Rôle principal + sous-rôles (ligne séparée)
+        // Rôle + sous-rôles
         Role mainRole = ap.getRole();
         if (mainRole != null) {
             header = header.append(mainRole.type().toComponent());
@@ -121,181 +172,40 @@ public class TabDisplayManager {
         return header;
     }
 
-    // ─── Injection des faux joueurs ───────────────────────────────────────────────
+    // ─── FOOTER : stats + quêtes ─────────────────────────────────────────────────
 
-    private void pushFakeEntries(Player player, AlphaPlayer ap, int spacerCount) {
-        sendPacket(player, new ClientboundPlayerInfoRemovePacket(ALL_FAKE_UUIDS));
+    private Component buildFooter(AlphaPlayer alphaPlayer) {
+        Player p = alphaPlayer.getPlayer();
+        if (p == null) return Component.empty();
 
-        List<ClientboundPlayerInfoUpdatePacket.Entry> entries = new ArrayList<>(spacerCount + COLUMN_HEIGHT);
+        Component footer = Component.empty()
+                .appendNewline()
+                .append(formatStat(alphaPlayer, Attribute.MAX_HEALTH, "Vie"))
+                .append(Component.text(" | ", NamedTextColor.DARK_GRAY))
+                .append(formatStat(alphaPlayer, Attribute.ATTACK_DAMAGE, "Force"))
+                .append(Component.text(" | ", NamedTextColor.DARK_GRAY))
+                .append(formatStat(alphaPlayer, Attribute.ARMOR, "Armure"))
+                .appendNewline()
+                .append(formatStat(alphaPlayer, Attribute.MOVEMENT_SPEED, "Vitesse"))
+                .append(Component.text(" | ", NamedTextColor.DARK_GRAY))
+                .append(formatStat(alphaPlayer, Attribute.ATTACK_SPEED, "Vit. d'Attaque"))
+                .append(Component.text(" | ", NamedTextColor.DARK_GRAY))
+                .append(formatStat(alphaPlayer, Attribute.LUCK, "Chance"))
+                .appendNewline();
 
-        for (int i = 0; i < spacerCount; i++) {
-            entries.add(buildSpacerEntry(i));
-        }
-
-        List<Component> lines = buildInfoLines(ap);
-        for (int i = 0; i < COLUMN_HEIGHT; i++) {
-            Component line = i < lines.size() ? lines.get(i) : Component.empty();
-            entries.add(buildInfoEntry(i, line));
-        }
-
-        sendPacket(player, new ClientboundPlayerInfoUpdatePacket(
-                EnumSet.of(
-                        ClientboundPlayerInfoUpdatePacket.Action.ADD_PLAYER,
-                        ClientboundPlayerInfoUpdatePacket.Action.UPDATE_DISPLAY_NAME,
-                        ClientboundPlayerInfoUpdatePacket.Action.UPDATE_LISTED
-                ),
-                entries
-        ));
-    }
-
-    private ClientboundPlayerInfoUpdatePacket.Entry buildSpacerEntry(int index) {
-        UUID uuid = SPACER_UUIDS.get(index);
-        // "~spXX" trie après tous les pseudos valides (~ = ASCII 126 > a-z, A-Z, 0-9, _)
-        GameProfile profile = new GameProfile(uuid, "~sp" + String.format("%02d", index));
-        return new ClientboundPlayerInfoUpdatePacket.Entry(
-                uuid, profile, true, 0, GameType.SURVIVAL,
-                net.minecraft.network.chat.Component.empty(), false, 0, null
-        );
-    }
-
-    private ClientboundPlayerInfoUpdatePacket.Entry buildInfoEntry(int index, Component displayName) {
-        UUID uuid = INFO_UUIDS.get(index);
-        GameProfile profile = new GameProfile(uuid, "srv" + String.format("%02d", index));
-        return new ClientboundPlayerInfoUpdatePacket.Entry(
-                uuid, profile, true, 0, GameType.SURVIVAL,
-                PaperAdventure.asVanilla(displayName), false, index + 1, null
-        );
-    }
-
-    private void sendPacket(Player player, net.minecraft.network.protocol.Packet<?> packet) {
-        ((CraftPlayer) player).getHandle().connection.send(packet);
-    }
-
-    // ─── Colonne droite : villageois · métiers · stats ───────────────────────────
-
-    private List<Component> buildInfoLines(AlphaPlayer ap) {
-        List<Component> lines = new ArrayList<>(COLUMN_HEIGHT);
-
-        // ── Villageois ──
-        List<Component> villagers = buildVillagerLines();
-        if (!villagers.isEmpty()) {
-            lines.add(Component.empty());
-            lines.add(section("Villageois"));
-            lines.addAll(villagers);
-        }
-
-        // ── Métiers — tous, 2 par ligne, triés niveau desc ──
-        lines.add(Component.empty());
-        lines.add(section("Métiers"));
-        lines.addAll(buildJobsLines(ap));
-
-        // ── Stats ──
-        List<Component> stats = buildStatsLines(ap);
-        if (!stats.isEmpty()) {
-            lines.add(Component.empty());
-            lines.add(section("Stats"));
-            lines.addAll(stats);
-        }
-
-        // ── Quête du jour (uniquement si de la place reste) ──
-        Component questLine  = buildQuestLine(ap);
+        // Quêtes (si actives)
+        Component questLine  = buildQuestLine(alphaPlayer);
         Component globalLine = buildGlobalQuestLine();
-        if (lines.size() <= COLUMN_HEIGHT - 3 && (!questLine.equals(Component.empty()) || !globalLine.equals(Component.empty()))) {
-            lines.add(Component.empty());
-            lines.add(section("Quêtes"));
-            if (!questLine.equals(Component.empty()))  lines.add(questLine);
-            if (!globalLine.equals(Component.empty())) lines.add(globalLine);
+        if (!questLine.equals(Component.empty()) || !globalLine.equals(Component.empty())) {
+            footer = footer
+                    .appendNewline().appendNewline()
+                    .append(Component.text("─── Quêtes ───", NamedTextColor.DARK_AQUA))
+                    .appendNewline();
+            if (!questLine.equals(Component.empty()))  footer = footer.append(questLine).appendNewline();
+            if (!globalLine.equals(Component.empty())) footer = footer.append(globalLine).appendNewline();
         }
 
-        return lines.subList(0, Math.min(lines.size(), COLUMN_HEIGHT));
-    }
-
-    // ─── Villageois ───────────────────────────────────────────────────────────────
-
-    private List<Component> buildVillagerLines() {
-        List<Component> lines = new ArrayList<>();
-        for (var mlVillager : VillagerRegistry.getAll()) {
-            if (mlVillager instanceof VillagerLevel vl) {
-                int lvl = vl.getLevel();
-                NamedTextColor lvlColor = lvl >= 3 ? NamedTextColor.GOLD : lvl >= 1 ? NamedTextColor.YELLOW : NamedTextColor.DARK_GRAY;
-                lines.add(Component.text(vl.getDisplayName().content() + " ", NamedTextColor.WHITE)
-                        .append(Component.text("niv." + lvl, lvlColor)));
-            }
-        }
-        return lines;
-    }
-
-    // ─── Métiers — tous les 12 en 2 par ligne ────────────────────────────────────
-
-    private List<Component> buildJobsLines(AlphaPlayer ap) {
-        EJob[] sorted = sortedJobs(ap);
-        List<Component> lines = new ArrayList<>(sorted.length / 2 + 1);
-        for (int i = 0; i < sorted.length; i += 2) {
-            Component left = jobEntry(ap, sorted[i]);
-            if (i + 1 < sorted.length) {
-                lines.add(left.append(Component.text("   ", NamedTextColor.DARK_GRAY)).append(jobEntry(ap, sorted[i + 1])));
-            } else {
-                lines.add(left);
-            }
-        }
-        return lines;
-    }
-
-    private Component jobEntry(AlphaPlayer ap, EJob job) {
-        int level = ap.getJobLevel(job);
-        NamedTextColor lvlColor = level == 0 ? NamedTextColor.DARK_GRAY
-                : level >= 7 ? NamedTextColor.GOLD
-                  : level >= 4 ? NamedTextColor.YELLOW
-                    : NamedTextColor.WHITE;
-        return job.toComponent()
-                .append(Component.text(": ", NamedTextColor.DARK_GRAY))
-                .append(Component.text(JobLevelConfig.getLevelName(level), lvlColor));
-    }
-
-    private EJob[] sortedJobs(AlphaPlayer ap) {
-        return Arrays.stream(EJob.values())
-                .sorted((a, b) -> {
-                    int diff = Integer.compare(ap.getJobLevel(b), ap.getJobLevel(a));
-                    if (diff != 0) return diff;
-                    return Integer.compare(ap.getJobReputation(b), ap.getJobReputation(a));
-                })
-                .toArray(EJob[]::new);
-    }
-
-    // ─── Stats du joueur ─────────────────────────────────────────────────────────
-
-    /**
-     * Affiche les stats Bukkit brutes.
-     * TODO : remplacer par vos stats custom si AlphaPlayer en expose (défense, force, etc.)
-     */
-    private List<Component> buildStatsLines(AlphaPlayer ap) {
-        Player p = ap.getPlayer();
-        if (p == null) return List.of();
-
-        var maxHpAttr = p.getAttribute(Attribute.MAX_HEALTH);
-        var armorAttr = p.getAttribute(Attribute.ARMOR);
-        var atkAttr   = p.getAttribute(Attribute.ATTACK_DAMAGE);
-        var speedAttr = p.getAttribute(Attribute.MOVEMENT_SPEED);
-        if (maxHpAttr == null || armorAttr == null || atkAttr == null || speedAttr == null) return List.of();
-
-        int hp    = (int) Math.ceil(p.getHealth());
-        int maxHp = (int) maxHpAttr.getValue();
-        int armor = (int) armorAttr.getValue();
-        int atk   = (int) atkAttr.getValue();
-        int speed = (int) Math.round(speedAttr.getValue() * 1000); // 0.1 vanilla → 100
-
-        return List.of(
-                statLine("♥", hp + "/" + maxHp,    NamedTextColor.RED,   "✦", "+" + speed + " vit.", NamedTextColor.WHITE),
-                statLine("❈", atk + " force",       NamedTextColor.GOLD,  "✦", armor + " déf.",       NamedTextColor.GREEN)
-        );
-    }
-
-    private Component statLine(String icon1, String val1, NamedTextColor c1, String icon2, String val2, NamedTextColor c2) {
-        return Component.text(icon1 + " ", c1)
-                .append(Component.text(val1, c1))
-                .append(Component.text("   ", NamedTextColor.DARK_GRAY))
-                .append(Component.text(icon2 + " ", c2))
-                .append(Component.text(val2, c2));
+        return footer.appendNewline();
     }
 
     // ─── Quête personnelle ────────────────────────────────────────────────────────
@@ -317,7 +227,6 @@ public class TabDisplayManager {
                 .append(Component.text("[", NamedTextColor.DARK_GRAY))
                 .append(Component.text(progressBar(progress, goal, 8), bar))
                 .append(Component.text("] " + progress + "/" + goal, NamedTextColor.DARK_GRAY));
-
         if (done) line = line.append(Component.text(" ✔ Trader !", NamedTextColor.GREEN));
         return line;
     }
@@ -342,28 +251,20 @@ public class TabDisplayManager {
 
     // ─── Nettoyage déconnexion ────────────────────────────────────────────────────
 
+    /**
+     * Appeler depuis {@code ServerListener.onPlayerQuit}.
+     * Supprime les faux joueurs du tab et nettoie l'état interne.
+     */
     public void removeInfoColumn(Player player) {
-        sendPacket(player, new ClientboundPlayerInfoRemovePacket(ALL_FAKE_UUIDS));
+        sendPacket(player, new ClientboundPlayerInfoRemovePacket(TabInfoColumn.FAKE_UUIDS));
+        teamInitialized.remove(player.getUniqueId());
+        // L'équipe scoreboard est détruite automatiquement lors du reset de l'AlphaScoreboard.
     }
 
-    // ─── Helpers ─────────────────────────────────────────────────────────────────
+    // ─── Utilitaires ─────────────────────────────────────────────────────────────
 
-    private Component section(String name) {
-        return Component.text("─── " + name + " ───", NamedTextColor.DARK_AQUA);
-    }
-
-    private String zoneName(AlphaPlayer ap) {
-        try {
-            return switch (ap.getWorld()) {
-                case VILLAGE    -> "Village";
-                case WILDERNESS -> "Wilderness";
-                case NETHER     -> "Nether";
-                case END        -> "End";
-                default         -> "?";
-            };
-        } catch (Exception e) {
-            return "?";
-        }
+    private void sendPacket(Player player, net.minecraft.network.protocol.Packet<?> packet) {
+        ((CraftPlayer) player).getHandle().connection.send(packet);
     }
 
     private String progressBar(int current, int total, int width) {
@@ -373,7 +274,41 @@ public class TabDisplayManager {
 
     private String formatTime(long seconds) {
         if (seconds >= 3600) return (seconds / 3600) + "h" + String.format("%02d", (seconds % 3600) / 60) + "m";
-        if (seconds >= 60)   return (seconds / 60) + "m" + String.format("%02d", seconds % 60) + "s";
+        if (seconds >= 60)   return (seconds / 60)   + "m" + String.format("%02d", seconds % 60) + "s";
         return seconds + "s";
+    }
+
+    private Component formatStat(AlphaPlayer alphaPlayer, Attribute attributeType, String statName) {
+        Player player = alphaPlayer.getPlayer();
+        if (player == null) return Component.empty();
+
+        AttributeInstance attributeInstance = player.getAttribute(attributeType);
+        if (attributeInstance == null) {
+            return Component.empty();
+        }
+
+        double baseValue = alphaPlayer.getBaseAttributes().getOrDefault(attributeType, attributeInstance.getBaseValue());
+        double currentValue = attributeInstance.getValue();
+        double diff = currentValue - baseValue;
+
+        String sign = "+";
+        NamedTextColor color;
+        if (Math.abs(diff) < 0.001) {
+            diff = 0;
+            color = NamedTextColor.GRAY;
+        } else if (diff > 0) {
+            color = NamedTextColor.GREEN;
+            sign = "+";
+        } else {
+            color = NamedTextColor.RED;
+            sign = "";
+        }
+
+        return Component.text(statName + ": ", NamedTextColor.WHITE)
+                .append(Component.text(formatDouble(baseValue) + sign + formatDouble(diff), color));
+    }
+
+    private String formatDouble(double d) {
+        return df.format(d);
     }
 }

@@ -1,6 +1,7 @@
 package fr.miuby.survi;
 
 import fr.miuby.lib.resource.MLResourceManager;
+import fr.miuby.survi.display.TabSkins;
 import fr.miuby.survi.job.ReputationCommand;
 import fr.miuby.survi.mob.MobCommand;
 import fr.miuby.survi.system.database.SqlCommand;
@@ -23,6 +24,8 @@ public class Survi extends JavaPlugin {
     @Override
     public void onEnable() {
         updateResources();
+
+        TabSkins.load(this);
 
         PluginManager pluginManager = this.getServer().getPluginManager();
         pluginManager.registerEvents(new ServerListener(), this);
