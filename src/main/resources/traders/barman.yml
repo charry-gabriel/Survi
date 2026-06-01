@@ -5,6 +5,7 @@ type: SAVANNA
 profession: FLETCHER
 job: ALCHIMISTE
 questDifficulty: COMMON
+questCompletionReputation: 10
 openMessage: >
   Bonjour, bienvenue au bar du Merveilleux Royal Bling-Bling Sexy-Baka Palace-Hôtel.
   A la carte, nous proposons différents cocktails élaborés avec amour, tendresse et voluptuosité:

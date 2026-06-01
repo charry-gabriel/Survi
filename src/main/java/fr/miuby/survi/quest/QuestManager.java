@@ -366,6 +366,9 @@ public class QuestManager {
         for (BlessingEffect effect : quest.getRewards().blessingEffects()) {
             effect.applyEffect(player);
         }
+        if (trader.getJob() != null && trader.getQuestCompletionReputation() > 0) {
+            player.addJobReputation(trader.getJob(), trader.getQuestCompletionReputation());
+        }
         player.getPlayer().sendMessage(Component.text("Vous avez reçu les récompenses de la quête ! ", NamedTextColor.GREEN));
         data.setClaimed(true);
         GameManager.getInstance().getDatabase().quests().updatePlayerQuest(player.getUuid(), data);
