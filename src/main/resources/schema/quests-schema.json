@@ -18,7 +18,15 @@
           },
           "type": {
             "type": "string",
-            "enum": []
+            "enum": [
+              "MINE",
+              "KILL",
+              "BREED",
+              "FISH",
+              "SHEAR",
+              "CRAFT",
+              "SMELT"
+            ]
           },
           "difficulty": {
             "type": "integer",
@@ -30,7 +38,20 @@
             "description": "Métiers autorisés à recevoir cette quête. Liste vide = tous les métiers.",
             "items": {
               "type": "string",
-              "enum": []
+              "enum": [
+                "MINEUR",
+                "BUCHERON",
+                "FERMIER",
+                "COMBATANT",
+                "ALCHIMISTE",
+                "ENCHANTEUR",
+                "FORGERON",
+                "PECHEUR",
+                "CHASSEUR",
+                "MARCHAND",
+                "AVENTURIER",
+                "BATISSEUR"
+              ]
             },
             "default": []
           },
@@ -2054,7 +2075,20 @@
                     "job": {
                       "type": "string",
                       "description": "Métier (EJob)",
-                      "enum": []
+                      "enum": [
+                        "MINEUR",
+                        "BUCHERON",
+                        "FERMIER",
+                        "COMBATANT",
+                        "ALCHIMISTE",
+                        "ENCHANTEUR",
+                        "FORGERON",
+                        "PECHEUR",
+                        "CHASSEUR",
+                        "MARCHAND",
+                        "AVENTURIER",
+                        "BATISSEUR"
+                      ]
                     },
                     "value": {
                       "type": "integer",
@@ -2079,7 +2113,45 @@
                     "potion": {
                       "type": "string",
                       "description": "Nom de l'effet de potion (ex: speed, haste, strength)",
-                      "enum": []
+                      "enum": [
+                        "absorption",
+                        "bad_omen",
+                        "blindness",
+                        "conduit_power",
+                        "darkness",
+                        "dolphins_grace",
+                        "fire_resistance",
+                        "glowing",
+                        "haste",
+                        "health_boost",
+                        "hero_of_the_village",
+                        "hunger",
+                        "infested",
+                        "instant_damage",
+                        "instant_health",
+                        "invisibility",
+                        "jump_boost",
+                        "levitation",
+                        "luck",
+                        "mining_fatigue",
+                        "nausea",
+                        "night_vision",
+                        "oozing",
+                        "poison",
+                        "regeneration",
+                        "resistance",
+                        "saturation",
+                        "slow_falling",
+                        "slowness",
+                        "speed",
+                        "strength",
+                        "unluck",
+                        "water_breathing",
+                        "weakness",
+                        "weaving",
+                        "wind_charged",
+                        "wither"
+                      ]
                     },
                     "duration": {
                       "type": "integer",

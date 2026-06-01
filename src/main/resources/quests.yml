@@ -6,755 +6,527 @@ quests:
   - id: "mine_cobblestone"
     name: "Mineur de Pierre"
     description: "Minez 300 blocs de cobblestone."
-    type: "MINE"
+    type: MINE
     difficulty: 1
     jobs:
       - MINEUR
-    target: "COBBLESTONE"
+    target: COBBLESTONE
     goal: 300
     rewards:
-      - type: REPUTATION
-        job: MINEUR
-        value: 10
-      - type: POTION
-        potion: haste
-        duration: 1728000
-        amplifier: 0
+      - {type: REPUTATION, job: MINEUR, value: 10}
+      - {type: POTION, potion: haste, duration: 1728000, amplifier: 0}
 
   - id: "mine_dirt"
     name: "Terrassier"
     description: "Extrayez 400 blocs de terre."
-    type: "MINE"
+    type: MINE
     difficulty: 1
     jobs:
       - MINEUR
-    target: "DIRT"
+    target: DIRT
     goal: 400
     rewards:
-      - type: REPUTATION
-        job: MINEUR
-        value: 8
-      - type: POTION
-        potion: haste
-        duration: 1728000
-        amplifier: 0
+      - {type: REPUTATION, job: MINEUR, value: 8}
+      - {type: POTION, potion: haste, duration: 1728000, amplifier: 0}
 
   - id: "mine_sand"
     name: "Carrier de Sable"
     description: "Récoltez 250 blocs de sable."
-    type: "MINE"
+    type: MINE
     difficulty: 1
     jobs:
       - MINEUR
-    target: "SAND"
+    target: SAND
     goal: 250
     rewards:
-      - type: REPUTATION
-        job: MINEUR
-        value: 8
-      - type: POTION
-        potion: speed
-        duration: 1728000
-        amplifier: 0
+      - {type: REPUTATION, job: MINEUR, value: 8}
+      - {type: POTION, potion: speed, duration: 1728000, amplifier: 0}
 
   - id: "mine_gravel"
     name: "Carrier de Gravier"
     description: "Récoltez 250 blocs de gravier."
-    type: "MINE"
+    type: MINE
     difficulty: 1
     jobs:
       - MINEUR
-    target: "GRAVEL"
+    target: GRAVEL
     goal: 250
     rewards:
-      - type: REPUTATION
-        job: MINEUR
-        value: 8
-      - type: POTION
-        potion: luck
-        duration: 1728000
-        amplifier: 0
+      - {type: REPUTATION, job: MINEUR, value: 8}
+      - {type: POTION, potion: luck, duration: 1728000, amplifier: 0}
 
   - id: "mine_oak_log"
     name: "Bûcheron Chêne"
     description: "Abattez 80 bûches de chêne."
-    type: "MINE"
+    type: MINE
     difficulty: 1
     jobs:
       - BUCHERON
-    target: "OAK_LOG"
+    target: OAK_LOG
     goal: 80
     rewards:
-      - type: REPUTATION
-        job: BUCHERON
-        value: 10
-      - type: POTION
-        potion: haste
-        duration: 1728000
-        amplifier: 0
+      - {type: REPUTATION, job: BUCHERON, value: 10}
+      - {type: POTION, potion: haste, duration: 1728000, amplifier: 0}
 
   - id: "mine_birch_log"
     name: "Bûcheron Bouleau"
     description: "Abattez 80 bûches de bouleau."
-    type: "MINE"
+    type: MINE
     difficulty: 1
     jobs:
       - BUCHERON
-    target: "BIRCH_LOG"
+    target: BIRCH_LOG
     goal: 80
     rewards:
-      - type: REPUTATION
-        job: BUCHERON
-        value: 10
-      - type: POTION
-        potion: speed
-        duration: 1728000
-        amplifier: 0
+      - {type: REPUTATION, job: BUCHERON, value: 10}
+      - {type: POTION, potion: speed, duration: 1728000, amplifier: 0}
 
   - id: "mine_spruce_log"
     name: "Bûcheron Sapin"
     description: "Abattez 80 bûches d'épicéa."
-    type: "MINE"
+    type: MINE
     difficulty: 1
     jobs:
       - BUCHERON
-    target: "SPRUCE_LOG"
+    target: SPRUCE_LOG
     goal: 80
     rewards:
-      - type: REPUTATION
-        job: BUCHERON
-        value: 10
-      - type: POTION
-        potion: speed
-        duration: 1728000
-        amplifier: 0
+      - {type: REPUTATION, job: BUCHERON, value: 10}
+      - {type: POTION, potion: speed, duration: 1728000, amplifier: 0}
 
   - id: "kill_zombies"
     name: "Chasseur de Zombies"
     description: "Tuez 25 zombies."
-    type: "KILL"
+    type: KILL
     difficulty: 1
     jobs:
       - COMBATANT
-    target: "ZOMBIE"
+    target: ZOMBIE
     goal: 25
     rewards:
-      - type: REPUTATION
-        job: COMBATANT
-        value: 10
-      - type: POTION
-        potion: strength
-        duration: 1728000
-        amplifier: 0
+      - {type: REPUTATION, job: COMBATANT, value: 10}
+      - {type: POTION, potion: strength, duration: 1728000, amplifier: 0}
 
   - id: "kill_skeletons"
     name: "Briseur d'Os"
     description: "Tuez 20 squelettes."
-    type: "KILL"
+    type: KILL
     difficulty: 1
     jobs:
       - COMBATANT
-    target: "SKELETON"
+    target: SKELETON
     goal: 20
     rewards:
-      - type: REPUTATION
-        job: COMBATANT
-        value: 10
-      - type: POTION
-        potion: speed
-        duration: 1728000
-        amplifier: 0
+      - {type: REPUTATION, job: COMBATANT, value: 10}
+      - {type: POTION, potion: speed, duration: 1728000, amplifier: 0}
 
   - id: "kill_spiders"
     name: "Aranéophobe"
     description: "Tuez 25 araignées."
-    type: "KILL"
+    type: KILL
     difficulty: 1
     jobs:
       - COMBATANT
-    target: "SPIDER"
+    target: SPIDER
     goal: 25
     rewards:
-      - type: REPUTATION
-        job: COMBATANT
-        value: 9
-      - type: POTION
-        potion: speed
-        duration: 1728000
-        amplifier: 0
+      - {type: REPUTATION, job: COMBATANT, value: 9}
+      - {type: POTION, potion: speed, duration: 1728000, amplifier: 0}
 
   - id: "kill_creepers"
     name: "Démineur"
     description: "Tuez 15 creepers."
-    type: "KILL"
+    type: KILL
     difficulty: 1
     jobs:
       - COMBATANT
-    target: "CREEPER"
+    target: CREEPER
     goal: 15
     rewards:
-      - type: REPUTATION
-        job: COMBATANT
-        value: 12
-      - type: POTION
-        potion: resistance
-        duration: 1728000
-        amplifier: 0
+      - {type: REPUTATION, job: COMBATANT, value: 12}
+      - {type: POTION, potion: resistance, duration: 1728000, amplifier: 0}
 
   - id: "fish_common"
     name: "Pêcheur du Dimanche"
     description: "Pêchez 10 poissons."
-    type: "FISH"
+    type: FISH
     difficulty: 1
     jobs:
       - PECHEUR
     target: null
     goal: 10
     rewards:
-      - type: REPUTATION
-        job: PECHEUR
-        value: 12
-      - type: POTION
-        potion: luck
-        duration: 1728000
-        amplifier: 0
+      - {type: REPUTATION, job: PECHEUR, value: 12}
+      - {type: POTION, potion: luck, duration: 1728000, amplifier: 0}
 
   - id: "shear_sheep"
     name: "Tondeur"
     description: "Tondez 20 moutons."
-    type: "SHEAR"
+    type: SHEAR
     difficulty: 1
     jobs:
       - FERMIER
-    target: "SHEEP"
+    target: SHEEP
     goal: 20
     rewards:
-      - type: REPUTATION
-        job: FERMIER
-        value: 10
-      - type: POTION
-        potion: speed
-        duration: 1728000
-        amplifier: 0
+      - {type: REPUTATION, job: FERMIER, value: 10}
+      - {type: POTION, potion: speed, duration: 1728000, amplifier: 0}
 
   - id: "breed_cow"
     name: "Éleveur de Vaches"
     description: "Faites se reproduire 10 vaches."
-    type: "BREED"
+    type: BREED
     difficulty: 1
     jobs:
       - FERMIER
-    target: "COW"
+    target: COW
     goal: 10
     rewards:
-      - type: REPUTATION
-        job: FERMIER
-        value: 10
-      - type: POTION
-        potion: saturation
-        duration: 1728000
-        amplifier: 0
+      - {type: REPUTATION, job: FERMIER, value: 10}
+      - {type: POTION, potion: saturation, duration: 1728000, amplifier: 0}
 
   - id: "breed_chicken"
     name: "Éleveur de Poulets"
     description: "Faites se reproduire 15 poulets."
-    type: "BREED"
+    type: BREED
     difficulty: 1
     jobs:
       - FERMIER
-    target: "CHICKEN"
+    target: CHICKEN
     goal: 15
     rewards:
-      - type: REPUTATION
-        job: FERMIER
-        value: 9
-      - type: POTION
-        potion: saturation
-        duration: 1728000
-        amplifier: 0
+      - {type: REPUTATION, job: FERMIER, value: 9}
+      - {type: POTION, potion: saturation, duration: 1728000, amplifier: 0}
 
   - id: "craft_torch"
     name: "Allumeur"
     description: "Fabriquez 64 torches."
-    type: "CRAFT"
+    type: CRAFT
     difficulty: 1
     jobs:
       - FORGERON
-    target: "TORCH"
+    target: TORCH
     goal: 64
     rewards:
-      - type: REPUTATION
-        job: FORGERON
-        value: 8
-      - type: POTION
-        potion: night_vision
-        duration: 1728000
-        amplifier: 0
+      - {type: REPUTATION, job: FORGERON, value: 8}
+      - {type: POTION, potion: night_vision, duration: 1728000, amplifier: 0}
 
   - id: "smelt_stone"
     name: "Cuiseur de Pierre"
     description: "Faites cuire 128 blocs de pierre."
-    type: "SMELT"
+    type: SMELT
     difficulty: 1
     jobs:
       - FORGERON
-    target: "STONE"
+    target: STONE
     goal: 128
     rewards:
-      - type: REPUTATION
-        job: FORGERON
-        value: 9
-      - type: POTION
-        potion: haste
-        duration: 1728000
-        amplifier: 0
+      - {type: REPUTATION, job: FORGERON, value: 9}
+      - {type: POTION, potion: haste, duration: 1728000, amplifier: 0}
 
   # ─────────────────── DIFFICULTÉ 2 (14 quêtes) ───────────────────
 
   - id: "mine_iron"
     name: "Mineur de Fer"
     description: "Minez 80 minerais de fer."
-    type: "MINE"
+    type: MINE
     difficulty: 2
     jobs:
       - MINEUR
-    target: "IRON_ORE"
+    target: IRON_ORE
     goal: 80
     rewards:
-      - type: REPUTATION
-        job: MINEUR
-        value: 25
-      - type: POTION
-        potion: haste
-        duration: 1728000
-        amplifier: 1
-      - type: POTION
-        potion: night_vision
-        duration: 1728000
-        amplifier: 0
+      - {type: REPUTATION, job: MINEUR, value: 25}
+      - {type: POTION, potion: haste, duration: 1728000, amplifier: 1}
+      - {type: POTION, potion: night_vision, duration: 1728000, amplifier: 0}
 
   - id: "mine_deepslate_iron"
     name: "Mineur Profond"
     description: "Minez 60 minerais de fer ardoisés."
-    type: "MINE"
+    type: MINE
     difficulty: 2
     jobs:
       - MINEUR
-    target: "DEEPSLATE_IRON_ORE"
+    target: DEEPSLATE_IRON_ORE
     goal: 60
     rewards:
-      - type: REPUTATION
-        job: MINEUR
-        value: 28
-      - type: POTION
-        potion: haste
-        duration: 1728000
-        amplifier: 1
+      - {type: REPUTATION, job: MINEUR, value: 28}
+      - {type: POTION, potion: haste, duration: 1728000, amplifier: 1}
 
   - id: "mine_coal"
     name: "Chercheur de Charbon"
     description: "Minez 200 minerais de charbon."
-    type: "MINE"
+    type: MINE
     difficulty: 2
     jobs:
       - MINEUR
-    target: "COAL_ORE"
+    target: COAL_ORE
     goal: 200
     rewards:
-      - type: REPUTATION
-        job: MINEUR
-        value: 22
-      - type: POTION
-        potion: haste
-        duration: 1728000
-        amplifier: 1
+      - {type: REPUTATION, job: MINEUR, value: 22}
+      - {type: POTION, potion: haste, duration: 1728000, amplifier: 1}
 
   - id: "mine_copper"
     name: "Chasseur de Cuivre"
     description: "Minez 100 minerais de cuivre."
-    type: "MINE"
+    type: MINE
     difficulty: 2
     jobs:
       - MINEUR
-    target: "COPPER_ORE"
+    target: COPPER_ORE
     goal: 100
     rewards:
-      - type: REPUTATION
-        job: MINEUR
-        value: 25
-      - type: POTION
-        potion: haste
-        duration: 1728000
-        amplifier: 1
+      - {type: REPUTATION, job: MINEUR, value: 25}
+      - {type: POTION, potion: haste, duration: 1728000, amplifier: 1}
 
   - id: "kill_drowned"
     name: "Exterminateur des Profondeurs"
     description: "Tuez 30 noyés."
-    type: "KILL"
+    type: KILL
     difficulty: 2
     jobs:
       - COMBATANT
-    target: "DROWNED"
+    target: DROWNED
     goal: 30
     rewards:
-      - type: REPUTATION
-        job: COMBATANT
-        value: 30
-      - type: POTION
-        potion: water_breathing
-        duration: 1728000
-        amplifier: 0
-      - type: POTION
-        potion: strength
-        duration: 1728000
-        amplifier: 0
+      - {type: REPUTATION, job: COMBATANT, value: 30}
+      - {type: POTION, potion: water_breathing, duration: 1728000, amplifier: 0}
+      - {type: POTION, potion: strength, duration: 1728000, amplifier: 0}
 
   - id: "kill_witch"
     name: "Chasseur de Sorcière"
     description: "Tuez 10 sorcières."
-    type: "KILL"
+    type: KILL
     difficulty: 2
     jobs:
       - CHASSEUR
-    target: "WITCH"
+    target: WITCH
     goal: 10
     rewards:
-      - type: REPUTATION
-        job: CHASSEUR
-        value: 35
-      - type: POTION
-        potion: luck
-        duration: 1728000
-        amplifier: 1
-      - type: POTION
-        potion: regeneration
-        duration: 1728000
-        amplifier: 0
+      - {type: REPUTATION, job: CHASSEUR, value: 35}
+      - {type: POTION, potion: luck, duration: 1728000, amplifier: 1}
+      - {type: POTION, potion: regeneration, duration: 1728000, amplifier: 0}
 
   - id: "kill_pillager"
     name: "Anti-Pillard"
     description: "Tuez 20 pillards."
-    type: "KILL"
+    type: KILL
     difficulty: 2
     jobs:
       - COMBATANT
-    target: "PILLAGER"
+    target: PILLAGER
     goal: 20
     rewards:
-      - type: REPUTATION
-        job: COMBATANT
-        value: 30
-      - type: POTION
-        potion: strength
-        duration: 1728000
-        amplifier: 0
-      - type: POTION
-        potion: resistance
-        duration: 1728000
-        amplifier: 0
+      - {type: REPUTATION, job: COMBATANT, value: 30}
+      - {type: POTION, potion: strength, duration: 1728000, amplifier: 0}
+      - {type: POTION, potion: resistance, duration: 1728000, amplifier: 0}
 
   - id: "breed_any"
     name: "Fermier Passionné"
     description: "Faites se reproduire 20 animaux."
-    type: "BREED"
+    type: BREED
     difficulty: 2
     jobs:
       - FERMIER
     target: null
     goal: 20
     rewards:
-      - type: REPUTATION
-        job: FERMIER
-        value: 28
-      - type: POTION
-        potion: saturation
-        duration: 1728000
-        amplifier: 0
+      - {type: REPUTATION, job: FERMIER, value: 28}
+      - {type: POTION, potion: saturation, duration: 1728000, amplifier: 0}
 
   - id: "craft_bread"
     name: "Boulanger"
     description: "Fabriquez 32 pains."
-    type: "CRAFT"
+    type: CRAFT
     difficulty: 2
     jobs:
       - FERMIER
-    target: "BREAD"
+    target: BREAD
     goal: 32
     rewards:
-      - type: REPUTATION
-        job: FERMIER
-        value: 25
-      - type: POTION
-        potion: regeneration
-        duration: 1728000
-        amplifier: 0
+      - {type: REPUTATION, job: FERMIER, value: 25}
+      - {type: POTION, potion: regeneration, duration: 1728000, amplifier: 0}
 
   - id: "craft_iron_sword"
     name: "Armurier Débutant"
     description: "Fabriquez 5 épées en fer."
-    type: "CRAFT"
+    type: CRAFT
     difficulty: 2
     jobs:
       - FORGERON
-    target: "IRON_SWORD"
+    target: IRON_SWORD
     goal: 5
     rewards:
-      - type: REPUTATION
-        job: FORGERON
-        value: 30
-      - type: POTION
-        potion: strength
-        duration: 1728000
-        amplifier: 0
+      - {type: REPUTATION, job: FORGERON, value: 30}
+      - {type: POTION, potion: strength, duration: 1728000, amplifier: 0}
 
   - id: "smelt_iron"
     name: "Maître Fondeur"
     description: "Faites cuire 200 lingots de fer."
-    type: "SMELT"
+    type: SMELT
     difficulty: 2
     jobs:
       - FORGERON
-    target: "IRON_INGOT"
+    target: IRON_INGOT
     goal: 200
     rewards:
-      - type: REPUTATION
-        job: FORGERON
-        value: 38
-      - type: POTION
-        potion: fire_resistance
-        duration: 1728000
-        amplifier: 0
+      - {type: REPUTATION, job: FORGERON, value: 38}
+      - {type: POTION, potion: fire_resistance, duration: 1728000, amplifier: 0}
 
   - id: "smelt_copper"
     name: "Fondeur de Cuivre"
     description: "Fondez 150 lingots de cuivre."
-    type: "SMELT"
+    type: SMELT
     difficulty: 2
     jobs:
       - FORGERON
-    target: "COPPER_INGOT"
+    target: COPPER_INGOT
     goal: 150
     rewards:
-      - type: REPUTATION
-        job: FORGERON
-        value: 32
-      - type: POTION
-        potion: haste
-        duration: 1728000
-        amplifier: 1
+      - {type: REPUTATION, job: FORGERON, value: 32}
+      - {type: POTION, potion: haste, duration: 1728000, amplifier: 1}
 
   - id: "fish_rare"
     name: "Pêcheur Confirmé"
     description: "Pêchez 30 poissons."
-    type: "FISH"
+    type: FISH
     difficulty: 2
     jobs:
       - PECHEUR
     target: null
     goal: 30
     rewards:
-      - type: REPUTATION
-        job: PECHEUR
-        value: 28
-      - type: POTION
-        potion: luck
-        duration: 1728000
-        amplifier: 1
+      - {type: REPUTATION, job: PECHEUR, value: 28}
+      - {type: POTION, potion: luck, duration: 1728000, amplifier: 1}
 
   - id: "shear_rare"
     name: "Tondeur Chevronné"
     description: "Tondez 50 moutons."
-    type: "SHEAR"
+    type: SHEAR
     difficulty: 2
     jobs:
       - FERMIER
-    target: "SHEEP"
+    target: SHEEP
     goal: 50
     rewards:
-      - type: REPUTATION
-        job: FERMIER
-        value: 26
-      - type: POTION
-        potion: speed
-        duration: 1728000
-        amplifier: 1
+      - {type: REPUTATION, job: FERMIER, value: 26}
+      - {type: POTION, potion: speed, duration: 1728000, amplifier: 1}
 
   # ─────────────────── DIFFICULTÉ 3 (8 quêtes) ───────────────────
 
   - id: "kill_endermen"
     name: "Chasseur de l'End"
     description: "Tuez 50 Endermen."
-    type: "KILL"
+    type: KILL
     difficulty: 3
     jobs:
       - COMBATANT
       - AVENTURIER
-    target: "ENDERMAN"
+    target: ENDERMAN
     goal: 50
     rewards:
-      - type: REPUTATION
-        job: COMBATANT
-        value: 100
-      - type: POTION
-        potion: strength
-        duration: 1728000
-        amplifier: 1
-      - type: POTION
-        potion: speed
-        duration: 1728000
-        amplifier: 1
-      - type: POTION
-        potion: resistance
-        duration: 1728000
-        amplifier: 0
+      - {type: REPUTATION, job: COMBATANT, value: 100}
+      - {type: POTION, potion: strength, duration: 1728000, amplifier: 1}
+      - {type: POTION, potion: speed, duration: 1728000, amplifier: 1}
+      - {type: POTION, potion: resistance, duration: 1728000, amplifier: 0}
 
   - id: "kill_wither_skeleton"
     name: "Faucheur des Âmes"
     description: "Tuez 10 Wither Squelettes."
-    type: "KILL"
+    type: KILL
     difficulty: 3
     jobs:
       - COMBATANT
       - AVENTURIER
-    target: "WITHER_SKELETON"
+    target: WITHER_SKELETON
     goal: 10
     rewards:
-      - type: REPUTATION
-        job: COMBATANT
-        value: 140
-      - type: POTION
-        potion: strength
-        duration: 1728000
-        amplifier: 1
-      - type: POTION
-        potion: resistance
-        duration: 1728000
-        amplifier: 1
+      - {type: REPUTATION, job: COMBATANT, value: 140}
+      - {type: POTION, potion: strength, duration: 1728000, amplifier: 1}
+      - {type: POTION, potion: resistance, duration: 1728000, amplifier: 1}
 
   - id: "kill_blaze"
     name: "Dompteur de Flammes"
     description: "Tuez 30 Blazes."
-    type: "KILL"
+    type: KILL
     difficulty: 3
     jobs:
       - COMBATANT
       - AVENTURIER
-    target: "BLAZE"
+    target: BLAZE
     goal: 30
     rewards:
-      - type: REPUTATION
-        job: COMBATANT
-        value: 120
-      - type: POTION
-        potion: fire_resistance
-        duration: 1728000
-        amplifier: 0
-      - type: POTION
-        potion: strength
-        duration: 1728000
-        amplifier: 1
+      - {type: REPUTATION, job: COMBATANT, value: 120}
+      - {type: POTION, potion: fire_resistance, duration: 1728000, amplifier: 0}
+      - {type: POTION, potion: strength, duration: 1728000, amplifier: 1}
 
   - id: "kill_guardian"
     name: "Terreur des Abysses"
     description: "Tuez 20 Gardiens."
-    type: "KILL"
+    type: KILL
     difficulty: 3
     jobs:
       - COMBATANT
       - AVENTURIER
-    target: "GUARDIAN"
+    target: GUARDIAN
     goal: 20
     rewards:
-      - type: REPUTATION
-        job: COMBATANT
-        value: 130
-      - type: POTION
-        potion: water_breathing
-        duration: 1728000
-        amplifier: 0
-      - type: POTION
-        potion: strength
-        duration: 1728000
-        amplifier: 1
+      - {type: REPUTATION, job: COMBATANT, value: 130}
+      - {type: POTION, potion: water_breathing, duration: 1728000, amplifier: 0}
+      - {type: POTION, potion: strength, duration: 1728000, amplifier: 1}
 
   - id: "mine_obsidian"
     name: "Briseur d'Obsidienne"
     description: "Minez 150 obsidiennes."
-    type: "MINE"
+    type: MINE
     difficulty: 3
     jobs:
       - MINEUR
       - AVENTURIER
-    target: "OBSIDIAN"
+    target: OBSIDIAN
     goal: 150
     rewards:
-      - type: REPUTATION
-        job: MINEUR
-        value: 160
-      - type: POTION
-        potion: haste
-        duration: 1728000
-        amplifier: 2
+      - {type: REPUTATION, job: MINEUR, value: 160}
+      - {type: POTION, potion: haste, duration: 1728000, amplifier: 2}
 
   - id: "mine_ancient_debris"
     name: "Chercheur de Nétherite"
     description: "Minez 10 Ancient Debris."
-    type: "MINE"
+    type: MINE
     difficulty: 3
     jobs:
       - MINEUR
       - AVENTURIER
-    target: "ANCIENT_DEBRIS"
+    target: ANCIENT_DEBRIS
     goal: 10
     rewards:
-      - type: REPUTATION
-        job: MINEUR
-        value: 200
-      - type: POTION
-        potion: haste
-        duration: 1728000
-        amplifier: 2
-      - type: POTION
-        potion: fire_resistance
-        duration: 1728000
-        amplifier: 0
+      - {type: REPUTATION, job: MINEUR, value: 200}
+      - {type: POTION, potion: haste, duration: 1728000, amplifier: 2}
+      - {type: POTION, potion: fire_resistance, duration: 1728000, amplifier: 0}
 
   - id: "smelt_gold"
     name: "Fondeur d'Or"
     description: "Faites cuire 128 lingots d'or."
-    type: "SMELT"
+    type: SMELT
     difficulty: 3
     jobs:
       - FORGERON
-    target: "GOLD_INGOT"
+    target: GOLD_INGOT
     goal: 128
     rewards:
-      - type: REPUTATION
-        job: FORGERON
-        value: 120
-      - type: POTION
-        potion: fire_resistance
-        duration: 1728000
-        amplifier: 0
-      - type: POTION
-        potion: luck
-        duration: 1728000
-        amplifier: 1
+      - {type: REPUTATION, job: FORGERON, value: 120}
+      - {type: POTION, potion: fire_resistance, duration: 1728000, amplifier: 0}
+      - {type: POTION, potion: luck, duration: 1728000, amplifier: 1}
 
   - id: "fish_legendary"
     name: "Grand Pêcheur"
     description: "Pêchez 60 poissons."
-    type: "FISH"
+    type: FISH
     difficulty: 3
     jobs:
       - PECHEUR
     target: null
     goal: 60
     rewards:
-      - type: REPUTATION
-        job: PECHEUR
-        value: 110
-      - type: POTION
-        potion: luck
-        duration: 1728000
-        amplifier: 2
+      - {type: REPUTATION, job: PECHEUR, value: 110}
+      - {type: POTION, potion: luck, duration: 1728000, amplifier: 2}
