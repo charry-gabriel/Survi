@@ -1,13 +1,15 @@
 # yaml-language-server: $schema=./schema/quests-schema.json
 quests:
 
-  # ─────────────────── COMMON (17 quêtes) ───────────────────
+  # ─────────────────── DIFFICULTÉ 1 (17 quêtes) ───────────────────
 
   - id: "mine_cobblestone"
     name: "Mineur de Pierre"
     description: "Minez 300 blocs de cobblestone."
     type: "MINE"
-    difficulty: "COMMON"
+    difficulty: 1
+    jobs:
+      - MINEUR
     target: "COBBLESTONE"
     goal: 300
     rewards:
@@ -23,7 +25,9 @@ quests:
     name: "Terrassier"
     description: "Extrayez 400 blocs de terre."
     type: "MINE"
-    difficulty: "COMMON"
+    difficulty: 1
+    jobs:
+      - MINEUR
     target: "DIRT"
     goal: 400
     rewards:
@@ -39,7 +43,9 @@ quests:
     name: "Carrier de Sable"
     description: "Récoltez 250 blocs de sable."
     type: "MINE"
-    difficulty: "COMMON"
+    difficulty: 1
+    jobs:
+      - MINEUR
     target: "SAND"
     goal: 250
     rewards:
@@ -55,7 +61,9 @@ quests:
     name: "Carrier de Gravier"
     description: "Récoltez 250 blocs de gravier."
     type: "MINE"
-    difficulty: "COMMON"
+    difficulty: 1
+    jobs:
+      - MINEUR
     target: "GRAVEL"
     goal: 250
     rewards:
@@ -71,7 +79,9 @@ quests:
     name: "Bûcheron Chêne"
     description: "Abattez 80 bûches de chêne."
     type: "MINE"
-    difficulty: "COMMON"
+    difficulty: 1
+    jobs:
+      - BUCHERON
     target: "OAK_LOG"
     goal: 80
     rewards:
@@ -87,7 +97,9 @@ quests:
     name: "Bûcheron Bouleau"
     description: "Abattez 80 bûches de bouleau."
     type: "MINE"
-    difficulty: "COMMON"
+    difficulty: 1
+    jobs:
+      - BUCHERON
     target: "BIRCH_LOG"
     goal: 80
     rewards:
@@ -103,7 +115,9 @@ quests:
     name: "Bûcheron Sapin"
     description: "Abattez 80 bûches d'épicéa."
     type: "MINE"
-    difficulty: "COMMON"
+    difficulty: 1
+    jobs:
+      - BUCHERON
     target: "SPRUCE_LOG"
     goal: 80
     rewards:
@@ -119,7 +133,9 @@ quests:
     name: "Chasseur de Zombies"
     description: "Tuez 25 zombies."
     type: "KILL"
-    difficulty: "COMMON"
+    difficulty: 1
+    jobs:
+      - COMBATANT
     target: "ZOMBIE"
     goal: 25
     rewards:
@@ -135,7 +151,9 @@ quests:
     name: "Briseur d'Os"
     description: "Tuez 20 squelettes."
     type: "KILL"
-    difficulty: "COMMON"
+    difficulty: 1
+    jobs:
+      - COMBATANT
     target: "SKELETON"
     goal: 20
     rewards:
@@ -151,7 +169,9 @@ quests:
     name: "Aranéophobe"
     description: "Tuez 25 araignées."
     type: "KILL"
-    difficulty: "COMMON"
+    difficulty: 1
+    jobs:
+      - COMBATANT
     target: "SPIDER"
     goal: 25
     rewards:
@@ -167,7 +187,9 @@ quests:
     name: "Démineur"
     description: "Tuez 15 creepers."
     type: "KILL"
-    difficulty: "COMMON"
+    difficulty: 1
+    jobs:
+      - COMBATANT
     target: "CREEPER"
     goal: 15
     rewards:
@@ -183,7 +205,9 @@ quests:
     name: "Pêcheur du Dimanche"
     description: "Pêchez 10 poissons."
     type: "FISH"
-    difficulty: "COMMON"
+    difficulty: 1
+    jobs:
+      - PECHEUR
     target: null
     goal: 10
     rewards:
@@ -199,7 +223,9 @@ quests:
     name: "Tondeur"
     description: "Tondez 20 moutons."
     type: "SHEAR"
-    difficulty: "COMMON"
+    difficulty: 1
+    jobs:
+      - FERMIER
     target: "SHEEP"
     goal: 20
     rewards:
@@ -215,7 +241,9 @@ quests:
     name: "Éleveur de Vaches"
     description: "Faites se reproduire 10 vaches."
     type: "BREED"
-    difficulty: "COMMON"
+    difficulty: 1
+    jobs:
+      - FERMIER
     target: "COW"
     goal: 10
     rewards:
@@ -231,7 +259,9 @@ quests:
     name: "Éleveur de Poulets"
     description: "Faites se reproduire 15 poulets."
     type: "BREED"
-    difficulty: "COMMON"
+    difficulty: 1
+    jobs:
+      - FERMIER
     target: "CHICKEN"
     goal: 15
     rewards:
@@ -247,7 +277,9 @@ quests:
     name: "Allumeur"
     description: "Fabriquez 64 torches."
     type: "CRAFT"
-    difficulty: "COMMON"
+    difficulty: 1
+    jobs:
+      - FORGERON
     target: "TORCH"
     goal: 64
     rewards:
@@ -263,7 +295,9 @@ quests:
     name: "Cuiseur de Pierre"
     description: "Faites cuire 128 blocs de pierre."
     type: "SMELT"
-    difficulty: "COMMON"
+    difficulty: 1
+    jobs:
+      - FORGERON
     target: "STONE"
     goal: 128
     rewards:
@@ -275,13 +309,15 @@ quests:
         duration: 1728000
         amplifier: 0
 
-  # ─────────────────── RARE (14 quêtes) ───────────────────
+  # ─────────────────── DIFFICULTÉ 2 (14 quêtes) ───────────────────
 
   - id: "mine_iron"
     name: "Mineur de Fer"
     description: "Minez 80 minerais de fer."
     type: "MINE"
-    difficulty: "RARE"
+    difficulty: 2
+    jobs:
+      - MINEUR
     target: "IRON_ORE"
     goal: 80
     rewards:
@@ -301,7 +337,9 @@ quests:
     name: "Mineur Profond"
     description: "Minez 60 minerais de fer ardoisés."
     type: "MINE"
-    difficulty: "RARE"
+    difficulty: 2
+    jobs:
+      - MINEUR
     target: "DEEPSLATE_IRON_ORE"
     goal: 60
     rewards:
@@ -317,7 +355,9 @@ quests:
     name: "Chercheur de Charbon"
     description: "Minez 200 minerais de charbon."
     type: "MINE"
-    difficulty: "RARE"
+    difficulty: 2
+    jobs:
+      - MINEUR
     target: "COAL_ORE"
     goal: 200
     rewards:
@@ -333,7 +373,9 @@ quests:
     name: "Chasseur de Cuivre"
     description: "Minez 100 minerais de cuivre."
     type: "MINE"
-    difficulty: "RARE"
+    difficulty: 2
+    jobs:
+      - MINEUR
     target: "COPPER_ORE"
     goal: 100
     rewards:
@@ -349,7 +391,9 @@ quests:
     name: "Exterminateur des Profondeurs"
     description: "Tuez 30 noyés."
     type: "KILL"
-    difficulty: "RARE"
+    difficulty: 2
+    jobs:
+      - COMBATANT
     target: "DROWNED"
     goal: 30
     rewards:
@@ -369,7 +413,9 @@ quests:
     name: "Chasseur de Sorcière"
     description: "Tuez 10 sorcières."
     type: "KILL"
-    difficulty: "RARE"
+    difficulty: 2
+    jobs:
+      - CHASSEUR
     target: "WITCH"
     goal: 10
     rewards:
@@ -389,7 +435,9 @@ quests:
     name: "Anti-Pillard"
     description: "Tuez 20 pillards."
     type: "KILL"
-    difficulty: "RARE"
+    difficulty: 2
+    jobs:
+      - COMBATANT
     target: "PILLAGER"
     goal: 20
     rewards:
@@ -409,7 +457,9 @@ quests:
     name: "Fermier Passionné"
     description: "Faites se reproduire 20 animaux."
     type: "BREED"
-    difficulty: "RARE"
+    difficulty: 2
+    jobs:
+      - FERMIER
     target: null
     goal: 20
     rewards:
@@ -425,7 +475,9 @@ quests:
     name: "Boulanger"
     description: "Fabriquez 32 pains."
     type: "CRAFT"
-    difficulty: "RARE"
+    difficulty: 2
+    jobs:
+      - FERMIER
     target: "BREAD"
     goal: 32
     rewards:
@@ -441,7 +493,9 @@ quests:
     name: "Armurier Débutant"
     description: "Fabriquez 5 épées en fer."
     type: "CRAFT"
-    difficulty: "RARE"
+    difficulty: 2
+    jobs:
+      - FORGERON
     target: "IRON_SWORD"
     goal: 5
     rewards:
@@ -457,7 +511,9 @@ quests:
     name: "Maître Fondeur"
     description: "Faites cuire 200 lingots de fer."
     type: "SMELT"
-    difficulty: "RARE"
+    difficulty: 2
+    jobs:
+      - FORGERON
     target: "IRON_INGOT"
     goal: 200
     rewards:
@@ -473,7 +529,9 @@ quests:
     name: "Fondeur de Cuivre"
     description: "Fondez 150 lingots de cuivre."
     type: "SMELT"
-    difficulty: "RARE"
+    difficulty: 2
+    jobs:
+      - FORGERON
     target: "COPPER_INGOT"
     goal: 150
     rewards:
@@ -489,7 +547,9 @@ quests:
     name: "Pêcheur Confirmé"
     description: "Pêchez 30 poissons."
     type: "FISH"
-    difficulty: "RARE"
+    difficulty: 2
+    jobs:
+      - PECHEUR
     target: null
     goal: 30
     rewards:
@@ -505,7 +565,9 @@ quests:
     name: "Tondeur Chevronné"
     description: "Tondez 50 moutons."
     type: "SHEAR"
-    difficulty: "RARE"
+    difficulty: 2
+    jobs:
+      - FERMIER
     target: "SHEEP"
     goal: 50
     rewards:
@@ -517,13 +579,16 @@ quests:
         duration: 1728000
         amplifier: 1
 
-  # ─────────────────── LEGENDARY (8 quêtes) ───────────────────
+  # ─────────────────── DIFFICULTÉ 3 (8 quêtes) ───────────────────
 
   - id: "kill_endermen"
     name: "Chasseur de l'End"
     description: "Tuez 50 Endermen."
     type: "KILL"
-    difficulty: "LEGENDARY"
+    difficulty: 3
+    jobs:
+      - COMBATANT
+      - AVENTURIER
     target: "ENDERMAN"
     goal: 50
     rewards:
@@ -547,7 +612,10 @@ quests:
     name: "Faucheur des Âmes"
     description: "Tuez 10 Wither Squelettes."
     type: "KILL"
-    difficulty: "LEGENDARY"
+    difficulty: 3
+    jobs:
+      - COMBATANT
+      - AVENTURIER
     target: "WITHER_SKELETON"
     goal: 10
     rewards:
@@ -567,7 +635,10 @@ quests:
     name: "Dompteur de Flammes"
     description: "Tuez 30 Blazes."
     type: "KILL"
-    difficulty: "LEGENDARY"
+    difficulty: 3
+    jobs:
+      - COMBATANT
+      - AVENTURIER
     target: "BLAZE"
     goal: 30
     rewards:
@@ -587,7 +658,10 @@ quests:
     name: "Terreur des Abysses"
     description: "Tuez 20 Gardiens."
     type: "KILL"
-    difficulty: "LEGENDARY"
+    difficulty: 3
+    jobs:
+      - COMBATANT
+      - AVENTURIER
     target: "GUARDIAN"
     goal: 20
     rewards:
@@ -607,7 +681,10 @@ quests:
     name: "Briseur d'Obsidienne"
     description: "Minez 150 obsidiennes."
     type: "MINE"
-    difficulty: "LEGENDARY"
+    difficulty: 3
+    jobs:
+      - MINEUR
+      - AVENTURIER
     target: "OBSIDIAN"
     goal: 150
     rewards:
@@ -623,7 +700,10 @@ quests:
     name: "Chercheur de Nétherite"
     description: "Minez 10 Ancient Debris."
     type: "MINE"
-    difficulty: "LEGENDARY"
+    difficulty: 3
+    jobs:
+      - MINEUR
+      - AVENTURIER
     target: "ANCIENT_DEBRIS"
     goal: 10
     rewards:
@@ -643,7 +723,9 @@ quests:
     name: "Fondeur d'Or"
     description: "Faites cuire 128 lingots d'or."
     type: "SMELT"
-    difficulty: "LEGENDARY"
+    difficulty: 3
+    jobs:
+      - FORGERON
     target: "GOLD_INGOT"
     goal: 128
     rewards:
@@ -663,7 +745,9 @@ quests:
     name: "Grand Pêcheur"
     description: "Pêchez 60 poissons."
     type: "FISH"
-    difficulty: "LEGENDARY"
+    difficulty: 3
+    jobs:
+      - PECHEUR
     target: null
     goal: 60
     rewards:

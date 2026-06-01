@@ -1,7 +1,6 @@
 package fr.miuby.survi.villager.trader;
 
 import fr.miuby.survi.job.EJob;
-import fr.miuby.survi.quest.EQuestDifficulty;
 import fr.miuby.survi.villager.AVillager;
 import lombok.Getter;
 import lombok.Setter;
@@ -22,9 +21,13 @@ public class Trader extends AVillager {
     @Getter
     protected final TextComponent openMessage;
 
+    /**
+     * Niveau de difficulté des quêtes proposées par ce Trader (int ≥ 1).
+     * 0 = non défini (la difficulté sera tirée aléatoirement selon le niveau du monde).
+     */
     @Getter
     @Setter
-    private EQuestDifficulty questDifficulty = EQuestDifficulty.COMMON;
+    private int questDifficulty = 0;
 
     @Getter
     @Setter
@@ -35,7 +38,7 @@ public class Trader extends AVillager {
         this.merchantRecipe = merchantRecipe;
         this.displayName = displayName.color(NamedTextColor.AQUA);
         this.openMessage = openMessage.color(NamedTextColor.WHITE);
-        
+
         for (int i = 0; i < merchantRecipe.length; i++) {
             reputationRecipes.add(new ReputationRecipe(merchantRecipe[i], 0, messages[i]));
         }

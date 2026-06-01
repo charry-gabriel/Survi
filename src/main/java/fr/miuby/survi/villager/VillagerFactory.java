@@ -6,7 +6,6 @@ import fr.miuby.survi.blessing.Blessing;
 import fr.miuby.survi.blessing.BlessingEffect;
 import fr.miuby.survi.item.SimpleItemStack;
 import fr.miuby.survi.player.AlphaPlayer;
-import fr.miuby.survi.quest.EQuestDifficulty;
 import fr.miuby.survi.villager.trader.Trader;
 import fr.miuby.survi.villager.trader.TraderConfig;
 import fr.miuby.survi.villager.trader.TraderLoader;
@@ -66,8 +65,9 @@ public class VillagerFactory {
             if (config.job != null && !config.job.isEmpty()) {
                 trader.setJob(EJob.valueOf(config.job.toUpperCase()));
             }
-            if (config.questDifficulty != null && !config.questDifficulty.isEmpty()) {
-                trader.setQuestDifficulty(EQuestDifficulty.valueOf(config.questDifficulty.toUpperCase()));
+            // questDifficulty est maintenant un int : 0 = non défini (aléatoire), ≥1 = niveau fixe
+            if (config.questDifficulty > 0) {
+                trader.setQuestDifficulty(config.questDifficulty);
             }
 
             // Reputations recipes

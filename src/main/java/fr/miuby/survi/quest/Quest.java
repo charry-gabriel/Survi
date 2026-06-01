@@ -1,7 +1,10 @@
 package fr.miuby.survi.quest;
 
+import fr.miuby.survi.job.EJob;
 import lombok.Getter;
 import lombok.experimental.SuperBuilder;
+
+import java.util.List;
 
 /**
  * Quête journalière individuelle.
@@ -11,5 +14,17 @@ import lombok.experimental.SuperBuilder;
 @Getter
 @SuperBuilder
 public class Quest extends BaseQuest {
-    private final EQuestDifficulty difficulty;
+
+    /**
+     * Niveau de difficulté de la quête (entier ≥ 1, croissant = plus difficile).
+     * Remplace l'ancienne enum EQuestDifficulty (COMMON/RARE/LEGENDARY → 1/2/3).
+     */
+    private final int difficulty;
+
+    /**
+     * Métiers autorisés à recevoir cette quête.
+     * Liste vide = tous les métiers peuvent la recevoir.
+     * Permet de filtrer les quêtes selon le métier du joueur ou du Trader.
+     */
+    private final List<EJob> jobs;
 }

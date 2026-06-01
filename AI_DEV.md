@@ -812,7 +812,7 @@ Respecter le schéma correspondant quand on génère du contenu :
 |---|---|
 | Joueurs | `AlphaPlayer`, `AlphaPlayerFactory`, `PlayerPersistenceService`, `PlayerAttributeService` |
 | Rôles | `ERole`, `RoleLoader`, `RoleManagementService`, `roles.yml` |
-| Quêtes | `QuestManager`, `Quest`, `EQuestType`, `EQuestDifficulty`, `quests.yml` |
+| Quêtes | `QuestManager`, `Quest`, `EQuestType`, `quests.yml` — `difficulty` est un `int` (≥1), `EQuestDifficulty` supprimé ; `jobs` est une `List<EJob>` (vide = tous) |
 | Villageois | `VillagerFactory`, `VillagerLevel`, `BlessingLoader`, `villagers/*.yml` |
 | Monstres | `MobLevelManager`, `MobTypeConfig`, `monsters.yml` |
 | Mondes | `WorldInitializer`, `WorldLevelManager`, `WorldResetManager`, `EWorld` |

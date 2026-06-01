@@ -4,6 +4,7 @@ import fr.miuby.lib.log.MLLogManager;
 import fr.miuby.survi.GameManager;
 import fr.miuby.survi.blessing.BlessingEffect;
 import fr.miuby.survi.blessing.PotionsEffect;
+import fr.miuby.survi.job.EJob;
 import fr.miuby.survi.player.AlphaPlayer;
 import fr.miuby.survi.system.log.ELogTag;
 import fr.miuby.survi.villager.trader.Trader;
@@ -106,7 +107,14 @@ public class QuestManager {
 
             try {
                 QuestYamlLoader.BaseFields base = QuestYamlLoader.parseBase(map);
-                EQuestDifficulty difficulty = EQuestDifficulty.valueOf((String) map.get("difficulty"));
+
+                int difficulty = ((Number) map.get("difficulty")).intValue();
+
+                @SuppressWarnings("unchecked")
+                List<String> rawJobs = (List<String>) map.get("jobs");
+                List<EJob> jobs = (rawJobs == null || rawJobs.isEmpty())
+                        ? List.of()
+                        : rawJobs.stream().map(j -> EJob.valueOf(j.toUpperCase())).toList();
 
                 questPool.add(Quest.builder()
                         .id(base.id())
@@ -117,6 +125,7 @@ public class QuestManager {
                         .goal(base.goal())
                         .rewards(base.rewards())
                         .difficulty(difficulty)
+                        .jobs(jobs)
                         .build());
 
             } catch (Exception e) {
@@ -132,10 +141,12 @@ public class QuestManager {
     }
 
     /**
-     * Retourne une quête aléatoire de la difficulté donnée en évitant de répéter
+     * Retourne une quête aléatoire du niveau de difficulté donné en évitant de répéter
      * la dernière quête attribuée au joueur (persistée en DB, résiste aux restarts).
+     *
+     * @param difficulty niveau de difficulté (int, ex : 1 = facile, 2 = moyen, 3 = difficile)
      */
-    public Quest getRandomQuest(EQuestDifficulty difficulty, UUID playerUuid) {
+    public Quest getRandomQuest(int difficulty, UUID playerUuid) {
         List<Quest> filtered = questPool.stream()
                 .filter(q -> q.getDifficulty() == difficulty)
                 .toList();
@@ -155,18 +166,50 @@ public class QuestManager {
     }
 
     /**
-     * Rolls a quest difficulty whose distribution scales with the world level.
-     * At world level 0 the odds reproduce the original values (70 / 25 / 5).
-     * As the level rises, COMMON weight shrinks and LEGENDARY weight grows.
+     * Retourne une quête aléatoire du niveau de difficulté donné en évitant de répéter
+     * la dernière quête attribuée au joueur, restreinte aux quêtes du métier spécifié.
+     * Si aucune quête n'est trouvée pour ce métier, tombe sur toutes les quêtes de la difficulté.
      *
+     * @param difficulty niveau de difficulté
+     * @param job        métier pour filtrer (null = pas de filtre métier)
+     * @param playerUuid UUID du joueur pour l'anti-répétition
+     */
+    public Quest getRandomQuest(int difficulty, EJob job, UUID playerUuid) {
+        if (job == null) return getRandomQuest(difficulty, playerUuid);
+
+        List<Quest> filtered = questPool.stream()
+                .filter(q -> q.getDifficulty() == difficulty)
+                .filter(q -> q.getJobs().isEmpty() || q.getJobs().contains(job))
+                .toList();
+
+        if (filtered.isEmpty()) return getRandomQuest(difficulty, playerUuid);
+        if (filtered.size() == 1) return filtered.getFirst();
+
+        String lastId = GameManager.getInstance().getDatabase().quests().getLastQuestId(playerUuid);
+        List<Quest> candidates = filtered.stream()
+                .filter(q -> !q.getId().equals(lastId))
+                .toList();
+
+        return candidates.isEmpty()
+                ? filtered.get(random.nextInt(filtered.size()))
+                : candidates.get(random.nextInt(candidates.size()));
+    }
+
+    /**
+     * Tire aléatoirement un niveau de difficulté (int) dont la distribution
+     * évolue avec le niveau du monde.
+     * Au niveau 0 : répartition 70 / 25 / 5 (diff 1 / 2 / 3).
+     * Plus le niveau monte, moins la difficulté 1 est probable.
+     *
+     * @return niveau de difficulté (1, 2 ou 3)
      * @see WorldLevelManager#getQuestDifficultyWeights()
      */
-    public EQuestDifficulty getRandomDifficulty() {
+    public int getRandomDifficulty() {
         int[] weights = GameManager.getInstance().getWorldLevelManager().getQuestDifficultyWeights();
         int roll = random.nextInt(100);
-        if (roll < weights[2])                   return EQuestDifficulty.LEGENDARY;
-        if (roll < weights[2] + weights[1])      return EQuestDifficulty.RARE;
-        return EQuestDifficulty.COMMON;
+        if (roll < weights[2])              return 3;  // ex-LEGENDARY
+        if (roll < weights[2] + weights[1]) return 2;  // ex-RARE
+        return 1;                                       // ex-COMMON
     }
 
     /**
@@ -273,6 +316,8 @@ public class QuestManager {
 
     /**
      * Attribue une nouvelle quête au joueur s'il n'a pas atteint sa limite journalière.
+     * Si le Trader a un métier défini, seules les quêtes compatibles avec ce métier
+     * (ou sans restriction de métier) sont proposées.
      */
     public void assignQuest(AlphaPlayer player, Trader trader, boolean force) {
         // Vérifier si le joueur a encore une quête non réclamée
@@ -294,8 +339,8 @@ public class QuestManager {
             return;
         }
 
-        EQuestDifficulty difficulty = getRandomDifficulty();
-        Quest quest = getRandomQuest(difficulty, player.getUuid());
+        int difficulty = getRandomDifficulty();
+        Quest quest = getRandomQuest(difficulty, trader.getJob(), player.getUuid());
         if (quest == null) return;
 
         // Prochain slot = nombre total de quêtes du jour
@@ -308,7 +353,7 @@ public class QuestManager {
         GameManager.getInstance().getDatabase().quests().setLastQuestId(player.getUuid(), quest.getId());
 
         MLLogManager.getInstance().log(Level.FINE, ELogTag.QUEST,
-                "[AssignQuest] " + player.getPseudo() + " → " + quest.getId() + " (" + difficulty + ") slot=" + nextSlot);
+                "[AssignQuest] " + player.getPseudo() + " → " + quest.getId() + " (diff=" + difficulty + ") slot=" + nextSlot);
         player.getPlayer().sendMessage(Component.text("Nouvelle quête acceptée auprès de ", NamedTextColor.GREEN)
                 .append(Component.text(trader.getNameId(), NamedTextColor.AQUA))
                 .append(Component.text(" : ", NamedTextColor.GREEN))
@@ -338,10 +383,11 @@ public class QuestManager {
         GameManager.getInstance().getDatabase().quests().setLastQuestId(player.getUuid(), quest.getId());
 
         if (player.getPlayer() != null) {
+            String jobsStr = quest.getJobs().isEmpty() ? "tous" : quest.getJobs().stream().map(EJob::getDisplayName).reduce((a, b) -> a + ", " + b).orElse("tous");
             player.getPlayer().sendMessage(Component.text("[TEST] Quête de test assignée : ", NamedTextColor.YELLOW)
                     .append(Component.text(quest.getName(), NamedTextColor.GOLD)));
             player.getPlayer().sendMessage(Component.text(quest.getDescription(), NamedTextColor.GRAY));
-            player.getPlayer().sendMessage(Component.text("Objectif : " + quest.getGoal() + " | Difficulté : " + quest.getDifficulty().name(), NamedTextColor.DARK_GRAY));
+            player.getPlayer().sendMessage(Component.text("Objectif : " + quest.getGoal() + " | Difficulté : " + quest.getDifficulty() + " | Métiers : " + jobsStr, NamedTextColor.DARK_GRAY));
         }
     }
 
