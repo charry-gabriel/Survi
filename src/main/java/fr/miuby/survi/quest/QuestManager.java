@@ -141,6 +141,15 @@ public class QuestManager {
     }
 
     /**
+     * Indique si ce Trader a au moins une quête disponible dans le pool pour son métier.
+     * Si {@code job} est null, retourne true tant que le pool n'est pas vide.
+     */
+    public boolean hasAvailableQuestFor(EJob job) {
+        if (job == null) return !questPool.isEmpty();
+        return questPool.stream().anyMatch(q -> q.getJobs().contains(job));
+    }
+
+    /**
      * Retourne une quête aléatoire du niveau de difficulté donné en évitant de répéter
      * la dernière quête attribuée au joueur (persistée en DB, résiste aux restarts).
      *
@@ -179,10 +188,10 @@ public class QuestManager {
 
         List<Quest> filtered = questPool.stream()
                 .filter(q -> q.getDifficulty() == difficulty)
-                .filter(q -> q.getJobs().isEmpty() || q.getJobs().contains(job))
+                .filter(q -> q.getJobs().contains(job))
                 .toList();
 
-        if (filtered.isEmpty()) return getRandomQuest(difficulty, playerUuid);
+        if (filtered.isEmpty()) return null;
         if (filtered.size() == 1) return filtered.getFirst();
 
         String lastId = GameManager.getInstance().getDatabase().quests().getLastQuestId(playerUuid);

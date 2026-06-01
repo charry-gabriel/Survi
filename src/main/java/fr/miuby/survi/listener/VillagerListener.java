@@ -80,7 +80,8 @@ public class VillagerListener implements Listener {
                     // Priorité 2 : proposer une nouvelle quête si le joueur a encore des slots disponibles
                     // (getCurrentActiveQuest() == null signifie qu'il n'a pas de quête en cours non réclamée)
                     boolean canAcceptNewQuest = alphaPlayer.getCurrentActiveQuest() == null
-                            && alphaPlayer.countTodayQuests() < QuestManager.DAILY_QUEST_LIMIT;
+                            && alphaPlayer.countTodayQuests() < QuestManager.DAILY_QUEST_LIMIT
+                            && GameManager.getInstance().getQuestManager().hasAvailableQuestFor(trader.getJob());
 
                     if (canAcceptNewQuest) {
                         Component questMessage = Component.text("\n[Quête] ", NamedTextColor.GOLD)
