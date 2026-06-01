@@ -70,6 +70,11 @@
         "RARE"
       ]
     },
+    "questCompletionReputation": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Réputation fixe accordée au métier du trader lors du rendu de quête (0 = désactivé)"
+    },
     "openMessage": { "type": "string" },
     "mainHandItem": {
       "type": "string"

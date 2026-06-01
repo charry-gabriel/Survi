@@ -33,6 +33,10 @@ public class Trader extends AVillager {
     @Setter
     private EJob job = null;
 
+    @Getter
+    @Setter
+    private int questCompletionReputation = 0;
+
     public Trader(String nameId, TextComponent displayName, Villager.Type type, Villager.Profession profession, MerchantRecipe[] merchantRecipe, TextComponent[] messages, TextComponent openMessage) {
         super(nameId, type, profession, messages);
         this.merchantRecipe = merchantRecipe;

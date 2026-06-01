@@ -69,6 +69,7 @@ public class VillagerFactory {
             if (config.questDifficulty > 0) {
                 trader.setQuestDifficulty(config.questDifficulty);
             }
+            trader.setQuestCompletionReputation(config.questCompletionReputation);
 
             // Reputations recipes
             config.recipes.stream()
