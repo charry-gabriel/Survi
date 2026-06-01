@@ -45,6 +45,7 @@ public class AlphaPlayer extends MLPlayer implements Serializable {
     @Getter
     private final List<PlayerQuestData> activeQuests = new ArrayList<>();
 
+    @Getter
     @Setter
     private MLWorld world;
     @Getter
@@ -188,10 +189,6 @@ public class AlphaPlayer extends MLPlayer implements Serializable {
     }
 
     //region Getters Setters
-    public EWorld getWorld() {
-        return (EWorld) this.world.getType();
-    }
-
     public void resetPlayer(){
         this.player = null;
     }

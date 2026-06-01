@@ -36,7 +36,7 @@ public final class PlayerAttributeService {
     public void applyAttributesForRole(AlphaPlayer alphaPlayer, Role role) {
         if (alphaPlayer.getPlayer() == null || role == null) return;
         for (RoleAttribute attribute : role.attributes()) {
-            if (alphaPlayer.getWorld() != attribute.getWorld() && attribute.getWorld() != EWorld.ALL)
+            if (alphaPlayer.getWorld().getType() != attribute.getWorld() && attribute.getWorld() != EWorld.ALL)
                 continue;
             attribute.setRole(role.roleId());
             if (attribute.getAttributeType() == Attribute.MAX_HEALTH)

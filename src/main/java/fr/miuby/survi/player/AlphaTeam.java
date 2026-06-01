@@ -17,7 +17,7 @@ public class AlphaTeam {
         Random random = new Random();
         this.team = scoreboard.registerNewTeam(alphaPlayer.getPseudo() + random.nextInt());
 
-        MLWorld world = WorldRegistry.get(alphaPlayer.getWorld());
+        MLWorld world = alphaPlayer.getWorld();
         this.team.color(world.getColor());
         TextComponent prefix = Component.text(world.getName() + " - ");
 

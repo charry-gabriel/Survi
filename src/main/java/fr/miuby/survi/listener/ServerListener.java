@@ -7,7 +7,7 @@ import fr.miuby.survi.system.database.Errors;
 import fr.miuby.survi.player.AlphaPlayer;
 import fr.miuby.survi.quest.PlayerQuestData;
 import fr.miuby.survi.quest.Quest;
-import fr.miuby.survi.display.TutorialBookService;   // ← AJOUT
+import fr.miuby.survi.display.TutorialBookService;
 import fr.miuby.survi.system.log.ELogTag;
 import org.bukkit.NamespacedKey;
 import org.bukkit.attribute.Attribute;
@@ -36,9 +36,6 @@ public class ServerListener implements Listener {
 
         GameManager.getInstance().getAlphaPlayerFactory().onPlayerJoin(event.getPlayer());
 
-        // ── Livre de tutoriel pour les nouveaux joueurs ───────────────────────
-        // giveTutorialBookIfNew vérifie player.hasPlayedBefore() en interne.
-        // Le scheduler décale d'un tick pour s'assurer que l'inventaire est prêt.
         GameManager.getInstance().getPlugin().getServer().getScheduler()
                 .runTaskLater(
                         GameManager.getInstance().getPlugin(),
@@ -51,6 +48,10 @@ public class ServerListener implements Listener {
     public void onPlayerQuit(PlayerQuitEvent event) {
         MLLogManager.getInstance().log(Level.FINE, ELogTag.PLAYER,
                 "[Quit] " + event.getPlayer().getName());
+
+        // Retire les faux joueurs de la colonne info avant la déconnexion
+        GameManager.getInstance().getTabDisplayManager().removeInfoColumn(event.getPlayer());
+
         AlphaPlayer.get(event.getPlayer().getUniqueId()).resetPlayer();
     }
 

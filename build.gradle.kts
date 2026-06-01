@@ -1,5 +1,8 @@
 plugins {
     java
+    // paperweight-userdev : donne accès à net.minecraft.*, com.mojang.authlib, PaperAdventure, etc.
+    // Vérifier la dernière version compatible avec Paper 26.1 sur https://github.com/PaperMC/paperweight
+    id("io.papermc.paperweight.userdev") version "2.0.0-beta.21"
     id("com.gradleup.shadow") version "9.4.1"
 }
 
@@ -20,8 +23,9 @@ repositories {
 }
 
 dependencies {
-    compileOnly("io.papermc.paper:paper-api:26.1.2.build.66-stable")
-    testImplementation("io.papermc.paper:paper-api:26.1.2.build.66-stable")
+    // Remplace compileOnly("io.papermc.paper:paper-api:...").
+    // Inclut paper-api + NMS complet (net.minecraft.*, authlib, PaperAdventure) avec Mojang mappings.
+    paperweight.paperDevBundle("26.1.2.build.66-stable")
 
     compileOnly("org.projectlombok:lombok:1.18.38")
     annotationProcessor("org.projectlombok:lombok:1.18.38")
@@ -33,6 +37,8 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 
+    // Les tests n'ont pas accès au dev bundle → on re-déclare paper-api pour eux
+    testImplementation("io.papermc.paper:paper-api:26.1.2.build.66-stable")
     testImplementation("org.yaml:snakeyaml:2.3")
     compileOnly("org.apache.logging.log4j:log4j-core:2.19.0")
 }
@@ -58,5 +64,6 @@ tasks {
 
     build {
         dependsOn(shadowJar)
+        // Pas de reobfJar nécessaire : Paper 26.1 tourne nativement avec les Mojang mappings
     }
 }
