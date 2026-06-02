@@ -22,6 +22,12 @@ public class GrowthItemListener implements Listener {
 
     private static final Random RANDOM = new Random();
 
+    private final PlacedBlockTracker placedBlockTracker;
+
+    public GrowthItemListener(PlacedBlockTracker placedBlockTracker) {
+        this.placedBlockTracker = placedBlockTracker;
+    }
+
     // ─── Blocs minerais — grandit le GROWTH_CASQUE_MINEUR ────────────────────────
     private static final Set<Material> ORE_BLOCKS = EnumSet.of(
             Material.COAL_ORE,            Material.DEEPSLATE_COAL_ORE,
@@ -60,9 +66,11 @@ public class GrowthItemListener implements Listener {
     /**
      * Incrémente les uses du growth item tenu en main sur n'importe quel BlockBreakEvent.
      * Cible GROWTH_PICKAXE et GROWTH_SWORD (eventType = "BlockBreakEvent").
+     * Ignoré si le bloc a été posé par un joueur.
      */
     @EventHandler(ignoreCancelled = true)
     public void onBlockBreak(BlockBreakEvent event) {
+        if (placedBlockTracker.isPlaced(event.getBlock())) return;
         GrowthItems.IncrementUses(event.getPlayer(), "BlockBreakEvent");
     }
 
@@ -72,7 +80,8 @@ public class GrowthItemListener implements Listener {
 
     /**
      * Incrémente les uses du GROWTH_CASQUE_MINEUR (porté en slot HEAD)
-     * uniquement lorsque le bloc cassé est un minerai.
+     * uniquement lorsque le bloc cassé est un minerai généré naturellement.
+     * Un minerai posé par un joueur (puis recassé ou déplacé par piston) est ignoré.
      *
      * <p>Priorité NORMAL pour ne pas interférer avec la gestion des drops
      * de {@code JobListener} (priorité HIGH).
@@ -80,6 +89,7 @@ public class GrowthItemListener implements Listener {
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onOreBreak(BlockBreakEvent event) {
         if (!ORE_BLOCKS.contains(event.getBlock().getType())) return;
+        if (placedBlockTracker.isPlaced(event.getBlock())) return;
         GrowthItems.IncrementUsesFromHelmet(event.getPlayer(), "OreBreakEvent");
     }
 
@@ -88,7 +98,8 @@ public class GrowthItemListener implements Listener {
     // ─────────────────────────────────────────────────────────────────────────────
 
     /**
-     * Gère le GROWTH_BATON_FERMIER lors de la destruction d'une culture.
+     * Gère le GROWTH_BATON_FERMIER lors de la destruction d'une culture naturelle.
+     * Un bloc de culture posé par un joueur est entièrement ignoré (ni XP ni bonus de drops).
      *
      * <ol>
      *   <li>Si le joueur tient le bâton en main (principale ou secondaire), applique
@@ -96,7 +107,7 @@ public class GrowthItemListener implements Listener {
      *   <li>Incrémente ensuite les uses du bâton (via {@link GrowthItems#IncrementUses}).</li>
      * </ol>
      *
-     * <p>Le bonus de drops est ajouté sur les drops vanilla (sans les annuler) :
+     * <p>Le bonus de drops est ajouté sur les drops vanilla (sans les annuler) :</p>
      * <ul>
      *   <li>Tier 0 → pas de bonus</li>
      *   <li>Tier 1 → ×1,5 (50 % de chance d'un item supplémentaire par drop)</li>
@@ -111,6 +122,7 @@ public class GrowthItemListener implements Listener {
     public void onCropBreak(BlockBreakEvent event) {
         Block block = event.getBlock();
         if (!CROP_BLOCKS.contains(block.getType())) return;
+        if (placedBlockTracker.isPlaced(block)) return;
 
         Player player = event.getPlayer();
 

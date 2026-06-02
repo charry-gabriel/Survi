@@ -1,7 +1,8 @@
-package fr.miuby.survi.quest;
+package fr.miuby.survi.listener;
 
 import fr.miuby.survi.GameManager;
 import fr.miuby.survi.player.AlphaPlayer;
+import fr.miuby.survi.quest.EQuestType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -16,8 +17,20 @@ import org.bukkit.event.player.PlayerShearEntityEvent;
 
 public class QuestListener implements Listener {
 
+    private final PlacedBlockTracker placedBlockTracker;
+
+    public QuestListener(PlacedBlockTracker placedBlockTracker) {
+        this.placedBlockTracker = placedBlockTracker;
+    }
+
+    /**
+     * Progresse la quête MINE uniquement si le bloc est d'origine naturelle.
+     * Un bloc posé par un joueur — qu'il ait été simplement replacé, poussé par piston,
+     * ou les deux — est ignoré et ne compte pas pour les quêtes ni les global quests.
+     */
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onBlockBreak(BlockBreakEvent event) {
+        if (placedBlockTracker.isPlaced(event.getBlock())) return;
         AlphaPlayer player = AlphaPlayer.get(event.getPlayer().getUniqueId());
         if (player != null) {
             GameManager.getInstance().getQuestManager().progressQuest(player, EQuestType.MINE, event.getBlock().getType(), 1);

@@ -9,7 +9,7 @@ import fr.miuby.survi.item.CustomItemCommand;
 import fr.miuby.survi.listener.*;
 import fr.miuby.survi.quest.GlobalQuestCommand;
 import fr.miuby.survi.quest.QuestCommand;
-import fr.miuby.survi.quest.QuestListener;
+import fr.miuby.survi.listener.QuestListener;
 import fr.miuby.survi.role.RoleCommand;
 import fr.miuby.survi.system.command.SystemCommand;
 import fr.miuby.survi.system.time.TimeManager;
@@ -28,19 +28,24 @@ public class Survi extends JavaPlugin {
         TabSkins.load(this);
 
         PluginManager pluginManager = this.getServer().getPluginManager();
+
+        PlacedBlockTracker placedBlockTracker = new PlacedBlockTracker();
+
         pluginManager.registerEvents(new ServerListener(), this);
         pluginManager.registerEvents(new PlayerListener(), this);
         pluginManager.registerEvents(new DamageListener(), this);
         pluginManager.registerEvents(new WorldListener(), this);
         pluginManager.registerEvents(new ItemListener(), this);
         pluginManager.registerEvents(new AlphaPlayerListener(), this);
-        pluginManager.registerEvents(new GrowthItemListener(), this);
         pluginManager.registerEvents(new CropGrowthListener(), this);
         pluginManager.registerEvents(new VillagerListener(), this);
-        pluginManager.registerEvents(new QuestListener(), this);
         pluginManager.registerEvents(new GraveListener(), this);
         pluginManager.registerEvents(new JobListener(), this);
         pluginManager.registerEvents(new MobSpawnListener(), this);
+        pluginManager.registerEvents(new GrowthItemListener(placedBlockTracker), this);
+        pluginManager.registerEvents(new QuestListener(placedBlockTracker), this);
+
+        pluginManager.registerEvents(placedBlockTracker, this);
 
         getConfig().options().copyDefaults(true);
         saveConfig();
