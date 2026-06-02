@@ -1,6 +1,8 @@
 package fr.miuby.survi.listener;
 
+import fr.miuby.lib.world.WorldRegistry;
 import fr.miuby.survi.GameManager;
+import fr.miuby.survi.world.EWorld;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.event.EventHandler;
@@ -17,6 +19,9 @@ public class GraveListener implements Listener {
 
     @EventHandler
     public void onPlayerDeath(PlayerDeathEvent event) {
+        if (WorldRegistry.get(event.getPlayer().getWorld().getUID()).getType() == EWorld.VILLAGE)
+            return;
+
         boolean created = GameManager.getInstance().getGraveManager().createGrave(event.getEntity());
         if (created) {
             event.getDrops().clear();

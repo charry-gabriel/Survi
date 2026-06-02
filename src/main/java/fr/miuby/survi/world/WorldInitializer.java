@@ -80,6 +80,7 @@ public class WorldInitializer {
         WorldRegistry.register(mvVillage);
         village.setGameRule(GameRules.ADVANCE_TIME, false);
         village.setGameRule(GameRules.MOB_GRIEFING, false);
+        village.setGameRule(GameRules.KEEP_INVENTORY, true);
 
         // --- Wilderness (NORMAL, réinitialisable) ---
         String wildName = worlds.get(EWorld.WILDERNESS);
