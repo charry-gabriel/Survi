@@ -695,6 +695,7 @@ version Paper et seront écrasées au prochain run du test de toute façon.
 | `traders/*.yml` | `schema/traders-schema.json` | `TraderConfigTest` |
 | `recipes.yml` | `schema/recipes-schema.json` | `RecipesConfigTest` |
 | `global_quests.yml` | `schema/global-quests-schema.json` | `GlobalQuestConfigTest` |
+| `growth_items/*.yml` | `schema/growth-items-schema.json` | `GrowthItemConfigTest` |
 
 ---
 
@@ -774,6 +775,64 @@ Enregistrer dans `BlessingLoader` via la map `type → BlessingEffect`.
 
 ---
 
+## 13b. Growth items
+
+Les growth items sont des items qui accumulent des « uses » au fil des événements et gagnent
+en puissance par paliers. La configuration est **entièrement en YAML** — aucun code Java
+n'est nécessaire pour créer un nouvel item.
+
+### Architecture
+
+```
+growth_items/<id>.yml       → GrowthItemFileConfig  (POJO SnakeYAML)
+                                      ↓
+                            GrowthItemLoader.loadAll()
+                                      ↓
+                            GrowthConfig / GrowthTier / PeriodicEffect  (types runtime)
+                                      ↓
+                            GrowthItemRegistry.register(id, config)
+```
+
+`GrowthItems.init()` est appelé par `GameManager` — il délègue entièrement à `GrowthItemLoader`.
+
+### Ajouter un nouveau growth item
+
+1. Créer `src/main/resources/growth_items/<mon_item>.yml` (valider contre `schema/growth-items-schema.json`)
+2. Ajouter l'entrée dans `ECustomItem` (appeler `createGrowthItem(meta, "<MON_ITEM>")` avant le builder)
+3. Ajouter la gestion de l'événement dans `GrowthItemListener` si le `eventType` est nouveau
+4. Si l'item est en slot d'armure (HEAD, etc.) : appeler `GrowthItems.IncrementUsesFromHelmet()` au lieu de `IncrementUses()`
+
+### Types d'effets YAML disponibles
+
+| `type`            | Champs requis                                                     | Description |
+|---|---|---|
+| `name`            | `value`                                                           | Renomme l'item |
+| `message`         | `value`                                                           | Envoie un message au joueur |
+| `haste`           | `seconds`                                                         | Donne Haste II pendant N secondes |
+| `add_enchantment` | `enchantment` (clé minecraft), `amount`                          | Ajoute N niveaux à l'enchantement |
+| `set_attribute`   | `attribute`, `attributeValue`, `operation`, `slot`               | Remplace l'attribut (retire tous les anciens modifiers de cet attribut) |
+
+### Types d'événements disponibles
+
+| `eventType`             | Listener                     | Description |
+|---|---|---|
+| `BlockBreakEvent`       | `GrowthItemListener`         | Tout bloc cassé (item en main) |
+| `OreBreakEvent`         | `GrowthItemListener`         | Minerais uniquement (item en casque) |
+| `CropBreakEvent`        | `GrowthItemListener`         | Cultures uniquement (item en main) |
+
+Pour ajouter un `eventType` : créer un `@EventHandler` dans `GrowthItemListener` avec le filtre approprié,
+puis appeler `GrowthItems.IncrementUses(player, "MonNouvelEventType")` ou `IncrementUsesFromHelmet`.
+
+### Clés PDC d'un growth item
+
+| Clé NamespacedKey | Type | Contenu |
+|---|---|---|
+| `growth_id`    | `STRING`  | ID du growth item (ex. `GROWTH_CASQUE_MINEUR`) |
+| `growth_uses`  | `INTEGER` | Nombre d'utilisations cumulées |
+| `growth_tier`  | `INTEGER` | Palier actuel (0 = aucun palier atteint) |
+
+---
+
 ## 14. Schémas JSON pour les YAML de contenu
 
 Respecter le schéma correspondant quand on génère du contenu :
@@ -786,6 +845,7 @@ Respecter le schéma correspondant quand on génère du contenu :
 | `villagers/*.yml` | `schema/villagers-schema.json` |
 | `traders/*.yml` | `schema/traders-schema.json` |
 | `recipes.yml` | `schema/recipes-schema.json` |
+| `growth_items/*.yml` | `schema/growth-items-schema.json` |
 
 ---
 
@@ -812,11 +872,12 @@ Respecter le schéma correspondant quand on génère du contenu :
 |---|---|
 | Joueurs | `AlphaPlayer`, `AlphaPlayerFactory`, `PlayerPersistenceService`, `PlayerAttributeService` |
 | Rôles | `ERole`, `RoleLoader`, `RoleManagementService`, `roles.yml` |
-| Quêtes | `QuestManager`, `Quest`, `EQuestType`, `quests.yml` — `difficulty` est un `int` (≥1), `EQuestDifficulty` supprimé ; `jobs` est une `List<EJob>` (vide = tous) |
+| Quêtes | `QuestManager`, `Quest`, `EQuestType`, `EQuestDifficulty`, `quests.yml` |
 | Villageois | `VillagerFactory`, `VillagerLevel`, `BlessingLoader`, `villagers/*.yml` |
 | Monstres | `MobLevelManager`, `MobTypeConfig`, `monsters.yml` |
 | Mondes | `WorldInitializer`, `WorldLevelManager`, `WorldResetManager`, `EWorld` |
 | Items | `ECustomItem`, `CustomItemBuilder`, `CustomRecipeFactory`, `recipes.yml` |
+| Growth items | `GrowthItems`, `GrowthItemLoader`, `GrowthItemFileConfig`, `GrowthItemListener`, `GrowthItemRegistry`, `growth_items/*.yml` |
 | Métiers | `EJob`, `JobLevelConfig`, `JobListener` |
 | DB | `MLSQLite` + `MLRepository` (MiubyLib), `Database`, `SQLite`, repositories dans `system/database/repository/` |
 

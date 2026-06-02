@@ -1,0 +1,30 @@
+# yaml-language-server: $schema=../../schema/growth-items-schema.json
+id: GROWTH_BATON_FERMIER
+eventType: CropBreakEvent
+
+# Grandit en cassant des cultures matures (CropBreakEvent dans GrowthItemListener).
+# Tenu en main secondaire — la houe reste libre en main principale.
+# Le bonus de drops (×1.5 / ×2.0 / ×2.5) est appliqué directement dans
+# GrowthItemListener.applyBatonCropBonus() en lisant TIER_KEY — pas via ItemEffect.
+
+tiers:
+  - requiredUses: 20
+    effects:
+      - { type: name,    value: "Bâton du Fermier II" }
+      - { type: message, value: "Ton bâton grandit — tes récoltes s'améliorent (×1.5) !" }
+
+  - requiredUses: 50
+    effects:
+      - { type: name,    value: "Bâton du Fermier III" }
+      - { type: message, value: "Excellent ! Tes récoltes doublent maintenant (×2.0) !" }
+
+  - requiredUses: 90
+    effects:
+      - { type: name,    value: "Bâton du Grand Fermier" }
+      - { type: message, value: "Bâton de légende — tes champs débordent (×2.5) !" }
+
+periodicEffects:
+  - everyUses: 12
+    effects:
+      - { type: haste,   seconds: 6 }
+      - { type: message, value: "Un élan de vitalité te traverse !" }

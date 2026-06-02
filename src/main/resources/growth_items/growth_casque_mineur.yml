@@ -1,0 +1,32 @@
+# yaml-language-server: $schema=../../schema/growth-items-schema.json
+id: GROWTH_CASQUE_MINEUR
+eventType: OreBreakEvent
+
+# Grandit en minant des minerais (OreBreakEvent dans GrowthItemListener).
+# Laisse la pioche libre — le joueur peut l'enchanter comme il veut.
+# set_attribute remplace la valeur initiale posée dans ECustomItem à chaque palier.
+
+tiers:
+  - requiredUses: 15
+    effects:
+      - { type: name,          value: "Casque de Mineur II" }
+      - { type: set_attribute, attribute: mining_efficiency, attributeValue: 8.0, operation: ADD_NUMBER, slot: HEAD }
+      - { type: message,       value: "Ton casque grandit — tu mines un peu plus vite !" }
+
+  - requiredUses: 35
+    effects:
+      - { type: name,          value: "Casque de Mineur III" }
+      - { type: set_attribute, attribute: mining_efficiency, attributeValue: 14.0, operation: ADD_NUMBER, slot: HEAD }
+      - { type: message,       value: "Impressionnant ! Tu tailles dans la roche comme dans du beurre." }
+
+  - requiredUses: 65
+    effects:
+      - { type: name,          value: "Casque du Maître Mineur" }
+      - { type: set_attribute, attribute: mining_efficiency, attributeValue: 22.0, operation: ADD_NUMBER, slot: HEAD }
+      - { type: message,       value: "Casque de légende. Tu es le roi des profondeurs." }
+
+periodicEffects:
+  - everyUses: 10
+    effects:
+      - { type: haste,   seconds: 8 }
+      - { type: message, value: "Un souffle de haste surgit de ton casque !" }
