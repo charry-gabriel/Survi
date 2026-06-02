@@ -11,20 +11,10 @@ global_quests:
     goal: 200
     time_limit: 3600
     rewards:
-      - type: REPUTATION
-        job: COMBATANT
-        value: 60
-      - type: REPUTATION
-        job: CHASSEUR
-        value: 40
-      - type: POTION
-        potion: strength
-        duration: 1728000
-        amplifier: 1
-      - type: POTION
-        potion: resistance
-        duration: 1728000
-        amplifier: 0
+      - {type: REPUTATION, job: COMBATANT, value: 60}
+      - {type: REPUTATION, job: CHASSEUR, value: 40}
+      - {type: POTION, potion: strength, duration: 1728000, amplifier: 1}
+      - {type: POTION, potion: resistance, duration: 1728000, amplifier: 0}
 
   - id: "global_kill_wither_skeleton"
     name: "Armée des Wither Squelettes"
@@ -34,23 +24,11 @@ global_quests:
     goal: 80
     time_limit: 5400
     rewards:
-      - type: REPUTATION
-        job: COMBATANT
-        value: 80
-      - type: REPUTATION
-        job: CHASSEUR
-        value: 50
-      - type: REPUTATION
-        job: AVENTURIER
-        value: 30
-      - type: POTION
-        potion: fire_resistance
-        duration: 1728000
-        amplifier: 0
-      - type: POTION
-        potion: strength
-        duration: 1728000
-        amplifier: 1
+      - {type: REPUTATION, job: COMBATANT, value: 80}
+      - {type: REPUTATION, job: CHASSEUR, value: 50}
+      - {type: REPUTATION, job: AVENTURIER, value: 30}
+      - {type: POTION, potion: fire_resistance, duration: 1728000, amplifier: 0}
+      - {type: POTION, potion: strength, duration: 1728000, amplifier: 1}
 
   - id: "global_kill_blaze"
     name: "Extinction des Blazes"
@@ -60,20 +38,10 @@ global_quests:
     goal: 150
     time_limit: 4800
     rewards:
-      - type: REPUTATION
-        job: COMBATANT
-        value: 70
-      - type: REPUTATION
-        job: ALCHIMISTE
-        value: 40
-      - type: POTION
-        potion: fire_resistance
-        duration: 1728000
-        amplifier: 0
-      - type: POTION
-        potion: haste
-        duration: 1728000
-        amplifier: 1
+      - {type: REPUTATION, job: COMBATANT, value: 70}
+      - {type: REPUTATION, job: ALCHIMISTE, value: 40}
+      - {type: POTION, potion: fire_resistance, duration: 1728000, amplifier: 0}
+      - {type: POTION, potion: haste, duration: 1728000, amplifier: 1}
 
   - id: "global_kill_guardian"
     name: "Terreur des Abysses"
@@ -83,25 +51,11 @@ global_quests:
     goal: 100
     time_limit: 5400
     rewards:
-      - type: REPUTATION
-        job: COMBATANT
-        value: 75
-      - type: REPUTATION
-        job: PECHEUR
-        value: 40
-      - type: REPUTATION
-        job: AVENTURIER
-        value: 25
-      - type: POTION
-        potion: water_breathing
-        duration: 1728000
-        amplifier: 0
-      - type: POTION
-        potion: strength
-        duration: 1728000
-        amplifier: 1
-
-  # ─── Minage ───────────────────────────────────────────────────────────────
+      - {type: REPUTATION, job: COMBATANT, value: 75}
+      - {type: REPUTATION, job: PECHEUR, value: 40}
+      - {type: REPUTATION, job: AVENTURIER, value: 25}
+      - {type: POTION, potion: water_breathing, duration: 1728000, amplifier: 0}
+      - {type: POTION, potion: strength, duration: 1728000, amplifier: 1}
 
   - id: "global_mine_ancient_debris"
     name: "Ruée vers la Nétherite"
@@ -111,20 +65,10 @@ global_quests:
     goal: 50
     time_limit: 7200
     rewards:
-      - type: REPUTATION
-        job: MINEUR
-        value: 100
-      - type: REPUTATION
-        job: FORGERON
-        value: 60
-      - type: POTION
-        potion: haste
-        duration: 1728000
-        amplifier: 2
-      - type: POTION
-        potion: fire_resistance
-        duration: 1728000
-        amplifier: 0
+      - {type: REPUTATION, job: MINEUR, value: 100}
+      - {type: REPUTATION, job: FORGERON, value: 60}
+      - {type: POTION, potion: haste, duration: 1728000, amplifier: 2}
+      - {type: POTION, potion: fire_resistance, duration: 1728000, amplifier: 0}
 
   - id: "global_mine_obsidian"
     name: "Chantier d'Obsidienne"
@@ -134,18 +78,9 @@ global_quests:
     goal: 500
     time_limit: 5400
     rewards:
-      - type: REPUTATION
-        job: MINEUR
-        value: 80
-      - type: REPUTATION
-        job: BATISSEUR
-        value: 50
-      - type: POTION
-        potion: haste
-        duration: 1728000
-        amplifier: 1
-
-  # ─── Pêche ────────────────────────────────────────────────────────────────
+      - {type: REPUTATION, job: MINEUR, value: 80}
+      - {type: REPUTATION, job: BATISSEUR, value: 50}
+      - {type: POTION, potion: haste, duration: 1728000, amplifier: 1}
 
   - id: "global_fish_marathon"
     name: "Marathon de Pêche"
@@ -155,18 +90,9 @@ global_quests:
     goal: 300
     time_limit: 5400
     rewards:
-      - type: REPUTATION
-        job: PECHEUR
-        value: 80
-      - type: REPUTATION
-        job: FERMIER
-        value: 30
-      - type: POTION
-        potion: luck
-        duration: 1728000
-        amplifier: 2
-
-  # ─── Élevage ──────────────────────────────────────────────────────────────
+      - {type: REPUTATION, job: PECHEUR, value: 80}
+      - {type: REPUTATION, job: FERMIER, value: 30}
+      - {type: POTION, potion: luck, duration: 1728000, amplifier: 2}
 
   - id: "global_breed_farming"
     name: "Grande Ferme Commune"
@@ -176,18 +102,9 @@ global_quests:
     goal: 100
     time_limit: 5400
     rewards:
-      - type: REPUTATION
-        job: FERMIER
-        value: 80
-      - type: REPUTATION
-        job: MARCHAND
-        value: 40
-      - type: POTION
-        potion: saturation
-        duration: 1728000
-        amplifier: 1
-
-  # ─── Craft / Forge ────────────────────────────────────────────────────────
+      - {type: REPUTATION, job: FERMIER, value: 80}
+      - {type: REPUTATION, job: MARCHAND, value: 40}
+      - {type: POTION, potion: saturation, duration: 1728000, amplifier: 1}
 
   - id: "global_smelt_iron"
     name: "Grande Fonderie"
@@ -197,20 +114,8 @@ global_quests:
     goal: 1000
     time_limit: 7200
     rewards:
-      - type: REPUTATION
-        job: FORGERON
-        value: 90
-      - type: REPUTATION
-        job: MINEUR
-        value: 40
-      - type: REPUTATION
-        job: MARCHAND
-        value: 30
-      - type: POTION
-        potion: haste
-        duration: 1728000
-        amplifier: 1
-      - type: POTION
-        potion: fire_resistance
-        duration: 1728000
-        amplifier: 0
+      - {type: REPUTATION, job: FORGERON, value: 90}
+      - {type: REPUTATION, job: MINEUR, value: 40}
+      - {type: REPUTATION, job: MARCHAND, value: 30}
+      - {type: POTION, potion: haste, duration: 1728000, amplifier: 1}
+      - {type: POTION, potion: fire_resistance, duration: 1728000, amplifier: 0}

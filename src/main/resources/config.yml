@@ -30,27 +30,13 @@ reputation:
   # L'id doit correspondre exactement au nom de l'entrée dans l'enum GlobalRank.
   # Doit rester trié du seuil le plus bas au plus haut.
   ranks:
-    - id: INCONNU
-      threshold: 0
-      display: "Inconnu"
-    - id: NOVICE
-      threshold: 50
-      display: "Novice"
-    - id: APPRENTI
-      threshold: 150
-      display: "Apprenti"
-    - id: MARCHAND
-      threshold: 350
-      display: "Marchand"
-    - id: EXPERT
-      threshold: 700
-      display: "Expert"
-    - id: MAITRE
-      threshold: 1200
-      display: "Maître"
-    - id: LEGENDAIRE
-      threshold: 2000
-      display: "Légendaire"
+    - {id: INCONNU, threshold: 0, display: "Inconnu"}
+    - {id: NOVICE, threshold: 50, display: "Novice"}
+    - {id: APPRENTI, threshold: 150, display: "Apprenti"}
+    - {id: MARCHAND, threshold: 350, display: "Marchand"}
+    - {id: EXPERT, threshold: 700, display: "Expert"}
+    - {id: MAITRE, threshold: 1200, display: "Maître"}
+    - {id: LEGENDAIRE, threshold: 2000, display: "Légendaire"}
 
 # ─── Métiers ────────────────────────────────────────────────────────────────────
 jobs:
@@ -67,28 +53,17 @@ jobs:
   #     niv. 3  → 9 XP max,  enchantements niv. III max (ex. Efficacité III)
   #     niv. 10 → 30 XP max, enchantements niv. X max (aucune restriction pratique)
   levels:
-    - threshold: 0
-      name: "Débutant"
-    - threshold: 20
-      name: "Novice"
-    - threshold: 50
-      name: "Apprenti"
-    - threshold: 100
-      name: "Adepte"
-    - threshold: 175
-      name: "Confirmé"
-    - threshold: 280
-      name: "Journalier"
-    - threshold: 420
-      name: "Expert"
-    - threshold: 600
-      name: "Artisan"
-    - threshold: 850
-      name: "Maître"
-    - threshold: 1200
-      name: "Grand Maître"
-    - threshold: 1700
-      name: "Légendaire"
+    - {threshold: 0, name: "Débutant"}
+    - {threshold: 20, name: "Novice"}
+    - {threshold: 50, name: "Apprenti"}
+    - {threshold: 100, name: "Adepte"}
+    - {threshold: 175, name: "Confirmé"}
+    - {threshold: 280, name: "Journalier"}
+    - {threshold: 420, name: "Expert"}
+    - {threshold: 600, name: "Artisan"}
+    - {threshold: 850, name: "Maître"}
+    - {threshold: 1200, name: "Grand Maître"}
+    - {threshold: 1700, name: "Légendaire"}
 
 # ─── Niveau du Monde ────────────────────────────────────────────────────────────
 world-level:
