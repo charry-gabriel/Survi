@@ -130,7 +130,7 @@ public class AlphaPlayer extends MLPlayer implements Serializable {
         this.world = WorldRegistry.get(getPlayer().getWorld().getUID());
         GameManager.getInstance().getAlphaPlayerFactory().sendToPlayers(this);
 
-        GameManager.getInstance().getVillagerFactory().applyAllCurrentBlessing(this);
+        GameManager.getInstance().getAlphaPlayerFactory().getEffectRestoreService().restoreOnJoin(this);
         GameManager.getInstance().getAlphaPlayerFactory().setPlayersToTeam(this.scoreboard);
 
         this.getAlphaLife().actualizeDeath();

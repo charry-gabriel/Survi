@@ -565,6 +565,10 @@ public class MonEffet extends BlessingEffect {
 
 Enregistrer dans `BlessingLoader` via la map `type → BlessingEffect`.
 
+**Réapplication à la connexion** : `PlayerEffectRestoreService.restoreOnJoin(player)` réapplique tous les effets de blessings actifs et envoie un récapitulatif "État actif". C'est le point central pour tout effet persistant à rétablir à la reconnexion — pas `VillagerFactory`.
+
+**Notifications offline** : `OfflineNotificationService` accumule les `VillagerLevelUpEvent`, `AlphaPlayerJobLevelUpEvent` et `WorldLevelUpEvent` survenus pendant l'absence d'un joueur, et les délivre groupés au join (priority HIGH, après l'application des effets).
+
 ---
 
 ## 13b. Growth items
@@ -645,7 +649,7 @@ growth_items/<id>.yml → GrowthItemFileConfig → GrowthItemLoader → GrowthIt
 
 | Sous-système | Fichiers à lire avant de modifier |
 |---|---|
-| Joueurs | `AlphaPlayer`, `AlphaPlayerFactory`, `PlayerPersistenceService`, `PlayerAttributeService` |
+| Joueurs | `AlphaPlayer`, `AlphaPlayerFactory`, `PlayerPersistenceService`, `PlayerAttributeService`, `PlayerEffectRestoreService`, `OfflineNotificationService` |
 | Rôles | `ERole`, `RoleLoader`, `RoleManagementService`, `roles.yml` |
 | Quêtes | `QuestManager`, `Quest`, `EQuestType`, `quests.yml` |
 | Villageois | `VillagerFactory`, `VillagerLevel`, `BlessingLoader`, `villagers/*.yml` |

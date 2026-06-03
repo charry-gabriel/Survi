@@ -10,6 +10,7 @@ import fr.miuby.survi.listener.*;
 import fr.miuby.survi.quest.GlobalQuestCommand;
 import fr.miuby.survi.quest.QuestCommand;
 import fr.miuby.survi.listener.QuestListener;
+import fr.miuby.survi.player.service.OfflineNotificationService;
 import fr.miuby.survi.role.RoleCommand;
 import fr.miuby.survi.system.command.SystemCommand;
 import fr.miuby.survi.system.time.TimeManager;
@@ -43,6 +44,7 @@ public class Survi extends JavaPlugin {
         pluginManager.registerEvents(new JobListener(), this);
         pluginManager.registerEvents(new JobLevelUpListener(), this);
         pluginManager.registerEvents(new WorldLevelUpListener(), this);
+        pluginManager.registerEvents(new OfflineNotificationService(), this);
         pluginManager.registerEvents(new MobSpawnListener(), this);
         pluginManager.registerEvents(new GrowthItemListener(placedBlockTracker), this);
         pluginManager.registerEvents(new QuestListener(placedBlockTracker), this);

@@ -4,6 +4,7 @@ import fr.miuby.lib.player.MLPlayerRegistry;
 import fr.miuby.survi.GameManager;
 import fr.miuby.survi.player.service.PlayerAttributeService;
 import fr.miuby.survi.player.service.PlayerPersistenceService;
+import fr.miuby.survi.player.service.PlayerEffectRestoreService;
 import fr.miuby.survi.role.Role;
 import fr.miuby.survi.system.exception.AlphaPlayerNotFoundException;
 import lombok.Getter;
@@ -18,6 +19,8 @@ public class AlphaPlayerFactory {
     private final PlayerAttributeService attributeService = new PlayerAttributeService();
     @Getter
     private final PlayerPersistenceService persistenceService = new PlayerPersistenceService(GameManager.getInstance().getDatabase().players());
+    @Getter
+    private final PlayerEffectRestoreService effectRestoreService = new PlayerEffectRestoreService();
 
     public AlphaPlayer get(UUID uuid) {
         return registry.get(uuid);

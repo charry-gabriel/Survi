@@ -4,26 +4,23 @@ import fr.miuby.lib.villager.MLVillager;
 import fr.miuby.lib.villager.VillagerRegistry;
 import fr.miuby.survi.blessing.Blessing;
 import fr.miuby.survi.blessing.BlessingEffect;
+import fr.miuby.survi.blessing.BlessingLoader;
 import fr.miuby.survi.item.SimpleItemStack;
-import fr.miuby.survi.player.AlphaPlayer;
 import fr.miuby.survi.villager.trader.Trader;
 import fr.miuby.survi.villager.trader.TraderConfig;
 import fr.miuby.survi.villager.trader.TraderLoader;
 import fr.miuby.survi.villager.villagerlevel.Tribute;
 import fr.miuby.survi.villager.villagerlevel.VillagerLevel;
 import fr.miuby.survi.villager.villagerlevel.VillagerLevelLoader;
-import fr.miuby.survi.blessing.BlessingLoader;
+import fr.miuby.survi.job.EJob;
 import lombok.Getter;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
-import net.kyori.adventure.text.format.NamedTextColor;
-import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.*;
 import org.bukkit.entity.Villager;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.MerchantRecipe;
 
-import fr.miuby.survi.job.EJob;
 import java.time.Duration;
 import java.util.List;
 
@@ -39,7 +36,6 @@ public class VillagerFactory {
 
         TraderLoader.loadAll().forEach(this::addNewTrader);
     }
-
 
     private void addNewTrader(TraderConfig config) {
         Villager.Type type = Registry.VILLAGER_TYPE.get(NamespacedKey.minecraft(config.type.toLowerCase()));
@@ -67,7 +63,6 @@ public class VillagerFactory {
             }
             trader.setQuestCompletionReputation(config.questCompletionReputation);
 
-            // Reputations recipes
             config.recipes.stream()
                     .filter(r -> r.requiredReputation > 0)
                     .forEach(r -> {
@@ -117,31 +112,5 @@ public class VillagerFactory {
                 .filter(Trader.class::isInstance)
                 .map(v -> (Trader) v)
                 .toList();
-    }
-
-    public void applyAllCurrentBlessing(AlphaPlayer player) {
-        TextComponent.Builder builder = Component.text();
-
-        for (MLVillager villager : VillagerRegistry.getAll()) {
-            if (!(villager instanceof VillagerLevel villagerLevel))
-                continue;
-
-            villagerLevel.applyAllCurrentBlessing(player);
-
-            Component recap = villagerLevel.getRecapMessage();
-            if (recap != null && !PlainTextComponentSerializer.plainText().serialize(recap).isBlank()) {
-                builder.append(recap).append(Component.newline());
-            }
-        }
-
-        Component globalText = builder.build();
-        if (PlainTextComponentSerializer.plainText().serialize(globalText).isBlank())
-            return;
-
-        player.getPlayer().sendMessage(Component.text()
-                .append(Component.text("-------------------- Récapitulatif --------------------\n", NamedTextColor.AQUA))
-                .append(globalText)
-                .append(Component.text("----------------------------------------------------", NamedTextColor.AQUA))
-                .build());
     }
 }
