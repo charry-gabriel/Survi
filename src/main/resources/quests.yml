@@ -23,7 +23,7 @@ quests:
     difficulty: 1
     jobs:
       - MINEUR
-    target: [COAL_ORE]
+    targets: [COAL_ORE]
     goal: 12
     rewards:
       - {type: REPUTATION, job: MINEUR, value: 1}
@@ -36,7 +36,7 @@ quests:
     difficulty: 1
     jobs:
       - MINEUR
-    target: IRON_ORE
+    targets: [IRON_ORE]
     goal: 10
     rewards:
       - {type: REPUTATION, job: MINEUR, value: 1}
@@ -49,7 +49,7 @@ quests:
     difficulty: 1
     jobs:
       - MINEUR
-    target: COPPER_ORE
+    targets: [COPPER_ORE]
     goal: 16
     rewards:
       - {type: REPUTATION, job: MINEUR, value: 1}
@@ -62,7 +62,7 @@ quests:
     difficulty: 1
     jobs:
       - MINEUR
-    target: REDSTONE_ORE
+    targets: [REDSTONE_ORE]
     goal: 24
     rewards:
       - {type: REPUTATION, job: MINEUR, value: 1}
@@ -75,7 +75,7 @@ quests:
     difficulty: 1
     jobs:
       - MINEUR
-    target: DEEPSLATE
+    targets: DEEPSLATE
     goal: 96
     rewards:
       - { type: REPUTATION, job: MINEUR, value: 2}
@@ -88,7 +88,7 @@ quests:
     difficulty: 1
     jobs:
       - MINEUR
-    target: ORE
+    targets: ORE
     goal: 20
     rewards:
       - {type: REPUTATION, job: MINEUR, value: 1}
@@ -299,7 +299,7 @@ quests:
     difficulty: 2
     jobs:
       - MINEUR
-    target: DEEPSLATE_DIAMOND_ORE
+    targets: DEEPSLATE_DIAMOND_ORE
     goal: 8
     rewards:
       - {type: REPUTATION, job: MINEUR, value: 3}
@@ -313,7 +313,7 @@ quests:
     difficulty: 2
     jobs:
       - MINEUR
-    target: NETHER_QUARTZ_ORE
+    targets: NETHER_QUARTZ_ORE
     goal: 64
     rewards:
       - {type: REPUTATION, job: MINEUR, value: 2}
@@ -327,7 +327,7 @@ quests:
     difficulty: 2
     jobs:
       - MINEUR
-    target: NETHER_GOLD_ORE
+    targets: NETHER_GOLD_ORE
     goal: 32
     rewards:
       - { type: REPUTATION, job: MINEUR, value: 2}
@@ -342,7 +342,7 @@ quests:
     difficulty: 2
     jobs:
       - MINEUR
-    target: DEEPSLATE_IRON_ORE
+    targets: DEEPSLATE_IRON_ORE
     goal: 60
     rewards:
       - {type: REPUTATION, job: MINEUR, value: 2}
@@ -355,7 +355,7 @@ quests:
     difficulty: 2
     jobs:
       - MINEUR
-    target: AMETHYST_BLOCK
+    targets: AMETHYST_BLOCK
     goal: 48
     rewards:
       - {type: REPUTATION, job: MINEUR, value: 2}
@@ -368,7 +368,7 @@ quests:
     difficulty: 2
     jobs:
       - MINEUR
-    target: DEEPSLATE_IRON_ORE
+    targets: DEEPSLATE_IRON_ORE
     goal: 60
     rewards:
       - {type: REPUTATION, job: MINEUR, value: 28}
@@ -382,7 +382,7 @@ quests:
     difficulty: 2
     jobs:
       - MINEUR
-    target: SCULK
+    targets: SCULK
     goal: 64
     rewards:
       - {type: REPUTATION, job: MINEUR, value: 3}
@@ -530,7 +530,7 @@ quests:
     difficulty: 3
     jobs:
       - MINEUR
-    target: ANCIENT_DEBRIS
+    targets: ANCIENT_DEBRIS
     goal: 6
     rewards:
       - { type: REPUTATION, job: MINEUR, value: 4}
@@ -543,7 +543,7 @@ quests:
     difficulty: 3
     jobs:
       - MINEUR
-    target: END_STONE
+    targets: END_STONE
     goal: 512
     rewards:
       - {type: REPUTATION, job: MINEUR, value: 4}
@@ -555,7 +555,7 @@ quests:
     difficulty: 3
     jobs:
       - MINEUR
-    target: CHORUS_PLANT
+    targets: CHORUS_PLANT
     goal: 64
     rewards:
       - {type: REPUTATION, job: MINEUR, value: 4}
@@ -567,7 +567,7 @@ quests:
     difficulty: 3
     jobs:
       - MINEUR
-    target: EMERALD_ORE
+    targets: EMERALD_ORE
     goal: 2
     rewards:
       - {type: REPUTATION, job: MINEUR, value: 5}
