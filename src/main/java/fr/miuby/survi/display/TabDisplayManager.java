@@ -20,8 +20,13 @@ import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.Team;
 
+import fr.miuby.survi.system.time.TimeManager;
+import fr.miuby.survi.world.WorldResetManager;
+
 import java.text.DecimalFormat;
+import java.time.Duration;
 import java.time.LocalDate;
+import java.time.ZonedDateTime;
 import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.List;
@@ -193,6 +198,12 @@ public class TabDisplayManager {
                 .append(formatStat(alphaPlayer, Attribute.LUCK, "Chance"))
                 .appendNewline();
 
+        // Reset Wilderness
+        Component resetLine = buildWildernessResetLine();
+        if (!resetLine.equals(Component.empty())) {
+            footer = footer.append(resetLine).appendNewline();
+        }
+
         // Quêtes (si actives)
         Component questLine  = buildQuestLine(alphaPlayer);
         Component globalLine = buildGlobalQuestLine();
@@ -247,6 +258,25 @@ public class TabDisplayManager {
                 .append(Component.text(progressBar(progress, goal, 8), NamedTextColor.GREEN))
                 .append(Component.text("]", NamedTextColor.DARK_GRAY))
                 .append(Component.text(" ⏰" + formatTime(remaining), NamedTextColor.GRAY));
+    }
+
+    // ─── Reset Wilderness ─────────────────────────────────────────────────────
+
+    private Component buildWildernessResetLine() {
+        WorldResetManager wrm = GameManager.getInstance().getWorldResetManager();
+        TimeManager tm = GameManager.getInstance().getTimeManager();
+
+        ZonedDateTime nextReset = wrm.getNextWildernessResetTime(tm.getServerTimezone());
+        if (nextReset == null) return Component.empty(); // resets désactivés
+
+        ZonedDateTime now = ZonedDateTime.now(tm.getServerTimezone());
+        if (!now.isBefore(nextReset)) {
+            return Component.text("⏰ Wilderness : reset imminent !", NamedTextColor.YELLOW);
+        }
+
+        Duration remaining = Duration.between(now, nextReset);
+        return Component.text("⏰ Wilderness : ", NamedTextColor.GRAY)
+                .append(Component.text("reset dans " + TimeManager.formatTime(remaining), NamedTextColor.YELLOW));
     }
 
     // ─── Nettoyage déconnexion ────────────────────────────────────────────────────

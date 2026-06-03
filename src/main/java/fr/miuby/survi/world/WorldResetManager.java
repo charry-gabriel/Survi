@@ -3,6 +3,7 @@ package fr.miuby.survi.world;
 import fr.miuby.lib.world.WorldRegistry;
 import fr.miuby.survi.GameManager;
 import fr.miuby.lib.log.MLLogManager;
+import fr.miuby.survi.system.SurviConfig;
 import fr.miuby.survi.system.log.ELogTag;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -12,6 +13,8 @@ import org.bukkit.Material;
 import org.bukkit.World;
 
 import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.logging.Level;
 
 public class WorldResetManager {
@@ -167,7 +170,30 @@ public class WorldResetManager {
         GameManager.getInstance().getDatabase().system().saveServerData("reset_freq", String.valueOf(days));
     }
 
-    private LocalDate getLastResetDate() {
+    /**
+     * Retourne le prochain {@link ZonedDateTime} auquel le reset Wilderness sera déclenché,
+     * ou {@code null} si les resets automatiques sont désactivés ({@code reset_freq <= 0}).
+     *
+     * <p>Le reset a lieu à {@link SurviConfig#getDailyResetHour()} le jour où
+     * {@code lastResetDate + frequency <= today}. Si ce moment est déjà passé,
+     * la méthode retourne {@code ZonedDateTime.now(tz)} pour indiquer qu'un reset
+     * est imminent / en attente.
+     */
+    public ZonedDateTime getNextWildernessResetTime(ZoneId tz) {
+        int frequency = getResetFrequency();
+        if (frequency <= 0) return null;
+
+        LocalDate lastReset = getLastResetDate();
+        LocalDate nextResetDate = lastReset.equals(LocalDate.MIN) ? LocalDate.now() : lastReset.plusDays(frequency);
+
+        int resetHour = SurviConfig.getInstance().getDailyResetHour();
+        ZonedDateTime nextReset = nextResetDate.atTime(resetHour, 0).atZone(tz);
+        ZonedDateTime now = ZonedDateTime.now(tz);
+
+        return now.isBefore(nextReset) ? nextReset : now;
+    }
+
+    public LocalDate getLastResetDate() {
         String val = GameManager.getInstance().getDatabase().system().getServerData("last_reset_date");
         return val != null ? LocalDate.parse(val) : LocalDate.MIN;
     }
