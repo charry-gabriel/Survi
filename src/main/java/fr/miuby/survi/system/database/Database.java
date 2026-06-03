@@ -21,6 +21,7 @@ public abstract class Database extends MLSQLite {
     protected CropRepository cropRepository;
     protected QuestRepository questRepository;
     protected SystemRepository systemRepository;
+    protected GraveRepository graveRepository;
 
     protected Database(String dbName) {
         super(dbName);
@@ -39,6 +40,7 @@ public abstract class Database extends MLSQLite {
         cropRepository     = new CropRepository(conn, this);
         questRepository    = new QuestRepository(conn, this);
         systemRepository   = new SystemRepository(conn, this);
+        graveRepository    = new GraveRepository(conn, this);
     }
 
     // =========================================================================
@@ -50,4 +52,5 @@ public abstract class Database extends MLSQLite {
     public CropRepository crops()         { return cropRepository; }
     public QuestRepository quests()       { return questRepository; }
     public SystemRepository system()      { return systemRepository; }
+    public GraveRepository graves()       { return graveRepository; }
 }

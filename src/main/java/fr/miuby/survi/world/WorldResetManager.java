@@ -50,7 +50,7 @@ public class WorldResetManager {
         String newEndName    = newWildName + "_the_end";
 
         MLLogManager.getInstance().log(Level.INFO, ELogTag.WORLD,
-                "Reset : " + currentWildName + " -> " + newWildName + " | " + currentNetherName + " -> " + newNetherName + " | " + currentEndName    + " -> " + newEndName);
+                "Reset : " + currentWildName + " -> " + newWildName + " | " + currentNetherName + " -> " + newNetherName + " | " + currentEndName + " -> " + newEndName);
 
         World village      = WorldRegistry.get(EWorld.VILLAGE).getWorld();
         Location safeSpawn = village.getSpawnLocation();
@@ -60,23 +60,28 @@ public class WorldResetManager {
         teleportPlayersToVillage(currentNetherName, safeSpawn);
         teleportPlayersToVillage(currentEndName,    safeSpawn);
 
-        // 2. Désenregistrer le portail Wilderness avant unload
+        // 2. Nettoyer les tombes des 3 mondes avant leur déchargement
+        clearGravesForWorld(currentWildName);
+        clearGravesForWorld(currentNetherName);
+        clearGravesForWorld(currentEndName);
+
+        // 3. Désenregistrer le portail Wilderness avant unload
         GameManager.getInstance().getWorldPortalManager().unregisterWildernessPortal(currentWildName);
 
-        // 3. Unload sans sauvegarde
+        // 4. Unload sans sauvegarde
         unloadWorld(currentWildName);
         unloadWorld(currentNetherName);
         unloadWorld(currentEndName);
 
-        // 4. Créer les 3 nouveaux mondes
+        // 5. Créer les 3 nouveaux mondes
         WorldInitializer.loadOrCreate(newWildName,   World.Environment.NORMAL);
         WorldInitializer.loadOrCreate(newNetherName, World.Environment.NETHER);
         WorldInitializer.loadOrCreate(newEndName,    World.Environment.THE_END);
 
-        // 5. Mettre à jour WorldInitializer (mémoire + DB + WorldRegistry)
+        // 6. Mettre à jour WorldInitializer (mémoire + DB + WorldRegistry)
         WorldInitializer.updateWorldNames(newWildName);
 
-        // 6. Post-init après génération des spawn chunks (5 s)
+        // 7. Post-init après génération des spawn chunks (5 s)
         Bukkit.getScheduler().runTaskLater(GameManager.getInstance().getPlugin(), () -> {
             setLastResetDate(LocalDate.now());
             buildWorldPortal(newWildName);
@@ -125,6 +130,12 @@ public class WorldResetManager {
     // -------------------------------------------------------------------------
     // Helpers
     // -------------------------------------------------------------------------
+
+    private void clearGravesForWorld(String worldName) {
+        World world = Bukkit.getWorld(worldName);
+        if (world == null) return;
+        GameManager.getInstance().getGraveManager().clearGravesInWorld(world.getUID());
+    }
 
     private void teleportPlayersToVillage(String worldName, Location destination) {
         World world = Bukkit.getWorld(worldName);

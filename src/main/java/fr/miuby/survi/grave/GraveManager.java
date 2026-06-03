@@ -2,66 +2,62 @@ package fr.miuby.survi.grave;
 
 import fr.miuby.survi.GameManager;
 import fr.miuby.lib.log.MLLogManager;
+import fr.miuby.survi.system.database.repository.GraveRepository;
 import fr.miuby.survi.system.log.ELogTag;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.*;
 import java.util.logging.Level;
 
 public class GraveManager {
     private static final Material GRAVE_MATERIAL = Material.CHEST;
 
-    private final File gravesFolder;
     private final Map<Location, GraveData> graveLocations = new HashMap<>();
 
     public GraveManager() {
-        this.gravesFolder = new File(GameManager.getInstance().getPlugin().getDataFolder(), "graves");
-
-        if (!gravesFolder.exists() && !gravesFolder.mkdirs())
-            MLLogManager.getInstance().log(Level.WARNING, ELogTag.GRAVE, "Impossible de créer le dossier de tombes.");
-
-        loadFromDisk();
+        loadFromDB();
     }
 
     // -------------------------------------------------------------------------
     // Chargement au démarrage
     // -------------------------------------------------------------------------
 
-    private void loadFromDisk() {
-        File[] files = gravesFolder.listFiles((d, name) -> name.endsWith(".yml"));
-        if (files == null) return;
+    private void loadFromDB() {
+        GraveRepository repo = GameManager.getInstance().getDatabase().graves();
+        List<GraveRepository.RawGrave> rows = repo.loadAll();
 
         int loaded = 0;
-        for (File file : files) {
-            try {
-                UUID graveId = UUID.fromString(file.getName().replace(".yml", ""));
-                FileConfiguration cfg = YamlConfiguration.loadConfiguration(file);
-                Location loc = cfg.getLocation("location");
-                UUID ownerId = UUID.fromString(cfg.getString("owner-uuid"));
+        for (GraveRepository.RawGrave row : rows) {
+            World world = Bukkit.getWorld(row.worldUid());
 
-                if (loc != null && loc.isWorldLoaded() && loc.getBlock().getType() == GRAVE_MATERIAL) {
-                    graveLocations.put(loc, new GraveData(graveId, ownerId, loc));
-                    loaded++;
-                } else {
-                    if (!file.delete())
-                        MLLogManager.getInstance().log(Level.WARNING, ELogTag.GRAVE, "Impossible de supprimer le fichier corrompu : " + file.getName());
-                }
-            } catch (Exception e) {
-                MLLogManager.getInstance().log(Level.WARNING, ELogTag.GRAVE, "Fichier corrompu ignoré : " + file.getName(), e);
+            if (world == null) {
+                // Monde introuvable — tombe orpheline (ex : ancien monde Wilderness supprimé)
+                repo.remove(row.id());
+                MLLogManager.getInstance().log(Level.WARNING, ELogTag.GRAVE, "Tombe orpheline supprimée (monde inexistant) : " + row.id());
+                continue;
             }
+
+            Location loc = new Location(world, row.x(), row.y(), row.z());
+            if (loc.getBlock().getType() != GRAVE_MATERIAL) {
+                // Le bloc n'est plus un coffre : entrée corrompue
+                repo.remove(row.id());
+                MLLogManager.getInstance().log(Level.WARNING, ELogTag.GRAVE, "Tombe corrompue supprimée (bloc absent) : " + row.id());
+                continue;
+            }
+
+            graveLocations.put(loc, new GraveData(row.id(), row.ownerId(), loc));
+            loaded++;
         }
 
         if (loaded > 0)
-            MLLogManager.getInstance().log(Level.INFO, ELogTag.GRAVE, loaded + " tombe(s) chargée(s) depuis le disque.");
+            MLLogManager.getInstance().log(Level.INFO, ELogTag.GRAVE, loaded + " tombe(s) chargée(s) depuis la base de données.");
     }
 
     // -------------------------------------------------------------------------
@@ -86,9 +82,20 @@ public class GraveManager {
 
         UUID graveId = UUID.randomUUID();
         GraveData grave = new GraveData(graveId, player.getUniqueId(), loc);
-        saveGraveFile(grave, items);
+
+        GameManager.getInstance().getDatabase().graves().save(
+                graveId,
+                player.getUniqueId(),
+                loc.getWorld().getUID(),
+                loc.getBlockX(),
+                loc.getBlockY(),
+                loc.getBlockZ(),
+                items
+        );
+
         graveLocations.put(loc, grave);
         loc.getBlock().setType(GRAVE_MATERIAL);
+
         MLLogManager.getInstance().log(Level.FINE, ELogTag.GRAVE,
                 "[CreateGrave] " + player.getName() + " → " + graveId + " en " + loc.getWorld().getName() + " " + loc.getBlockX() + "," + loc.getBlockY() + "," + loc.getBlockZ());
 
@@ -138,7 +145,7 @@ public class GraveManager {
             return true;
         }
 
-        List<ItemStack> items = loadItems(grave);
+        List<ItemStack> items = GameManager.getInstance().getDatabase().graves().loadItems(grave.id());
         for (ItemStack item : items) {
             Map<Integer, ItemStack> leftover = player.getInventory().addItem(item);
             for (ItemStack drop : leftover.values()) {
@@ -147,8 +154,7 @@ public class GraveManager {
         }
 
         removeGrave(grave);
-        MLLogManager.getInstance().log(Level.FINE, ELogTag.GRAVE,
-                "[CollectGrave] " + player.getName() + " a récupéré la tombe " + grave.id());
+        MLLogManager.getInstance().log(Level.FINE, ELogTag.GRAVE, "[CollectGrave] " + player.getName() + " a récupéré la tombe " + grave.id());
         player.sendMessage(Component.text("Vous avez récupéré votre tombe.").color(NamedTextColor.GREEN));
         return true;
     }
@@ -162,45 +168,36 @@ public class GraveManager {
     }
 
     // -------------------------------------------------------------------------
-    // Helpers internes
+    // Nettoyage lors d'un reset de monde
     // -------------------------------------------------------------------------
 
-    private List<ItemStack> loadItems(GraveData grave) {
-        File file = getGraveFile(grave);
-        if (!file.exists()) return new ArrayList<>();
-        FileConfiguration cfg = YamlConfiguration.loadConfiguration(file);
-        List<?> raw = cfg.getList("items", new ArrayList<>());
-        List<ItemStack> items = new ArrayList<>();
-        for (Object obj : raw) {
-            if (obj instanceof ItemStack itemStack)
-                items.add(itemStack);
-        }
-        return items;
+    /**
+     * Supprime de la mémoire et de la base toutes les tombes appartenant au monde donné.
+     * Doit être appelé AVANT le déchargement du monde, sur le thread principal.
+     */
+    public void clearGravesInWorld(UUID worldUid) {
+        int before = graveLocations.size();
+        graveLocations.entrySet().removeIf(e -> {
+            World w = e.getKey().getWorld();
+            return w != null && w.getUID().equals(worldUid);
+        });
+        int removed = before - graveLocations.size();
+
+        GameManager.getInstance().getDatabase().graves().removeByWorldUid(worldUid);
+
+        if (removed > 0)
+            MLLogManager.getInstance().log(Level.INFO, ELogTag.GRAVE, removed + " tombe(s) supprimée(s) suite au reset du monde " + worldUid + ".");
     }
 
-    private void saveGraveFile(GraveData grave, List<ItemStack> items) {
-        File file = getGraveFile(grave);
-        FileConfiguration cfg = new YamlConfiguration();
-        cfg.set("owner-uuid", grave.ownerId().toString());
-        cfg.set("location", grave.location());
-        cfg.set("items", items);
-        try {
-            cfg.save(file);
-        } catch (IOException e) {
-            MLLogManager.getInstance().log(Level.SEVERE, ELogTag.GRAVE, "Impossible de sauvegarder " + file.getName(), e);
-        }
-    }
+    // -------------------------------------------------------------------------
+    // Helpers internes
+    // -------------------------------------------------------------------------
 
     private void removeGrave(GraveData grave) {
         graveLocations.remove(grave.location());
         if (grave.location().getBlock().getType() == GRAVE_MATERIAL)
             grave.location().getBlock().setType(Material.AIR);
-        if (!getGraveFile(grave).delete())
-            MLLogManager.getInstance().log(Level.WARNING, ELogTag.GRAVE, "Impossible de supprimer le fichier de " + grave.id());
-    }
-
-    private File getGraveFile(GraveData grave) {
-        return new File(gravesFolder, grave.id() + ".yml");
+        GameManager.getInstance().getDatabase().graves().remove(grave.id());
     }
 
     private boolean isValidItem(ItemStack item) {

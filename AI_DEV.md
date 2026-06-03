@@ -462,6 +462,7 @@ GameManager.getInstance().getDatabase().villagers()  // VillagerRepository
 GameManager.getInstance().getDatabase().quests()     // QuestRepository
 GameManager.getInstance().getDatabase().crops()      // CropRepository
 GameManager.getInstance().getDatabase().system()     // SystemRepository (logs, serverData)
+GameManager.getInstance().getDatabase().graves()     // GraveRepository
 ```
 
 Le SQL va **uniquement** dans les repositories. Jamais inline dans un Listener ou Command.
@@ -655,6 +656,7 @@ growth_items/<id>.yml → GrowthItemFileConfig → GrowthItemLoader → GrowthIt
 | Villageois | `VillagerFactory`, `VillagerLevel`, `BlessingLoader`, `villagers/*.yml` |
 | Monstres | `MobLevelManager`, `MobTypeConfig`, `monsters.yml` |
 | Mondes | `WorldInitializer`, `WorldLevelManager`, `WorldResetManager`, `EWorld` |
+| Tombes | `GraveManager`, `GraveData`, `GraveRepository`, `GraveListener` |
 | Items | `ECustomItem`, `CustomItemBuilder`, `CustomRecipeFactory`, `recipes.yml` |
 | Growth items | `GrowthItems`, `GrowthItemLoader`, `GrowthItemFileConfig`, `GrowthItemListener`, `GrowthItemRegistry`, `growth_items/*.yml` |
 | Métiers | `EJob`, `JobLevelConfig`, `JobListener` |

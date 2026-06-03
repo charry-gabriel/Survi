@@ -8,7 +8,7 @@ import java.sql.*;
 import java.util.logging.Level;
 
 public class SQLite extends Database {
-    private static final int CURRENT_DB_VERSION = 9;
+    private static final int CURRENT_DB_VERSION = 10;
 
     public SQLite() {
         super(GameManager.getInstance().getPlugin().getConfig().getString("SQLite.Filename", "minecraft"));
@@ -51,6 +51,7 @@ public class SQLite extends Database {
             s.executeUpdate(createPlayerQuestMetaTable());
             s.executeUpdate(createServerDataTable());
             s.executeUpdate(createDelayedEffectsTable());
+            s.executeUpdate(createGraveTable());
         }
     }
 
@@ -140,6 +141,19 @@ public class SQLite extends Database {
                 ");";
     }
 
+    private String createGraveTable() {
+        return "CREATE TABLE IF NOT EXISTS grave (" +
+                "`id` VARCHAR(36) NOT NULL," +
+                "`owner_uuid` VARCHAR(36) NOT NULL," +
+                "`world_uid` VARCHAR(36) NOT NULL," +
+                "`x` INT NOT NULL," +
+                "`y` INT NOT NULL," +
+                "`z` INT NOT NULL," +
+                "`items_yaml` TEXT NOT NULL," +
+                "PRIMARY KEY (`id`)" +
+                ");";
+    }
+
     // =========================================================================
     // Migrations
     // =========================================================================
@@ -186,6 +200,9 @@ public class SQLite extends Database {
                 s.executeUpdate(createPlayerQuestMetaTable());
                 s.executeUpdate("INSERT OR IGNORE INTO player_quest_meta (player_uuid, last_quest_id) " +
                         "SELECT player_uuid, quest_id FROM player_quest WHERE slot = 0");
+            }
+            if (currentVersion < 10) {
+                s.executeUpdate(createGraveTable());
             }
         }
     }
