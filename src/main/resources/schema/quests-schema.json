@@ -30,8 +30,8 @@
           },
           "difficulty": {
             "type": "integer",
-            "description": "Niveau de difficulté de la quête (entier ≥ 1, croissant = plus difficile). Ex : 1 = facile, 2 = moyen, 3 = difficile.",
-            "minimum": 1
+            "description": "Niveau de difficulté de la quête (entier ≥ 0, croissant = plus difficile). Ex : 1 = facile, 2 = moyen, 3 = difficile.",
+            "minimum": 0
           },
           "jobs": {
             "type": "array",

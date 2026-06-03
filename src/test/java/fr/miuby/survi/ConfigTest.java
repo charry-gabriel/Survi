@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
  *   <li>{@code combat} — modificateurs dégâts/résistance {@code > 0}, diviseur de vie {@code ≥ 1}.</li>
  *   <li>{@code reputation.ranks} — liste triée par threshold croissant depuis 0, IDs uniques.</li>
  *   <li>{@code jobs.levels} — exactement 11 entrées, triées, threshold croissant depuis 0.</li>
- *   <li>{@code world-level} — mob-rarity, mob-difficulty, quest-weights cohérents.</li>
+ *   <li>{@code world-level} — mob-rarity, mob-difficulty cohérents.</li>
  *   <li>{@code adventure-limits.wilderness-radius-per-level} — même compte que {@code jobs.levels},
  *       valeurs positives croissantes, {@code radius[0] / 8 ≥ 1} (cohérence Nether).</li>
  *   <li>{@code village-zone} — centre XZ, paliers triés par {@code after-hours} croissant,
@@ -189,26 +189,6 @@ class ConfigTest {
         assertNotNull(mobDifficulty, "world-level.mob-difficulty doit être présent");
         assertNonNegativeNumber(mobDifficulty, "base", "world-level.mob-difficulty");
         assertNonNegativeNumber(mobDifficulty, "per-level", "world-level.mob-difficulty");
-
-        // quest-weights
-        Map<String, Object> questWeights = (Map<String, Object>) worldLevel.get("quest-weights");
-        assertNotNull(questWeights, "world-level.quest-weights doit être présent");
-
-        Map<String, Object> common = (Map<String, Object>) questWeights.get("common");
-        assertNotNull(common, "world-level.quest-weights.common doit être présent");
-        assertIntInRange(common, "base",            "world-level.quest-weights.common", 1, 100);
-        assertIntInRange(common, "min",             "world-level.quest-weights.common", 0, 99);
-        assertNonNegativeInt(common, "per-level-penalty", "world-level.quest-weights.common");
-        assertTrue((Integer) common.get("min") < (Integer) common.get("base"),
-                "world-level.quest-weights.common.min doit être < base");
-
-        Map<String, Object> legendary = (Map<String, Object>) questWeights.get("legendary");
-        assertNotNull(legendary, "world-level.quest-weights.legendary doit être présent");
-        assertIntInRange(legendary, "base",           "world-level.quest-weights.legendary", 0, 99);
-        assertIntInRange(legendary, "max",            "world-level.quest-weights.legendary", 1, 100);
-        assertNonNegativeInt(legendary, "per-level-gain", "world-level.quest-weights.legendary");
-        assertTrue((Integer) legendary.get("max") >= (Integer) legendary.get("base"),
-                "world-level.quest-weights.legendary.max doit être ≥ base");
     }
 
     // ─── adventure-limits ─────────────────────────────────────────────────────────

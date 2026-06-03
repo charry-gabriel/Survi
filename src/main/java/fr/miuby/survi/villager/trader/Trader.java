@@ -21,14 +21,6 @@ public class Trader extends AVillager {
     @Getter
     protected final TextComponent openMessage;
 
-    /**
-     * Niveau de difficulté des quêtes proposées par ce Trader (int ≥ 1).
-     * 0 = non défini (la difficulté sera tirée aléatoirement selon le niveau du monde).
-     */
-    @Getter
-    @Setter
-    private int questDifficulty = 0;
-
     @Getter
     @Setter
     private EJob job = null;

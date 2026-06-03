@@ -65,10 +65,6 @@ public class VillagerFactory {
             if (config.job != null && !config.job.isEmpty()) {
                 trader.setJob(EJob.valueOf(config.job.toUpperCase()));
             }
-            // questDifficulty est maintenant un int : 0 = non défini (aléatoire), ≥1 = niveau fixe
-            if (config.questDifficulty > 0) {
-                trader.setQuestDifficulty(config.questDifficulty);
-            }
             trader.setQuestCompletionReputation(config.questCompletionReputation);
 
             // Reputations recipes

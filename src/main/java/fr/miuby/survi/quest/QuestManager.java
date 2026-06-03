@@ -205,23 +205,6 @@ public class QuestManager {
     }
 
     /**
-     * Tire aléatoirement un niveau de difficulté (int) dont la distribution
-     * évolue avec le niveau du monde.
-     * Au niveau 0 : répartition 70 / 25 / 5 (diff 1 / 2 / 3).
-     * Plus le niveau monte, moins la difficulté 1 est probable.
-     *
-     * @return niveau de difficulté (1, 2 ou 3)
-     * @see WorldLevelManager#getQuestDifficultyWeights()
-     */
-    public int getRandomDifficulty() {
-        int[] weights = GameManager.getInstance().getWorldLevelManager().getQuestDifficultyWeights();
-        int roll = random.nextInt(100);
-        if (roll < weights[2])              return 3;  // ex-LEGENDARY
-        if (roll < weights[2] + weights[1]) return 2;  // ex-RARE
-        return 1;                                       // ex-COMMON
-    }
-
-    /**
      * Appelé à la connexion d'un joueur : restaure ses quêtes du jour et supprime
      * les expirées (date ≠ aujourd'hui). Ré-applique ou retire les effets de
      * potion selon l'état de chaque quête.
@@ -348,7 +331,9 @@ public class QuestManager {
             return;
         }
 
-        int difficulty = getRandomDifficulty();
+        int difficulty = (trader.getJob() != null && player.getJobReputation(trader.getJob()) == 0)
+                ? 0
+                : GameManager.getInstance().getWorldLevelManager().getLevel();
         Quest quest = getRandomQuest(difficulty, trader.getJob(), player.getUuid());
         if (quest == null) return;
 

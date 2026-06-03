@@ -51,8 +51,8 @@ public class QuestListener implements Listener {
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onEntityBreed(EntityBreedEvent event) {
-        if (event.getBreeder() instanceof Player killer) {
-            AlphaPlayer player = AlphaPlayer.get(killer.getUniqueId());
+        if (event.getBreeder() instanceof Player p) {
+            AlphaPlayer player = AlphaPlayer.get(p.getUniqueId());
             if (player != null) {
                 GameManager.getInstance().getQuestManager().progressQuest(player, EQuestType.BREED, event.getEntityType(), 1);
                 GameManager.getInstance().getGlobalQuestManager().progressGlobalQuest(player, EQuestType.BREED, event.getEntityType(), 1);
@@ -76,8 +76,9 @@ public class QuestListener implements Listener {
         if (event.getWhoClicked() instanceof Player killer) {
             AlphaPlayer player = AlphaPlayer.get(killer.getUniqueId());
             if (player != null) {
-                GameManager.getInstance().getQuestManager().progressQuest(player, EQuestType.CRAFT, event.getRecipe().getResult().getType(), 1);
-                GameManager.getInstance().getGlobalQuestManager().progressGlobalQuest(player, EQuestType.CRAFT, event.getRecipe().getResult().getType(), 1);
+                int amount = event.getRecipe().getResult().getAmount();
+                GameManager.getInstance().getQuestManager().progressQuest(player, EQuestType.CRAFT, event.getRecipe().getResult().getType(), amount);
+                GameManager.getInstance().getGlobalQuestManager().progressGlobalQuest(player, EQuestType.CRAFT, event.getRecipe().getResult().getType(), amount);
             }
         }
     }
@@ -86,8 +87,9 @@ public class QuestListener implements Listener {
     public void onSmelt(FurnaceExtractEvent event) {
         AlphaPlayer player = AlphaPlayer.get(event.getPlayer().getUniqueId());
         if (player != null) {
-            GameManager.getInstance().getQuestManager().progressQuest(player, EQuestType.SMELT, event.getItemType(), event.getItemAmount());
-            GameManager.getInstance().getGlobalQuestManager().progressGlobalQuest(player, EQuestType.SMELT, event.getItemType(), event.getItemAmount());
+            int amount = event.getItemAmount();
+            GameManager.getInstance().getQuestManager().progressQuest(player, EQuestType.SMELT, event.getItemType(), amount);
+            GameManager.getInstance().getGlobalQuestManager().progressGlobalQuest(player, EQuestType.SMELT, event.getItemType(), amount);
         }
     }
 

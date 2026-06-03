@@ -54,13 +54,6 @@ public class SurviConfig {
     @Getter private double mobDifficultyBase;
     @Getter private double mobDifficultyPerLevel;
 
-    @Getter private int questCommonBase;
-    @Getter private int questCommonMin;
-    @Getter private int questCommonPerLevelPenalty;
-    @Getter private int questLegendaryBase;
-    @Getter private int questLegendaryMax;
-    @Getter private int questLegendaryPerLevelGain;
-
     @Getter private VillageZoneConfig villageZoneConfig;
 
     /** Rayon Wilderness (en blocs XZ) autorisé par niveau Aventurier (index 0–10). */
@@ -113,13 +106,6 @@ public class SurviConfig {
         mobRarityCap       = cfg.getDouble("world-level.mob-rarity.cap",       5.0);
         mobDifficultyBase     = cfg.getDouble("world-level.mob-difficulty.base",      1.0);
         mobDifficultyPerLevel = cfg.getDouble("world-level.mob-difficulty.per-level", 0.05);
-
-        questCommonBase            = cfg.getInt("world-level.quest-weights.common.base",              70);
-        questCommonMin             = cfg.getInt("world-level.quest-weights.common.min",               30);
-        questCommonPerLevelPenalty = cfg.getInt("world-level.quest-weights.common.per-level-penalty",  2);
-        questLegendaryBase         = cfg.getInt("world-level.quest-weights.legendary.base",            5);
-        questLegendaryMax          = cfg.getInt("world-level.quest-weights.legendary.max",            30);
-        questLegendaryPerLevelGain = cfg.getInt("world-level.quest-weights.legendary.per-level-gain",  1);
 
         EGlobalRank.initFromConfig(this);
 

@@ -76,17 +76,6 @@ world-level:
   mob-difficulty:
     base: 1.0
     per-level: 0.05
-  # Poids de tirage des difficultés de quêtes selon le niveau du monde
-  quest-weights:
-    common:
-      base: 70
-      min: 30
-      per-level-penalty: 2
-    legendary:
-      base: 5
-      max: 30
-      per-level-gain: 1
-    # rare = 100 − common − legendary (calculé automatiquement, non configurable)
 
 # ─── Limites Aventurier ──────────────────────────────────────────────────────────
 # Rayon autorisé dans la Wilderness (et dans le Nether = rayon ÷ 8) par niveau

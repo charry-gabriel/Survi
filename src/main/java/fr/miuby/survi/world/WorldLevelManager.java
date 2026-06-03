@@ -64,28 +64,6 @@ public class WorldLevelManager {
         return worldLevel;
     }
 
-    /**
-     * Poids de tirage des difficultés de quêtes {COMMON, RARE, LEGENDARY}.
-     *
-     * <p>Formules (config) :
-     * <ul>
-     *   <li>COMMON     : max(commonMin, commonBase − level × perLevelPenalty)</li>
-     *   <li>LEGENDARY  : min(legendaryMax, legendaryBase + level × perLevelGain)</li>
-     *   <li>RARE       : 100 − COMMON − LEGENDARY</li>
-     * </ul>
-     *
-     * @return int[3] : [commonWeight, rareWeight, legendaryWeight]
-     */
-    public int[] getQuestDifficultyWeights() {
-        SurviConfig cfg = SurviConfig.getInstance();
-        int legendary = Math.min(cfg.getQuestLegendaryMax(),
-                cfg.getQuestLegendaryBase() + worldLevel * cfg.getQuestLegendaryPerLevelGain());
-        int common    = Math.max(cfg.getQuestCommonMin(),
-                cfg.getQuestCommonBase() - worldLevel * cfg.getQuestCommonPerLevelPenalty());
-        int rare      = 100 - common - legendary;
-        return new int[]{common, rare, legendary};
-    }
-
     public String getDisplayName() {
         return "Niveau " + worldLevel;
     }
