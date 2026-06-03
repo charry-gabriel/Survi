@@ -147,30 +147,13 @@ public enum ECustomItem {
         item.setItemMeta(meta);
     }),
 
-    /**
-     * Casque de mineur growth item (MINEUR, niveau 4+).
-     *
-     * <p>Item secondaire du métier MINEUR : porté sur la tête, il grandit en minant
-     * des minerais (OreBreakEvent dans GrowthItemListener) et gagne progressivement
-     * en efficacité minière via {@code SetAttributeItemEffect}.
-     *
-     * <p>L'avantage par rapport à GROWTH_PICKAXE : la pioche reste totalement libre
-     * — le joueur peut l'enchanter normalement (Fortune III, Efficiency V, etc.)
-     * sans qu'elle soit "consommée" par le système de growth.
-     *
-     * <p>Attribut initial : MINING_EFFICIENCY +3 (remplacé aux paliers 15/35/65 minerais
-     * par +8, +14, +22 via SetAttributeItemEffect qui efface les anciens modificateurs).
-     */
     GROWTH_CASQUE_MINEUR(Material.LEATHER_HELMET, item -> {
-        // Étape 1 : PDC growth item (doit précéder CustomItemBuilder pour que la meta soit commitée)
         ItemMeta preMeta = item.getItemMeta();
         createGrowthItem(preMeta, "GROWTH_CASQUE_MINEUR");
         item.setItemMeta(preMeta);
-        // Étape 2 : apparence + attribut initial de mining efficiency
-        // Le CustomItemBuilder relit la meta déjà commitée → le PDC est préservé
         new CustomItemBuilder(item, "GrowthCasque")
                 .name("Casque de Mineur I", NamedTextColor.GOLD)
-                .leatherArmor(TrimMaterial.GOLD, TrimPattern.FLOW, Color.fromRGB(0xC8960A)) // doré ambré
+                .leatherArmor(TrimMaterial.GOLD, TrimPattern.FLOW, Color.fromRGB(0xC8960A))
                 .addAttribute(Attribute.MINING_EFFICIENCY, 3.0, ADD_NUMBER, EquipmentSlotGroup.HEAD)
                 .addAttribute(Attribute.MOVEMENT_SPEED, -0.01, ADD_NUMBER, EquipmentSlotGroup.HEAD)
                 .unbreakable()
@@ -178,22 +161,31 @@ public enum ECustomItem {
                 .addItemFlag(ItemFlag.HIDE_ARMOR_TRIM);
     }),
 
-    /**
-     * Bâton de récolte growth item (FERMIER, niveau 4+).
-     *
-     * <p>Item secondaire du métier FERMIER : tenu en main secondaire, il grandit en
-     * cassant des cultures matures (CropBreakEvent dans GrowthItemListener) et augmente
-     * le rendement de récolte via un multiplicateur de drops géré dans le listener.
-     *
-     * <p>La houe reste totalement libre en main principale — le bâton ne l'encombre pas.
-     * Multiplicateur de drops bonus : tier × 0,5 (tier 1 = +50 %, tier 2 = +100 %, tier 3 = +150 %).
-     */
     GROWTH_BATON_FERMIER(Material.BLAZE_ROD, item -> {
         ItemMeta meta = item.getItemMeta();
         createGrowthItem(meta, "GROWTH_BATON_FERMIER");
         meta.setUnbreakable(true);
         meta.customName(Component.text("Bâton du Fermier I", NamedTextColor.GREEN).decoration(TextDecoration.ITALIC, false));
         item.setItemMeta(meta);
+    }),
+
+    GROWTH_BOUSSOLE_AVENTURIER(Material.COMPASS, item -> {
+        ItemMeta preMeta = item.getItemMeta();
+        createGrowthItem(preMeta, "GROWTH_BOUSSOLE_AVENTURIER");
+        item.setItemMeta(preMeta);
+        new CustomItemBuilder(item, "GrowthBoussole")
+                .name("Boussole de l'Aventurier I", NamedTextColor.AQUA)
+                .addAttribute(Attribute.MOVEMENT_SPEED, 0.01, ADD_NUMBER, EquipmentSlotGroup.HAND)
+                .unbreakable();
+    }),
+
+    GROWTH_EPEE_SHINY(Material.NETHERITE_SWORD, item -> {
+        ItemMeta preMeta = item.getItemMeta();
+        createGrowthItem(preMeta, "GROWTH_EPEE_SHINY");
+        item.setItemMeta(preMeta);
+        new CustomItemBuilder(item, "GrowthEpeeShiny")
+                .name("Épée Shiny I", NamedTextColor.LIGHT_PURPLE)
+                .unbreakable();
     }),
 
     MUFFIN(Material.PLAYER_HEAD, item -> {
@@ -221,6 +213,8 @@ public enum ECustomItem {
         pdc.set(new NamespacedKey(GameManager.getInstance().getPlugin(), "edible"), PersistentDataType.BOOLEAN, true);
         item.setItemMeta(meta);
     });
+
+    // ─── Infrastructure enum ──────────────────────────────────────────────────
 
     private static final String DEFAULT_NAMESPACE = "survi";
     private static final Map<String, ECustomItem> LOOKUP = Arrays.stream(values()).collect(

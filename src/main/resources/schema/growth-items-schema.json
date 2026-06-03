@@ -1,29 +1,31 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "title": "Growth Item Config",
-  "description": "Configuration d'un growth item — fichier growth_items/<id>.yml",
   "type": "object",
   "required": ["id", "eventType", "tiers"],
   "additionalProperties": false,
   "properties": {
     "id": {
       "type": "string",
-      "description": "Identifiant ECustomItem correspondant (ex. GROWTH_CASQUE_MINEUR)"
+      "description": "Identifiant ECustomItem (ex. GROWTH_CASQUE_MINEUR)"
     },
     "eventType": {
       "type": "string",
-      "description": "Événement qui incrémente les uses",
-      "enum": ["BlockBreakEvent", "OreBreakEvent", "CropBreakEvent"]
+      "enum": [
+        "BlockBreakEvent",
+        "OreBreakEvent",
+        "CropBreakEvent",
+        "NewBiomeEvent",
+        "NewMobTypeKillEvent"
+      ]
     },
     "tiers": {
       "type": "array",
-      "description": "Paliers uniques, déclenchés une seule fois quand le seuil d'uses est atteint",
       "minItems": 1,
       "items": { "$ref": "#/definitions/tier" }
     },
     "periodicEffects": {
       "type": "array",
-      "description": "Effets répétés tous les N uses",
       "items": { "$ref": "#/definitions/periodic" }
     }
   },
@@ -35,16 +37,8 @@
       "required": ["requiredUses", "effects"],
       "additionalProperties": false,
       "properties": {
-        "requiredUses": {
-          "type": "integer",
-          "minimum": 1,
-          "description": "Nombre d'uses cumulés pour déclencher ce palier"
-        },
-        "effects": {
-          "type": "array",
-          "minItems": 1,
-          "items": { "$ref": "#/definitions/effect" }
-        }
+        "requiredUses": { "type": "integer", "minimum": 1 },
+        "effects":      { "type": "array", "minItems": 1, "items": { "$ref": "#/definitions/effect" } }
       }
     },
 
@@ -53,16 +47,8 @@
       "required": ["everyUses", "effects"],
       "additionalProperties": false,
       "properties": {
-        "everyUses": {
-          "type": "integer",
-          "minimum": 1,
-          "description": "Fréquence de déclenchement (tous les N uses)"
-        },
-        "effects": {
-          "type": "array",
-          "minItems": 1,
-          "items": { "$ref": "#/definitions/effect" }
-        }
+        "everyUses": { "type": "integer", "minimum": 1 },
+        "effects":   { "type": "array", "minItems": 1, "items": { "$ref": "#/definitions/effect" } }
       }
     },
 
@@ -72,65 +58,53 @@
       "properties": {
         "type": {
           "type": "string",
-          "enum": ["name", "message", "haste", "add_enchantment", "set_attribute"],
-          "description": "Type d'effet"
+          "enum": ["name", "message", "haste", "potion", "add_enchantment", "set_attribute"]
         },
-        "value": {
-          "type": "string",
-          "description": "[name / message] Texte à afficher ou nom à appliquer"
-        },
-        "seconds": {
-          "type": "integer",
-          "minimum": 1,
-          "description": "[haste] Durée de l'effet Haste en secondes"
-        },
-        "enchantment": {
-          "type": "string",
-          "description": "[add_enchantment] Clé Minecraft de l'enchantement (ex. fortune, efficiency)"
-        },
-        "amount": {
-          "type": "integer",
-          "minimum": 1,
-          "description": "[add_enchantment] Niveaux à ajouter à l'enchantement existant"
-        },
+        "value":          { "type": "string",  "description": "[name / message]" },
+        "seconds":        { "type": "integer", "minimum": 1,  "description": "[haste / potion]" },
+        "effect":         { "type": "string",  "description": "[potion] clé PotionEffectType (ex. speed, strength, night_vision)" },
+        "amplifier":      { "type": "integer", "minimum": 0,  "description": "[potion] 0 = niveau I, 1 = niveau II" },
+        "enchantment":    { "type": "string",  "description": "[add_enchantment] clé minecraft (ex. fortune, sharpness)" },
+        "amount":         { "type": "integer", "minimum": 1,  "description": "[add_enchantment] niveaux à ajouter" },
         "attribute": {
           "type": "string",
-          "description": "[set_attribute] Nom de l'attribut en snake_case (ex. mining_efficiency)",
+          "description": "[set_attribute]",
           "enum": [
             "mining_efficiency", "movement_speed", "attack_damage", "attack_speed",
             "armor", "armor_toughness", "max_health", "block_break_speed",
             "luck", "knockback_resistance"
           ]
         },
-        "attributeValue": {
-          "type": "number",
-          "description": "[set_attribute] Valeur totale à appliquer (remplace la valeur précédente)"
-        },
+        "attributeValue": { "type": "number",  "description": "[set_attribute] valeur totale (remplace l'existant)" },
         "operation": {
           "type": "string",
-          "description": "[set_attribute] Opération de l'AttributeModifier",
-          "enum": ["ADD_NUMBER", "ADD_SCALAR", "MULTIPLY_SCALAR_1"]
+          "enum": ["ADD_NUMBER", "ADD_SCALAR", "MULTIPLY_SCALAR_1"],
+          "description": "[set_attribute]"
         },
         "slot": {
           "type": "string",
-          "description": "[set_attribute] Slot d'équipement concerné",
-          "enum": ["HEAD", "CHEST", "LEGS", "FEET", "HAND", "OFF_HAND", "ARMOR", "ANY"]
+          "enum": ["HEAD", "CHEST", "LEGS", "FEET", "HAND", "OFF_HAND", "ARMOR", "ANY"],
+          "description": "[set_attribute]"
         }
       },
-      "if": { "properties": { "type": { "const": "name" } } },
+      "if":   { "properties": { "type": { "const": "name" } } },
       "then": { "required": ["value"] },
       "else": {
-        "if": { "properties": { "type": { "const": "message" } } },
+        "if":   { "properties": { "type": { "const": "message" } } },
         "then": { "required": ["value"] },
         "else": {
-          "if": { "properties": { "type": { "const": "haste" } } },
+          "if":   { "properties": { "type": { "const": "haste" } } },
           "then": { "required": ["seconds"] },
           "else": {
-            "if": { "properties": { "type": { "const": "add_enchantment" } } },
-            "then": { "required": ["enchantment", "amount"] },
+            "if":   { "properties": { "type": { "const": "potion" } } },
+            "then": { "required": ["effect", "seconds"] },
             "else": {
-              "if": { "properties": { "type": { "const": "set_attribute" } } },
-              "then": { "required": ["attribute", "attributeValue", "operation", "slot"] }
+              "if":   { "properties": { "type": { "const": "add_enchantment" } } },
+              "then": { "required": ["enchantment", "amount"] },
+              "else": {
+                "if":   { "properties": { "type": { "const": "set_attribute" } } },
+                "then": { "required": ["attribute", "attributeValue", "operation", "slot"] }
+              }
             }
           }
         }

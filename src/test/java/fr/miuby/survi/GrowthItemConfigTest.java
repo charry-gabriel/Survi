@@ -13,37 +13,28 @@ import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-/**
- * Valide la structure de tous les fichiers {@code src/main/resources/growth_items/*.yml}
- * sans runtime Bukkit.
- *
- * <h3>Ce qui est vérifié</h3>
- * <ul>
- *   <li>Le dossier {@code growth_items/} existe et contient au moins un fichier.</li>
- *   <li>Chaque fichier est parseable en {@link GrowthItemFileConfig} via SnakeYAML.</li>
- *   <li>Champs obligatoires au niveau racine : {@code id}, {@code eventType}, {@code tiers}.</li>
- *   <li>{@code eventType} appartient à la liste des valeurs reconnues par
- *       {@code GrowthItemListener}.</li>
- *   <li>Chaque palier ({@code tiers}) : {@code requiredUses >= 1}, liste d'effets non vide,
- *       paliers ordonnés de façon croissante.</li>
- *   <li>Chaque effet périodique ({@code periodicEffects}) : {@code everyUses >= 1}.</li>
- *   <li>Pour chaque effet : {@code type} valide, champs requis selon le type présents et
- *       cohérents (ex. {@code seconds >= 1} pour {@code haste}).</li>
- * </ul>
- */
 class GrowthItemConfigTest {
 
-    // ─── Constantes de validation ─────────────────────────────────────────────────
+    // ─── Constantes de validation ─────────────────────────────────────────────
 
     private static final Set<String> VALID_EVENT_TYPES = Set.of(
-            "BlockBreakEvent", "OreBreakEvent", "CropBreakEvent"
+            "BlockBreakEvent",
+            "OreBreakEvent",
+            "CropBreakEvent",
+            "NewBiomeEvent",        // GROWTH_BOUSSOLE_AVENTURIER
+            "NewMobTypeKillEvent"   // GROWTH_EPEE_SHINY
     );
 
     private static final Set<String> VALID_EFFECT_TYPES = Set.of(
-            "name", "message", "haste", "add_enchantment", "set_attribute"
+            "name",
+            "message",
+            "haste",
+            "potion",           // PotionItemEffect — effect + seconds + amplifier
+            "add_enchantment",
+            "set_attribute"
     );
 
-    /** Doit rester en sync avec le switch de GrowthItemLoader.parseAttribute(). */
+    /** Doit rester en sync avec GrowthItemLoader.parseAttribute(). */
     private static final Set<String> VALID_ATTRIBUTES = Set.of(
             "mining_efficiency", "movement_speed", "attack_damage", "attack_speed",
             "armor", "armor_toughness", "max_health", "block_break_speed",
@@ -58,7 +49,7 @@ class GrowthItemConfigTest {
             "HEAD", "CHEST", "LEGS", "FEET", "HAND", "OFF_HAND", "ARMOR", "ANY"
     );
 
-    // ─── Test principal ───────────────────────────────────────────────────────────
+    // ─── Test principal ───────────────────────────────────────────────────────
 
     @Test
     void testAllGrowthItemConfigs() {
@@ -84,134 +75,101 @@ class GrowthItemConfigTest {
         }
     }
 
-    // ─── Validation racine ────────────────────────────────────────────────────────
+    // ─── Racine ───────────────────────────────────────────────────────────────
 
     private void validateRoot(GrowthItemFileConfig config, String filename) {
         assertNotNull(config, filename + " : fichier vide ou non parseable");
-
-        assertStringNotEmpty(config.id,
-                filename + " : champ 'id' manquant ou vide");
-
-        assertStringNotEmpty(config.eventType,
-                filename + " : champ 'eventType' manquant ou vide");
-
+        assertStringNotEmpty(config.id, filename + " : 'id' manquant");
+        assertStringNotEmpty(config.eventType, filename + " : 'eventType' manquant");
         assertTrue(VALID_EVENT_TYPES.contains(config.eventType),
-                filename + " : eventType invalide '" + config.eventType + "'. "
-                        + "Valeurs valides : " + VALID_EVENT_TYPES);
-
-        assertNotNull(config.tiers,
-                filename + " : champ 'tiers' manquant");
-
-        assertFalse(config.tiers.isEmpty(),
-                filename + " : 'tiers' doit contenir au moins un palier");
+                filename + " : eventType invalide '" + config.eventType + "'. Valides : " + VALID_EVENT_TYPES);
+        assertNotNull(config.tiers, filename + " : 'tiers' manquant");
+        assertFalse(config.tiers.isEmpty(), filename + " : 'tiers' vide");
     }
 
-    // ─── Validation des paliers ───────────────────────────────────────────────────
+    // ─── Paliers ──────────────────────────────────────────────────────────────
 
     private void validateTiers(GrowthItemFileConfig config, String filename) {
         int previousUses = 0;
         for (int i = 0; i < config.tiers.size(); i++) {
             GrowthItemFileConfig.TierConfig tier = config.tiers.get(i);
             String ctx = filename + " tiers[" + i + "]";
-
             assertNotNull(tier, ctx + " : palier null");
-
-            assertTrue(tier.requiredUses >= 1,
-                    ctx + " : requiredUses doit être >= 1 (valeur : " + tier.requiredUses + ")");
-
+            assertTrue(tier.requiredUses >= 1, ctx + " : requiredUses doit être >= 1");
             assertTrue(tier.requiredUses > previousUses,
-                    ctx + " : requiredUses (" + tier.requiredUses + ") doit être strictement supérieur "
-                            + "au palier précédent (" + previousUses + ") — les paliers doivent être croissants");
-
+                    ctx + " : requiredUses (" + tier.requiredUses + ") doit être > au palier précédent ("
+                            + previousUses + ") — paliers non croissants");
             assertNotNull(tier.effects, ctx + " : 'effects' manquant");
-            assertFalse(tier.effects.isEmpty(), ctx + " : 'effects' ne doit pas être vide");
-
-            for (int j = 0; j < tier.effects.size(); j++) {
+            assertFalse(tier.effects.isEmpty(), ctx + " : 'effects' vide");
+            for (int j = 0; j < tier.effects.size(); j++)
                 validateEffect(tier.effects.get(j), ctx + " effects[" + j + "]");
-            }
-
             previousUses = tier.requiredUses;
         }
     }
 
-    // ─── Validation des effets périodiques ───────────────────────────────────────
+    // ─── Effets périodiques ───────────────────────────────────────────────────
 
     private void validatePeriodicEffects(GrowthItemFileConfig config, String filename) {
         if (config.periodicEffects == null || config.periodicEffects.isEmpty()) return;
-
         for (int i = 0; i < config.periodicEffects.size(); i++) {
-            GrowthItemFileConfig.PeriodicConfig periodic = config.periodicEffects.get(i);
+            GrowthItemFileConfig.PeriodicConfig p = config.periodicEffects.get(i);
             String ctx = filename + " periodicEffects[" + i + "]";
-
-            assertNotNull(periodic, ctx + " : entrée null");
-
-            assertTrue(periodic.everyUses >= 1,
-                    ctx + " : everyUses doit être >= 1 (valeur : " + periodic.everyUses + ")");
-
-            assertNotNull(periodic.effects, ctx + " : 'effects' manquant");
-            assertFalse(periodic.effects.isEmpty(), ctx + " : 'effects' ne doit pas être vide");
-
-            for (int j = 0; j < periodic.effects.size(); j++) {
-                validateEffect(periodic.effects.get(j), ctx + " effects[" + j + "]");
-            }
+            assertNotNull(p, ctx + " : entrée null");
+            assertTrue(p.everyUses >= 1, ctx + " : everyUses doit être >= 1");
+            assertNotNull(p.effects, ctx + " : 'effects' manquant");
+            assertFalse(p.effects.isEmpty(), ctx + " : 'effects' vide");
+            for (int j = 0; j < p.effects.size(); j++)
+                validateEffect(p.effects.get(j), ctx + " effects[" + j + "]");
         }
     }
 
-    // ─── Validation d'un effet individuel ────────────────────────────────────────
+    // ─── Effet individuel ─────────────────────────────────────────────────────
 
     private void validateEffect(GrowthItemFileConfig.EffectConfig effect, String ctx) {
         assertNotNull(effect, ctx + " : effet null");
-
-        assertStringNotEmpty(effect.type, ctx + " : champ 'type' manquant ou vide");
-
+        assertStringNotEmpty(effect.type, ctx + " : 'type' manquant");
         assertTrue(VALID_EFFECT_TYPES.contains(effect.type),
-                ctx + " : type d'effet invalide '" + effect.type + "'. "
-                        + "Valeurs valides : " + VALID_EFFECT_TYPES);
+                ctx + " : type invalide '" + effect.type + "'. Valides : " + VALID_EFFECT_TYPES);
 
         switch (effect.type) {
 
             case "name", "message" ->
-                    assertStringNotEmpty(effect.value,
-                            ctx + " : champ 'value' requis pour type=" + effect.type);
+                    assertStringNotEmpty(effect.value, ctx + " : 'value' requis pour type=" + effect.type);
 
             case "haste" ->
-                    assertTrue(effect.seconds >= 1,
-                            ctx + " : 'seconds' doit être >= 1 (valeur : " + effect.seconds + ")");
+                    assertTrue(effect.seconds >= 1, ctx + " : 'seconds' doit être >= 1");
+
+            case "potion" -> {
+                assertStringNotEmpty(effect.effect,
+                        ctx + " : 'effect' requis pour type=potion (ex. speed, strength, night_vision)");
+                assertTrue(effect.seconds >= 1,
+                        ctx + " : 'seconds' doit être >= 1");
+                assertTrue(effect.amplifier >= 0,
+                        ctx + " : 'amplifier' doit être >= 0 (0 = niveau I, 1 = niveau II…)");
+            }
 
             case "add_enchantment" -> {
-                assertStringNotEmpty(effect.enchantment,
-                        ctx + " : champ 'enchantment' requis pour type=add_enchantment");
-                assertTrue(effect.amount >= 1,
-                        ctx + " : 'amount' doit être >= 1 (valeur : " + effect.amount + ")");
+                assertStringNotEmpty(effect.enchantment, ctx + " : 'enchantment' requis");
+                assertTrue(effect.amount >= 1, ctx + " : 'amount' doit être >= 1");
             }
 
             case "set_attribute" -> {
-                assertStringNotEmpty(effect.attribute,
-                        ctx + " : champ 'attribute' requis pour type=set_attribute");
-
+                assertStringNotEmpty(effect.attribute, ctx + " : 'attribute' requis");
                 assertTrue(VALID_ATTRIBUTES.contains(effect.attribute.toLowerCase()),
                         ctx + " : attribut inconnu '" + effect.attribute + "'. "
                                 + "Ajouter le case dans GrowthItemLoader.parseAttribute() si légitime. "
-                                + "Attributs connus : " + VALID_ATTRIBUTES);
-
-                assertStringNotEmpty(effect.operation,
-                        ctx + " : champ 'operation' requis pour type=set_attribute");
-
+                                + "Connus : " + VALID_ATTRIBUTES);
+                assertStringNotEmpty(effect.operation, ctx + " : 'operation' requis");
                 assertTrue(VALID_OPERATIONS.contains(effect.operation.toUpperCase()),
-                        ctx + " : opération inconnue '" + effect.operation + "'. "
-                                + "Valeurs valides : " + VALID_OPERATIONS);
-
-                assertStringNotEmpty(effect.slot,
-                        ctx + " : champ 'slot' requis pour type=set_attribute");
-
+                        ctx + " : opération inconnue '" + effect.operation + "'. Valides : " + VALID_OPERATIONS);
+                assertStringNotEmpty(effect.slot, ctx + " : 'slot' requis");
                 assertTrue(VALID_SLOTS.contains(effect.slot.toUpperCase()),
-                        ctx + " : slot inconnu '" + effect.slot + "'. "
-                                + "Valeurs valides : " + VALID_SLOTS);
+                        ctx + " : slot inconnu '" + effect.slot + "'. Valides : " + VALID_SLOTS);
             }
         }
     }
 
-    // ─── Utilitaire ──────────────────────────────────────────────────────────────
+    // ─── Utilitaire ──────────────────────────────────────────────────────────
 
     private void assertStringNotEmpty(String value, String message) {
         assertTrue(value != null && !value.trim().isEmpty(), message);

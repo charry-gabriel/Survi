@@ -1,0 +1,37 @@
+# yaml-language-server: $schema=../../schema/growth-items-schema.json
+id: GROWTH_EPEE_SHINY
+eventType: NewMobTypeKillEvent
+
+# Grandit à chaque nouveau TYPE de mob de niveau >= 30 tué avec cette épée en main principale.
+# Chaque type d'entité ne compte qu'une seule fois (système Pokédex).
+# La liste des types déjà tués est stockée en CSV dans growth_killed_mob_types (PDC sur l'item).
+# Le niveau du mob est lu via MobLevelManager.getStoredLevel() (clé PDC survi:mob_level).
+#
+# Paliers : 2 types -> tier 1 | 4 types -> tier 2 | 7 types -> tier 3
+
+tiers:
+  - requiredUses: 2
+    effects:
+      - { type: name,            value: "Épée Shiny II" }
+      - { type: add_enchantment, enchantment: sharpness, amount: 1 }
+      - { type: message,         value: "3 espèces éliminées. L'épée s'affûte." }
+
+  - requiredUses: 4
+    effects:
+      - { type: name,            value: "Épée Shiny III" }
+      - { type: add_enchantment, enchantment: sharpness, amount: 1 }
+      - { type: add_enchantment, enchantment: looting,   amount: 1 }
+      - { type: message,         value: "8 espèces ! Le butin commence à s'améliorer." }
+
+  - requiredUses: 7
+    effects:
+      - { type: name,            value: "Épée du Chasseur Légendaire" }
+      - { type: add_enchantment, enchantment: sharpness, amount: 1 }
+      - { type: add_enchantment, enchantment: looting,   amount: 1 }
+      - { type: message,         value: "20 espèces. Plus rien ne peut te résister." }
+
+periodicEffects:
+  - everyUses: 1
+    effects:
+      - { type: potion,  effect: strength, seconds: 15, amplifier: 1 }
+      - { type: message, value: "La force d'un vainqueur t'envahit !" }
