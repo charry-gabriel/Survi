@@ -103,7 +103,7 @@ public class BlessingLoader {
                 case "UNLOCK_ARMOR" -> new UnlockArmorEffect(ELockedArmorType.valueOf(String.valueOf(map.get("armor")).toUpperCase()));
                 case "LOCK_WORLD"   -> new LockWorldEffect(EWorld.valueOf(String.valueOf(map.get("world")).toUpperCase()));
                 case "MESSAGE"      -> new MessageEffect(String.valueOf(map.get("text")));
-                case "WORLD_LEVEL"  -> new WorldLevelEffect(toInt(map.get("levels"), 1));
+                case "WORLD_LEVEL"  -> new WorldLevelEffect();
                 case "WORLD_RESET"  -> new WorldResetEffect(toInt(map.get("frequency"), 7));
                 case "LIMIT_WORLD"  -> parseLimitWorld(map);
                 case "REPUTATION"   -> parseReputation(map);
