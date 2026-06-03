@@ -8,21 +8,16 @@ import fr.miuby.survi.job.EJob;
 import fr.miuby.survi.player.AlphaPlayer;
 import fr.miuby.survi.system.log.ELogTag;
 import fr.miuby.survi.villager.trader.Trader;
-import lombok.Getter;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.sound.Sound;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
-import org.bukkit.configuration.file.YamlConfiguration;
 
-import fr.miuby.survi.world.WorldLevelManager;
-
-import java.io.File;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.logging.Level;
 
-public class QuestManager {
+public class QuestManager extends AbstractQuestManager<Quest> {
 
     /**
      * Nombre maximum de quêtes qu'un joueur peut accepter par jour.
@@ -30,13 +25,24 @@ public class QuestManager {
      */
     public static final int DAILY_QUEST_LIMIT = 2;
 
-    @Getter
-    private final List<Quest> questPool = new ArrayList<>();
     private final Random random = new Random();
 
     public QuestManager() {
         loadQuests();
     }
+
+    // =========================================================================
+    // Pool — source YAML
+    // =========================================================================
+
+    @Override
+    protected List<Quest> fetchPool() {
+        return QuestYamlLoader.loadQuests();
+    }
+
+    // =========================================================================
+    // Reload à chaud
+    // =========================================================================
 
     /**
      * Recharge le pool de quêtes depuis {@code quests.yml} à chaud, sans redémarrage.
@@ -58,10 +64,8 @@ public class QuestManager {
     public int reload() {
         loadQuests();
 
-        // Inspecter les joueurs connectés dont une quête active n'existe plus dans le nouveau pool
         int orphanCount = 0;
         for (AlphaPlayer player : GameManager.getInstance().getAlphaPlayerFactory().getAlphaPlayers()) {
-            // Ignorer les joueurs hors ligne : leur état ne change pas en temps réel
             if (player.getPlayer() == null) continue;
 
             for (PlayerQuestData data : player.getActiveQuests()) {
@@ -84,61 +88,9 @@ public class QuestManager {
         return questPool.size();
     }
 
-    private void loadQuests() {
-        File questFile = new File(GameManager.getInstance().getPlugin().getDataFolder(), "quests.yml");
-        YamlConfiguration config = YamlConfiguration.loadConfiguration(questFile);
-        if (!config.contains("quests")) {
-            MLLogManager.getInstance().log(Level.SEVERE, ELogTag.QUEST, "Impossible de charger les quêtes depuis quests.yml !");
-            return;
-        }
-
-        questPool.clear();
-
-        List<?> questsList = config.getList("quests");
-        if (questsList == null) {
-            MLLogManager.getInstance().log(Level.WARNING, ELogTag.QUEST, "La liste 'quests' est absente ou vide dans quests.yml");
-            return;
-        }
-
-        for (Object obj : questsList) {
-            if (!(obj instanceof Map<?, ?> rawMap)) continue;
-            @SuppressWarnings("unchecked")
-            Map<String, Object> map = (Map<String, Object>) rawMap;
-
-            try {
-                QuestYamlLoader.BaseFields base = QuestYamlLoader.parseBase(map);
-
-                int difficulty = ((Number) map.get("difficulty")).intValue();
-
-                @SuppressWarnings("unchecked")
-                List<String> rawJobs = (List<String>) map.get("jobs");
-                List<EJob> jobs = (rawJobs == null || rawJobs.isEmpty())
-                        ? List.of()
-                        : rawJobs.stream().map(j -> EJob.valueOf(j.toUpperCase())).toList();
-
-                questPool.add(Quest.builder()
-                        .id(base.id())
-                        .name(base.name())
-                        .description(base.description())
-                        .type(base.type())
-                        .targets(base.targets())
-                        .goal(base.goal())
-                        .rewards(base.rewards())
-                        .difficulty(difficulty)
-                        .jobs(jobs)
-                        .build());
-
-            } catch (Exception e) {
-                MLLogManager.getInstance().log(Level.WARNING, ELogTag.QUEST, "Erreur lors du chargement d'une quête dans quests.yml", e);
-            }
-        }
-
-        MLLogManager.getInstance().log(Level.INFO, ELogTag.QUEST, questPool.size() + " quêtes chargées depuis quests.yml");
-    }
-
-    public Quest getQuest(String id) {
-        return questPool.stream().filter(q -> q.getId().equals(id)).findFirst().orElse(null);
-    }
+    // =========================================================================
+    // Sélection
+    // =========================================================================
 
     /**
      * Indique si ce Trader a au moins une quête disponible dans le pool pour son métier.
@@ -152,8 +104,6 @@ public class QuestManager {
     /**
      * Retourne une quête aléatoire du niveau de difficulté donné en évitant de répéter
      * la dernière quête attribuée au joueur (persistée en DB, résiste aux restarts).
-     *
-     * @param difficulty niveau de difficulté (int, ex : 1 = facile, 2 = moyen, 3 = difficile)
      */
     public Quest getRandomQuest(int difficulty, UUID playerUuid) {
         List<Quest> filtered = questPool.stream()
@@ -162,9 +112,7 @@ public class QuestManager {
         if (filtered.isEmpty()) return null;
         if (filtered.size() == 1) return filtered.getFirst();
 
-        // Lire le dernier questId depuis la DB (persistant entre les restarts)
         String lastId = GameManager.getInstance().getDatabase().quests().getLastQuestId(playerUuid);
-
         List<Quest> candidates = filtered.stream()
                 .filter(q -> !q.getId().equals(lastId))
                 .toList();
@@ -175,13 +123,10 @@ public class QuestManager {
     }
 
     /**
-     * Retourne une quête aléatoire du niveau de difficulté donné en évitant de répéter
-     * la dernière quête attribuée au joueur, restreinte aux quêtes du métier spécifié.
-     * Si aucune quête n'est trouvée pour ce métier, tombe sur toutes les quêtes de la difficulté.
+     * Variante avec filtre métier. Si aucune quête ne correspond au métier,
+     * retourne null (pas de fallback sur toutes les difficultés).
      *
-     * @param difficulty niveau de difficulté
-     * @param job        métier pour filtrer (null = pas de filtre métier)
-     * @param playerUuid UUID du joueur pour l'anti-répétition
+     * @param job métier pour filtrer (null = pas de filtre métier)
      */
     public Quest getRandomQuest(int difficulty, EJob job, UUID playerUuid) {
         if (job == null) return getRandomQuest(difficulty, playerUuid);
@@ -204,16 +149,18 @@ public class QuestManager {
                 : candidates.get(random.nextInt(candidates.size()));
     }
 
+    // =========================================================================
+    // État joueur
+    // =========================================================================
+
     /**
      * Appelé à la connexion d'un joueur : restaure ses quêtes du jour et supprime
      * les expirées (date ≠ aujourd'hui). Ré-applique ou retire les effets de
      * potion selon l'état de chaque quête.
-     *
-     * <p>Extrait d'AlphaPlayer pour garder toute la logique métier de quête ici.
      */
     public void restoreQuestsOnJoin(AlphaPlayer player, List<PlayerQuestData> loaded) {
         player.getActiveQuests().clear();
-        java.time.LocalDate today = java.time.LocalDate.now();
+        LocalDate today = LocalDate.now();
 
         List<PlayerQuestData> expired = new ArrayList<>();
         List<PlayerQuestData> valid   = new ArrayList<>();
@@ -223,14 +170,12 @@ public class QuestManager {
             else                                         expired.add(quest);
         }
 
-        // Nettoyage des quêtes expirées
         for (PlayerQuestData q : expired) {
             GameManager.getInstance().getDatabase().quests().deletePlayerQuestSlot(player.getUuid(), q.getSlot());
             MLLogManager.getInstance().log(Level.INFO, ELogTag.QUEST,
                     "Quête expirée (slot " + q.getSlot() + ") supprimée pour " + player.getPseudo());
         }
 
-        // Retrait des effets de potion des quêtes expirées réclamées
         List<BlessingEffect> effectsToRemove = new ArrayList<>();
         for (PlayerQuestData q : expired) {
             if (q.isClaimed()) {
@@ -249,10 +194,8 @@ public class QuestManager {
             }, 2L);
         }
 
-        // Chargement des quêtes valides
         player.getActiveQuests().addAll(valid);
 
-        // Ré-application des effets de potion des quêtes valides déjà réclamées
         List<BlessingEffect> effectsToReapply = new ArrayList<>();
         for (PlayerQuestData q : valid) {
             if (q.isClaimed()) {
@@ -272,6 +215,10 @@ public class QuestManager {
         }
     }
 
+    // =========================================================================
+    // Attribution
+    // =========================================================================
+
     /**
      * Reset admin : supprime la quête en cours et retire les effets de potion
      * si elle était déjà complétée. Libère un slot pour une nouvelle quête.
@@ -280,7 +227,6 @@ public class QuestManager {
         PlayerQuestData current = player.getCurrentActiveQuest();
         if (current == null) return false;
 
-        // Retirer les buffs si elle était déjà complétée (mais pas encore réclamée)
         if (current.isCompleted() && player.getPlayer() != null) {
             Quest quest = getQuest(current.getQuestId());
             if (quest != null) {
@@ -299,20 +245,15 @@ public class QuestManager {
         return true;
     }
 
-    /**
-     * Attribue une nouvelle quête au joueur s'il n'a pas atteint sa limite journalière.
-     */
     public void assignQuest(AlphaPlayer player, Trader trader) {
         assignQuest(player, trader, false);
     }
 
     /**
      * Attribue une nouvelle quête au joueur s'il n'a pas atteint sa limite journalière.
-     * Si le Trader a un métier défini, seules les quêtes compatibles avec ce métier
-     * (ou sans restriction de métier) sont proposées.
+     * Si le Trader a un métier défini, seules les quêtes compatibles sont proposées.
      */
     public void assignQuest(AlphaPlayer player, Trader trader, boolean force) {
-        // Vérifier si le joueur a encore une quête non réclamée
         PlayerQuestData current = player.getCurrentActiveQuest();
         if (current != null) {
             if (current.isCompleted()) {
@@ -323,7 +264,6 @@ public class QuestManager {
             return;
         }
 
-        // Vérifier la limite journalière
         if (!force && player.countTodayQuests() >= DAILY_QUEST_LIMIT) {
             player.getPlayer().sendMessage(Component.text("Vous avez atteint votre limite de ", NamedTextColor.RED)
                     .append(Component.text(String.valueOf(DAILY_QUEST_LIMIT), NamedTextColor.GOLD))
@@ -337,13 +277,10 @@ public class QuestManager {
         Quest quest = getRandomQuest(difficulty, trader.getJob(), player.getUuid());
         if (quest == null) return;
 
-        // Prochain slot = nombre total de quêtes du jour
         int nextSlot = player.countTodayQuests();
-
         PlayerQuestData data = new PlayerQuestData(nextSlot, quest.getId(), 0, LocalDate.now(), false, trader.getNameId(), false);
         player.putQuest(data);
         GameManager.getInstance().getDatabase().quests().updatePlayerQuest(player.getUuid(), data);
-        // Mémoriser cette quête comme dernière attribuée pour l'anti-répétition
         GameManager.getInstance().getDatabase().quests().setLastQuestId(player.getUuid(), quest.getId());
 
         MLLogManager.getInstance().log(Level.FINE, ELogTag.QUEST,
@@ -359,10 +296,8 @@ public class QuestManager {
     /**
      * Attribue une quête spécifique au joueur (mode test admin).
      * Ignore la limite journalière et la sélection aléatoire.
-     * Si le joueur a déjà une quête active, elle est remplacée après confirmation.
      */
     public void assignSpecificQuest(AlphaPlayer player, Quest quest) {
-        // Si une quête non réclamée est déjà active, on la supprime d'abord
         PlayerQuestData current = player.getCurrentActiveQuest();
         if (current != null) {
             player.removeQuest(current.getSlot());
@@ -370,7 +305,6 @@ public class QuestManager {
         }
 
         int nextSlot = player.countTodayQuests();
-        // traderId null en mode test : pas besoin d'un villageois pour valider
         PlayerQuestData data = new PlayerQuestData(nextSlot, quest.getId(), 0, LocalDate.now(), false, null, false);
         player.putQuest(data);
         GameManager.getInstance().getDatabase().quests().updatePlayerQuest(player.getUuid(), data);
@@ -384,6 +318,10 @@ public class QuestManager {
             player.getPlayer().sendMessage(Component.text("Objectif : " + quest.getGoal() + " | Difficulté : " + quest.getDifficulty() + " | Métiers : " + jobsStr, NamedTextColor.DARK_GRAY));
         }
     }
+
+    // =========================================================================
+    // Progression
+    // =========================================================================
 
     /**
      * Réclame la récompense de la quête complétée auprès du bon Trader.

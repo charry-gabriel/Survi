@@ -1,29 +1,123 @@
 package fr.miuby.survi.quest;
 
 import fr.miuby.lib.log.MLLogManager;
+import fr.miuby.survi.GameManager;
 import fr.miuby.survi.blessing.Blessing;
 import fr.miuby.survi.blessing.BlessingEffect;
 import fr.miuby.survi.blessing.BlessingLoader;
+import fr.miuby.survi.job.EJob;
 import fr.miuby.survi.system.log.ELogTag;
 import org.bukkit.Material;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.EntityType;
 
+import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.function.Function;
 import java.util.logging.Level;
 
 /**
- * Utilitaire de parsing YAML partagé entre {@link QuestManager}
- * et {@link GlobalQuestManager}.
+ * Chargement YAML des quêtes journalières et globales.
+ * Seule classe autorisée à toucher les fichiers {@code quests.yml} et {@code global_quests.yml}.
  */
 public final class QuestYamlLoader {
 
     private QuestYamlLoader() {}
 
-    // -------------------------------------------------------------------------
-    // Record de retour pour les champs communs
-    // -------------------------------------------------------------------------
+    // =========================================================================
+    // Points d'entrée publics
+    // =========================================================================
+
+    /** Charge et retourne toutes les quêtes journalières depuis {@code quests.yml}. */
+    public static List<Quest> loadQuests() {
+        return loadFromFile("quests.yml", "quests", QuestYamlLoader::buildQuest, "quête(s)");
+    }
+
+    /** Charge et retourne toutes les quêtes globales depuis {@code global_quests.yml}. */
+    public static List<GlobalQuest> loadGlobalQuests() {
+        return loadFromFile("global_quests.yml", "global_quests", QuestYamlLoader::buildGlobalQuest, "quête(s) globale(s)");
+    }
+
+    // =========================================================================
+    // Chargement générique (fichier → liste de quêtes)
+    // =========================================================================
+
+    /**
+     * Ouvre un fichier YAML, itère sur la liste à la clé {@code rootKey} et applique
+     * {@code builder} sur chaque entrée. Les erreurs par entrée sont loggées et ignorées.
+     */
+    private static <T extends BaseQuest> List<T> loadFromFile(
+            String filename, String rootKey, Function<Map<String, Object>, T> builder, String logLabel) {
+
+        File file = new File(GameManager.getInstance().getPlugin().getDataFolder(), filename);
+        YamlConfiguration config = YamlConfiguration.loadConfiguration(file);
+        List<T> result = new ArrayList<>();
+
+        if (!config.contains(rootKey)) {
+            MLLogManager.getInstance().log(Level.SEVERE, ELogTag.QUEST, "Clé '" + rootKey + "' absente dans " + filename);
+            return result;
+        }
+
+        List<?> rawList = config.getList(rootKey);
+        if (rawList == null) return result;
+
+        for (Object obj : rawList) {
+            if (!(obj instanceof Map<?, ?> rawMap)) continue;
+            @SuppressWarnings("unchecked")
+            Map<String, Object> map = (Map<String, Object>) rawMap;
+            try {
+                T quest = builder.apply(map);
+                if (quest != null) result.add(quest);
+            } catch (Exception e) {
+                MLLogManager.getInstance().log(Level.WARNING, ELogTag.QUEST,
+                        "Erreur lors du chargement d'une entrée dans " + filename, e);
+            }
+        }
+
+        MLLogManager.getInstance().log(Level.INFO, ELogTag.QUEST,
+                result.size() + " " + logLabel + " chargée(s) depuis " + filename);
+        return result;
+    }
+
+    // =========================================================================
+    // Builders spécifiques par type de quête
+    // =========================================================================
+
+    private static Quest buildQuest(Map<String, Object> map) {
+        BaseFields base = parseBase(map);
+
+        int difficulty = ((Number) map.get("difficulty")).intValue();
+
+        @SuppressWarnings("unchecked")
+        List<String> rawJobs = (List<String>) map.get("jobs");
+        List<EJob> jobs = (rawJobs == null || rawJobs.isEmpty())
+                ? List.of()
+                : rawJobs.stream().map(j -> EJob.valueOf(j.toUpperCase())).toList();
+
+        return Quest.builder()
+                .id(base.id()).name(base.name()).description(base.description())
+                .type(base.type()).targets(base.targets()).goal(base.goal()).rewards(base.rewards())
+                .difficulty(difficulty).jobs(jobs)
+                .build();
+    }
+
+    private static GlobalQuest buildGlobalQuest(Map<String, Object> map) {
+        BaseFields base = parseBase(map);
+        int timeLimit = ((Number) map.get("time_limit")).intValue();
+
+        return GlobalQuest.builder()
+                .id(base.id()).name(base.name()).description(base.description())
+                .type(base.type()).targets(base.targets()).goal(base.goal()).rewards(base.rewards())
+                .timeLimitSeconds(timeLimit)
+                .build();
+    }
+
+    // =========================================================================
+    // Parsing des champs communs (BaseQuest)
+    // =========================================================================
 
     /**
      * Champs communs aux deux types de quêtes, tels que parsés depuis un
@@ -39,30 +133,8 @@ public final class QuestYamlLoader {
             Blessing rewards
     ) {}
 
-    // -------------------------------------------------------------------------
-    // API
-    // -------------------------------------------------------------------------
-
-    /**
-     * Parse les champs communs d'un bloc quête.
-     *
-     * <p>Les récompenses sont définies sous la clé {@code rewards} comme une
-     * liste de BlessingEffects :</p>
-     * <pre>
-     * rewards:
-     *   - type: REPUTATION
-     *     job: MINEUR
-     *     value: 50
-     *   - type: POTION
-     *     potion: haste
-     *     duration: 1728000
-     *     amplifier: 0
-     * </pre>
-     *
-     * @throws Exception si un champ obligatoire est absent ou invalide
-     */
     @SuppressWarnings("unchecked")
-    public static BaseFields parseBase(Map<String, Object> map) {
+    private static BaseFields parseBase(Map<String, Object> map) {
         String id          = (String) map.get("id");
         String name        = (String) map.get("name");
         String description = (String) map.get("description");
@@ -95,7 +167,7 @@ public final class QuestYamlLoader {
      * @return liste des objets Material/EntityType correspondants, ou {@code null} pour FISH ou si {@code targets} est absent/null
      */
     @SuppressWarnings("unchecked")
-    public static List<Object> parseTargets(Map<String, Object> map, EQuestType type) {
+    private static List<Object> parseTargets(Map<String, Object> map, EQuestType type) {
         Object raw = map.get("targets");
         if (raw == null) return null;
 

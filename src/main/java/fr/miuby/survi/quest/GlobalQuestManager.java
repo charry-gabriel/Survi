@@ -14,27 +14,17 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Bukkit;
-import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitTask;
 
-import java.io.File;
 import java.util.*;
 import java.util.logging.Level;
 
-public class GlobalQuestManager {
+public class GlobalQuestManager extends AbstractQuestManager<GlobalQuest> {
 
-    @Getter
-    private final List<GlobalQuest> questPool = new ArrayList<>();
-
-    @Getter
-    private GlobalQuest activeQuest = null;
-
-    @Getter
-    private int progress = 0;
-
-    @Getter
-    private final Set<UUID> participants = new HashSet<>();
+    @Getter private GlobalQuest activeQuest = null;
+    @Getter private int progress = 0;
+    @Getter private final Set<UUID> participants = new HashSet<>();
 
     private BukkitTask timerTask = null;
     private long endTime = 0L;
@@ -44,61 +34,17 @@ public class GlobalQuestManager {
     }
 
     // =========================================================================
-    // Chargement YAML
+    // Pool — source YAML
     // =========================================================================
 
-    private void loadQuests() {
-        File questFile = new File(GameManager.getInstance().getPlugin().getDataFolder(), "global_quests.yml");
-        YamlConfiguration config = YamlConfiguration.loadConfiguration(questFile);
-
-        if (!config.contains("global_quests")) {
-            MLLogManager.getInstance().log(Level.WARNING, ELogTag.QUEST,
-                    "Impossible de charger les quêtes globales depuis global_quests.yml !");
-            return;
-        }
-
-        questPool.clear();
-
-        List<?> rawList = config.getList("global_quests");
-        if (rawList == null) return;
-
-        for (Object obj : rawList) {
-            if (!(obj instanceof Map<?, ?> rawMap)) continue;
-            @SuppressWarnings("unchecked")
-            Map<String, Object> map = (Map<String, Object>) rawMap;
-
-            try {
-                QuestYamlLoader.BaseFields base = QuestYamlLoader.parseBase(map);
-                int timeLimit = ((Number) map.get("time_limit")).intValue();
-
-                questPool.add(GlobalQuest.builder()
-                        .id(base.id())
-                        .name(base.name())
-                        .description(base.description())
-                        .type(base.type())
-                        .targets(base.targets())
-                        .goal(base.goal())
-                        .rewards(base.rewards())
-                        .timeLimitSeconds(timeLimit)
-                        .build());
-
-            } catch (Exception e) {
-                MLLogManager.getInstance().log(Level.WARNING, ELogTag.QUEST,
-                        "Erreur lors du chargement d'une quête globale dans global_quests.yml", e);
-            }
-        }
-
-        MLLogManager.getInstance().log(Level.INFO, ELogTag.QUEST,
-                questPool.size() + " quêtes globales chargées depuis global_quests.yml");
+    @Override
+    protected List<GlobalQuest> fetchPool() {
+        return QuestYamlLoader.loadGlobalQuests();
     }
 
     // =========================================================================
     // API publique
     // =========================================================================
-
-    public GlobalQuest getQuest(String id) {
-        return questPool.stream().filter(q -> q.getId().equals(id)).findFirst().orElse(null);
-    }
 
     public boolean startQuest(String questId) {
         if (activeQuest != null) return false;
@@ -180,20 +126,16 @@ public class GlobalQuestManager {
             AlphaPlayer ap = factory.getAlphaPlayer(uuid);
             if (ap == null) continue;
 
-            // Applique tous les BlessingEffects (REPUTATION + POTION)
             for (BlessingEffect effect : quest.getRewards().blessingEffects()) {
                 effect.applyEffect(ap);
             }
 
             Player p = ap.getPlayer();
-            if (p != null) {
-                p.sendMessage(buildRewardMessage(quest));
-            }
+            if (p != null) p.sendMessage(buildRewardMessage(quest));
         }
 
         MLLogManager.getInstance().log(Level.INFO, ELogTag.QUEST,
-                "[GlobalQuest] Quête complétée : " + quest.getId()
-                        + " | participants=" + winners.size());
+                "[GlobalQuest] Quête complétée : " + quest.getId() + " | participants=" + winners.size());
     }
 
     private void onTimeout() {
@@ -292,9 +234,7 @@ public class GlobalQuestManager {
     }
 
     private void broadcastMessage(Component msg) {
-        for (Player p : Bukkit.getOnlinePlayers()) {
-            p.sendMessage(msg);
-        }
+        for (Player p : Bukkit.getOnlinePlayers()) p.sendMessage(msg);
     }
 
     // =========================================================================
