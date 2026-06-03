@@ -61,7 +61,6 @@ public class VillagerFactory {
             if (config.job != null && !config.job.isEmpty()) {
                 trader.setJob(EJob.valueOf(config.job.toUpperCase()));
             }
-            trader.setQuestCompletionReputation(config.questCompletionReputation);
 
             config.recipes.stream()
                     .filter(r -> r.requiredReputation > 0)

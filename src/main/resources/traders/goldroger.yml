@@ -4,7 +4,6 @@ displayName: "Gol D. Roger"
 type: SAVANNA
 profession: WEAPONSMITH
 job: PECHEUR
-questCompletionReputation: 10
 openMessage: "Veux-tu une belle canne à pêche ?"
 mainHandItem: FISHING_ROD
 

@@ -75,7 +75,7 @@ quests:
     difficulty: 1
     jobs:
       - MINEUR
-    targets: DEEPSLATE
+    targets: [DEEPSLATE_COPPER_ORE, DEEPSLATE_COAL_ORE, DEEPSLATE_GOLD_ORE]
     goal: 96
     rewards:
       - { type: REPUTATION, job: MINEUR, value: 2}
@@ -88,7 +88,7 @@ quests:
     difficulty: 1
     jobs:
       - MINEUR
-    targets: ORE
+    targets: [DEEPSLATE_COPPER_ORE, DEEPSLATE_COAL_ORE, DEEPSLATE_GOLD_ORE]
     goal: 20
     rewards:
       - {type: REPUTATION, job: MINEUR, value: 1}
@@ -299,7 +299,7 @@ quests:
     difficulty: 2
     jobs:
       - MINEUR
-    targets: DEEPSLATE_DIAMOND_ORE
+    targets: [DEEPSLATE_DIAMOND_ORE]
     goal: 8
     rewards:
       - {type: REPUTATION, job: MINEUR, value: 3}
@@ -313,7 +313,7 @@ quests:
     difficulty: 2
     jobs:
       - MINEUR
-    targets: NETHER_QUARTZ_ORE
+    targets: [NETHER_QUARTZ_ORE]
     goal: 64
     rewards:
       - {type: REPUTATION, job: MINEUR, value: 2}
@@ -327,7 +327,7 @@ quests:
     difficulty: 2
     jobs:
       - MINEUR
-    targets: NETHER_GOLD_ORE
+    targets: [NETHER_GOLD_ORE]
     goal: 32
     rewards:
       - { type: REPUTATION, job: MINEUR, value: 2}
@@ -342,7 +342,7 @@ quests:
     difficulty: 2
     jobs:
       - MINEUR
-    targets: DEEPSLATE_IRON_ORE
+    targets: [DEEPSLATE_IRON_ORE]
     goal: 60
     rewards:
       - {type: REPUTATION, job: MINEUR, value: 2}
@@ -355,20 +355,20 @@ quests:
     difficulty: 2
     jobs:
       - MINEUR
-    targets: AMETHYST_BLOCK
+    targets: [AMETHYST_BLOCK]
     goal: 48
     rewards:
       - {type: REPUTATION, job: MINEUR, value: 2}
 
 
-  - id: "mine_deepslate_iron"
+  - id: "mine_deepslate_iron2"
     name: "Mineur Profond"
     description: "Minez 48 minerais de fer ardoisés."
     type: MINE
     difficulty: 2
     jobs:
       - MINEUR
-    targets: DEEPSLATE_IRON_ORE
+    targets: [DEEPSLATE_IRON_ORE]
     goal: 60
     rewards:
       - {type: REPUTATION, job: MINEUR, value: 28}
@@ -382,7 +382,7 @@ quests:
     difficulty: 2
     jobs:
       - MINEUR
-    targets: SCULK
+    targets: [SCULK]
     goal: 64
     rewards:
       - {type: REPUTATION, job: MINEUR, value: 3}
@@ -530,7 +530,7 @@ quests:
     difficulty: 3
     jobs:
       - MINEUR
-    targets: ANCIENT_DEBRIS
+    targets: [ANCIENT_DEBRIS]
     goal: 6
     rewards:
       - { type: REPUTATION, job: MINEUR, value: 4}
@@ -543,7 +543,7 @@ quests:
     difficulty: 3
     jobs:
       - MINEUR
-    targets: END_STONE
+    targets: [END_STONE]
     goal: 512
     rewards:
       - {type: REPUTATION, job: MINEUR, value: 4}
@@ -555,7 +555,7 @@ quests:
     difficulty: 3
     jobs:
       - MINEUR
-    targets: CHORUS_PLANT
+    targets: [CHORUS_PLANT]
     goal: 64
     rewards:
       - {type: REPUTATION, job: MINEUR, value: 4}
@@ -567,7 +567,7 @@ quests:
     difficulty: 3
     jobs:
       - MINEUR
-    targets: EMERALD_ORE
+    targets: [EMERALD_ORE]
     goal: 2
     rewards:
       - {type: REPUTATION, job: MINEUR, value: 5}
@@ -647,7 +647,7 @@ quests:
       - {type: REPUTATION, job: MINEUR, value: 160}
       - {type: POTION, potion: haste, duration: 1728000, amplifier: 2}
 
-  - id: "mine_ancient_debris"
+  - id: "mine_ancient_debris2"
     name: "Chercheur de Nétherite"
     description: "Minez 10 Ancient Debris."
     type: MINE

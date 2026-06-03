@@ -102,6 +102,10 @@ class ConfigTest {
         Map<String, Object> reputation = (Map<String, Object>) config.get("reputation");
         assertNotNull(reputation, "La section 'reputation' doit être présente");
 
+        assertTrue(reputation.containsKey("quest-completion-reputation"), "reputation.quest-completion-reputation doit être présent");
+        assertInstanceOf(Integer.class, reputation.get("quest-completion-reputation"), "reputation.quest-completion-reputation doit être un entier");
+        assertTrue((Integer) reputation.get("quest-completion-reputation") > 0, "reputation.quest-completion-reputation doit être > 0");
+
         List<?> ranks = (List<?>) reputation.get("ranks");
         assertNotNull(ranks, "reputation.ranks doit être présent");
         assertFalse(ranks.isEmpty(), "reputation.ranks ne doit pas être vide");
