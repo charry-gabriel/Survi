@@ -155,50 +155,17 @@ public class QuestManager extends AbstractQuestManager<Quest> {
     // =========================================================================
 
     /**
-     * Appelé à la connexion d'un joueur : restaure ses quêtes du jour et supprime
-     * les expirées (date ≠ aujourd'hui). Ré-applique ou retire les effets de
-     * potion selon l'état de chaque quête.
+     * Appelé à la connexion d'un joueur : restaure ses quêtes du jour et ré-applique
+     * les effets de potion des quêtes réclamées.
+     * Les quêtes expirées sont supprimées en amont par {@code deleteExpiredPlayerQuests}
+     * — {@code loaded} ne contient donc que des quêtes valides (date = aujourd'hui).
      */
     public void restoreQuestsOnJoin(AlphaPlayer player, List<PlayerQuestData> loaded) {
         player.getActiveQuests().clear();
-        LocalDate today = LocalDate.now();
-
-        List<PlayerQuestData> expired = new ArrayList<>();
-        List<PlayerQuestData> valid   = new ArrayList<>();
-
-        for (PlayerQuestData quest : loaded) {
-            if (today.isEqual(quest.getLastAccepted())) valid.add(quest);
-            else                                         expired.add(quest);
-        }
-
-        for (PlayerQuestData q : expired) {
-            GameManager.getInstance().getDatabase().quests().deletePlayerQuestSlot(player.getUuid(), q.getSlot());
-            MLLogManager.getInstance().log(Level.INFO, ELogTag.QUEST,
-                    "Quête expirée (slot " + q.getSlot() + ") supprimée pour " + player.getPseudo());
-        }
-
-        List<BlessingEffect> effectsToRemove = new ArrayList<>();
-        for (PlayerQuestData q : expired) {
-            if (q.isClaimed()) {
-                Quest questDef = getQuest(q.getQuestId());
-                if (questDef != null) {
-                    for (BlessingEffect effect : questDef.getRewards().blessingEffects()) {
-                        if (effect instanceof PotionsEffect) effectsToRemove.add(effect);
-                    }
-                }
-            }
-        }
-        if (!effectsToRemove.isEmpty()) {
-            GameManager.getInstance().getScheduler().runTaskLater(GameManager.getInstance().getPlugin(), () -> {
-                if (!player.getPlayer().isOnline()) return;
-                for (BlessingEffect effect : effectsToRemove) effect.resetEffect(player);
-            }, 2L);
-        }
-
-        player.getActiveQuests().addAll(valid);
+        player.getActiveQuests().addAll(loaded);
 
         List<BlessingEffect> effectsToReapply = new ArrayList<>();
-        for (PlayerQuestData q : valid) {
+        for (PlayerQuestData q : loaded) {
             if (q.isClaimed()) {
                 Quest questDef = getQuest(q.getQuestId());
                 if (questDef != null) {

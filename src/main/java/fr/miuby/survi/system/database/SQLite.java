@@ -8,7 +8,7 @@ import java.sql.*;
 import java.util.logging.Level;
 
 public class SQLite extends Database {
-    private static final int CURRENT_DB_VERSION = 10;
+    private static final int CURRENT_DB_VERSION = 11;
 
     public SQLite() {
         super(GameManager.getInstance().getPlugin().getConfig().getString("SQLite.Filename", "minecraft"));
@@ -203,6 +203,9 @@ public class SQLite extends Database {
             }
             if (currentVersion < 10) {
                 s.executeUpdate(createGraveTable());
+            }
+            if (currentVersion < 11) {
+                s.executeUpdate("CREATE INDEX IF NOT EXISTS idx_pq_uuid_date ON player_quest (player_uuid, last_accepted)");
             }
         }
     }

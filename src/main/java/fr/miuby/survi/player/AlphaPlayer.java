@@ -23,6 +23,7 @@ import org.bukkit.World;
 import org.bukkit.attribute.Attribute;
 
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
 import fr.miuby.survi.quest.PlayerQuestData;
@@ -151,7 +152,9 @@ public class AlphaPlayer extends MLPlayer implements Serializable {
             }
         });
 
-        List<PlayerQuestData> loaded = GameManager.getInstance().getDatabase().quests().getPlayerQuests(this.getUuid());
+        LocalDate today = LocalDate.now();
+        GameManager.getInstance().getDatabase().quests().deleteExpiredPlayerQuests(this.getUuid(), today);
+        List<PlayerQuestData> loaded = GameManager.getInstance().getDatabase().quests().getActivePlayerQuests(this.getUuid(), today);
         GameManager.getInstance().getQuestManager().restoreQuestsOnJoin(this, loaded);
 
         // Calcul initial des niveaux de métier

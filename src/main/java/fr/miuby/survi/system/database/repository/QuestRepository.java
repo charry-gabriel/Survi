@@ -59,8 +59,53 @@ public class QuestRepository extends MLRepository {
     // =========================================================================
 
     /**
+     * Retourne uniquement les quêtes acceptées à la date donnée (typiquement aujourd'hui).
+     * Exploite l'index idx_pq_uuid_date — aucun scan complet de la table.
+     */
+    public List<PlayerQuestData> getActivePlayerQuests(UUID playerUuid, LocalDate date) {
+        List<PlayerQuestData> quests = new ArrayList<>();
+        try (PreparedStatement ps = connection.prepareStatement(
+                "SELECT slot, quest_id, progress, last_accepted, is_completed, trader_id, claimed " +
+                        "FROM player_quest WHERE player_uuid = ? AND last_accepted = ? ORDER BY slot ASC")) {
+            ps.setString(1, playerUuid.toString());
+            ps.setString(2, date.toString());
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    quests.add(new PlayerQuestData(
+                            rs.getInt("slot"),
+                            rs.getString("quest_id"),
+                            rs.getInt("progress"),
+                            LocalDate.parse(rs.getString("last_accepted")),
+                            rs.getBoolean("is_completed"),
+                            rs.getString("trader_id"),
+                            rs.getBoolean("claimed")
+                    ));
+                }
+            }
+        } catch (SQLException ex) {
+            MLLogManager.getInstance().log(Level.SEVERE, ELogTag.QUEST, "Failed to get active player quests", ex);
+        }
+        return quests;
+    }
+
+    /**
+     * Supprime en une seule requête toutes les quêtes antérieures à la date donnée.
+     * Exploite l'index idx_pq_uuid_date — remplace les suppressions slot-par-slot.
+     */
+    public void deleteExpiredPlayerQuests(UUID playerUuid, LocalDate today) {
+        runAsync(conn -> {
+            try (PreparedStatement ps = conn.prepareStatement(
+                    "DELETE FROM player_quest WHERE player_uuid = ? AND last_accepted < ?")) {
+                ps.setString(1, playerUuid.toString());
+                ps.setString(2, today.toString());
+                ps.executeUpdate();
+            }
+        }, ELogTag.QUEST, "Failed to delete expired player quests");
+    }
+
+    /**
      * Retourne toutes les quêtes du joueur (tous les slots, toutes les dates).
-     * La sélection des quêtes valides vs expirées se fait dans AlphaPlayer.
+     * Réservé aux opérations admin/debug — préférer {@link #getActivePlayerQuests} à la connexion.
      */
     public List<PlayerQuestData> getPlayerQuests(UUID playerUuid) {
         List<PlayerQuestData> quests = new ArrayList<>();
