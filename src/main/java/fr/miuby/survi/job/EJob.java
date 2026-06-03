@@ -23,16 +23,10 @@ public enum EJob {
 
     MINEUR        ("Mineur",        NamedTextColor.GRAY),
     BUCHERON      ("Bûcheron",      NamedTextColor.DARK_GREEN),
-    FERMIER       ("Fermier",       NamedTextColor.GREEN),
-    COMBATANT     ("Combatant",     NamedTextColor.RED),
-    ALCHIMISTE    ("Alchimiste",    NamedTextColor.DARK_PURPLE),
-    ENCHANTEUR    ("Enchanteur",    NamedTextColor.BLUE),
-    FORGERON      ("Forgeron",      NamedTextColor.DARK_GRAY),
-    PECHEUR       ("Pêcheur",       NamedTextColor.AQUA),
-    CHASSEUR      ("Chasseur",      NamedTextColor.GOLD),
-    MARCHAND      ("Marchand",      NamedTextColor.YELLOW),
-    AVENTURIER    ("Aventurier",    NamedTextColor.LIGHT_PURPLE),
-    BATISSEUR     ("Bâtisseur",     NamedTextColor.WHITE);
+    FERMIER       ("Fermier",       NamedTextColor.YELLOW),
+    ENCHANTEUR    ("Enchanteur",    NamedTextColor.DARK_PURPLE),
+    PECHEUR       ("Pêcheur",       NamedTextColor.BLUE),
+    AVENTURIER    ("Aventurier",    NamedTextColor.RED);
 
     private final String displayName;
     private final NamedTextColor color;

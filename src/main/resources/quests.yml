@@ -1,33 +1,99 @@
 # yaml-language-server: $schema=./schema/quests-schema.json
 quests:
 
-  # ─────────────────── DIFFICULTÉ 1 (17 quêtes) ───────────────────
+  # ─────────────────── DIFFICULTÉ 1 (7 quêtes par métier) ───────────────────
 
   - id: "mine_cobblestone"
     name: "Mineur de Pierre"
-    description: "Minez 300 blocs de cobblestone."
+    description: "Minez 128 blocs de cobblestone."
     type: MINE
     difficulty: 1
     jobs:
       - MINEUR
     targets: [COBBLESTONE]
-    goal: 300
+    goal: 128
     rewards:
-      - {type: REPUTATION, job: MINEUR, value: 10}
+      - {type: REPUTATION, job: MINEUR, value: 1}
       - {type: POTION, potion: haste, duration: 1728000, amplifier: 0}
 
-  - id: "mine_dirt"
-    name: "Terrassier"
-    description: "Extrayez 400 blocs de terre."
+  - id: "mine_coal"
+    name: "Chercheur de Charbon"
+    description: "Minez 12 minerais de charbon."
     type: MINE
     difficulty: 1
     jobs:
       - MINEUR
-    targets: [DIRT]
-    goal: 400
+    target: [COAL_ORE]
+    goal: 12
     rewards:
-      - {type: REPUTATION, job: MINEUR, value: 8}
+      - {type: REPUTATION, job: MINEUR, value: 1}
       - {type: POTION, potion: haste, duration: 1728000, amplifier: 0}
+
+  - id: "mine_iron"
+    name: "Prospecteur de Fer"
+    description: "Minez 10 minerais de fer."
+    type: MINE
+    difficulty: 1
+    jobs:
+      - MINEUR
+    target: IRON_ORE
+    goal: 10
+    rewards:
+      - {type: REPUTATION, job: MINEUR, value: 1}
+      - {type: POTION, potion: haste, duration: 1728000, amplifier: 0}
+
+  - id: "mine_copper"
+    name: "Collecteur de Cuivre"
+    description: "Minez 16 minerais de cuivre."
+    type: MINE
+    difficulty: 1
+    jobs:
+      - MINEUR
+    target: COPPER_ORE
+    goal: 16
+    rewards:
+      - {type: REPUTATION, job: MINEUR, value: 1}
+      - {type: POTION, potion: haste, duration: 1728000, amplifier: 0}
+
+  - id: "mine_redstone"
+    name: "Ingénieur Débutant"
+    description: "Minez 24 minerais de redstone."
+    type: MINE
+    difficulty: 1
+    jobs:
+      - MINEUR
+    target: REDSTONE_ORE
+    goal: 24
+    rewards:
+      - {type: REPUTATION, job: MINEUR, value: 1}
+      - {type: POTION, potion: haste, duration: 1728000, amplifier: 0}
+
+  - id: "mine_deepslate"
+    name: "Sous la Surface"
+    description: "Minez 96 blocs d'ardoise des abîmes."
+    type: MINE
+    difficulty: 1
+    jobs:
+      - MINEUR
+    target: DEEPSLATE
+    goal: 96
+    rewards:
+      - { type: REPUTATION, job: MINEUR, value: 2}
+      - { type: POTION, potion: haste, duration: 1728000, amplifier: 0 }
+
+  - id: "mine_mixed_ores"
+    name: "Veine Prometteuse"
+    description: "Minez 20 minerais au total."
+    type: MINE
+    difficulty: 1
+    jobs:
+      - MINEUR
+    target: ORE
+    goal: 20
+    rewards:
+      - {type: REPUTATION, job: MINEUR, value: 1}
+      - { type: POTION, potion: haste, duration: 1728000, amplifier: 0 }
+
 
   - id: "mine_sand"
     name: "Carrier de Sable"
@@ -224,47 +290,103 @@ quests:
       - {type: REPUTATION, job: FORGERON, value: 9}
       - {type: POTION, potion: haste, duration: 1728000, amplifier: 0}
 
-  # ─────────────────── DIFFICULTÉ 2 (14 quêtes) ───────────────────
+  # ─────────────────── DIFFICULTÉ 2 (7 quêtes par métier) ───────────────────
 
-  - id: "mine_iron"
-    name: "Mineur de Fer"
-    description: "Minez 80 minerais de fer."
+  - id: "mine_diamond_hunt"
+    name: "Chasseur de Diamants"
+    description: "Minez 8 diamants."
     type: MINE
     difficulty: 2
     jobs:
       - MINEUR
-    targets: [IRON_ORE, DEEPSLATE_IRON_ORE]
-    goal: 80
+    target: DEEPSLATE_DIAMOND_ORE
+    goal: 8
     rewards:
-      - {type: REPUTATION, job: MINEUR, value: 25}
+      - {type: REPUTATION, job: MINEUR, value: 3}
       - {type: POTION, potion: haste, duration: 1728000, amplifier: 1}
       - {type: POTION, potion: night_vision, duration: 1728000, amplifier: 0}
 
-  - id: "mine_coal"
-    name: "Chercheur de Charbon"
-    description: "Minez 200 minerais de charbon."
+  - id: "mine_nether_quartz"
+    name: "Cristaux du Nether"
+    description: "Minez 64 quartz du Nether."
     type: MINE
     difficulty: 2
     jobs:
       - MINEUR
-    targets: [COAL_ORE, DEEPSLATE_COAL_ORE]
-    goal: 200
+    target: NETHER_QUARTZ_ORE
+    goal: 64
     rewards:
-      - {type: REPUTATION, job: MINEUR, value: 22}
+      - {type: REPUTATION, job: MINEUR, value: 2}
+      - { type: POTION, potion: haste, duration: 1728000, amplifier: 1 }
+      - { type: POTION, potion: night_vision, duration: 1728000, amplifier: 0 }
+
+  - id: "mine_nether_gold"
+    name: "Or du Royaume Infernal"
+    description: "Minez 32 minerais d'or du Nether."
+    type: MINE
+    difficulty: 2
+    jobs:
+      - MINEUR
+    target: NETHER_GOLD_ORE
+    goal: 32
+    rewards:
+      - { type: REPUTATION, job: MINEUR, value: 2}
+      - { type: REPUTATION, job: AVENTURIER, value: 1}
+      - { type: POTION, potion: haste, duration: 1728000, amplifier: 1 }
+      - { type: POTION, potion: night_vision, duration: 1728000, amplifier: 0 }
+
+  - id: "mine_deepslate_iron"
+    name: "Mineur Profond"
+    description: "Minez 48 minerais de fer ardoisés."
+    type: MINE
+    difficulty: 2
+    jobs:
+      - MINEUR
+    target: DEEPSLATE_IRON_ORE
+    goal: 60
+    rewards:
+      - {type: REPUTATION, job: MINEUR, value: 2}
       - {type: POTION, potion: haste, duration: 1728000, amplifier: 1}
 
-  - id: "mine_copper"
-    name: "Chasseur de Cuivre"
-    description: "Minez 100 minerais de cuivre."
+  - id: "mine_amethyst_geode"
+    name: "Cristaux des Géodes"
+    description: "Minez 48 blocs dans les géodes d'améthyste."
     type: MINE
     difficulty: 2
     jobs:
       - MINEUR
-    targets: [COPPER_ORE, DEEPSLATE_COPPER_ORE]
-    goal: 100
+    target: AMETHYST_BLOCK
+    goal: 48
     rewards:
-      - {type: REPUTATION, job: MINEUR, value: 25}
+      - {type: REPUTATION, job: MINEUR, value: 2}
+
+
+  - id: "mine_deepslate_iron"
+    name: "Mineur Profond"
+    description: "Minez 48 minerais de fer ardoisés."
+    type: MINE
+    difficulty: 2
+    jobs:
+      - MINEUR
+    target: DEEPSLATE_IRON_ORE
+    goal: 60
+    rewards:
+      - {type: REPUTATION, job: MINEUR, value: 28}
       - {type: POTION, potion: haste, duration: 1728000, amplifier: 1}
+
+
+  - id: "mine_sculk_block"
+    name: "Propagation Souterraine"
+    description: "Minez 64 blocs de Sculk dans le Deep Dark."
+    type: MINE
+    difficulty: 2
+    jobs:
+      - MINEUR
+    target: SCULK
+    goal: 64
+    rewards:
+      - {type: REPUTATION, job: MINEUR, value: 3}
+      - { type: REPUTATION, job: AVENTURIER, value: 2}
 
   - id: "kill_drowned"
     name: "Exterminateur des Profondeurs"
@@ -399,7 +521,56 @@ quests:
       - {type: REPUTATION, job: FERMIER, value: 26}
       - {type: POTION, potion: speed, duration: 1728000, amplifier: 1}
 
-  # ─────────────────── DIFFICULTÉ 3 (8 quêtes) ───────────────────
+  # ─────────────────── DIFFICULTÉ 3 (7 quêtes par métier) ───────────────────
+
+  - id: "mine_ancient_debris"
+    name: "Trésor du Nether"
+    description: "Minez 6 débris antiques."
+    type: MINE
+    difficulty: 3
+    jobs:
+      - MINEUR
+    target: ANCIENT_DEBRIS
+    goal: 6
+    rewards:
+      - { type: REPUTATION, job: MINEUR, value: 4}
+      - { type: REPUTATION, job: AVENTURIER, value: 1}
+
+  - id: "mine_end_stone_mass"
+    name: "Colonisation de l'End"
+    description: "Minez 512 blocs d'End Stone dans l'End."
+    type: MINE
+    difficulty: 3
+    jobs:
+      - MINEUR
+    target: END_STONE
+    goal: 512
+    rewards:
+      - {type: REPUTATION, job: MINEUR, value: 4}
+
+  - id: "mine_chorus_plants"
+    name: "Écho de l'End"
+    description: "Récoltez 64 Chorus dans l'End."
+    type: MINE
+    difficulty: 3
+    jobs:
+      - MINEUR
+    target: CHORUS_PLANT
+    goal: 64
+    rewards:
+      - {type: REPUTATION, job: MINEUR, value: 4}
+
+  - id: "mine_emerald"
+    name: "Richesse des Montagnes"
+    description: "Minez 2 minerais d'émeraude dans les biomes de montagne"
+    type: MINE
+    difficulty: 3
+    jobs:
+      - MINEUR
+    target: EMERALD_ORE
+    goal: 2
+    rewards:
+      - {type: REPUTATION, job: MINEUR, value: 5}
 
   - id: "kill_endermen"
     name: "Chasseur de l'End"
