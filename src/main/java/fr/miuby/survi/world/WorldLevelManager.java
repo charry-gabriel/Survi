@@ -1,9 +1,11 @@
 package fr.miuby.survi.world;
 
+import fr.miuby.lib.MiubyLib;
 import fr.miuby.survi.GameManager;
 import fr.miuby.survi.system.SurviConfig;
 import fr.miuby.lib.log.MLLogManager;
 import fr.miuby.survi.system.log.ELogTag;
+import fr.miuby.survi.world.event.WorldLevelUpEvent;
 
 import java.util.logging.Level;
 
@@ -34,12 +36,19 @@ public class WorldLevelManager {
 
     // ─── Mutation ────────────────────────────────────────────────────────────────
 
-    public void increment(int delta) {
-        if (delta <= 0) return;
-        worldLevel += delta;
+    public void increment() {
+        int oldLevel = worldLevel;
+        worldLevel++;
         persist();
-        MLLogManager.getInstance().log(Level.INFO, ELogTag.SYSTEM,
-                "[WorldLevel] Niveau du monde : " + worldLevel + " (+" + delta + ")");
+        MiubyLib.callEvent(new WorldLevelUpEvent(oldLevel, worldLevel));
+        MLLogManager.getInstance().log(Level.INFO, ELogTag.SYSTEM, "[WorldLevel] Niveau du monde : " + worldLevel + " (+1)");
+    }
+
+    public void decrement() {
+        if (worldLevel <= 0) return;
+        worldLevel--;
+        persist();
+        MLLogManager.getInstance().log(Level.INFO, ELogTag.SYSTEM, "[WorldLevel] Niveau du monde : " + worldLevel + " (-1)");
     }
 
     /**

@@ -41,6 +41,8 @@ public class Survi extends JavaPlugin {
         pluginManager.registerEvents(new VillagerListener(), this);
         pluginManager.registerEvents(new GraveListener(), this);
         pluginManager.registerEvents(new JobListener(), this);
+        pluginManager.registerEvents(new JobLevelUpListener(), this);
+        pluginManager.registerEvents(new WorldLevelUpListener(), this);
         pluginManager.registerEvents(new MobSpawnListener(), this);
         pluginManager.registerEvents(new GrowthItemListener(placedBlockTracker), this);
         pluginManager.registerEvents(new QuestListener(placedBlockTracker), this);

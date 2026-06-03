@@ -1,10 +1,12 @@
 package fr.miuby.survi.player;
 
+import fr.miuby.lib.MiubyLib;
 import fr.miuby.lib.player.MLPlayer;
 import fr.miuby.lib.world.WorldRegistry;
 import fr.miuby.survi.job.EJob;
 import fr.miuby.survi.job.JobLevelConfig;
 import fr.miuby.survi.GameManager;
+import fr.miuby.survi.player.event.AlphaPlayerJobLevelUpEvent;
 import fr.miuby.survi.system.SurviConfig;
 import fr.miuby.survi.role.*;
 import fr.miuby.lib.log.MLLogManager;
@@ -314,6 +316,10 @@ public class AlphaPlayer extends MLPlayer implements Serializable {
         int oldLevel = jobLevels.getOrDefault(job, 0);
         int newLevel = JobLevelConfig.computeLevel(newReputation);
         jobLevels.put(job, newLevel);
+
+        if (newLevel > oldLevel) {
+            MiubyLib.callEvent(new AlphaPlayerJobLevelUpEvent(this, job, oldLevel, newLevel));
+        }
 
         if (newLevel > oldLevel && getPlayer() != null && getPlayer().isOnline()) {
             int nextThreshold = JobLevelConfig.getNextThreshold(newReputation);

@@ -1,0 +1,73 @@
+package fr.miuby.survi.listener;
+
+import fr.miuby.survi.job.EJob;
+import fr.miuby.survi.job.JobLevelConfig;
+import fr.miuby.survi.player.AlphaPlayer;
+import fr.miuby.survi.player.event.AlphaPlayerJobLevelUpEvent;
+import net.kyori.adventure.key.Key;
+import net.kyori.adventure.sound.Sound;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.title.Title;
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+
+import java.time.Duration;
+
+/**
+ * Réagit à {@link AlphaPlayerJobLevelUpEvent} pour produire les effets de passage de niveau :
+ *
+ * <ul>
+ *   <li><b>Effets visuels</b> — title + subtitle affiché au joueur concerné</li>
+ *   <li><b>Son</b>           — joué pour tous les joueurs en ligne</li>
+ *   <li><b>Annonce</b>       — broadcast global en chat</li>
+ * </ul>
+ *
+ * Le message de progression (rep actuelle / seuil suivant) et le log restent gérés
+ * dans {@code AlphaPlayer.updateJobLevel()}.
+ */
+public class JobLevelUpListener implements Listener {
+
+    private static final Sound LEVEL_UP_SOUND = Sound.sound(Key.key("ui.toast.challenge_complete"), Sound.Source.MASTER, 1f, 1.1f);
+
+    private static final Title.Times TITLE_TIMES = Title.Times.times(
+            Duration.ofMillis(300),
+            Duration.ofMillis(2500),
+            Duration.ofMillis(500)
+    );
+
+    @EventHandler
+    public void onJobLevelUp(AlphaPlayerJobLevelUpEvent event) {
+        AlphaPlayer alphaPlayer = event.getAlphaPlayer();
+        Player player = alphaPlayer.getPlayer();
+        EJob job = event.getJob();
+        int newLevel = event.getNewLevel();
+        String levelName = JobLevelConfig.getLevelName(newLevel);
+
+        // ── Effets visuels — title affiché uniquement au joueur concerné ─────────
+        if (player != null && player.isOnline()) {
+            player.showTitle(Title.title(
+                    Component.text("⚒ Niveau supérieur !", NamedTextColor.GOLD),
+                    Component.text(job.getDisplayName(), job.getColor())
+                            .append(Component.text(" · " + levelName, NamedTextColor.YELLOW)),
+                    TITLE_TIMES
+            ));
+        }
+
+        // ── Annonce + son — tous les joueurs en ligne ─────────────────────────────
+        Component broadcast = Component.text("⚒ ", NamedTextColor.GOLD)
+                .append(Component.text(alphaPlayer.getPseudo(), NamedTextColor.WHITE))
+                .append(Component.text(" a atteint le niveau ", NamedTextColor.GOLD))
+                .append(Component.text(levelName, NamedTextColor.YELLOW))
+                .append(Component.text(" en ", NamedTextColor.GOLD))
+                .append(job.toComponent())
+                .append(Component.text(" !", NamedTextColor.GOLD));
+
+        for (Player p : Bukkit.getOnlinePlayers()) {
+            p.playSound(LEVEL_UP_SOUND);
+        }
+        Bukkit.broadcast(broadcast);
+    }
+}

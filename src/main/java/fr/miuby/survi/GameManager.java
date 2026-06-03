@@ -90,14 +90,14 @@ public class GameManager {
 
         // MiubyLib doit être initialisé avant MLLogManager (setupHandlers en a besoin)
         MiubyLib.init(plugin);
-        fr.miuby.lib.log.MLLogManager.getInstance().registerTags(ELogTag.values());
+        MLLogManager.getInstance().registerTags(ELogTag.values());
 
-        fr.miuby.lib.log.MLLogManager.getInstance().log(Level.INFO, ELogTag.SYSTEM, "Initialisation du plugin...");
+        MLLogManager.getInstance().log(Level.INFO, ELogTag.SYSTEM, "Initialisation du plugin...");
 
         this.initDatabase();
 
         // Initialisation complète du log après la DB pour brancher la persistence
-        fr.miuby.lib.log.MLLogManager.getInstance().initialize(new LogPersistence(database.system()));
+        MLLogManager.getInstance().initialize(new LogPersistence(database.system()));
 
         this.initWorlds();
     }

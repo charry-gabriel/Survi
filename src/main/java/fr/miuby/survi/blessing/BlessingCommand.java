@@ -205,7 +205,7 @@ public class BlessingCommand {
                         .then(Commands.literal("world_level")
                                 .executes(ctx -> {
                                     AlphaPlayer target = AlphaPlayerArgument.getAlphaPlayer(ctx, playerArgument);
-                                    new WorldLevelEffect(1).applyEffect(target);
+                                    new WorldLevelEffect().applyEffect(target);
                                     feedback(ctx, target, "World level +1 → " + GameManager.getInstance().getWorldLevelManager().getLevel());
                                     return Command.SINGLE_SUCCESS;
                                 })
