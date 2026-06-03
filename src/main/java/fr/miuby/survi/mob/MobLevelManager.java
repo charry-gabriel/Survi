@@ -20,13 +20,11 @@ import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.potion.PotionEffectType;
 
 import java.io.File;
-import java.util.Arrays;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.logging.Level;
-import java.util.stream.Collectors;
 
 /**
  * Cœur du système de niveaux des monstres.
@@ -60,12 +58,21 @@ public class MobLevelManager {
 
     // ─── État ─────────────────────────────────────────────────────────────────────
 
-    private final Map<EntityType, MobTypeConfig> configs = new EnumMap<>(EntityType.class);
+    private final Map<EntityType, MobTypeConfig> configs       = new EnumMap<>(EntityType.class);
+    private final Map<EntityType, String>        cachedMobNames = new EnumMap<>(EntityType.class);
     private final Random random = new Random();
 
     @Getter
     private int    levelsPerTier       = 10;
     private double spawnWeightExponent = 1.8;
+
+    /**
+     * Poids pré-calculés pour {@link #rollMobLevel()}.
+     * {@code cachedWeights[i] = (levelsPerTier - i) ^ spawnWeightExponent}
+     * Ne dépend pas du world level — recalculé uniquement dans {@link #init()}.
+     */
+    private double[] cachedWeights;
+    private double   cachedWeightsTotal;
 
     // ─── Lifecycle ────────────────────────────────────────────────────────────────
 
@@ -79,6 +86,15 @@ public class MobLevelManager {
 
         levelsPerTier       = cfg.getInt("levels-per-world-tier", 10);
         spawnWeightExponent = cfg.getDouble("spawn-weight-exponent", 1.8);
+
+        // Pré-calcul des poids de tirage — indépendants du world level, donc stables
+        // jusqu'au prochain init(). Évite d'allouer un double[] à chaque spawn.
+        cachedWeights = new double[levelsPerTier];
+        cachedWeightsTotal = 0;
+        for (int i = 0; i < levelsPerTier; i++) {
+            cachedWeights[i] = Math.pow(levelsPerTier - (double) i, spawnWeightExponent);
+            cachedWeightsTotal += cachedWeights[i];
+        }
 
         configs.clear();
 
@@ -143,6 +159,12 @@ public class MobLevelManager {
             configs.put(type, typeConfig);
         }
 
+        // Pré-calcul des noms de mobs — pur, déterministe, une fois suffit par type.
+        cachedMobNames.clear();
+        for (EntityType type : configs.keySet()) {
+            cachedMobNames.put(type, buildMobName(type));
+        }
+
         new MobNametagTask().runTaskTimer(GameManager.getInstance().getPlugin(), 0L, MobNametagTask.PERIOD_TICKS);
 
         MLLogManager.getInstance().log(Level.INFO, ELogTag.SYSTEM,
@@ -157,22 +179,16 @@ public class MobLevelManager {
      * <p>Distribution pondérée : niveau bas = plus fréquent, niveau haut = élite rare.
      * Formule du poids pour l'offset {@code i} (0 = plus commun) :
      * {@code weight(i) = (levelsPerTier - i) ^ spawnWeightExponent}
+     * <p>Les poids sont pré-calculés dans {@link #init()} — aucune allocation ici.
      */
     public int rollMobLevel() {
         int worldLevel = GameManager.getInstance().getWorldLevelManager().getLevel();
         int tierStart  = worldLevel * levelsPerTier + 1;
 
-        double[] weights = new double[levelsPerTier];
-        double total = 0;
-        for (int i = 0; i < levelsPerTier; i++) {
-            weights[i] = Math.pow(levelsPerTier - (double)i, spawnWeightExponent);
-            total += weights[i];
-        }
-
-        double roll       = random.nextDouble() * total;
+        double roll       = random.nextDouble() * cachedWeightsTotal;
         double cumulative = 0;
-        for (int i = 0; i < levelsPerTier; i++) {
-            cumulative += weights[i];
+        for (int i = 0; i < cachedWeights.length; i++) {
+            cumulative += cachedWeights[i];
             if (roll <= cumulative) return tierStart + i;
         }
         return tierStart;
@@ -312,8 +328,7 @@ public class MobLevelManager {
 
     /** @return {@code true} si le type est configuré et activé. */
     public boolean isManaged(EntityType type) {
-        MobTypeConfig cfg = configs.get(type);
-        return cfg != null;
+        return configs.get(type) != null;
     }
 
     /** @return le niveau stocké dans le PDC du mob, ou {@code -1} s'il n'en a pas. */
@@ -374,11 +389,24 @@ public class MobLevelManager {
         }
     }
 
-    /** Formate un EntityType en nom lisible (ex. CAVE_SPIDER → "Cave Spider"). */
+    /**
+     * Formate un EntityType en nom lisible (ex. CAVE_SPIDER → "Cave Spider").
+     * Retourne le nom pré-calculé dans {@link #cachedMobNames} — aucune allocation.
+     */
     private String formatMobName(EntityType type) {
-        return Arrays.stream(type.name().split("_"))
-                .map(w -> Character.toUpperCase(w.charAt(0)) + w.substring(1).toLowerCase())
-                .collect(Collectors.joining(" "));
+        return cachedMobNames.getOrDefault(type, type.name());
+    }
+
+    /** Construit le nom lisible d'un EntityType. Appelé uniquement dans {@link #init()}. */
+    private String buildMobName(EntityType type) {
+        String[] parts = type.name().split("_");
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < parts.length; i++) {
+            if (i > 0) sb.append(' ');
+            String p = parts[i];
+            sb.append(Character.toUpperCase(p.charAt(0))).append(p.substring(1).toLowerCase());
+        }
+        return sb.toString();
     }
 
     private int    toInt   (Object v, int    def) { return v instanceof Number n ? n.intValue()    : def; }
