@@ -7,7 +7,7 @@ global_quests:
     name: "Grande Chasse aux Endermen"
     description: "Ensemble, tuez 200 Endermen dans l'End !"
     type: "KILL"
-    target: "ENDERMAN"
+    targets: [ENDERMAN]
     goal: 200
     time_limit: 3600
     rewards:
@@ -20,7 +20,7 @@ global_quests:
     name: "Armée des Wither Squelettes"
     description: "Éliminez 80 Wither Squelettes du Nether !"
     type: "KILL"
-    target: "WITHER_SKELETON"
+    targets: [WITHER_SKELETON]
     goal: 80
     time_limit: 5400
     rewards:
@@ -34,7 +34,7 @@ global_quests:
     name: "Extinction des Blazes"
     description: "Éteignez 150 Blazes dans les forteresses du Nether !"
     type: "KILL"
-    target: "BLAZE"
+    targets: [BLAZE]
     goal: 150
     time_limit: 4800
     rewards:
@@ -47,7 +47,7 @@ global_quests:
     name: "Terreur des Abysses"
     description: "Tuez 100 Gardiens dans les temples sous-marins !"
     type: "KILL"
-    target: "GUARDIAN"
+    targets: [GUARDIAN]
     goal: 100
     time_limit: 5400
     rewards:
@@ -61,7 +61,7 @@ global_quests:
     name: "Ruée vers la Nétherite"
     description: "Extrayez ensemble 50 Ancient Debris !"
     type: "MINE"
-    target: "ANCIENT_DEBRIS"
+    targets: [ANCIENT_DEBRIS]
     goal: 50
     time_limit: 7200
     rewards:
@@ -74,7 +74,7 @@ global_quests:
     name: "Chantier d'Obsidienne"
     description: "Minez 500 blocs d'obsidienne !"
     type: "MINE"
-    target: "OBSIDIAN"
+    targets: [OBSIDIAN]
     goal: 500
     time_limit: 5400
     rewards:
@@ -86,7 +86,7 @@ global_quests:
     name: "Marathon de Pêche"
     description: "Pêchez collectivement 300 poissons !"
     type: "FISH"
-    target: null
+    targets: null
     goal: 300
     time_limit: 5400
     rewards:
@@ -98,7 +98,7 @@ global_quests:
     name: "Grande Ferme Commune"
     description: "Faites se reproduire 100 animaux ensemble !"
     type: "BREED"
-    target: null
+    targets: null
     goal: 100
     time_limit: 5400
     rewards:
@@ -110,7 +110,7 @@ global_quests:
     name: "Grande Fonderie"
     description: "Fondez ensemble 1000 lingots de fer !"
     type: "SMELT"
-    target: "IRON_INGOT"
+    targets: [IRON_INGOT]
     goal: 1000
     time_limit: 7200
     rewards:

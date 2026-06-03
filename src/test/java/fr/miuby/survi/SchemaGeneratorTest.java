@@ -107,7 +107,7 @@ class SchemaGeneratorTest {
     }
 
     private void updateQuestsSchema() throws IOException {
-        Path path = Paths.get("src/main/resources/schema/quests.schema.json");
+        Path path = Paths.get("src/main/resources/schema/quests-schema.json");
         if (!Files.exists(path)) return;
 
         String content = Files.readString(path);
@@ -128,20 +128,13 @@ class SchemaGeneratorTest {
                     m -> m.group(1) + "[\n        " + Matcher.quoteReplacement(jobEnumJson) + "\n      ]");
         }
 
-        // Update target enum (Material + EntityType)
+        // Update targets items.enum (Material + EntityType).
+        // targets est un array nullable dont items.enum contient tous les Materials et EntityTypes.
         List<String> allTargets = Stream.concat(getMaterialNames().stream(), getEntityTypeNames().stream())
                 .distinct()
                 .sorted()
                 .toList();
-        Pattern targetPattern = Pattern.compile("\"target\":\\s*\\{\\s*\"type\":\\s*\\[\"string\",\\s*\"null\"\\][^{}]*\\}");
-        String targetEnumJson = "\"target\": {\n            \"type\": [\"string\", \"null\"],\n            \"enum\": [\n              null,\n              " +
-                allTargets.stream().map(s -> "\"" + s + "\"").collect(Collectors.joining(",\n              ")) +
-                "\n            ]\n          }";
-        if (targetPattern.matcher(content).find()) {
-            content = targetPattern.matcher(content).replaceAll(Matcher.quoteReplacement(targetEnumJson));
-        } else {
-            content = replaceEnum(content, "target", allTargets);
-        }
+        content = replaceTargetsItemsEnum(content, allTargets);
 
         // Update job enum in rewards > REPUTATION effect
         content = replaceEnum(content, "job", getEnumNamesFromSource("src/main/java/fr/miuby/survi/job/EJob.java"));
@@ -174,20 +167,12 @@ class SchemaGeneratorTest {
         // Update quest type enum (MINE, KILL, …)
         content = replaceEnum(content, "type", getEnumNamesFromSource("src/main/java/fr/miuby/survi/quest/EQuestType.java"));
 
-        // Update target enum (Material + EntityType)
+        // Update targets items.enum (Material + EntityType).
         List<String> allTargets = Stream.concat(getMaterialNames().stream(), getEntityTypeNames().stream())
                 .distinct()
                 .sorted()
                 .toList();
-        Pattern targetPattern = Pattern.compile("\"target\":\\s*\\{\\s*\"type\":\\s*\\[\"string\",\\s*\"null\"\\][^{}]*\\}");
-        String targetEnumJson = "\"target\": {\n            \"type\": [\"string\", \"null\"],\n            \"description\": \"Matériau (MINE/CRAFT/SMELT) ou EntityType (KILL/SHEAR/BREED). Null pour FISH ou pour tout type.\",\n            \"enum\": [\n              null,\n              " +
-                allTargets.stream().map(s -> "\"" + s + "\"").collect(java.util.stream.Collectors.joining(",\n              ")) +
-                "\n            ]\n          }";
-        if (targetPattern.matcher(content).find()) {
-            content = targetPattern.matcher(content).replaceAll(java.util.regex.Matcher.quoteReplacement(targetEnumJson));
-        } else {
-            content = replaceEnum(content, "target", allTargets);
-        }
+        content = replaceTargetsItemsEnum(content, allTargets);
 
         // Update job enum in rewards > REPUTATION effect
         content = replaceEnum(content, "job", getEnumNamesFromSource("src/main/java/fr/miuby/survi/job/EJob.java"));
@@ -207,6 +192,8 @@ class SchemaGeneratorTest {
 
         // Update world enum in rewards > LOCK_WORLD / LIMIT_WORLD effects
         content = replaceEnum(content, "world", getEnumNamesFromSource("src/main/java/fr/miuby/survi/world/EWorld.java"));
+
+        Files.writeString(path, content);
     }
 
     private void updateTradersSchema() throws IOException {
@@ -303,10 +290,45 @@ class SchemaGeneratorTest {
             entities.addAll(List.of("PLAYER", "ZOMBIE", "SKELETON", "CREEPER", "COW", "SHEEP", "PIG", "CHICKEN"));
         }
 
-        // Enrichir avec les YML (parfois utilisé comme target dans les quêtes)
-        entities.addAll(collectValuesFromYml("target"));
+        // Enrichir avec les valeurs trouvées dans les YAML (targets est une liste inline)
+        entities.addAll(collectValuesFromYml("targets"));
 
         return entities.stream().toList();
+    }
+
+    /**
+     * Remplace l'enum dans le bloc {@code items} de la propriété {@code "targets"} du schéma.
+     * La propriété {@code targets} est un tableau nullable dont la structure est :
+     * <pre>
+     * "targets": {
+     *   "type": ["array", "null"],
+     *   "items": {
+     *     "type": "string",
+     *     "enum": [...]
+     *   }
+     * }
+     * </pre>
+     */
+    private String replaceTargetsItemsEnum(String content, List<String> values) {
+        if (values.isEmpty()) return content;
+
+        String enumJson = "\"enum\": [\n                " +
+                values.stream().distinct().sorted().map(s -> "\"" + s + "\"").collect(Collectors.joining(",\n                ")) +
+                "\n              ]";
+
+        // On cherche "targets": { ... "items": { ... "enum": [...] } }
+        // en remplaçant l'enum à l'intérieur du bloc items
+        Pattern itemsEnumPattern = Pattern.compile(
+                "(\"targets\"\\s*:\\s*\\{[^{}]*\"items\"\\s*:\\s*\\{[^{}]*)\"enum\"\\s*:\\s*\\[[^\\]]*\\]([^{}]*\\})([^{}]*\\})"
+        );
+        Matcher m = itemsEnumPattern.matcher(content);
+        if (m.find()) {
+            return m.replaceAll(mr -> Matcher.quoteReplacement(mr.group(1)) +
+                    Matcher.quoteReplacement(enumJson) +
+                    Matcher.quoteReplacement(mr.group(2)) +
+                    Matcher.quoteReplacement(mr.group(3)));
+        }
+        return content;
     }
 
 
@@ -374,11 +396,20 @@ class SchemaGeneratorTest {
                     .forEach(p -> {
                         try {
                             String content = Files.readString(p);
-                            // Regex pour trouver "key: VALUE" ou "key: 'VALUE'" ou "key: "VALUE""
-                            Pattern pattern = Pattern.compile("(?m)^\\s*" + key + ":\\s*[\"']?([A-Z0-9_]+)[\"']?");
-                            Matcher matcher = pattern.matcher(content);
+                            // Format scalaire : "key: VALUE"
+                            Pattern scalarPattern = Pattern.compile("(?m)^\\s*" + key + ":\\s*[\"']?([A-Z0-9_]+)[\"']?");
+                            Matcher matcher = scalarPattern.matcher(content);
                             while (matcher.find()) {
                                 values.add(matcher.group(1).toUpperCase());
+                            }
+                            // Format liste inline : "key: [VALUE1, VALUE2, ...]"
+                            Pattern listPattern = Pattern.compile("(?m)^\\s*" + key + ":\\s*\\[([^\\]]+)\\]");
+                            Matcher listMatcher = listPattern.matcher(content);
+                            while (listMatcher.find()) {
+                                for (String item : listMatcher.group(1).split(",")) {
+                                    String val = item.trim().replaceAll("[\"']", "").toUpperCase();
+                                    if (!val.isEmpty() && !val.equals("NULL")) values.add(val);
+                                }
                             }
                         } catch (IOException _) {
                             // ignore

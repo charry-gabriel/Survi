@@ -121,7 +121,7 @@ public class QuestManager {
                         .name(base.name())
                         .description(base.description())
                         .type(base.type())
-                        .target(base.target())
+                        .targets(base.targets())
                         .goal(base.goal())
                         .rewards(base.rewards())
                         .difficulty(difficulty)

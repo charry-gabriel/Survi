@@ -76,7 +76,7 @@ public class GlobalQuestManager {
                         .name(base.name())
                         .description(base.description())
                         .type(base.type())
-                        .target(base.target())
+                        .targets(base.targets())
                         .goal(base.goal())
                         .rewards(base.rewards())
                         .timeLimitSeconds(timeLimit)

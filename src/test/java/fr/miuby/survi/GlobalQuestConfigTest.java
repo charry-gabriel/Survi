@@ -16,9 +16,10 @@ import java.util.regex.Pattern;
  *
  * Vérifications :
  *  - présence de la clé racine "global_quests"
- *  - champs obligatoires : id, name, description, type, goal, time_limit, rewards
+ *  - champs obligatoires : id, name, description, type, targets, goal, time_limit, rewards
  *  - unicité des ids
  *  - type ∈ {MINE, KILL, BREED, FISH, SHEAR, CRAFT, SMELT}
+ *  - targets : null ou liste de strings non vides
  *  - goal ≥ 1
  *  - time_limit ≥ 60
  *  - rewards non vide : chaque entrée a un type ∈ {REPUTATION, POTION}
@@ -174,11 +175,24 @@ class GlobalQuestConfigTest {
 
     private List<String> extractValues(String content, String key) {
         List<String> values = new ArrayList<>();
-        Pattern pattern = Pattern.compile("(?m)^\\s*(?:-\\s+)?" + key + ":\\s*[\"']?([A-Z0-9_a-z]+)[\"']?");
+        // Supporte les deux formats : "key: VALUE" et "key: [VALUE1, VALUE2]"
+        Pattern pattern = Pattern.compile("(?m)^\\s*(?:-\\s+)?" + key + ":\\s*(.+)$");
         Matcher matcher = pattern.matcher(content);
         while (matcher.find()) {
-            String val = matcher.group(1).trim();
-            if (!val.isEmpty()) values.add(val);
+            String raw = matcher.group(1).trim();
+            if (raw.equals("null")) continue;
+            // Format liste inline : [VAL1, VAL2, ...]
+            if (raw.startsWith("[") && raw.endsWith("]")) {
+                String inner = raw.substring(1, raw.length() - 1);
+                for (String item : inner.split(",")) {
+                    String val = item.trim().replaceAll("[\"']", "");
+                    if (!val.isEmpty() && !val.equals("null")) values.add(val);
+                }
+            } else {
+                // Format scalaire simple
+                String val = raw.replaceAll("[\"']", "").trim();
+                if (!val.isEmpty()) values.add(val);
+            }
         }
         return values;
     }

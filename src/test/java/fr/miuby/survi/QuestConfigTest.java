@@ -24,11 +24,12 @@ import static org.junit.jupiter.api.Assertions.*;
  * <ul>
  *   <li>Présence de la clé racine {@code quests} avec au moins une entrée.</li>
  *   <li>Pour chaque quête : {@code id}, {@code name}, {@code description}, {@code type},
- *       {@code difficulty}, {@code target}, {@code goal} et {@code rewards} requis.</li>
+ *       {@code difficulty}, {@code targets}, {@code goal} et {@code rewards} requis.</li>
  *   <li>Unicité des {@code id}.</li>
  *   <li>{@code type} ∈ {MINE, KILL, BREED, FISH, SHEAR, CRAFT, SMELT}.</li>
  *   <li>{@code difficulty} : entier ≥ 1.</li>
  *   <li>{@code goal} : entier ≥ 1.</li>
+ *   <li>{@code targets} : null ou liste non vide de strings non vides.</li>
  *   <li>{@code jobs} : si présent, liste non vide de noms EJob valides.</li>
  *   <li>{@code rewards} : non vide — chaque récompense validée par type
  *       (REPUTATION, POTION, MAX_HEALTH, RESISTANCE, DAMAGE, DISPEL, UNLOCK_TOOL,
@@ -134,8 +135,20 @@ class QuestConfigTest {
             assertInstanceOf(Integer.class, quest.get("difficulty"), ctx + " : 'difficulty' doit être un entier");
             assertTrue((Integer) quest.get("difficulty") >= 1, ctx + " : 'difficulty' doit être ≥ 1");
 
-            // target (peut être null)
-            assertTrue(quest.containsKey("target"), ctx + " : champ 'target' manquant (utiliser 'null' explicitement si non applicable)");
+            // targets (null autorisé pour FISH, sinon liste non vide de strings)
+            assertTrue(quest.containsKey("targets"),
+                    ctx + " : champ 'targets' manquant (utiliser 'null' explicitement si non applicable)");
+            Object targetsRaw = quest.get("targets");
+            if (targetsRaw != null) {
+                assertInstanceOf(List.class, targetsRaw, ctx + " : 'targets' doit être une liste ou null");
+                List<?> targetList = (List<?>) targetsRaw;
+                assertFalse(targetList.isEmpty(), ctx + " : 'targets' ne doit pas être une liste vide (utiliser null à la place)");
+                for (int t = 0; t < targetList.size(); t++) {
+                    Object tRaw = targetList.get(t);
+                    assertNotNull(tRaw, ctx + ".targets[" + t + "] est null");
+                    assertFalse(String.valueOf(tRaw).isBlank(), ctx + ".targets[" + t + "] ne doit pas être vide");
+                }
+            }
 
             // goal
             assertTrue(quest.containsKey("goal"), ctx + " : champ 'goal' manquant");

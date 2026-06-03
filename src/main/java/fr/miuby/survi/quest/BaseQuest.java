@@ -4,6 +4,8 @@ import fr.miuby.survi.blessing.Blessing;
 import lombok.Getter;
 import lombok.experimental.SuperBuilder;
 
+import java.util.List;
+
 /**
  * Classe de base commune aux quêtes journalières ({@link Quest})
  * et aux quêtes globales ({@link GlobalQuest}).
@@ -17,8 +19,12 @@ public abstract class BaseQuest {
     private final String description;
     private final EQuestType type;
 
-    /** Material (MINE/CRAFT/SMELT), EntityType (KILL/SHEAR/BREED) ou null (FISH). */
-    private final Object target;
+    /**
+     * Liste des cibles acceptées : Materials (MINE/CRAFT/SMELT), EntityTypes (KILL/SHEAR/BREED) ou null (FISH).
+     * Une seule entrée = comportement identique à l'ancienne cible unique.
+     * Plusieurs entrées = toute cible de la liste est acceptée (ex: IRON_ORE + DEEPSLATE_IRON_ORE).
+     */
+    private final List<Object> targets;
     private final int goal;
 
     /** Effets à appliquer en récompense. Jamais null (tableau vide si aucun effet). */
@@ -31,7 +37,7 @@ public abstract class BaseQuest {
     public boolean matchesAction(EQuestType actionType, Object actionTarget) {
         if (this.type != actionType) return false;
         return (actionType == EQuestType.FISH)
-                || (this.target == null)
-                || this.target.equals(actionTarget);
+                || (this.targets == null || this.targets.isEmpty())
+                || this.targets.contains(actionTarget);
     }
 }

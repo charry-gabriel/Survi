@@ -10,7 +10,7 @@ quests:
     difficulty: 1
     jobs:
       - MINEUR
-    target: COBBLESTONE
+    targets: [COBBLESTONE]
     goal: 300
     rewards:
       - {type: REPUTATION, job: MINEUR, value: 10}
@@ -23,7 +23,7 @@ quests:
     difficulty: 1
     jobs:
       - MINEUR
-    target: DIRT
+    targets: [DIRT]
     goal: 400
     rewards:
       - {type: REPUTATION, job: MINEUR, value: 8}
@@ -36,7 +36,7 @@ quests:
     difficulty: 1
     jobs:
       - MINEUR
-    target: SAND
+    targets: [SAND]
     goal: 250
     rewards:
       - {type: REPUTATION, job: MINEUR, value: 8}
@@ -49,7 +49,7 @@ quests:
     difficulty: 1
     jobs:
       - MINEUR
-    target: GRAVEL
+    targets: [GRAVEL]
     goal: 250
     rewards:
       - {type: REPUTATION, job: MINEUR, value: 8}
@@ -62,7 +62,7 @@ quests:
     difficulty: 1
     jobs:
       - BUCHERON
-    target: OAK_LOG
+    targets: [OAK_LOG]
     goal: 80
     rewards:
       - {type: REPUTATION, job: BUCHERON, value: 10}
@@ -75,7 +75,7 @@ quests:
     difficulty: 1
     jobs:
       - BUCHERON
-    target: BIRCH_LOG
+    targets: [BIRCH_LOG]
     goal: 80
     rewards:
       - {type: REPUTATION, job: BUCHERON, value: 10}
@@ -88,7 +88,7 @@ quests:
     difficulty: 1
     jobs:
       - BUCHERON
-    target: SPRUCE_LOG
+    targets: [SPRUCE_LOG]
     goal: 80
     rewards:
       - {type: REPUTATION, job: BUCHERON, value: 10}
@@ -101,7 +101,7 @@ quests:
     difficulty: 1
     jobs:
       - COMBATANT
-    target: ZOMBIE
+    targets: [ZOMBIE]
     goal: 25
     rewards:
       - {type: REPUTATION, job: COMBATANT, value: 10}
@@ -114,7 +114,7 @@ quests:
     difficulty: 1
     jobs:
       - COMBATANT
-    target: SKELETON
+    targets: [SKELETON]
     goal: 20
     rewards:
       - {type: REPUTATION, job: COMBATANT, value: 10}
@@ -127,7 +127,7 @@ quests:
     difficulty: 1
     jobs:
       - COMBATANT
-    target: SPIDER
+    targets: [SPIDER]
     goal: 25
     rewards:
       - {type: REPUTATION, job: COMBATANT, value: 9}
@@ -140,7 +140,7 @@ quests:
     difficulty: 1
     jobs:
       - COMBATANT
-    target: CREEPER
+    targets: [CREEPER]
     goal: 15
     rewards:
       - {type: REPUTATION, job: COMBATANT, value: 12}
@@ -153,7 +153,7 @@ quests:
     difficulty: 1
     jobs:
       - PECHEUR
-    target: null
+    targets: null
     goal: 10
     rewards:
       - {type: REPUTATION, job: PECHEUR, value: 12}
@@ -166,7 +166,7 @@ quests:
     difficulty: 1
     jobs:
       - FERMIER
-    target: SHEEP
+    targets: [SHEEP]
     goal: 20
     rewards:
       - {type: REPUTATION, job: FERMIER, value: 10}
@@ -179,7 +179,7 @@ quests:
     difficulty: 1
     jobs:
       - FERMIER
-    target: COW
+    targets: [COW]
     goal: 10
     rewards:
       - {type: REPUTATION, job: FERMIER, value: 10}
@@ -192,7 +192,7 @@ quests:
     difficulty: 1
     jobs:
       - FERMIER
-    target: CHICKEN
+    targets: [CHICKEN]
     goal: 15
     rewards:
       - {type: REPUTATION, job: FERMIER, value: 9}
@@ -205,7 +205,7 @@ quests:
     difficulty: 1
     jobs:
       - FORGERON
-    target: TORCH
+    targets: [TORCH]
     goal: 64
     rewards:
       - {type: REPUTATION, job: FORGERON, value: 8}
@@ -218,7 +218,7 @@ quests:
     difficulty: 1
     jobs:
       - FORGERON
-    target: STONE
+    targets: [STONE]
     goal: 128
     rewards:
       - {type: REPUTATION, job: FORGERON, value: 9}
@@ -233,25 +233,12 @@ quests:
     difficulty: 2
     jobs:
       - MINEUR
-    target: IRON_ORE
+    targets: [IRON_ORE, DEEPSLATE_IRON_ORE]
     goal: 80
     rewards:
       - {type: REPUTATION, job: MINEUR, value: 25}
       - {type: POTION, potion: haste, duration: 1728000, amplifier: 1}
       - {type: POTION, potion: night_vision, duration: 1728000, amplifier: 0}
-
-  - id: "mine_deepslate_iron"
-    name: "Mineur Profond"
-    description: "Minez 60 minerais de fer ardoisés."
-    type: MINE
-    difficulty: 2
-    jobs:
-      - MINEUR
-    target: DEEPSLATE_IRON_ORE
-    goal: 60
-    rewards:
-      - {type: REPUTATION, job: MINEUR, value: 28}
-      - {type: POTION, potion: haste, duration: 1728000, amplifier: 1}
 
   - id: "mine_coal"
     name: "Chercheur de Charbon"
@@ -260,7 +247,7 @@ quests:
     difficulty: 2
     jobs:
       - MINEUR
-    target: COAL_ORE
+    targets: [COAL_ORE, DEEPSLATE_COAL_ORE]
     goal: 200
     rewards:
       - {type: REPUTATION, job: MINEUR, value: 22}
@@ -273,7 +260,7 @@ quests:
     difficulty: 2
     jobs:
       - MINEUR
-    target: COPPER_ORE
+    targets: [COPPER_ORE, DEEPSLATE_COPPER_ORE]
     goal: 100
     rewards:
       - {type: REPUTATION, job: MINEUR, value: 25}
@@ -286,7 +273,7 @@ quests:
     difficulty: 2
     jobs:
       - COMBATANT
-    target: DROWNED
+    targets: [DROWNED]
     goal: 30
     rewards:
       - {type: REPUTATION, job: COMBATANT, value: 30}
@@ -300,7 +287,7 @@ quests:
     difficulty: 2
     jobs:
       - CHASSEUR
-    target: WITCH
+    targets: [WITCH]
     goal: 10
     rewards:
       - {type: REPUTATION, job: CHASSEUR, value: 35}
@@ -314,7 +301,7 @@ quests:
     difficulty: 2
     jobs:
       - COMBATANT
-    target: PILLAGER
+    targets: [PILLAGER]
     goal: 20
     rewards:
       - {type: REPUTATION, job: COMBATANT, value: 30}
@@ -328,7 +315,7 @@ quests:
     difficulty: 2
     jobs:
       - FERMIER
-    target: null
+    targets: null
     goal: 20
     rewards:
       - {type: REPUTATION, job: FERMIER, value: 28}
@@ -341,7 +328,7 @@ quests:
     difficulty: 2
     jobs:
       - FERMIER
-    target: BREAD
+    targets: [BREAD]
     goal: 32
     rewards:
       - {type: REPUTATION, job: FERMIER, value: 25}
@@ -354,7 +341,7 @@ quests:
     difficulty: 2
     jobs:
       - FORGERON
-    target: IRON_SWORD
+    targets: [IRON_SWORD]
     goal: 5
     rewards:
       - {type: REPUTATION, job: FORGERON, value: 30}
@@ -367,7 +354,7 @@ quests:
     difficulty: 2
     jobs:
       - FORGERON
-    target: IRON_INGOT
+    targets: [IRON_INGOT]
     goal: 200
     rewards:
       - {type: REPUTATION, job: FORGERON, value: 38}
@@ -380,7 +367,7 @@ quests:
     difficulty: 2
     jobs:
       - FORGERON
-    target: COPPER_INGOT
+    targets: [COPPER_INGOT]
     goal: 150
     rewards:
       - {type: REPUTATION, job: FORGERON, value: 32}
@@ -393,7 +380,7 @@ quests:
     difficulty: 2
     jobs:
       - PECHEUR
-    target: null
+    targets: null
     goal: 30
     rewards:
       - {type: REPUTATION, job: PECHEUR, value: 28}
@@ -406,7 +393,7 @@ quests:
     difficulty: 2
     jobs:
       - FERMIER
-    target: SHEEP
+    targets: [SHEEP]
     goal: 50
     rewards:
       - {type: REPUTATION, job: FERMIER, value: 26}
@@ -422,7 +409,7 @@ quests:
     jobs:
       - COMBATANT
       - AVENTURIER
-    target: ENDERMAN
+    targets: [ENDERMAN]
     goal: 50
     rewards:
       - {type: REPUTATION, job: COMBATANT, value: 100}
@@ -438,7 +425,7 @@ quests:
     jobs:
       - COMBATANT
       - AVENTURIER
-    target: WITHER_SKELETON
+    targets: [WITHER_SKELETON]
     goal: 10
     rewards:
       - {type: REPUTATION, job: COMBATANT, value: 140}
@@ -453,7 +440,7 @@ quests:
     jobs:
       - COMBATANT
       - AVENTURIER
-    target: BLAZE
+    targets: [BLAZE]
     goal: 30
     rewards:
       - {type: REPUTATION, job: COMBATANT, value: 120}
@@ -468,7 +455,7 @@ quests:
     jobs:
       - COMBATANT
       - AVENTURIER
-    target: GUARDIAN
+    targets: [GUARDIAN]
     goal: 20
     rewards:
       - {type: REPUTATION, job: COMBATANT, value: 130}
@@ -483,7 +470,7 @@ quests:
     jobs:
       - MINEUR
       - AVENTURIER
-    target: OBSIDIAN
+    targets: [OBSIDIAN]
     goal: 150
     rewards:
       - {type: REPUTATION, job: MINEUR, value: 160}
@@ -497,7 +484,7 @@ quests:
     jobs:
       - MINEUR
       - AVENTURIER
-    target: ANCIENT_DEBRIS
+    targets: [ANCIENT_DEBRIS]
     goal: 10
     rewards:
       - {type: REPUTATION, job: MINEUR, value: 200}
@@ -511,7 +498,7 @@ quests:
     difficulty: 3
     jobs:
       - FORGERON
-    target: GOLD_INGOT
+    targets: [GOLD_INGOT]
     goal: 128
     rewards:
       - {type: REPUTATION, job: FORGERON, value: 120}
@@ -525,7 +512,7 @@ quests:
     difficulty: 3
     jobs:
       - PECHEUR
-    target: null
+    targets: null
     goal: 60
     rewards:
       - {type: REPUTATION, job: PECHEUR, value: 110}
