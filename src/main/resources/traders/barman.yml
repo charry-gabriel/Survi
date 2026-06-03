@@ -3,9 +3,7 @@ nameId: "Barman"
 displayName: "Fruity Délice"
 type: SAVANNA
 profession: FLETCHER
-job: ALCHIMISTE
-questDifficulty: 1
-questCompletionReputation: 10
+job: ENCHANTEUR
 openMessage: >
   Bonjour, bienvenue au bar du Merveilleux Royal Bling-Bling Sexy-Baka Palace-Hôtel.
   A la carte, nous proposons différents cocktails élaborés avec amour, tendresse et voluptuosité:

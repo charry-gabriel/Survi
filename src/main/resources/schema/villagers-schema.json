@@ -15,22 +15,13 @@
     "type": {
       "type": "string",
       "enum": [
-        "DAMAGE",
-        "DISPEL",
-        "FLY",
-        "GAME_MODE",
-        "ITEM",
-        "LIMIT_WORLD",
-        "LOCK_WORLD",
-        "MAX_HEALTH",
-        "MESSAGE",
-        "RANDOM_ITEM",
-        "REGEN",
-        "RESISTANCE",
-        "UNLOCK_ARMOR",
-        "UNLOCK_TOOL",
-        "WORLD_LEVEL",
-        "WORLD_RESET"
+        "DESERT",
+        "JUNGLE",
+        "PLAINS",
+        "SAVANNA",
+        "SNOW",
+        "SWAMP",
+        "TAIGA"
       ]
     },
     "profession": {
@@ -121,6 +112,10 @@
         "CLE32",
         "ENDIALE",
         "FISHING_D_ROD",
+        "GROWTH_BATON_FERMIER",
+        "GROWTH_BOUSSOLE_AVENTURIER",
+        "GROWTH_CASQUE_MINEUR",
+        "GROWTH_EPEE_SHINY",
         "GROWTH_PICKAXE",
         "GROWTH_SWORD",
         "HEALING_ARROW",

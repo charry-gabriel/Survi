@@ -37,7 +37,6 @@ class TraderConfigTest {
                 assertStringNotEmpty(config.profession, "profession manquant dans " + file.getName());
                 assertNotNull(config.openMessage, "openMessage manquant dans " + file.getName());
                 assertNotNull(config.recipes, "recipes manquant dans " + file.getName());
-                assertTrue(config.questCompletionReputation >= 0, "questCompletionReputation invalide dans " + file.getName());
 
                 for (int i = 0; i < config.recipes.size(); i++) {
                     TraderRecipeConfig recipe = config.recipes.get(i);

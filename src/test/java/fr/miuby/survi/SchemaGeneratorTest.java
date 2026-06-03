@@ -37,38 +37,35 @@ class SchemaGeneratorTest {
 
         String content = Files.readString(path);
 
-        // Update Villager Type enum
-        content = replaceEnum(content, "type", getVillagerTypeNames());
+        // Séparer le contenu en deux parties au niveau de "definitions:" pour éviter la
+        // contamination croisée : "type" apparaît à la fois dans les propriétés racines
+        // (type de villageois) et dans definitions.blessingEffect.properties (type d'effet).
+        // Les appels replaceEnum doivent cibler chaque section indépendamment.
+        int defsIndex = content.indexOf("\"definitions\":");
+        if (defsIndex < 0) defsIndex = content.length();
+        String propsPart = content.substring(0, defsIndex);
+        String defsPart  = content.substring(defsIndex);
 
-        // Update Villager Profession enum
-        content = replaceEnum(content, "profession", getVillagerProfessionNames());
+        // Section "properties" — type de villageois + profession
+        propsPart = replaceEnum(propsPart, "type", getVillagerTypeNames());
+        propsPart = replaceEnum(propsPart, "profession", getVillagerProfessionNames());
 
-        // Update Material enum (for tributes)
-        content = replaceEnum(content, "material", getMaterialNames());
+        // Section "definitions" — item (material, customItem) + blessingEffect
+        defsPart = replaceEnum(defsPart, "material", getMaterialNames());
+        defsPart = replaceEnum(defsPart, "customItem", getCustomItemNames());
 
-        // Update CustomItem enum
-        content = replaceEnum(content, "customItem", getCustomItemNames());
+        List<String> blessingTypes = getEnumNamesFromSource("src/main/java/fr/miuby/survi/villager/villagerlevel/blessing/BlessingLoader.java");
+        if (blessingTypes.isEmpty()) {
+            blessingTypes = List.of("DAMAGE", "DISPEL", "FLY", "GAME_MODE", "ITEM", "LIMIT_WORLD",
+                    "LOCK_WORLD", "MAX_HEALTH", "MESSAGE", "RANDOM_ITEM", "REGEN",
+                    "RESISTANCE", "UNLOCK_ARMOR", "UNLOCK_TOOL", "WORLD_LEVEL", "WORLD_RESET");
+        }
+        defsPart = replaceEnum(defsPart, "type", blessingTypes);
+        defsPart = replaceEnum(defsPart, "tool", getEnumNamesFromSource("src/main/java/fr/miuby/survi/item/locked_item/ELockedToolType.java"));
+        defsPart = replaceEnum(defsPart, "armor", getEnumNamesFromSource("src/main/java/fr/miuby/survi/item/locked_item/ELockedArmorType.java"));
+        defsPart = replaceEnum(defsPart, "world", getEnumNamesFromSource("src/main/java/fr/miuby/survi/world/EWorld.java"));
 
-        // Update blessing effect type enum
-        content = replaceEnum(content, "type", getEnumNamesFromSource("src/main/java/fr/miuby/survi/villager/villagerlevel/blessing/BlessingLoader.java")
-                .isEmpty()
-                ? List.of("DAMAGE", "DISPEL", "FLY", "GAME_MODE", "ITEM", "LIMIT_WORLD",
-                "LOCK_WORLD", "MAX_HEALTH", "MESSAGE", "RANDOM_ITEM", "REGEN",
-                "RESISTANCE", "UNLOCK_ARMOR", "UNLOCK_TOOL", "WORLD_LEVEL", "WORLD_RESET")
-                : List.of("DAMAGE", "DISPEL", "FLY", "GAME_MODE", "ITEM", "LIMIT_WORLD",
-                "LOCK_WORLD", "MAX_HEALTH", "MESSAGE", "RANDOM_ITEM", "REGEN",
-                "RESISTANCE", "UNLOCK_ARMOR", "UNLOCK_TOOL", "WORLD_LEVEL", "WORLD_RESET"));
-
-        // Update tool enum (ELockedToolType)
-        content = replaceEnum(content, "tool", getEnumNamesFromSource("src/main/java/fr/miuby/survi/item/locked_item/ELockedToolType.java"));
-
-        // Update armor enum (ELockedArmorType)
-        content = replaceEnum(content, "armor", getEnumNamesFromSource("src/main/java/fr/miuby/survi/item/locked_item/ELockedArmorType.java"));
-
-        // Update world enum (EWorld)
-        content = replaceEnum(content, "world", getEnumNamesFromSource("src/main/java/fr/miuby/survi/world/EWorld.java"));
-
-        Files.writeString(path, content);
+        Files.writeString(path, propsPart + defsPart);
     }
 
     private void updateRecipesSchema() throws IOException {
@@ -469,7 +466,11 @@ class SchemaGeneratorTest {
             sb.append(content, lastEnd, matcher.start());
             String propertyBlock = matcher.group();
             String updatedBlock;
-            if (propertyBlock.contains("\"enum\":")) {
+            if (propertyBlock.contains("\"const\":")) {
+                // Bloc discriminateur JSON Schema ("const") : ne jamais y insérer un enum.
+                // Nettoyer aussi tout enum qui aurait été inséré par erreur lors d'une exécution précédente.
+                updatedBlock = propertyBlock.replaceAll("\\s*,?\\s*\"enum\":\\s*\\[[^\\]]*\\]", "");
+            } else if (propertyBlock.contains("\"enum\":")) {
                 updatedBlock = propertyBlock.replaceAll("\"enum\":\\s*\\[[^\\]]*\\]", Matcher.quoteReplacement(enumJson));
             } else if (propertyBlock.contains("\"examples\":")) {
                 updatedBlock = propertyBlock.replaceAll("\"examples\":\\s*\\[[^\\]]*\\]", Matcher.quoteReplacement(enumJson));

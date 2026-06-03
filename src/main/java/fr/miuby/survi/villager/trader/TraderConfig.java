@@ -8,8 +8,6 @@ public class TraderConfig {
     public String type;
     public String profession;
     public String job;               // optionnel — nom de l'enum EJob
-    public int questDifficulty;      // optionnel — niveau de difficulté (int ≥ 1, 0 = aléatoire)
-    public int questCompletionReputation;    // optionnel — réputation fixe accordée au métier du trader lors du rendu de quête (0 = désactivé)
     public String openMessage;
     public String mainHandItem;              // optionnel — material vanilla à équiper en main
     public List<TraderRecipeConfig> recipes;

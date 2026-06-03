@@ -6,6 +6,7 @@ import fr.miuby.survi.blessing.BlessingEffect;
 import fr.miuby.survi.blessing.PotionsEffect;
 import fr.miuby.survi.job.EJob;
 import fr.miuby.survi.player.AlphaPlayer;
+import fr.miuby.survi.system.SurviConfig;
 import fr.miuby.survi.system.log.ELogTag;
 import fr.miuby.survi.villager.trader.Trader;
 import net.kyori.adventure.key.Key;
@@ -344,8 +345,8 @@ public class QuestManager extends AbstractQuestManager<Quest> {
         for (BlessingEffect effect : quest.getRewards().blessingEffects()) {
             effect.applyEffect(player);
         }
-        if (trader.getJob() != null && trader.getQuestCompletionReputation() > 0) {
-            player.addJobReputation(trader.getJob(), trader.getQuestCompletionReputation());
+        if (trader.getJob() != null && SurviConfig.getInstance().getQuestCompletionReputation() > 0) {
+            player.addJobReputation(trader.getJob(), SurviConfig.getInstance().getQuestCompletionReputation());
         }
         player.getPlayer().sendMessage(Component.text("Vous avez reçu les récompenses de la quête ! ", NamedTextColor.GREEN));
         data.setClaimed(true);

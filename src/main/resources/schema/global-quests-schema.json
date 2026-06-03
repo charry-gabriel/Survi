@@ -1838,7 +1838,7 @@
                 {
                   "description": "Bonus de points de vie maximaux.",
                   "properties": {
-                    "type": { "type": "string", "const": "MAX_HEALTH" },
+                    "type": { "type": "string", "const": "MAX_HEALTH"},
                     "value": { "type": "integer", "description": "Bonus HP (positif = bonus, négatif = malus)" }
                   },
                   "required": ["type", "value"],
@@ -1847,7 +1847,7 @@
                 {
                   "description": "Modificateur de résistance aux dégâts reçus.",
                   "properties": {
-                    "type": { "type": "string", "const": "RESISTANCE" },
+                    "type": { "type": "string", "const": "RESISTANCE"},
                     "value": { "type": "number", "description": "Multiplicateur de résistance (ex: 0.5 = 50%)" }
                   },
                   "required": ["type", "value"],
@@ -1856,7 +1856,7 @@
                 {
                   "description": "Modificateur de dégâts infligés.",
                   "properties": {
-                    "type": { "type": "string", "const": "DAMAGE" },
+                    "type": { "type": "string", "const": "DAMAGE"},
                     "value": { "type": "number", "description": "Multiplicateur de dégâts (ex: 1.5 = 150%)" }
                   },
                   "required": ["type", "value"],
@@ -1865,7 +1865,7 @@
                 {
                   "description": "Modifie le nombre de vies (dispel).",
                   "properties": {
-                    "type": { "type": "string", "const": "DISPEL" },
+                    "type": { "type": "string", "const": "DISPEL"},
                     "value": { "type": "integer", "minimum": 1, "description": "Nombre de dispel" }
                   },
                   "required": ["type", "value"],
@@ -1874,8 +1874,14 @@
                 {
                   "description": "Déverrouille un type d'outil.",
                   "properties": {
-                    "type": { "type": "string", "const": "UNLOCK_TOOL" },
-                    "tool": { "type": "string", "description": "Type d'outil (ELockedToolType)", "enum": [] }
+                    "type": { "type": "string", "const": "UNLOCK_TOOL"},
+                    "tool": { "type": "string", "description": "Type d'outil (ELockedToolType)", "enum": [
+                      "DIAMOND",
+                      "GOLD",
+                      "IRON",
+                      "STONE",
+                      "WOOD"
+                    ] }
                   },
                   "required": ["type", "tool"],
                   "additionalProperties": false
@@ -1883,8 +1889,15 @@
                 {
                   "description": "Déverrouille un type d'armure.",
                   "properties": {
-                    "type": { "type": "string", "const": "UNLOCK_ARMOR" },
-                    "armor": { "type": "string", "description": "Type d'armure (ELockedArmorType)", "enum": [] }
+                    "type": { "type": "string", "const": "UNLOCK_ARMOR"},
+                    "armor": { "type": "string", "description": "Type d'armure (ELockedArmorType)", "enum": [
+                      "CHAINMAIL",
+                      "DIAMOND",
+                      "GOLD",
+                      "IRON",
+                      "LEATHER",
+                      "NETHERITE"
+                    ] }
                   },
                   "required": ["type", "armor"],
                   "additionalProperties": false
@@ -1892,8 +1905,14 @@
                 {
                   "description": "Déverrouille l'accès à un monde (malgré le nom 'LOCK').",
                   "properties": {
-                    "type": { "type": "string", "const": "LOCK_WORLD" },
-                    "world": { "type": "string", "description": "Monde à déverrouiller (EWorld)", "enum": [] }
+                    "type": { "type": "string", "const": "LOCK_WORLD"},
+                    "world": { "type": "string", "description": "Monde à déverrouiller (EWorld)", "enum": [
+                      "ALL",
+                      "END",
+                      "NETHER",
+                      "VILLAGE",
+                      "WILDERNESS"
+                    ] }
                   },
                   "required": ["type", "world"],
                   "additionalProperties": false
@@ -1901,7 +1920,7 @@
                 {
                   "description": "Envoie un message broadcast.",
                   "properties": {
-                    "type": { "type": "string", "const": "MESSAGE" },
+                    "type": { "type": "string", "const": "MESSAGE"},
                     "text": { "type": "string", "description": "Texte du message" }
                   },
                   "required": ["type", "text"],
@@ -1910,7 +1929,7 @@
                 {
                   "description": "Augmente le niveau global du monde.",
                   "properties": {
-                    "type": { "type": "string", "const": "WORLD_LEVEL" },
+                    "type": { "type": "string", "const": "WORLD_LEVEL"},
                     "levels": { "type": "integer", "minimum": 1, "description": "Nombre de niveaux gagnés" }
                   },
                   "required": ["type", "levels"],
@@ -1919,7 +1938,7 @@
                 {
                   "description": "Modifie la fréquence de reset des mondes.",
                   "properties": {
-                    "type": { "type": "string", "const": "WORLD_RESET" },
+                    "type": { "type": "string", "const": "WORLD_RESET"},
                     "frequency": { "type": "integer", "minimum": 0, "description": "Fréquence en jours (0 = désactivé)" }
                   },
                   "required": ["type", "frequency"],
@@ -1928,8 +1947,14 @@
                 {
                   "description": "Définit une limite géographique pour un monde.",
                   "properties": {
-                    "type": { "type": "string", "const": "LIMIT_WORLD" },
-                    "world": { "type": "string", "description": "Monde concerné (EWorld)", "enum": [] },
+                    "type": { "type": "string", "const": "LIMIT_WORLD"},
+                    "world": { "type": "string", "description": "Monde concerné (EWorld)", "enum": [
+                      "ALL",
+                      "END",
+                      "NETHER",
+                      "VILLAGE",
+                      "WILDERNESS"
+                    ] },
                     "min-x": { "type": "integer" },
                     "max-x": { "type": "integer" },
                     "min-y": { "type": "integer" },
@@ -1943,8 +1968,15 @@
                 {
                   "description": "Réputation accordée dans un métier.",
                   "properties": {
-                    "type": { "type": "string", "const": "REPUTATION" },
-                    "job": { "type": "string", "description": "Métier (EJob)", "enum": [] },
+                    "type": { "type": "string", "const": "REPUTATION"},
+                    "job": { "type": "string", "description": "Métier (EJob)", "enum": [
+                      "AVENTURIER",
+                      "BUCHERON",
+                      "ENCHANTEUR",
+                      "FERMIER",
+                      "MINEUR",
+                      "PECHEUR"
+                    ] },
                     "value": { "type": "integer", "minimum": 1, "description": "Quantité de réputation accordée" }
                   },
                   "required": ["type", "job", "value"],
@@ -1953,8 +1985,46 @@
                 {
                   "description": "Effet de potion accordé.",
                   "properties": {
-                    "type": { "type": "string", "const": "POTION" },
-                    "potion": { "type": "string", "description": "Nom de l'effet de potion (ex: speed, haste, strength)", "enum": [] },
+                    "type": { "type": "string", "const": "POTION"},
+                    "potion": { "type": "string", "description": "Nom de l'effet de potion (ex: speed, haste, strength)", "enum": [
+                        "absorption",
+                        "bad_omen",
+                        "blindness",
+                        "conduit_power",
+                        "darkness",
+                        "dolphins_grace",
+                        "fire_resistance",
+                        "glowing",
+                        "haste",
+                        "health_boost",
+                        "hero_of_the_village",
+                        "hunger",
+                        "infested",
+                        "instant_damage",
+                        "instant_health",
+                        "invisibility",
+                        "jump_boost",
+                        "levitation",
+                        "luck",
+                        "mining_fatigue",
+                        "nausea",
+                        "night_vision",
+                        "oozing",
+                        "poison",
+                        "regeneration",
+                        "resistance",
+                        "saturation",
+                        "slow_falling",
+                        "slowness",
+                        "speed",
+                        "strength",
+                        "unluck",
+                        "water_breathing",
+                        "weakness",
+                        "weaving",
+                        "wind_charged",
+                        "wither"
+                      ] },
                     "duration": { "type": "integer", "minimum": 1, "description": "Durée de l'effet en ticks (20 ticks = 1 seconde)" },
                     "amplifier": { "type": "integer", "minimum": 0, "description": "Niveau de l'effet (0 = niveau I, 1 = niveau II, ...)" }
                   },

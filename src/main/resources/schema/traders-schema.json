@@ -48,16 +48,10 @@
     "job": {
       "type": "string",
       "enum": [
-        "ALCHIMISTE",
         "AVENTURIER",
-        "BATISSEUR",
         "BUCHERON",
-        "CHASSEUR",
-        "COMBATANT",
         "ENCHANTEUR",
         "FERMIER",
-        "FORGERON",
-        "MARCHAND",
         "MINEUR",
         "PECHEUR"
       ]
@@ -69,11 +63,6 @@
         "LEGENDARY",
         "RARE"
       ]
-    },
-    "questCompletionReputation": {
-      "type": "integer",
-      "minimum": 0,
-      "description": "Réputation fixe accordée au métier du trader lors du rendu de quête (0 = désactivé)"
     },
     "openMessage": { "type": "string" },
     "mainHandItem": {
@@ -755,6 +744,10 @@
         "GREEN_WALL_BANNER",
         "GREEN_WOOL",
         "GRINDSTONE",
+        "GROWTH_BATON_FERMIER",
+        "GROWTH_BOUSSOLE_AVENTURIER",
+        "GROWTH_CASQUE_MINEUR",
+        "GROWTH_EPEE_SHINY",
         "GROWTH_PICKAXE",
         "GROWTH_SWORD",
         "GUARDIAN_SPAWN_EGG",
@@ -1806,6 +1799,10 @@
         "CLE32",
         "ENDIALE",
         "FISHING_D_ROD",
+        "GROWTH_BATON_FERMIER",
+        "GROWTH_BOUSSOLE_AVENTURIER",
+        "GROWTH_CASQUE_MINEUR",
+        "GROWTH_EPEE_SHINY",
         "GROWTH_PICKAXE",
         "GROWTH_SWORD",
         "HEALING_ARROW",
