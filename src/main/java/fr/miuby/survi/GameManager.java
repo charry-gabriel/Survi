@@ -10,6 +10,8 @@ import fr.miuby.survi.world.crops.PlantedCropsManager;
 import fr.miuby.survi.display.TabDisplayManager;
 import fr.miuby.survi.quest.GlobalQuestManager;
 import fr.miuby.survi.quest.QuestManager;
+import fr.miuby.survi.quest.QuestActionBarService;
+import fr.miuby.survi.quest.GlobalQuestBossBarService;
 import fr.miuby.survi.role.RoleManagementService;
 import fr.miuby.survi.system.database.Database;
 import fr.miuby.survi.system.database.SQLite;
@@ -51,6 +53,8 @@ public class GameManager {
     @Getter private RoleManagementService roleManagementService;
     @Getter private QuestManager questManager;
     @Getter private GlobalQuestManager globalQuestManager;
+    @Getter private QuestActionBarService questActionBarService;
+    @Getter private GlobalQuestBossBarService globalQuestBossBarService;
     @Getter private GraveManager graveManager;
     @Getter private WorldLevelManager worldLevelManager;
     @Getter private MobLevelManager mobLevelManager;
@@ -150,6 +154,8 @@ public class GameManager {
         MLLogManager.getInstance().log(Level.INFO, ELogTag.ITEM, "Initialisation des items/recettes...");
         this.initItems();
 
+        this.questActionBarService = new QuestActionBarService();
+        this.globalQuestBossBarService = new GlobalQuestBossBarService();
         this.questManager = new QuestManager();
         this.globalQuestManager = new GlobalQuestManager();
 

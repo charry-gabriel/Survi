@@ -67,6 +67,7 @@ public class GlobalQuestManager extends AbstractQuestManager<GlobalQuest> {
 
         MLLogManager.getInstance().log(Level.INFO, ELogTag.QUEST,
                 "[GlobalQuest] Quête démarrée : " + quest.getId());
+        GameManager.getInstance().getGlobalQuestBossBarService().onQuestStarted(quest);
         return true;
     }
 
@@ -82,6 +83,7 @@ public class GlobalQuestManager extends AbstractQuestManager<GlobalQuest> {
 
         broadcastMessage(Component.text("⚔ Quête Globale ", NamedTextColor.RED, TextDecoration.BOLD)
                 .append(Component.text("« " + name + " » annulée par un administrateur. Aucune récompense.", NamedTextColor.YELLOW)));
+        GameManager.getInstance().getGlobalQuestBossBarService().onQuestEnded();
 
         MLLogManager.getInstance().log(Level.INFO, ELogTag.QUEST,
                 "[GlobalQuest] Quête annulée par admin : " + name);
@@ -96,6 +98,8 @@ public class GlobalQuestManager extends AbstractQuestManager<GlobalQuest> {
 
         if (progress >= activeQuest.getGoal()) {
             onComplete();
+        } else {
+            GameManager.getInstance().getGlobalQuestBossBarService().onProgressUpdate(activeQuest, progress);
         }
     }
 
@@ -120,6 +124,7 @@ public class GlobalQuestManager extends AbstractQuestManager<GlobalQuest> {
         participants.clear();
 
         broadcastQuestComplete(quest, winners.size());
+        GameManager.getInstance().getGlobalQuestBossBarService().onQuestCompleted(quest);
 
         AlphaPlayerFactory factory = GameManager.getInstance().getAlphaPlayerFactory();
         for (UUID uuid : winners) {
@@ -153,6 +158,7 @@ public class GlobalQuestManager extends AbstractQuestManager<GlobalQuest> {
                         .append(Component.text("« " + name + " »", NamedTextColor.YELLOW))
                         .append(Component.text(" non complétée dans les temps ! Aucune récompense.", NamedTextColor.RED))
         );
+        GameManager.getInstance().getGlobalQuestBossBarService().onQuestEnded();
 
         MLLogManager.getInstance().log(Level.INFO, ELogTag.QUEST,
                 "[GlobalQuest] Quête expirée : " + name);

@@ -196,6 +196,7 @@ public class TabDisplayManager {
                 .append(formatStat(alphaPlayer, Attribute.ATTACK_SPEED, "Vit. d'Attaque"))
                 .append(Component.text(" | ", NamedTextColor.DARK_GRAY))
                 .append(formatStat(alphaPlayer, Attribute.LUCK, "Chance"))
+                .appendNewline()
                 .appendNewline();
 
         // Reset Wilderness
@@ -209,7 +210,7 @@ public class TabDisplayManager {
         Component globalLine = buildGlobalQuestLine();
         if (!questLine.equals(Component.empty()) || !globalLine.equals(Component.empty())) {
             footer = footer
-                    .appendNewline().appendNewline()
+                    .appendNewline()
                     .append(Component.text("─── Quêtes ───", NamedTextColor.DARK_AQUA))
                     .appendNewline();
             if (!questLine.equals(Component.empty()))  footer = footer.append(questLine).appendNewline();
@@ -232,12 +233,9 @@ public class TabDisplayManager {
         boolean done = data.isCompleted();
         int progress = data.getProgress();
         int goal     = quest.getGoal();
-        NamedTextColor bar = done ? NamedTextColor.GREEN : NamedTextColor.AQUA;
 
         Component line = Component.text(quest.getName() + " ", NamedTextColor.WHITE)
-                .append(Component.text("[", NamedTextColor.DARK_GRAY))
-                .append(Component.text(progressBar(progress, goal, 8), bar))
-                .append(Component.text("] " + progress + "/" + goal, NamedTextColor.DARK_GRAY));
+                .append(Component.text(progress + "/" + goal, NamedTextColor.DARK_GRAY));
         if (done) line = line.append(Component.text(" ✔ Trader !", NamedTextColor.GREEN));
         return line;
     }
@@ -254,9 +252,7 @@ public class TabDisplayManager {
         long remaining = gqm.getRemainingSeconds();
 
         return Component.text("⚔ " + gq.getName() + " ", NamedTextColor.YELLOW)
-                .append(Component.text("[", NamedTextColor.DARK_GRAY))
-                .append(Component.text(progressBar(progress, goal, 8), NamedTextColor.GREEN))
-                .append(Component.text("]", NamedTextColor.DARK_GRAY))
+                .append(Component.text(progress + "/" + goal, NamedTextColor.DARK_GRAY))
                 .append(Component.text(" ⏰" + formatTime(remaining), NamedTextColor.GRAY));
     }
 
@@ -295,11 +291,6 @@ public class TabDisplayManager {
 
     private void sendPacket(Player player, net.minecraft.network.protocol.Packet<?> packet) {
         ((CraftPlayer) player).getHandle().connection.send(packet);
-    }
-
-    private String progressBar(int current, int total, int width) {
-        int filled = total > 0 ? Math.min(width, current * width / total) : 0;
-        return "█".repeat(filled) + "░".repeat(width - filled);
     }
 
     private String formatTime(long seconds) {

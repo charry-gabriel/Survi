@@ -372,6 +372,7 @@ public class QuestManager extends AbstractQuestManager<Quest> {
             completeQuestInternal(player, quest);
         } else {
             GameManager.getInstance().getDatabase().quests().updatePlayerQuest(player.getUuid(), data);
+            GameManager.getInstance().getQuestActionBarService().showProgress(player, quest, data);
         }
     }
 
@@ -390,5 +391,6 @@ public class QuestManager extends AbstractQuestManager<Quest> {
         player.getPlayer().sendMessage(Component.text("Quête terminée : ", NamedTextColor.GREEN)
                 .append(Component.text(quest.getName(), NamedTextColor.GOLD)));
         player.getPlayer().sendMessage(Component.text("Allez voir le Trader pour obtenir votre récompense !", NamedTextColor.GRAY));
+        GameManager.getInstance().getQuestActionBarService().showCompleted(player, quest);
     }
 }

@@ -652,7 +652,7 @@ growth_items/<id>.yml → GrowthItemFileConfig → GrowthItemLoader → GrowthIt
 |---|---|
 | Joueurs | `AlphaPlayer`, `AlphaPlayerFactory`, `PlayerPersistenceService`, `PlayerAttributeService`, `PlayerEffectRestoreService`, `OfflineNotificationService` |
 | Rôles | `ERole`, `RoleLoader`, `RoleManagementService`, `roles.yml` |
-| Quêtes | `QuestManager`, `Quest`, `EQuestType`, `quests.yml` |
+| Quêtes | `QuestManager`, `GlobalQuestManager`, `Quest`, `EQuestType`, `QuestActionBarService`, `GlobalQuestBossBarService`, `quests.yml` |
 | Villageois | `VillagerFactory`, `VillagerLevel`, `BlessingLoader`, `villagers/*.yml` |
 | Monstres | `MobLevelManager`, `MobTypeConfig`, `monsters.yml` |
 | Mondes | `WorldInitializer`, `WorldLevelManager`, `WorldResetManager`, `EWorld` |
@@ -664,7 +664,31 @@ growth_items/<id>.yml → GrowthItemFileConfig → GrowthItemLoader → GrowthIt
 
 ---
 
-## 17. Règles de performance
+## 20. Affichage des quêtes — ActionBar & BossBar
+
+### Quêtes journalières — `QuestActionBarService`
+
+Appelé depuis `QuestManager` à chaque progression et à la complétion. Durée native Paper (~3 s).
+
+```java
+gm.getQuestActionBarService().showProgress(player, quest, data);  // avec cooldown 2s anti-spam
+gm.getQuestActionBarService().showCompleted(player, quest);        // toujours affiché, reset cooldown
+```
+
+### Quêtes globales — `GlobalQuestBossBarService`
+
+Appelé depuis `GlobalQuestManager`. La barre s'affiche 5 s (100 ticks) puis se masque automatiquement.
+
+```java
+gm.getGlobalQuestBossBarService().onQuestStarted(quest);           // au démarrage (0 %)
+gm.getGlobalQuestBossBarService().onProgressUpdate(quest, progress);// à chaque palier de 10 %
+gm.getGlobalQuestBossBarService().onQuestCompleted(quest);          // à 100 % (barre verte)
+gm.getGlobalQuestBossBarService().onQuestEnded();                   // annulation / timeout
+```
+
+Ne jamais appeler directement `showBossBar` / `hideBossBar` sur les joueurs pour les quêtes globales — passer uniquement par ce service.
+
+---
 
 - Jamais de `.stream()` dans un EventHandler fréquent (damage, move, tick) — boucles for ou structures pré-calculées.
 - Jamais de `Bukkit.getWorld(String)` / `Bukkit.getPlayer(UUID)` en hot path — passer par `WorldRegistry` / `AlphaPlayer.get(uuid)`.
