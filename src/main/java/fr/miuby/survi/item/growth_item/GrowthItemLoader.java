@@ -23,6 +23,10 @@ public final class GrowthItemLoader {
 
     private GrowthItemLoader() {}
 
+    // =========================================================================
+    // Chargement
+    // =========================================================================
+
     public static void loadAll() {
         List<GrowthItemFileConfig> files = MLResourceManager.loadPojoAll(
                 GameManager.getInstance().getPlugin(), "growth_items", GrowthItemFileConfig.class);
@@ -38,6 +42,31 @@ public final class GrowthItemLoader {
                         "Erreur lors du chargement du growth item '" + cfg.id + "' : " + e.getMessage());
             }
         }
+    }
+
+    // =========================================================================
+    // Reload à chaud
+    // =========================================================================
+
+    /**
+     * Recharge tous les fichiers {@code growth_items/*.yml} à chaud, sans redémarrage.
+     *
+     * <p>Séquence :</p>
+     * <ol>
+     *   <li>Vide {@link GrowthItemRegistry}.</li>
+     *   <li>Invalide le cache {@link MLResourceManager} (couvre aussi villagers et traders,
+     *       qui seront rechargés depuis le disque au prochain accès).</li>
+     *   <li>Relit tous les fichiers et repeuple le registre.</li>
+     * </ol>
+     *
+     * <p>Les items growth déjà en possession des joueurs ne sont pas affectés
+     * (leurs PDC — tier, uses — restent intacts). Seules les définitions des effets
+     * et des seuils sont mises à jour pour les prochains usages.</p>
+     */
+    public static void reload() {
+        GrowthItemRegistry.clear();
+        MLResourceManager.clearCache();
+        loadAll();
     }
 
     // ─── Conversion ───────────────────────────────────────────────────────────
@@ -121,14 +150,14 @@ public final class GrowthItemLoader {
 
     private static EquipmentSlotGroup parseSlotGroup(String name) {
         return switch (name.toUpperCase()) {
-            case "HEAD"     -> EquipmentSlotGroup.HEAD;
-            case "CHEST"    -> EquipmentSlotGroup.CHEST;
-            case "LEGS"     -> EquipmentSlotGroup.LEGS;
-            case "FEET"     -> EquipmentSlotGroup.FEET;
-            case "HAND"     -> EquipmentSlotGroup.HAND;
+            case "HEAD"    -> EquipmentSlotGroup.HEAD;
+            case "CHEST"   -> EquipmentSlotGroup.CHEST;
+            case "LEGS"    -> EquipmentSlotGroup.LEGS;
+            case "FEET"    -> EquipmentSlotGroup.FEET;
+            case "HAND"    -> EquipmentSlotGroup.HAND;
             case "OFFHAND" -> EquipmentSlotGroup.OFFHAND;
-            case "ARMOR"    -> EquipmentSlotGroup.ARMOR;
-            case "ANY"      -> EquipmentSlotGroup.ANY;
+            case "ARMOR"   -> EquipmentSlotGroup.ARMOR;
+            case "ANY"     -> EquipmentSlotGroup.ANY;
             default -> throw new IllegalArgumentException("Slot inconnu : '" + name + "'");
         };
     }

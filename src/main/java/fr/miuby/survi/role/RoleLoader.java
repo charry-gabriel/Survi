@@ -34,6 +34,30 @@ public class RoleLoader {
     private static final MultiKeyRegistry<Role> INSTANCE = new MultiKeyRegistry<>();
 
     public RoleLoader() {
+        loadRoles();
+    }
+
+    // =========================================================================
+    // Reload à chaud
+    // =========================================================================
+
+    /**
+     * Recharge {@code roles.yml} à chaud, sans redémarrage.
+     *
+     * <p>Le registre est entièrement reconstruit depuis le fichier. Les joueurs
+     * connectés conservent leurs attributs de rôle actuels ; les modifications
+     * seront effectives à leur prochaine reconnexion ou réattribution de rôle.</p>
+     */
+    public void reload() {
+        INSTANCE.clear();
+        loadRoles();
+    }
+
+    // =========================================================================
+    // Chargement interne
+    // =========================================================================
+
+    private void loadRoles() {
         File file = new File(GameManager.getInstance().getPlugin().getDataFolder(), "roles.yml");
         YamlConfiguration config = YamlConfiguration.loadConfiguration(file);
 
@@ -61,17 +85,24 @@ public class RoleLoader {
             List<RoleAttribute> attributes = parseAttributes(section);
 
             Role role = new Role(
-                eRole,
-                eRole.toComponent(),
-                attributes,
-                roleId
+                    eRole,
+                    eRole.toComponent(),
+                    attributes,
+                    roleId
             );
 
             attributes.forEach(attr -> attr.setRole(roleId));
 
             INSTANCE.register(role, eRole);
         }
+
+        MLLogManager.getInstance().log(Level.INFO, ELogTag.ROLE,
+                "[RoleLoader] " + INSTANCE.getAll().size() + " rôle(s) chargé(s) depuis roles.yml.");
     }
+
+    // =========================================================================
+    // Parsing
+    // =========================================================================
 
     private List<RoleAttribute> parseAttributes(ConfigurationSection section) {
         List<RoleAttribute> result = new ArrayList<>();
@@ -126,6 +157,10 @@ public class RoleLoader {
 
         return result;
     }
+
+    // =========================================================================
+    // Accesseurs
+    // =========================================================================
 
     public Role getRole(ERole role) {
         return INSTANCE.get(role);

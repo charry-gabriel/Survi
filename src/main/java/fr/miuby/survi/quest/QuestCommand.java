@@ -29,10 +29,6 @@ public class QuestCommand {
 
     public static LiteralArgumentBuilder<CommandSourceStack> createCommand() {
         return Commands.literal("quest")
-                .then(Commands.literal("reload")
-                        .requires(source -> source.getSender().isOp())
-                        .executes(QuestCommand::reloadQuests)
-                )
                 .then(Commands.literal("give")
                         .requires(source -> source.getSender().isOp())
                         .then(Commands.argument(playerArgument, AlphaPlayerArgument.alphaPlayer())

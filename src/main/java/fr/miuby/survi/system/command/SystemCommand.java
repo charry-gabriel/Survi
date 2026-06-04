@@ -27,6 +27,9 @@ public class SystemCommand {
                 // === LOG COMMANDS — gérés par MLLogCommand dans MiubyLib ===
                 .then(MLLogCommand.create())
 
+                // === RELOAD COMMANDS ===
+                .then(ReloadCommand.create())
+
                 // === TIME COMMANDS ===
                 .then(Commands.literal("time")
                         .then(Commands.literal("info")
