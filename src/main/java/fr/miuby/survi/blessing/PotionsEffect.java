@@ -19,4 +19,7 @@ public class PotionsEffect extends BlessingEffect {
     public void resetEffect(AlphaPlayer player) {
         player.getPlayer().removePotionEffect(potion.getType());
     }
+
+    @Override
+    public boolean requiresOnlinePlayer() { return true; }
 }

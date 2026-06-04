@@ -30,4 +30,7 @@ public class RandomItemEffect extends BlessingEffect {
         if (item != null)
             player.getPlayer().getInventory().addItem(item);
     }
+
+    @Override
+    public boolean requiresOnlinePlayer() { return true; }
 }

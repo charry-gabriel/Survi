@@ -12,4 +12,7 @@ public class GameModeEffect extends BlessingEffect {
     public void applyEffect(AlphaPlayer player) {
         player.getPlayer().setGameMode(this.gameMode);
     }
+
+    @Override
+    public boolean requiresOnlinePlayer() { return true; }
 }

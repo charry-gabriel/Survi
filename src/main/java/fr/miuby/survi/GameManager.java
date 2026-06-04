@@ -20,6 +20,7 @@ import fr.miuby.survi.item.CustomRecipe;
 import fr.miuby.survi.item.growth_item.GrowthItems;
 import fr.miuby.survi.item.locked_item.LockedItemsFactory;
 import fr.miuby.survi.player.AlphaPlayerFactory;
+import fr.miuby.survi.player.service.OfflineNotificationService;
 import fr.miuby.survi.role.RoleLoader;
 import fr.miuby.survi.system.time.TimeManager;
 import fr.miuby.survi.villager.VillagerFactory;
@@ -55,6 +56,7 @@ public class GameManager {
     @Getter private GlobalQuestManager globalQuestManager;
     @Getter private QuestActionBarService questActionBarService;
     @Getter private GlobalQuestBossBarService globalQuestBossBarService;
+    @Getter private OfflineNotificationService offlineNotificationService;
     @Getter private GraveManager graveManager;
     @Getter private WorldLevelManager worldLevelManager;
     @Getter private MobLevelManager mobLevelManager;
@@ -158,6 +160,8 @@ public class GameManager {
         this.globalQuestBossBarService = new GlobalQuestBossBarService();
         this.questManager = new QuestManager();
         this.globalQuestManager = new GlobalQuestManager();
+
+        this.offlineNotificationService = new OfflineNotificationService();
 
         this.graveManager = new GraveManager();
 

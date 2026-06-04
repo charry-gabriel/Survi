@@ -16,4 +16,7 @@ public class ItemEffect extends BlessingEffect{
         item.setAmount(this.amount);
         player.getPlayer().getInventory().addItem(item);
     }
+
+    @Override
+    public boolean requiresOnlinePlayer() { return true; }
 }

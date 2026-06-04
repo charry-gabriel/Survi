@@ -1,5 +1,6 @@
 package fr.miuby.survi.player.service;
 
+import fr.miuby.survi.blessing.BlessingEffect;
 import fr.miuby.lib.villager.MLVillager;
 import fr.miuby.lib.villager.VillagerRegistry;
 import fr.miuby.survi.GameManager;
@@ -13,10 +14,6 @@ import fr.miuby.survi.world.event.WorldLevelUpEvent;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
-import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerJoinEvent;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -27,18 +24,14 @@ import java.util.UUID;
 
 /**
  * Accumule les notifications survenues pendant qu'un joueur était déconnecté,
- * et les délivre dès sa reconnexion.
+ * et les délivre dès sa reconnexion via {@link #deliverPending(UUID, Player)}.
  *
- * <ul>
- *   <li>Écoute {@link AlphaPlayerJobLevelUpEvent} — si le joueur est absent, met en file.</li>
- *   <li>Écoute {@link WorldLevelUpEvent} — met en file pour tous les joueurs absents.</li>
- *   <li>Écoute {@link VillagerLevelUpEvent} — met en file pour tous les joueurs absents.</li>
- *   <li>Écoute {@link PlayerJoinEvent} (HIGH) — délivre les notifications en attente.</li>
- * </ul>
+ * <p>Les notifications sont purement en mémoire : elles ne survivent pas à un redémarrage.
  *
- * Les notifications sont purement en mémoire : elles ne survivent pas à un redémarrage.
+ * <p>L'écoute des events Bukkit est déléguée à
+ * {@link fr.miuby.survi.listener.OfflineNotificationListener}.
  */
-public class OfflineNotificationService implements Listener {
+public class OfflineNotificationService {
 
     private record JobLevelUpRecord(EJob job, int oldLevel, int newLevel) {}
     private record VillagerLevelUpRecord(String nameId, int oldLevel, int newLevel) {}
@@ -55,10 +48,13 @@ public class OfflineNotificationService implements Listener {
     /** Montées de niveau de villageois manquées, par joueur. */
     private final Map<UUID, List<VillagerLevelUpRecord>> pendingVillagerLevelUps = new HashMap<>();
 
+    /** Récompenses de quêtes globales reçues pendant que le joueur était déconnecté. */
+    private record PendingQuestReward(List<BlessingEffect> effects, Component message) {}
+    private final Map<UUID, List<PendingQuestReward>> pendingQuestRewards = new HashMap<>();
+
     // ─── Accumulation ────────────────────────────────────────────────────────────
 
-    @EventHandler
-    public void onJobLevelUp(AlphaPlayerJobLevelUpEvent event) {
+    public void recordJobLevelUp(AlphaPlayerJobLevelUpEvent event) {
         Player player = event.getAlphaPlayer().getPlayer();
         if (player != null && player.isOnline()) return;
 
@@ -67,8 +63,7 @@ public class OfflineNotificationService implements Listener {
                 .add(new JobLevelUpRecord(event.getJob(), event.getOldLevel(), event.getNewLevel()));
     }
 
-    @EventHandler
-    public void onWorldLevelUp(WorldLevelUpEvent event) {
+    public void recordWorldLevelUp(WorldLevelUpEvent event) {
         for (AlphaPlayer alpha : GameManager.getInstance().getAlphaPlayerFactory().getAlphaPlayers()) {
             Player player = alpha.getPlayer();
             if (player != null && player.isOnline()) continue;
@@ -77,8 +72,7 @@ public class OfflineNotificationService implements Listener {
         }
     }
 
-    @EventHandler
-    public void onVillagerLevelUp(VillagerLevelUpEvent event) {
+    public void recordVillagerLevelUp(VillagerLevelUpEvent event) {
         // L'event est fired avant this.level++ dans levelUp() — oldLevel = newLevel - 1
         String nameId = event.getVillagerLevel().getNameId();
         int oldLevel = event.getNewLevel() - 1;
@@ -92,13 +86,19 @@ public class OfflineNotificationService implements Listener {
         }
     }
 
+    /**
+     * Met en attente des effets de récompense pour un joueur hors ligne.
+     * Ils seront appliqués et notifiés à sa prochaine connexion.
+     */
+    public void queueQuestReward(UUID uuid, List<BlessingEffect> effects, Component rewardMessage) {
+        pendingQuestRewards.computeIfAbsent(uuid, k -> new ArrayList<>())
+                .add(new PendingQuestReward(List.copyOf(effects), rewardMessage));
+    }
+
     // ─── Livraison ────────────────────────────────────────────────────────────────
 
-    @EventHandler(priority = EventPriority.HIGH)
-    public void onPlayerJoin(PlayerJoinEvent event) {
-        UUID uuid = event.getPlayer().getUniqueId();
-        Player player = event.getPlayer();
-
+    /** Livre toutes les notifications en attente pour ce joueur, puis vide sa file. */
+    public void deliverPending(UUID uuid, Player player) {
         boolean hasAny = pendingJobLevelUps.containsKey(uuid)
                 || pendingWorldLevelFrom.containsKey(uuid)
                 || pendingVillagerLevelUps.containsKey(uuid);
@@ -110,6 +110,7 @@ public class OfflineNotificationService implements Listener {
         deliverJobNotifications(uuid, player);
         deliverWorldNotification(uuid, player);
         deliverVillagerNotifications(uuid, player);
+        deliverQuestRewards(uuid, player);
     }
 
     private void deliverJobNotifications(UUID uuid, Player player) {
@@ -173,6 +174,19 @@ public class OfflineNotificationService implements Listener {
                             .append(Component.text(" → ", NamedTextColor.GRAY))
                             .append(Component.text("Niveau " + rec.newLevel(), NamedTextColor.YELLOW))
             );
+        }
+    }
+
+    private void deliverQuestRewards(UUID uuid, Player player) {
+        List<PendingQuestReward> pending = pendingQuestRewards.remove(uuid);
+        if (pending == null || pending.isEmpty()) return;
+
+        AlphaPlayer ap = GameManager.getInstance().getAlphaPlayerFactory().getAlphaPlayer(uuid);
+        for (PendingQuestReward reward : pending) {
+            for (BlessingEffect effect : reward.effects()) {
+                effect.applyEffect(ap);
+            }
+            player.sendMessage(reward.message());
         }
     }
 }

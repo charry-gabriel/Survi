@@ -7,4 +7,7 @@ public class FlyEffect extends BlessingEffect {
     public void applyEffect(AlphaPlayer player) {
         player.getPlayer().setFlying(true);
     }
+
+    @Override
+    public boolean requiresOnlinePlayer() { return true; }
 }

@@ -568,7 +568,7 @@ Enregistrer dans `BlessingLoader` via la map `type → BlessingEffect`.
 
 **Réapplication à la connexion** : `PlayerEffectRestoreService.restoreOnJoin(player)` réapplique tous les effets de blessings actifs et envoie un récapitulatif "État actif". C'est le point central pour tout effet persistant à rétablir à la reconnexion — pas `VillagerFactory`.
 
-**Notifications offline** : `OfflineNotificationService` accumule les `VillagerLevelUpEvent`, `AlphaPlayerJobLevelUpEvent` et `WorldLevelUpEvent` survenus pendant l'absence d'un joueur, et les délivre groupés au join (priority HIGH, après l'application des effets).
+**Notifications offline** : `OfflineNotificationService` accumule les `VillagerLevelUpEvent`, `AlphaPlayerJobLevelUpEvent` et `WorldLevelUpEvent` survenus pendant l'absence d'un joueur, et les délivre groupés au join (priority HIGH, après l'application des effets). L'écoute des events est confiée à `OfflineNotificationListener` (dans `listener/`) qui délègue au service — le service n'implémente pas `Listener`.
 
 ---
 
@@ -650,7 +650,7 @@ growth_items/<id>.yml → GrowthItemFileConfig → GrowthItemLoader → GrowthIt
 
 | Sous-système | Fichiers à lire avant de modifier |
 |---|---|
-| Joueurs | `AlphaPlayer`, `AlphaPlayerFactory`, `PlayerPersistenceService`, `PlayerAttributeService`, `PlayerEffectRestoreService`, `OfflineNotificationService` |
+| Joueurs | `AlphaPlayer`, `AlphaPlayerFactory`, `PlayerPersistenceService`, `PlayerAttributeService`, `PlayerEffectRestoreService`, `OfflineNotificationService`, `OfflineNotificationListener` |
 | Rôles | `ERole`, `RoleLoader`, `RoleManagementService`, `roles.yml` |
 | Quêtes | `QuestManager`, `GlobalQuestManager`, `Quest`, `EQuestType`, `QuestActionBarService`, `GlobalQuestBossBarService`, `quests.yml` |
 | Villageois | `VillagerFactory`, `VillagerLevel`, `BlessingLoader`, `villagers/*.yml` |

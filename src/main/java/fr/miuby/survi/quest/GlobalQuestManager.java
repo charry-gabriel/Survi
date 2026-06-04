@@ -6,6 +6,7 @@ import fr.miuby.survi.blessing.BlessingEffect;
 import fr.miuby.survi.blessing.ReputationEffect;
 import fr.miuby.survi.player.AlphaPlayer;
 import fr.miuby.survi.player.AlphaPlayerFactory;
+import fr.miuby.survi.player.service.OfflineNotificationService;
 import fr.miuby.survi.system.log.ELogTag;
 import lombok.Getter;
 import net.kyori.adventure.key.Key;
@@ -127,16 +128,27 @@ public class GlobalQuestManager extends AbstractQuestManager<GlobalQuest> {
         GameManager.getInstance().getGlobalQuestBossBarService().onQuestCompleted(quest);
 
         AlphaPlayerFactory factory = GameManager.getInstance().getAlphaPlayerFactory();
+        OfflineNotificationService offlineNotif = GameManager.getInstance().getOfflineNotificationService();
+
         for (UUID uuid : winners) {
             AlphaPlayer ap = factory.getAlphaPlayer(uuid);
-            if (ap == null) continue;
+            Player p = ap.getPlayer();
+            boolean online = p != null && p.isOnline();
 
+            List<BlessingEffect> deferred = new ArrayList<>();
             for (BlessingEffect effect : quest.getRewards().blessingEffects()) {
-                effect.applyEffect(ap);
+                if (!effect.requiresOnlinePlayer() || online) {
+                    effect.applyEffect(ap);
+                } else {
+                    deferred.add(effect);
+                }
             }
 
-            Player p = ap.getPlayer();
-            if (p != null) p.sendMessage(buildRewardMessage(quest));
+            if (!deferred.isEmpty()) {
+                offlineNotif.queueQuestReward(uuid, deferred, buildRewardMessage(quest));
+            }
+
+            if (online) p.sendMessage(buildRewardMessage(quest));
         }
 
         MLLogManager.getInstance().log(Level.INFO, ELogTag.QUEST,

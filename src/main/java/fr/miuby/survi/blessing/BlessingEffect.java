@@ -8,4 +8,6 @@ public abstract class BlessingEffect {
     public void resetEffect(AlphaPlayer player) {
         // no-op par défaut
     }
+
+    public boolean requiresOnlinePlayer() { return false; }
 }
