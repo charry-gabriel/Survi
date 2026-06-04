@@ -5,6 +5,7 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import fr.miuby.lib.command.MLLogCommand;
 import fr.miuby.survi.GameManager;
 import fr.miuby.survi.system.SurviConfig;
+import fr.miuby.survi.system.perf.PerfTimer;
 import fr.miuby.survi.system.time.TimeManager;
 import fr.miuby.survi.world.VillageZoneManager;
 import fr.miuby.survi.world.config.VillageZoneConfig;
@@ -26,6 +27,48 @@ public class SystemCommand {
 
                 // === LOG COMMANDS — gérés par MLLogCommand dans MiubyLib ===
                 .then(MLLogCommand.create())
+
+                // === PERF COMMANDS ===
+                // /survi perf on   → active les PerfTimers (seuil 0,5 ms, tag PERF)
+                // /survi perf off  → désactive (overhead nul immédiatement)
+                // /survi perf status → état actuel
+                .then(Commands.literal("perf")
+                        .then(Commands.literal("on")
+                                .executes(ctx -> {
+                                    PerfTimer.setEnabled(true);
+                                    ctx.getSource().getSender().sendMessage(
+                                            Component.text("⏱ PerfTimers ", NamedTextColor.YELLOW)
+                                                    .append(Component.text("activés", NamedTextColor.GREEN))
+                                                    .append(Component.text(
+                                                            " — seuil 0,5 ms · tag PERF · désactivez avec /survi perf off",
+                                                            NamedTextColor.GRAY)));
+                                    return Command.SINGLE_SUCCESS;
+                                })
+                        )
+                        .then(Commands.literal("off")
+                                .executes(ctx -> {
+                                    PerfTimer.setEnabled(false);
+                                    ctx.getSource().getSender().sendMessage(
+                                            Component.text("⏱ PerfTimers ", NamedTextColor.YELLOW)
+                                                    .append(Component.text("désactivés", NamedTextColor.RED))
+                                                    .append(Component.text(
+                                                            " — overhead nul.",
+                                                            NamedTextColor.GRAY)));
+                                    return Command.SINGLE_SUCCESS;
+                                })
+                        )
+                        .then(Commands.literal("status")
+                                .executes(ctx -> {
+                                    boolean on = PerfTimer.isEnabled();
+                                    ctx.getSource().getSender().sendMessage(
+                                            Component.text("⏱ PerfTimers : ", NamedTextColor.YELLOW)
+                                                    .append(Component.text(
+                                                            on ? "ON ✓" : "OFF",
+                                                            on ? NamedTextColor.GREEN : NamedTextColor.RED)));
+                                    return Command.SINGLE_SUCCESS;
+                                })
+                        )
+                )
 
                 // === TIME COMMANDS ===
                 .then(Commands.literal("time")

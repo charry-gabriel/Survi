@@ -12,5 +12,6 @@ public enum ELogTag implements ILogTag {
     JOB,
     WORLD,
     SYSTEM,
-    GRAVE
+    GRAVE,
+    PERF
 }

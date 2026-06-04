@@ -9,6 +9,7 @@ import fr.miuby.survi.player.AlphaPlayer;
 import fr.miuby.survi.role.RoleAttribute;
 import fr.miuby.survi.system.SurviConfig;
 import fr.miuby.survi.system.log.ELogTag;
+import fr.miuby.survi.system.perf.PerfTimer;
 import fr.miuby.survi.world.EWorld;
 import io.papermc.paper.advancement.AdvancementDisplay;
 import net.kyori.adventure.text.Component;
@@ -18,6 +19,7 @@ import fr.miuby.survi.blessing.PotionsEffect;
 import fr.miuby.survi.quest.PlayerQuestData;
 import fr.miuby.survi.quest.Quest;
 import fr.miuby.lib.log.MLLogManager;
+
 import java.util.logging.Level;
 
 import org.bukkit.Location;
@@ -42,45 +44,51 @@ import java.util.UUID;
 
 public class PlayerListener implements Listener {
 
-    /** Cooldown d'avertissement "limite du village" par joueur (évite le spam, en ms). */
+    /** Cooldown d'avertissement « limite du village » par joueur (évite le spam, en ms). */
     private static final long WARN_COOLDOWN_MS = 6_000L;
+
     private final Map<UUID, Long> lastWarnTime = new HashMap<>();
+
+    // ─── Hot path : mouvement joueur ─────────────────────────────────────────────
 
     @EventHandler(ignoreCancelled = true)
     public void onPlayerMove(PlayerMoveEvent event) {
-        Player player = event.getPlayer();
+        if (event.getPlayer().isOp() || !event.hasChangedPosition()) return;
 
-        if (player.isOp() || !event.hasChangedPosition())
-            return;
+        try (var t = PerfTimer.start("PlayerListener.onPlayerMove")) {
+            Player player    = event.getPlayer();
+            String worldName = player.getWorld().getName();
 
-        String worldName = player.getWorld().getName();
-        MLWorld villageWorld = WorldRegistry.get(EWorld.VILLAGE);
-        MLWorld wildernessWorld = WorldRegistry.get(EWorld.WILDERNESS);
-        MLWorld netherWorld = WorldRegistry.get(EWorld.NETHER);
+            MLWorld villageWorld    = WorldRegistry.get(EWorld.VILLAGE);
+            MLWorld wildernessWorld = WorldRegistry.get(EWorld.WILDERNESS);
+            MLWorld netherWorld     = WorldRegistry.get(EWorld.NETHER);
 
-        boolean outOfBounds = false;
+            boolean outOfBounds = false;
 
-        // --- Village : limite gérée par la zone évolutive ---
-        if (worldName.equals(villageWorld.getName())
-                && GameManager.getInstance().getVillageZoneManager().isLocationOutOfBounds(event.getTo())) {
-            outOfBounds = true;
-        }
+            // Village : limite gérée par la zone évolutive
+            if (worldName.equals(villageWorld.getName())
+                    && GameManager.getInstance().getVillageZoneManager().isLocationOutOfBounds(event.getTo())) {
+                outOfBounds = true;
+            }
 
-        // --- Wilderness : limite dynamique selon niveau Aventurier ---
-        if (!outOfBounds && wildernessWorld != null && worldName.equals(wildernessWorld.getWorld().getName())) {
-            outOfBounds = isOutOfAdventureLimit(event.getPlayer(), event.getTo(), false);
-        }
+            // Wilderness : limite dynamique selon niveau Aventurier
+            if (!outOfBounds && wildernessWorld != null && worldName.equals(wildernessWorld.getWorld().getName())) {
+                outOfBounds = isOutOfAdventureLimit(player, event.getTo(), false);
+            }
 
-        // --- Nether : même limite divisée par 8 ---
-        if (!outOfBounds && netherWorld != null && worldName.equals(netherWorld.getWorld().getName())) {
-            outOfBounds = isOutOfAdventureLimit(event.getPlayer(), event.getTo(), true);
-        }
+            // Nether : même limite divisée par 8
+            if (!outOfBounds && netherWorld != null && worldName.equals(netherWorld.getWorld().getName())) {
+                outOfBounds = isOutOfAdventureLimit(player, event.getTo(), true);
+            }
 
-        if (outOfBounds) {
-            blockMovement(event);
-            warn(player);
+            if (outOfBounds) {
+                blockMovement(event);
+                warn(player);
+            }
         }
     }
+
+    // ─── Helpers mouvement ───────────────────────────────────────────────────────
 
     /**
      * Vérifie si le joueur dépasse la limite d'exploration liée à son niveau Aventurier.
@@ -126,6 +134,8 @@ public class PlayerListener implements Listener {
         }
     }
 
+    // ─── Autres events ───────────────────────────────────────────────────────────
+
     @EventHandler
     public void onPlayerAdvancementDone(PlayerAdvancementDoneEvent event) {
         Player player = event.getPlayer();
@@ -161,10 +171,14 @@ public class PlayerListener implements Listener {
         final Player player = event.getEntity();
         MLLogManager.getInstance().log(Level.FINE, ELogTag.PLAYER,
                 "[PlayerDeath] " + player.getName() + " mort en " + player.getLocation().getWorld().getName()
-                        + " x=" + player.getLocation().getBlockX() + " y=" + player.getLocation().getBlockY() + " z=" + player.getLocation().getBlockZ());
+                        + " x=" + player.getLocation().getBlockX()
+                        + " y=" + player.getLocation().getBlockY()
+                        + " z=" + player.getLocation().getBlockZ());
 
         final ItemStack[] armor = player.getInventory().getArmorContents();
-        GameManager.getInstance().getScheduler().scheduleSyncDelayedTask(GameManager.getInstance().getPlugin(), () -> player.getInventory().setArmorContents(armor));
+        GameManager.getInstance().getScheduler()
+                .scheduleSyncDelayedTask(GameManager.getInstance().getPlugin(),
+                        () -> player.getInventory().setArmorContents(armor));
 
         for (ItemStack is : armor) {
             event.getDrops().remove(is);
@@ -199,9 +213,10 @@ public class PlayerListener implements Listener {
         }
 
         if (!effectsToReapply.isEmpty()) {
-            GameManager.getInstance().getScheduler().runTaskLater(GameManager.getInstance().getPlugin(), () -> {
-                if (player.isOnline()) effectsToReapply.forEach(e -> e.applyEffect(alphaPlayer));
-            }, 5L);
+            GameManager.getInstance().getScheduler().runTaskLater(
+                    GameManager.getInstance().getPlugin(),
+                    () -> { if (player.isOnline()) effectsToReapply.forEach(e -> e.applyEffect(alphaPlayer)); },
+                    5L);
         }
     }
 
@@ -211,7 +226,6 @@ public class PlayerListener implements Listener {
             if (nsKey.toString().equals(event.getRecipe().toString()))
                 event.setCancelled(true);
         }
-
         if (GameManager.getInstance().getLockedItemsFactory().isLocked(event.getRecipe()))
             event.setCancelled(true);
     }

@@ -2,6 +2,7 @@ package fr.miuby.survi.listener;
 
 import fr.miuby.survi.job.EJob;
 import fr.miuby.survi.player.AlphaPlayer;
+import fr.miuby.survi.system.perf.PerfTimer;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Material;
@@ -93,6 +94,10 @@ public class JobListener implements Listener {
      *
      * <p>Exemple : 3 items de base, multiplicateur 0.5 →
      * total = 3 × 0.5 = 1.5 → 1 item garanti + 50 % de chance d'un 2e.</p>
+     *
+     * <p>{@code block.getDrops(tool)} est l'appel le plus coûteux ici (calcul Bukkit +
+     * enchantements). Si le PerfTimer signale cette méthode, envisager un cache des drops
+     * par {@link Material} pour les enchantements communs.</p>
      */
     private static void dropWithMultiplier(BlockBreakEvent event, double multiplier) {
         Block block = event.getBlock();
@@ -121,7 +126,7 @@ public class JobListener implements Listener {
     }
 
     // ════════════════════════════════════════════════════════════════════════════
-    //  MINEUR – drops sur les minerais
+    //  MINEUR / BUCHERON – drops sur les blocs
     // ════════════════════════════════════════════════════════════════════════════
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
@@ -133,13 +138,16 @@ public class JobListener implements Listener {
 
         Material type = block.getType();
 
-        if (ORE_BLOCKS.contains(type)) {
-            int level = alpha.getJobLevel(EJob.MINEUR);
-            dropWithMultiplier(event, getMultiplier(level));
+        // Sortie rapide si le bloc n'est pas concerné (avant d'ouvrir un timer)
+        if (!ORE_BLOCKS.contains(type) && !LOG_BLOCKS.contains(type)) return;
 
-        } else if (LOG_BLOCKS.contains(type)) {
-            int level = alpha.getJobLevel(EJob.BUCHERON);
-            dropWithMultiplier(event, getMultiplier(level));
+        // block.getDrops(tool) est coûteux : on mesure précisément cette section
+        try (var t = PerfTimer.start("JobListener.dropWithMultiplier")) {
+            if (ORE_BLOCKS.contains(type)) {
+                dropWithMultiplier(event, getMultiplier(alpha.getJobLevel(EJob.MINEUR)));
+            } else {
+                dropWithMultiplier(event, getMultiplier(alpha.getJobLevel(EJob.BUCHERON)));
+            }
         }
     }
 
@@ -160,16 +168,14 @@ public class JobListener implements Listener {
         AlphaPlayer alpha = AlphaPlayer.get(player.getUniqueId());
         if (alpha == null) return;
 
-        int jobLevel = alpha.getJobLevel(EJob.ENCHANTEUR);
-        int maxXpCost = jobLevel * 3; // niv.1 → 3, niv.5 → 15, niv.10 → 30
+        int jobLevel  = alpha.getJobLevel(EJob.ENCHANTEUR);
+        int maxXpCost = jobLevel * 3;
 
         EnchantmentOffer[] offers = event.getOffers();
         for (int i = 0; i < offers.length; i++) {
             if (offers[i] == null) continue;
-
             boolean costTooHigh  = offers[i].getCost() > maxXpCost;
             boolean levelTooHigh = offers[i].getEnchantmentLevel() > jobLevel;
-
             if (jobLevel == 0 || costTooHigh || levelTooHigh) {
                 offers[i] = null;
             }
@@ -193,12 +199,10 @@ public class JobListener implements Listener {
                     Component.text("✗ Vous ne pouvez pas encore enchanter. Progressez dans le métier ")
                             .color(NamedTextColor.RED)
                             .append(EJob.ENCHANTEUR.toComponent())
-                            .append(Component.text(".", NamedTextColor.RED))
-            );
+                            .append(Component.text(".", NamedTextColor.RED)));
             return;
         }
 
-        // Annule si l'un des enchantements dépasse le niveau métier
         boolean tooHigh = false;
         for (Map.Entry<Enchantment, Integer> entry : event.getEnchantsToAdd().entrySet()) {
             if (entry.getValue() > jobLevel) {
@@ -213,8 +217,7 @@ public class JobListener implements Listener {
                     Component.text("✗ Cet enchantement dépasse votre niveau de métier ")
                             .color(NamedTextColor.RED)
                             .append(EJob.ENCHANTEUR.toComponent())
-                            .append(Component.text(" (max niv." + jobLevel + " d'enchantement).", NamedTextColor.RED))
-            );
+                            .append(Component.text(" (max niv." + jobLevel + " d'enchantement).", NamedTextColor.RED)));
         }
     }
 
@@ -226,8 +229,7 @@ public class JobListener implements Listener {
      * Bloque la préparation d'une opération d'enclume si elle ajoute ou monte
      * un enchantement au-delà du niveau métier de l'ENCHANTEUR.
      *
-     * <p>Les simples renommages (aucun enchantement ajouté/monté) sont toujours
-     * autorisés.</p>
+     * <p>Les simples renommages (aucun enchantement ajouté/monté) sont toujours autorisés.</p>
      */
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onPrepareAnvil(PrepareAnvilEvent event) {
@@ -243,14 +245,11 @@ public class JobListener implements Listener {
         ItemStack firstItem = event.getInventory().getFirstItem();
         if (firstItem == null || firstItem.getType() == Material.AIR) return;
 
-        // Enchantements actuels sur le premier item (avant opération)
-        Map<Enchantment, Integer> firstEnchants = getEnchants(firstItem);
-        // Enchantements sur le résultat (après opération)
+        Map<Enchantment, Integer> firstEnchants  = getEnchants(firstItem);
         Map<Enchantment, Integer> resultEnchants = getEnchants(result);
 
-        // Vérifie si l'opération ajoute ou monte un enchantement
         boolean enchantmentChanged = false;
-        boolean tooHighLevel = false;
+        boolean tooHighLevel       = false;
 
         for (Map.Entry<Enchantment, Integer> entry : resultEnchants.entrySet()) {
             int previousLevel = firstEnchants.getOrDefault(entry.getKey(), 0);
@@ -263,30 +262,24 @@ public class JobListener implements Listener {
             }
         }
 
-        // Si aucun enchantement n'est modifié (simple renommage), on laisse passer
         if (!enchantmentChanged) return;
 
         if (tooHighLevel) {
             event.setResult(null);
-            // Message discret : PrepareAnvilEvent se déclenche souvent lors de la saisie,
-            // on évite donc de spammer le joueur ici. L'absence de résultat est suffisante.
         }
     }
 
-    // ─── Utilitaire : récupère les enchantements d'un ItemStack ──────────────────
+    // ─── Utilitaire : enchantements d'un ItemStack ───────────────────────────────
 
     /**
      * Retourne les enchantements d'un ItemStack.
      * Pour un livre enchanté, retourne les enchantements stockés.
-     * Pour tout autre item, retourne les enchantements appliqués.
      */
     private static Map<Enchantment, Integer> getEnchants(ItemStack item) {
         if (item == null) return Map.of();
         ItemMeta meta = item.getItemMeta();
         if (meta == null) return Map.of();
-        if (meta instanceof EnchantmentStorageMeta esm) {
-            return esm.getStoredEnchants();
-        }
+        if (meta instanceof EnchantmentStorageMeta esm) return esm.getStoredEnchants();
         return meta.getEnchants();
     }
 }

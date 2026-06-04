@@ -516,7 +516,9 @@ MLLogManager.getInstance().log(Level.WARNING, ELogTag.VILLAGER, "Message", excep
 
 Jamais `System.out.println` ni `plugin.getLogger().info(...)`.
 
-Tags disponibles : `PLAYER`, `VILLAGER`, `QUEST`, `REPUTATION`, `ITEM`, `ROLE`, `JOB`, `WORLD`, `SYSTEM`, `GRAVE`.
+Tags disponibles : `PLAYER`, `VILLAGER`, `QUEST`, `REPUTATION`, `ITEM`, `ROLE`, `JOB`, `WORLD`, `SYSTEM`, `GRAVE`, `PERF`.
+
+`PERF` est réservé à `PerfTimer` (voir section 17) — ne pas l'utiliser pour du logging métier.
 
 ---
 
@@ -696,8 +698,43 @@ Ne jamais appeler directement `showBossBar` / `hideBossBar` sur les joueurs pour
 - **DB toujours async, sans exception.** Même pour les events ponctuels (`onDailyReset`, `onPlayerQuit`…).
 - Ne pas allouer d'objets inutiles dans les listeners chauds.
 - `ignoreCancelled = true` sur tous les `@EventHandler` sauf cas explicite.
-- **Pré-cacher les références stables** (`WorldRegistry.get(EWorld.XXX)`, `GameManager.getInstance().getXxxManager()`) dans des champs `private final` initialisés dans le constructeur du listener — pas à chaque appel.
+- **Pré-cacher les références stables** (`GameManager.getInstance().getXxxManager()`) dans des champs `private final` initialisés dans le constructeur du listener — pas à chaque appel.
+- **Ne jamais cacher `WorldRegistry.get(EWorld.XXX)` dans un champ.** Les mondes Wilderness, Nether et End peuvent être réinitialisés à tout moment — la référence deviendrait invalide silencieusement. Toujours appeler `WorldRegistry.get()` inline dans le handler. Un lookup `EnumMap` coûte ~10 ns : c'est négligeable.
 - **Jamais `getAlphaPlayers()` / `getAll()` dans un hot path.** Pour des états rares (joueurs avec un rôle spécifique), maintenir un `Set<UUID>` dédié mis à jour sur l'event de changement d'état (`AlphaPlayerRoleChangeEvent`, etc.).
+
+---
+
+## 17. PerfTimer — mesure de performance à chaud
+
+Chronomètre inline toggleable. **Zéro overhead quand désactivé** (retourne un singleton NO_OP, aucune allocation).
+
+```java
+try (var t = PerfTimer.start("DamageListener.onEntityDamage")) {
+    // code à mesurer
+}   // log automatique en WARNING/PERF si > 0,5 ms
+```
+
+**Activation / désactivation à chaud (en jeu, OP uniquement) :**
+```
+/survi perf on      → active les timers
+/survi perf off     → désactive (overhead nul immédiatement)
+/survi perf status  → état actuel
+```
+
+**Règles d'usage :**
+- Poser un `PerfTimer` sur les hot paths sans condition : l'overhead désactivé est ~1 ns (volatile read).
+- Nommer clairement : `"ClassName.methodName"` ou `"ClassName.section-specifique"` pour les blocs imbriqués.
+- Les timers imbriqués sont autorisés (ex : timer global + timer sur le seul sous-bloc suspect).
+- Le tag `PERF` est géré par `MLLogManager` comme tous les autres — il peut être filtré indépendamment de l'activation du timer.
+
+**Points instrumentés actuellement :**
+| Label | Emplacement | Risque |
+|---|---|---|
+| `DamageListener.onEntityDamageByEntity` | Modificateur dégâts joueur | faible |
+| `DamageListener.onEntityDamage` | Résistance + mécanique FÉE | moyen |
+| `DamageListener.FEE-propagation` | Itération `getAlphaPlayers()` FÉE | ⚠ élevé — à remplacer par `Set<UUID>` |
+| `PlayerListener.onPlayerMove` | Vérification limites monde | moyen |
+| `JobListener.dropWithMultiplier` | `block.getDrops(tool)` Bukkit | moyen |
 
 ---
 
