@@ -9,21 +9,9 @@ import org.bukkit.block.data.Orientable;
 import org.bukkit.entity.Player;
 
 import java.util.*;
-import java.util.concurrent.CompletableFuture;
 import java.util.logging.Level;
 
 public class WorldPortalManager {
-
-    /** Délai (ticks) après le chargement serveur des chunks pour laisser le client les recevoir. */
-    private static final long CLIENT_CHUNK_RECEIVE_DELAY = 20L;
-
-    private static final String DB_KEY_WORLD  = "world_portal_wild_world";
-    private static final String DB_KEY_MIN_X  = "world_portal_wild_min_x";
-    private static final String DB_KEY_MIN_Y  = "world_portal_wild_min_y";
-    private static final String DB_KEY_MIN_Z  = "world_portal_wild_min_z";
-    private static final String DB_KEY_MAX_X  = "world_portal_wild_max_x";
-    private static final String DB_KEY_MAX_Y  = "world_portal_wild_max_y";
-    private static final String DB_KEY_MAX_Z  = "world_portal_wild_max_z";
 
     // worldName → { min, max } de l'intérieur du portail (blocs de verre)
     private final Map<String, Location[]> portalZones = new HashMap<>();
@@ -49,8 +37,10 @@ public class WorldPortalManager {
 
     /**
      * Enregistre la zone intérieure (blocs de verre) du portail Wilderness.
-     * Sauvegarde min et max en DB, puis envoie les faux blocs aux joueurs présents
-     * dans ce monde une fois les chunks chargés côté serveur et client.
+     * Sauvegarde min et max en DB, puis envoie les faux blocs directement aux
+     * joueurs présents (leurs chunks sont déjà chargés côté client puisqu'ils
+     * sont déjà dans le monde). Les nouveaux arrivants reçoivent les faux blocs
+     * via {@link #sendFakePortalBlocksInChunk}, déclenché par PlayerChunkLoadEvent.
      */
     public void registerWildernessPortal(String worldName, Location min, Location max) {
         portalZones.put(worldName, new Location[]{ min.clone(), max.clone() });
@@ -58,7 +48,7 @@ public class WorldPortalManager {
 
         World world = Bukkit.getWorld(worldName);
         if (world != null) {
-            world.getPlayers().forEach(p -> sendFakePortalBlocksAsync(p, min, max));
+            world.getPlayers().forEach(p -> sendFakePortalBlocks(p, min, max));
         }
 
         MLLogManager.getInstance().log(Level.INFO, ELogTag.WORLD,
@@ -69,8 +59,8 @@ public class WorldPortalManager {
      * Met à jour la position du portail Village (appelé par {@link VillageZoneManager}
      * à chaque changement de palier de zone).
      *
-     * <p>Enregistre la nouvelle zone dans {@link #portalZones} et envoie immédiatement
-     * les faux blocs NETHER_PORTAL à tous les joueurs présents dans le Village.</p>
+     * <p>Efface les anciens faux blocs NETHER_PORTAL et envoie les nouveaux directement
+     * aux joueurs présents dans le Village (chunks déjà chargés côté client).</p>
      */
     public void updateVillagePortal(String villageName, Location min, Location max) {
         World world = Bukkit.getWorld(villageName);
@@ -85,12 +75,11 @@ public class WorldPortalManager {
         portalZones.put(villageName, new Location[]{ min.clone(), max.clone() });
 
         if (world != null) {
-            world.getPlayers().forEach(p -> sendFakePortalBlocksAsync(p, min, max));
+            world.getPlayers().forEach(p -> sendFakePortalBlocks(p, min, max));
         }
 
         MLLogManager.getInstance().log(Level.INFO, ELogTag.WORLD,
-                "Portail Village mis à jour : " + fmt(min) + " → " + fmt(max)
-                        + " (axe : " + detectAxis(min, max) + ")");
+                "Portail Village mis à jour : " + fmt(min) + " → " + fmt(max) + " (axe : " + detectAxis(min, max) + ")");
     }
 
     /** Retire la zone du portail Wilderness avant unload (reset). */
@@ -101,69 +90,49 @@ public class WorldPortalManager {
     }
 
     // -------------------------------------------------------------------------
-    // Point d'entrée unique : connexion ou changement de monde
+    // Envoi par chunk — déclenché par PlayerChunkLoadEvent dans WorldListener
     // -------------------------------------------------------------------------
 
     /**
-     * À appeler depuis {@code PlayerJoinEvent} ET {@code PlayerChangedWorldEvent}.
-     * Charge les chunks du portail côté serveur si nécessaire, attend que le client
-     * les ait reçus, puis envoie les faux blocs NETHER_PORTAL.
+     * Indique si le chunk (chunkX, chunkZ) contient des blocs du portail enregistré
+     * pour ce monde. Appel O(1) — utilisé par WorldListener pour filtrer les chunks
+     * sans portail avant de planifier un envoi.
      */
-    public void sendFakePortalBlocksIfNeeded(Player player) {
+    public boolean chunkOverlapsPortal(String worldName, int chunkX, int chunkZ) {
+        Location[] zone = portalZones.get(worldName);
+        if (zone == null) return false;
+        int minCX = Math.min(zone[0].getBlockX(), zone[1].getBlockX()) >> 4;
+        int maxCX = Math.max(zone[0].getBlockX(), zone[1].getBlockX()) >> 4;
+        int minCZ = Math.min(zone[0].getBlockZ(), zone[1].getBlockZ()) >> 4;
+        int maxCZ = Math.max(zone[0].getBlockZ(), zone[1].getBlockZ()) >> 4;
+        return chunkX >= minCX && chunkX <= maxCX && chunkZ >= minCZ && chunkZ <= maxCZ;
+    }
+
+    /**
+     * Envoie les faux blocs NETHER_PORTAL appartenant au chunk (chunkX, chunkZ)
+     * au joueur donné.
+     *
+     * <p>Appelé depuis {@link fr.miuby.survi.listener.WorldListener#onPlayerChunkLoad}
+     * avec un délai d'1 tick pour garantir que le paquet chunk précède le BlockChange
+     * dans la file TCP du client.</p>
+     */
+    public void sendFakePortalBlocksInChunk(Player player, int chunkX, int chunkZ) {
         Location[] zone = portalZones.get(player.getWorld().getName());
         if (zone == null) return;
 
-        sendFakePortalBlocksAsync(player, zone[0], zone[1]);
-    }
-
-    public void sendAllFakePortalBlocks(Player player) {
-        portalZones.values().forEach(zone -> sendFakePortalBlocksAsync(player, zone[0], zone[1]));
-    }
-
-    // -------------------------------------------------------------------------
-    // Envoi async : chargement chunk serveur → délai client → sendBlockChange
-    // -------------------------------------------------------------------------
-
-    /**
-     * Charge en async tous les chunks couvrant la zone [min, max] du portail,
-     * puis attend {@link #CLIENT_CHUNK_RECEIVE_DELAY} ticks pour laisser le client
-     * recevoir les chunks, puis envoie les faux blocs NETHER_PORTAL au joueur.
-     *
-     * <p>Deux étapes garantissent que {@code sendBlockChange} arrive après que
-     * le client a le chunk en mémoire :</p>
-     * <ol>
-     *   <li>Chargement async serveur (world.getChunkAtAsync)</li>
-     *   <li>Délai réseau client (CLIENT_CHUNK_RECEIVE_DELAY ticks)</li>
-     * </ol>
-     */
-    private void sendFakePortalBlocksAsync(Player player, Location min, Location max) {
+        Location min = zone[0];
+        Location max = zone[1];
         World world = min.getWorld();
         if (world == null) return;
 
-        int minCX = Math.min(min.getBlockX(), max.getBlockX()) >> 4;
-        int maxCX = Math.max(min.getBlockX(), max.getBlockX()) >> 4;
-        int minCZ = Math.min(min.getBlockZ(), max.getBlockZ()) >> 4;
-        int maxCZ = Math.max(min.getBlockZ(), max.getBlockZ()) >> 4;
+        Axis axis = detectAxis(min, max);
+        var fakePortal = Bukkit.createBlockData(Material.NETHER_PORTAL, bd -> ((Orientable) bd).setAxis(axis));
 
-        List<CompletableFuture<Chunk>> futures = new ArrayList<>();
-        for (int cx = minCX; cx <= maxCX; cx++) {
-            for (int cz = minCZ; cz <= maxCZ; cz++) {
-                futures.add(world.getChunkAtAsync(cx, cz));
+        iterateZone(min, max, (w, x, y, z) -> {
+            if ((x >> 4) == chunkX && (z >> 4) == chunkZ) {
+                player.sendBlockChange(new Location(w, x, y, z), fakePortal);
             }
-        }
-
-        // Étape 1 : attendre que tous les chunks soient chargés côté serveur
-        CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).thenRun(() ->
-                // Étape 2 : petit délai pour que le client reçoive les chunks via réseau
-                Bukkit.getScheduler().runTaskLater(GameManager.getInstance().getPlugin(), () -> {
-                    if (!player.isOnline()) return;
-                    if (!player.getWorld().equals(world)) return; // changement de monde entre-temps
-
-                    MLLogManager.getInstance().log(Level.INFO, ELogTag.WORLD,
-                            "Envoi faux blocs portail à " + player.getName() + " dans " + world.getName());
-                    sendFakePortalBlocks(player, min, max);
-                }, CLIENT_CHUNK_RECEIVE_DELAY)
-        );
+        });
     }
 
     // -------------------------------------------------------------------------
@@ -294,6 +263,14 @@ public class WorldPortalManager {
     // -------------------------------------------------------------------------
     // Persistance DB
     // -------------------------------------------------------------------------
+
+    private static final String DB_KEY_WORLD  = "world_portal_wild_world";
+    private static final String DB_KEY_MIN_X  = "world_portal_wild_min_x";
+    private static final String DB_KEY_MIN_Y  = "world_portal_wild_min_y";
+    private static final String DB_KEY_MIN_Z  = "world_portal_wild_min_z";
+    private static final String DB_KEY_MAX_X  = "world_portal_wild_max_x";
+    private static final String DB_KEY_MAX_Y  = "world_portal_wild_max_y";
+    private static final String DB_KEY_MAX_Z  = "world_portal_wild_max_z";
 
     private void loadWildernessPortalFromDB() {
         var db = GameManager.getInstance().getDatabase().system();

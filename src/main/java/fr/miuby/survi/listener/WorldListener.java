@@ -18,6 +18,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
+import io.papermc.paper.event.packet.PlayerChunkLoadEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerPortalEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
@@ -118,16 +119,46 @@ public class WorldListener implements Listener {
     }
 
     // -------------------------------------------------------------------------
-    // Faux blocs portail & état joueur
+    // Faux blocs portail — envoi précis à la réception de chaque chunk
     // -------------------------------------------------------------------------
 
     /**
-     * Faux blocs portail + mise à jour du monde dans AlphaPlayer au changement de monde.
+     * Envoie les faux blocs NETHER_PORTAL au client exactement 1 tick après que
+     * Paper a transmis le chunk au joueur. Le délai garantit que le paquet BlockChange
+     * arrive après le paquet LevelChunk dans la file TCP — peu importe la connexion
+     * ou le render distance. Plus fiable que l'ancienne heuristique de 20 ticks.
+     *
+     * <p>Le filtre {@code chunkOverlapsPortal} court-circuite l'event pour les
+     * ~99 % de chunks qui ne contiennent aucun bloc de portail.</p>
+     */
+    @EventHandler
+    public void onPlayerChunkLoad(PlayerChunkLoadEvent event) {
+        int cx = event.getChunk().getX();
+        int cz = event.getChunk().getZ();
+        World world = event.getChunk().getWorld();
+        Player player = event.getPlayer();
+
+        if (!GameManager.getInstance().getWorldPortalManager().chunkOverlapsPortal(world.getName(), cx, cz)) return;
+
+        GameManager.getInstance().getPlugin().getServer().getScheduler().runTaskLater(
+                GameManager.getInstance().getPlugin(), () -> {
+                    if (!player.isOnline()) return;
+                    if (!player.getWorld().equals(world)) return;
+                    GameManager.getInstance().getWorldPortalManager().sendFakePortalBlocksInChunk(player, cx, cz);
+                }, 1L);
+    }
+
+    // -------------------------------------------------------------------------
+    // État joueur au changement de monde
+    // -------------------------------------------------------------------------
+
+    /**
+     * Mise à jour du monde dans AlphaPlayer au changement de monde.
+     * Les faux blocs portail sont gérés par {@link #onPlayerChunkLoad} — pas besoin
+     * d'un appel explicite ici.
      */
     @EventHandler
     public void onPlayerChangedWorld(PlayerChangedWorldEvent event) {
-        GameManager.getInstance().getWorldPortalManager().sendFakePortalBlocksIfNeeded(event.getPlayer());
-
         AlphaPlayer alphaPlayer = AlphaPlayer.get(event.getPlayer().getUniqueId());
         if (alphaPlayer == null) return;
 

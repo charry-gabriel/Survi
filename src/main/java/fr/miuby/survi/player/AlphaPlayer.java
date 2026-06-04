@@ -139,10 +139,6 @@ public class AlphaPlayer extends MLPlayer implements Serializable {
 
         this.player.discoverRecipes(GameManager.getInstance().getCustomRecipeFactory().getNewRecipes().keySet());
 
-        GameManager.getInstance().getWorldPortalManager().sendAllFakePortalBlocks(this.player);
-
-        // Chargement réputation par métier depuis la DB
-        // La DB stocke job.name() comme clé (ex. "MINEUR"), on convertit en EJob.
         Map<String, Integer> rawRep = GameManager.getInstance().getDatabase().quests().getReputation(this.getUuid());
         rawRep.forEach((key, value) -> {
             try {
