@@ -24,7 +24,7 @@ public class WorldLevelManager {
 
     // ─── State ───────────────────────────────────────────────────────────────────
 
-    private int worldLevel = 0;
+    private int worldLevel = 1;
 
     // ─── Lifecycle ───────────────────────────────────────────────────────────────
 
@@ -45,7 +45,7 @@ public class WorldLevelManager {
     }
 
     public void decrement() {
-        if (worldLevel <= 0) return;
+        if (worldLevel <= 1) return;
         worldLevel--;
         persist();
         MLLogManager.getInstance().log(Level.INFO, ELogTag.SYSTEM, "[WorldLevel] Niveau du monde : " + worldLevel + " (-1)");
@@ -56,10 +56,10 @@ public class WorldLevelManager {
      * Réservé aux admins (tests, corrections manuelles).
      */
     public void reset() {
-        worldLevel = 0;
+        worldLevel = 1;
         persist();
         MLLogManager.getInstance().log(Level.INFO, ELogTag.SYSTEM,
-                "[WorldLevel] Niveau du monde réinitialisé à 0");
+                "[WorldLevel] Niveau du monde réinitialisé à 1");
     }
 
 

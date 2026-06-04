@@ -44,9 +44,9 @@ public class SystemRepository extends MLRepository {
     public int getWorldLevel() {
         String raw = getServerData("world_level");
         try {
-            return raw != null ? Integer.parseInt(raw) : 0;
+            return raw != null ? Integer.parseInt(raw) : 1;
         } catch (NumberFormatException e) {
-            return 0;
+            return 1;
         }
     }
 

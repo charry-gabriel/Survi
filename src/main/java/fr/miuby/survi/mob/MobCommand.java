@@ -152,7 +152,7 @@ public class MobCommand {
      */
     private static LiteralArgumentBuilder<CommandSourceStack> buildTestTierSubCommand() {
         return Commands.literal("testtier")
-                .then(Commands.argument("tier", IntegerArgumentType.integer(0))
+                .then(Commands.argument("tier", IntegerArgumentType.integer(1))
                         .then(Commands.argument(ARG_TYPE, StringArgumentType.word())
                                 .suggests((_, builder) -> {
                                     suggestConfiguredMobs(builder);
@@ -162,7 +162,7 @@ public class MobCommand {
                                     CommandSender sender = ctx.getSource().getSender();
                                     int tier  = IntegerArgumentType.getInteger(ctx, "tier");
                                     int lpt   = GameManager.getInstance().getMobLevelManager().getLevelsPerTier();
-                                    int level = tier * lpt + 1;
+                                    int level = (tier - 1) * lpt + 1;
 
                                     EntityType type = parseType(sender,
                                             StringArgumentType.getString(ctx, ARG_TYPE));

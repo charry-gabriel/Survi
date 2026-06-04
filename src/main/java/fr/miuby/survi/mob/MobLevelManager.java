@@ -183,7 +183,7 @@ public class MobLevelManager {
      */
     public int rollMobLevel() {
         int worldLevel = GameManager.getInstance().getWorldLevelManager().getLevel();
-        int tierStart  = worldLevel * levelsPerTier + 1;
+        int tierStart  = (worldLevel - 1) * levelsPerTier + 1;
 
         double roll       = random.nextDouble() * cachedWeightsTotal;
         double cumulative = 0;
@@ -199,7 +199,7 @@ public class MobLevelManager {
      */
     public int getMaxLevelForCurrentTier() {
         int worldLevel = GameManager.getInstance().getWorldLevelManager().getLevel();
-        return (worldLevel + 1) * levelsPerTier;
+        return worldLevel * levelsPerTier;
     }
 
     // ─── Application des stats ────────────────────────────────────────────────────
@@ -314,7 +314,7 @@ public class MobLevelManager {
      */
     private NamedTextColor getLevelColor(int level) {
         int worldLevel = GameManager.getInstance().getWorldLevelManager().getLevel();
-        int tierStart  = worldLevel * levelsPerTier + 1;
+        int tierStart  = (worldLevel - 1) * levelsPerTier + 1;
         int offset     = Math.max(0, level - tierStart);
         double ratio   = levelsPerTier > 1 ? (double) offset / (levelsPerTier - 1) : 0;
 
