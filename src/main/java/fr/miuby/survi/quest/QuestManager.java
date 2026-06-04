@@ -94,12 +94,28 @@ public class QuestManager extends AbstractQuestManager<Quest> {
     // =========================================================================
 
     /**
-     * Indique si ce Trader a au moins une quête disponible dans le pool pour son métier.
-     * Si {@code job} est null, retourne true tant que le pool n'est pas vide.
+     * Calcule la difficulté applicable pour un joueur auprès d'un trader donné.
+     * <ul>
+     *   <li>Difficulté 0 si le trader a un métier ET que le joueur y a 0 réputation
+     *       (premier contact) — on lui donne une quête introductive.</li>
+     *   <li>Niveau du monde sinon.</li>
+     * </ul>
      */
-    public boolean hasAvailableQuestFor(EJob job) {
-        if (job == null) return !questPool.isEmpty();
-        return questPool.stream().anyMatch(q -> q.getJobs().contains(job));
+    public int computeDifficulty(AlphaPlayer player, Trader trader) {
+        return (trader.getJob() != null && player.getJobReputation(trader.getJob()) == 0)
+                ? 0
+                : GameManager.getInstance().getWorldLevelManager().getLevel();
+    }
+
+    /**
+     * Indique si ce trader a au moins une quête disponible dans le pool
+     * pour le métier et la difficulté donnés.
+     * Si {@code job} est null, toutes les quêtes de la bonne difficulté sont éligibles.
+     */
+    public boolean hasAvailableQuestFor(EJob job, int difficulty) {
+        return questPool.stream()
+                .filter(q -> q.getDifficulty() == difficulty)
+                .anyMatch(q -> job == null || q.getJobs().contains(job));
     }
 
     /**
@@ -155,17 +171,50 @@ public class QuestManager extends AbstractQuestManager<Quest> {
     // =========================================================================
 
     /**
-     * Appelé à la connexion d'un joueur : restaure ses quêtes du jour et ré-applique
-     * les effets de potion des quêtes réclamées.
-     * Les quêtes expirées sont supprimées en amont par {@code deleteExpiredPlayerQuests}
-     * — {@code loaded} ne contient donc que des quêtes valides (date = aujourd'hui).
+     * Appelé à la connexion d'un joueur : restaure ses quêtes du jour et supprime
+     * les expirées (date ≠ aujourd'hui). Ré-applique ou retire les effets de
+     * potion selon l'état de chaque quête.
      */
     public void restoreQuestsOnJoin(AlphaPlayer player, List<PlayerQuestData> loaded) {
         player.getActiveQuests().clear();
-        player.getActiveQuests().addAll(loaded);
+        LocalDate today = LocalDate.now();
+
+        List<PlayerQuestData> expired = new ArrayList<>();
+        List<PlayerQuestData> valid   = new ArrayList<>();
+
+        for (PlayerQuestData quest : loaded) {
+            if (today.isEqual(quest.getLastAccepted())) valid.add(quest);
+            else                                         expired.add(quest);
+        }
+
+        for (PlayerQuestData q : expired) {
+            GameManager.getInstance().getDatabase().quests().deletePlayerQuestSlot(player.getUuid(), q.getSlot());
+            MLLogManager.getInstance().log(Level.INFO, ELogTag.QUEST,
+                    "Quête expirée (slot " + q.getSlot() + ") supprimée pour " + player.getPseudo());
+        }
+
+        List<BlessingEffect> effectsToRemove = new ArrayList<>();
+        for (PlayerQuestData q : expired) {
+            if (q.isClaimed()) {
+                Quest questDef = getQuest(q.getQuestId());
+                if (questDef != null) {
+                    for (BlessingEffect effect : questDef.getRewards().blessingEffects()) {
+                        if (effect instanceof PotionsEffect) effectsToRemove.add(effect);
+                    }
+                }
+            }
+        }
+        if (!effectsToRemove.isEmpty()) {
+            GameManager.getInstance().getScheduler().runTaskLater(GameManager.getInstance().getPlugin(), () -> {
+                if (!player.getPlayer().isOnline()) return;
+                for (BlessingEffect effect : effectsToRemove) effect.resetEffect(player);
+            }, 2L);
+        }
+
+        player.getActiveQuests().addAll(valid);
 
         List<BlessingEffect> effectsToReapply = new ArrayList<>();
-        for (PlayerQuestData q : loaded) {
+        for (PlayerQuestData q : valid) {
             if (q.isClaimed()) {
                 Quest questDef = getQuest(q.getQuestId());
                 if (questDef != null) {
@@ -239,9 +288,7 @@ public class QuestManager extends AbstractQuestManager<Quest> {
             return;
         }
 
-        int difficulty = (trader.getJob() != null && player.getJobReputation(trader.getJob()) == 0)
-                ? 0
-                : GameManager.getInstance().getWorldLevelManager().getLevel();
+        int difficulty = computeDifficulty(player, trader);
         Quest quest = getRandomQuest(difficulty, trader.getJob(), player.getUuid());
         if (quest == null) return;
 
@@ -339,7 +386,6 @@ public class QuestManager extends AbstractQuestManager<Quest> {
             completeQuestInternal(player, quest);
         } else {
             GameManager.getInstance().getDatabase().quests().updatePlayerQuest(player.getUuid(), data);
-            GameManager.getInstance().getQuestActionBarService().showProgress(player, quest, data);
         }
     }
 
@@ -358,6 +404,5 @@ public class QuestManager extends AbstractQuestManager<Quest> {
         player.getPlayer().sendMessage(Component.text("Quête terminée : ", NamedTextColor.GREEN)
                 .append(Component.text(quest.getName(), NamedTextColor.GOLD)));
         player.getPlayer().sendMessage(Component.text("Allez voir le Trader pour obtenir votre récompense !", NamedTextColor.GRAY));
-        GameManager.getInstance().getQuestActionBarService().showCompleted(player, quest);
     }
 }
