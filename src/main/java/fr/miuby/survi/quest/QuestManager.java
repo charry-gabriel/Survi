@@ -1,6 +1,8 @@
 package fr.miuby.survi.quest;
 
 import fr.miuby.lib.log.MLLogManager;
+import fr.miuby.lib.villager.MLVillager;
+import fr.miuby.lib.villager.VillagerRegistry;
 import fr.miuby.survi.GameManager;
 import fr.miuby.survi.blessing.BlessingEffect;
 import fr.miuby.survi.blessing.PotionsEffect;
@@ -17,6 +19,7 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.logging.Level;
+import java.util.stream.Collectors;
 
 public class QuestManager extends AbstractQuestManager<Quest> {
 
@@ -48,45 +51,98 @@ public class QuestManager extends AbstractQuestManager<Quest> {
     /**
      * Recharge le pool de quêtes depuis {@code quests.yml} à chaud, sans redémarrage.
      *
-     * <h3>Comportement sur les quêtes en cours</h3>
+     * <h3>Comportement sur les quêtes en cours (joueurs connectés)</h3>
+     *
+     * <p>Le nouveau pool est d'abord chargé en mémoire temporaire avant de remplacer l'actuel,
+     * de sorte que les définitions des quêtes orphelines sont encore accessibles pour
+     * appliquer les récompenses éventuelles.
+     *
      * <ul>
-     *   <li><b>Quête modifiée (même id, champs changés)</b> — la nouvelle définition
-     *       s'applique immédiatement : si la progression actuelle du joueur dépasse
-     *       le nouveau goal, la prochaine action déclenchante complètera la quête.</li>
-     *   <li><b>Quête supprimée (id absent du nouveau fichier)</b> — la quête orpheline
-     *       ne peut plus progresser (aucun match possible), reste en DB et expire
-     *       naturellement à minuit. Un avertissement est loggé par joueur concerné.</li>
-     *   <li><b>Quête réclamée (claimed)</b> — les effets de potion déjà appliqués
-     *       persistent jusqu'à leur expiration naturelle ; aucune action requise.</li>
+     *   <li><b>Quête dont l'id existe encore</b> — le joueur continue normalement.</li>
+     *   <li><b>Quête terminée (completed) mais non réclamée, id supprimé</b> — les récompenses sont
+     *       accordées immédiatement (blessing effects + réputation métier si le trader est encore
+     *       disponible). La quête est marquée comme réclamée en DB.</li>
+     *   <li><b>Quête en cours (non terminée), id supprimé</b> — la quête est supprimée et le slot
+     *       est libéré : le joueur peut en accepter une nouvelle dès sa prochaine interaction avec
+     *       un Trader. Un message d'information lui est envoyé.</li>
      * </ul>
      *
      * @return le nombre de quêtes présentes dans le pool après rechargement
      */
     public int reload() {
-        loadQuests();
+        // 1. Charger le nouveau pool sans encore remplacer l'actuel
+        //    (le pool courant reste lisible pour traiter les quêtes orphelines)
+        List<Quest> incoming = QuestYamlLoader.loadQuests();
+        Set<String> incomingIds = incoming.stream().map(Quest::getId).collect(Collectors.toSet());
 
-        int orphanCount = 0;
+        // 2. Traiter les joueurs connectés qui ont une quête orpheline
+        int rewardedCount = 0;
+        int droppedCount  = 0;
         for (AlphaPlayer player : GameManager.getInstance().getAlphaPlayerFactory().getAlphaPlayers()) {
             if (player.getPlayer() == null) continue;
 
-            for (PlayerQuestData data : player.getActiveQuests()) {
-                if (!data.isClaimed() && getQuest(data.getQuestId()) == null) {
-                    orphanCount++;
-                    MLLogManager.getInstance().log(Level.WARNING, ELogTag.QUEST,
-                            "[Reload] " + player.getPseudo() + " a une quête active orpheline : "
-                                    + data.getQuestId() + " (progression " + data.getProgress()
-                                    + " conservée en DB, expire à minuit)");
+            for (PlayerQuestData data : new ArrayList<>(player.getActiveQuests())) {
+                if (incomingIds.contains(data.getQuestId())) continue; // quête encore valide — rien à faire
+
+                Quest oldQuest = getQuest(data.getQuestId()); // pool encore intact à ce stade
+
+                if (data.isCompleted() && !data.isClaimed() && oldQuest != null) {
+                    // Le joueur avait terminé la quête avant le reload → récompense immédiate
+                    applyOrphanRewards(player, data, oldQuest);
+                    rewardedCount++;
+                } else if (!data.isCompleted()) {
+                    // Quête en cours supprimée → libérer le slot
+                    player.removeQuest(data.getSlot());
+                    GameManager.getInstance().getDatabase().quests().deletePlayerQuestSlot(player.getUuid(), data.getSlot());
+                    player.getPlayer().sendMessage(Component.text(
+                            "Votre quête en cours a été supprimée suite à une mise à jour. Vous pouvez en accepter une nouvelle auprès d'un Trader.",
+                            NamedTextColor.YELLOW));
+                    droppedCount++;
                 }
+                // Cas data.isCompleted() && data.isClaimed() : déjà réclamée → rien à faire
             }
         }
 
-        if (orphanCount > 0) {
-            MLLogManager.getInstance().log(Level.WARNING, ELogTag.QUEST,
-                    "[Reload] " + orphanCount + " quête(s) active(s) orpheline(s) détectée(s). "
-                            + "Elles ne progresseront plus et seront nettoyées à minuit.");
-        }
+        // 3. Remplacer le pool
+        questPool.clear();
+        questPool.addAll(incoming);
+
+        if (rewardedCount > 0) MLLogManager.getInstance().log(Level.INFO, ELogTag.QUEST,
+                "[Reload] " + rewardedCount + " quête(s) terminée(s) récompensée(s) automatiquement (id supprimé du nouveau fichier).");
+        if (droppedCount > 0) MLLogManager.getInstance().log(Level.INFO, ELogTag.QUEST,
+                "[Reload] " + droppedCount + " quête(s) en cours supprimée(s) — slots libérés.");
 
         return questPool.size();
+    }
+
+    /**
+     * Applique les récompenses d'une quête orpheline directement, sans passer par un Trader.
+     * Utilisé dans {@link #reload()} pour les quêtes terminées dont l'id a été supprimé du YAML.
+     */
+    private void applyOrphanRewards(AlphaPlayer player, PlayerQuestData data, Quest quest) {
+        // Blessing effects (potions, réputation de blessing, etc.)
+        for (BlessingEffect effect : quest.getRewards().blessingEffects()) {
+            effect.applyEffect(player);
+        }
+
+        // Réputation de métier — récupère le job du trader d'origine s'il est encore en jeu
+        if (data.getTraderId() != null) {
+            MLVillager villager = VillagerRegistry.get(data.getTraderId());
+            if (villager instanceof Trader trader && trader.getJob() != null
+                    && SurviConfig.getInstance().getQuestCompletionReputation() > 0) {
+                player.addJobReputation(trader.getJob(), SurviConfig.getInstance().getQuestCompletionReputation());
+            }
+        }
+
+        data.setClaimed(true);
+        GameManager.getInstance().getDatabase().quests().updatePlayerQuest(player.getUuid(), data);
+
+        player.getPlayer().sendMessage(Component.text(
+                "Votre quête « " + quest.getName() + " » a été récompensée automatiquement suite à une mise à jour.",
+                NamedTextColor.GREEN));
+
+        MLLogManager.getInstance().log(Level.INFO, ELogTag.QUEST,
+                "[Reload] Récompenses accordées à " + player.getPseudo() + " pour la quête orpheline : " + quest.getId());
     }
 
     // =========================================================================
@@ -283,7 +339,6 @@ public class QuestManager extends AbstractQuestManager<Quest> {
 
     /**
      * Attribue une nouvelle quête au joueur s'il n'a pas atteint sa limite journalière.
-     * Si le Trader a un métier défini, seules les quêtes compatibles sont proposées.
      */
     public void assignQuest(AlphaPlayer player, Trader trader, boolean force) {
         PlayerQuestData current = player.getCurrentActiveQuest();
@@ -325,7 +380,6 @@ public class QuestManager extends AbstractQuestManager<Quest> {
 
     /**
      * Attribue une quête spécifique au joueur (mode test admin).
-     * Ignore la limite journalière et la sélection aléatoire.
      */
     public void assignSpecificQuest(AlphaPlayer player, Quest quest) {
         PlayerQuestData current = player.getCurrentActiveQuest();
@@ -344,8 +398,7 @@ public class QuestManager extends AbstractQuestManager<Quest> {
 
         if (player.getPlayer() != null) {
             String jobsStr = quest.getJobs().isEmpty() ? "tous" : quest.getJobs().stream().map(EJob::getDisplayName).reduce((a, b) -> a + ", " + b).orElse("tous");
-            player.getPlayer().sendMessage(Component.text("[TEST] Quête de test assignée : ", NamedTextColor.YELLOW)
-                    .append(Component.text(quest.getName(), NamedTextColor.GOLD)));
+            player.getPlayer().sendMessage(Component.text("[TEST] Quête de test assignée : ", NamedTextColor.YELLOW).append(Component.text(quest.getName(), NamedTextColor.GOLD)));
             player.getPlayer().sendMessage(Component.text(quest.getDescription(), NamedTextColor.GRAY));
             player.getPlayer().sendMessage(Component.text("Objectif : " + quest.getGoal() + " | Difficulté : " + quest.getDifficulty() + " | Métiers : " + jobsStr, NamedTextColor.DARK_GRAY));
         }
@@ -435,8 +488,7 @@ public class QuestManager extends AbstractQuestManager<Quest> {
 
         Sound myCustomSound = Sound.sound(Key.key("ui.toast.challenge_complete"), Sound.Source.MASTER, 1f, 1.1f);
         player.getPlayer().playSound(myCustomSound);
-        player.getPlayer().sendMessage(Component.text("Quête terminée : ", NamedTextColor.GREEN)
-                .append(Component.text(quest.getName(), NamedTextColor.GOLD)));
+        player.getPlayer().sendMessage(Component.text("Quête terminée : ", NamedTextColor.GREEN).append(Component.text(quest.getName(), NamedTextColor.GOLD)));
         player.getPlayer().sendMessage(Component.text("Allez voir le Trader pour obtenir votre récompense !", NamedTextColor.GRAY));
         GameManager.getInstance().getQuestActionBarService().showCompleted(player, quest);
 

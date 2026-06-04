@@ -46,6 +46,39 @@ public class GlobalQuestManager extends AbstractQuestManager<GlobalQuest> {
     }
 
     // =========================================================================
+    // Reload à chaud
+    // =========================================================================
+
+    /**
+     * Recharge le pool de quêtes globales depuis {@code global_quests.yml} à chaud.
+     *
+     * <h3>Comportement sur la quête active</h3>
+     * <ul>
+     *   <li>La quête active en cours <b>n'est pas interrompue</b> — elle continue jusqu'à
+     *       complétion ou timeout.</li>
+     *   <li>Si son {@code id} n'existe plus dans le nouveau fichier, un avertissement est
+     *       loggé mais aucune action n'est prise (la définition en mémoire reste valide
+     *       jusqu'à la fin de la quête).</li>
+     *   <li>Si son {@code id} existe encore, la définition est silencieusement mise à jour
+     *       pour les futures références. La progression en cours reste inchangée.</li>
+     * </ul>
+     *
+     * @return le nombre de quêtes présentes dans le pool après rechargement
+     */
+    public int reload() {
+        loadQuests();
+
+        if (activeQuest != null && getQuest(activeQuest.getId()) == null) {
+            MLLogManager.getInstance().log(Level.WARNING, ELogTag.QUEST,
+                    "[GlobalQuest Reload] La quête active '" + activeQuest.getId()
+                            + "' est introuvable dans le nouveau global_quests.yml. "
+                            + "Elle continuera jusqu'à sa fin naturelle (complétion ou timeout).");
+        }
+
+        return questPool.size();
+    }
+
+    // =========================================================================
     // API publique
     // =========================================================================
 

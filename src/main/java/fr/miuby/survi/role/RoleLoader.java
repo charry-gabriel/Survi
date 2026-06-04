@@ -3,6 +3,8 @@ package fr.miuby.survi.role;
 import fr.miuby.lib.utils.MultiKeyRegistry;
 import fr.miuby.survi.GameManager;
 import fr.miuby.lib.log.MLLogManager;
+import fr.miuby.survi.player.AlphaPlayer;
+import fr.miuby.survi.player.service.PlayerAttributeService;
 import fr.miuby.survi.system.log.ELogTag;
 import fr.miuby.survi.world.EWorld;
 import org.bukkit.Registry;
@@ -16,24 +18,84 @@ import java.util.Collection;
 import java.util.List;
 import java.util.logging.Level;
 
-/**
- * Charge et expose tous les rôles définis dans {@code roles.yml}.
- *
- * <h3>Architecture</h3>
- * Les attributs de gameplay sont lus depuis {@code roles.yml}.
- * Le {@code displayName} et la {@code color} sont définis dans {@link ERole}
- * (comme pour {@link fr.miuby.survi.job.EJob}).
- *
- * <h3>Ajouter un nouveau rôle</h3>
- * <ol>
- *   <li>Ajouter la valeur dans {@link ERole} avec son displayName et sa couleur.</li>
- *   <li>Ajouter la section correspondante dans {@code roles.yml}.</li>
- * </ol>
- */
 public class RoleLoader {
     private static final MultiKeyRegistry<Role> INSTANCE = new MultiKeyRegistry<>();
 
     public RoleLoader() {
+        loadRoles();
+    }
+
+    // =========================================================================
+    // Reload à chaud
+    // =========================================================================
+
+    /**
+     * Recharge {@code roles.yml} à chaud et ré-applique immédiatement les attributs
+     * de rôle sur tous les joueurs connectés.
+     *
+     * <h3>Séquence pour chaque joueur connecté</h3>
+     * <ol>
+     *   <li>Suppression des anciens modificateurs d'attributs (en utilisant les anciens
+     *       objets {@link Role} encore référencés par le joueur).</li>
+     *   <li>Mise à jour des références de rôle (principal + sous-rôles) vers les nouveaux
+     *       objets du registre rechargé.</li>
+     *   <li>Application des nouveaux modificateurs d'attributs.</li>
+     * </ol>
+     *
+     * <p>Si un rôle est supprimé du YAML mais qu'un joueur le possède encore,
+     * ses attributs sont retirés mais le rôle n'est pas désaffecté (cas très inhabituel).
+     * Aucune écriture en DB n'est faite — seul l'état en mémoire et les attributs Bukkit changent.</p>
+     */
+    public void reload() {
+        INSTANCE.clear();
+        loadRoles();
+        reapplyOnlinePlayers();
+    }
+
+    /**
+     * Pour chaque joueur connecté : retire les anciens attributs de rôle, met à jour
+     * les références vers les nouveaux objets Role du registre, puis réapplique.
+     */
+    private void reapplyOnlinePlayers() {
+        PlayerAttributeService attributeService = new PlayerAttributeService();
+        int updated = 0;
+
+        for (AlphaPlayer player : GameManager.getInstance().getAlphaPlayerFactory().getAlphaPlayers()) {
+            if (player.getPlayer() == null) continue;
+
+            // 1. Retire les anciens modificateurs (utilise encore les anciens objets Role)
+            attributeService.clearAllRoleAttributes(player);
+
+            // 2. Met à jour la référence du rôle principal
+            if (player.getRole() != null) {
+                Role newMain = getRole(player.getRole().type());
+                if (newMain != null) player.setRole(newMain);
+                // Si null (rôle supprimé du YAML), le joueur garde la référence ancienne
+                // mais ses attributs ont été nettoyés à l'étape 1 — ils ne seront plus
+                // appliqués à l'étape 3 (getRole retournerait null).
+            }
+
+            // 3. Met à jour les références des sous-rôles
+            List<Role> subs = player.getSubRoles();
+            for (int i = 0; i < subs.size(); i++) {
+                Role newSub = getRole(subs.get(i).type());
+                if (newSub != null) subs.set(i, newSub);
+            }
+
+            // 4. Applique les nouveaux attributs
+            attributeService.applyAllRoleAttributes(player);
+            updated++;
+        }
+
+        MLLogManager.getInstance().log(Level.INFO, ELogTag.ROLE,
+                "[RoleLoader] Attributs de rôle ré-appliqués sur " + updated + " joueur(s) connecté(s).");
+    }
+
+    // =========================================================================
+    // Chargement interne
+    // =========================================================================
+
+    private void loadRoles() {
         File file = new File(GameManager.getInstance().getPlugin().getDataFolder(), "roles.yml");
         YamlConfiguration config = YamlConfiguration.loadConfiguration(file);
 
@@ -60,18 +122,18 @@ public class RoleLoader {
             String roleId = section.getString("roleId", key.toLowerCase());
             List<RoleAttribute> attributes = parseAttributes(section);
 
-            Role role = new Role(
-                eRole,
-                eRole.toComponent(),
-                attributes,
-                roleId
-            );
-
+            Role role = new Role(eRole, eRole.toComponent(), attributes, roleId);
             attributes.forEach(attr -> attr.setRole(roleId));
-
             INSTANCE.register(role, eRole);
         }
+
+        MLLogManager.getInstance().log(Level.INFO, ELogTag.ROLE,
+                "[RoleLoader] " + INSTANCE.getAll().size() + " rôle(s) chargé(s) depuis roles.yml.");
     }
+
+    // =========================================================================
+    // Parsing
+    // =========================================================================
 
     private List<RoleAttribute> parseAttributes(ConfigurationSection section) {
         List<RoleAttribute> result = new ArrayList<>();
@@ -81,7 +143,6 @@ public class RoleLoader {
         for (Object raw : attrList) {
             if (!(raw instanceof java.util.Map<?, ?> rawMap)) continue;
 
-            // Cast sûr : SnakeYAML produit toujours des Map<String, Object>
             @SuppressWarnings("unchecked")
             java.util.Map<String, Object> map = (java.util.Map<String, Object>) rawMap;
 
@@ -100,17 +161,13 @@ public class RoleLoader {
             try {
                 world = EWorld.valueOf(worldStr.toUpperCase());
             } catch (IllegalArgumentException e) {
-                MLLogManager.getInstance().log(Level.WARNING, ELogTag.ROLE,
-                        "[RoleLoader] World inconnu : " + worldStr, e);
+                MLLogManager.getInstance().log(Level.WARNING, ELogTag.ROLE, "[RoleLoader] World inconnu : " + worldStr, e);
                 continue;
             }
 
-            Attribute attribute = Registry.ATTRIBUTE.get(
-                    org.bukkit.NamespacedKey.minecraft(attributeStr.toLowerCase())
-            );
+            Attribute attribute = Registry.ATTRIBUTE.get(org.bukkit.NamespacedKey.minecraft(attributeStr.toLowerCase()));
             if (attribute == null) {
-                MLLogManager.getInstance().log(Level.WARNING, ELogTag.ROLE,
-                        "[RoleLoader] Attribut Bukkit inconnu : " + attributeStr);
+                MLLogManager.getInstance().log(Level.WARNING, ELogTag.ROLE, "[RoleLoader] Attribut Bukkit inconnu : " + attributeStr);
                 continue;
             }
 
@@ -127,23 +184,16 @@ public class RoleLoader {
         return result;
     }
 
-    public Role getRole(ERole role) {
-        return INSTANCE.get(role);
-    }
+    // =========================================================================
+    // Accesseurs
+    // =========================================================================
 
-    public Collection<Role> getRoles() {
-        return INSTANCE.getAll();
-    }
-
-    public Role getDefaultRole() {
-        return INSTANCE.get(ERole.NAIN);
-    }
+    public Role getRole(ERole role)       { return INSTANCE.get(role); }
+    public Collection<Role> getRoles()    { return INSTANCE.getAll(); }
+    public Role getDefaultRole()          { return INSTANCE.get(ERole.NAIN); }
 
     public Role getRole(String roleType) {
-        try {
-            return getRole(ERole.valueOf(roleType));
-        } catch (IllegalArgumentException _) {
-            return null;
-        }
+        try { return getRole(ERole.valueOf(roleType)); }
+        catch (IllegalArgumentException _) { return null; }
     }
 }

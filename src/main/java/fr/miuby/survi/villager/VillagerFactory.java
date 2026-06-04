@@ -1,5 +1,6 @@
 package fr.miuby.survi.villager;
 
+import fr.miuby.lib.resource.MLResourceManager;
 import fr.miuby.lib.villager.MLVillager;
 import fr.miuby.lib.villager.VillagerRegistry;
 import fr.miuby.survi.blessing.Blessing;
@@ -36,6 +37,45 @@ public class VillagerFactory {
 
         TraderLoader.loadAll().forEach(this::addNewTrader);
     }
+
+    // =========================================================================
+    // Reload à chaud
+    // =========================================================================
+
+    /**
+     * Recharge à chaud tous les villageois enregistrés (VillagerLevel et Traders)
+     * depuis leurs fichiers YAML respectifs, sans recréer les entités Bukkit.
+     *
+     * <h3>Séquence</h3>
+     * <ol>
+     *   <li>Invalide le cache {@link MLResourceManager} pour forcer la re-lecture depuis le disque.</li>
+     *   <li>Pour chaque {@link VillagerLevel} : appelle {@link VillagerLevel#reloadConfig(VillagerConfig)}.
+     *       L'inventaire tribute est recalculé en déduisant les items déjà donnés par les joueurs.</li>
+     *   <li>Pour chaque {@link Trader} : appelle {@link Trader#reload(TraderConfig)}.
+     *       Les recettes sont mises à jour ; les joueurs voient les nouvelles recettes à leur prochaine ouverture.</li>
+     * </ol>
+     */
+    public void reloadAll() {
+        MLResourceManager.clearCache();
+
+        for (MLVillager villager : VillagerRegistry.getAll()) {
+            if (villager instanceof VillagerLevel vl) {
+                VillagerConfig config = VillagerLevelLoader.load(vl.getNameId());
+                if (config != null) {
+                    vl.reloadConfig(config);
+                }
+            } else if (villager instanceof Trader trader) {
+                TraderConfig config = TraderLoader.load(trader.getNameId());
+                if (config != null) {
+                    trader.reload(config);
+                }
+            }
+        }
+    }
+
+    // =========================================================================
+    // Création initiale
+    // =========================================================================
 
     private void addNewTrader(TraderConfig config) {
         Villager.Type type = Registry.VILLAGER_TYPE.get(NamespacedKey.minecraft(config.type.toLowerCase()));
@@ -85,10 +125,10 @@ public class VillagerFactory {
 
         Villager.Type type = Registry.VILLAGER_TYPE.get(NamespacedKey.minecraft(config.type.toLowerCase()));
         Villager.Profession profession = Registry.VILLAGER_PROFESSION.get(NamespacedKey.minecraft(config.profession.toLowerCase()));
-        TextComponent[] names = config.levels.stream().map(level -> Component.text(level.name)).toArray(TextComponent[]::new);
+        TextComponent[] names    = config.levels.stream().map(level -> Component.text(level.name)).toArray(TextComponent[]::new);
         TextComponent[] messages = config.levels.stream().map(level -> Component.text(level.message)).toArray(TextComponent[]::new);
-        TextComponent[] recap = config.levels.stream().map(level -> Component.text(level.recap)).toArray(TextComponent[]::new);
-        Tribute[] tributes = config.levels.stream().map(level -> new Tribute(level.tribute.stream().map(SimpleItemStack::toItemStack).toArray(ItemStack[]::new))).toArray(Tribute[]::new);
+        TextComponent[] recap    = config.levels.stream().map(level -> Component.text(level.recap)).toArray(TextComponent[]::new);
+        Tribute[] tributes       = config.levels.stream().map(level -> new Tribute(level.tribute.stream().map(SimpleItemStack::toItemStack).toArray(ItemStack[]::new))).toArray(Tribute[]::new);
 
         Blessing[] blessings = config.levels.stream()
                 .map(level -> BlessingLoader.loadFromList(id, level.blessings))
@@ -101,6 +141,10 @@ public class VillagerFactory {
 
         MLVillager.spawn(() -> new VillagerLevel(config.name, type, profession, blessings, locks, messages, tributes, names, recap));
     }
+
+    // =========================================================================
+    // Accesseurs
+    // =========================================================================
 
     /**
      * Retourne tous les Traders enregistrés dans le VillagerRegistry.

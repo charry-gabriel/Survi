@@ -28,6 +28,9 @@ public class SystemCommand {
                 // === LOG COMMANDS — gérés par MLLogCommand dans MiubyLib ===
                 .then(MLLogCommand.create())
 
+                // === RELOAD COMMANDS ===
+                .then(ReloadCommand.create())
+
                 // === PERF COMMANDS ===
                 // /survi perf on   → active les PerfTimers (seuil 0,5 ms, tag PERF)
                 // /survi perf off  → désactive (overhead nul immédiatement)

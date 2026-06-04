@@ -14,5 +14,10 @@ public final class GrowthItemRegistry {
         return INSTANCE.get(id);
     }
 
+    /** Vide le registre. À appeler avant un rechargement à chaud via {@link GrowthItemLoader#reload()}. */
+    public static void clear() {
+        INSTANCE.clear();
+    }
+
     private GrowthItemRegistry() {}
 }

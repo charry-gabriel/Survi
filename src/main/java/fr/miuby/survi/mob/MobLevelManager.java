@@ -58,7 +58,7 @@ public class MobLevelManager {
 
     // ─── État ─────────────────────────────────────────────────────────────────────
 
-    private final Map<EntityType, MobTypeConfig> configs       = new EnumMap<>(EntityType.class);
+    private final Map<EntityType, MobTypeConfig> configs        = new EnumMap<>(EntityType.class);
     private final Map<EntityType, String>        cachedMobNames = new EnumMap<>(EntityType.class);
     private final Random random = new Random();
 
@@ -69,7 +69,7 @@ public class MobLevelManager {
     /**
      * Poids pré-calculés pour {@link #rollMobLevel()}.
      * {@code cachedWeights[i] = (levelsPerTier - i) ^ spawnWeightExponent}
-     * Ne dépend pas du world level — recalculé uniquement dans {@link #init()}.
+     * Ne dépend pas du world level — recalculé uniquement dans {@link #loadConfig()}.
      */
     private double[] cachedWeights;
     private double   cachedWeightsTotal;
@@ -77,10 +77,30 @@ public class MobLevelManager {
     // ─── Lifecycle ────────────────────────────────────────────────────────────────
 
     /**
-     * Charge (ou recharge) la configuration depuis {@code monsters.yml}.
-     * Le fichier est créé depuis le jar s'il est absent.
+     * Charge la configuration depuis {@code monsters.yml} et démarre la tâche de nametag.
+     * Appeler une seule fois au démarrage — pour les rechargements à chaud, utiliser {@link #reload()}.
      */
     public void init() {
+        loadConfig();
+        new MobNametagTask().runTaskTimer(GameManager.getInstance().getPlugin(), 0L, MobNametagTask.PERIOD_TICKS);
+    }
+
+    /**
+     * Recharge la configuration depuis {@code monsters.yml} à chaud, sans redémarrage.
+     * Le timer de nametag existant n'est pas recréé.
+     *
+     * <p>Les mobs déjà spawnés conservent leurs stats actuelles ; seuls les nouveaux spawns
+     * appliqueront la configuration mise à jour.</p>
+     */
+    public void reload() {
+        loadConfig();
+    }
+
+    /**
+     * Lit {@code monsters.yml} et reconstruit {@link #configs} et {@link #cachedMobNames}.
+     * Commun à {@link #init()} et {@link #reload()}.
+     */
+    private void loadConfig() {
         File file = new File(GameManager.getInstance().getPlugin().getDataFolder(), "monsters.yml");
         YamlConfiguration cfg = YamlConfiguration.loadConfiguration(file);
 
@@ -88,7 +108,7 @@ public class MobLevelManager {
         spawnWeightExponent = cfg.getDouble("spawn-weight-exponent", 1.8);
 
         // Pré-calcul des poids de tirage — indépendants du world level, donc stables
-        // jusqu'au prochain init(). Évite d'allouer un double[] à chaque spawn.
+        // jusqu'au prochain loadConfig(). Évite d'allouer un double[] à chaque spawn.
         cachedWeights = new double[levelsPerTier];
         cachedWeightsTotal = 0;
         for (int i = 0; i < levelsPerTier; i++) {
@@ -165,10 +185,8 @@ public class MobLevelManager {
             cachedMobNames.put(type, buildMobName(type));
         }
 
-        new MobNametagTask().runTaskTimer(GameManager.getInstance().getPlugin(), 0L, MobNametagTask.PERIOD_TICKS);
-
         MLLogManager.getInstance().log(Level.INFO, ELogTag.SYSTEM,
-                "[MobLevel] " + configs.size() + " types de mobs chargés (levelsPerTier="
+                "[MobLevel] " + configs.size() + " types de mobs chargés depuis monsters.yml (levelsPerTier="
                         + levelsPerTier + ", weightExp=" + spawnWeightExponent + ")");
     }
 
@@ -179,7 +197,7 @@ public class MobLevelManager {
      * <p>Distribution pondérée : niveau bas = plus fréquent, niveau haut = élite rare.
      * Formule du poids pour l'offset {@code i} (0 = plus commun) :
      * {@code weight(i) = (levelsPerTier - i) ^ spawnWeightExponent}
-     * <p>Les poids sont pré-calculés dans {@link #init()} — aucune allocation ici.
+     * <p>Les poids sont pré-calculés dans {@link #loadConfig()} — aucune allocation ici.
      */
     public int rollMobLevel() {
         int worldLevel = GameManager.getInstance().getWorldLevelManager().getLevel();
@@ -397,7 +415,7 @@ public class MobLevelManager {
         return cachedMobNames.getOrDefault(type, type.name());
     }
 
-    /** Construit le nom lisible d'un EntityType. Appelé uniquement dans {@link #init()}. */
+    /** Construit le nom lisible d'un EntityType. Appelé uniquement dans {@link #loadConfig()}. */
     private String buildMobName(EntityType type) {
         String[] parts = type.name().split("_");
         StringBuilder sb = new StringBuilder();
