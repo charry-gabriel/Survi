@@ -173,7 +173,8 @@ public class QuestManager extends AbstractQuestManager<Quest> {
     /**
      * Appelé à la connexion d'un joueur : restaure ses quêtes du jour et supprime
      * les expirées (date ≠ aujourd'hui). Ré-applique ou retire les effets de
-     * potion selon l'état de chaque quête.
+     * potion selon l'état de chaque quête. Active le glow du Trader cible si le
+     * joueur a une quête terminée non réclamée.
      */
     public void restoreQuestsOnJoin(AlphaPlayer player, List<PlayerQuestData> loaded) {
         player.getActiveQuests().clear();
@@ -230,6 +231,17 @@ public class QuestManager extends AbstractQuestManager<Quest> {
                 for (BlessingEffect effect : effectsToReapply) effect.applyEffect(player);
             }, 5L);
         }
+
+        // Active le glow du Trader cible si le joueur a une quête terminée non réclamée
+        QuestGlowService glowService = GameManager.getInstance().getQuestGlowService();
+        if (glowService != null) {
+            for (PlayerQuestData q : valid) {
+                if (q.isCompleted() && !q.isClaimed() && q.getTraderId() != null) {
+                    glowService.enableGlow(player, q.getTraderId());
+                    break; // Au plus une quête active non réclamée à la fois
+                }
+            }
+        }
     }
 
     // =========================================================================
@@ -255,6 +267,9 @@ public class QuestManager extends AbstractQuestManager<Quest> {
 
         player.removeQuest(current.getSlot());
         GameManager.getInstance().getDatabase().quests().deletePlayerQuestSlot(player.getUuid(), current.getSlot());
+
+        QuestGlowService glowService = GameManager.getInstance().getQuestGlowService();
+        if (glowService != null) glowService.disableGlow(player);
 
         if (player.getPlayer() != null) {
             player.getPlayer().sendMessage(Component.text("Votre quête a été réinitialisée par un administrateur. Vous pouvez en accepter une nouvelle !", NamedTextColor.YELLOW));
@@ -317,6 +332,8 @@ public class QuestManager extends AbstractQuestManager<Quest> {
         if (current != null) {
             player.removeQuest(current.getSlot());
             GameManager.getInstance().getDatabase().quests().deletePlayerQuestSlot(player.getUuid(), current.getSlot());
+            QuestGlowService glowService = GameManager.getInstance().getQuestGlowService();
+            if (glowService != null) glowService.disableGlow(player);
         }
 
         int nextSlot = player.countTodayQuests();
@@ -366,6 +383,9 @@ public class QuestManager extends AbstractQuestManager<Quest> {
         data.setClaimed(true);
         GameManager.getInstance().getDatabase().quests().updatePlayerQuest(player.getUuid(), data);
 
+        QuestGlowService glowService = GameManager.getInstance().getQuestGlowService();
+        if (glowService != null) glowService.disableGlow(player);
+
         // Historique persistant
         GameManager.getInstance().getDatabase().questHistory().insert(
                 player.getUuid(),
@@ -399,6 +419,7 @@ public class QuestManager extends AbstractQuestManager<Quest> {
             completeQuestInternal(player, quest);
         } else {
             GameManager.getInstance().getDatabase().quests().updatePlayerQuest(player.getUuid(), data);
+            GameManager.getInstance().getQuestActionBarService().showProgress(player, quest, data);
         }
     }
 
@@ -417,5 +438,12 @@ public class QuestManager extends AbstractQuestManager<Quest> {
         player.getPlayer().sendMessage(Component.text("Quête terminée : ", NamedTextColor.GREEN)
                 .append(Component.text(quest.getName(), NamedTextColor.GOLD)));
         player.getPlayer().sendMessage(Component.text("Allez voir le Trader pour obtenir votre récompense !", NamedTextColor.GRAY));
+        GameManager.getInstance().getQuestActionBarService().showCompleted(player, quest);
+
+        // Active le glow du Trader cible pour guider le joueur
+        if (data.getTraderId() != null) {
+            QuestGlowService glowService = GameManager.getInstance().getQuestGlowService();
+            if (glowService != null) glowService.enableGlow(player, data.getTraderId());
+        }
     }
 }

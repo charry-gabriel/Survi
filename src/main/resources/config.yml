@@ -60,7 +60,7 @@ jobs:
     - {threshold: 5, name: "Novice"}
     - {threshold: 15, name: "Apprenti"}
     - {threshold: 35, name: "Adepte"}
-    - {threshold: 55, name: "Confirmé"} #item du métier sur le lvl 4
+    - {threshold: 55, name: "Confirmé"}
     - {threshold: 80, name: "Journalier"}
     - {threshold: 110, name: "Expert"}
     - {threshold: 150, name: "Artisan"}
@@ -131,7 +131,7 @@ village-zone:
         max-y: 64
         max-z: -7
 
-    - after-hours: 0.5       # après 1 h de jeu réel
+    - after-hours: 0.5       # après 30m de jeu réel
       radius: 50
       spawn:
         x: 10

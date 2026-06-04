@@ -81,6 +81,10 @@ public class Survi extends JavaPlugin {
             tm.stop();
         }
         GameManager.getInstance().getVillageZoneManager().stop();
+
+        if (GameManager.getInstance().getQuestGlowService() != null) {
+            GameManager.getInstance().getQuestGlowService().shutdown();
+        }
     }
 
     private void updateResources() {

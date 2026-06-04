@@ -4,6 +4,8 @@ import fr.miuby.lib.MiubyLib;
 import fr.miuby.lib.log.MLLogManager;
 import fr.miuby.survi.grave.GraveManager;
 import fr.miuby.survi.mob.MobLevelManager;
+import fr.miuby.survi.player.service.OfflineNotificationService;
+import fr.miuby.survi.quest.QuestGlowService;
 import fr.miuby.survi.system.log.ELogTag;
 import fr.miuby.survi.system.log.LogPersistence;
 import fr.miuby.survi.world.crops.PlantedCropsManager;
@@ -20,7 +22,6 @@ import fr.miuby.survi.item.CustomRecipe;
 import fr.miuby.survi.item.growth_item.GrowthItems;
 import fr.miuby.survi.item.locked_item.LockedItemsFactory;
 import fr.miuby.survi.player.AlphaPlayerFactory;
-import fr.miuby.survi.player.service.OfflineNotificationService;
 import fr.miuby.survi.role.RoleLoader;
 import fr.miuby.survi.system.time.TimeManager;
 import fr.miuby.survi.villager.VillagerFactory;
@@ -57,6 +58,7 @@ public class GameManager {
     @Getter private QuestActionBarService questActionBarService;
     @Getter private GlobalQuestBossBarService globalQuestBossBarService;
     @Getter private OfflineNotificationService offlineNotificationService;
+    @Getter private QuestGlowService questGlowService;
     @Getter private GraveManager graveManager;
     @Getter private WorldLevelManager worldLevelManager;
     @Getter private MobLevelManager mobLevelManager;
@@ -149,6 +151,8 @@ public class GameManager {
 
         MLLogManager.getInstance().log(Level.INFO, ELogTag.PLAYER, "Initialisation des joueurs...");
         this.initPlayers();
+
+        this.questGlowService = new QuestGlowService(plugin);
 
         MLLogManager.getInstance().log(Level.INFO, ELogTag.VILLAGER, "Initialisation des villageois...");
         this.villagerFactory = new VillagerFactory();

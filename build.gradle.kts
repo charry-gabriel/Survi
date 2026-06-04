@@ -20,12 +20,12 @@ repositories {
     maven("https://repo.papermc.io/repository/maven-public/")
     maven("https://oss.sonatype.org/content/groups/public/")
     maven("https://jitpack.io")
+    maven("https://repo.dmulloy2.net/repository/public/")
 }
 
 dependencies {
-    // Remplace compileOnly("io.papermc.paper:paper-api:...").
-    // Inclut paper-api + NMS complet (net.minecraft.*, authlib, PaperAdventure) avec Mojang mappings.
     paperweight.paperDevBundle("26.1.2.build.66-stable")
+    compileOnly("com.comphenix.protocol:ProtocolLib:5.3.0")
 
     compileOnly("org.projectlombok:lombok:1.18.38")
     annotationProcessor("org.projectlombok:lombok:1.18.38")

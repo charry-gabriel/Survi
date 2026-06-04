@@ -8,6 +8,7 @@ import fr.miuby.survi.player.AlphaPlayer;
 import fr.miuby.survi.quest.PlayerQuestData;
 import fr.miuby.survi.quest.Quest;
 import fr.miuby.survi.display.TutorialBookService;
+import fr.miuby.survi.quest.QuestGlowService;
 import fr.miuby.survi.system.log.ELogTag;
 import org.bukkit.NamespacedKey;
 import org.bukkit.attribute.Attribute;
@@ -52,6 +53,10 @@ public class ServerListener implements Listener {
         // Retire les faux joueurs de la colonne info avant la déconnexion
         GameManager.getInstance().getTabDisplayManager().removeInfoColumn(event.getPlayer());
 
+        // Nettoie l'entrée glow sans envoyer de paquet (joueur déconnecté)
+        QuestGlowService glowService = GameManager.getInstance().getQuestGlowService();
+        if (glowService != null) glowService.cleanupOnQuit(event.getPlayer().getUniqueId());
+
         AlphaPlayer.get(event.getPlayer().getUniqueId()).resetPlayer();
     }
 
@@ -82,6 +87,7 @@ public class ServerListener implements Listener {
         MLLogManager.getInstance().log(Level.INFO, ELogTag.QUEST, "Reset des quêtes journalières...");
 
         int resetCount = 0;
+        QuestGlowService glowService = GameManager.getInstance().getQuestGlowService();
 
         for (AlphaPlayer player : GameManager.getInstance().getAlphaPlayerFactory().getAlphaPlayers()) {
             if (player.getActiveQuests().isEmpty()) continue;
@@ -103,8 +109,10 @@ public class ServerListener implements Listener {
                 GameManager.getInstance().getDatabase().quests().clearAllPlayerQuests(player.getUuid());
                 player.getPlayer().sendMessage(Component.text("[Quêtes] ", NamedTextColor.GOLD)
                         .append(Component.text("Vos quêtes du jour ont expiré.", NamedTextColor.YELLOW)));
+                if (glowService != null) glowService.disableGlow(player);
             } else {
                 player.getActiveQuests().clear();
+                if (glowService != null) glowService.cleanupOnQuit(player.getUuid());
             }
 
             resetCount++;

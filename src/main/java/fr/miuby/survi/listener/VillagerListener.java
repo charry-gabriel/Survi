@@ -7,6 +7,7 @@ import fr.miuby.lib.villager.VillagerRegistry;
 import fr.miuby.survi.GameManager;
 import fr.miuby.survi.player.AlphaPlayer;
 import fr.miuby.survi.quest.PlayerQuestData;
+import fr.miuby.survi.quest.QuestGlowService;
 import fr.miuby.survi.quest.QuestManager;
 import fr.miuby.lib.log.MLLogManager;
 import fr.miuby.survi.system.log.ELogTag;
@@ -126,6 +127,20 @@ public class VillagerListener implements Listener {
         MLLogManager.getInstance().log(Level.FINE, ELogTag.VILLAGER, "[VillagerLoaded] " + villager.getNameId());
         VillagerRegistry.register(villager);
         VillagerPostLoadActions.executeAndClear(villager);
+
+        // Si le villageois qui vient de charger est un Trader, vérifier si des joueurs
+        // connectés ont une quête terminée à récupérer chez lui (ex. : respawn du villageois).
+        if (villager instanceof Trader trader) {
+            QuestGlowService glowService = GameManager.getInstance().getQuestGlowService();
+            if (glowService == null) return;
+            for (AlphaPlayer alphaPlayer : GameManager.getInstance().getAlphaPlayerFactory().getAlphaPlayers()) {
+                if (alphaPlayer.getPlayer() == null) continue;
+                PlayerQuestData q = alphaPlayer.getCurrentActiveQuest();
+                if (q != null && q.isCompleted() && !q.isClaimed() && trader.getNameId().equals(q.getTraderId())) {
+                    glowService.enableGlow(alphaPlayer, trader.getNameId());
+                }
+            }
+        }
     }
 
     @EventHandler
