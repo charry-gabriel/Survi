@@ -18,6 +18,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitTask;
 
+import java.time.LocalDate;
 import java.util.*;
 import java.util.logging.Level;
 
@@ -25,7 +26,8 @@ public class GlobalQuestManager extends AbstractQuestManager<GlobalQuest> {
 
     @Getter private GlobalQuest activeQuest = null;
     @Getter private int progress = 0;
-    @Getter private final Set<UUID> participants = new HashSet<>();
+    /** Contribution individuelle de chaque participant : UUID → nombre d'actions effectuées. */
+    private final Map<UUID, Integer> contributions = new HashMap<>();
 
     private BukkitTask timerTask = null;
     private long endTime = 0L;
@@ -47,6 +49,12 @@ public class GlobalQuestManager extends AbstractQuestManager<GlobalQuest> {
     // API publique
     // =========================================================================
 
+    /** Ensemble des UUID ayant contribué à la quête en cours. */
+    public Set<UUID> getParticipants() { return contributions.keySet(); }
+
+    /** Snapshot en lecture seule des contributions individuelles (UUID → actions). */
+    public Map<UUID, Integer> getContributions() { return Collections.unmodifiableMap(contributions); }
+
     public boolean startQuest(String questId) {
         if (activeQuest != null) return false;
 
@@ -55,7 +63,7 @@ public class GlobalQuestManager extends AbstractQuestManager<GlobalQuest> {
 
         activeQuest = quest;
         progress    = 0;
-        participants.clear();
+        contributions.clear();
         endTime = System.currentTimeMillis() + quest.getTimeLimitSeconds() * 1000L;
 
         broadcastQuestStart(quest);
@@ -80,7 +88,7 @@ public class GlobalQuestManager extends AbstractQuestManager<GlobalQuest> {
         activeQuest = null;
         progress    = 0;
         endTime     = 0L;
-        participants.clear();
+        contributions.clear();
 
         broadcastMessage(Component.text("⚔ Quête Globale ", NamedTextColor.RED, TextDecoration.BOLD)
                 .append(Component.text("« " + name + " » annulée par un administrateur. Aucune récompense.", NamedTextColor.YELLOW)));
@@ -94,7 +102,7 @@ public class GlobalQuestManager extends AbstractQuestManager<GlobalQuest> {
         if (activeQuest == null) return;
         if (!activeQuest.matchesAction(type, target)) return;
 
-        participants.add(player.getUuid());
+        contributions.merge(player.getUuid(), amount, Integer::sum);
         progress = Math.min(progress + amount, activeQuest.getGoal() + amount);
 
         if (progress >= activeQuest.getGoal()) {
@@ -116,23 +124,24 @@ public class GlobalQuestManager extends AbstractQuestManager<GlobalQuest> {
     private void onComplete() {
         if (timerTask != null) { timerTask.cancel(); timerTask = null; }
 
-        GlobalQuest quest = activeQuest;
-        Set<UUID> winners = new HashSet<>(participants);
+        GlobalQuest quest         = activeQuest;
+        Map<UUID, Integer> snapshot = new HashMap<>(contributions);
+        int worldLevel            = GameManager.getInstance().getWorldLevelManager().getLevel();
 
         activeQuest = null;
         progress    = 0;
         endTime     = 0L;
-        participants.clear();
+        contributions.clear();
 
-        broadcastQuestComplete(quest, winners.size());
+        broadcastQuestComplete(quest, snapshot);
         GameManager.getInstance().getGlobalQuestBossBarService().onQuestCompleted(quest);
 
-        AlphaPlayerFactory factory = GameManager.getInstance().getAlphaPlayerFactory();
+        AlphaPlayerFactory factory         = GameManager.getInstance().getAlphaPlayerFactory();
         OfflineNotificationService offlineNotif = GameManager.getInstance().getOfflineNotificationService();
 
-        for (UUID uuid : winners) {
-            AlphaPlayer ap = factory.getAlphaPlayer(uuid);
-            Player p = ap.getPlayer();
+        for (Map.Entry<UUID, Integer> entry : snapshot.entrySet()) {
+            AlphaPlayer ap = factory.getAlphaPlayer(entry.getKey());
+            Player p       = ap.getPlayer();
             boolean online = p != null && p.isOnline();
 
             List<BlessingEffect> deferred = new ArrayList<>();
@@ -144,15 +153,18 @@ public class GlobalQuestManager extends AbstractQuestManager<GlobalQuest> {
                 }
             }
 
-            if (!deferred.isEmpty()) {
-                offlineNotif.queueQuestReward(uuid, deferred, buildRewardMessage(quest));
-            }
-
+            if (!deferred.isEmpty()) offlineNotif.queueQuestReward(entry.getKey(), deferred, buildRewardMessage(quest));
             if (online) p.sendMessage(buildRewardMessage(quest));
+
+            // Historique persistant
+            GameManager.getInstance().getDatabase().questHistory().insert(
+                    ap.getUuid(), ap.getPseudo(), quest.getId(), LocalDate.now(),
+                    worldLevel, null, "global", entry.getValue()
+            );
         }
 
         MLLogManager.getInstance().log(Level.INFO, ELogTag.QUEST,
-                "[GlobalQuest] Quête complétée : " + quest.getId() + " | participants=" + winners.size());
+                "[GlobalQuest] Quête complétée : " + quest.getId() + " | participants=" + snapshot.size());
     }
 
     private void onTimeout() {
@@ -162,7 +174,7 @@ public class GlobalQuestManager extends AbstractQuestManager<GlobalQuest> {
         activeQuest = null;
         progress    = 0;
         endTime     = 0L;
-        participants.clear();
+        contributions.clear();
         timerTask   = null;
 
         broadcastMessage(
@@ -218,7 +230,19 @@ public class GlobalQuestManager extends AbstractQuestManager<GlobalQuest> {
         }
     }
 
-    private void broadcastQuestComplete(GlobalQuest quest, int participantCount) {
+    private void broadcastQuestComplete(GlobalQuest quest, Map<UUID, Integer> snapshot) {
+        int participantCount  = snapshot.size();
+        int totalContribution = snapshot.values().stream().mapToInt(Integer::intValue).sum();
+
+        // Top 3 contributeurs triés par contribution décroissante
+        List<Map.Entry<UUID, Integer>> top3 = snapshot.entrySet().stream()
+                .sorted(Map.Entry.<UUID, Integer>comparingByValue().reversed())
+                .limit(3)
+                .toList();
+
+        AlphaPlayerFactory factory = GameManager.getInstance().getAlphaPlayerFactory();
+        String[] medals = {"🥇", "🥈", "🥉"};
+
         Component msg = Component.newline()
                 .append(Component.text("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━", NamedTextColor.GREEN))
                 .appendNewline()
@@ -226,8 +250,24 @@ public class GlobalQuestManager extends AbstractQuestManager<GlobalQuest> {
                 .appendNewline()
                 .append(Component.text("  " + quest.getName(), NamedTextColor.YELLOW, TextDecoration.BOLD))
                 .appendNewline()
-                .append(Component.text("  " + participantCount + " participant(s) récompensé(s) !", NamedTextColor.WHITE))
-                .appendNewline()
+                .append(Component.text("  " + participantCount + " participant(s) récompensé(s) !", NamedTextColor.WHITE));
+
+        if (!top3.isEmpty()) {
+            msg = msg.appendNewline()
+                    .append(Component.text("  ─ Top contributeurs ─", NamedTextColor.DARK_GRAY));
+            for (int i = 0; i < top3.size(); i++) {
+                Map.Entry<UUID, Integer> entry = top3.get(i);
+                String pseudo = factory.getAlphaPlayer(entry.getKey()).getPseudo();
+                int pct = totalContribution > 0 ? (int) ((long) entry.getValue() * 100 / totalContribution) : 0;
+                msg = msg.appendNewline()
+                        .append(Component.text("  " + medals[i] + " ", NamedTextColor.YELLOW))
+                        .append(Component.text(pseudo, NamedTextColor.WHITE))
+                        .append(Component.text("  " + pct + "%", NamedTextColor.AQUA))
+                        .append(Component.text("  (" + entry.getValue() + " actions)", NamedTextColor.DARK_GRAY));
+            }
+        }
+
+        msg = msg.appendNewline()
                 .append(Component.text("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━", NamedTextColor.GREEN))
                 .appendNewline();
 

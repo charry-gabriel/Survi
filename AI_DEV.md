@@ -457,12 +457,13 @@ player.sendMessage("texte brut")
 Hiérarchie : `SQLite extends Database extends MLSQLite` (voir section 2 MiubyLib).
 
 ```java
-GameManager.getInstance().getDatabase().players()    // PlayerRepository
-GameManager.getInstance().getDatabase().villagers()  // VillagerRepository
-GameManager.getInstance().getDatabase().quests()     // QuestRepository
-GameManager.getInstance().getDatabase().crops()      // CropRepository
-GameManager.getInstance().getDatabase().system()     // SystemRepository (logs, serverData)
-GameManager.getInstance().getDatabase().graves()     // GraveRepository
+GameManager.getInstance().getDatabase().players()       // PlayerRepository
+GameManager.getInstance().getDatabase().villagers()     // VillagerRepository
+GameManager.getInstance().getDatabase().quests()        // QuestRepository
+GameManager.getInstance().getDatabase().crops()         // CropRepository
+GameManager.getInstance().getDatabase().system()        // SystemRepository (logs, serverData)
+GameManager.getInstance().getDatabase().graves()        // GraveRepository
+GameManager.getInstance().getDatabase().questHistory()  // QuestHistoryRepository
 ```
 
 Le SQL va **uniquement** dans les repositories. Jamais inline dans un Listener ou Command.
@@ -655,6 +656,7 @@ growth_items/<id>.yml → GrowthItemFileConfig → GrowthItemLoader → GrowthIt
 | Joueurs | `AlphaPlayer`, `AlphaPlayerFactory`, `PlayerPersistenceService`, `PlayerAttributeService`, `PlayerEffectRestoreService`, `OfflineNotificationService`, `OfflineNotificationListener` |
 | Rôles | `ERole`, `RoleLoader`, `RoleManagementService`, `roles.yml` |
 | Quêtes | `QuestManager`, `GlobalQuestManager`, `Quest`, `EQuestType`, `QuestActionBarService`, `GlobalQuestBossBarService`, `quests.yml` |
+| Histoirique & stats quêtes | `QuestHistoryEntry`, `QuestHistoryRepository`, `QuestCommand` (`history`), `PlayerCommand` |
 | Villageois | `VillagerFactory`, `VillagerLevel`, `BlessingLoader`, `villagers/*.yml` |
 | Monstres | `MobLevelManager`, `MobTypeConfig`, `monsters.yml` |
 | Mondes | `WorldInitializer`, `WorldLevelManager`, `WorldResetManager`, `EWorld` |

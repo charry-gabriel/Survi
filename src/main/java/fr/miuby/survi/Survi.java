@@ -12,6 +12,7 @@ import fr.miuby.survi.quest.QuestCommand;
 import fr.miuby.survi.listener.QuestListener;
 import fr.miuby.survi.role.RoleCommand;
 import fr.miuby.survi.system.command.SystemCommand;
+import fr.miuby.survi.system.command.PlayerCommand;
 import fr.miuby.survi.system.time.TimeManager;
 import fr.miuby.survi.villager.VillagerCommand;
 import fr.miuby.survi.blessing.BlessingCommand;
@@ -67,6 +68,7 @@ public class Survi extends JavaPlugin {
             commands.registrar().register(WorldCommand.createWorldResetCommand().build());
             commands.registrar().register(WorldCommand.createTeleportToCommand().build());
             commands.registrar().register(MobCommand.createCommand().build());
+            commands.registrar().register(PlayerCommand.createCommand().build());
         });
 
         GameManager.getInstance().init(this);

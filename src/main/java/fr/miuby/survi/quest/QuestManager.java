@@ -365,6 +365,19 @@ public class QuestManager extends AbstractQuestManager<Quest> {
         player.getPlayer().sendMessage(Component.text("Vous avez reçu les récompenses de la quête ! ", NamedTextColor.GREEN));
         data.setClaimed(true);
         GameManager.getInstance().getDatabase().quests().updatePlayerQuest(player.getUuid(), data);
+
+        // Historique persistant
+        GameManager.getInstance().getDatabase().questHistory().insert(
+                player.getUuid(),
+                player.getPseudo(),
+                quest.getId(),
+                LocalDate.now(),
+                quest.getDifficulty(),
+                trader.getJob() != null ? trader.getJob().name() : null,
+                "daily",
+                0
+        );
+
         return true;
     }
 

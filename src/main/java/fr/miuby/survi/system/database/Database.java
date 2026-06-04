@@ -22,6 +22,7 @@ public abstract class Database extends MLSQLite {
     protected QuestRepository questRepository;
     protected SystemRepository systemRepository;
     protected GraveRepository graveRepository;
+    protected QuestHistoryRepository questHistoryRepository;
 
     protected Database(String dbName) {
         super(dbName);
@@ -35,22 +36,24 @@ public abstract class Database extends MLSQLite {
     @Override
     protected void onLoaded() {
         Connection conn = getConnection();
-        playerRepository   = new PlayerRepository(conn, this);
-        villagerRepository = new VillagerRepository(conn, this);
-        cropRepository     = new CropRepository(conn, this);
-        questRepository    = new QuestRepository(conn, this);
-        systemRepository   = new SystemRepository(conn, this);
-        graveRepository    = new GraveRepository(conn, this);
+        playerRepository        = new PlayerRepository(conn, this);
+        villagerRepository      = new VillagerRepository(conn, this);
+        cropRepository          = new CropRepository(conn, this);
+        questRepository         = new QuestRepository(conn, this);
+        systemRepository        = new SystemRepository(conn, this);
+        graveRepository         = new GraveRepository(conn, this);
+        questHistoryRepository  = new QuestHistoryRepository(conn, this);
     }
 
     // =========================================================================
     // Délégués aux repositories
     // =========================================================================
 
-    public PlayerRepository players()     { return playerRepository; }
-    public VillagerRepository villagers() { return villagerRepository; }
-    public CropRepository crops()         { return cropRepository; }
-    public QuestRepository quests()       { return questRepository; }
-    public SystemRepository system()      { return systemRepository; }
-    public GraveRepository graves()       { return graveRepository; }
+    public PlayerRepository players()                  { return playerRepository; }
+    public VillagerRepository villagers()              { return villagerRepository; }
+    public CropRepository crops()                      { return cropRepository; }
+    public QuestRepository quests()                    { return questRepository; }
+    public SystemRepository system()                   { return systemRepository; }
+    public GraveRepository graves()                    { return graveRepository; }
+    public QuestHistoryRepository questHistory()       { return questHistoryRepository; }
 }

@@ -14,8 +14,14 @@ import io.papermc.paper.command.brigadier.CommandSourceStack;
 import io.papermc.paper.command.brigadier.Commands;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
 import fr.miuby.survi.GameManager;
+
+import java.time.format.DateTimeFormatter;
+import java.util.List;
 
 @SuppressWarnings({"java:S3516", "SameReturnValue"})
 public class QuestCommand {
@@ -67,6 +73,13 @@ public class QuestCommand {
                                 .then(Commands.argument(questArgument, QuestArgument.quest())
                                         .executes(QuestCommand::testQuest)
                                 )
+                        )
+                )
+                .then(Commands.literal("history")
+                        .executes(QuestCommand::historyself)
+                        .then(Commands.argument(playerArgument, AlphaPlayerArgument.alphaPlayer())
+                                .requires(source -> source.getSender().isOp())
+                                .executes(QuestCommand::historyOf)
                         )
                 );
     }
@@ -191,5 +204,77 @@ public class QuestCommand {
                 Component.text("Les quêtes en cours des joueurs connectés sont conservées. "
                         + "Consultez la console pour d'éventuelles quêtes orphelines.").color(NamedTextColor.GRAY));
         return Command.SINGLE_SUCCESS;
+    }
+
+    // =========================================================================
+    // /quest history
+    // =========================================================================
+
+    /** Affiche l'historique de l'expéditeur (doit être un joueur en jeu). */
+    private static int historyself(CommandContext<CommandSourceStack> ctx) {
+        CommandSender sender = ctx.getSource().getSender();
+        if (!(sender instanceof Player player)) {
+            sender.sendMessage(Component.text("Utilisez /quest history <joueur> depuis la console.").color(NamedTextColor.RED));
+            return Command.SINGLE_SUCCESS;
+        }
+        showHistory(sender, AlphaPlayer.get(player.getUniqueId()));
+        return Command.SINGLE_SUCCESS;
+    }
+
+    /** Affiche l'historique d'un joueur spécifique (op seulement). */
+    private static int historyOf(CommandContext<CommandSourceStack> ctx) {
+        showHistory(ctx.getSource().getSender(), AlphaPlayerArgument.getAlphaPlayer(ctx, playerArgument));
+        return Command.SINGLE_SUCCESS;
+    }
+
+    private static void showHistory(CommandSender sender, AlphaPlayer ap) {
+        List<QuestHistoryEntry> entries = GameManager.getInstance().getDatabase().questHistory().getHistory(ap.getUuid(), 10);
+        DateTimeFormatter fmt = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+
+        sender.sendMessage(Component.text("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━").color(NamedTextColor.GOLD));
+        sender.sendMessage(Component.text("  ✦ Historique de " + ap.getPseudo())
+                .color(NamedTextColor.GOLD).decoration(TextDecoration.BOLD, true));
+        sender.sendMessage(Component.text("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━").color(NamedTextColor.GOLD));
+
+        if (entries.isEmpty()) {
+            sender.sendMessage(Component.text("  Aucune quête complétée pour l'instant.").color(NamedTextColor.GRAY));
+        } else {
+            for (int i = 0; i < entries.size(); i++) {
+                QuestHistoryEntry e = entries.get(i);
+
+                // Lookup du nom de la quête dans les pools (daily ou global)
+                String questName = null;
+                if ("daily".equals(e.questType())) {
+                    Quest q = GameManager.getInstance().getQuestManager().getQuest(e.questId());
+                    if (q != null) questName = q.getName();
+                } else {
+                    GlobalQuest gq = GameManager.getInstance().getGlobalQuestManager().getQuest(e.questId());
+                    if (gq != null) questName = gq.getName();
+                }
+                String displayName = questName != null ? questName : e.questId();
+
+                // Libellé de difficulté
+                String diffLabel = "daily".equals(e.questType())
+                        ? "diff." + e.difficulty()
+                        : "mondiale";
+
+                // Libellé de métier
+                String jobLabel = e.job() != null ? e.job() : "—";
+
+                Component line = Component.text("  #" + (i + 1) + " ", NamedTextColor.DARK_GRAY)
+                        .append(Component.text(e.completedAt().format(fmt) + " ", NamedTextColor.WHITE))
+                        .append(Component.text("[" + diffLabel + "] ", NamedTextColor.YELLOW))
+                        .append(Component.text("[" + jobLabel + "] ", NamedTextColor.AQUA))
+                        .append(Component.text(displayName, NamedTextColor.GRAY));
+
+                if ("global".equals(e.questType()) && e.contribution() > 0) {
+                    line = line.append(Component.text(" — contrib:" + e.contribution(), NamedTextColor.DARK_GRAY));
+                }
+
+                sender.sendMessage(line);
+            }
+        }
+
+        sender.sendMessage(Component.text("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━").color(NamedTextColor.GOLD));
     }
 }

@@ -8,7 +8,7 @@ import java.sql.*;
 import java.util.logging.Level;
 
 public class SQLite extends Database {
-    private static final int CURRENT_DB_VERSION = 11;
+    private static final int CURRENT_DB_VERSION = 12;
 
     public SQLite() {
         super(GameManager.getInstance().getPlugin().getConfig().getString("SQLite.Filename", "minecraft"));
@@ -52,6 +52,9 @@ public class SQLite extends Database {
             s.executeUpdate(createServerDataTable());
             s.executeUpdate(createDelayedEffectsTable());
             s.executeUpdate(createGraveTable());
+            s.executeUpdate(createQuestHistoryTable());
+            s.executeUpdate("CREATE INDEX IF NOT EXISTS idx_qh_player ON quest_history (player_uuid)");
+            s.executeUpdate("CREATE INDEX IF NOT EXISTS idx_qh_type   ON quest_history (quest_type)");
         }
     }
 
@@ -154,6 +157,20 @@ public class SQLite extends Database {
                 ");";
     }
 
+    private String createQuestHistoryTable() {
+        return "CREATE TABLE IF NOT EXISTS quest_history (" +
+                "`id` INTEGER PRIMARY KEY AUTOINCREMENT," +
+                "`player_uuid` VARCHAR(36) NOT NULL," +
+                "`player_pseudo` VARCHAR(255) NOT NULL," +
+                "`quest_id` VARCHAR(255) NOT NULL," +
+                "`completed_at` TEXT NOT NULL," +
+                "`difficulty` INT NOT NULL DEFAULT -1," +
+                "`job` VARCHAR(50)," +
+                "`quest_type` VARCHAR(20) NOT NULL DEFAULT 'daily'," +
+                "`contribution` INT NOT NULL DEFAULT 0" +
+                ");";
+    }
+
     // =========================================================================
     // Migrations
     // =========================================================================
@@ -206,6 +223,11 @@ public class SQLite extends Database {
             }
             if (currentVersion < 11) {
                 s.executeUpdate("CREATE INDEX IF NOT EXISTS idx_pq_uuid_date ON player_quest (player_uuid, last_accepted)");
+            }
+            if (currentVersion < 12) {
+                s.executeUpdate(createQuestHistoryTable());
+                s.executeUpdate("CREATE INDEX IF NOT EXISTS idx_qh_player ON quest_history (player_uuid)");
+                s.executeUpdate("CREATE INDEX IF NOT EXISTS idx_qh_type   ON quest_history (quest_type)");
             }
         }
     }

@@ -206,4 +206,51 @@ public class QuestRepository extends MLRepository {
             }
         }, ELogTag.QUEST, "Failed to set last quest id");
     }
+
+    // =========================================================================
+    // CLASSEMENTS — réputation
+    // =========================================================================
+
+    /**
+     * Top {@code limit} joueurs par réputation totale (somme de tous les métiers).
+     * Seules les entrées dont le {@code trader_id} correspond à un nom de {@link fr.miuby.survi.job.EJob}
+     * sont comptabilisées ; les anciennes entrées trader-id sont naturellement exclues via la jointure.
+     */
+    public List<ReputationRankEntry> getTopByTotalReputation(int limit) {
+        List<ReputationRankEntry> list = new ArrayList<>();
+        try (PreparedStatement ps = connection.prepareStatement(
+                "SELECT p.pseudo, SUM(pr.reputation) as total " +
+                        "FROM player_reputation pr JOIN player p ON p.uuid = pr.player_uuid " +
+                        "GROUP BY pr.player_uuid ORDER BY total DESC LIMIT ?")) {
+            ps.setInt(1, limit);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) list.add(new ReputationRankEntry(rs.getString("pseudo"), rs.getLong("total")));
+            }
+        } catch (SQLException ex) {
+            MLLogManager.getInstance().log(Level.SEVERE, ELogTag.REPUTATION, "Failed to get total reputation leaderboard", ex);
+        }
+        return list;
+    }
+
+    /**
+     * Top {@code limit} joueurs pour un métier spécifique ({@code jobName} = {@link fr.miuby.survi.job.EJob#name()}).
+     */
+    public List<ReputationRankEntry> getTopByJob(String jobName, int limit) {
+        List<ReputationRankEntry> list = new ArrayList<>();
+        try (PreparedStatement ps = connection.prepareStatement(
+                "SELECT p.pseudo, pr.reputation " +
+                        "FROM player_reputation pr JOIN player p ON p.uuid = pr.player_uuid " +
+                        "WHERE pr.trader_id = ? ORDER BY pr.reputation DESC LIMIT ?")) {
+            ps.setString(1, jobName);
+            ps.setInt(2, limit);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) list.add(new ReputationRankEntry(rs.getString("pseudo"), rs.getLong("reputation")));
+            }
+        } catch (SQLException ex) {
+            MLLogManager.getInstance().log(Level.SEVERE, ELogTag.REPUTATION, "Failed to get job reputation leaderboard for " + jobName, ex);
+        }
+        return list;
+    }
+
+    public record ReputationRankEntry(String pseudo, long value) {}
 }
