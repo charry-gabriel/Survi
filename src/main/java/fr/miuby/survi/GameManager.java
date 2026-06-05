@@ -152,7 +152,7 @@ public class GameManager {
         MLLogManager.getInstance().log(Level.INFO, ELogTag.PLAYER, "Initialisation des joueurs...");
         this.initPlayers();
 
-        this.questGlowService = new QuestGlowService(plugin);
+        this.questGlowService = new QuestGlowService();
 
         MLLogManager.getInstance().log(Level.INFO, ELogTag.VILLAGER, "Initialisation des villageois...");
         this.villagerFactory = new VillagerFactory();

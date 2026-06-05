@@ -204,6 +204,58 @@ public final class GrowthItems {
         });
     }
 
+    // ─── API publique pour les commandes admin ────────────────────────────────
+
+    /**
+     * Retourne l'ID growth ({@code growth_id} PDC) d'un item, ou {@code null} s'il n'en a pas.
+     *
+     * @param item l'item à inspecter (peut être {@code null} ou air)
+     * @return l'ID growth, ex. {@code "GROWTH_PICKAXE"}, ou {@code null}
+     */
+    @Nullable
+    public static String getGrowthId(ItemStack item) {
+        if (item == null || item.getType().isAir()) return null;
+        ItemMeta meta = item.getItemMeta();
+        if (meta == null) return null;
+        return meta.getPersistentDataContainer().get(ID_KEY, PersistentDataType.STRING);
+    }
+
+    /**
+     * Force le passage au palier suivant d'un item de croissance sans passer par la logique d'utilisation.
+     *
+     * <p>Modifie {@code item} en place. L'appelant doit le remettre dans l'inventaire si nécessaire
+     * (l'item était obtenu via un getter retournant une copie, ex. {@code getHelmet()}, {@code getItem(slot)}).</p>
+     *
+     * @param item  l'item à faire monter de palier
+     * @param alpha le joueur cible (pour les effets de type message, haste, potion)
+     * @return {@code true} si le palier a été appliqué, {@code false} si l'item n'est pas un growth item
+     *         ou est déjà au palier maximum
+     */
+    public static boolean forceLvlUp(ItemStack item, AlphaPlayer alpha) {
+        if (item == null || item.getType().isAir()) return false;
+        ItemMeta meta = item.getItemMeta();
+        if (meta == null) return false;
+        PersistentDataContainer pdc = meta.getPersistentDataContainer();
+        if (!pdc.has(ID_KEY, PersistentDataType.STRING)) return false;
+
+        String growthId = pdc.get(ID_KEY, PersistentDataType.STRING);
+        GrowthConfig config = GrowthItemRegistry.get(growthId);
+        if (config == null) return false;
+
+        int currentTier = pdc.getOrDefault(TIER_KEY, PersistentDataType.INTEGER, 0);
+        if (currentTier >= config.tiers().size()) return false;
+
+        GrowthTier tier = config.tiers().get(currentTier);
+        pdc.set(TIER_KEY, PersistentDataType.INTEGER, currentTier + 1);
+        pdc.set(USES_KEY, PersistentDataType.INTEGER, tier.requiredUses());
+        item.setItemMeta(meta);
+
+        for (ItemEffect effect : tier.effects())
+            effect.apply(item, alpha);
+
+        return true;
+    }
+
     /** Désérialise un CSV en {@link Set}, en ignorant les chaînes vides. */
     private static Set<String> parseSet(String csv) {
         if (csv.isBlank()) return new HashSet<>();

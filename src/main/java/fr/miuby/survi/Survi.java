@@ -6,6 +6,7 @@ import fr.miuby.survi.job.ReputationCommand;
 import fr.miuby.survi.mob.MobCommand;
 import fr.miuby.survi.system.database.SqlCommand;
 import fr.miuby.survi.item.CustomItemCommand;
+import fr.miuby.survi.item.growth_item.GrowthItemCommand;
 import fr.miuby.survi.listener.*;
 import fr.miuby.survi.quest.GlobalQuestCommand;
 import fr.miuby.survi.quest.QuestCommand;
@@ -58,6 +59,7 @@ public class Survi extends JavaPlugin {
             commands.registrar().register(SqlCommand.createCommand().build());
             commands.registrar().register(VillagerCommand.createCommand().build());
             commands.registrar().register(CustomItemCommand.createCommand().build());
+            commands.registrar().register(GrowthItemCommand.createCommand().build());
             commands.registrar().register(RoleCommand.createRoleCommand().build());
             commands.registrar().register(RoleCommand.createSubRoleCommand().build());
             commands.registrar().register(QuestCommand.createCommand().build());
@@ -81,10 +83,6 @@ public class Survi extends JavaPlugin {
             tm.stop();
         }
         GameManager.getInstance().getVillageZoneManager().stop();
-
-        if (GameManager.getInstance().getQuestGlowService() != null) {
-            GameManager.getInstance().getQuestGlowService().shutdown();
-        }
     }
 
     private void updateResources() {
