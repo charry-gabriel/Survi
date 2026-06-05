@@ -193,6 +193,9 @@ public class PlayerListener implements Listener {
         AlphaPlayer alphaPlayer = AlphaPlayer.get(player.getUniqueId());
         alphaPlayer.getAlphaLife().actualizeDeath();
 
+        // Forcer le respawn dans Village — sans ça Paper utilise son monde par défaut ("world").
+        event.setRespawnLocation(WorldRegistry.get(EWorld.VILLAGE).getWorld().getSpawnLocation());
+
         for (RoleAttribute roleAttribute : alphaPlayer.getRole().attributes()) {
             if (roleAttribute.getAttributeType() == Attribute.MAX_ABSORPTION) {
                 player.removePotionEffect(PotionEffectType.ABSORPTION);

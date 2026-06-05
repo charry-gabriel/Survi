@@ -158,15 +158,14 @@ public class AlphaPlayer extends MLPlayer implements Serializable {
     }
 
     private void checkOrTeleportToValidWorld() {
-        boolean validWorld = false;
-        for (String name : WorldInitializer.getWorlds().values())
-            if (getPlayer().getWorld().getName().equals(name))
-                validWorld = true;
+        boolean validWorld = WorldInitializer.getWorlds().values().stream()
+                .anyMatch(name -> getPlayer().getWorld().getName().equals(name));
 
         if (!validWorld) {
-            World village = WorldRegistry.get(EWorld.VILLAGE).getWorld();
-            Location safeSpawn = village.getSpawnLocation();
-            getPlayer().teleport(safeSpawn);
+            Location safeSpawn = WorldRegistry.get(EWorld.VILLAGE).getWorld().getSpawnLocation();
+            MiubyLib.runLater(() -> {
+                if (getPlayer() != null && getPlayer().isOnline()) getPlayer().teleport(safeSpawn);
+            }, 1L);
         }
     }
 
