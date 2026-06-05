@@ -2,18 +2,27 @@ package fr.miuby.survi.item.growth_item;
 
 import fr.miuby.survi.GameManager;
 import fr.miuby.survi.item.growth_item.config.GrowthConfig;
+import fr.miuby.survi.item.growth_item.effect.AddEnchantmentItemEffect;
 import fr.miuby.survi.item.growth_item.effect.ItemEffect;
 import fr.miuby.survi.player.AlphaPlayer;
+import fr.miuby.survi.system.exception.AlphaPlayerNotFoundException;
+import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 public final class GrowthItems {
@@ -128,7 +137,7 @@ public final class GrowthItems {
      *
      * <p>La liste des types tués est stockée en CSV dans
      * {@link #KILLED_MOB_TYPES_KEY} sur l'item.
-     * Seuls les mobs de niveau ≥ 30 comptent (vérifié côté listener).
+     * Seuls les mobs de niveau ≥ 30 comptent (vérifié côté listener).</p>
      *
      * @param player         le joueur
      * @param entityTypeName nom du type Bukkit (ex. {@code ZOMBIE}, {@code CREEPER})
@@ -254,6 +263,167 @@ public final class GrowthItems {
             effect.apply(item, alpha);
 
         return true;
+    }
+
+    // ─── Reload à chaud — mise à jour des items en main/équipés ──────────────
+
+    /**
+     * Réapplique les effets persistants (name, set_attribute, add_enchantment) de tous les paliers
+     * atteints sur {@code item} en se basant sur la nouvelle config du registre.
+     *
+     * <p>Séquence :</p>
+     * <ol>
+     *   <li>Défait la contribution growth sur les enchantements (via tracking PDC ou inférence legacy).</li>
+     *   <li>Réapplique les effets non-transitoires de chaque palier de 0 à {@code currentTier - 1}.</li>
+     *   <li>Si la nouvelle config expose des paliers que les {@code uses} actuels suffisent à déclencher
+     *       (ex. nouveau palier ajouté avec un seuil déjà franchi), les avance silencieusement.</li>
+     * </ol>
+     *
+     * <p>Les effets transitoires (message, haste, potion) sont ignorés — ils ne sont pas rejoués
+     * lors d'un reload.</p>
+     *
+     * <p>L'appelant doit remettre l'item dans l'inventaire si le getter utilisé retourne une copie
+     * (ex. {@code getHelmet()}).</p>
+     */
+    public static void reapplyAll(ItemStack item, AlphaPlayer alpha) {
+        if (item == null || item.getType().isAir()) return;
+        ItemMeta meta = item.getItemMeta();
+        if (meta == null) return;
+        PersistentDataContainer pdc = meta.getPersistentDataContainer();
+        if (!pdc.has(ID_KEY, PersistentDataType.STRING)) return;
+
+        String growthId = pdc.get(ID_KEY, PersistentDataType.STRING);
+        GrowthConfig config = GrowthItemRegistry.get(growthId);
+        if (config == null) return;
+
+        int currentTier = pdc.getOrDefault(TIER_KEY, PersistentDataType.INTEGER, 0);
+        int uses = pdc.getOrDefault(USES_KEY, PersistentDataType.INTEGER, 0);
+
+        // Étape 1 : défaire la contribution growth sur les enchantements
+        resetGrowthEnchantments(item, currentTier, config);
+
+        // Étape 2 : réappliquer les effets persistants de tous les paliers déjà atteints
+        int newTier = Math.min(currentTier, config.tiers().size());
+        for (int i = 0; i < newTier; i++) {
+            for (ItemEffect effect : config.tiers().get(i).effects()) {
+                if (!effect.isTransient()) effect.apply(item, alpha);
+            }
+        }
+
+        // Étape 3 : avancer silencieusement les paliers que les uses actuels débloquent déjà
+        while (newTier < config.tiers().size() && uses >= config.tiers().get(newTier).requiredUses()) {
+            for (ItemEffect effect : config.tiers().get(newTier).effects()) {
+                if (!effect.isTransient()) effect.apply(item, alpha);
+            }
+            newTier++;
+        }
+
+        // Étape 4 : mettre à jour le tier en PDC si nécessaire
+        if (newTier != currentTier) {
+            meta = item.getItemMeta();
+            meta.getPersistentDataContainer().set(TIER_KEY, PersistentDataType.INTEGER, newTier);
+            item.setItemMeta(meta);
+        }
+    }
+
+    /**
+     * Appelle {@link #reapplyAll} sur tous les growth items tenus en main ou équipés
+     * (main, offhand, armure) par les joueurs actuellement en ligne.
+     *
+     * <p>À appeler après {@link GrowthItemLoader#reload()} pour que les items
+     * au palier maximum (sans use restant) reçoivent immédiatement la nouvelle config.</p>
+     */
+    public static void reapplyOnlinePlayers() {
+        for (Player player : Bukkit.getOnlinePlayers()) {
+            AlphaPlayer alpha;
+            try {
+                alpha = AlphaPlayer.get(player.getUniqueId());
+            } catch (AlphaPlayerNotFoundException ignored) {
+                continue;
+            }
+            PlayerInventory inv = player.getInventory();
+
+            ItemStack mainHand = inv.getItemInMainHand();
+            if (getGrowthId(mainHand) != null) {
+                reapplyAll(mainHand, alpha);
+                inv.setItemInMainHand(mainHand);
+            }
+
+            ItemStack offHand = inv.getItemInOffHand();
+            if (getGrowthId(offHand) != null) {
+                reapplyAll(offHand, alpha);
+                inv.setItemInOffHand(offHand);
+            }
+
+            ItemStack[] armor = inv.getArmorContents();
+            boolean anyUpdated = false;
+            for (ItemStack piece : armor) {
+                if (piece != null && !piece.getType().isAir() && getGrowthId(piece) != null) {
+                    reapplyAll(piece, alpha);
+                    anyUpdated = true;
+                }
+            }
+            if (anyUpdated) inv.setArmorContents(armor);
+        }
+    }
+
+    // ─── Reset enchantements growth ───────────────────────────────────────────
+
+    /**
+     * Défait la contribution growth sur les enchantements d'un item avant une réapplication complète.
+     *
+     * <p>Deux stratégies :</p>
+     * <ul>
+     *   <li><b>Tracking PDC</b> (items créés avec ce système) : les clés {@code growth_ench_*}
+     *       contiennent le montant exact ajouté par le growth — on le soustrait et on retire les clés.</li>
+     *   <li><b>Inférence legacy</b> (items sans tracking) : on somme les {@code amount} de tous les
+     *       {@link AddEnchantmentItemEffect} des paliers atteints depuis la config courante et on
+     *       soustrait ce total. Approximation acceptable pour un item existant avant ce système.</li>
+     * </ul>
+     */
+    @SuppressWarnings("deprecation")
+    private static void resetGrowthEnchantments(ItemStack item, int currentTier, GrowthConfig config) {
+        ItemMeta meta = item.getItemMeta();
+        if (meta == null) return;
+        PersistentDataContainer pdc = meta.getPersistentDataContainer();
+        String namespace = GameManager.getInstance().getPlugin().getName().toLowerCase();
+
+        List<NamespacedKey> trackKeys = new ArrayList<>();
+        for (NamespacedKey k : pdc.getKeys()) {
+            if (k.getNamespace().equals(namespace) && k.getKey().startsWith("growth_ench_"))
+                trackKeys.add(k);
+        }
+
+        if (!trackKeys.isEmpty()) {
+            // Tracking précis : soustraire les montants enregistrés
+            for (NamespacedKey key : trackKeys) {
+                Integer amount = pdc.get(key, PersistentDataType.INTEGER);
+                pdc.remove(key);
+                if (amount == null || amount == 0) continue;
+                Enchantment ench = Enchantment.getByKey(NamespacedKey.minecraft(key.getKey().substring("growth_ench_".length())));
+                if (ench == null || !meta.hasEnchant(ench)) continue;
+                int newLevel = Math.max(0, meta.getEnchantLevel(ench) - amount);
+                if (newLevel == 0) meta.removeEnchant(ench);
+                else meta.addEnchant(ench, newLevel, true);
+            }
+        } else {
+            // Legacy : inférer depuis la config courante
+            Map<Enchantment, Integer> inferred = new HashMap<>();
+            for (int i = 0; i < Math.min(currentTier, config.tiers().size()); i++) {
+                for (ItemEffect effect : config.tiers().get(i).effects()) {
+                    if (effect instanceof AddEnchantmentItemEffect aeie)
+                        inferred.merge(aeie.enchantment(), aeie.amount(), Integer::sum);
+                }
+            }
+            for (Map.Entry<Enchantment, Integer> entry : inferred.entrySet()) {
+                if (!meta.hasEnchant(entry.getKey())) continue;
+                int newLevel = Math.max(0, meta.getEnchantLevel(entry.getKey()) - entry.getValue());
+                if (newLevel == 0) meta.removeEnchant(entry.getKey());
+                else meta.addEnchant(entry.getKey(), newLevel, true);
+            }
+        }
+
+        item.setItemMeta(meta);
     }
 
     /** Désérialise un CSV en {@link Set}, en ignorant les chaînes vides. */

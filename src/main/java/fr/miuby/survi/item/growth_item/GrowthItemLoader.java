@@ -57,16 +57,19 @@ public final class GrowthItemLoader {
      *   <li>Invalide le cache {@link MLResourceManager} (couvre aussi villagers et traders,
      *       qui seront rechargés depuis le disque au prochain accès).</li>
      *   <li>Relit tous les fichiers et repeuple le registre.</li>
+     *   <li>Appelle {@link GrowthItems#reapplyOnlinePlayers()} pour mettre à jour immédiatement
+     *       les items tenus en main ou équipés par les joueurs connectés — notamment ceux au
+     *       palier maximum qui n'accumulent plus de uses.</li>
      * </ol>
      *
-     * <p>Les items growth déjà en possession des joueurs ne sont pas affectés
-     * (leurs PDC — tier, uses — restent intacts). Seules les définitions des effets
-     * et des seuils sont mises à jour pour les prochains usages.</p>
+     * <p>Les PDC (tier, uses) des items restent intacts ; seuls les effets persistants
+     * (attributs, enchantements, nom) sont réappliqués depuis la nouvelle config.</p>
      */
     public static void reload() {
         GrowthItemRegistry.clear();
         MLResourceManager.clearCache();
         loadAll();
+        GrowthItems.reapplyOnlinePlayers();
     }
 
     // ─── Conversion ───────────────────────────────────────────────────────────

@@ -26,19 +26,7 @@ import java.util.Collection;
  *     new SetAttributeItemEffect(Attribute.MINING_EFFICIENCY, 22.0, ADD_NUMBER, EquipmentSlotGroup.HEAD)
  * </pre>
  */
-public class SetAttributeItemEffect implements ItemEffect {
-
-    private final Attribute attribute;
-    private final double value;
-    private final AttributeModifier.Operation operation;
-    private final EquipmentSlotGroup slotGroup;
-
-    public SetAttributeItemEffect(Attribute attribute, double value, AttributeModifier.Operation operation, EquipmentSlotGroup slotGroup) {
-        this.attribute = attribute;
-        this.value = value;
-        this.operation = operation;
-        this.slotGroup = slotGroup;
-    }
+public record SetAttributeItemEffect(Attribute attribute, double value, AttributeModifier.Operation operation, EquipmentSlotGroup slotGroup) implements ItemEffect {
 
     @Override
     public void apply(ItemStack item, AlphaPlayer player) {

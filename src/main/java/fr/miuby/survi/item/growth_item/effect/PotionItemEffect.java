@@ -18,17 +18,7 @@ import org.bukkit.potion.PotionEffectType;
  * <p>{@code amplifier} : 0 = niveau I, 1 = niveau II, etc.
  * Si absent dans le YAML, SnakeYAML le positionne à 0 (niveau I).
  */
-public class PotionItemEffect implements ItemEffect {
-
-    private final PotionEffectType potionEffectType;
-    private final int seconds;
-    private final int amplifier;
-
-    public PotionItemEffect(PotionEffectType potionEffectType, int seconds, int amplifier) {
-        this.potionEffectType = potionEffectType;
-        this.seconds = seconds;
-        this.amplifier = amplifier;
-    }
+public record PotionItemEffect(PotionEffectType potionEffectType, int seconds, int amplifier) implements ItemEffect {
 
     @Override
     public void apply(ItemStack item, AlphaPlayer player) {
@@ -39,4 +29,7 @@ public class PotionItemEffect implements ItemEffect {
                 true,   // particles – visible
                 true)); // icon      – icône dans l'inventaire
     }
+
+    @Override
+    public boolean isTransient() { return true; }
 }
