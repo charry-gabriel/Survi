@@ -4,4 +4,3 @@ main: fr.miuby.survi.Survi
 api-version: '26.1'
 authors: [Miuby]
 description: Petite survi TeamAlpha
-depend: [ProtocolLib]
