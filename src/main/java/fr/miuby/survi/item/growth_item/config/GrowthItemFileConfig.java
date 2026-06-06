@@ -11,6 +11,19 @@ public class GrowthItemFileConfig {
 
     public String id;
     public String eventType;
+
+    /**
+     * Effets appliqués dès la création de l'item <em>et</em> réappliqués à chaque reload
+     * (avant les effets de palier).
+     *
+     * <p>Permet de modifier les stats de base d'un growth item via YAML sans recompiler.
+     * Typiquement des {@code set_attribute} (ex. {@code mining_efficiency: 3.0} sur le casque)
+     * ou des {@code add_enchantment} initiaux.</p>
+     *
+     * <p>Optionnel — peut être absent du YAML (SnakeYAML laisse la liste vide).</p>
+     */
+    public List<EffectConfig> baseEffects = new ArrayList<>();
+
     public List<TierConfig> tiers = new ArrayList<>();
     public List<PeriodicConfig> periodicEffects = new ArrayList<>();
 
@@ -24,38 +37,14 @@ public class GrowthItemFileConfig {
         public List<EffectConfig> effects = new ArrayList<>();
     }
 
-    /**
-     * Un effet YAML. Le champ {@code type} détermine quels autres champs sont lus :
-     *
-     * <ul>
-     *   <li>{@code name}            — {@code value}</li>
-     *   <li>{@code message}         — {@code value}</li>
-     *   <li>{@code haste}           — {@code seconds}</li>
-     *   <li>{@code potion}          — {@code effect} (clé Bukkit, ex. {@code speed}),
-     *                                  {@code seconds}, {@code amplifier} (défaut 0 = niveau I)</li>
-     *   <li>{@code add_enchantment} — {@code enchantment}, {@code amount}</li>
-     *   <li>{@code set_attribute}   — {@code attribute}, {@code attributeValue},
-     *                                  {@code operation}, {@code slot}</li>
-     * </ul>
-     */
     public static class EffectConfig {
         public String type;
-
-        // name / message
         public String value;
-
-        // haste / potion
         public int seconds;
-
-        // potion
-        public String effect;    // PotionEffectType en minuscule (ex. speed, strength, night_vision)
-        public int amplifier;    // 0 = niveau I, 1 = niveau II — défaut SnakeYAML : 0
-
-        // add_enchantment
+        public String effect;
+        public int amplifier;
         public String enchantment;
         public int amount;
-
-        // set_attribute
         public String attribute;
         public double attributeValue;
         public String operation;

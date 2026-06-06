@@ -2,6 +2,7 @@ package fr.miuby.survi.listener;
 
 import fr.miuby.survi.GameManager;
 import fr.miuby.survi.item.growth_item.GrowthItems;
+import fr.miuby.survi.system.exception.AlphaPlayerNotFoundException;
 import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
 import org.bukkit.entity.LivingEntity;
@@ -11,8 +12,11 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
+import org.bukkit.event.player.PlayerItemHeldEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.PlayerInventory;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -60,6 +64,62 @@ public class GrowthItemListener implements Listener {
             org.bukkit.Material.PITCHER_CROP,
             org.bukkit.Material.TORCHFLOWER_CROP
     );
+
+    // ═════════════════════════════════════════════════════════════════════════
+    //  Détection reload — mise à jour paresseuse des items stale
+    // ═════════════════════════════════════════════════════════════════════════
+
+    /**
+     * Quand le joueur change de slot actif, vérifie si le nouvel item en main est un
+     * growth item dont la config a changé depuis la dernière application.
+     *
+     * <p>Couvre le cas nominal : item au palier max sans use (ne peut plus progresser
+     * naturellement) et items récupérés d'un coffre après un reload.</p>
+     */
+    @EventHandler(ignoreCancelled = true)
+    public void onItemHeld(PlayerItemHeldEvent event) {
+        Player player = event.getPlayer();
+        ItemStack newItem = player.getInventory().getItem(event.getNewSlot());
+        if (GrowthItems.getGrowthId(newItem) == null) return;
+        try {
+            if (GrowthItems.checkAndReapplyIfStale(newItem, player))
+                player.getInventory().setItem(event.getNewSlot(), newItem);
+        } catch (AlphaPlayerNotFoundException ignored) {}
+    }
+
+    /**
+     * À la connexion, vérifie tous les emplacements tenus ou équipés (main, offhand, armure).
+     * Couvre le cas d'un joueur qui se reconnecte après un reload effectué pendant sa déconnexion.
+     */
+    @EventHandler(priority = EventPriority.HIGH)
+    public void onPlayerJoin(PlayerJoinEvent event) {
+        Player player = event.getPlayer();
+        PlayerInventory inv = player.getInventory();
+        try {
+            // Main (slot actif du hotbar)
+            ItemStack mainHand = inv.getItemInMainHand();
+            if (GrowthItems.getGrowthId(mainHand) != null
+                    && GrowthItems.checkAndReapplyIfStale(mainHand, player))
+                inv.setItemInMainHand(mainHand);
+
+            // Offhand
+            ItemStack offHand = inv.getItemInOffHand();
+            if (GrowthItems.getGrowthId(offHand) != null
+                    && GrowthItems.checkAndReapplyIfStale(offHand, player))
+                inv.setItemInOffHand(offHand);
+
+            // Armure (getArmorContents retourne un tableau de copies)
+            ItemStack[] armor = inv.getArmorContents();
+            boolean anyUpdated = false;
+            for (ItemStack piece : armor) {
+                if (GrowthItems.getGrowthId(piece) != null
+                        && GrowthItems.checkAndReapplyIfStale(piece, player))
+                    anyUpdated = true;
+            }
+            if (anyUpdated) inv.setArmorContents(armor);
+
+        } catch (AlphaPlayerNotFoundException ignored) {}
+    }
 
     // ═════════════════════════════════════════════════════════════════════════
     //  Items en main — GROWTH_PICKAXE, GROWTH_SWORD, GROWTH_BATON_FERMIER
@@ -128,22 +188,13 @@ public class GrowthItemListener implements Listener {
     //  GROWTH_BOUSSOLE_AVENTURIER — croît à chaque nouveau biome découvert
     // ═════════════════════════════════════════════════════════════════════════
 
-    /**
-     * Déclenche l'incrément de la boussole quand le joueur entre dans un biome
-     * qu'il n'a jamais visité avec cet item.
-     *
-     * <p>Optimisation : la vérification du biome (comparaison d'enum) est faite
-     * en premier. Le coût réel (recherche de l'item dans les mains + lecture PDC)
-     * ne s'applique que lors d'un vrai changement de biome, ce qui est rare même
-     * pour un joueur actif.
-     */
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onPlayerMove(PlayerMoveEvent event) {
         if (!event.hasChangedBlock()) return;
 
         Biome fromBiome = event.getFrom().getBlock().getBiome();
         Biome toBiome   = event.getTo().getBlock().getBiome();
-        if (fromBiome == toBiome) return; // même biome, rien à faire
+        if (fromBiome == toBiome) return;
 
         String biomeKey = toBiome.getKey().toString();
         GrowthItems.IncrementUsesOnNewBiome(event.getPlayer(), biomeKey);
@@ -153,15 +204,6 @@ public class GrowthItemListener implements Listener {
     //  GROWTH_EPEE_SHINY — croît à chaque nouveau type de mob niv. 30+ tué
     // ═════════════════════════════════════════════════════════════════════════
 
-    /**
-     * Incrémente l'épée shiny quand le joueur tue un mob de niveau ≥ 30
-     * d'un type jamais tué avec cet item.
-     *
-     * <p>Le niveau est lu via {@link fr.miuby.survi.mob.MobLevelManager#getStoredLevel}
-     * (clé PDC {@code survi:mob_level}).
-     * La validation "épée en main principale" est déléguée à
-     * {@link GrowthItems#IncrementUsesOnNewMobType} pour garder le listener fin.
-     */
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onMobKill(EntityDeathEvent event) {
         if (!(event.getEntity().getKiller() instanceof Player player)) return;

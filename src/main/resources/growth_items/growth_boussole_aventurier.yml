@@ -2,31 +2,28 @@
 id: GROWTH_BOUSSOLE_AVENTURIER
 eventType: NewBiomeEvent
 
-# Grandit à chaque nouveau biome visité (toutes dimensions — Overworld, Nether, End).
-# L'incrément est déclenché par GrowthItemListener.onPlayerMove, qui compare le biome
-# de l'ancienne et de la nouvelle position (avec hasChangedBlock() pour limiter les appels).
-# La liste des biomes déjà découverts est stockée en CSV dans growth_visited_biomes (PDC sur l'item).
-#
-# set_attribute remplace la valeur initiale +0.01 d'ECustomItem à chaque palier.
+# Stats de base — le +0.01 de movement_speed initialement hardcodé dans ECustomItem.
+baseEffects:
+  - { type: set_attribute, attribute: movement_speed, attributeValue: 0.01, operation: ADD_NUMBER, slot: HAND }
 
 tiers:
   - requiredUses: 5
     effects:
       - { type: name,          value: "Boussole de l'Aventurier II" }
       - { type: set_attribute, attribute: movement_speed, attributeValue: 0.03, operation: ADD_NUMBER, slot: HAND }
-      - { type: message,       value: "5 biomes découverts ! La boussole s'éveille." }
+      - { type: message,       value: "Tu prends de la vitesse — la route t'appelle !" }
+
+  - requiredUses: 12
+    effects:
+      - { type: name,          value: "Boussole de l'Aventurier III" }
+      - { type: set_attribute, attribute: movement_speed, attributeValue: 0.06, operation: ADD_NUMBER, slot: HAND }
+      - { type: message,       value: "Tu es devenu un vrai globe-trotteur." }
 
   - requiredUses: 20
     effects:
-      - { type: name,          value: "Boussole de l'Aventurier III" }
-      - { type: set_attribute, attribute: movement_speed, attributeValue: 0.05, operation: ADD_NUMBER, slot: HAND }
-      - { type: message,       value: "20 biomes ! Tu commences à maîtriser le monde." }
-
-  - requiredUses: 45
-    effects:
       - { type: name,          value: "Boussole du Grand Aventurier" }
       - { type: set_attribute, attribute: movement_speed, attributeValue: 0.08, operation: ADD_NUMBER, slot: HAND }
-      - { type: message,       value: "45 biomes ! Tu as tout vu. Légende vivante." }
+      - { type: message,       value: "Tu as tout vu. Légende vivante." }
 
 periodicEffects:
   - everyUses: 8

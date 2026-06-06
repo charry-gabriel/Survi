@@ -8,6 +8,7 @@ import fr.miuby.survi.item.growth_item.config.GrowthItemFileConfig.EffectConfig;
 import fr.miuby.survi.item.growth_item.effect.*;
 import fr.miuby.survi.system.log.ELogTag;
 import fr.miuby.lib.log.MLLogManager;
+import lombok.Getter;
 import net.kyori.adventure.text.Component;
 import org.bukkit.NamespacedKey;
 import org.bukkit.attribute.Attribute;
@@ -22,6 +23,14 @@ import java.util.logging.Level;
 public final class GrowthItemLoader {
 
     private GrowthItemLoader() {}
+
+    /**
+     * Compteur monotone incrémenté à chaque {@link #reload()}.
+     * Comparé à la clé PDC {@code growth_reload_version} portée par chaque item pour détecter
+     * les items qui n'ont pas encore intégré la nouvelle config (voir {@link GrowthItems#checkAndReapplyIfStale}).
+     */
+    @Getter
+    private static int configVersion = 0;
 
     // =========================================================================
     // Chargement
@@ -54,28 +63,26 @@ public final class GrowthItemLoader {
      * <p>Séquence :</p>
      * <ol>
      *   <li>Vide {@link GrowthItemRegistry}.</li>
-     *   <li>Invalide le cache {@link MLResourceManager} (couvre aussi villagers et traders,
-     *       qui seront rechargés depuis le disque au prochain accès).</li>
+     *   <li>Invalide le cache {@link MLResourceManager}.</li>
      *   <li>Relit tous les fichiers et repeuple le registre.</li>
-     *   <li>Appelle {@link GrowthItems#reapplyOnlinePlayers()} pour mettre à jour immédiatement
-     *       les items tenus en main ou équipés par les joueurs connectés — notamment ceux au
-     *       palier maximum qui n'accumulent plus de uses.</li>
+     *   <li>Incrémente {@link #configVersion} — les items growth qui ne l'ont pas encore
+     *       intégré seront mis à jour paresseusement dès qu'ils seront tenus en main
+     *       ou équipés (voir {@link GrowthItems#checkAndReapplyIfStale}).</li>
      * </ol>
-     *
-     * <p>Les PDC (tier, uses) des items restent intacts ; seuls les effets persistants
-     * (attributs, enchantements, nom) sont réappliqués depuis la nouvelle config.</p>
      */
     public static void reload() {
         GrowthItemRegistry.clear();
         MLResourceManager.clearCache();
         loadAll();
-        GrowthItems.reapplyOnlinePlayers();
+        configVersion++;
     }
 
     // ─── Conversion ───────────────────────────────────────────────────────────
 
     private static GrowthConfig convert(GrowthItemFileConfig cfg) {
         GrowthConfig.Builder builder = GrowthConfig.builder(cfg.eventType);
+        if (cfg.baseEffects != null && !cfg.baseEffects.isEmpty())
+            builder.baseEffects(convertEffects(cfg.baseEffects));
         for (var tier : cfg.tiers)
             builder.tier(tier.requiredUses, convertEffects(tier.effects));
         for (var periodic : cfg.periodicEffects)
@@ -128,11 +135,6 @@ public final class GrowthItemLoader {
         };
     }
 
-    /**
-     * Résout un {@link PotionEffectType} depuis son nom minuscule (ex. {@code speed},
-     * {@code strength}, {@code night_vision}).
-     * Utilise {@link PotionEffectType#getByName(String)} — deprecated mais stable en Paper 26.
-     */
     @SuppressWarnings("deprecation")
     private static PotionEffectType parsePotionEffect(String name) {
         PotionEffectType type = PotionEffectType.getByName(name.toUpperCase());

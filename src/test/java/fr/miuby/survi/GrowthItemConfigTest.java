@@ -21,17 +21,21 @@ class GrowthItemConfigTest {
             "BlockBreakEvent",
             "OreBreakEvent",
             "CropBreakEvent",
-            "NewBiomeEvent",        // GROWTH_BOUSSOLE_AVENTURIER
-            "NewMobTypeKillEvent"   // GROWTH_EPEE_SHINY
+            "NewBiomeEvent",
+            "NewMobTypeKillEvent"
     );
 
     private static final Set<String> VALID_EFFECT_TYPES = Set.of(
-            "name",
-            "message",
-            "haste",
-            "potion",           // PotionItemEffect — effect + seconds + amplifier
-            "add_enchantment",
-            "set_attribute"
+            "name", "message", "haste", "potion", "add_enchantment", "set_attribute"
+    );
+
+    /**
+     * Types autorisés dans {@code baseEffects} — les effets transitoires (message, haste, potion)
+     * sont ignorés lors du reload (cf. {@code ItemEffect.isTransient()}) et n'ont donc pas leur place
+     * dans baseEffects.
+     */
+    private static final Set<String> VALID_BASE_EFFECT_TYPES = Set.of(
+            "name", "add_enchantment", "set_attribute"
     );
 
     /** Doit rester en sync avec GrowthItemLoader.parseAttribute(). */
@@ -67,6 +71,7 @@ class GrowthItemConfigTest {
             try (InputStream in = new FileInputStream(file)) {
                 GrowthItemFileConfig config = yaml.load(in);
                 validateRoot(config, file.getName());
+                validateBaseEffects(config, file.getName());
                 validateTiers(config, file.getName());
                 validatePeriodicEffects(config, file.getName());
             } catch (Exception e) {
@@ -85,6 +90,39 @@ class GrowthItemConfigTest {
                 filename + " : eventType invalide '" + config.eventType + "'. Valides : " + VALID_EVENT_TYPES);
         assertNotNull(config.tiers, filename + " : 'tiers' manquant");
         assertFalse(config.tiers.isEmpty(), filename + " : 'tiers' vide");
+    }
+
+    // ─── Effets de base ───────────────────────────────────────────────────────
+
+    /**
+     * Valide {@code baseEffects} :
+     * <ul>
+     *   <li>Chaque effet est structurellement valide (mêmes règles que les tiers).</li>
+     *   <li>Seuls les types persistants sont autorisés — un effet transitoire (message, haste,
+     *       potion) dans {@code baseEffects} serait ignoré silencieusement lors du reload,
+     *       ce qui est probablement une erreur de config.</li>
+     * </ul>
+     */
+    private void validateBaseEffects(GrowthItemFileConfig config, String filename) {
+        if (config.baseEffects == null || config.baseEffects.isEmpty()) return;
+
+        for (int i = 0; i < config.baseEffects.size(); i++) {
+            GrowthItemFileConfig.EffectConfig effect = config.baseEffects.get(i);
+            String ctx = filename + " baseEffects[" + i + "]";
+
+            assertNotNull(effect, ctx + " : effet null");
+            assertStringNotEmpty(effect.type, ctx + " : 'type' manquant");
+            assertTrue(VALID_EFFECT_TYPES.contains(effect.type),
+                    ctx + " : type invalide '" + effect.type + "'");
+
+            assertTrue(VALID_BASE_EFFECT_TYPES.contains(effect.type),
+                    ctx + " : le type '" + effect.type + "' est transitoire — il sera ignoré lors "
+                            + "du reload (reapplyAll ne rejoue que name, add_enchantment et set_attribute). "
+                            + "Supprimer l'effet ou le déplacer dans un palier / periodicEffects.");
+
+            // Validation structurelle identique aux effets de tiers
+            validateEffect(effect, ctx);
+        }
     }
 
     // ─── Paliers ──────────────────────────────────────────────────────────────
@@ -142,8 +180,7 @@ class GrowthItemConfigTest {
             case "potion" -> {
                 assertStringNotEmpty(effect.effect,
                         ctx + " : 'effect' requis pour type=potion (ex. speed, strength, night_vision)");
-                assertTrue(effect.seconds >= 1,
-                        ctx + " : 'seconds' doit être >= 1");
+                assertTrue(effect.seconds >= 1, ctx + " : 'seconds' doit être >= 1");
                 assertTrue(effect.amplifier >= 0,
                         ctx + " : 'amplifier' doit être >= 0 (0 = niveau I, 1 = niveau II…)");
             }
@@ -169,7 +206,7 @@ class GrowthItemConfigTest {
         }
     }
 
-    // ─── Utilitaire ──────────────────────────────────────────────────────────
+    // ─── Utilitaire ───────────────────────────────────────────────────────────
 
     private void assertStringNotEmpty(String value, String message) {
         assertTrue(value != null && !value.trim().isEmpty(), message);

@@ -7,25 +7,40 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Regroupe la configuration d'un Growth Item : paliers uniques + effets périodiques.
+ * Regroupe la configuration complète d'un Growth Item :
+ * effets de base, paliers uniques et effets périodiques.
  *
- * <p>Les deux surcharges de {@link Builder#tier} et {@link Builder#periodic}
- * (varargs et {@link List}) permettent au code Java de rester lisible
- * et au {@link fr.miuby.survi.item.growth_item.GrowthItemLoader} d'éviter un {@code toArray()}.
+ * <p>{@link #baseEffects()} contient les {@link ItemEffect} appliqués dès la création
+ * de l'item et réappliqués en premier lors d'un {@code reapplyAll} (avant les paliers).
+ * Ils permettent de rendre les stats initiales configurables via YAML sans recompiler.</p>
  */
-public record GrowthConfig(String eventType, List<GrowthTier> tiers, List<PeriodicEffect> periodicEffects) {
+public record GrowthConfig(
+        String eventType,
+        List<ItemEffect> baseEffects,
+        List<GrowthTier> tiers,
+        List<PeriodicEffect> periodicEffects
+) {
 
     public static Builder builder(String eventType) {
         return new Builder(eventType);
     }
 
+    public record PeriodicEffect(int everyUses, List<ItemEffect> effects) {}
+
     public static class Builder {
         private final String eventType;
+        private List<ItemEffect> baseEffects = new ArrayList<>();
         private final List<GrowthTier> tiers = new ArrayList<>();
         private final List<PeriodicEffect> periodicEffects = new ArrayList<>();
 
         private Builder(String eventType) {
             this.eventType = eventType;
+        }
+
+        /** Effets de base (stats initiales, avant tout palier). */
+        public Builder baseEffects(List<ItemEffect> effects) {
+            this.baseEffects = List.copyOf(effects);
+            return this;
         }
 
         /** Utilisé par le code Java direct (lambdas, inline). */
@@ -53,7 +68,7 @@ public record GrowthConfig(String eventType, List<GrowthTier> tiers, List<Period
         }
 
         public GrowthConfig build() {
-            return new GrowthConfig(eventType, tiers, periodicEffects);
+            return new GrowthConfig(eventType, List.copyOf(baseEffects), List.copyOf(tiers), List.copyOf(periodicEffects));
         }
     }
 }

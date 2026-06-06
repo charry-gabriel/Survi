@@ -28,6 +28,7 @@ class SchemaGeneratorTest {
             updateTradersSchema();
             updateMonstersSchema();
             updateRolesSchema();
+            updateGrowthItemsSchema();
         });
     }
 
@@ -485,5 +486,59 @@ class SchemaGeneratorTest {
         }
         sb.append(content.substring(lastEnd));
         return sb.toString();
+    }
+
+    // ─── Growth Items Schema ───────────────────────────────────────────────────
+
+    /**
+     * Met à jour le schéma {@code growth-items-schema.json} en synchronisant l'enum
+     * {@code attribute} de {@code set_attribute} avec les cases de
+     * {@code GrowthItemLoader.parseAttribute()}.
+     *
+     * <p>Les autres enums du schéma (eventType, type, operation, slot) sont statiques
+     * et ne nécessitent pas de sync automatique.</p>
+     */
+    private void updateGrowthItemsSchema() throws IOException {
+        Path path = Paths.get("src/main/resources/schema/growth-items-schema.json");
+        if (!Files.exists(path)) return;
+
+        String content = Files.readString(path);
+
+        List<String> attributes = extractGrowthAttributes();
+        if (!attributes.isEmpty()) {
+            // "attribute" apparaît dans deux définitions (baseEffect et effect) — replaceEnum
+            // met à jour tous les blocs trouvés, ce qui est le comportement souhaité.
+            content = replaceEnum(content, "attribute", attributes);
+        }
+
+        Files.writeString(path, content);
+    }
+
+    /**
+     * Extrait les noms d'attributs supportés depuis le switch de
+     * {@code GrowthItemLoader.parseAttribute()} en parsant le source Java.
+     */
+    private List<String> extractGrowthAttributes() {
+        try {
+            Path loaderPath = Paths.get("src/main/java/fr/miuby/survi/item/growth_item/GrowthItemLoader.java");
+            if (!Files.exists(loaderPath)) return List.of();
+            String source = Files.readString(loaderPath);
+
+            int methodStart = source.indexOf("private static Attribute parseAttribute");
+            if (methodStart < 0) return List.of();
+
+            // Extraire uniquement le corps de la méthode (jusqu'au prochain "private static")
+            int methodEnd = source.indexOf("\n    private static", methodStart + 1);
+            String methodBody = methodEnd > 0 ? source.substring(methodStart, methodEnd) : source.substring(methodStart);
+
+            // Trouver toutes les chaînes "case "xyz"" → attribut "xyz"
+            java.util.regex.Pattern casePattern = java.util.regex.Pattern.compile("case \"([a-z_]+)\"");
+            java.util.regex.Matcher matcher = casePattern.matcher(methodBody);
+            List<String> attrs = new ArrayList<>();
+            while (matcher.find()) attrs.add(matcher.group(1));
+            return attrs.stream().distinct().sorted().toList();
+        } catch (IOException e) {
+            return List.of();
+        }
     }
 }
