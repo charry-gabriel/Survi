@@ -1,7 +1,5 @@
 plugins {
     java
-    // paperweight-userdev : donne accès à net.minecraft.*, com.mojang.authlib, PaperAdventure, etc.
-    // Vérifier la dernière version compatible avec Paper 26.1 sur https://github.com/PaperMC/paperweight
     id("io.papermc.paperweight.userdev") version "2.0.0-beta.21"
     id("com.gradleup.shadow") version "9.4.1"
 }
@@ -66,4 +64,24 @@ tasks {
         dependsOn(shadowJar)
         // Pas de reobfJar nécessaire : Paper 26.1 tourne nativement avec les Mojang mappings
     }
+}
+tasks.register<Exec>("deployTest") {
+    dependsOn(tasks.shadowJar)
+
+    commandLine(
+        "scp",
+        "-P", "2222",
+        tasks.shadowJar.get().archiveFile.get().asFile.absolutePath,
+        "admin@timeuhalefa.fr:/opt/minecraft/test/plugins/"
+    )
+}
+tasks.register<Exec>("deployMain") {
+    dependsOn(tasks.shadowJar)
+
+    commandLine(
+        "scp",
+        "-P", "2222",
+        tasks.shadowJar.get().archiveFile.get().asFile.absolutePath,
+        "admin@timeuhalefa.fr:/opt/minecraft/main/plugins/"
+    )
 }
