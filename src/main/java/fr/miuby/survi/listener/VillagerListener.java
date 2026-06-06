@@ -109,13 +109,10 @@ public class VillagerListener implements Listener {
             int reputation = trader.getJob() != null ? alphaPlayer.getJobReputation(trader.getJob()) : 0;
             List<MerchantRecipe> recipes = trader.getRecipesForPlayer(reputation);
             trader.getVillager().setRecipes(recipes);
-            player.closeInventory();
-            MiubyLib.runLater(() -> {
-                if (!player.isOnline()) return;
-                player.openInventory(MenuType.MERCHANT.builder().merchant(trader.getVillager()).title(trader.getDisplayName()).build(player));
-                player.sendMessage(Component.text("<", NamedTextColor.AQUA).append(trader.getDisplayName()).append(Component.text("> ", NamedTextColor.AQUA)).append(trader.getOpenMessage()));
-            }, 1L);
 
+            if (!player.isOnline()) return;
+            player.openInventory(MenuType.MERCHANT.builder().merchant(trader.getVillager()).title(trader.getDisplayName()).build(player));
+            player.sendMessage(Component.text("<", NamedTextColor.AQUA).append(trader.getDisplayName()).append(Component.text("> ", NamedTextColor.AQUA)).append(trader.getOpenMessage()));
         } else if (slot == TraderMenuService.SLOT_CANCEL) {
             player.closeInventory();
         }
