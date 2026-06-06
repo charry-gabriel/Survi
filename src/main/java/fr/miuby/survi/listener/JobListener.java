@@ -131,19 +131,19 @@ public class JobListener implements Listener {
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onBlockBreak(BlockBreakEvent event) {
-        Block block = event.getBlock();
+        Material type = event.getBlock().getType();
+
+        // isOre calculé une seule fois : sert au filtre rapide ET au branchement interne
+        boolean isOre = ORE_BLOCKS.contains(type);
+        if (!isOre && !LOG_BLOCKS.contains(type)) return;
+
         Player player = event.getPlayer();
         AlphaPlayer alpha = AlphaPlayer.get(player.getUniqueId());
         if (alpha == null) return;
 
-        Material type = block.getType();
-
-        // Sortie rapide si le bloc n'est pas concerné (avant d'ouvrir un timer)
-        if (!ORE_BLOCKS.contains(type) && !LOG_BLOCKS.contains(type)) return;
-
         // block.getDrops(tool) est coûteux : on mesure précisément cette section
         try (var t = PerfTimer.start("JobListener.dropWithMultiplier")) {
-            if (ORE_BLOCKS.contains(type)) {
+            if (isOre) {
                 dropWithMultiplier(event, getMultiplier(alpha.getJobLevel(EJob.MINEUR)));
             } else {
                 dropWithMultiplier(event, getMultiplier(alpha.getJobLevel(EJob.BUCHERON)));

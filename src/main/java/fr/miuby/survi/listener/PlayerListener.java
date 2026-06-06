@@ -1,8 +1,10 @@
 package fr.miuby.survi.listener;
 
 import com.destroystokyo.paper.event.player.PlayerArmorChangeEvent;
+import fr.miuby.lib.utils.Cooldown;
 import fr.miuby.lib.world.MLWorld;
 import fr.miuby.lib.world.WorldRegistry;
+import fr.miuby.lib.world.WorldType;
 import fr.miuby.survi.GameManager;
 import fr.miuby.survi.job.EJob;
 import fr.miuby.survi.player.AlphaPlayer;
@@ -11,6 +13,7 @@ import fr.miuby.survi.system.SurviConfig;
 import fr.miuby.survi.system.log.ELogTag;
 import fr.miuby.survi.system.perf.PerfTimer;
 import fr.miuby.survi.world.EWorld;
+import fr.miuby.survi.world.VillageZoneManager;
 import io.papermc.paper.advancement.AdvancementDisplay;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -37,9 +40,7 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 public class PlayerListener implements Listener {
@@ -47,7 +48,20 @@ public class PlayerListener implements Listener {
     /** Cooldown d'avertissement « limite du village » par joueur (évite le spam, en ms). */
     private static final long WARN_COOLDOWN_MS = 6_000L;
 
-    private final Map<UUID, Long> lastWarnTime = new HashMap<>();
+    // ─── Références stables pré-cachées ──────────────────────────────────────────
+
+    private final GameManager gm;
+    private final VillageZoneManager villageZoneManager;
+    private final SurviConfig surviConfig;
+
+    /** Cooldown d'avertissement par joueur — remplace l'ancien Map<UUID, Long>. */
+    private final Cooldown<UUID> warnCooldown = new Cooldown<>(WARN_COOLDOWN_MS);
+
+    public PlayerListener() {
+        this.gm                  = GameManager.getInstance();
+        this.villageZoneManager  = gm.getVillageZoneManager();
+        this.surviConfig         = SurviConfig.getInstance();
+    }
 
     // ─── Hot path : mouvement joueur ─────────────────────────────────────────────
 
@@ -56,29 +70,22 @@ public class PlayerListener implements Listener {
         if (event.getPlayer().isOp() || !event.hasChangedPosition()) return;
 
         try (var t = PerfTimer.start("PlayerListener.onPlayerMove")) {
-            Player player    = event.getPlayer();
-            String worldName = player.getWorld().getName();
+            Player player = event.getPlayer();
 
-            MLWorld villageWorld    = WorldRegistry.get(EWorld.VILLAGE);
-            MLWorld wildernessWorld = WorldRegistry.get(EWorld.WILDERNESS);
-            MLWorld netherWorld     = WorldRegistry.get(EWorld.NETHER);
+            // Un seul lookup par UUID — évite les 3 lookups par WorldType + comparaisons String
+            MLWorld mlWorld = WorldRegistry.get(player.getWorld().getUID());
+            if (mlWorld == null) return;
 
-            boolean outOfBounds = false;
-
-            // Village : limite gérée par la zone évolutive
-            if (worldName.equals(villageWorld.getName())
-                    && GameManager.getInstance().getVillageZoneManager().isLocationOutOfBounds(event.getTo())) {
-                outOfBounds = true;
-            }
-
-            // Wilderness : limite dynamique selon niveau Aventurier
-            if (!outOfBounds && wildernessWorld != null && worldName.equals(wildernessWorld.getWorld().getName())) {
+            WorldType worldType = mlWorld.getType();
+            boolean outOfBounds;
+            if (worldType == EWorld.VILLAGE) {
+                outOfBounds = villageZoneManager.isLocationOutOfBounds(event.getTo());
+            } else if (worldType == EWorld.WILDERNESS) {
                 outOfBounds = isOutOfAdventureLimit(player, event.getTo(), false);
-            }
-
-            // Nether : même limite divisée par 8
-            if (!outOfBounds && netherWorld != null && worldName.equals(netherWorld.getWorld().getName())) {
+            } else if (worldType == EWorld.NETHER) {
                 outOfBounds = isOutOfAdventureLimit(player, event.getTo(), true);
+            } else {
+                return;
             }
 
             if (outOfBounds) {
@@ -103,7 +110,7 @@ public class PlayerListener implements Listener {
         if (alphaPlayer == null) return false;
 
         int aventurierLevel = alphaPlayer.getJobLevel(EJob.AVENTURIER);
-        List<Integer> radii = SurviConfig.getInstance().getAdventureWildernessRadii();
+        List<Integer> radii = surviConfig.getAdventureWildernessRadii();
 
         int idx = Math.min(aventurierLevel, radii.size() - 1);
         int radius = radii.get(idx);
@@ -125,11 +132,9 @@ public class PlayerListener implements Listener {
     }
 
     private void warn(Player player) {
-        long now = System.currentTimeMillis();
-
-        if (now - lastWarnTime.getOrDefault(player.getUniqueId(), 0L) >= WARN_COOLDOWN_MS) {
-            lastWarnTime.put(player.getUniqueId(), now);
-
+        UUID uuid = player.getUniqueId();
+        if (!warnCooldown.isOnCooldown(uuid)) {
+            warnCooldown.set(uuid);
             player.sendMessage(Component.text("Tu ne peux pas aller plus loin !", NamedTextColor.RED));
         }
     }
@@ -159,7 +164,7 @@ public class PlayerListener implements Listener {
                 "[ArmorChange] " + event.getPlayer().getName() + " slot=" + event.getSlotType());
         boolean malus = false;
         for (ItemStack item : event.getPlayer().getInventory().getArmorContents()) {
-            if (item != null && GameManager.getInstance().getLockedItemsFactory().isLocked(item.getType().getKey())) {
+            if (item != null && gm.getLockedItemsFactory().isLocked(item.getType().getKey())) {
                 malus = true;
             }
         }
@@ -176,9 +181,8 @@ public class PlayerListener implements Listener {
                         + " z=" + player.getLocation().getBlockZ());
 
         final ItemStack[] armor = player.getInventory().getArmorContents();
-        GameManager.getInstance().getScheduler()
-                .scheduleSyncDelayedTask(GameManager.getInstance().getPlugin(),
-                        () -> player.getInventory().setArmorContents(armor));
+
+        gm.getScheduler().scheduleSyncDelayedTask(gm.getPlugin(), () -> player.getInventory().setArmorContents(armor));
 
         for (ItemStack is : armor) {
             event.getDrops().remove(is);
@@ -206,7 +210,7 @@ public class PlayerListener implements Listener {
         List<BlessingEffect> effectsToReapply = new ArrayList<>();
         for (PlayerQuestData questData : alphaPlayer.getActiveQuests()) {
             if (questData.isClaimed()) {
-                Quest quest = GameManager.getInstance().getQuestManager().getQuest(questData.getQuestId());
+                Quest quest = gm.getQuestManager().getQuest(questData.getQuestId());
                 if (quest != null) {
                     for (BlessingEffect effect : quest.getRewards().blessingEffects()) {
                         if (effect instanceof PotionsEffect) effectsToReapply.add(effect);
@@ -216,8 +220,8 @@ public class PlayerListener implements Listener {
         }
 
         if (!effectsToReapply.isEmpty()) {
-            GameManager.getInstance().getScheduler().runTaskLater(
-                    GameManager.getInstance().getPlugin(),
+            gm.getScheduler().runTaskLater(
+                    gm.getPlugin(),
                     () -> { if (player.isOnline()) effectsToReapply.forEach(e -> e.applyEffect(alphaPlayer)); },
                     5L);
         }
@@ -225,11 +229,11 @@ public class PlayerListener implements Listener {
 
     @EventHandler(ignoreCancelled = true)
     public void onPlayerRecipeDiscover(PlayerRecipeDiscoverEvent event) {
-        for (NamespacedKey nsKey : GameManager.getInstance().getCustomRecipeFactory().getOldRecipes()) {
+        for (NamespacedKey nsKey : gm.getCustomRecipeFactory().getOldRecipes()) {
             if (nsKey.toString().equals(event.getRecipe().toString()))
                 event.setCancelled(true);
         }
-        if (GameManager.getInstance().getLockedItemsFactory().isLocked(event.getRecipe()))
+        if (gm.getLockedItemsFactory().isLocked(event.getRecipe()))
             event.setCancelled(true);
     }
 }
