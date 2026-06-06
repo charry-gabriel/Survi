@@ -2,6 +2,7 @@ package fr.miuby.survi.player;
 
 import fr.miuby.lib.player.MLPlayerRegistry;
 import fr.miuby.survi.GameManager;
+import fr.miuby.survi.display.TutorialBookService;
 import fr.miuby.survi.player.service.PlayerAttributeService;
 import fr.miuby.survi.player.service.PlayerPersistenceService;
 import fr.miuby.survi.player.service.PlayerEffectRestoreService;
@@ -70,6 +71,12 @@ public class AlphaPlayerFactory {
         if (alphaPlayer == null) {
             GameManager.getInstance().getDatabase().players().create(bukkitPlayer);
             alphaPlayer = registerAlphaPlayer(bukkitPlayer.getUniqueId(), bukkitPlayer.getName(), GameManager.getInstance().getRoleLoader().getDefaultRole());
+
+            GameManager.getInstance().getPlugin().getServer().getScheduler().runTaskLater(
+                    GameManager.getInstance().getPlugin(),
+                    () -> TutorialBookService.giveTutorialBook(bukkitPlayer),
+                    1L
+            );
         }
 
         alphaPlayer.setPlayer(bukkitPlayer);

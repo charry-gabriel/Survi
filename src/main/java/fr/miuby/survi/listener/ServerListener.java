@@ -36,13 +36,6 @@ public class ServerListener implements Listener {
                 "[Join] " + event.getPlayer().getName() + " (" + event.getPlayer().getUniqueId() + ")");
 
         GameManager.getInstance().getAlphaPlayerFactory().onPlayerJoin(event.getPlayer());
-
-        GameManager.getInstance().getPlugin().getServer().getScheduler()
-                .runTaskLater(
-                        GameManager.getInstance().getPlugin(),
-                        () -> TutorialBookService.giveTutorialBookIfNew(event.getPlayer()),
-                        1L
-                );
     }
 
     @EventHandler
