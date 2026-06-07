@@ -19,8 +19,8 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import fr.miuby.survi.blessing.BlessingEffect;
 import fr.miuby.survi.blessing.PotionsEffect;
-import fr.miuby.survi.quest.PlayerQuestData;
-import fr.miuby.survi.quest.Quest;
+import fr.miuby.survi.quest.quest.PlayerQuestData;
+import fr.miuby.survi.quest.quest.Quest;
 import fr.miuby.lib.log.MLLogManager;
 
 import java.util.logging.Level;

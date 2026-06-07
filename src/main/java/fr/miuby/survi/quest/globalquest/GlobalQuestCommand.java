@@ -1,4 +1,4 @@
-package fr.miuby.survi.quest;
+package fr.miuby.survi.quest.globalquest;
 
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;

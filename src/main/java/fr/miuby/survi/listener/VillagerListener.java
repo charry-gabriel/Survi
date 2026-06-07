@@ -1,14 +1,13 @@
 package fr.miuby.survi.listener;
 
-import fr.miuby.lib.MiubyLib;
 import fr.miuby.lib.villager.MLVillager;
 import fr.miuby.lib.villager.VillagerLoadedEvent;
 import fr.miuby.lib.villager.VillagerRegistry;
 import fr.miuby.survi.GameManager;
 import fr.miuby.survi.player.AlphaPlayer;
-import fr.miuby.survi.quest.PlayerQuestData;
-import fr.miuby.survi.quest.QuestGlowService;
-import fr.miuby.survi.quest.QuestManager;
+import fr.miuby.survi.quest.quest.PlayerQuestData;
+import fr.miuby.survi.quest.quest.QuestGlowService;
+import fr.miuby.survi.quest.quest.QuestManager;
 import fr.miuby.lib.log.MLLogManager;
 import fr.miuby.survi.system.log.ELogTag;
 import fr.miuby.survi.villager.AVillager;

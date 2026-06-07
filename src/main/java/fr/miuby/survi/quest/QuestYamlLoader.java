@@ -6,6 +6,8 @@ import fr.miuby.survi.blessing.Blessing;
 import fr.miuby.survi.blessing.BlessingEffect;
 import fr.miuby.survi.blessing.BlessingLoader;
 import fr.miuby.survi.job.EJob;
+import fr.miuby.survi.quest.globalquest.GlobalQuest;
+import fr.miuby.survi.quest.quest.Quest;
 import fr.miuby.survi.system.log.ELogTag;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.YamlConfiguration;

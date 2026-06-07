@@ -3,7 +3,7 @@ package fr.miuby.survi.system.database.repository;
 import fr.miuby.lib.sqlite.MLRepository;
 import fr.miuby.lib.sqlite.MLSQLite;
 import fr.miuby.lib.log.MLLogManager;
-import fr.miuby.survi.quest.PlayerQuestData;
+import fr.miuby.survi.quest.quest.PlayerQuestData;
 import fr.miuby.survi.system.log.ELogTag;
 
 import java.sql.Connection;

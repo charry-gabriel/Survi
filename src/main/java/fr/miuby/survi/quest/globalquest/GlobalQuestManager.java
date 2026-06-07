@@ -1,4 +1,4 @@
-package fr.miuby.survi.quest;
+package fr.miuby.survi.quest.globalquest;
 
 import fr.miuby.lib.log.MLLogManager;
 import fr.miuby.survi.GameManager;
@@ -7,6 +7,9 @@ import fr.miuby.survi.blessing.ReputationEffect;
 import fr.miuby.survi.player.AlphaPlayer;
 import fr.miuby.survi.player.AlphaPlayerFactory;
 import fr.miuby.survi.player.service.OfflineNotificationService;
+import fr.miuby.survi.quest.AbstractQuestManager;
+import fr.miuby.survi.quest.EQuestType;
+import fr.miuby.survi.quest.QuestYamlLoader;
 import fr.miuby.survi.system.log.ELogTag;
 import lombok.Getter;
 import net.kyori.adventure.key.Key;

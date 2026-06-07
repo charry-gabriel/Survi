@@ -1,6 +1,8 @@
 package fr.miuby.survi.quest;
 
 import fr.miuby.survi.blessing.Blessing;
+import fr.miuby.survi.quest.globalquest.GlobalQuest;
+import fr.miuby.survi.quest.quest.Quest;
 import lombok.Getter;
 import lombok.experimental.SuperBuilder;
 

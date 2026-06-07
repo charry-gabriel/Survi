@@ -1,4 +1,4 @@
-package fr.miuby.survi.quest;
+package fr.miuby.survi.quest.globalquest;
 
 import fr.miuby.survi.GameManager;
 import net.kyori.adventure.bossbar.BossBar;

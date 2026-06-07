@@ -4,7 +4,7 @@ import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import fr.miuby.lib.command.MLStringArgument;
 import fr.miuby.survi.GameManager;
-import fr.miuby.survi.quest.Quest;
+import fr.miuby.survi.quest.quest.Quest;
 import fr.miuby.survi.system.command.CommandErrors;
 
 import java.util.Collection;

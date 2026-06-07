@@ -1,4 +1,4 @@
-package fr.miuby.survi.quest;
+package fr.miuby.survi.quest.quest;
 
 import fr.miuby.lib.log.MLLogManager;
 import fr.miuby.lib.villager.VillagerRegistry;

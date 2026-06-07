@@ -1,6 +1,7 @@
-package fr.miuby.survi.quest;
+package fr.miuby.survi.quest.quest;
 
 import fr.miuby.survi.job.EJob;
+import fr.miuby.survi.quest.BaseQuest;
 import lombok.Getter;
 import lombok.experimental.SuperBuilder;
 

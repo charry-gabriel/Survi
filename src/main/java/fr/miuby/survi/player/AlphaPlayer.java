@@ -19,14 +19,13 @@ import lombok.Setter;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
-import org.bukkit.World;
 import org.bukkit.attribute.Attribute;
 
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
-import fr.miuby.survi.quest.PlayerQuestData;
+import fr.miuby.survi.quest.quest.PlayerQuestData;
 import java.util.*;
 import java.util.logging.Level;
 

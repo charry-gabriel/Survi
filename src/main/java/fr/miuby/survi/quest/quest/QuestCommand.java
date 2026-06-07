@@ -1,4 +1,4 @@
-package fr.miuby.survi.quest;
+package fr.miuby.survi.quest.quest;
 
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
@@ -6,6 +6,7 @@ import com.mojang.brigadier.context.CommandContext;
 import fr.miuby.survi.blessing.BlessingEffect;
 import fr.miuby.survi.blessing.PotionsEffect;
 import fr.miuby.survi.player.AlphaPlayer;
+import fr.miuby.survi.quest.globalquest.GlobalQuest;
 import fr.miuby.survi.system.command.argument.AlphaPlayerArgument;
 import fr.miuby.survi.system.command.argument.QuestArgument;
 import fr.miuby.survi.system.command.argument.TraderArgument;

@@ -3,7 +3,8 @@ package fr.miuby.survi.system.database.repository;
 import fr.miuby.lib.log.MLLogManager;
 import fr.miuby.lib.sqlite.MLRepository;
 import fr.miuby.lib.sqlite.MLSQLite;
-import fr.miuby.survi.quest.QuestHistoryEntry;
+import fr.miuby.survi.quest.quest.QuestHistoryEntry;
+import fr.miuby.survi.quest.quest.Quest;
 import fr.miuby.survi.system.log.ELogTag;
 
 import java.sql.Connection;
@@ -35,7 +36,7 @@ public class QuestHistoryRepository extends MLRepository {
      * @param playerPseudo pseudo au moment de la complétion (dénormalisé pour l'affichage)
      * @param questId      identifiant de la quête
      * @param completedAt  date de complétion
-     * @param difficulty   difficulté ({@link fr.miuby.survi.quest.Quest#getDifficulty()} ou niveau du monde)
+     * @param difficulty   difficulté ({@link Quest#getDifficulty()} ou niveau du monde)
      * @param job          nom EJob ({@code null} si aucun métier lié)
      * @param questType    {@code "daily"} ou {@code "global"}
      * @param contribution contribution individuelle au progrès (0 pour daily)

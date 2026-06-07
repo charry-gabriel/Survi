@@ -1,5 +1,7 @@
 package fr.miuby.survi.quest;
 
+import fr.miuby.survi.quest.globalquest.GlobalQuestManager;
+import fr.miuby.survi.quest.quest.QuestManager;
 import lombok.Getter;
 
 import java.util.ArrayList;

@@ -1,4 +1,4 @@
-package fr.miuby.survi.quest;
+package fr.miuby.survi.quest.quest;
 
 import fr.miuby.survi.job.EJob;
 

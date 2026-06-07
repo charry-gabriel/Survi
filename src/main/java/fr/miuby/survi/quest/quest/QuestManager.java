@@ -1,4 +1,4 @@
-package fr.miuby.survi.quest;
+package fr.miuby.survi.quest.quest;
 
 import fr.miuby.lib.log.MLLogManager;
 import fr.miuby.lib.villager.MLVillager;
@@ -8,6 +8,9 @@ import fr.miuby.survi.blessing.BlessingEffect;
 import fr.miuby.survi.blessing.PotionsEffect;
 import fr.miuby.survi.job.EJob;
 import fr.miuby.survi.player.AlphaPlayer;
+import fr.miuby.survi.quest.AbstractQuestManager;
+import fr.miuby.survi.quest.EQuestType;
+import fr.miuby.survi.quest.QuestYamlLoader;
 import fr.miuby.survi.system.SurviConfig;
 import fr.miuby.survi.system.log.ELogTag;
 import fr.miuby.survi.villager.trader.Trader;
