@@ -139,7 +139,7 @@ public class TabDisplayManager {
 
         Component header = Component.empty()
                 .appendNewline()
-                .append(Component.text("◆  Survi  ◆", NamedTextColor.GOLD))
+                .append(Component.text("◆  Survie  ◆", NamedTextColor.GOLD))
                 .appendNewline()
                 .appendNewline();
 
