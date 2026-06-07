@@ -2,6 +2,7 @@ package fr.miuby.survi.listener.job;
 
 import fr.miuby.survi.job.EJob;
 import fr.miuby.survi.player.AlphaPlayer;
+import org.bukkit.Material;
 import org.bukkit.entity.FishHook;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
@@ -100,11 +101,9 @@ public class PecheurListener implements Listener {
         double multiplier = LOOT_MULTIPLIER[level];
         double totalAmount = stack.getAmount() * multiplier;
         int amount = (int) totalAmount;
-        if (RANDOM.nextDouble() < totalAmount - amount) amount++;
-        if (amount <= 0) {
-            event.setCancelled(true); // bas niveau → parfois rien du tout
-        } else {
-            stack.setAmount(Math.min(amount, stack.getMaxStackSize()));
-        }
+        if (RANDOM.nextDouble() < totalAmount - amount)
+            amount++;
+
+        stack.setAmount(Math.clamp(amount, 0, stack.getMaxStackSize()));
     }
 }
