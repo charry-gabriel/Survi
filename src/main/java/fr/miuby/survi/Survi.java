@@ -7,6 +7,7 @@ import fr.miuby.survi.mob.MobCommand;
 import fr.miuby.survi.system.database.SqlCommand;
 import fr.miuby.survi.item.CustomItemCommand;
 import fr.miuby.survi.item.growth_item.GrowthItemCommand;
+import fr.miuby.survi.job.task.PecheurEffectsTask;
 import fr.miuby.survi.listener.*;
 import fr.miuby.survi.quest.GlobalQuestCommand;
 import fr.miuby.survi.quest.QuestCommand;
@@ -42,15 +43,22 @@ public class Survi extends JavaPlugin {
         pluginManager.registerEvents(new CropGrowthListener(), this);
         pluginManager.registerEvents(new VillagerListener(), this);
         pluginManager.registerEvents(new GraveListener(), this);
-        pluginManager.registerEvents(new JobListener(), this);
+        pluginManager.registerEvents(new MineurListener(), this);
+        pluginManager.registerEvents(new BucheronListener(), this);
+        pluginManager.registerEvents(new FermierListener(), this);
+        pluginManager.registerEvents(new EnchanteurListener(), this);
         pluginManager.registerEvents(new JobLevelUpListener(), this);
         pluginManager.registerEvents(new WorldLevelUpListener(), this);
         pluginManager.registerEvents(new MobSpawnListener(), this);
         pluginManager.registerEvents(new GrowthItemListener(placedBlockTracker), this);
         pluginManager.registerEvents(new QuestListener(placedBlockTracker), this);
         pluginManager.registerEvents(new OfflineNotificationListener(), this);
+        pluginManager.registerEvents(new PecheurListener(), this);
+        pluginManager.registerEvents(new AventurierListener(), this);
 
         pluginManager.registerEvents(placedBlockTracker, this);
+
+        new PecheurEffectsTask().runTaskTimer(this, 0L, PecheurEffectsTask.PERIOD_TICKS);
 
         getConfig().options().copyDefaults(true);
         saveConfig();

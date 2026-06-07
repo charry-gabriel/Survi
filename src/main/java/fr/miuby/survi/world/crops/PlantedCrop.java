@@ -9,32 +9,41 @@ public class PlantedCrop {
     private final int x;
     private final int y;
     private final int z;
+    /** Niveau FERMIER du joueur au moment de la plantation. */
+    private final int farmLevel;
 
-    public PlantedCrop(Location location) {
+    public PlantedCrop(Location location, int farmLevel) {
         this.worldUid = location.getWorld().getUID().toString();
         this.x = location.getBlockX();
         this.y = location.getBlockY();
         this.z = location.getBlockZ();
+        this.farmLevel = farmLevel;
     }
 
-    public PlantedCrop(String worldUid, int x, int y, int z) {
+    /** Constructeur de chargement DB (avec niveau). */
+    public PlantedCrop(String worldUid, int x, int y, int z, int farmLevel) {
         this.worldUid = worldUid;
         this.x = x;
         this.y = y;
         this.z = z;
+        this.farmLevel = farmLevel;
     }
 
+    /** Constructeur de chargement DB legacy (sans niveau → défaut 3 = vanilla). */
+    public PlantedCrop(String worldUid, int x, int y, int z) {
+        this(worldUid, x, y, z, 3);
+    }
 
+    /** Clé unique basée sur la position (farmLevel exclu : la clé identifie le bloc). */
     public String getKey() {
         return String.format("%s;%d;%d;%d", worldUid, x, y, z);
     }
 
-
     public static PlantedCrop fromKey(String key) {
         String[] parts = key.split(";");
-        return new PlantedCrop(parts[0], 
-            Integer.parseInt(parts[1]), 
-            Integer.parseInt(parts[2]), 
-            Integer.parseInt(parts[3]));
+        return new PlantedCrop(parts[0],
+                Integer.parseInt(parts[1]),
+                Integer.parseInt(parts[2]),
+                Integer.parseInt(parts[3]));
     }
 }
