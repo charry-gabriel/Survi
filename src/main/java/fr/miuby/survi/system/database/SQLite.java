@@ -8,7 +8,7 @@ import java.sql.*;
 import java.util.logging.Level;
 
 public class SQLite extends Database {
-    private static final int CURRENT_DB_VERSION = 12;
+    private static final int CURRENT_DB_VERSION = 13;
 
     public SQLite() {
         super(GameManager.getInstance().getPlugin().getConfig().getString("SQLite.Filename", "minecraft"));
@@ -92,6 +92,7 @@ public class SQLite extends Database {
                 "`x` INT NOT NULL," +
                 "`y` INT NOT NULL," +
                 "`z` INT NOT NULL," +
+                "`farm_level` INTEGER NOT NULL DEFAULT 3," +
                 "PRIMARY KEY (`world_uid`, `x`, `y`, `z`)" +
                 ");";
     }
@@ -228,6 +229,11 @@ public class SQLite extends Database {
                 s.executeUpdate(createQuestHistoryTable());
                 s.executeUpdate("CREATE INDEX IF NOT EXISTS idx_qh_player ON quest_history (player_uuid)");
                 s.executeUpdate("CREATE INDEX IF NOT EXISTS idx_qh_type   ON quest_history (quest_type)");
+            }
+            if (currentVersion < 13) {
+                if (!hasColumn("planted_crops", "farm_level")) {
+                    s.executeUpdate("ALTER TABLE planted_crops ADD COLUMN farm_level INTEGER NOT NULL DEFAULT 3");
+                }
             }
         }
     }
