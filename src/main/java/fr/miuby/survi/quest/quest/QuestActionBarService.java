@@ -14,13 +14,14 @@ import java.util.UUID;
 /**
  * Affiche la progression des quêtes journalières dans l'ActionBar.
  *
- * <p>La barre reste visible en permanence tant que la quête est en cours, grâce à une
+ * <p>La barre reste visible en permanence tant que la quête progresse, grâce à une
  * tâche de rafraîchissement par joueur toutes les {@value #REFRESH_TICKS} ticks
  * (inférieur à la durée native Paper de ~60 ticks, ce qui empêche la barre de disparaître
  * entre deux events de progression).</p>
  *
- * <p>Chaque progression met à jour le contenu immédiatement ; le rafraîchissement ne fait
- * que renvoyer le dernier message connu pour maintenir la barre visible.</p>
+ * <p>Chaque progression met à jour le contenu immédiatement et réinitialise le chrono
+ * d'inactivité. Si aucune progression n'est reçue pendant {@value #IDLE_HIDE_MS} ms,
+ * la barre est masquée automatiquement (tâche de rafraîchissement annulée).</p>
  *
  * <p>La complétion affiche un message unique et arrête le rafraîchissement.</p>
  *
@@ -35,10 +36,19 @@ public class QuestActionBarService {
      */
     private static final long REFRESH_TICKS = 40L;
 
+    /**
+     * Durée d'inactivité (sans progression) au-delà de laquelle la barre est masquée automatiquement.
+     * La vérification se fait à chaque tick de rafraîchissement, donc la latence réelle avant masquage
+     * est au plus IDLE_HIDE_MS + (REFRESH_TICKS × 50 ms).
+     */
+    private static final long IDLE_HIDE_MS = 20_000L;
+
     /** Dernier message à afficher par joueur (mis à jour à chaque progression). */
     private final Map<UUID, Component> activeMessages = new HashMap<>();
     /** Tâche de rafraîchissement périodique par joueur. */
     private final Map<UUID, BukkitTask> refreshTasks  = new HashMap<>();
+    /** Horodatage (ms) de la dernière progression reçue, par joueur. Remis à zéro par stopRefresh. */
+    private final Map<UUID, Long>       lastProgressAt = new HashMap<>();
 
     // =========================================================================
     // API publique
@@ -46,8 +56,8 @@ public class QuestActionBarService {
 
     /**
      * Affiche la progression dans l'ActionBar et maintient la barre visible en continu.
-     * Chaque appel met à jour le contenu immédiatement. Si aucune tâche de rafraîchissement
-     * n'est encore active pour ce joueur, elle est démarrée automatiquement.
+     * Chaque appel met à jour le contenu immédiatement, réinitialise le chrono d'inactivité
+     * et démarre la tâche de rafraîchissement si elle n'est pas encore active.
      *
      * @param player joueur concerné
      * @param quest  définition de la quête
@@ -59,6 +69,7 @@ public class QuestActionBarService {
 
         Component message = buildProgressMessage(quest, data);
         activeMessages.put(uuid, message);
+        lastProgressAt.put(uuid, System.currentTimeMillis());
         player.getPlayer().sendActionBar(message);
 
         if (!refreshTasks.containsKey(uuid)) {
@@ -91,6 +102,7 @@ public class QuestActionBarService {
      */
     public void stopRefresh(UUID uuid) {
         activeMessages.remove(uuid);
+        lastProgressAt.remove(uuid);
         BukkitTask task = refreshTasks.remove(uuid);
         if (task != null) task.cancel();
     }
@@ -102,6 +114,13 @@ public class QuestActionBarService {
     private void refreshActionBar(UUID uuid) {
         Component message = activeMessages.get(uuid);
         if (message == null) { stopRefresh(uuid); return; }
+
+        // Masquage automatique après 30 s sans progression
+        Long lastTime = lastProgressAt.get(uuid);
+        if (lastTime == null || System.currentTimeMillis() - lastTime > IDLE_HIDE_MS) {
+            stopRefresh(uuid);
+            return;
+        }
 
         AlphaPlayer player = GameManager.getInstance().getAlphaPlayerFactory().get(uuid);
         if (player == null || player.getPlayer() == null) { stopRefresh(uuid); return; }
