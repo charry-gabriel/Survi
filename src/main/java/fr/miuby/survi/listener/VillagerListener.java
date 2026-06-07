@@ -9,6 +9,8 @@ import fr.miuby.survi.quest.quest.PlayerQuestData;
 import fr.miuby.survi.quest.quest.QuestGlowService;
 import fr.miuby.survi.quest.quest.QuestManager;
 import fr.miuby.lib.log.MLLogManager;
+import fr.miuby.survi.sound.ESound;
+import fr.miuby.survi.sound.SoundService;
 import fr.miuby.survi.system.log.ELogTag;
 import fr.miuby.survi.villager.AVillager;
 import fr.miuby.survi.villager.trader.Trader;
@@ -18,8 +20,6 @@ import fr.miuby.survi.villager.villagerlevel.VillagerLevel;
 import fr.miuby.survi.villager.VillagerPostLoadActions;
 import fr.miuby.survi.blessing.BlessingEffect;
 import fr.miuby.survi.villager.villagerlevel.event.VillagerLevelUpEvent;
-import net.kyori.adventure.key.Key;
-import net.kyori.adventure.sound.Sound;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
@@ -153,11 +153,9 @@ public class VillagerListener implements Listener {
             );
         }
 
-        Sound myCustomSound = Sound.sound(Key.key("ui.toast.challenge_complete"), Sound.Source.MASTER, 1f, 1.1f);
+        SoundService.broadcast(ESound.VILLAGER_LEVEL_UP);
 
         for (Player p : Bukkit.getOnlinePlayers()) {
-            p.playSound(myCustomSound);
-
             for (BlessingEffect effect : villager.getBlessing().blessingEffects()) {
                 effect.applyEffect(AlphaPlayer.get(p.getUniqueId()));
             }

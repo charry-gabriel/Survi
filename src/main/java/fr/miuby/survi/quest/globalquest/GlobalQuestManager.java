@@ -10,10 +10,10 @@ import fr.miuby.survi.player.service.OfflineNotificationService;
 import fr.miuby.survi.quest.AbstractQuestManager;
 import fr.miuby.survi.quest.EQuestType;
 import fr.miuby.survi.quest.QuestYamlLoader;
+import fr.miuby.survi.sound.ESound;
+import fr.miuby.survi.sound.SoundService;
 import fr.miuby.survi.system.log.ELogTag;
 import lombok.Getter;
-import net.kyori.adventure.key.Key;
-import net.kyori.adventure.sound.Sound;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
@@ -160,9 +160,9 @@ public class GlobalQuestManager extends AbstractQuestManager<GlobalQuest> {
     private void onComplete() {
         if (timerTask != null) { timerTask.cancel(); timerTask = null; }
 
-        GlobalQuest quest         = activeQuest;
+        GlobalQuest quest = activeQuest;
         Map<UUID, Integer> snapshot = new HashMap<>(contributions);
-        int worldLevel            = GameManager.getInstance().getWorldLevelManager().getLevel();
+        int worldLevel = GameManager.getInstance().getWorldLevelManager().getLevel();
 
         activeQuest = null;
         progress    = 0;
@@ -172,7 +172,7 @@ public class GlobalQuestManager extends AbstractQuestManager<GlobalQuest> {
         broadcastQuestComplete(quest, snapshot);
         GameManager.getInstance().getGlobalQuestBossBarService().onQuestCompleted(quest);
 
-        AlphaPlayerFactory factory         = GameManager.getInstance().getAlphaPlayerFactory();
+        AlphaPlayerFactory factory = GameManager.getInstance().getAlphaPlayerFactory();
         OfflineNotificationService offlineNotif = GameManager.getInstance().getOfflineNotificationService();
 
         for (Map.Entry<UUID, Integer> entry : snapshot.entrySet()) {
@@ -259,10 +259,9 @@ public class GlobalQuestManager extends AbstractQuestManager<GlobalQuest> {
                 .append(Component.text("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━", NamedTextColor.GOLD))
                 .appendNewline();
 
-        Sound startSound = Sound.sound(Key.key("ui.toast.challenge_complete"), Sound.Source.MASTER, 1f, 0.8f);
         for (Player p : Bukkit.getOnlinePlayers()) {
             p.sendMessage(msg);
-            p.playSound(startSound);
+            SoundService.play(p, ESound.GLOBAL_QUEST_START);
         }
     }
 
@@ -307,10 +306,9 @@ public class GlobalQuestManager extends AbstractQuestManager<GlobalQuest> {
                 .append(Component.text("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━", NamedTextColor.GREEN))
                 .appendNewline();
 
-        Sound completeSound = Sound.sound(Key.key("ui.toast.challenge_complete"), Sound.Source.MASTER, 1f, 1.2f);
         for (Player p : Bukkit.getOnlinePlayers()) {
             p.sendMessage(msg);
-            p.playSound(completeSound);
+            SoundService.play(p, ESound.GLOBAL_QUEST_COMPLETE);
         }
     }
 

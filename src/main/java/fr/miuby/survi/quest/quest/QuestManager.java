@@ -11,11 +11,11 @@ import fr.miuby.survi.player.AlphaPlayer;
 import fr.miuby.survi.quest.AbstractQuestManager;
 import fr.miuby.survi.quest.EQuestType;
 import fr.miuby.survi.quest.QuestYamlLoader;
+import fr.miuby.survi.sound.ESound;
+import fr.miuby.survi.sound.SoundService;
 import fr.miuby.survi.system.SurviConfig;
 import fr.miuby.survi.system.log.ELogTag;
 import fr.miuby.survi.villager.trader.Trader;
-import net.kyori.adventure.key.Key;
-import net.kyori.adventure.sound.Sound;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 
@@ -492,8 +492,7 @@ public class QuestManager extends AbstractQuestManager<Quest> {
                 "[QuestComplete] " + player.getPseudo() + " — " + quest.getId());
         GameManager.getInstance().getDatabase().quests().updatePlayerQuest(player.getUuid(), data);
 
-        Sound myCustomSound = Sound.sound(Key.key("ui.toast.challenge_complete"), Sound.Source.MASTER, 1f, 1.1f);
-        player.getPlayer().playSound(myCustomSound);
+        SoundService.play(player.getPlayer(), ESound.QUEST_COMPLETE);
         player.getPlayer().sendMessage(Component.text("Quête terminée : ", NamedTextColor.GREEN).append(Component.text(quest.getName(), NamedTextColor.GOLD)));
         player.getPlayer().sendMessage(Component.text("Allez voir le Trader pour obtenir votre récompense !", NamedTextColor.GRAY));
         GameManager.getInstance().getQuestActionBarService().showCompleted(player, quest);

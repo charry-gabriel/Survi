@@ -4,8 +4,8 @@ import fr.miuby.survi.job.EJob;
 import fr.miuby.survi.job.JobLevelConfig;
 import fr.miuby.survi.player.AlphaPlayer;
 import fr.miuby.survi.player.event.AlphaPlayerJobLevelUpEvent;
-import net.kyori.adventure.key.Key;
-import net.kyori.adventure.sound.Sound;
+import fr.miuby.survi.sound.ESound;
+import fr.miuby.survi.sound.SoundService;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.title.Title;
@@ -29,8 +29,6 @@ import java.time.Duration;
  * dans {@code AlphaPlayer.updateJobLevel()}.
  */
 public class JobLevelUpListener implements Listener {
-
-    private static final Sound LEVEL_UP_SOUND = Sound.sound(Key.key("ui.toast.challenge_complete"), Sound.Source.MASTER, 1f, 1.1f);
 
     private static final Title.Times TITLE_TIMES = Title.Times.times(
             Duration.ofMillis(300),
@@ -65,9 +63,7 @@ public class JobLevelUpListener implements Listener {
                 .append(job.toComponent())
                 .append(Component.text(" !", NamedTextColor.GOLD));
 
-        for (Player p : Bukkit.getOnlinePlayers()) {
-            p.playSound(LEVEL_UP_SOUND);
-        }
+        SoundService.broadcast(ESound.JOB_LEVEL_UP);
         Bukkit.broadcast(broadcast);
     }
 }

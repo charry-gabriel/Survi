@@ -6,10 +6,10 @@ import fr.miuby.survi.player.AlphaPlayer;
 import fr.miuby.survi.player.event.AlphaPlayerRoleChangeEvent;
 import fr.miuby.survi.role.ERole;
 import fr.miuby.survi.role.Role;
+import fr.miuby.survi.sound.ESound;
+import fr.miuby.survi.sound.SoundService;
 import fr.miuby.survi.system.perf.PerfTimer;
 import fr.miuby.survi.world.EWorld;
-import net.kyori.adventure.key.Key;
-import net.kyori.adventure.sound.Sound;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Villager;
 import org.bukkit.event.EventHandler;
@@ -29,7 +29,6 @@ import static java.lang.Math.min;
 import static java.lang.Math.round;
 
 public class DamageListener implements Listener {
-    private final Sound slimeSound = Sound.sound(Key.key("entity.slime.attack"), Sound.Source.MASTER, 1f, 1.1f);
 
     /**
      * UUID des joueurs FÉE connectés.
@@ -117,7 +116,7 @@ public class DamageListener implements Listener {
                             if (other.getPlayer() == null) continue;
                             other.setTakingNoDamage(true);
                             other.getPlayer().damage(damage);
-                            other.getPlayer().playSound(slimeSound);
+                            SoundService.play(other.getPlayer(), ESound.FEE_DAMAGE);
                         }
                     }
 

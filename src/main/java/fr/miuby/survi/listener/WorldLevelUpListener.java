@@ -1,8 +1,8 @@
 package fr.miuby.survi.listener;
 
+import fr.miuby.survi.sound.ESound;
+import fr.miuby.survi.sound.SoundService;
 import fr.miuby.survi.world.event.WorldLevelUpEvent;
-import net.kyori.adventure.key.Key;
-import net.kyori.adventure.sound.Sound;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.title.Title;
@@ -24,8 +24,6 @@ import java.time.Duration;
  */
 public class WorldLevelUpListener implements Listener {
 
-    private static final Sound WORLD_LEVEL_SOUND = Sound.sound(Key.key("ui.toast.challenge_complete"), Sound.Source.MASTER, 1f, 0.8f);
-
     private static final Title.Times TITLE_TIMES = Title.Times.times(
             Duration.ofMillis(500),
             Duration.ofMillis(3000),
@@ -46,7 +44,7 @@ public class WorldLevelUpListener implements Listener {
         );
 
         for (Player p : Bukkit.getOnlinePlayers()) {
-            p.playSound(WORLD_LEVEL_SOUND);
+            SoundService.play(p, ESound.WORLD_LEVEL_UP);
             p.showTitle(title);
         }
         Bukkit.broadcast(broadcast);
