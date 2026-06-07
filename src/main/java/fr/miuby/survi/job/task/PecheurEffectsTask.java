@@ -90,23 +90,8 @@ public class PecheurEffectsTask extends BukkitRunnable {
 
     private static void applyPressureDamage(Player player, int level) {
         if (level >= 10) return;
-        if (getWaterDepth(player) > PRESSURE_SAFE_DEPTH[level]) {
+        if (player.getLocation().getBlockY() < 63 - PRESSURE_SAFE_DEPTH[level]) {
             player.damage(1.0); // 1HP = 0.5 cœur
         }
-    }
-
-    /**
-     * Compte les blocs d'eau consécutifs depuis la position du joueur vers la surface.
-     * Retourne 0 si le joueur n'est pas dans l'eau.
-     */
-    private static int getWaterDepth(Player player) {
-        Block b = player.getLocation().getBlock();
-        if (b.getType() != Material.WATER) return 0;
-        int depth = 0;
-        while (b.getType() == Material.WATER && depth < 320) {
-            b = b.getRelative(BlockFace.UP);
-            depth++;
-        }
-        return depth;
     }
 }

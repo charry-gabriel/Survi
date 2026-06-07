@@ -55,7 +55,7 @@ public class Survi extends JavaPlugin {
         pluginManager.registerEvents(new QuestListener(placedBlockTracker), this);
         pluginManager.registerEvents(new OfflineNotificationListener(), this);
         pluginManager.registerEvents(new PecheurListener(), this);
-        pluginManager.registerEvents(new AventurierListener(), this);
+        pluginManager.registerEvents(new AventurierListener(this), this);
 
         pluginManager.registerEvents(placedBlockTracker, this);
 

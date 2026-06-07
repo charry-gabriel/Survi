@@ -1,148 +1,67 @@
 package fr.miuby.survi.listener.job;
 
-import fr.miuby.lib.MiubyLib;
 import fr.miuby.survi.job.EJob;
 import fr.miuby.survi.player.AlphaPlayer;
-import org.bukkit.enchantments.Enchantment;
+import fr.miuby.survi.player.event.AlphaPlayerJobLevelUpEvent;
+import org.bukkit.NamespacedKey;
+import org.bukkit.attribute.Attribute;
+import org.bukkit.attribute.AttributeInstance;
+import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.entity.EntityDamageEvent;
-import org.bukkit.event.player.PlayerMoveEvent;
-import org.bukkit.event.player.PlayerQuitEvent;
-import org.bukkit.inventory.ItemStack;
-
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
+import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.plugin.java.JavaPlugin;
 
 /**
- * Gère la réduction (ou amplification) des dégâts de chute selon le niveau AVENTURIER.
+ * Applique le seuil de chute sans dégâts de l'aventurier via un modifier
+ * transient ADD_NUMBER sur {@code safe_fall_distance} (base vanilla = 3 blocs).
  *
- * <h3>Seuil de sécurité par niveau :</h3>
+ * <h3>Modifier par niveau :</h3>
  * <pre>
- *  niv.0 = 0 bloc  → tout bloc de chute fait des dégâts
- *  niv.1 = 1 bloc  → dégâts à partir de 2 blocs
- *  niv.2 = 2 blocs → dégâts à partir de 3 blocs
- *  niv.3 = 3 blocs → dégâts à partir de 4 blocs (vanilla)
- *  niv.4 = 4 blocs → dégâts à partir de 5 blocs
- *  …
- *  niv.10= 10 blocs→ dégâts à partir de 11 blocs
+ *  niv.0 → -2 → seuil = 1 → dégâts à partir de 2 blocs
+ *  niv.1 → -1 → seuil = 2 → dégâts à partir de 3 blocs
+ *  niv.2 →  0 → seuil = 3 → dégâts à partir de 4 blocs (vanilla)
+ *  niv.N → N - 2
  * </pre>
  *
- * <p>La formule est : {@code dégâts = max(0, distanceChute - niveau)}</p>
- *
- * <p>Deux handlers couvrent tous les cas :</p>
- * <ul>
- *   <li>{@link #onFallDamage} — chutes > 3 blocs (EntityDamageEvent vanilla).</li>
- *   <li>{@link #trackSmallFall} — chutes ≤ 3 blocs depuis une corniche (niv. 0-2 seulement).</li>
- * </ul>
+ * <p>Le modifier est transient : reappliqué à chaque connexion.
+ * La base n'est jamais modifiée ; le calcul des dégâts et Feather Falling
+ * sont entièrement délégués au moteur vanilla.</p>
  */
 public class AventurierListener implements Listener {
 
-    // ─── État interne ─────────────────────────────────────────────────────────────
+    private static final double VANILLA_SAFE_FALL = 3.0;
 
-    /** Joueurs dont la chute a déjà été traitée ce tick (via EntityDamageEvent). */
-    private final Set<UUID> fallHandledThisTick = Collections.synchronizedSet(new HashSet<>());
+    private final NamespacedKey modifierKey;
 
-    /** Y où le joueur a quitté le sol pour la dernière fois (pour les petites chutes). */
-    private final Map<UUID, Double> leftGroundY = new HashMap<>();
-
-    // ════════════════════════════════════════════════════════════════════════════
-    //  Chutes grandes (> 3 blocs) — EntityDamageEvent
-    // ════════════════════════════════════════════════════════════════════════════
-
-    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
-    public void onFallDamage(EntityDamageEvent event) {
-        if (!(event.getEntity() instanceof Player player)) return;
-        if (event.getCause() != EntityDamageEvent.DamageCause.FALL) return;
-
-        AlphaPlayer alpha = AlphaPlayer.get(player.getUniqueId());
-        if (alpha == null) return;
-        int level = alpha.getJobLevel(EJob.AVENTURIER);
-
-        // Marquer : la chute sera traitée ici (évite double-dégâts avec trackSmallFall)
-        fallHandledThisTick.add(player.getUniqueId());
-        MiubyLib.runLater(() -> fallHandledThisTick.remove(player.getUniqueId()), 1L);
-
-        float fallDist = player.getFallDistance();
-        double newDmg = Math.max(0.0, fallDist - level);
-
-        // Feather Falling : réduction de 12 % par niveau d'enchantement
-        int featherLevel = getFeatherFallingLevel(player);
-        if (featherLevel > 0) newDmg *= Math.max(0, 1.0 - featherLevel * 0.12);
-
-        if (newDmg <= 0) {
-            event.setCancelled(true);
-        } else {
-            event.setDamage(newDmg);
-        }
+    public AventurierListener(JavaPlugin plugin) {
+        this.modifierKey = new NamespacedKey(plugin, "aventurier_safe_fall_distance");
     }
-
-    // ════════════════════════════════════════════════════════════════════════════
-    //  Petites chutes (≤ 3 blocs depuis une corniche) — PlayerMoveEvent
-    //  Uniquement pour niv. 0-2 (en dessous du seuil vanilla)
-    // ════════════════════════════════════════════════════════════════════════════
 
     @EventHandler(priority = EventPriority.MONITOR)
-    public void trackSmallFall(PlayerMoveEvent event) {
-        if (!event.hasChangedPosition()) return;
-        Player player = event.getPlayer();
-        UUID id = player.getUniqueId();
-        boolean onGround = player.isOnGround();
-
-        if (!onGround) {
-            // Mémoriser le Y de décollage (première fois seulement)
-            leftGroundY.putIfAbsent(id, event.getFrom().getY());
-        } else {
-            Double startY = leftGroundY.remove(id);
-            if (startY == null) return;
-
-            // Si EntityDamageEvent a déjà géré la chute ce tick, ne pas doubler
-            if (fallHandledThisTick.contains(id)) return;
-
-            double landY = event.getTo().getY();
-            double fallDist = startY - landY;
-
-            // Seulement les petites chutes (≤ 3,5 blocs depuis la corniche)
-            // Les grandes chutes sont gérées par EntityDamageEvent
-            if (fallDist <= 0 || fallDist > 3.5) return;
-
-            AlphaPlayer alpha = AlphaPlayer.get(id);
-            if (alpha == null) return;
-            int level = alpha.getJobLevel(EJob.AVENTURIER);
-
-            // Niv. 3+ = seuil vanilla ou mieux → pas de dégâts pour les petites chutes
-            if (level >= 3) return;
-
-            double smallFallDmg = Math.max(0, fallDist - level);
-            if (smallFallDmg > 0) {
-                int featherLevel = getFeatherFallingLevel(player);
-                if (featherLevel > 0) smallFallDmg *= Math.max(0, 1.0 - featherLevel * 0.12);
-                if (smallFallDmg > 0) player.damage(smallFallDmg);
-            }
-        }
+    public void onPlayerJoin(PlayerJoinEvent event) {
+        AlphaPlayer alpha = AlphaPlayer.get(event.getPlayer().getUniqueId());
+        applyFallModifier(event.getPlayer(), alpha.getJobLevel(EJob.AVENTURIER));
     }
-
-    // ════════════════════════════════════════════════════════════════════════════
-    //  Nettoyage
-    // ════════════════════════════════════════════════════════════════════════════
 
     @EventHandler
-    public void onPlayerQuit(PlayerQuitEvent event) {
-        UUID id = event.getPlayer().getUniqueId();
-        leftGroundY.remove(id);
-        fallHandledThisTick.remove(id);
+    public void onJobLevelUp(AlphaPlayerJobLevelUpEvent event) {
+        if (event.getJob() != EJob.AVENTURIER) return;
+        Player player = event.getAlphaPlayer().getPlayer();
+        if (player == null || !player.isOnline()) return;
+        applyFallModifier(player, event.getNewLevel());
     }
 
-    // ─── Utilitaire ───────────────────────────────────────────────────────────────
+    private void applyFallModifier(Player player, int level) {
+        AttributeInstance attr = player.getAttribute(Attribute.SAFE_FALL_DISTANCE);
+        if (attr == null) return;
 
-    private static int getFeatherFallingLevel(Player player) {
-        ItemStack boots = player.getInventory().getBoots();
-        return (boots != null) ? boots.getEnchantmentLevel(Enchantment.FEATHER_FALLING) : 0;
+        AttributeModifier existing = attr.getModifier(modifierKey);
+        if (existing != null) attr.removeModifier(existing);
+
+        double delta = (level + 0.7) - VANILLA_SAFE_FALL;
+        attr.addTransientModifier(new AttributeModifier(modifierKey, delta, AttributeModifier.Operation.ADD_NUMBER));
     }
 }

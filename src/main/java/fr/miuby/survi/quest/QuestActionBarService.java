@@ -115,7 +115,7 @@ public class QuestActionBarService {
 
     private Component buildProgressMessage(Quest quest, PlayerQuestData data) {
         return Component.text("⚔ ", NamedTextColor.AQUA)
-                .append(Component.text(quest.getName(), NamedTextColor.YELLOW))
+                .append(Component.text(quest.getDescription(), NamedTextColor.YELLOW))
                 .append(Component.text(" — ", NamedTextColor.DARK_GRAY))
                 .append(Component.text(data.getProgress() + "/" + quest.getGoal(), NamedTextColor.WHITE));
     }
