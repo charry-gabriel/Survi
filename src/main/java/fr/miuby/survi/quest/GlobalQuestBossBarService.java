@@ -11,81 +11,89 @@ import org.bukkit.scheduler.BukkitTask;
 /**
  * Affiche la progression des quêtes globales dans une barre de boss.
  *
- * <p>La barre s'affiche brièvement :</p>
+ * <p>La barre reste visible en permanence pendant toute la durée de la quête,
+ * et se met à jour à chaque progression. Elle se masque uniquement à la fin.</p>
+ *
  * <ul>
- *   <li>au lancement (0 %, barre vide)</li>
- *   <li>à chaque palier de {@value #MILESTONE_STEP} % (10 %, 20 %, …, 90 %)</li>
- *   <li>à la complétion (100 %, barre pleine verte)</li>
+ *   <li>Démarrage → barre vide bleue, affichée immédiatement à tous</li>
+ *   <li>Progression → mise à jour immédiate du contenu, barre toujours visible</li>
+ *   <li>Complétion → barre verte pendant {@value #COMPLETION_DISPLAY_TICKS} ticks, puis masquée</li>
+ *   <li>Annulation / timeout → masquée immédiatement</li>
  * </ul>
  *
- * <p>Chaque apparition dure {@value #DISPLAY_DURATION_TICKS} ticks (15 s) puis la barre se
- * masque automatiquement. Atteindre un nouveau palier réinitialise ce délai.</p>
+ * <p>Les joueurs qui se connectent en cours de quête reçoivent la barre via
+ * {@link #showToPlayer(Player)}, appelé depuis {@code ServerListener.onPlayerJoin}.</p>
  */
 public class GlobalQuestBossBarService {
 
-    private static final long DISPLAY_DURATION_TICKS = 300L;  // 5 secondes
-    private static final int  MILESTONE_STEP         = 10;    // palier toutes les 10 %
+    /** Durée d'affichage de la barre verte après complétion avant masquage (10 secondes). */
+    private static final long COMPLETION_DISPLAY_TICKS = 200L;
 
     private final BossBar bossBar = BossBar.bossBar(Component.empty(), 0f, BossBar.Color.BLUE, BossBar.Overlay.PROGRESS);
 
     private BukkitTask hideTask = null;
-    /** Dernier palier affiché en pourcentage entier. -1 = aucune quête en cours. */
-    private int lastShownMilestonePercent = -1;
+    /** true si une quête globale est en cours et la barre doit rester affichée en permanence. */
+    private boolean active = false;
 
     // =========================================================================
     // API publique
     // =========================================================================
 
     /**
-     * Appelé au démarrage d'une quête globale : affiche la barre vide avec le nom.
+     * Appelé au démarrage d'une quête globale : affiche la barre vide à tous les joueurs.
      *
      * @param quest quête qui vient d'être lancée
      */
     public void onQuestStarted(GlobalQuest quest) {
-        lastShownMilestonePercent = 0;
+        cancelHideTask();
+        active = true;
         updateBar(buildName(quest, 0), 0f, BossBar.Color.BLUE);
-        scheduleShow();
+        showToAll();
     }
 
     /**
-     * Appelé à chaque unité de progression : affiche la barre uniquement aux paliers de 10 %.
+     * Appelé à chaque unité de progression : met à jour le contenu de la barre immédiatement.
+     * La barre reste visible sans interruption — aucun palier requis.
      *
      * @param quest    quête globale active (non null)
      * @param progress progression actuelle
      */
     public void onProgressUpdate(GlobalQuest quest, int progress) {
+        if (!active) return;
         int goal = quest.getGoal();
         if (goal <= 0) return;
-
-        // Plafonné à 99 : le palier 100 % est réservé à onQuestCompleted
-        int percent   = Math.min(99, (progress * 100) / goal);
-        int milestone = (percent / MILESTONE_STEP) * MILESTONE_STEP;
-
-        if (milestone <= lastShownMilestonePercent) return;
-        lastShownMilestonePercent = milestone;
-
         float barProgress = Math.min(1f, (float) progress / goal);
         updateBar(buildName(quest, progress), barProgress, BossBar.Color.BLUE);
-        scheduleShow();
     }
 
     /**
-     * Appelé à la complétion de la quête : affiche la barre pleine en vert.
+     * Appelé à la complétion : affiche la barre verte, puis la masque automatiquement
+     * après {@value #COMPLETION_DISPLAY_TICKS} ticks.
      *
      * @param quest quête qui vient d'être complétée
      */
     public void onQuestCompleted(GlobalQuest quest) {
-        lastShownMilestonePercent = 100;
+        active = false;
         updateBar(buildCompletedName(quest), 1f, BossBar.Color.GREEN);
-        scheduleShow();
+        scheduleHide(COMPLETION_DISPLAY_TICKS);
     }
 
     /**
      * Appelé lors d'une annulation ou d'un timeout : masque immédiatement la barre.
      */
     public void onQuestEnded() {
-        lastShownMilestonePercent = -1;
+        active = false;
         hideNow();
+    }
+
+    /**
+     * Affiche la barre au joueur qui vient de se connecter si une quête globale est active.
+     * Appelé depuis {@code ServerListener.onPlayerJoin}.
+     *
+     * @param player joueur qui vient de se connecter
+     */
+    public void showToPlayer(Player player) {
+        if (active) player.showBossBar(bossBar);
     }
 
     // =========================================================================
@@ -98,20 +106,26 @@ public class GlobalQuestBossBarService {
         bossBar.color(color);
     }
 
-    private void scheduleShow() {
-        if (hideTask != null) { hideTask.cancel(); hideTask = null; }
+    private void showToAll() {
         for (Player p : Bukkit.getOnlinePlayers()) p.showBossBar(bossBar);
+    }
 
+    private void scheduleHide(long delayTicks) {
+        cancelHideTask();
         hideTask = GameManager.getInstance().getScheduler().runTaskLater(
                 GameManager.getInstance().getPlugin(),
                 this::hideNow,
-                DISPLAY_DURATION_TICKS
+                delayTicks
         );
     }
 
     private void hideNow() {
-        if (hideTask != null) { hideTask.cancel(); hideTask = null; }
+        cancelHideTask();
         for (Player p : Bukkit.getOnlinePlayers()) p.hideBossBar(bossBar);
+    }
+
+    private void cancelHideTask() {
+        if (hideTask != null) { hideTask.cancel(); hideTask = null; }
     }
 
     // =========================================================================

@@ -36,6 +36,7 @@ public class ServerListener implements Listener {
                 "[Join] " + event.getPlayer().getName() + " (" + event.getPlayer().getUniqueId() + ")");
 
         GameManager.getInstance().getAlphaPlayerFactory().onPlayerJoin(event.getPlayer());
+        GameManager.getInstance().getGlobalQuestBossBarService().showToPlayer(event.getPlayer());
     }
 
     @EventHandler
@@ -49,6 +50,9 @@ public class ServerListener implements Listener {
         // Nettoie l'entrée glow sans envoyer de paquet (joueur déconnecté)
         QuestGlowService glowService = GameManager.getInstance().getQuestGlowService();
         if (glowService != null) glowService.cleanupOnQuit(event.getPlayer().getUniqueId());
+
+        // Arrête le rafraîchissement de l'actionbar si une quête journalière était en cours
+        GameManager.getInstance().getQuestActionBarService().stopRefresh(event.getPlayer().getUniqueId());
 
         AlphaPlayer.get(event.getPlayer().getUniqueId()).resetPlayer();
     }
@@ -100,6 +104,7 @@ public class ServerListener implements Listener {
                 }
                 player.getActiveQuests().clear();
                 GameManager.getInstance().getDatabase().quests().clearAllPlayerQuests(player.getUuid());
+                GameManager.getInstance().getQuestActionBarService().stopRefresh(player.getUuid());
                 player.getPlayer().sendMessage(Component.text("[Quêtes] ", NamedTextColor.GOLD)
                         .append(Component.text("Vos quêtes du jour ont expiré.", NamedTextColor.YELLOW)));
                 if (glowService != null) glowService.disableGlow(player);

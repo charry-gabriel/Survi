@@ -487,22 +487,33 @@ try (var t = PerfTimer.start("DamageListener.onEntityDamage")) {
 
 ### Quêtes journalières — `QuestActionBarService`
 
-Appelé depuis `QuestManager` à chaque progression et à la complétion. Durée native Paper (~3 s).
+Appelé depuis `QuestManager` à chaque progression et à la complétion. La barre reste visible en
+permanence grâce à une tâche de rafraîchissement par joueur (40 ticks), démarrée au premier appel
+de `showProgress` et annulée par `showCompleted` ou `stopRefresh`.
 
 ```java
-gm.getQuestActionBarService().showProgress(player, quest, data);  // avec cooldown 2s anti-spam
-gm.getQuestActionBarService().showCompleted(player, quest);        // toujours affiché, reset cooldown
+gm.getQuestActionBarService().showProgress(player, quest, data); // met à jour + démarre rafraîchissement
+gm.getQuestActionBarService().showCompleted(player, quest);       // affiche message fin + stoppe rafraîchissement
+gm.getQuestActionBarService().stopRefresh(uuid);                  // à appeler : déco, reset journalier, reset admin, reload
 ```
+
+`stopRefresh` est appelé dans : `ServerListener.onPlayerQuit`, `ServerListener.onDailyReset`,
+`QuestManager.resetQuest`, `QuestManager.assignSpecificQuest` (suppression ancienne quête),
+`QuestManager.reload` (quête en cours supprimée).
 
 ### Quêtes globales — `GlobalQuestBossBarService`
 
-Appelé depuis `GlobalQuestManager`. La barre s'affiche 5 s (100 ticks) puis se masque automatiquement.
+Appelé depuis `GlobalQuestManager`. La barre reste visible **en permanence** pendant toute la quête ;
+elle se masque uniquement à la fin (annulation immédiate, complétion après 10 s).
+Les joueurs qui se connectent en cours de quête reçoivent la barre via `showToPlayer`, appelé depuis
+`ServerListener.onPlayerJoin`.
 
 ```java
-gm.getGlobalQuestBossBarService().onQuestStarted(quest);            // au démarrage (0 %)
-gm.getGlobalQuestBossBarService().onProgressUpdate(quest, progress); // à chaque palier de 10 %
-gm.getGlobalQuestBossBarService().onQuestCompleted(quest);           // à 100 % (barre verte)
-gm.getGlobalQuestBossBarService().onQuestEnded();                    // annulation / timeout
+gm.getGlobalQuestBossBarService().onQuestStarted(quest);             // au démarrage (0 %, barre permanente)
+gm.getGlobalQuestBossBarService().onProgressUpdate(quest, progress);  // à chaque progression (pas de palier)
+gm.getGlobalQuestBossBarService().onQuestCompleted(quest);            // 100 % barre verte, masque après 10 s
+gm.getGlobalQuestBossBarService().onQuestEnded();                     // annulation / timeout → masquage immédiat
+gm.getGlobalQuestBossBarService().showToPlayer(player);              // join en cours de quête
 ```
 
 Ne jamais appeler directement `showBossBar` / `hideBossBar` sur les joueurs pour les quêtes globales — passer uniquement par ce service.

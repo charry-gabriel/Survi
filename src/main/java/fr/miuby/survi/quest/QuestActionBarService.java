@@ -1,9 +1,11 @@
 package fr.miuby.survi.quest;
 
+import fr.miuby.survi.GameManager;
 import fr.miuby.survi.player.AlphaPlayer;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
+import org.bukkit.scheduler.BukkitTask;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -12,27 +14,40 @@ import java.util.UUID;
 /**
  * Affiche la progression des quêtes journalières dans l'ActionBar.
  *
- * <p>La durée d'affichage est celle native de Paper (~3 secondes), sans tâche répétitive.
- * Un anti-spam de 2 secondes évite les rafraîchissements trop fréquents lorsque le joueur
- * progresse rapidement (ex. minage en masse).</p>
+ * <p>La barre reste visible en permanence tant que la quête est en cours, grâce à une
+ * tâche de rafraîchissement par joueur toutes les {@value #REFRESH_TICKS} ticks
+ * (inférieur à la durée native Paper de ~60 ticks, ce qui empêche la barre de disparaître
+ * entre deux events de progression).</p>
  *
- * <p>La complétion s'affiche toujours, sans cooldown, et réinitialise le timer pour que
- * le prochain affichage de progression soit immédiat.</p>
+ * <p>Chaque progression met à jour le contenu immédiatement ; le rafraîchissement ne fait
+ * que renvoyer le dernier message connu pour maintenir la barre visible.</p>
+ *
+ * <p>La complétion affiche un message unique et arrête le rafraîchissement.</p>
+ *
+ * <p>Appeler {@link #stopRefresh(UUID)} dans tous les cas de fin de quête hors progression
+ * normale : déconnexion, reset journalier, reset admin, reload.</p>
  */
 public class QuestActionBarService {
 
-    private static final long PROGRESS_COOLDOWN_MS = 2_000L;
+    /**
+     * Intervalle de rafraîchissement en ticks.
+     * Doit rester inférieur à ~60 ticks (durée native Paper) pour que la barre ne clignote pas.
+     */
+    private static final long REFRESH_TICKS = 40L;
 
-    /** Timestamp du dernier affichage par joueur, pour le cooldown anti-spam. */
-    private final Map<UUID, Long> lastShown = new HashMap<>();
+    /** Dernier message à afficher par joueur (mis à jour à chaque progression). */
+    private final Map<UUID, Component> activeMessages = new HashMap<>();
+    /** Tâche de rafraîchissement périodique par joueur. */
+    private final Map<UUID, BukkitTask> refreshTasks  = new HashMap<>();
 
     // =========================================================================
     // API publique
     // =========================================================================
 
     /**
-     * Affiche la progression dans l'ActionBar, avec cooldown de 2 secondes.
-     * Silencieux si le joueur n'est pas en ligne ou si le cooldown n'est pas écoulé.
+     * Affiche la progression dans l'ActionBar et maintient la barre visible en continu.
+     * Chaque appel met à jour le contenu immédiatement. Si aucune tâche de rafraîchissement
+     * n'est encore active pour ce joueur, elle est démarrée automatiquement.
      *
      * @param player joueur concerné
      * @param quest  définition de la quête
@@ -42,25 +57,56 @@ public class QuestActionBarService {
         if (player.getPlayer() == null) return;
         UUID uuid = player.getUuid();
 
-        long now = System.currentTimeMillis();
-        Long last = lastShown.get(uuid);
-        if (last != null && (now - last) < PROGRESS_COOLDOWN_MS) return;
+        Component message = buildProgressMessage(quest, data);
+        activeMessages.put(uuid, message);
+        player.getPlayer().sendActionBar(message);
 
-        lastShown.put(uuid, now);
-        player.getPlayer().sendActionBar(buildProgressMessage(quest, data));
+        if (!refreshTasks.containsKey(uuid)) {
+            BukkitTask task = GameManager.getInstance().getScheduler().runTaskTimer(
+                    GameManager.getInstance().getPlugin(),
+                    () -> refreshActionBar(uuid),
+                    REFRESH_TICKS, REFRESH_TICKS
+            );
+            refreshTasks.put(uuid, task);
+        }
     }
 
     /**
-     * Affiche le message de quête complétée, sans cooldown.
-     * Réinitialise le cooldown pour que le prochain affichage de progression soit immédiat.
+     * Affiche le message de quête complétée et stoppe le rafraîchissement.
      *
      * @param player joueur concerné
      * @param quest  définition de la quête complétée
      */
     public void showCompleted(AlphaPlayer player, Quest quest) {
         if (player.getPlayer() == null) return;
-        lastShown.remove(player.getUuid());
+        stopRefresh(player.getUuid());
         player.getPlayer().sendActionBar(buildCompletedMessage(quest));
+    }
+
+    /**
+     * Arrête le rafraîchissement pour un joueur et efface le message mémorisé.
+     * À appeler à la déconnexion, au reset journalier, au reset admin et au reload.
+     *
+     * @param uuid UUID du joueur
+     */
+    public void stopRefresh(UUID uuid) {
+        activeMessages.remove(uuid);
+        BukkitTask task = refreshTasks.remove(uuid);
+        if (task != null) task.cancel();
+    }
+
+    // =========================================================================
+    // Rafraîchissement
+    // =========================================================================
+
+    private void refreshActionBar(UUID uuid) {
+        Component message = activeMessages.get(uuid);
+        if (message == null) { stopRefresh(uuid); return; }
+
+        AlphaPlayer player = GameManager.getInstance().getAlphaPlayerFactory().get(uuid);
+        if (player == null || player.getPlayer() == null) { stopRefresh(uuid); return; }
+
+        player.getPlayer().sendActionBar(message);
     }
 
     // =========================================================================

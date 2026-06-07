@@ -94,6 +94,7 @@ public class QuestManager extends AbstractQuestManager<Quest> {
                     // Quête en cours supprimée → libérer le slot
                     player.removeQuest(data.getSlot());
                     GameManager.getInstance().getDatabase().quests().deletePlayerQuestSlot(player.getUuid(), data.getSlot());
+                    GameManager.getInstance().getQuestActionBarService().stopRefresh(player.getUuid());
                     player.getPlayer().sendMessage(Component.text(
                             "Votre quête en cours a été supprimée suite à une mise à jour. Vous pouvez en accepter une nouvelle auprès d'un Trader.",
                             NamedTextColor.YELLOW));
@@ -326,6 +327,7 @@ public class QuestManager extends AbstractQuestManager<Quest> {
 
         QuestGlowService glowService = GameManager.getInstance().getQuestGlowService();
         if (glowService != null) glowService.disableGlow(player);
+        GameManager.getInstance().getQuestActionBarService().stopRefresh(player.getUuid());
 
         if (player.getPlayer() != null) {
             player.getPlayer().sendMessage(Component.text("Votre quête a été réinitialisée par un administrateur. Vous pouvez en accepter une nouvelle !", NamedTextColor.YELLOW));
@@ -388,6 +390,7 @@ public class QuestManager extends AbstractQuestManager<Quest> {
             GameManager.getInstance().getDatabase().quests().deletePlayerQuestSlot(player.getUuid(), current.getSlot());
             QuestGlowService glowService = GameManager.getInstance().getQuestGlowService();
             if (glowService != null) glowService.disableGlow(player);
+            GameManager.getInstance().getQuestActionBarService().stopRefresh(player.getUuid());
         }
 
         int nextSlot = player.countTodayQuests();
