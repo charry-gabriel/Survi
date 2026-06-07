@@ -1,5 +1,7 @@
 package fr.miuby.survi.listener;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.event.EventHandler;
@@ -45,6 +47,15 @@ public class PlacedBlockTracker implements Listener {
     /** clé = UUID du monde, valeur = positions de blocs posés par des joueurs (encodées en long). */
     private final Map<UUID, Set<Long>> placedBlocks = new HashMap<>();
 
+    /**
+     * Quand {@code false}, {@link #isPlaced} retourne toujours {@code false} —
+     * les blocs posés sont traités comme naturels (mode test quête).
+     * Activé par défaut.
+     */
+    @Getter
+    @Setter
+    private static volatile boolean enabled = true;
+
     // ─────────────────────────────────────────────────────────────────────────────
     //  API publique — appelée par QuestListener et GrowthItemListener
     // ─────────────────────────────────────────────────────────────────────────────
@@ -55,6 +66,7 @@ public class PlacedBlockTracker implements Listener {
      * nettoyage de ce tracker (MONITOR, enregistré en dernier).
      */
     public boolean isPlaced(Block block) {
+        if (!enabled) return false;
         Set<Long> set = placedBlocks.get(block.getWorld().getUID());
         return set != null && set.contains(pack(block.getX(), block.getY(), block.getZ()));
     }

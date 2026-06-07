@@ -4,6 +4,7 @@ import com.mojang.brigadier.Command;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import fr.miuby.lib.command.MLLogCommand;
 import fr.miuby.survi.GameManager;
+import fr.miuby.survi.listener.PlacedBlockTracker;
 import fr.miuby.survi.system.SurviConfig;
 import fr.miuby.survi.system.perf.PerfTimer;
 import fr.miuby.survi.system.time.TimeManager;
@@ -31,8 +32,45 @@ public class SystemCommand {
                 // === RELOAD COMMANDS ===
                 .then(ReloadCommand.create())
 
+                // === BLOCK TRACKER COMMANDS ===
+                // /survi blocktracker on     → active le tracking (comportement normal)
+                // /survi blocktracker off    → désactive (mode test — blocs posés comptent comme naturels)
+                // /survi blocktracker status → état actuel
+                .then(Commands.literal("blocktracker")
+                        .then(Commands.literal("on")
+                                .executes(ctx -> {
+                                    PlacedBlockTracker.setEnabled(true);
+                                    ctx.getSource().getSender().sendMessage(
+                                            Component.text("🧱 Block Tracker ", NamedTextColor.YELLOW)
+                                                    .append(Component.text("activé", NamedTextColor.GREEN))
+                                                    .append(Component.text(" — les blocs posés ne comptent plus pour les quêtes.", NamedTextColor.GRAY)));
+                                    return Command.SINGLE_SUCCESS;
+                                })
+                        )
+                        .then(Commands.literal("off")
+                                .executes(ctx -> {
+                                    PlacedBlockTracker.setEnabled(false);
+                                    ctx.getSource().getSender().sendMessage(
+                                            Component.text("🧱 Block Tracker ", NamedTextColor.YELLOW)
+                                                    .append(Component.text("désactivé", NamedTextColor.RED))
+                                                    .append(Component.text(" — mode test : les blocs posés comptent comme naturels.", NamedTextColor.GRAY)));
+                                    return Command.SINGLE_SUCCESS;
+                                })
+                        )
+                        .then(Commands.literal("status")
+                                .executes(ctx -> {
+                                    boolean on = PlacedBlockTracker.isEnabled();
+                                    ctx.getSource().getSender().sendMessage(
+                                            Component.text("🧱 Block Tracker : ", NamedTextColor.YELLOW)
+                                                    .append(Component.text(
+                                                            on ? "ON ✓ — blocs posés ignorés" : "OFF — mode test actif",
+                                                            on ? NamedTextColor.GREEN : NamedTextColor.RED)));
+                                    return Command.SINGLE_SUCCESS;
+                                })
+                        )
+                )
+
                 // === PERF COMMANDS ===
-                // /survi perf on   → active les PerfTimers (seuil 0,5 ms, tag PERF)
                 // /survi perf off  → désactive (overhead nul immédiatement)
                 // /survi perf status → état actuel
                 .then(Commands.literal("perf")
