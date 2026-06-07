@@ -20,6 +20,13 @@ public class LockedItemsFactory {
         leatherItems.add(Material.LEATHER_BOOTS.getKey());
         armorItems.add(new LockedArmorItem(leatherItems, ELockedArmorType.LEATHER));
 
+        List<NamespacedKey> copperItems = new ArrayList<>();
+        copperItems.add(Material.COPPER_HELMET.getKey());
+        copperItems.add(Material.COPPER_CHESTPLATE.getKey());
+        copperItems.add(Material.COPPER_LEGGINGS.getKey());
+        copperItems.add(Material.COPPER_BOOTS.getKey());
+        armorItems.add(new LockedArmorItem(copperItems, ELockedArmorType.COPPER));
+
         List<NamespacedKey> goldItems = new ArrayList<>();
         goldItems.add(Material.GOLDEN_HELMET.getKey());
         goldItems.add(Material.GOLDEN_CHESTPLATE.getKey());
@@ -61,6 +68,7 @@ public class LockedItemsFactory {
         woodToolItems.add(Material.WOODEN_PICKAXE.getKey());
         woodToolItems.add(Material.WOODEN_SHOVEL.getKey());
         woodToolItems.add(Material.WOODEN_SWORD.getKey());
+        woodToolItems.add(Material.WOODEN_SPEAR.getKey());
         toolItems.add(new LockedToolItem(woodToolItems, ELockedToolType.WOOD));
 
         List<NamespacedKey> stoneToolItems = new ArrayList<>();
@@ -69,7 +77,17 @@ public class LockedItemsFactory {
         stoneToolItems.add(Material.STONE_PICKAXE.getKey());
         stoneToolItems.add(Material.STONE_SHOVEL.getKey());
         stoneToolItems.add(Material.STONE_SWORD.getKey());
+        stoneToolItems.add(Material.STONE_SPEAR.getKey());
         toolItems.add(new LockedToolItem(stoneToolItems, ELockedToolType.STONE));
+
+        List<NamespacedKey> copperToolItems = new ArrayList<>();
+        copperToolItems.add(Material.COPPER_AXE.getKey());
+        copperToolItems.add(Material.COPPER_HOE.getKey());
+        copperToolItems.add(Material.COPPER_PICKAXE.getKey());
+        copperToolItems.add(Material.COPPER_SHOVEL.getKey());
+        copperToolItems.add(Material.COPPER_SWORD.getKey());
+        copperToolItems.add(Material.COPPER_SPEAR.getKey());
+        toolItems.add(new LockedToolItem(copperToolItems, ELockedToolType.COPPER));
 
         List<NamespacedKey> ironToolItems = new ArrayList<>();
         ironToolItems.add(Material.IRON_AXE.getKey());
@@ -77,6 +95,7 @@ public class LockedItemsFactory {
         ironToolItems.add(Material.IRON_PICKAXE.getKey());
         ironToolItems.add(Material.IRON_SHOVEL.getKey());
         ironToolItems.add(Material.IRON_SWORD.getKey());
+        ironToolItems.add(Material.IRON_SPEAR.getKey());
         toolItems.add(new LockedToolItem(ironToolItems, ELockedToolType.IRON));
 
         List<NamespacedKey> goldToolItems = new ArrayList<>();
@@ -85,6 +104,7 @@ public class LockedItemsFactory {
         goldToolItems.add(Material.GOLDEN_PICKAXE.getKey());
         goldToolItems.add(Material.GOLDEN_SHOVEL.getKey());
         goldToolItems.add(Material.GOLDEN_SWORD.getKey());
+        goldToolItems.add(Material.GOLDEN_SPEAR.getKey());
         toolItems.add(new LockedToolItem(goldToolItems, ELockedToolType.GOLD));
 
         List<NamespacedKey> diamondToolItems = new ArrayList<>();
@@ -93,7 +113,17 @@ public class LockedItemsFactory {
         diamondToolItems.add(Material.DIAMOND_PICKAXE.getKey());
         diamondToolItems.add(Material.DIAMOND_SHOVEL.getKey());
         diamondToolItems.add(Material.DIAMOND_SWORD.getKey());
+        diamondToolItems.add(Material.DIAMOND_SPEAR.getKey());
         toolItems.add(new LockedToolItem(diamondToolItems, ELockedToolType.DIAMOND));
+
+        List<NamespacedKey> netheriteToolItems = new ArrayList<>();
+        netheriteToolItems.add(Material.NETHERITE_AXE.getKey());
+        netheriteToolItems.add(Material.NETHERITE_HOE.getKey());
+        netheriteToolItems.add(Material.NETHERITE_PICKAXE.getKey());
+        netheriteToolItems.add(Material.NETHERITE_SHOVEL.getKey());
+        netheriteToolItems.add(Material.NETHERITE_SWORD.getKey());
+        netheriteToolItems.add(Material.NETHERITE_SPEAR.getKey());
+        toolItems.add(new LockedToolItem(netheriteToolItems, ELockedToolType.NETHERITE));
     }
 
     public boolean isLocked(NamespacedKey item) {
