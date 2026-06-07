@@ -1,4 +1,4 @@
-package fr.miuby.survi.listener;
+package fr.miuby.survi.listener.job;
 
 import fr.miuby.lib.MiubyLib;
 import fr.miuby.survi.GameManager;
@@ -9,7 +9,6 @@ import fr.miuby.survi.player.AlphaPlayer;
 import fr.miuby.survi.role.ERole;
 import fr.miuby.survi.role.Role;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.Ageable;
 import org.bukkit.event.EventHandler;

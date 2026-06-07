@@ -1,4 +1,4 @@
-package fr.miuby.survi.listener;
+package fr.miuby.survi.listener.job;
 
 import fr.miuby.survi.job.EJob;
 import fr.miuby.survi.player.AlphaPlayer;

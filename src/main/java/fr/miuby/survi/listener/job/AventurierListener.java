@@ -1,4 +1,4 @@
-package fr.miuby.survi.listener;
+package fr.miuby.survi.listener.job;
 
 import fr.miuby.lib.MiubyLib;
 import fr.miuby.survi.job.EJob;

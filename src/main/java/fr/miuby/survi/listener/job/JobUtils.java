@@ -1,4 +1,4 @@
-package fr.miuby.survi.listener;
+package fr.miuby.survi.listener.job;
 
 import org.bukkit.block.Block;
 import org.bukkit.event.block.BlockBreakEvent;
