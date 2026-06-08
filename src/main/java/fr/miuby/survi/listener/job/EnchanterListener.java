@@ -1,6 +1,7 @@
 package fr.miuby.survi.listener.job;
 
 import fr.miuby.survi.job.EJob;
+import fr.miuby.survi.job.config.JobsConfig;
 import fr.miuby.survi.player.AlphaPlayer;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -26,17 +27,13 @@ import org.bukkit.inventory.meta.Repairable;
 import java.util.Map;
 
 /**
- * Gère tous les effets du métier {@link EJob#ENCHANTEUR} :
+ * Gère tous les effets du métier {@link EJob#ENCHANTER} :
  * table d'enchantement, enclume (cap XP + bypass Too Expensive),
- * durabilité accélérée/réduite, réparation XP mending-like (niv.9-10).
+ * durabilité accélérée/réduite, réparation XP mending-like.
+ *
+ * <p>Tous les paramètres numériques sont lus depuis {@link JobsConfig} ({@code jobs.yml}).</p>
  */
-public class EnchanteurListener implements Listener {
-
-    private static final double[] DURABILITY_LOSS_MULT =
-            { 3.00, 2.00, 1.50, 1.25, 1.00, 0.75, 0.50, 0.25, 0.10, 0.00, 0.00 };
-
-    private static final int[] ANVIL_MAX_COST =
-            { 2, 4, 7, 11, 16, 20, 25, 30, 35, 40, Integer.MAX_VALUE };
+public class EnchanterListener implements Listener {
 
     // ════════════════════════════════════════════════════════════════════════════
     //  Table d'enchantement
@@ -46,7 +43,7 @@ public class EnchanteurListener implements Listener {
     public void onPrepareEnchant(PrepareItemEnchantEvent event) {
         AlphaPlayer alpha = AlphaPlayer.get(event.getEnchanter().getUniqueId());
         if (alpha == null) return;
-        int jobLevel = alpha.getJobLevel(EJob.ENCHANTEUR);
+        int jobLevel = alpha.getJobLevel(EJob.ENCHANTER);
         int maxXpCost = jobLevel * 3;
         for (int i = 0; i < event.getOffers().length; i++) {
             EnchantmentOffer offer = event.getOffers()[i];
@@ -60,11 +57,11 @@ public class EnchanteurListener implements Listener {
     public void onEnchant(EnchantItemEvent event) {
         AlphaPlayer alpha = AlphaPlayer.get(event.getEnchanter().getUniqueId());
         if (alpha == null) return;
-        int jobLevel = alpha.getJobLevel(EJob.ENCHANTEUR);
+        int jobLevel = alpha.getJobLevel(EJob.ENCHANTER);
         if (jobLevel == 0) {
             event.setCancelled(true);
             event.getEnchanter().sendMessage(Component.text("✗ Vous ne pouvez pas encore enchanter. Progressez dans le métier ")
-                    .color(NamedTextColor.RED).append(EJob.ENCHANTEUR.toComponent())
+                    .color(NamedTextColor.RED).append(EJob.ENCHANTER.toComponent())
                     .append(Component.text(".", NamedTextColor.RED)));
             return;
         }
@@ -73,7 +70,7 @@ public class EnchanteurListener implements Listener {
         if (tooHigh) {
             event.setCancelled(true);
             event.getEnchanter().sendMessage(Component.text("✗ Cet enchantement dépasse votre niveau de métier ")
-                    .color(NamedTextColor.RED).append(EJob.ENCHANTEUR.toComponent())
+                    .color(NamedTextColor.RED).append(EJob.ENCHANTER.toComponent())
                     .append(Component.text(" (max niv." + jobLevel + " d'enchantement).", NamedTextColor.RED)));
         }
     }
@@ -87,14 +84,15 @@ public class EnchanteurListener implements Listener {
         if (!(event.getView().getPlayer() instanceof Player player)) return;
         AlphaPlayer alpha = AlphaPlayer.get(player.getUniqueId());
         if (alpha == null) return;
-        int jobLevel = alpha.getJobLevel(EJob.ENCHANTEUR);
+        int jobLevel = alpha.getJobLevel(EJob.ENCHANTER);
+        JobsConfig.EnchanterCfg enc = JobsConfig.getInstance().getEnchanter();
         AnvilInventory anvil = event.getInventory();
         ItemStack first  = anvil.getItem(0);
         ItemStack second = anvil.getItem(1);
 
         // Résultat nul → niv.10 : reconstruction pour bypasser "Too Expensive"
         if (event.getResult() == null || event.getResult().getType() == Material.AIR) {
-            if (jobLevel >= 10 && first != null && !first.getType().isAir()) {
+            if (enc.getAnvilMaxXpCost()[jobLevel] < 0 && first != null && !first.getType().isAir()) {
                 ItemStack rebuilt = constructAnvilResult(first, second, anvil.getRenameText(), jobLevel);
                 if (rebuilt != null) { event.setResult(rebuilt); anvil.setRepairCost(39); }
             }
@@ -115,8 +113,9 @@ public class EnchanteurListener implements Listener {
         }
         if (changed && tooHigh) { event.setResult(null); return; }
 
-        // Vérification du cap XP
-        if (anvil.getRepairCost() > ANVIL_MAX_COST[jobLevel]) { event.setResult(null); return; }
+        // Vérification du cap XP (-1 = illimité)
+        int maxCost = enc.getAnvilMaxXpCost()[jobLevel];
+        if (maxCost >= 0 && anvil.getRepairCost() > maxCost) { event.setResult(null); return; }
 
         // Réinitialisation du RepairCost → plus jamais "Too Expensive"
         ItemStack finalResult = event.getResult().clone();
@@ -166,7 +165,8 @@ public class EnchanteurListener implements Listener {
     public void onItemDamage(PlayerItemDamageEvent event) {
         AlphaPlayer alpha = AlphaPlayer.get(event.getPlayer().getUniqueId());
         if (alpha == null) return;
-        double mult = DURABILITY_LOSS_MULT[alpha.getJobLevel(EJob.ENCHANTEUR)];
+        double mult = JobsConfig.getInstance().getEnchanter()
+                .getDurabilityLossMultiplier()[alpha.getJobLevel(EJob.ENCHANTER)];
         if (mult <= 0) { event.setCancelled(true); return; }
         if (mult == 1.0) return;
         double total = event.getDamage() * mult;
@@ -177,7 +177,7 @@ public class EnchanteurListener implements Listener {
     }
 
     // ════════════════════════════════════════════════════════════════════════════
-    //  Réparation XP — mending-like (niv.9-10)
+    //  Réparation XP — mending-like
     // ════════════════════════════════════════════════════════════════════════════
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
@@ -185,9 +185,9 @@ public class EnchanteurListener implements Listener {
         if (event.getAmount() <= 0) return;
         AlphaPlayer alpha = AlphaPlayer.get(event.getPlayer().getUniqueId());
         if (alpha == null) return;
-        int level = alpha.getJobLevel(EJob.ENCHANTEUR);
-        if (level < 9) return;
-        int repairPerXP = (level == 10) ? 4 : 2;
+        int level = alpha.getJobLevel(EJob.ENCHANTER);
+        int repairPerXP = JobsConfig.getInstance().getEnchanter().getRepairPerXp()[level];
+        if (repairPerXP <= 0) return;
         ItemStack target = findMostDamagedItem(event.getPlayer());
         if (target == null) return;
         if (!(target.getItemMeta() instanceof Damageable dmg) || dmg.getDamage() == 0) return;

@@ -3,7 +3,7 @@ nameId: "GoldRoger"
 displayName: "Gol D. Roger"
 type: SAVANNA
 profession: WEAPONSMITH
-job: PECHEUR
+job: FISHERMAN
 openMessage: "Veux-tu une belle canne à pêche ?"
 mainHandItem: FISHING_ROD
 

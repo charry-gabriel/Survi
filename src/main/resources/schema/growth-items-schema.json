@@ -74,10 +74,17 @@
           "type": "string",
           "description": "[set_attribute]",
           "enum": [
-            "mining_efficiency", "movement_speed", "attack_damage", "attack_speed",
-            "armor", "armor_toughness", "max_health", "block_break_speed",
-            "luck", "knockback_resistance"
-          ]
+        "armor",
+        "armor_toughness",
+        "attack_damage",
+        "attack_speed",
+        "block_break_speed",
+        "knockback_resistance",
+        "luck",
+        "max_health",
+        "mining_efficiency",
+        "movement_speed"
+      ]
         },
         "attributeValue": { "type": "number",  "description": "[set_attribute] valeur de base (remplacée par les paliers)" },
         "operation": {
@@ -121,10 +128,17 @@
           "type": "string",
           "description": "[set_attribute]",
           "enum": [
-            "mining_efficiency", "movement_speed", "attack_damage", "attack_speed",
-            "armor", "armor_toughness", "max_health", "block_break_speed",
-            "luck", "knockback_resistance"
-          ]
+        "armor",
+        "armor_toughness",
+        "attack_damage",
+        "attack_speed",
+        "block_break_speed",
+        "knockback_resistance",
+        "luck",
+        "max_health",
+        "mining_efficiency",
+        "movement_speed"
+      ]
         },
         "attributeValue": { "type": "number",  "description": "[set_attribute] valeur totale (remplace l'existant)" },
         "operation": {

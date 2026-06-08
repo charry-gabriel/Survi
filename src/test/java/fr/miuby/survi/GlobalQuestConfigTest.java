@@ -33,9 +33,7 @@ class GlobalQuestConfigTest {
     );
 
     private static final Set<String> VALID_JOBS = Set.of(
-            "MINEUR", "BUCHERON", "FERMIER", "COMBATANT", "ALCHIMISTE",
-            "ENCHANTEUR", "FORGERON", "PECHEUR", "CHASSEUR", "MARCHAND",
-            "AVENTURIER", "BATISSEUR"
+            "MINER", "LUMBERJACK", "FARMER", "ENCHANTER", "FISHERMAN", "EXPLORER"
     );
 
     /** Tous les types d'effets supportés par BlessingLoader. */

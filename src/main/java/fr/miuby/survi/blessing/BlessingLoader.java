@@ -35,7 +35,7 @@ public class BlessingLoader {
      * <pre>
      * rewards:
      *   - type: REPUTATION
-     *     job: MINEUR
+     *     job: MINER
      *     value: 50
      *   - type: POTION
      *     potion: haste

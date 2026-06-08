@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.*;
  *   <li>{@code reputation.ranks} — liste triée par threshold croissant depuis 0, IDs uniques.</li>
  *   <li>{@code jobs.levels} — exactement 11 entrées, triées, threshold croissant depuis 0.</li>
  *   <li>{@code world-level} — mob-rarity, mob-difficulty cohérents.</li>
- *   <li>{@code adventure-limits.wilderness-radius-per-level} — même compte que {@code jobs.levels},
+ *   <li>{@code explore-limits.wilderness-radius-per-level} — même compte que {@code jobs.levels},
  *       valeurs positives croissantes, {@code radius[0] / 8 ≥ 1} (cohérence Nether).</li>
  *   <li>{@code village-zone} — centre XZ, paliers triés par {@code after-hours} croissant,
  *       chaque palier avec {@code radius > 0}, {@code spawn} et {@code portal} valides.</li>
@@ -195,18 +195,18 @@ class ConfigTest {
         assertNonNegativeNumber(mobDifficulty, "per-level", "world-level.mob-difficulty");
     }
 
-    // ─── adventure-limits ─────────────────────────────────────────────────────────
+    // ─── explore-limits ─────────────────────────────────────────────────────────
 
     @Test
     @SuppressWarnings("unchecked")
-    void adventureLimitsSectionIsValid() throws IOException {
+    void exploreLimitsSectionIsValid() throws IOException {
         Map<String, Object> config = loadConfig();
 
-        Map<String, Object> adventureLimits = (Map<String, Object>) config.get("adventure-limits");
-        assertNotNull(adventureLimits, "La section 'adventure-limits' doit être présente");
+        Map<String, Object> exploreLimits = (Map<String, Object>) config.get("explore-limits");
+        assertNotNull(exploreLimits, "La section 'explore-limits' doit être présente");
 
-        List<?> radii = (List<?>) adventureLimits.get("wilderness-radius-per-level");
-        assertNotNull(radii, "adventure-limits.wilderness-radius-per-level doit être présent");
+        List<?> radii = (List<?>) exploreLimits.get("wilderness-radius-per-level");
+        assertNotNull(radii, "explore-limits.wilderness-radius-per-level doit être présent");
 
         // Cohérence avec jobs.levels (même nombre d'entrées)
         List<?> jobLevels = (List<?>) ((Map<?, ?>) config.get("jobs")).get("levels");

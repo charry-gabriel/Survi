@@ -3,6 +3,7 @@ package fr.miuby.survi.listener.job;
 import fr.miuby.lib.MiubyLib;
 import fr.miuby.survi.GameManager;
 import fr.miuby.survi.job.EJob;
+import fr.miuby.survi.job.config.JobsConfig;
 import fr.miuby.survi.world.crops.PlantedCropUtils;
 import fr.miuby.survi.world.crops.PlantedCropsManager;
 import fr.miuby.survi.player.AlphaPlayer;
@@ -29,37 +30,10 @@ import org.bukkit.event.player.PlayerInteractEvent;
  *   <li>Cultures plantées par un fermier (niv. 5) → croissance vanilla.</li>
  *   <li>Cultures plantées par un fermier (niv. 6-10) → croissance accélérée (tick(s) bonus).</li>
  * </ul>
+ *
+ * <p>Tous les paramètres numériques sont lus depuis {@link JobsConfig} ({@code jobs.yml}).</p>
  */
 public class CropGrowthListener implements Listener {
-
-    // ─── Tables de croissance par niveau (index = niveau, 0 → 10) ────────────────
-
-    /**
-     * Probabilité d'autoriser un tick de croissance (niv. 0-4 uniquement).
-     * niv.5 = 1.0 (vanilla), utilisé comme borne dans le handler.
-     */
-    private static final double[] CROP_GROWTH_ALLOW_CHANCE = {
-            0.05,  // niv. 0 — 5%  (20× plus lent que vanilla)
-            0.15,  // niv. 1
-            0.30,  // niv. 2
-            0.50,  // niv. 3
-            0.70,  // niv. 4
-            1.00,  // niv. 5 — vanilla
-            1.00, 1.00, 1.00, 1.00, 1.00
-    };
-
-    /**
-     * Probabilité d'un tick de croissance BONUS immédiatement après un tick normal (niv. 6-10).
-     * niv.10 = toujours 1 bonus + 50 % d'un 2e bonus supplémentaire.
-     */
-    private static final double[] CROP_EXTRA_GROWTH_CHANCE = {
-            0, 0, 0, 0, 0, 0,
-            0.20,  // niv. 6
-            0.40,  // niv. 7
-            0.65,  // niv. 8
-            1.00,  // niv. 9
-            1.00   // niv. 10 (+ 50 % d'un 3e tick via logique dédiée)
-    };
 
     // ════════════════════════════════════════════════════════════════════════════
     //  Enregistrement de la plantation
@@ -73,7 +47,7 @@ public class CropGrowthListener implements Listener {
 
         Block targetBlock = GameManager.getInstance().getPlantedCropsManager().getTargetBlockForPlanting(event);
         if (targetBlock != null) {
-            int farmLevel = alpha.getJobLevel(EJob.FERMIER);
+            int farmLevel = alpha.getJobLevel(EJob.FARMER);
             GameManager.getInstance().getPlantedCropsManager().addPlantedCrop(targetBlock.getLocation(), farmLevel);
         }
     }
@@ -101,15 +75,17 @@ public class CropGrowthListener implements Listener {
         // Culture non plantée par un fermier → vanilla, aucune modification
         if (farmLevel == null) return;
 
+        JobsConfig.FarmerCfg farmer = JobsConfig.getInstance().getFarmer();
+
         // Niv. 0-4 : ralentissement → annule le tick avec probabilité (1 - chance)
-        if (farmLevel < 5 && Math.random() > CROP_GROWTH_ALLOW_CHANCE[farmLevel]) {
+        if (farmLevel < 5 && Math.random() > farmer.getCropGrowthAllowChance()[farmLevel]) {
             event.setCancelled(true);
             return;
         }
 
         // Niv. 6-10 : tick(s) bonus après le tick normal
         if (farmLevel >= 6) {
-            scheduleExtraGrowth(event.getBlock(), farmLevel);
+            scheduleExtraGrowth(event.getBlock(), farmLevel, farmer);
         }
     }
 
@@ -117,8 +93,8 @@ public class CropGrowthListener implements Listener {
      * Planifie un (ou deux pour niv.10) tick(s) de croissance supplémentaires.
      * N'avance le bloc que s'il est toujours un {@link Ageable} non au max.
      */
-    private static void scheduleExtraGrowth(Block block, int farmLevel) {
-        if (Math.random() >= CROP_EXTRA_GROWTH_CHANCE[farmLevel]) return;
+    private static void scheduleExtraGrowth(Block block, int farmLevel, JobsConfig.FarmerCfg farmer) {
+        if (Math.random() >= farmer.getCropExtraGrowthChance()[farmLevel]) return;
 
         Location loc = block.getLocation().clone();
         MiubyLib.runLater(() -> {
@@ -128,8 +104,8 @@ public class CropGrowthListener implements Listener {
             ageable.setAge(ageable.getAge() + 1);
             target.setBlockData(ageable);
 
-            // Niv. 10 seulement : 50 % de chance d'un 3e tick de croissance
-            if (farmLevel == 10 && Math.random() < 0.50) {
+            // Niv. 10 seulement : chance d'un 3e tick de croissance
+            if (farmLevel == 10 && Math.random() < farmer.getCropThirdTickChanceAtMax()) {
                 MiubyLib.runLater(() -> {
                     Block t2 = loc.getBlock();
                     if (!(t2.getBlockData() instanceof Ageable a2)) return;

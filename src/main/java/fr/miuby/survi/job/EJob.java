@@ -14,19 +14,19 @@ import net.kyori.adventure.text.format.NamedTextColor;
  *
  * Niveaux 0–10 (voir config.yml → jobs.levels).
  * Effets par niveau :
- *   MINEUR    — multiplicateur de drops sur les minerais  (×0,2 au niv.0 → ×2,0 au niv.10)
- *   BUCHERON  — multiplicateur de drops sur les bûches    (×0,2 au niv.0 → ×2,0 au niv.10)
- *   ENCHANTEUR — plafond XP table d'enchantement (niv×3) et niveau max d'enchantement (= niv)
+ *   MINER      — multiplicateur de drops sur les minerais  (×0,2 au niv.0 → ×2,0 au niv.10)
+ *   LUMBERJACK — multiplicateur de drops sur les bûches    (×0,2 au niv.0 → ×2,0 au niv.10)
+ *   ENCHANTER  — plafond XP table d'enchantement (niv×3) et niveau max d'enchantement (= niv)
  */
 @Getter
 public enum EJob {
 
-    MINEUR        ("Mineur",        NamedTextColor.GRAY),
-    BUCHERON      ("Bûcheron",      NamedTextColor.DARK_GREEN),
-    FERMIER       ("Fermier",       NamedTextColor.YELLOW),
-    ENCHANTEUR    ("Enchanteur",    NamedTextColor.DARK_PURPLE),
-    PECHEUR       ("Pêcheur",       NamedTextColor.BLUE),
-    AVENTURIER    ("Aventurier",    NamedTextColor.RED);
+    MINER      ("Mineur",     NamedTextColor.GRAY),
+    LUMBERJACK ("Bûcheron",   NamedTextColor.DARK_GREEN),
+    FARMER     ("Fermier",    NamedTextColor.YELLOW),
+    ENCHANTER  ("Enchanteur", NamedTextColor.DARK_PURPLE),
+    FISHERMAN  ("Pêcheur",    NamedTextColor.BLUE),
+    EXPLORER   ("Explorateur", NamedTextColor.RED);
 
     private final String displayName;
     private final NamedTextColor color;

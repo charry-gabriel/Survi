@@ -113,7 +113,7 @@
         "ENDIALE",
         "FISHING_D_ROD",
         "GROWTH_BATON_FERMIER",
-        "GROWTH_BOUSSOLE_AVENTURIER",
+        "GROWTH_BOUSSOLE_EXPLORER",
         "GROWTH_CASQUE_MINEUR",
         "GROWTH_EPEE_SHINY",
         "GROWTH_PICKAXE",
@@ -1851,24 +1851,24 @@
           "type": "string",
           "description": "Tier d'outil à débloquer (UNLOCK_TOOL).",
           "enum": [
-            "DIAMOND",
-            "GOLD",
-            "IRON",
-            "STONE",
-            "WOOD"
-          ]
+        "DIAMOND",
+        "GOLD",
+        "IRON",
+        "STONE",
+        "WOOD"
+      ]
         },
         "armor": {
           "type": "string",
           "description": "Tier d'armure à débloquer (UNLOCK_ARMOR).",
           "enum": [
-            "CHAINMAIL",
-            "DIAMOND",
-            "GOLD",
-            "IRON",
-            "LEATHER",
-            "NETHERITE"
-          ]
+        "CHAINMAIL",
+        "DIAMOND",
+        "GOLD",
+        "IRON",
+        "LEATHER",
+        "NETHERITE"
+      ]
         },
         "world": {
           "type": "string",

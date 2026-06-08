@@ -9,11 +9,11 @@ quests:
     type: MINE
     difficulty: 1
     jobs:
-      - MINEUR
+      - MINER
     targets: [COBBLESTONE]
     goal: 128
     rewards:
-      - {type: REPUTATION, job: MINEUR, value: 1}
+      - {type: REPUTATION, job: MINER, value: 1}
       - {type: POTION, potion: haste, duration: 1728000, amplifier: 0}
 
   - id: "mine_coal"
@@ -22,11 +22,11 @@ quests:
     type: MINE
     difficulty: 1
     jobs:
-      - MINEUR
+      - MINER
     targets: [COAL_ORE]
     goal: 12
     rewards:
-      - {type: REPUTATION, job: MINEUR, value: 1}
+      - {type: REPUTATION, job: MINER, value: 1}
       - {type: POTION, potion: haste, duration: 1728000, amplifier: 0}
 
   - id: "mine_iron"
@@ -35,11 +35,11 @@ quests:
     type: MINE
     difficulty: 1
     jobs:
-      - MINEUR
+      - MINER
     targets: [IRON_ORE]
     goal: 10
     rewards:
-      - {type: REPUTATION, job: MINEUR, value: 1}
+      - {type: REPUTATION, job: MINER, value: 1}
       - {type: POTION, potion: haste, duration: 1728000, amplifier: 0}
 
   - id: "mine_copper"
@@ -48,11 +48,11 @@ quests:
     type: MINE
     difficulty: 1
     jobs:
-      - MINEUR
+      - MINER
     targets: [COPPER_ORE]
     goal: 16
     rewards:
-      - {type: REPUTATION, job: MINEUR, value: 1}
+      - {type: REPUTATION, job: MINER, value: 1}
       - {type: POTION, potion: haste, duration: 1728000, amplifier: 0}
 
   - id: "mine_redstone"
@@ -61,11 +61,11 @@ quests:
     type: MINE
     difficulty: 1
     jobs:
-      - MINEUR
+      - MINER
     targets: [REDSTONE_ORE]
     goal: 24
     rewards:
-      - {type: REPUTATION, job: MINEUR, value: 1}
+      - {type: REPUTATION, job: MINER, value: 1}
       - {type: POTION, potion: haste, duration: 1728000, amplifier: 0}
 
   - id: "mine_deepslate"
@@ -74,11 +74,11 @@ quests:
     type: MINE
     difficulty: 1
     jobs:
-      - MINEUR
+      - MINER
     targets: [DEEPSLATE_COPPER_ORE, DEEPSLATE_COAL_ORE, DEEPSLATE_GOLD_ORE]
     goal: 96
     rewards:
-      - { type: REPUTATION, job: MINEUR, value: 2}
+      - { type: REPUTATION, job: MINER, value: 2}
       - { type: POTION, potion: haste, duration: 1728000, amplifier: 0 }
 
   - id: "mine_mixed_ores"
@@ -87,11 +87,11 @@ quests:
     type: MINE
     difficulty: 1
     jobs:
-      - MINEUR
+      - MINER
     targets: [DEEPSLATE_COPPER_ORE, DEEPSLATE_COAL_ORE, DEEPSLATE_GOLD_ORE]
     goal: 20
     rewards:
-      - {type: REPUTATION, job: MINEUR, value: 1}
+      - {type: REPUTATION, job: MINER, value: 1}
       - { type: POTION, potion: haste, duration: 1728000, amplifier: 0 }
 
 
@@ -101,11 +101,11 @@ quests:
     type: MINE
     difficulty: 1
     jobs:
-      - MINEUR
+      - MINER
     targets: [SAND]
     goal: 250
     rewards:
-      - {type: REPUTATION, job: MINEUR, value: 8}
+      - {type: REPUTATION, job: MINER, value: 8}
       - {type: POTION, potion: speed, duration: 1728000, amplifier: 0}
 
   - id: "mine_gravel"
@@ -114,11 +114,11 @@ quests:
     type: MINE
     difficulty: 1
     jobs:
-      - MINEUR
+      - MINER
     targets: [GRAVEL]
     goal: 250
     rewards:
-      - {type: REPUTATION, job: MINEUR, value: 8}
+      - {type: REPUTATION, job: MINER, value: 8}
       - {type: POTION, potion: luck, duration: 1728000, amplifier: 0}
 
   - id: "mine_oak_log"
@@ -127,11 +127,11 @@ quests:
     type: MINE
     difficulty: 1
     jobs:
-      - BUCHERON
+      - LUMBERJACK
     targets: [OAK_LOG]
     goal: 80
     rewards:
-      - {type: REPUTATION, job: BUCHERON, value: 10}
+      - {type: REPUTATION, job: LUMBERJACK, value: 10}
       - {type: POTION, potion: haste, duration: 1728000, amplifier: 0}
 
   - id: "mine_birch_log"
@@ -140,11 +140,11 @@ quests:
     type: MINE
     difficulty: 1
     jobs:
-      - BUCHERON
+      - LUMBERJACK
     targets: [BIRCH_LOG]
     goal: 80
     rewards:
-      - {type: REPUTATION, job: BUCHERON, value: 10}
+      - {type: REPUTATION, job: LUMBERJACK, value: 10}
       - {type: POTION, potion: speed, duration: 1728000, amplifier: 0}
 
   - id: "mine_spruce_log"
@@ -153,11 +153,11 @@ quests:
     type: MINE
     difficulty: 1
     jobs:
-      - BUCHERON
+      - LUMBERJACK
     targets: [SPRUCE_LOG]
     goal: 80
     rewards:
-      - {type: REPUTATION, job: BUCHERON, value: 10}
+      - {type: REPUTATION, job: LUMBERJACK, value: 10}
       - {type: POTION, potion: speed, duration: 1728000, amplifier: 0}
 
   - id: "kill_zombies"
@@ -166,11 +166,11 @@ quests:
     type: KILL
     difficulty: 1
     jobs:
-      - ENCHANTEUR
+      - ENCHANTER
     targets: [ZOMBIE]
     goal: 25
     rewards:
-      - {type: REPUTATION, job: ENCHANTEUR, value: 10}
+      - {type: REPUTATION, job: ENCHANTER, value: 10}
       - {type: POTION, potion: strength, duration: 1728000, amplifier: 0}
 
   - id: "kill_skeletons"
@@ -179,11 +179,11 @@ quests:
     type: KILL
     difficulty: 1
     jobs:
-      - ENCHANTEUR
+      - ENCHANTER
     targets: [SKELETON]
     goal: 20
     rewards:
-      - {type: REPUTATION, job: ENCHANTEUR, value: 10}
+      - {type: REPUTATION, job: ENCHANTER, value: 10}
       - {type: POTION, potion: speed, duration: 1728000, amplifier: 0}
 
   - id: "kill_spiders"
@@ -192,11 +192,11 @@ quests:
     type: KILL
     difficulty: 1
     jobs:
-      - ENCHANTEUR
+      - ENCHANTER
     targets: [SPIDER]
     goal: 25
     rewards:
-      - {type: REPUTATION, job: ENCHANTEUR, value: 9}
+      - {type: REPUTATION, job: ENCHANTER, value: 9}
       - {type: POTION, potion: speed, duration: 1728000, amplifier: 0}
 
   - id: "kill_creepers"
@@ -205,11 +205,11 @@ quests:
     type: KILL
     difficulty: 1
     jobs:
-      - ENCHANTEUR
+      - ENCHANTER
     targets: [CREEPER]
     goal: 15
     rewards:
-      - {type: REPUTATION, job: ENCHANTEUR, value: 12}
+      - {type: REPUTATION, job: ENCHANTER, value: 12}
       - {type: POTION, potion: resistance, duration: 1728000, amplifier: 0}
 
   - id: "fish_common"
@@ -218,11 +218,11 @@ quests:
     type: FISH
     difficulty: 1
     jobs:
-      - PECHEUR
+      - FISHERMAN
     targets: null
     goal: 10
     rewards:
-      - {type: REPUTATION, job: PECHEUR, value: 12}
+      - {type: REPUTATION, job: FISHERMAN, value: 12}
       - {type: POTION, potion: luck, duration: 1728000, amplifier: 0}
 
   - id: "shear_sheep"
@@ -231,11 +231,11 @@ quests:
     type: SHEAR
     difficulty: 1
     jobs:
-      - FERMIER
+      - FARMER
     targets: [SHEEP]
     goal: 20
     rewards:
-      - {type: REPUTATION, job: FERMIER, value: 10}
+      - {type: REPUTATION, job: FARMER, value: 10}
       - {type: POTION, potion: speed, duration: 1728000, amplifier: 0}
 
   - id: "breed_cow"
@@ -244,11 +244,11 @@ quests:
     type: BREED
     difficulty: 1
     jobs:
-      - FERMIER
+      - FARMER
     targets: [COW]
     goal: 10
     rewards:
-      - {type: REPUTATION, job: FERMIER, value: 10}
+      - {type: REPUTATION, job: FARMER, value: 10}
       - {type: POTION, potion: saturation, duration: 1728000, amplifier: 0}
 
   - id: "breed_chicken"
@@ -257,11 +257,11 @@ quests:
     type: BREED
     difficulty: 1
     jobs:
-      - FERMIER
+      - FARMER
     targets: [CHICKEN]
     goal: 15
     rewards:
-      - {type: REPUTATION, job: FERMIER, value: 9}
+      - {type: REPUTATION, job: FARMER, value: 9}
       - {type: POTION, potion: saturation, duration: 1728000, amplifier: 0}
 
   - id: "craft_torch"
@@ -270,11 +270,11 @@ quests:
     type: CRAFT
     difficulty: 1
     jobs:
-      - ENCHANTEUR
+      - ENCHANTER
     targets: [TORCH]
     goal: 64
     rewards:
-      - {type: REPUTATION, job: ENCHANTEUR, value: 8}
+      - {type: REPUTATION, job: ENCHANTER, value: 8}
       - {type: POTION, potion: night_vision, duration: 1728000, amplifier: 0}
 
   - id: "smelt_stone"
@@ -283,11 +283,11 @@ quests:
     type: SMELT
     difficulty: 1
     jobs:
-      - ENCHANTEUR
+      - ENCHANTER
     targets: [STONE]
     goal: 128
     rewards:
-      - {type: REPUTATION, job: ENCHANTEUR, value: 9}
+      - {type: REPUTATION, job: ENCHANTER, value: 9}
       - {type: POTION, potion: haste, duration: 1728000, amplifier: 0}
 
   # ─────────────────── DIFFICULTÉ 2 (7 quêtes par métier) ───────────────────
@@ -298,11 +298,11 @@ quests:
     type: MINE
     difficulty: 2
     jobs:
-      - MINEUR
+      - MINER
     targets: [DEEPSLATE_DIAMOND_ORE]
     goal: 8
     rewards:
-      - {type: REPUTATION, job: MINEUR, value: 3}
+      - {type: REPUTATION, job: MINER, value: 3}
       - {type: POTION, potion: haste, duration: 1728000, amplifier: 1}
       - {type: POTION, potion: night_vision, duration: 1728000, amplifier: 0}
 
@@ -312,11 +312,11 @@ quests:
     type: MINE
     difficulty: 2
     jobs:
-      - MINEUR
+      - MINER
     targets: [NETHER_QUARTZ_ORE]
     goal: 64
     rewards:
-      - {type: REPUTATION, job: MINEUR, value: 2}
+      - {type: REPUTATION, job: MINER, value: 2}
       - { type: POTION, potion: haste, duration: 1728000, amplifier: 1 }
       - { type: POTION, potion: night_vision, duration: 1728000, amplifier: 0 }
 
@@ -326,12 +326,12 @@ quests:
     type: MINE
     difficulty: 2
     jobs:
-      - MINEUR
+      - MINER
     targets: [NETHER_GOLD_ORE]
     goal: 32
     rewards:
-      - { type: REPUTATION, job: MINEUR, value: 2}
-      - { type: REPUTATION, job: AVENTURIER, value: 1}
+      - { type: REPUTATION, job: MINER, value: 2}
+      - { type: REPUTATION, job: EXPLORER, value: 1}
       - { type: POTION, potion: haste, duration: 1728000, amplifier: 1 }
       - { type: POTION, potion: night_vision, duration: 1728000, amplifier: 0 }
 
@@ -341,11 +341,11 @@ quests:
     type: MINE
     difficulty: 2
     jobs:
-      - MINEUR
+      - MINER
     targets: [DEEPSLATE_IRON_ORE]
     goal: 60
     rewards:
-      - {type: REPUTATION, job: MINEUR, value: 2}
+      - {type: REPUTATION, job: MINER, value: 2}
       - {type: POTION, potion: haste, duration: 1728000, amplifier: 1}
 
   - id: "mine_amethyst_geode"
@@ -354,11 +354,11 @@ quests:
     type: MINE
     difficulty: 2
     jobs:
-      - MINEUR
+      - MINER
     targets: [AMETHYST_BLOCK]
     goal: 48
     rewards:
-      - {type: REPUTATION, job: MINEUR, value: 2}
+      - {type: REPUTATION, job: MINER, value: 2}
 
 
   - id: "mine_deepslate_iron2"
@@ -367,11 +367,11 @@ quests:
     type: MINE
     difficulty: 2
     jobs:
-      - MINEUR
+      - MINER
     targets: [DEEPSLATE_IRON_ORE]
     goal: 60
     rewards:
-      - {type: REPUTATION, job: MINEUR, value: 28}
+      - {type: REPUTATION, job: MINER, value: 28}
       - {type: POTION, potion: haste, duration: 1728000, amplifier: 1}
 
 
@@ -381,12 +381,12 @@ quests:
     type: MINE
     difficulty: 2
     jobs:
-      - MINEUR
+      - MINER
     targets: [SCULK]
     goal: 64
     rewards:
-      - {type: REPUTATION, job: MINEUR, value: 3}
-      - { type: REPUTATION, job: AVENTURIER, value: 2}
+      - {type: REPUTATION, job: MINER, value: 3}
+      - { type: REPUTATION, job: EXPLORER, value: 2}
 
   - id: "kill_drowned"
     name: "Exterminateur des Profondeurs"
@@ -394,11 +394,11 @@ quests:
     type: KILL
     difficulty: 2
     jobs:
-      - ENCHANTEUR
+      - ENCHANTER
     targets: [DROWNED]
     goal: 30
     rewards:
-      - {type: REPUTATION, job: ENCHANTEUR, value: 30}
+      - {type: REPUTATION, job: ENCHANTER, value: 30}
       - {type: POTION, potion: water_breathing, duration: 1728000, amplifier: 0}
       - {type: POTION, potion: strength, duration: 1728000, amplifier: 0}
 
@@ -408,11 +408,11 @@ quests:
     type: KILL
     difficulty: 2
     jobs:
-      - ENCHANTEUR
+      - ENCHANTER
     targets: [WITCH]
     goal: 10
     rewards:
-      - {type: REPUTATION, job: ENCHANTEUR, value: 35}
+      - {type: REPUTATION, job: ENCHANTER, value: 35}
       - {type: POTION, potion: luck, duration: 1728000, amplifier: 1}
       - {type: POTION, potion: regeneration, duration: 1728000, amplifier: 0}
 
@@ -422,11 +422,11 @@ quests:
     type: KILL
     difficulty: 2
     jobs:
-      - ENCHANTEUR
+      - ENCHANTER
     targets: [PILLAGER]
     goal: 20
     rewards:
-      - {type: REPUTATION, job: ENCHANTEUR, value: 30}
+      - {type: REPUTATION, job: ENCHANTER, value: 30}
       - {type: POTION, potion: strength, duration: 1728000, amplifier: 0}
       - {type: POTION, potion: resistance, duration: 1728000, amplifier: 0}
 
@@ -436,11 +436,11 @@ quests:
     type: BREED
     difficulty: 2
     jobs:
-      - FERMIER
+      - FARMER
     targets: null
     goal: 20
     rewards:
-      - {type: REPUTATION, job: FERMIER, value: 28}
+      - {type: REPUTATION, job: FARMER, value: 28}
       - {type: POTION, potion: saturation, duration: 1728000, amplifier: 0}
 
   - id: "craft_bread"
@@ -449,11 +449,11 @@ quests:
     type: CRAFT
     difficulty: 2
     jobs:
-      - FERMIER
+      - FARMER
     targets: [BREAD]
     goal: 32
     rewards:
-      - {type: REPUTATION, job: FERMIER, value: 25}
+      - {type: REPUTATION, job: FARMER, value: 25}
       - {type: POTION, potion: regeneration, duration: 1728000, amplifier: 0}
 
   - id: "craft_iron_sword"
@@ -462,11 +462,11 @@ quests:
     type: CRAFT
     difficulty: 2
     jobs:
-      - ENCHANTEUR
+      - ENCHANTER
     targets: [IRON_SWORD]
     goal: 5
     rewards:
-      - {type: REPUTATION, job: ENCHANTEUR, value: 30}
+      - {type: REPUTATION, job: ENCHANTER, value: 30}
       - {type: POTION, potion: strength, duration: 1728000, amplifier: 0}
 
   - id: "smelt_iron"
@@ -475,11 +475,11 @@ quests:
     type: SMELT
     difficulty: 2
     jobs:
-      - ENCHANTEUR
+      - ENCHANTER
     targets: [IRON_INGOT]
     goal: 200
     rewards:
-      - {type: REPUTATION, job: ENCHANTEUR, value: 38}
+      - {type: REPUTATION, job: ENCHANTER, value: 38}
       - {type: POTION, potion: fire_resistance, duration: 1728000, amplifier: 0}
 
   - id: "smelt_copper"
@@ -488,11 +488,11 @@ quests:
     type: SMELT
     difficulty: 2
     jobs:
-      - ENCHANTEUR
+      - ENCHANTER
     targets: [COPPER_INGOT]
     goal: 150
     rewards:
-      - {type: REPUTATION, job: ENCHANTEUR, value: 32}
+      - {type: REPUTATION, job: ENCHANTER, value: 32}
       - {type: POTION, potion: haste, duration: 1728000, amplifier: 1}
 
   - id: "fish_rare"
@@ -501,11 +501,11 @@ quests:
     type: FISH
     difficulty: 2
     jobs:
-      - PECHEUR
+      - FISHERMAN
     targets: null
     goal: 30
     rewards:
-      - {type: REPUTATION, job: PECHEUR, value: 28}
+      - {type: REPUTATION, job: FISHERMAN, value: 28}
       - {type: POTION, potion: luck, duration: 1728000, amplifier: 1}
 
   - id: "shear_rare"
@@ -514,11 +514,11 @@ quests:
     type: SHEAR
     difficulty: 2
     jobs:
-      - FERMIER
+      - FARMER
     targets: [SHEEP]
     goal: 50
     rewards:
-      - {type: REPUTATION, job: FERMIER, value: 26}
+      - {type: REPUTATION, job: FARMER, value: 26}
       - {type: POTION, potion: speed, duration: 1728000, amplifier: 1}
 
   # ─────────────────── DIFFICULTÉ 3 (7 quêtes par métier) ───────────────────
@@ -529,12 +529,12 @@ quests:
     type: MINE
     difficulty: 3
     jobs:
-      - MINEUR
+      - MINER
     targets: [ANCIENT_DEBRIS]
     goal: 6
     rewards:
-      - { type: REPUTATION, job: MINEUR, value: 4}
-      - { type: REPUTATION, job: AVENTURIER, value: 1}
+      - { type: REPUTATION, job: MINER, value: 4}
+      - { type: REPUTATION, job: EXPLORER, value: 1}
 
   - id: "mine_end_stone_mass"
     name: "Colonisation de l'End"
@@ -542,11 +542,11 @@ quests:
     type: MINE
     difficulty: 3
     jobs:
-      - MINEUR
+      - MINER
     targets: [END_STONE]
     goal: 512
     rewards:
-      - {type: REPUTATION, job: MINEUR, value: 4}
+      - {type: REPUTATION, job: MINER, value: 4}
 
   - id: "mine_chorus_plants"
     name: "Écho de l'End"
@@ -554,11 +554,11 @@ quests:
     type: MINE
     difficulty: 3
     jobs:
-      - MINEUR
+      - MINER
     targets: [CHORUS_PLANT]
     goal: 64
     rewards:
-      - {type: REPUTATION, job: MINEUR, value: 4}
+      - {type: REPUTATION, job: MINER, value: 4}
 
   - id: "mine_emerald"
     name: "Richesse des Montagnes"
@@ -566,11 +566,11 @@ quests:
     type: MINE
     difficulty: 3
     jobs:
-      - MINEUR
+      - MINER
     targets: [EMERALD_ORE]
     goal: 2
     rewards:
-      - {type: REPUTATION, job: MINEUR, value: 5}
+      - {type: REPUTATION, job: MINER, value: 5}
 
   - id: "kill_endermen"
     name: "Chasseur de l'End"
@@ -578,12 +578,12 @@ quests:
     type: KILL
     difficulty: 3
     jobs:
-      - ENCHANTEUR
-      - AVENTURIER
+      - ENCHANTER
+      - EXPLORER
     targets: [ENDERMAN]
     goal: 50
     rewards:
-      - {type: REPUTATION, job: ENCHANTEUR, value: 100}
+      - {type: REPUTATION, job: ENCHANTER, value: 100}
       - {type: POTION, potion: strength, duration: 1728000, amplifier: 1}
       - {type: POTION, potion: speed, duration: 1728000, amplifier: 1}
       - {type: POTION, potion: resistance, duration: 1728000, amplifier: 0}
@@ -594,12 +594,12 @@ quests:
     type: KILL
     difficulty: 3
     jobs:
-      - ENCHANTEUR
-      - AVENTURIER
+      - ENCHANTER
+      - EXPLORER
     targets: [WITHER_SKELETON]
     goal: 10
     rewards:
-      - {type: REPUTATION, job: ENCHANTEUR, value: 140}
+      - {type: REPUTATION, job: ENCHANTER, value: 140}
       - {type: POTION, potion: strength, duration: 1728000, amplifier: 1}
       - {type: POTION, potion: resistance, duration: 1728000, amplifier: 1}
 
@@ -609,12 +609,12 @@ quests:
     type: KILL
     difficulty: 3
     jobs:
-      - ENCHANTEUR
-      - AVENTURIER
+      - ENCHANTER
+      - EXPLORER
     targets: [BLAZE]
     goal: 30
     rewards:
-      - {type: REPUTATION, job: ENCHANTEUR, value: 120}
+      - {type: REPUTATION, job: ENCHANTER, value: 120}
       - {type: POTION, potion: fire_resistance, duration: 1728000, amplifier: 0}
       - {type: POTION, potion: strength, duration: 1728000, amplifier: 1}
 
@@ -624,12 +624,12 @@ quests:
     type: KILL
     difficulty: 3
     jobs:
-      - ENCHANTEUR
-      - AVENTURIER
+      - ENCHANTER
+      - EXPLORER
     targets: [GUARDIAN]
     goal: 20
     rewards:
-      - {type: REPUTATION, job: ENCHANTEUR, value: 130}
+      - {type: REPUTATION, job: ENCHANTER, value: 130}
       - {type: POTION, potion: water_breathing, duration: 1728000, amplifier: 0}
       - {type: POTION, potion: strength, duration: 1728000, amplifier: 1}
 
@@ -639,12 +639,12 @@ quests:
     type: MINE
     difficulty: 3
     jobs:
-      - MINEUR
-      - AVENTURIER
+      - MINER
+      - EXPLORER
     targets: [OBSIDIAN]
     goal: 150
     rewards:
-      - {type: REPUTATION, job: MINEUR, value: 160}
+      - {type: REPUTATION, job: MINER, value: 160}
       - {type: POTION, potion: haste, duration: 1728000, amplifier: 2}
 
   - id: "mine_ancient_debris2"
@@ -653,12 +653,12 @@ quests:
     type: MINE
     difficulty: 3
     jobs:
-      - MINEUR
-      - AVENTURIER
+      - MINER
+      - EXPLORER
     targets: [ANCIENT_DEBRIS]
     goal: 10
     rewards:
-      - {type: REPUTATION, job: MINEUR, value: 200}
+      - {type: REPUTATION, job: MINER, value: 200}
       - {type: POTION, potion: haste, duration: 1728000, amplifier: 2}
       - {type: POTION, potion: fire_resistance, duration: 1728000, amplifier: 0}
 
@@ -668,11 +668,11 @@ quests:
     type: SMELT
     difficulty: 3
     jobs:
-      - ENCHANTEUR
+      - ENCHANTER
     targets: [GOLD_INGOT]
     goal: 128
     rewards:
-      - {type: REPUTATION, job: ENCHANTEUR, value: 120}
+      - {type: REPUTATION, job: ENCHANTER, value: 120}
       - {type: POTION, potion: fire_resistance, duration: 1728000, amplifier: 0}
       - {type: POTION, potion: luck, duration: 1728000, amplifier: 1}
 
@@ -682,9 +682,9 @@ quests:
     type: FISH
     difficulty: 3
     jobs:
-      - PECHEUR
+      - FISHERMAN
     targets: null
     goal: 60
     rewards:
-      - {type: REPUTATION, job: PECHEUR, value: 110}
+      - {type: REPUTATION, job: FISHERMAN, value: 110}
       - {type: POTION, potion: luck, duration: 1728000, amplifier: 2}

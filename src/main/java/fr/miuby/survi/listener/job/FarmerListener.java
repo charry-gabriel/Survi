@@ -16,10 +16,10 @@ import java.util.EnumSet;
 import java.util.Set;
 
 /**
- * Gère les effets du métier {@link EJob#FERMIER} :
+ * Gère les effets du métier {@link EJob#FARMER} :
  * multiplicateur de drops sur les cultures récoltées et sur les mobs passifs tués.
  */
-public class FermierListener implements Listener {
+public class FarmerListener implements Listener {
 
     private static final Set<Material> HARVEST_CROPS = EnumSet.of(
             Material.WHEAT, Material.CARROTS, Material.POTATOES, Material.BEETROOTS,
@@ -45,8 +45,8 @@ public class FermierListener implements Listener {
         if (!HARVEST_CROPS.contains(event.getBlock().getType())) return;
         AlphaPlayer alpha = AlphaPlayer.get(event.getPlayer().getUniqueId());
         if (alpha == null) return;
-        try (var t = PerfTimer.start("FermierListener.dropWithMultiplier")) {
-            JobUtils.dropWithMultiplier(event, JobUtils.getMultiplier(alpha.getJobLevel(EJob.FERMIER)));
+        try (var t = PerfTimer.start("FarmerListener.dropWithMultiplier")) {
+            JobUtils.dropWithMultiplier(event, JobUtils.getMultiplier(alpha.getJobLevel(EJob.FARMER)));
         }
     }
 
@@ -59,6 +59,6 @@ public class FermierListener implements Listener {
         if (killer == null) return;
         AlphaPlayer alpha = AlphaPlayer.get(killer.getUniqueId());
         if (alpha == null) return;
-        JobUtils.applyDropMultiplier(event.getDrops(), JobUtils.getMultiplier(alpha.getJobLevel(EJob.FERMIER)));
+        JobUtils.applyDropMultiplier(event.getDrops(), JobUtils.getMultiplier(alpha.getJobLevel(EJob.FARMER)));
     }
 }

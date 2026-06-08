@@ -185,7 +185,7 @@ public class GrowthItemListener implements Listener {
     }
 
     // ═════════════════════════════════════════════════════════════════════════
-    //  GROWTH_BOUSSOLE_AVENTURIER — croît à chaque nouveau biome découvert
+    //  GROWTH_BOUSSOLE_EXPLORER — croît à chaque nouveau biome découvert
     // ═════════════════════════════════════════════════════════════════════════
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)

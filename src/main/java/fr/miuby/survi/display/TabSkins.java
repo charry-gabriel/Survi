@@ -64,8 +64,8 @@ public final class TabSkins {
     /**
      * Textures des métiers. Alimenter dans {@link #load} :
      * <pre>
-     *   JOB_PROPS.put(EJob.MINEUR,   fetchSigned("UUID_MINEUR",   "mineur"));
-     *   JOB_PROPS.put(EJob.BUCHERON, fetchSigned("UUID_BUCHERON", "bucheron"));
+     *   JOB_PROPS.put(EJob.MINER,      fetchSigned("UUID_MINER",      "miner"));
+     *   JOB_PROPS.put(EJob.LUMBERJACK, fetchSigned("UUID_LUMBERJACK", "lumberjack"));
      * </pre>
      * Les métiers absents utilisent {@link #gray()} comme fallback (voir TabInfoColumn).
      */
@@ -95,8 +95,8 @@ public final class TabSkins {
             BLUE_PROP = fetchSigned(BLUE_UUID, "blue");
 
             // ── Skins de métiers ──────────────────────────────────────────────
-            // JOB_PROPS.put(EJob.MINEUR,   fetchSigned("UUID_MINEUR",   "mineur"));
-            // JOB_PROPS.put(EJob.BUCHERON, fetchSigned("UUID_BUCHERON", "bucheron"));
+            // JOB_PROPS.put(EJob.MINER,      fetchSigned("UUID_MINER",      "miner"));
+            // JOB_PROPS.put(EJob.LUMBERJACK, fetchSigned("UUID_LUMBERJACK", "lumberjack"));
         });
     }
 

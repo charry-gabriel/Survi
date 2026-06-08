@@ -81,9 +81,9 @@ public class PlayerListener implements Listener {
             if (worldType == EWorld.VILLAGE) {
                 outOfBounds = villageZoneManager.isLocationOutOfBounds(event.getTo());
             } else if (worldType == EWorld.WILDERNESS) {
-                outOfBounds = isOutOfAdventureLimit(player, event.getTo(), false);
+                outOfBounds = isOutOfExploreLimit(player, event.getTo(), false);
             } else if (worldType == EWorld.NETHER) {
-                outOfBounds = isOutOfAdventureLimit(player, event.getTo(), true);
+                outOfBounds = isOutOfExploreLimit(player, event.getTo(), true);
             } else {
                 return;
             }
@@ -98,21 +98,21 @@ public class PlayerListener implements Listener {
     // ─── Helpers mouvement ───────────────────────────────────────────────────────
 
     /**
-     * Vérifie si le joueur dépasse la limite d'exploration liée à son niveau Aventurier.
+     * Vérifie si le joueur dépasse la limite d'exploration liée à son niveau Explorateur.
      *
      * @param player  le joueur à tester
      * @param to      la destination du mouvement
      * @param isNether {@code true} pour le Nether (rayon divisé par 8)
      * @return {@code true} si la position est hors des limites autorisées
      */
-    private boolean isOutOfAdventureLimit(Player player, Location to, boolean isNether) {
+    private boolean isOutOfExploreLimit(Player player, Location to, boolean isNether) {
         AlphaPlayer alphaPlayer = AlphaPlayer.get(player.getUniqueId());
         if (alphaPlayer == null) return false;
 
-        int aventurierLevel = alphaPlayer.getJobLevel(EJob.AVENTURIER);
-        List<Integer> radii = surviConfig.getAdventureWildernessRadii();
+        int explorerLevel = alphaPlayer.getJobLevel(EJob.EXPLORER);
+        List<Integer> radii = surviConfig.getExploreWildernessRadius();
 
-        int idx = Math.min(aventurierLevel, radii.size() - 1);
+        int idx = Math.min(explorerLevel, radii.size() - 1);
         int radius = radii.get(idx);
         if (isNether) radius = radius / 8;
 

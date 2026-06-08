@@ -19,14 +19,14 @@
           "type": {
             "type": "string",
             "enum": [
-              "BREED",
-              "CRAFT",
-              "FISH",
-              "KILL",
-              "MINE",
-              "SHEAR",
-              "SMELT"
-            ]
+        "BREED",
+        "CRAFT",
+        "FISH",
+        "KILL",
+        "MINE",
+        "SHEAR",
+        "SMELT"
+      ]
           },
           "difficulty": {
             "type": "integer",
@@ -39,13 +39,13 @@
             "items": {
               "type": "string",
               "enum": [
-                "AVENTURIER",
-                "BUCHERON",
-                "ENCHANTEUR",
-                "FERMIER",
-                "MINEUR",
-                "PECHEUR"
-              ]
+        "ENCHANTER",
+        "EXPLORER",
+        "FARMER",
+        "FISHERMAN",
+        "LUMBERJACK",
+        "MINER"
+      ]
             },
             "default": []
           },
@@ -1920,12 +1920,12 @@
                       "type": "string",
                       "description": "Type d'outil (ELockedToolType)",
                       "enum": [
-                        "DIAMOND",
-                        "GOLD",
-                        "IRON",
-                        "STONE",
-                        "WOOD"
-                      ]
+        "DIAMOND",
+        "GOLD",
+        "IRON",
+        "STONE",
+        "WOOD"
+      ]
                     }
                   },
                   "required": [
@@ -1945,13 +1945,13 @@
                       "type": "string",
                       "description": "Type d'armure (ELockedArmorType)",
                       "enum": [
-                        "CHAINMAIL",
-                        "DIAMOND",
-                        "GOLD",
-                        "IRON",
-                        "LEATHER",
-                        "NETHERITE"
-                      ]
+        "CHAINMAIL",
+        "DIAMOND",
+        "GOLD",
+        "IRON",
+        "LEATHER",
+        "NETHERITE"
+      ]
                     }
                   },
                   "required": [
@@ -1971,12 +1971,12 @@
                       "type": "string",
                       "description": "Monde à déverrouiller (EWorld)",
                       "enum": [
-                        "ALL",
-                        "END",
-                        "NETHER",
-                        "VILLAGE",
-                        "WILDERNESS"
-                      ]
+        "ALL",
+        "END",
+        "NETHER",
+        "VILLAGE",
+        "WILDERNESS"
+      ]
                     }
                   },
                   "required": [
@@ -2052,12 +2052,12 @@
                       "type": "string",
                       "description": "Monde concerné (EWorld)",
                       "enum": [
-                        "ALL",
-                        "END",
-                        "NETHER",
-                        "VILLAGE",
-                        "WILDERNESS"
-                      ]
+        "ALL",
+        "END",
+        "NETHER",
+        "VILLAGE",
+        "WILDERNESS"
+      ]
                     },
                     "min-x": {
                       "type": "integer"
@@ -2095,13 +2095,13 @@
                       "type": "string",
                       "description": "Métier (EJob)",
                       "enum": [
-                        "AVENTURIER",
-                        "BUCHERON",
-                        "ENCHANTEUR",
-                        "FERMIER",
-                        "MINEUR",
-                        "PECHEUR"
-                      ]
+        "ENCHANTER",
+        "EXPLORER",
+        "FARMER",
+        "FISHERMAN",
+        "LUMBERJACK",
+        "MINER"
+      ]
                     },
                     "value": {
                       "type": "integer",

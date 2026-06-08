@@ -8,7 +8,7 @@ import fr.miuby.survi.mob.MobCommand;
 import fr.miuby.survi.system.database.SqlCommand;
 import fr.miuby.survi.item.CustomItemCommand;
 import fr.miuby.survi.item.growth_item.GrowthItemCommand;
-import fr.miuby.survi.job.task.PecheurEffectsTask;
+import fr.miuby.survi.job.task.FishermanEffectsTask;
 import fr.miuby.survi.listener.*;
 import fr.miuby.survi.quest.globalquest.GlobalQuestCommand;
 import fr.miuby.survi.quest.quest.QuestCommand;
@@ -44,22 +44,22 @@ public class Survi extends JavaPlugin {
         pluginManager.registerEvents(new CropGrowthListener(), this);
         pluginManager.registerEvents(new VillagerListener(), this);
         pluginManager.registerEvents(new GraveListener(), this);
-        pluginManager.registerEvents(new MineurListener(), this);
-        pluginManager.registerEvents(new BucheronListener(), this);
-        pluginManager.registerEvents(new FermierListener(), this);
-        pluginManager.registerEvents(new EnchanteurListener(), this);
+        pluginManager.registerEvents(new MinerListener(), this);
+        pluginManager.registerEvents(new LumberjackListener(), this);
+        pluginManager.registerEvents(new FarmerListener(), this);
+        pluginManager.registerEvents(new EnchanterListener(), this);
         pluginManager.registerEvents(new JobLevelUpListener(), this);
         pluginManager.registerEvents(new WorldLevelUpListener(), this);
         pluginManager.registerEvents(new MobSpawnListener(), this);
         pluginManager.registerEvents(new GrowthItemListener(placedBlockTracker), this);
         pluginManager.registerEvents(new QuestListener(placedBlockTracker), this);
         pluginManager.registerEvents(new OfflineNotificationListener(), this);
-        pluginManager.registerEvents(new PecheurListener(), this);
-        pluginManager.registerEvents(new AventurierListener(this), this);
+        pluginManager.registerEvents(new FishermanListener(), this);
+        pluginManager.registerEvents(new ExplorerListener(this), this);
 
         pluginManager.registerEvents(placedBlockTracker, this);
 
-        new PecheurEffectsTask().runTaskTimer(this, 0L, PecheurEffectsTask.PERIOD_TICKS);
+        new FishermanEffectsTask().runTaskTimer(this, 0L, FishermanEffectsTask.PERIOD_TICKS);
 
         getConfig().options().copyDefaults(true);
         saveConfig();
@@ -99,6 +99,8 @@ public class Survi extends JavaPlugin {
         MLResourceManager.deployFolder(this, "traders");
         MLResourceManager.deployFolder(this, "growth_items");
         MLResourceManager.deployFolder(this, "quests");
+        MLResourceManager.deployFolder(this, "growth_items");
+        MLResourceManager.deploy(this, "jobs.yml");
         MLResourceManager.deploy(this, "config.yml");
         MLResourceManager.deploy(this, "global_quests.yml");
         MLResourceManager.deploy(this, "recipes.yml");

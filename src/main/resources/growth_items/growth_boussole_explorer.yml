@@ -1,5 +1,5 @@
 # yaml-language-server: $schema=../../schema/growth-items-schema.json
-id: GROWTH_BOUSSOLE_AVENTURIER
+id: GROWTH_BOUSSOLE_EXPLORER
 eventType: NewBiomeEvent
 
 # Stats de base — le +0.01 de movement_speed initialement hardcodé dans ECustomItem.
@@ -9,19 +9,19 @@ baseEffects:
 tiers:
   - requiredUses: 5
     effects:
-      - { type: name,          value: "Boussole de l'Aventurier II" }
+      - { type: name,          value: "Boussole de l'Explorateur II" }
       - { type: set_attribute, attribute: movement_speed, attributeValue: 0.03, operation: ADD_NUMBER, slot: HAND }
       - { type: message,       value: "Tu prends de la vitesse — la route t'appelle !" }
 
   - requiredUses: 12
     effects:
-      - { type: name,          value: "Boussole de l'Aventurier III" }
+      - { type: name,          value: "Boussole de l'Explorateur III" }
       - { type: set_attribute, attribute: movement_speed, attributeValue: 0.06, operation: ADD_NUMBER, slot: HAND }
       - { type: message,       value: "Tu es devenu un vrai globe-trotteur." }
 
   - requiredUses: 20
     effects:
-      - { type: name,          value: "Boussole du Grand Aventurier" }
+      - { type: name,          value: "Boussole du Grand Explorateur" }
       - { type: set_attribute, attribute: movement_speed, attributeValue: 0.08, operation: ADD_NUMBER, slot: HAND }
       - { type: message,       value: "Tu as tout vu. Légende vivante." }
 

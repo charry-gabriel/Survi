@@ -48,12 +48,12 @@
     "job": {
       "type": "string",
       "enum": [
-        "AVENTURIER",
-        "BUCHERON",
-        "ENCHANTEUR",
-        "FERMIER",
-        "MINEUR",
-        "PECHEUR"
+        "ENCHANTER",
+        "EXPLORER",
+        "FARMER",
+        "FISHERMAN",
+        "LUMBERJACK",
+        "MINER"
       ]
     },
     "questDifficulty": {
@@ -745,7 +745,7 @@
         "GREEN_WOOL",
         "GRINDSTONE",
         "GROWTH_BATON_FERMIER",
-        "GROWTH_BOUSSOLE_AVENTURIER",
+        "GROWTH_BOUSSOLE_EXPLORER",
         "GROWTH_CASQUE_MINEUR",
         "GROWTH_EPEE_SHINY",
         "GROWTH_PICKAXE",
@@ -1800,7 +1800,7 @@
         "ENDIALE",
         "FISHING_D_ROD",
         "GROWTH_BATON_FERMIER",
-        "GROWTH_BOUSSOLE_AVENTURIER",
+        "GROWTH_BOUSSOLE_EXPLORER",
         "GROWTH_CASQUE_MINEUR",
         "GROWTH_EPEE_SHINY",
         "GROWTH_PICKAXE",
