@@ -70,11 +70,4 @@ public final class JobLevelConfig {
         if (level >= getMaxLevel()) return -1;
         return entries().get(level + 1).threshold();
     }
-
-    /** Nom textuel du niveau pour l'affichage, lu depuis la config. */
-    public static String getLevelName(int level) {
-        List<SurviConfig.JobLevelEntry> list = entries();
-        if (level < 0 || level >= list.size()) return "Niveau " + level;
-        return list.get(level).name();
-    }
 }

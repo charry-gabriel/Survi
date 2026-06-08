@@ -143,11 +143,9 @@ class TabInfoColumn {
 
     private static Component jobDisplay(AlphaPlayer ap, EJob job) {
         int level = ap.getJobLevel(job);
-        int rep   = ap.getJobReputation(job);
         return job.toComponent()
                 .append(Component.text(": ", NamedTextColor.WHITE))
-                .append(Component.text("niv." + level, NamedTextColor.WHITE))
-                .append(Component.text(" (" + rep + " rép.)", NamedTextColor.WHITE));
+                .append(Component.text("niv." + level, NamedTextColor.WHITE));
     }
 
     private static Component dailyProgressDisplay(AlphaPlayer ap) {

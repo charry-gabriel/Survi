@@ -123,8 +123,7 @@ public class ReputationCommand {
             target.getPlayer().sendMessage(
                     Component.text(isAdd ? "✦ Un administrateur vous a accordé " : "✦ Un administrateur vous a retiré ")
                             .color(isAdd ? NamedTextColor.GREEN : NamedTextColor.GOLD)
-                            .append(Component.text(Math.abs(actualDelta) + " rep", NamedTextColor.WHITE))
-                            .append(Component.text(" en métier ", isAdd ? NamedTextColor.GREEN : NamedTextColor.GOLD))
+                            .append(Component.text("de la reputation dans le métier ", isAdd ? NamedTextColor.GREEN : NamedTextColor.GOLD))
                             .append(job.toComponent())
                             .append(Component.text(".", isAdd ? NamedTextColor.GREEN : NamedTextColor.GOLD))
             );
@@ -155,9 +154,8 @@ public class ReputationCommand {
 
         if (target.getPlayer() != null && target.getPlayer().isOnline()) {
             target.getPlayer().sendMessage(
-                    Component.text("✦ Un administrateur a fixé votre réputation en métier ", NamedTextColor.GREEN)
+                    Component.text("✦ Un administrateur a modifié votre réputation en métier ", NamedTextColor.GREEN)
                             .append(job.toComponent())
-                            .append(Component.text(" à " + value + ".", NamedTextColor.GREEN))
             );
         }
 
@@ -189,13 +187,12 @@ public class ReputationCommand {
         sendJobDisplay(senderPlayer, target, false);
 
         if (senderPlayer == null) {
-            // Appelé depuis la console : afficher en texte brut
+            // Appelé depuis la console : afficher en texte brut avec rep pour admin
             sender.sendMessage("=== Métiers de " + target.getPseudo() + " ===");
             for (EJob job : EJob.values()) {
                 int level = target.getJobLevel(job);
-                int rep = target.getJobReputation(job);
-                sender.sendMessage(String.format("  %-15s niv.%d — %s  (rep: %d)",
-                        job.getDisplayName(), level, JobLevelConfig.getLevelName(level), rep));
+                sender.sendMessage(String.format("  %-15s niv.%d ",
+                        job.getDisplayName(), level));
             }
         }
 
@@ -205,7 +202,7 @@ public class ReputationCommand {
     }
 
     /**
-     * Envoie l'affichage complet des métiers au joueur.
+     * Envoie l'affichage des métiers au joueur (niveaux uniquement, sans réputation).
      *
      * @param recipient joueur qui reçoit le message (peut être null si console)
      * @param subject   joueur dont on affiche les métiers
@@ -222,18 +219,10 @@ public class ReputationCommand {
 
         for (EJob job : EJob.values()) {
             int level = subject.getJobLevel(job);
-            int rep = subject.getJobReputation(job);
-            String levelName = JobLevelConfig.getLevelName(level);
-            int nextThresh = JobLevelConfig.getNextThreshold(rep);
-            String progress = nextThresh >= 0 ? rep + "/" + nextThresh : rep + " (MAX)";
-
             TextComponent line = Component.text("  ")
                     .append(job.toComponent().decoration(TextDecoration.BOLD, false))
-                    .append(Component.text(" — ").color(NamedTextColor.DARK_GRAY))
-                    .append(Component.text("niv." + level + " ").color(NamedTextColor.WHITE))
-                    .append(Component.text(levelName).color(NamedTextColor.YELLOW))
-                    .append(Component.text("  " + progress + " rep").color(NamedTextColor.GRAY));
-
+                    .append(Component.text(" — ", NamedTextColor.DARK_GRAY))
+                    .append(Component.text("niv." + level, NamedTextColor.WHITE));
             recipient.sendMessage(line);
         }
 

@@ -312,21 +312,9 @@ public class AlphaPlayer extends MLPlayer implements Serializable {
         }
 
         if (newLevel > oldLevel && getPlayer() != null && getPlayer().isOnline()) {
-            int nextThreshold = JobLevelConfig.getNextThreshold(newReputation);
-            String progress = nextThreshold >= 0
-                    ? " (" + newReputation + "/" + nextThreshold + " rep)"
-                    : " (niveau maximum atteint !)";
-            getPlayer().sendMessage(
-                    Component.text("⚒ Métier ", NamedTextColor.GREEN)
-                            .append(job.toComponent())
-                            .append(Component.text(" : ", NamedTextColor.GREEN))
-                            .append(Component.text(JobLevelConfig.getLevelName(newLevel), NamedTextColor.GOLD))
-                            .append(Component.text(progress, NamedTextColor.GRAY))
-            );
+            getPlayer().sendMessage(Component.text("⚒ ", NamedTextColor.GREEN).append(job.toComponent()));
             MLLogManager.getInstance().log(Level.INFO, ELogTag.JOB,
-                    getPseudo() + " : métier " + job.name()
-                            + " niv. " + oldLevel + " -> " + newLevel
-                            + " (rep=" + newReputation + ")");
+                    getPseudo() + " : " + job.name() + " niv. " + oldLevel + " -> " + newLevel);
         }
     }
 

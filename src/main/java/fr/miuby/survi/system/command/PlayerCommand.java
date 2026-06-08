@@ -156,14 +156,9 @@ public class PlayerCommand {
         sender.sendMessage(Component.text("  ─ Métiers ─", NamedTextColor.DARK_GRAY));
         for (EJob job : EJob.values()) {
             int level = ap.getJobLevel(job);
-            int rep   = ap.getJobReputation(job);
-            int next  = JobLevelConfig.getNextThreshold(rep);
-            String progress = next >= 0 ? rep + "/" + next : rep + " (MAX)";
             TextComponent line = Component.text("    ")
                     .append(job.toComponent())
-                    .append(Component.text(" niv." + level + " — ", NamedTextColor.WHITE))
-                    .append(Component.text(JobLevelConfig.getLevelName(level), NamedTextColor.YELLOW))
-                    .append(Component.text("  " + progress + " rep", NamedTextColor.DARK_GRAY));
+                    .append(Component.text(" niv." + level, NamedTextColor.WHITE));
             sender.sendMessage(line);
         }
 
@@ -191,8 +186,33 @@ public class PlayerCommand {
     private static int topJob(CommandContext<CommandSourceStack> ctx, int limit) {
         EJob job = JobArgument.getJob(ctx, JOB_ARG);
         List<ReputationRankEntry> top = GameManager.getInstance().getDatabase().quests().getTopByJob(job.name(), limit);
-        sendLeaderboard(ctx.getSource().getSender(), "Classement — " + job.getDisplayName(),
-                top.stream().map(e -> Map.entry(e.pseudo(), e.value())).toList(), "rep");
+
+        CommandSender sender = ctx.getSource().getSender();
+        if (top.isEmpty()) {
+            sender.sendMessage(Component.text("Aucune donnée disponible pour ce classement.").color(NamedTextColor.GRAY));
+            return Command.SINGLE_SUCCESS;
+        }
+
+        String[] medals = {"⚜ ", "✦ ", "● "};
+        NamedTextColor[] colors = {NamedTextColor.GOLD, NamedTextColor.GRAY, NamedTextColor.DARK_AQUA};
+
+        sender.sendMessage(Component.text("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━").color(NamedTextColor.GOLD));
+        sender.sendMessage(Component.text("  Classement — " + job.getDisplayName()).color(NamedTextColor.GOLD).decoration(TextDecoration.BOLD, true));
+        sender.sendMessage(Component.text("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━").color(NamedTextColor.GOLD));
+
+        for (int i = 0; i < top.size(); i++) {
+            String medal = i < medals.length ? medals[i] : (i + 1) + ". ";
+            NamedTextColor color = i < colors.length ? colors[i] : NamedTextColor.WHITE;
+            ReputationRankEntry e = top.get(i);
+            int level = JobLevelConfig.computeLevel((int) e.value());
+            sender.sendMessage(
+                    Component.text("  " + medal, color)
+                            .append(Component.text(e.pseudo(), NamedTextColor.WHITE))
+                            .append(Component.text("  niv." + level, NamedTextColor.DARK_GRAY))
+            );
+        }
+
+        sender.sendMessage(Component.text("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━").color(NamedTextColor.GOLD));
         return Command.SINGLE_SUCCESS;
     }
 

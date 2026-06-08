@@ -31,7 +31,7 @@ public class SurviConfig {
     private SurviConfig() {}
 
     public record RankEntry(String id, int threshold, String display) {}
-    public record JobLevelEntry(int threshold, String name) {}
+    public record JobLevelEntry(int threshold) {}
 
     // ─── Champs ──────────────────────────────────────────────────────────────────
 
@@ -97,8 +97,7 @@ public class SurviConfig {
             for (Object obj : rawLevels) {
                 if (obj instanceof java.util.Map<?, ?> map) {
                     jobLevelEntries.add(new JobLevelEntry(
-                            ((Number) map.get("threshold")).intValue(),
-                            String.valueOf(map.get("name"))
+                            ((Number) map.get("threshold")).intValue()
                     ));
                 }
             }

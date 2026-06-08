@@ -1,7 +1,6 @@
 package fr.miuby.survi.listener;
 
 import fr.miuby.survi.job.EJob;
-import fr.miuby.survi.job.JobLevelConfig;
 import fr.miuby.survi.player.AlphaPlayer;
 import fr.miuby.survi.player.event.AlphaPlayerJobLevelUpEvent;
 import fr.miuby.survi.sound.ESound;
@@ -42,14 +41,13 @@ public class JobLevelUpListener implements Listener {
         Player player = alphaPlayer.getPlayer();
         EJob job = event.getJob();
         int newLevel = event.getNewLevel();
-        String levelName = JobLevelConfig.getLevelName(newLevel);
 
         // ── Effets visuels — title affiché uniquement au joueur concerné ─────────
         if (player != null && player.isOnline()) {
             player.showTitle(Title.title(
                     Component.text("⚒ Niveau supérieur !", NamedTextColor.GOLD),
                     Component.text(job.getDisplayName(), job.getColor())
-                            .append(Component.text(" · " + levelName, NamedTextColor.YELLOW)),
+                            .append(Component.text(" · niv." + newLevel, NamedTextColor.YELLOW)),
                     TITLE_TIMES
             ));
         }
@@ -58,7 +56,7 @@ public class JobLevelUpListener implements Listener {
         Component broadcast = Component.text("⚒ ", NamedTextColor.GOLD)
                 .append(Component.text(alphaPlayer.getPseudo(), NamedTextColor.WHITE))
                 .append(Component.text(" a atteint le niveau ", NamedTextColor.GOLD))
-                .append(Component.text(levelName, NamedTextColor.YELLOW))
+                .append(Component.text("niv." + newLevel, NamedTextColor.YELLOW))
                 .append(Component.text(" en ", NamedTextColor.GOLD))
                 .append(job.toComponent())
                 .append(Component.text(" !", NamedTextColor.GOLD));

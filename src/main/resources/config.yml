@@ -56,17 +56,17 @@ jobs:
   #     niv. 3  → 9 XP max,  enchantements niv. III max (ex. Efficacité III)
   #     niv. 10 → 30 XP max, enchantements niv. X max (aucune restriction pratique)
   levels:
-    - {threshold: 0, name: "Débutant"}
-    - {threshold: 5, name: "Novice"}
-    - {threshold: 15, name: "Apprenti"}
-    - {threshold: 35, name: "Adepte"}
-    - {threshold: 55, name: "Confirmé"}
-    - {threshold: 80, name: "Journalier"}
-    - {threshold: 110, name: "Expert"}
-    - {threshold: 150, name: "Artisan"}
-    - {threshold: 190, name: "Maître"}
-    - {threshold: 240, name: "Grand Maître"}
-    - {threshold: 300, name: "Légendaire"}
+    - {threshold: 0}
+    - {threshold: 5}
+    - {threshold: 15}
+    - {threshold: 35}
+    - {threshold: 55}
+    - {threshold: 80}
+    - {threshold: 110}
+    - {threshold: 150}
+    - {threshold: 190}
+    - {threshold: 240}
+    - {threshold: 300}
 
 # ─── Niveau du Monde ────────────────────────────────────────────────────────────
 world-level:

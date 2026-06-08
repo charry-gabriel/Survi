@@ -7,7 +7,6 @@ import fr.miuby.lib.villager.MLVillager;
 import fr.miuby.lib.villager.VillagerRegistry;
 import fr.miuby.survi.GameManager;
 import fr.miuby.survi.job.EJob;
-import fr.miuby.survi.job.JobLevelConfig;
 import fr.miuby.survi.player.AlphaPlayer;
 import fr.miuby.survi.player.event.AlphaPlayerJobLevelUpEvent;
 import fr.miuby.survi.villager.villagerlevel.VillagerLevel;
@@ -132,9 +131,9 @@ public class OfflineNotificationService {
                     Component.text("⚒ Métier ", NamedTextColor.GOLD)
                             .append(rec.job().toComponent())
                             .append(Component.text(" : ", NamedTextColor.GOLD))
-                            .append(Component.text(JobLevelConfig.getLevelName(rec.oldLevel()), NamedTextColor.GRAY))
+                            .append(Component.text("niv." + rec.oldLevel(), NamedTextColor.GRAY))
                             .append(Component.text(" → ", NamedTextColor.GRAY))
-                            .append(Component.text(JobLevelConfig.getLevelName(rec.newLevel()), NamedTextColor.YELLOW))
+                            .append(Component.text("niv." + rec.newLevel(), NamedTextColor.YELLOW))
             );
         }
     }
