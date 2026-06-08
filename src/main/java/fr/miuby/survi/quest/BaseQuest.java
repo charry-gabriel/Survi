@@ -33,6 +33,14 @@ public abstract class BaseQuest {
     private final Blessing rewards;
 
     /**
+     * Retourne la description avec {@code {value}} remplacé par l'objectif numérique.
+     * À utiliser partout où la description est affichée au joueur.
+     */
+    public String getFormattedDescription() {
+        return description.replace("{value}", String.valueOf(goal));
+    }
+
+    /**
      * Vérifie si une action de jeu correspond à cette quête.
      * Centralise la logique type + cible partagée par QuestManager et GlobalQuestManager.
      */

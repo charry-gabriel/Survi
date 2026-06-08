@@ -3,7 +3,7 @@ quests:
 
   - id: "shear_sheep"
     name: "Tondeur"
-    description: "Tondez 20 moutons."
+    description: "Tondez {value} moutons."
     type: SHEAR
     difficulty: 1
     jobs:
@@ -16,7 +16,7 @@ quests:
 
   - id: "shear_rare"
     name: "Tondeur Chevronné"
-    description: "Tondez 50 moutons."
+    description: "Tondez {value} moutons."
     type: SHEAR
     difficulty: 2
     jobs:

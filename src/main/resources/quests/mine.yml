@@ -5,7 +5,7 @@ quests:
 
   - id: "mine_cobblestone"
     name: "Mineur de Pierre"
-    description: "Minez 128 blocs de cobblestone."
+    description: "Minez {value} blocs de cobblestone."
     type: MINE
     difficulty: 1
     jobs:
@@ -18,7 +18,7 @@ quests:
 
   - id: "mine_coal"
     name: "Chercheur de Charbon"
-    description: "Minez 12 minerais de charbon."
+    description: "Minez {value} minerais de charbon."
     type: MINE
     difficulty: 1
     jobs:
@@ -31,7 +31,7 @@ quests:
 
   - id: "mine_iron"
     name: "Prospecteur de Fer"
-    description: "Minez 10 minerais de fer."
+    description: "Minez {value} minerais de fer."
     type: MINE
     difficulty: 1
     jobs:
@@ -44,7 +44,7 @@ quests:
 
   - id: "mine_copper"
     name: "Collecteur de Cuivre"
-    description: "Minez 16 minerais de cuivre."
+    description: "Minez {value} minerais de cuivre."
     type: MINE
     difficulty: 1
     jobs:
@@ -57,7 +57,7 @@ quests:
 
   - id: "mine_redstone"
     name: "Ingénieur Débutant"
-    description: "Minez 24 minerais de redstone."
+    description: "Minez {value} minerais de redstone."
     type: MINE
     difficulty: 1
     jobs:
@@ -70,7 +70,7 @@ quests:
 
   - id: "mine_deepslate"
     name: "Sous la Surface"
-    description: "Minez 96 blocs d'ardoise des abîmes."
+    description: "Minez {value} blocs d'ardoise des abîmes."
     type: MINE
     difficulty: 1
     jobs:
@@ -83,7 +83,7 @@ quests:
 
   - id: "mine_mixed_ores"
     name: "Veine Prometteuse"
-    description: "Minez 20 minerais au total."
+    description: "Minez {value} minerais au total."
     type: MINE
     difficulty: 1
     jobs:
@@ -96,7 +96,7 @@ quests:
 
   - id: "mine_sand"
     name: "Carrier de Sable"
-    description: "Récoltez 250 blocs de sable."
+    description: "Récoltez {value} blocs de sable."
     type: MINE
     difficulty: 1
     jobs:
@@ -109,7 +109,7 @@ quests:
 
   - id: "mine_gravel"
     name: "Carrier de Gravier"
-    description: "Récoltez 250 blocs de gravier."
+    description: "Récoltez {value} blocs de gravier."
     type: MINE
     difficulty: 1
     jobs:
@@ -122,7 +122,7 @@ quests:
 
   - id: "mine_oak_log"
     name: "Bûcheron Chêne"
-    description: "Abattez 80 bûches de chêne."
+    description: "Abattez {value} bûches de chêne."
     type: MINE
     difficulty: 1
     jobs:
@@ -135,7 +135,7 @@ quests:
 
   - id: "mine_birch_log"
     name: "Bûcheron Bouleau"
-    description: "Abattez 80 bûches de bouleau."
+    description: "Abattez {value} bûches de bouleau."
     type: MINE
     difficulty: 1
     jobs:
@@ -148,7 +148,7 @@ quests:
 
   - id: "mine_spruce_log"
     name: "Bûcheron Sapin"
-    description: "Abattez 80 bûches d'épicéa."
+    description: "Abattez {value} bûches d'épicéa."
     type: MINE
     difficulty: 1
     jobs:
@@ -163,7 +163,7 @@ quests:
 
   - id: "mine_diamond_hunt"
     name: "Chasseur de Diamants"
-    description: "Minez 8 diamants."
+    description: "Minez {value} diamants."
     type: MINE
     difficulty: 2
     jobs:
@@ -177,7 +177,7 @@ quests:
 
   - id: "mine_nether_quartz"
     name: "Cristaux du Nether"
-    description: "Minez 64 quartz du Nether."
+    description: "Minez {value} quartz du Nether."
     type: MINE
     difficulty: 2
     jobs:
@@ -191,7 +191,7 @@ quests:
 
   - id: "mine_nether_gold"
     name: "Or du Royaume Infernal"
-    description: "Minez 32 minerais d'or du Nether."
+    description: "Minez {value} minerais d'or du Nether."
     type: MINE
     difficulty: 2
     jobs:
@@ -206,7 +206,7 @@ quests:
 
   - id: "mine_deepslate_iron"
     name: "Mineur Profond"
-    description: "Minez 48 minerais de fer ardoisés."
+    description: "Minez {value} minerais de fer ardoisés."
     type: MINE
     difficulty: 2
     jobs:
@@ -219,7 +219,7 @@ quests:
 
   - id: "mine_amethyst_geode"
     name: "Cristaux des Géodes"
-    description: "Minez 48 blocs dans les géodes d'améthyste."
+    description: "Minez {value} blocs dans les géodes d'améthyste."
     type: MINE
     difficulty: 2
     jobs:
@@ -231,7 +231,7 @@ quests:
 
   - id: "mine_deepslate_iron2"
     name: "Mineur Profond"
-    description: "Minez 48 minerais de fer ardoisés."
+    description: "Minez {value} minerais de fer ardoisés."
     type: MINE
     difficulty: 2
     jobs:
@@ -244,7 +244,7 @@ quests:
 
   - id: "mine_sculk_block"
     name: "Propagation Souterraine"
-    description: "Minez 64 blocs de Sculk dans le Deep Dark."
+    description: "Minez {value} blocs de Sculk dans le Deep Dark."
     type: MINE
     difficulty: 2
     jobs:
@@ -259,7 +259,7 @@ quests:
 
   - id: "mine_ancient_debris"
     name: "Trésor du Nether"
-    description: "Minez 6 débris antiques."
+    description: "Minez {value} débris antiques."
     type: MINE
     difficulty: 3
     jobs:
@@ -272,7 +272,7 @@ quests:
 
   - id: "mine_end_stone_mass"
     name: "Colonisation de l'End"
-    description: "Minez 512 blocs d'End Stone dans l'End."
+    description: "Minez {value} blocs d'End Stone dans l'End."
     type: MINE
     difficulty: 3
     jobs:
@@ -284,7 +284,7 @@ quests:
 
   - id: "mine_chorus_plants"
     name: "Écho de l'End"
-    description: "Récoltez 64 Chorus dans l'End."
+    description: "Récoltez {value} Chorus dans l'End."
     type: MINE
     difficulty: 3
     jobs:
@@ -296,7 +296,7 @@ quests:
 
   - id: "mine_emerald"
     name: "Richesse des Montagnes"
-    description: "Minez 2 minerais d'émeraude dans les biomes de montagne"
+    description: "Minez {value} minerais d'émeraude dans les biomes de montagne"
     type: MINE
     difficulty: 3
     jobs:
@@ -308,7 +308,7 @@ quests:
 
   - id: "mine_obsidian"
     name: "Briseur d'Obsidienne"
-    description: "Minez 150 obsidiennes."
+    description: "Minez {value} obsidiennes."
     type: MINE
     difficulty: 3
     jobs:
@@ -322,7 +322,7 @@ quests:
 
   - id: "mine_ancient_debris2"
     name: "Chercheur de Nétherite"
-    description: "Minez 10 Ancient Debris."
+    description: "Minez {value} Ancient Debris."
     type: MINE
     difficulty: 3
     jobs:

@@ -3,7 +3,7 @@ quests:
 
   - id: "breed_cow"
     name: "Éleveur de Vaches"
-    description: "Faites se reproduire 10 vaches."
+    description: "Faites se reproduire {value} vaches."
     type: BREED
     difficulty: 1
     jobs:
@@ -16,7 +16,7 @@ quests:
 
   - id: "breed_chicken"
     name: "Éleveur de Poulets"
-    description: "Faites se reproduire 15 poulets."
+    description: "Faites se reproduire {value} poulets."
     type: BREED
     difficulty: 1
     jobs:
@@ -29,7 +29,7 @@ quests:
 
   - id: "breed_any"
     name: "Fermier Passionné"
-    description: "Faites se reproduire 20 animaux."
+    description: "Faites se reproduire {value} animaux."
     type: BREED
     difficulty: 2
     jobs:

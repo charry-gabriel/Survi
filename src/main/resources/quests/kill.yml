@@ -5,7 +5,7 @@ quests:
 
   - id: "kill_zombies"
     name: "Chasseur de Zombies"
-    description: "Tuez 25 zombies."
+    description: "Tuez {value} zombies."
     type: KILL
     difficulty: 1
     jobs:
@@ -18,7 +18,7 @@ quests:
 
   - id: "kill_skeletons"
     name: "Briseur d'Os"
-    description: "Tuez 20 squelettes."
+    description: "Tuez {value} squelettes."
     type: KILL
     difficulty: 1
     jobs:
@@ -31,7 +31,7 @@ quests:
 
   - id: "kill_spiders"
     name: "Aranéophobe"
-    description: "Tuez 25 araignées."
+    description: "Tuez {value} araignées."
     type: KILL
     difficulty: 1
     jobs:
@@ -44,7 +44,7 @@ quests:
 
   - id: "kill_creepers"
     name: "Démineur"
-    description: "Tuez 15 creepers."
+    description: "Tuez {value} creepers."
     type: KILL
     difficulty: 1
     jobs:
@@ -59,7 +59,7 @@ quests:
 
   - id: "kill_drowned"
     name: "Exterminateur des Profondeurs"
-    description: "Tuez 30 noyés."
+    description: "Tuez {value} noyés."
     type: KILL
     difficulty: 2
     jobs:
@@ -73,7 +73,7 @@ quests:
 
   - id: "kill_witch"
     name: "Chasseur de Sorcière"
-    description: "Tuez 10 sorcières."
+    description: "Tuez {value} sorcières."
     type: KILL
     difficulty: 2
     jobs:
@@ -87,7 +87,7 @@ quests:
 
   - id: "kill_pillager"
     name: "Anti-Pillard"
-    description: "Tuez 20 pillards."
+    description: "Tuez {value} pillards."
     type: KILL
     difficulty: 2
     jobs:
@@ -103,7 +103,7 @@ quests:
 
   - id: "kill_endermen"
     name: "Chasseur de l'End"
-    description: "Tuez 50 Endermen."
+    description: "Tuez {value} Endermen."
     type: KILL
     difficulty: 3
     jobs:
@@ -119,7 +119,7 @@ quests:
 
   - id: "kill_wither_skeleton"
     name: "Faucheur des Âmes"
-    description: "Tuez 10 Wither Squelettes."
+    description: "Tuez {value} Wither Squelettes."
     type: KILL
     difficulty: 3
     jobs:
@@ -134,7 +134,7 @@ quests:
 
   - id: "kill_blaze"
     name: "Dompteur de Flammes"
-    description: "Tuez 30 Blazes."
+    description: "Tuez {value} Blazes."
     type: KILL
     difficulty: 3
     jobs:
@@ -149,7 +149,7 @@ quests:
 
   - id: "kill_guardian"
     name: "Terreur des Abysses"
-    description: "Tuez 20 Gardiens."
+    description: "Tuez {value} Gardiens."
     type: KILL
     difficulty: 3
     jobs:

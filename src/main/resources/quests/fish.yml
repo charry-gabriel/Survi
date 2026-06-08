@@ -3,7 +3,7 @@ quests:
 
   - id: "fish_common"
     name: "Pêcheur du Dimanche"
-    description: "Pêchez 10 poissons."
+    description: "Pêchez {value} poissons."
     type: FISH
     difficulty: 1
     jobs:
@@ -16,7 +16,7 @@ quests:
 
   - id: "fish_rare"
     name: "Pêcheur Confirmé"
-    description: "Pêchez 30 poissons."
+    description: "Pêchez {value} poissons."
     type: FISH
     difficulty: 2
     jobs:
@@ -29,7 +29,7 @@ quests:
 
   - id: "fish_legendary"
     name: "Grand Pêcheur"
-    description: "Pêchez 60 poissons."
+    description: "Pêchez {value} poissons."
     type: FISH
     difficulty: 3
     jobs:

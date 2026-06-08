@@ -3,7 +3,7 @@ quests:
 
   - id: "smelt_stone"
     name: "Cuiseur de Pierre"
-    description: "Faites cuire 128 blocs de pierre."
+    description: "Faites cuire {value} blocs de pierre."
     type: SMELT
     difficulty: 1
     jobs:
@@ -16,7 +16,7 @@ quests:
 
   - id: "smelt_iron"
     name: "Maître Fondeur"
-    description: "Faites cuire 200 lingots de fer."
+    description: "Faites cuire {value} lingots de fer."
     type: SMELT
     difficulty: 2
     jobs:
@@ -29,7 +29,7 @@ quests:
 
   - id: "smelt_copper"
     name: "Fondeur de Cuivre"
-    description: "Fondez 150 lingots de cuivre."
+    description: "Fondez {value} lingots de cuivre."
     type: SMELT
     difficulty: 2
     jobs:
@@ -42,7 +42,7 @@ quests:
 
   - id: "smelt_gold"
     name: "Fondeur d'Or"
-    description: "Faites cuire 128 lingots d'or."
+    description: "Faites cuire {value} lingots d'or."
     type: SMELT
     difficulty: 3
     jobs:

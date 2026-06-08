@@ -238,7 +238,7 @@ public class GlobalQuestManager extends AbstractQuestManager<GlobalQuest> {
                 .appendNewline()
                 .append(Component.text("  " + quest.getName(), NamedTextColor.YELLOW, TextDecoration.BOLD))
                 .appendNewline()
-                .append(Component.text("  " + quest.getDescription(), NamedTextColor.WHITE))
+                .append(Component.text("  " + quest.getFormattedDescription(), NamedTextColor.WHITE))
                 .appendNewline()
                 .append(Component.text("  Objectif : ", NamedTextColor.GRAY))
                 .append(Component.text(quest.getGoal() + " ", NamedTextColor.AQUA))

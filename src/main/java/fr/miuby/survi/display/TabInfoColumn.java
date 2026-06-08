@@ -174,8 +174,7 @@ class TabInfoColumn {
         else if (remaining >= 60) time = (remaining / 60) + "m" + String.format("%02d", remaining % 60) + "s";
         else time = remaining + "s";
         return Component.text("⚔ " + gq.getName() + " ", NamedTextColor.YELLOW)
-                .append(Component.text(gqm.getProgress() + "/" + gq.getGoal(), NamedTextColor.DARK_GRAY))
-                .append(Component.text(" ⏰" + time, NamedTextColor.GRAY));
+                .append(Component.text(gqm.getProgress() + "/" + gq.getGoal(), NamedTextColor.DARK_GRAY));
     }
 
     // ── Utilitaires ──────────────────────────────────────────────────────────

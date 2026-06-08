@@ -379,7 +379,7 @@ public class QuestManager extends AbstractQuestManager<Quest> {
                 .append(Component.text(trader.getNameId(), NamedTextColor.AQUA))
                 .append(Component.text(" : ", NamedTextColor.GREEN))
                 .append(Component.text(quest.getName(), NamedTextColor.GOLD)));
-        player.getPlayer().sendMessage(Component.text(quest.getDescription(), NamedTextColor.GRAY));
+        player.getPlayer().sendMessage(Component.text(quest.getFormattedDescription(), NamedTextColor.GRAY));
         player.getPlayer().sendMessage(Component.text("Quête " + (nextSlot + 1) + "/" + DAILY_QUEST_LIMIT + " du jour.", NamedTextColor.DARK_GRAY));
     }
 
@@ -405,7 +405,7 @@ public class QuestManager extends AbstractQuestManager<Quest> {
         if (player.getPlayer() != null) {
             String jobsStr = quest.getJobs().isEmpty() ? "tous" : quest.getJobs().stream().map(EJob::getDisplayName).reduce((a, b) -> a + ", " + b).orElse("tous");
             player.getPlayer().sendMessage(Component.text("[TEST] Quête de test assignée : ", NamedTextColor.YELLOW).append(Component.text(quest.getName(), NamedTextColor.GOLD)));
-            player.getPlayer().sendMessage(Component.text(quest.getDescription(), NamedTextColor.GRAY));
+            player.getPlayer().sendMessage(Component.text(quest.getFormattedDescription(), NamedTextColor.GRAY));
             player.getPlayer().sendMessage(Component.text("Objectif : " + quest.getGoal() + " | Difficulté : " + quest.getDifficulty() + " | Métiers : " + jobsStr, NamedTextColor.DARK_GRAY));
         }
     }

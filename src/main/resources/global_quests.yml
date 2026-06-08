@@ -5,7 +5,7 @@ global_quests:
 
   - id: "global_kill_enderman"
     name: "Grande Chasse aux Endermen"
-    description: "Ensemble, tuez 200 Endermen dans l'End !"
+    description: "Ensemble, tuez {value} Endermen dans l'End !"
     type: "KILL"
     targets: [ENDERMAN]
     goal: 200
@@ -18,7 +18,7 @@ global_quests:
 
   - id: "global_kill_wither_skeleton"
     name: "Armée des Wither Squelettes"
-    description: "Éliminez 80 Wither Squelettes du Nether !"
+    description: "Éliminez {value} Wither Squelettes du Nether !"
     type: "KILL"
     targets: [WITHER_SKELETON]
     goal: 80
@@ -32,7 +32,7 @@ global_quests:
 
   - id: "global_kill_blaze"
     name: "Extinction des Blazes"
-    description: "Éteignez 150 Blazes dans les forteresses du Nether !"
+    description: "Éteignez {value} Blazes dans les forteresses du Nether !"
     type: "KILL"
     targets: [BLAZE]
     goal: 150
@@ -45,7 +45,7 @@ global_quests:
 
   - id: "global_kill_guardian"
     name: "Terreur des Abysses"
-    description: "Tuez 100 Gardiens dans les temples sous-marins !"
+    description: "Tuez {value} Gardiens dans les temples sous-marins !"
     type: "KILL"
     targets: [GUARDIAN]
     goal: 100
@@ -59,7 +59,7 @@ global_quests:
 
   - id: "global_mine_ancient_debris"
     name: "Ruée vers la Nétherite"
-    description: "Extrayez ensemble 50 Ancient Debris !"
+    description: "Extrayez ensemble {value} Ancient Debris !"
     type: "MINE"
     targets: [ANCIENT_DEBRIS]
     goal: 50
@@ -72,7 +72,7 @@ global_quests:
 
   - id: "global_mine_obsidian"
     name: "Chantier d'Obsidienne"
-    description: "Minez 500 blocs d'obsidienne !"
+    description: "Minez {value} blocs d'obsidienne !"
     type: "MINE"
     targets: [OBSIDIAN]
     goal: 500
@@ -84,7 +84,7 @@ global_quests:
 
   - id: "global_fish_marathon"
     name: "Marathon de Pêche"
-    description: "Pêchez collectivement 300 poissons !"
+    description: "Pêchez collectivement {value} poissons !"
     type: "FISH"
     targets: null
     goal: 300
@@ -96,7 +96,7 @@ global_quests:
 
   - id: "global_breed_farming"
     name: "Grande Ferme Commune"
-    description: "Faites se reproduire 100 animaux ensemble !"
+    description: "Faites se reproduire {value} animaux ensemble !"
     type: "BREED"
     targets: null
     goal: 100
@@ -108,7 +108,7 @@ global_quests:
 
   - id: "global_smelt_iron"
     name: "Grande Fonderie"
-    description: "Fondez ensemble 1000 lingots de fer !"
+    description: "Fondez ensemble {value} lingots de fer !"
     type: "SMELT"
     targets: [IRON_INGOT]
     goal: 1000

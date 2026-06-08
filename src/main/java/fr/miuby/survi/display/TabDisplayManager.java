@@ -3,6 +3,8 @@ package fr.miuby.survi.display;
 import fr.miuby.survi.GameManager;
 import fr.miuby.survi.player.AlphaPlayer;
 import fr.miuby.survi.player.EGlobalRank;
+import fr.miuby.survi.quest.globalquest.GlobalQuest;
+import fr.miuby.survi.quest.globalquest.GlobalQuestManager;
 import fr.miuby.survi.quest.quest.PlayerQuestData;
 import fr.miuby.survi.quest.quest.Quest;
 import fr.miuby.survi.role.Role;
@@ -272,16 +274,32 @@ public class TabDisplayManager {
                 .append(formatStat(alphaPlayer, Attribute.LUCK, "Chance"))
                 .appendNewline();
 
-        // Description de la quête active
+        // Quête journalière active
         PlayerQuestData questData = alphaPlayer.getCurrentActiveQuest();
         if (questData != null && !questData.isClaimed() && questData.getLastAccepted().isEqual(LocalDate.now())) {
             Quest quest = GameManager.getInstance().getQuestManager().getQuest(questData.getQuestId());
             if (quest != null) {
+                int remaining = Math.max(0, quest.getGoal() - questData.getProgress());
+                String description = quest.getDescription().replace("{value}", String.valueOf(remaining));
                 footer = footer
                         .appendNewline()
-                        .append(Component.text(quest.getName() + " — ", NamedTextColor.GOLD))
-                        .append(Component.text(quest.getDescription(), NamedTextColor.GRAY));
+                        .append(Component.text("Quête : ", NamedTextColor.GOLD))
+                        .append(Component.text(description, NamedTextColor.GRAY));
             }
+        }
+
+        // Quête globale active
+        GlobalQuestManager gqm = GameManager.getInstance().getGlobalQuestManager();
+        GlobalQuest activeGlobalQuest = gqm.getActiveQuest();
+        if (activeGlobalQuest != null) {
+            int remaining = Math.max(0, activeGlobalQuest.getGoal() - gqm.getProgress());
+            String description = activeGlobalQuest.getDescription().replace("{value}", String.valueOf(remaining));
+
+            footer = footer
+                    .appendNewline()
+                    .append(Component.text("Quête globale : ", NamedTextColor.GOLD))
+                    .append(Component.text(description, NamedTextColor.GRAY))
+                    .append(Component.text("  ⏰ " + GlobalQuestManager.formatSeconds(gqm.getRemainingSeconds()), NamedTextColor.GRAY));
         }
 
         return footer.appendNewline();

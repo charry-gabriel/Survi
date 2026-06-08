@@ -2,6 +2,7 @@ package fr.miuby.survi.player.service;
 
 import fr.miuby.lib.villager.MLVillager;
 import fr.miuby.lib.villager.VillagerRegistry;
+import fr.miuby.survi.GameManager;
 import fr.miuby.survi.player.AlphaPlayer;
 import fr.miuby.survi.villager.villagerlevel.VillagerLevel;
 import net.kyori.adventure.text.Component;
@@ -36,9 +37,10 @@ public class PlayerEffectRestoreService {
         if (PlainTextComponentSerializer.plainText().serialize(globalText).isBlank()) return;
 
         player.getPlayer().sendMessage(Component.text()
-                .append(Component.text("-------------------- État actif --------------------\n", NamedTextColor.AQUA))
+                .append(Component.text("-------------------- Récap --------------------", NamedTextColor.YELLOW)).appendNewline()
+                .append(Component.text("Difficulté Niv. " + GameManager.getInstance().getWorldLevelManager().getLevel(), NamedTextColor.YELLOW)).appendNewline()
                 .append(globalText)
-                .append(Component.text("----------------------------------------------------", NamedTextColor.AQUA))
+                .append(Component.text("----------------------------------------------", NamedTextColor.YELLOW))
                 .build());
     }
 }

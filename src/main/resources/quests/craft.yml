@@ -3,7 +3,7 @@ quests:
 
   - id: "craft_torch"
     name: "Allumeur"
-    description: "Fabriquez 64 torches."
+    description: "Fabriquez {value} torches."
     type: CRAFT
     difficulty: 1
     jobs:
@@ -16,7 +16,7 @@ quests:
 
   - id: "craft_bread"
     name: "Boulanger"
-    description: "Fabriquez 32 pains."
+    description: "Fabriquez {value} pains."
     type: CRAFT
     difficulty: 2
     jobs:
@@ -29,7 +29,7 @@ quests:
 
   - id: "craft_iron_sword"
     name: "Armurier Débutant"
-    description: "Fabriquez 5 épées en fer."
+    description: "Fabriquez {value} épées en fer."
     type: CRAFT
     difficulty: 2
     jobs:

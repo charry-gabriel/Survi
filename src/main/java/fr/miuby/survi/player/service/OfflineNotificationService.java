@@ -1,5 +1,7 @@
 package fr.miuby.survi.player.service;
 
+import fr.miuby.survi.quest.globalquest.GlobalQuest;
+import fr.miuby.survi.quest.globalquest.GlobalQuestManager;
 import fr.miuby.survi.blessing.BlessingEffect;
 import fr.miuby.lib.villager.MLVillager;
 import fr.miuby.lib.villager.VillagerRegistry;
@@ -111,6 +113,7 @@ public class OfflineNotificationService {
         deliverWorldNotification(uuid, player);
         deliverVillagerNotifications(uuid, player);
         deliverQuestRewards(uuid, player);
+        deliverGlobalQuestStatus(player);
     }
 
     private void deliverJobNotifications(UUID uuid, Player player) {
@@ -188,5 +191,33 @@ public class OfflineNotificationService {
             }
             player.sendMessage(reward.message());
         }
+    }
+
+    /**
+     * Notifie le joueur au join s'il y a une quête globale en cours.
+     * Envoie le nom, la description, la progression et le temps restant.
+     */
+    private void deliverGlobalQuestStatus(Player player) {
+        GlobalQuestManager gqm = GameManager.getInstance().getGlobalQuestManager();
+        GlobalQuest activeQuest = gqm.getActiveQuest();
+        if (activeQuest == null) return;
+
+        int gProgress = gqm.getProgress();
+        int gGoal = activeQuest.getGoal();
+        int percent = gGoal > 0 ? Math.min(100, (gProgress * 100) / gGoal) : 0;
+
+        player.sendMessage(
+                Component.text("⚔ Quête globale en cours : ", NamedTextColor.GOLD)
+                        .append(Component.text("« " + activeQuest.getName() + " »", NamedTextColor.YELLOW))
+        );
+        player.sendMessage(
+                Component.text("   ", NamedTextColor.DARK_GRAY)
+                        .append(Component.text(activeQuest.getFormattedDescription(), NamedTextColor.WHITE))
+        );
+        player.sendMessage(
+                Component.text("   ", NamedTextColor.DARK_GRAY)
+                        .append(Component.text(gProgress + "/" + gGoal + " (" + percent + "%)", NamedTextColor.AQUA))
+                        .append(Component.text("  ⏰ " + GlobalQuestManager.formatSeconds(gqm.getRemainingSeconds()), NamedTextColor.GRAY))
+        );
     }
 }
