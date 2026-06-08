@@ -1,8 +1,14 @@
 package fr.miuby.survi.display;
 
 import fr.miuby.lib.villager.VillagerRegistry;
+import fr.miuby.survi.GameManager;
 import fr.miuby.survi.job.EJob;
 import fr.miuby.survi.player.AlphaPlayer;
+import fr.miuby.survi.quest.globalquest.GlobalQuest;
+import fr.miuby.survi.quest.globalquest.GlobalQuestManager;
+import fr.miuby.survi.quest.quest.PlayerQuestData;
+import fr.miuby.survi.quest.quest.Quest;
+import fr.miuby.survi.quest.quest.QuestManager;
 import fr.miuby.survi.villager.villagerlevel.VillagerLevel;
 import com.mojang.authlib.properties.Property;
 import io.papermc.paper.adventure.PaperAdventure;
@@ -11,6 +17,7 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import net.minecraft.network.protocol.game.ClientboundPlayerInfoUpdatePacket;
 import net.minecraft.world.level.GameType;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -70,6 +77,29 @@ class TabInfoColumn {
             entries.add(entry(slot++, jobDisplay(ap, job), skin));
         }
 
+        // ── Section Quêtes ───────────────────────────────────────────────────
+        GlobalQuestManager gqm = GameManager.getInstance().getGlobalQuestManager();
+        GlobalQuest gq = gqm.getActiveQuest();
+        PlayerQuestData questData = ap.getCurrentActiveQuest();
+        Quest quest = (questData != null && !questData.isClaimed() && questData.getLastAccepted().isEqual(LocalDate.now()))
+                ? GameManager.getInstance().getQuestManager().getQuest(questData.getQuestId())
+                : null;
+
+        entries.add(entry(slot++, Component.empty(), TabSkins.gray()));
+        entries.add(entry(slot++, section("Quêtes"),  TabSkins.blue()));
+
+        if (quest != null) {
+            entries.add(entry(slot++, personalQuestDisplay(questData, quest), TabSkins.gray()));
+        } else {
+            entries.add(entry(slot++, Component.text("Aucune quête en cours", NamedTextColor.GRAY), TabSkins.gray()));
+        }
+
+        if (gq != null) {
+            entries.add(entry(slot++, globalQuestDisplay(gqm, gq), TabSkins.gray()));
+        }
+
+        entries.add(entry(slot++, dailyProgressDisplay(ap), TabSkins.gray()));
+
         // ── Padding bas de contenu ───────────────────────────────────────────
         while (slot < totalSlots) {
             entries.add(entry(slot++, Component.empty(), TabSkins.gray()));
@@ -118,6 +148,34 @@ class TabInfoColumn {
                 .append(Component.text(": ", NamedTextColor.WHITE))
                 .append(Component.text("niv." + level, NamedTextColor.WHITE))
                 .append(Component.text(" (" + rep + " rép.)", NamedTextColor.WHITE));
+    }
+
+    private static Component dailyProgressDisplay(AlphaPlayer ap) {
+        int done = ap.countTodayQuests();
+        int max  = QuestManager.DAILY_QUEST_LIMIT;
+        return Component.text("Quêtes du jour : ", NamedTextColor.GRAY)
+                .append(Component.text(done + "/" + max,
+                        done >= max ? NamedTextColor.GREEN : NamedTextColor.WHITE));
+    }
+
+    private static Component personalQuestDisplay(PlayerQuestData data, Quest quest) {
+        int progress = data.getProgress();
+        int goal     = quest.getGoal();
+        Component line = Component.text(quest.getName() + " ", NamedTextColor.WHITE)
+                .append(Component.text(progress + "/" + goal, NamedTextColor.DARK_GRAY));
+        if (data.isCompleted()) line = line.append(Component.text(" ✔ Trader !", NamedTextColor.GREEN));
+        return line;
+    }
+
+    private static Component globalQuestDisplay(GlobalQuestManager gqm, GlobalQuest gq) {
+        long remaining = gqm.getRemainingSeconds();
+        String time;
+        if (remaining >= 3600) time = (remaining / 3600) + "h" + String.format("%02d", (remaining % 3600) / 60) + "m";
+        else if (remaining >= 60) time = (remaining / 60) + "m" + String.format("%02d", remaining % 60) + "s";
+        else time = remaining + "s";
+        return Component.text("⚔ " + gq.getName() + " ", NamedTextColor.YELLOW)
+                .append(Component.text(gqm.getProgress() + "/" + gq.getGoal(), NamedTextColor.DARK_GRAY))
+                .append(Component.text(" ⏰" + time, NamedTextColor.GRAY));
     }
 
     // ── Utilitaires ──────────────────────────────────────────────────────────

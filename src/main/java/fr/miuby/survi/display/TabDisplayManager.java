@@ -3,8 +3,6 @@ package fr.miuby.survi.display;
 import fr.miuby.survi.GameManager;
 import fr.miuby.survi.player.AlphaPlayer;
 import fr.miuby.survi.player.EGlobalRank;
-import fr.miuby.survi.quest.globalquest.GlobalQuest;
-import fr.miuby.survi.quest.globalquest.GlobalQuestManager;
 import fr.miuby.survi.quest.quest.PlayerQuestData;
 import fr.miuby.survi.quest.quest.Quest;
 import fr.miuby.survi.role.Role;
@@ -213,47 +211,47 @@ public class TabDisplayManager {
         EGlobalRank rank = ap.getGlobalRank();
         int worldLevel   = GameManager.getInstance().getWorldLevelManager().getLevel();
 
+        // Ligne 1 : titre seul
         Component header = Component.empty()
                 .appendNewline()
                 .append(Component.text("◆  Survie  ◆", NamedTextColor.GOLD))
-                .appendNewline()
                 .appendNewline();
 
-        // Zone · Difficulté · Morts · Succès
+        // Ligne 2 : monde · difficulté · reset wilderness
         header = header
-                .append(Component.text("Monde : ", NamedTextColor.GRAY))
                 .append(Component.text(ap.getWorld().getName(), ap.getWorld().getColor()))
                 .append(SEP)
-                .append(Component.text("Difficulté : ", NamedTextColor.GRAY))
+                .append(Component.text("Difficulté ", NamedTextColor.GRAY))
                 .append(Component.text("Niv. " + worldLevel,
-                        worldLevel >= 5 ? NamedTextColor.RED : NamedTextColor.GOLD))
+                        worldLevel >= 5 ? NamedTextColor.RED : NamedTextColor.GOLD));
+
+        Component resetComponent = buildWildernessResetLine();
+        if (!resetComponent.equals(Component.empty())) {
+            header = header.append(SEP).append(resetComponent);
+        }
+        header = header.appendNewline();
+
+        // Ligne 3 : rang · morts · succès · rôle(s)  (sans réputation — visible dans les métiers)
+        header = header
+                .append(rank.displayComponent())
                 .append(SEP)
                 .append(Component.text("☠ " + ap.getMort(), NamedTextColor.DARK_RED))
                 .append(SEP)
-                .append(Component.text("★ " + ap.getSuccess(), NamedTextColor.YELLOW))
-                .appendNewline();
+                .append(Component.text("★ " + ap.getSuccess(), NamedTextColor.YELLOW));
 
-        // Rang + réputation
-        header = header
-                .append(rank.displayComponent())
-                .append(Component.text("  (" + ap.getTotalReputation() + " rép.)", rank.getColor()))
-                .appendNewline();
-
-        // Rôle + sous-rôles
         Role mainRole = ap.getRole();
         if (mainRole != null) {
-            header = header.append(mainRole.type().toComponent());
+            header = header.append(SEP).append(mainRole.type().toComponent());
             List<Role> subs = ap.getSubRoles();
             for (int i = 0; i < Math.min(2, subs.size()); i++) {
-                header = header.append(SEP).append(subs.get(i).type().toComponent());
+                header = header.append(subs.get(i).type().toComponent());
             }
-            header = header.appendNewline();
         }
 
-        return header;
+        return header.appendNewline().appendNewline();
     }
 
-    // ─── FOOTER : stats + quêtes ─────────────────────────────────────────────────
+    // ─── FOOTER : stats ──────────────────────────────────────────────────────────
 
     private Component buildFooter(AlphaPlayer alphaPlayer) {
         Player p = alphaPlayer.getPlayer();
@@ -272,64 +270,21 @@ public class TabDisplayManager {
                 .append(formatStat(alphaPlayer, Attribute.ATTACK_SPEED, "Vit. d'Attaque"))
                 .append(Component.text(" | ", NamedTextColor.DARK_GRAY))
                 .append(formatStat(alphaPlayer, Attribute.LUCK, "Chance"))
-                .appendNewline()
                 .appendNewline();
 
-        // Reset Wilderness
-        Component resetLine = buildWildernessResetLine();
-        if (!resetLine.equals(Component.empty())) {
-            footer = footer.append(resetLine).appendNewline();
-        }
-
-        // Quêtes (si actives)
-        Component questLine  = buildQuestLine(alphaPlayer);
-        Component globalLine = buildGlobalQuestLine();
-        if (!questLine.equals(Component.empty()) || !globalLine.equals(Component.empty())) {
-            footer = footer
-                    .appendNewline()
-                    .append(Component.text("─── Quêtes ───", NamedTextColor.DARK_AQUA))
-                    .appendNewline();
-            if (!questLine.equals(Component.empty()))  footer = footer.append(questLine).appendNewline();
-            if (!globalLine.equals(Component.empty())) footer = footer.append(globalLine).appendNewline();
+        // Description de la quête active
+        PlayerQuestData questData = alphaPlayer.getCurrentActiveQuest();
+        if (questData != null && !questData.isClaimed() && questData.getLastAccepted().isEqual(LocalDate.now())) {
+            Quest quest = GameManager.getInstance().getQuestManager().getQuest(questData.getQuestId());
+            if (quest != null) {
+                footer = footer
+                        .appendNewline()
+                        .append(Component.text(quest.getName() + " — ", NamedTextColor.GOLD))
+                        .append(Component.text(quest.getDescription(), NamedTextColor.GRAY));
+            }
         }
 
         return footer.appendNewline();
-    }
-
-    // ─── Quête personnelle ────────────────────────────────────────────────────────
-
-    private Component buildQuestLine(AlphaPlayer ap) {
-        PlayerQuestData data = ap.getCurrentActiveQuest();
-        if (data == null || data.isClaimed()) return Component.empty();
-        if (!data.getLastAccepted().isEqual(LocalDate.now())) return Component.empty();
-
-        Quest quest = GameManager.getInstance().getQuestManager().getQuest(data.getQuestId());
-        if (quest == null) return Component.empty();
-
-        boolean done = data.isCompleted();
-        int progress = data.getProgress();
-        int goal     = quest.getGoal();
-
-        Component line = Component.text(quest.getName() + " ", NamedTextColor.WHITE)
-                .append(Component.text(progress + "/" + goal, NamedTextColor.DARK_GRAY));
-        if (done) line = line.append(Component.text(" ✔ Trader !", NamedTextColor.GREEN));
-        return line;
-    }
-
-    // ─── Quête globale ────────────────────────────────────────────────────────────
-
-    private Component buildGlobalQuestLine() {
-        GlobalQuestManager gqm = GameManager.getInstance().getGlobalQuestManager();
-        GlobalQuest gq = gqm.getActiveQuest();
-        if (gq == null) return Component.empty();
-
-        int progress   = gqm.getProgress();
-        int goal       = gq.getGoal();
-        long remaining = gqm.getRemainingSeconds();
-
-        return Component.text("⚔ " + gq.getName() + " ", NamedTextColor.YELLOW)
-                .append(Component.text(progress + "/" + goal, NamedTextColor.DARK_GRAY))
-                .append(Component.text(" ⏰" + formatTime(remaining), NamedTextColor.GRAY));
     }
 
     // ─── Reset Wilderness ─────────────────────────────────────────────────────
@@ -343,12 +298,13 @@ public class TabDisplayManager {
 
         ZonedDateTime now = ZonedDateTime.now(tm.getServerTimezone());
         if (!now.isBefore(nextReset)) {
-            return Component.text("⏰ Wilderness : reset imminent !", NamedTextColor.YELLOW);
+            return Component.text("Reset ", NamedTextColor.GRAY)
+                    .append(Component.text("imminent !", NamedTextColor.YELLOW));
         }
 
         Duration remaining = Duration.between(now, nextReset);
-        return Component.text("⏰ Wilderness : ", NamedTextColor.GRAY)
-                .append(Component.text("reset dans " + TimeManager.formatTime(remaining), NamedTextColor.YELLOW));
+        return Component.text("Reset dans ", NamedTextColor.GRAY)
+                .append(Component.text(TimeManager.formatTime(remaining), NamedTextColor.YELLOW));
     }
 
     // ─── Nettoyage déconnexion ────────────────────────────────────────────────────
