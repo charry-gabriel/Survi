@@ -15,6 +15,7 @@ import org.bukkit.entity.EntityType;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -23,7 +24,7 @@ import java.util.logging.Level;
 
 /**
  * Chargement YAML des quêtes journalières et globales.
- * Seule classe autorisée à toucher les fichiers {@code quests.yml} et {@code global_quests.yml}.
+ * Seule classe autorisée à toucher les fichiers du dossier {@code quests/} et {@code global_quests.yml}.
  */
 public final class QuestYamlLoader {
 
@@ -33,9 +34,30 @@ public final class QuestYamlLoader {
     // Points d'entrée publics
     // =========================================================================
 
-    /** Charge et retourne toutes les quêtes journalières depuis {@code quests.yml}. */
+    /**
+     * Charge et retourne toutes les quêtes journalières depuis le dossier {@code quests/}.
+     * Chaque fichier {@code .yml} du dossier est lu indépendamment puis fusionné.
+     * L'ordre de chargement est alphabétique pour garantir la reproductibilité.
+     */
     public static List<Quest> loadQuests() {
-        return loadFromFile("quests.yml", "quests", QuestYamlLoader::buildQuest, "quête(s)");
+        File folder = new File(GameManager.getInstance().getPlugin().getDataFolder(), "quests");
+        if (!folder.isDirectory()) {
+            MLLogManager.getInstance().log(Level.SEVERE, ELogTag.QUEST, "Dossier 'quests/' introuvable dans le dataFolder");
+            return List.of();
+        }
+        File[] files = folder.listFiles((dir, name) -> name.endsWith(".yml"));
+        if (files == null || files.length == 0) {
+            MLLogManager.getInstance().log(Level.WARNING, ELogTag.QUEST, "Aucun fichier .yml trouvé dans 'quests/'");
+            return List.of();
+        }
+        Arrays.sort(files); // ordre alphabétique déterministe
+        List<Quest> result = new ArrayList<>();
+        for (File file : files) {
+            result.addAll(loadFromFile(file, "quests", QuestYamlLoader::buildQuest, "quête(s)"));
+        }
+        MLLogManager.getInstance().log(Level.INFO, ELogTag.QUEST,
+                result.size() + " quête(s) chargée(s) au total depuis quests/");
+        return result;
     }
 
     /** Charge et retourne toutes les quêtes globales depuis {@code global_quests.yml}. */
@@ -48,18 +70,27 @@ public final class QuestYamlLoader {
     // =========================================================================
 
     /**
+     * Ouvre un fichier YAML par nom relatif au dataFolder, itère sur la liste
+     * à la clé {@code rootKey} et applique {@code builder} sur chaque entrée.
+     */
+    private static <T extends BaseQuest> List<T> loadFromFile(
+            String filename, String rootKey, Function<Map<String, Object>, T> builder, String logLabel) {
+        File file = new File(GameManager.getInstance().getPlugin().getDataFolder(), filename);
+        return loadFromFile(file, rootKey, builder, logLabel);
+    }
+
+    /**
      * Ouvre un fichier YAML, itère sur la liste à la clé {@code rootKey} et applique
      * {@code builder} sur chaque entrée. Les erreurs par entrée sont loggées et ignorées.
      */
     private static <T extends BaseQuest> List<T> loadFromFile(
-            String filename, String rootKey, Function<Map<String, Object>, T> builder, String logLabel) {
+            File file, String rootKey, Function<Map<String, Object>, T> builder, String logLabel) {
 
-        File file = new File(GameManager.getInstance().getPlugin().getDataFolder(), filename);
         YamlConfiguration config = YamlConfiguration.loadConfiguration(file);
         List<T> result = new ArrayList<>();
 
         if (!config.contains(rootKey)) {
-            MLLogManager.getInstance().log(Level.SEVERE, ELogTag.QUEST, "Clé '" + rootKey + "' absente dans " + filename);
+            MLLogManager.getInstance().log(Level.SEVERE, ELogTag.QUEST, "Clé '" + rootKey + "' absente dans " + file.getName());
             return result;
         }
 
@@ -75,12 +106,12 @@ public final class QuestYamlLoader {
                 if (quest != null) result.add(quest);
             } catch (Exception e) {
                 MLLogManager.getInstance().log(Level.WARNING, ELogTag.QUEST,
-                        "Erreur lors du chargement d'une entrée dans " + filename, e);
+                        "Erreur lors du chargement d'une entrée dans " + file.getName(), e);
             }
         }
 
         MLLogManager.getInstance().log(Level.INFO, ELogTag.QUEST,
-                result.size() + " " + logLabel + " chargée(s) depuis " + filename);
+                result.size() + " " + logLabel + " chargée(s) depuis " + file.getName());
         return result;
     }
 

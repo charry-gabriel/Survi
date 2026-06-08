@@ -1,0 +1,41 @@
+# yaml-language-server: $schema=../schema/quests-schema.json
+quests:
+
+  - id: "craft_torch"
+    name: "Allumeur"
+    description: "Fabriquez 64 torches."
+    type: CRAFT
+    difficulty: 1
+    jobs:
+      - ENCHANTEUR
+    targets: [TORCH]
+    goal: 64
+    rewards:
+      - {type: REPUTATION, job: ENCHANTEUR, value: 8}
+      - {type: POTION, potion: night_vision, duration: 1728000, amplifier: 0}
+
+  - id: "craft_bread"
+    name: "Boulanger"
+    description: "Fabriquez 32 pains."
+    type: CRAFT
+    difficulty: 2
+    jobs:
+      - FERMIER
+    targets: [BREAD]
+    goal: 32
+    rewards:
+      - {type: REPUTATION, job: FERMIER, value: 25}
+      - {type: POTION, potion: regeneration, duration: 1728000, amplifier: 0}
+
+  - id: "craft_iron_sword"
+    name: "Armurier Débutant"
+    description: "Fabriquez 5 épées en fer."
+    type: CRAFT
+    difficulty: 2
+    jobs:
+      - ENCHANTEUR
+    targets: [IRON_SWORD]
+    goal: 5
+    rewards:
+      - {type: REPUTATION, job: ENCHANTEUR, value: 30}
+      - {type: POTION, potion: strength, duration: 1728000, amplifier: 0}

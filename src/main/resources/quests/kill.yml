@@ -1,0 +1,163 @@
+# yaml-language-server: $schema=../schema/quests-schema.json
+quests:
+
+  # ─────────────────── DIFFICULTÉ 1 ───────────────────
+
+  - id: "kill_zombies"
+    name: "Chasseur de Zombies"
+    description: "Tuez 25 zombies."
+    type: KILL
+    difficulty: 1
+    jobs:
+      - ENCHANTEUR
+    targets: [ZOMBIE]
+    goal: 25
+    rewards:
+      - {type: REPUTATION, job: ENCHANTEUR, value: 10}
+      - {type: POTION, potion: strength, duration: 1728000, amplifier: 0}
+
+  - id: "kill_skeletons"
+    name: "Briseur d'Os"
+    description: "Tuez 20 squelettes."
+    type: KILL
+    difficulty: 1
+    jobs:
+      - ENCHANTEUR
+    targets: [SKELETON]
+    goal: 20
+    rewards:
+      - {type: REPUTATION, job: ENCHANTEUR, value: 10}
+      - {type: POTION, potion: speed, duration: 1728000, amplifier: 0}
+
+  - id: "kill_spiders"
+    name: "Aranéophobe"
+    description: "Tuez 25 araignées."
+    type: KILL
+    difficulty: 1
+    jobs:
+      - ENCHANTEUR
+    targets: [SPIDER]
+    goal: 25
+    rewards:
+      - {type: REPUTATION, job: ENCHANTEUR, value: 9}
+      - {type: POTION, potion: speed, duration: 1728000, amplifier: 0}
+
+  - id: "kill_creepers"
+    name: "Démineur"
+    description: "Tuez 15 creepers."
+    type: KILL
+    difficulty: 1
+    jobs:
+      - ENCHANTEUR
+    targets: [CREEPER]
+    goal: 15
+    rewards:
+      - {type: REPUTATION, job: ENCHANTEUR, value: 12}
+      - {type: POTION, potion: resistance, duration: 1728000, amplifier: 0}
+
+  # ─────────────────── DIFFICULTÉ 2 ───────────────────
+
+  - id: "kill_drowned"
+    name: "Exterminateur des Profondeurs"
+    description: "Tuez 30 noyés."
+    type: KILL
+    difficulty: 2
+    jobs:
+      - ENCHANTEUR
+    targets: [DROWNED]
+    goal: 30
+    rewards:
+      - {type: REPUTATION, job: ENCHANTEUR, value: 30}
+      - {type: POTION, potion: water_breathing, duration: 1728000, amplifier: 0}
+      - {type: POTION, potion: strength, duration: 1728000, amplifier: 0}
+
+  - id: "kill_witch"
+    name: "Chasseur de Sorcière"
+    description: "Tuez 10 sorcières."
+    type: KILL
+    difficulty: 2
+    jobs:
+      - ENCHANTEUR
+    targets: [WITCH]
+    goal: 10
+    rewards:
+      - {type: REPUTATION, job: ENCHANTEUR, value: 35}
+      - {type: POTION, potion: luck, duration: 1728000, amplifier: 1}
+      - {type: POTION, potion: regeneration, duration: 1728000, amplifier: 0}
+
+  - id: "kill_pillager"
+    name: "Anti-Pillard"
+    description: "Tuez 20 pillards."
+    type: KILL
+    difficulty: 2
+    jobs:
+      - ENCHANTEUR
+    targets: [PILLAGER]
+    goal: 20
+    rewards:
+      - {type: REPUTATION, job: ENCHANTEUR, value: 30}
+      - {type: POTION, potion: strength, duration: 1728000, amplifier: 0}
+      - {type: POTION, potion: resistance, duration: 1728000, amplifier: 0}
+
+  # ─────────────────── DIFFICULTÉ 3 ───────────────────
+
+  - id: "kill_endermen"
+    name: "Chasseur de l'End"
+    description: "Tuez 50 Endermen."
+    type: KILL
+    difficulty: 3
+    jobs:
+      - ENCHANTEUR
+      - AVENTURIER
+    targets: [ENDERMAN]
+    goal: 50
+    rewards:
+      - {type: REPUTATION, job: ENCHANTEUR, value: 100}
+      - {type: POTION, potion: strength, duration: 1728000, amplifier: 1}
+      - {type: POTION, potion: speed, duration: 1728000, amplifier: 1}
+      - {type: POTION, potion: resistance, duration: 1728000, amplifier: 0}
+
+  - id: "kill_wither_skeleton"
+    name: "Faucheur des Âmes"
+    description: "Tuez 10 Wither Squelettes."
+    type: KILL
+    difficulty: 3
+    jobs:
+      - ENCHANTEUR
+      - AVENTURIER
+    targets: [WITHER_SKELETON]
+    goal: 10
+    rewards:
+      - {type: REPUTATION, job: ENCHANTEUR, value: 140}
+      - {type: POTION, potion: strength, duration: 1728000, amplifier: 1}
+      - {type: POTION, potion: resistance, duration: 1728000, amplifier: 1}
+
+  - id: "kill_blaze"
+    name: "Dompteur de Flammes"
+    description: "Tuez 30 Blazes."
+    type: KILL
+    difficulty: 3
+    jobs:
+      - ENCHANTEUR
+      - AVENTURIER
+    targets: [BLAZE]
+    goal: 30
+    rewards:
+      - {type: REPUTATION, job: ENCHANTEUR, value: 120}
+      - {type: POTION, potion: fire_resistance, duration: 1728000, amplifier: 0}
+      - {type: POTION, potion: strength, duration: 1728000, amplifier: 1}
+
+  - id: "kill_guardian"
+    name: "Terreur des Abysses"
+    description: "Tuez 20 Gardiens."
+    type: KILL
+    difficulty: 3
+    jobs:
+      - ENCHANTEUR
+      - AVENTURIER
+    targets: [GUARDIAN]
+    goal: 20
+    rewards:
+      - {type: REPUTATION, job: ENCHANTEUR, value: 130}
+      - {type: POTION, potion: water_breathing, duration: 1728000, amplifier: 0}
+      - {type: POTION, potion: strength, duration: 1728000, amplifier: 1}

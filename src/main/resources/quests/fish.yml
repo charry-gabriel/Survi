@@ -1,0 +1,41 @@
+# yaml-language-server: $schema=../schema/quests-schema.json
+quests:
+
+  - id: "fish_common"
+    name: "Pêcheur du Dimanche"
+    description: "Pêchez 10 poissons."
+    type: FISH
+    difficulty: 1
+    jobs:
+      - PECHEUR
+    targets: null
+    goal: 10
+    rewards:
+      - {type: REPUTATION, job: PECHEUR, value: 12}
+      - {type: POTION, potion: luck, duration: 1728000, amplifier: 0}
+
+  - id: "fish_rare"
+    name: "Pêcheur Confirmé"
+    description: "Pêchez 30 poissons."
+    type: FISH
+    difficulty: 2
+    jobs:
+      - PECHEUR
+    targets: null
+    goal: 30
+    rewards:
+      - {type: REPUTATION, job: PECHEUR, value: 28}
+      - {type: POTION, potion: luck, duration: 1728000, amplifier: 1}
+
+  - id: "fish_legendary"
+    name: "Grand Pêcheur"
+    description: "Pêchez 60 poissons."
+    type: FISH
+    difficulty: 3
+    jobs:
+      - PECHEUR
+    targets: null
+    goal: 60
+    rewards:
+      - {type: REPUTATION, job: PECHEUR, value: 110}
+      - {type: POTION, potion: luck, duration: 1728000, amplifier: 2}

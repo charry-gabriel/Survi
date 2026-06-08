@@ -10,6 +10,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -18,14 +20,15 @@ import java.util.Set;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * Valide la structure de {@code src/main/resources/quests.yml} sans runtime Bukkit.
+ * Valide la structure des fichiers {@code src/main/resources/quests/*.yml} sans runtime Bukkit.
  *
  * <h3>Ce qui est vérifié</h3>
  * <ul>
- *   <li>Présence de la clé racine {@code quests} avec au moins une entrée.</li>
+ *   <li>Présence du dossier {@code quests/} avec au moins un fichier {@code .yml}.</li>
+ *   <li>Chaque fichier possède la clé racine {@code quests} avec au moins une entrée.</li>
  *   <li>Pour chaque quête : {@code id}, {@code name}, {@code description}, {@code type},
  *       {@code difficulty}, {@code targets}, {@code goal} et {@code rewards} requis.</li>
- *   <li>Unicité des {@code id}.</li>
+ *   <li>Unicité des {@code id} sur l'ensemble des fichiers du dossier.</li>
  *   <li>{@code type} ∈ {MINE, KILL, BREED, FISH, SHEAR, CRAFT, SMELT}.</li>
  *   <li>{@code difficulty} : entier ≥ 1.</li>
  *   <li>{@code goal} : entier ≥ 1.</li>
@@ -73,55 +76,54 @@ class QuestConfigTest {
     // ─── Tests ────────────────────────────────────────────────────────────────────
 
     @Test
-    void testFileExists() {
-        assertTrue(new File("src/main/resources/quests.yml").exists(),
-                "quests.yml introuvable dans src/main/resources/");
+    void testFolderExists() {
+        File folder = new File("src/main/resources/quests");
+        assertTrue(folder.isDirectory(), "Dossier quests/ introuvable dans src/main/resources/");
+        File[] files = folder.listFiles((dir, name) -> name.endsWith(".yml"));
+        assertNotNull(files, "Impossible de lister src/main/resources/quests/");
+        assertTrue(files.length > 0, "Aucun fichier .yml dans src/main/resources/quests/");
     }
 
     @Test
     @SuppressWarnings("unchecked")
-    void testRootStructure() {
-        Map<String, Object> root = loadRoot();
-        assertTrue(root.containsKey("quests"), "La clé racine 'quests' est absente de quests.yml");
-
-        Object raw = root.get("quests");
-        assertNotNull(raw, "La section 'quests' est nulle");
-        assertInstanceOf(List.class, raw, "La section 'quests' doit être une liste YAML");
-
-        List<?> quests = (List<?>) raw;
-        assertFalse(quests.isEmpty(), "quests.yml doit contenir au moins une quête");
-    }
-
-    @Test
-    @SuppressWarnings("unchecked")
-    void testUniqueIds() {
-        List<?> quests = getQuests();
-        Set<String> seen = new HashSet<>();
-        for (int i = 0; i < quests.size(); i++) {
-            Map<String, Object> quest = (Map<String, Object>) quests.get(i);
-            Object idRaw = quest.get("id");
-            assertNotNull(idRaw, "quests[" + i + "] : champ 'id' manquant ou null");
-            String id = String.valueOf(idRaw).trim();
-            assertTrue(seen.add(id), "ID de quête en double : '" + id + "'");
+    void testEachFileHasRootKey() {
+        for (File file : getQuestFiles()) {
+            Map<String, Object> root = loadFile(file);
+            assertTrue(root.containsKey("quests"),
+                    "La clé racine 'quests' est absente dans " + file.getName());
+            Object raw = root.get("quests");
+            assertNotNull(raw, "La section 'quests' est nulle dans " + file.getName());
+            assertInstanceOf(List.class, raw, "La section 'quests' doit être une liste dans " + file.getName());
+            assertFalse(((List<?>) raw).isEmpty(), file.getName() + " doit contenir au moins une quête");
         }
     }
 
     @Test
     @SuppressWarnings("unchecked")
-    void testEachQuestConfig() {
-        List<?> quests = getQuests();
+    void testUniqueIds() {
+        List<?> quests = getAllQuests();
+        Set<String> seen = new HashSet<>();
+        for (int i = 0; i < quests.size(); i++) {
+            Map<String, Object> quest = (Map<String, Object>) quests.get(i);
+            String id = String.valueOf(quest.get("id"));
+            assertFalse(seen.contains(id), "ID en double (global) : '" + id + "' à l'index " + i);
+            seen.add(id);
+        }
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    void testValidStructure() {
         Set<String> validJobs = validJobNames();
+        List<?> quests = getAllQuests();
 
         for (int i = 0; i < quests.size(); i++) {
-            Object raw = quests.get(i);
-            String ctx = "quests[" + i + "]";
-            assertNotNull(raw, ctx + " est null");
-            assertInstanceOf(Map.class, raw, ctx + " doit être un objet YAML");
-            Map<String, Object> quest = (Map<String, Object>) raw;
+            Map<String, Object> quest = (Map<String, Object>) quests.get(i);
+            String ctx = "quests[" + i + "] (id=" + quest.get("id") + ")";
 
-            // Champs obligatoires
-            assertStringField(quest, "id",          ctx);
-            assertStringField(quest, "name",        ctx);
+            // Champs string obligatoires
+            assertStringField(quest, "id", ctx);
+            assertStringField(quest, "name", ctx);
             assertStringField(quest, "description", ctx);
 
             // type
@@ -253,26 +255,43 @@ class QuestConfigTest {
         assertFalse(String.valueOf(map.get(key)).isBlank(), ctx + " : '" + key + "' ne doit pas être vide");
     }
 
+    /** Retourne les fichiers .yml du dossier quests/, triés alphabétiquement. */
+    private File[] getQuestFiles() {
+        File folder = new File("src/main/resources/quests");
+        assertTrue(folder.isDirectory(), "Dossier quests/ introuvable");
+        File[] files = folder.listFiles((dir, name) -> name.endsWith(".yml"));
+        assertNotNull(files, "Impossible de lister src/main/resources/quests/");
+        assertTrue(files.length > 0, "Aucun fichier .yml dans quests/");
+        Arrays.sort(files);
+        return files;
+    }
+
+    /** Charge un seul fichier YAML et retourne sa racine. */
     @SuppressWarnings("unchecked")
-    private Map<String, Object> loadRoot() {
-        File file = new File("src/main/resources/quests.yml");
-        assertTrue(file.exists(), "quests.yml introuvable");
+    private Map<String, Object> loadFile(File file) {
         try (InputStream in = new FileInputStream(file)) {
             Yaml yaml = new Yaml(new LoaderOptions());
             Object loaded = yaml.load(in);
-            assertNotNull(loaded, "quests.yml est vide ou n'a pas pu être parsé");
-            assertInstanceOf(Map.class, loaded, "La racine de quests.yml doit être un objet YAML");
+            assertNotNull(loaded, file.getName() + " est vide ou n'a pas pu être parsé");
+            assertInstanceOf(Map.class, loaded, "La racine de " + file.getName() + " doit être un objet YAML");
             return (Map<String, Object>) loaded;
         } catch (Exception e) {
-            fail("Erreur de parsing YAML : " + e.getMessage());
+            fail("Erreur de parsing YAML dans " + file.getName() + " : " + e.getMessage());
             throw new RuntimeException(e); // unreachable
         }
     }
 
+    /** Fusionne toutes les listes {@code quests} de l'ensemble des fichiers du dossier. */
     @SuppressWarnings("unchecked")
-    private List<?> getQuests() {
-        Map<String, Object> root = loadRoot();
-        assertTrue(root.containsKey("quests"), "Section 'quests' absente");
-        return (List<?>) root.get("quests");
+    private List<?> getAllQuests() {
+        List<Object> all = new ArrayList<>();
+        for (File file : getQuestFiles()) {
+            Map<String, Object> root = loadFile(file);
+            assertTrue(root.containsKey("quests"), "Section 'quests' absente dans " + file.getName());
+            Object raw = root.get("quests");
+            assertInstanceOf(List.class, raw, "Section 'quests' invalide dans " + file.getName());
+            all.addAll((List<Object>) raw);
+        }
+        return all;
     }
 }

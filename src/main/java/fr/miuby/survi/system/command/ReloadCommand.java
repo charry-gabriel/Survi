@@ -16,7 +16,7 @@ import net.kyori.adventure.text.format.NamedTextColor;
  * <h3>Usage</h3>
  * <pre>
  *   /survi reload                  → recharge tous les YAML supportés
- *   /survi reload quests           → quests.yml uniquement
+ *   /survi reload quests           → quests/*.yml uniquement
  *   /survi reload global_quests    → global_quests.yml uniquement
  *   /survi reload monsters         → monsters.yml uniquement
  *   /survi reload roles            → roles.yml + ré-application immédiate sur les joueurs connectés
@@ -63,7 +63,7 @@ public class ReloadCommand {
         GameManager.getInstance().getVillagerFactory().reloadAll();   // clearCache + reload VillagerLevel + Traders
 
         sender.sendMessage(Component.text("✔ Rechargement terminé :").color(NamedTextColor.GREEN));
-        sender.sendMessage(Component.text("  quests.yml → ").color(NamedTextColor.GRAY).append(Component.text(quests + " quête(s)", NamedTextColor.WHITE)));
+        sender.sendMessage(Component.text("  quests/*.yml → ").color(NamedTextColor.GRAY).append(Component.text(quests + " quête(s)", NamedTextColor.WHITE)));
         sender.sendMessage(Component.text("  global_quests.yml → ").color(NamedTextColor.GRAY).append(Component.text(globalQuests + " quête(s) globale(s)", NamedTextColor.WHITE)));
         sender.sendMessage(Component.text("  monsters.yml ✔ — roles.yml ✔ (joueurs connectés mis à jour) — growth_items/*.yml ✔").color(NamedTextColor.GRAY));
         sender.sendMessage(Component.text("  villagers/*.yml + traders/*.yml ✔ (entités en jeu mises à jour, inventaires recalculés)").color(NamedTextColor.GRAY));
@@ -77,7 +77,7 @@ public class ReloadCommand {
 
     private static int reloadQuests(CommandContext<CommandSourceStack> ctx) {
         var sender = ctx.getSource().getSender();
-        sender.sendMessage(Component.text("Rechargement de quests.yml...").color(NamedTextColor.GRAY));
+        sender.sendMessage(Component.text("Rechargement de quests/*.yml...").color(NamedTextColor.GRAY));
         int loaded = GameManager.getInstance().getQuestManager().reload();
         sender.sendMessage(Component.text("✔ " + loaded + " quête(s). Quêtes orphelines traitées (voir console).").color(NamedTextColor.GREEN));
         return Command.SINGLE_SUCCESS;

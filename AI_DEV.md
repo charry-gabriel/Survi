@@ -62,7 +62,7 @@ Et si la modification touche un **enum du projet** (`EJob`, `ERole`, `EWorld`, `
 
 | Fichier YAML | Schéma | Test |
 |---|---|---|
-| `quests.yml` | `schema/quests-schema.json` | `QuestConfigTest` |
+| `quests/*.yml` | `schema/quests-schema.json` | `QuestConfigTest` |
 | `monsters.yml` | `schema/monsters-schema.json` | `MonstersConfigTest` |
 | `roles.yml` | `schema/roles-schema.json` | `RolesConfigTest` |
 | `villagers/*.yml` | `schema/villagers-schema.json` | `VillagerConfigTest` |
@@ -245,6 +245,8 @@ YamlConfiguration config = YamlConfiguration.loadConfiguration(file);
 
 Les fichiers sont déployés via `MLResourceManager.deploy()` / `deployFolder()` dans `Survi.onEnable()`. Ne pas appeler `saveResource()` directement.
 
+Les quêtes journalières suivent le même pattern folder que `growth_items/` : chaque fichier `quests/<type>.yml` est chargé indépendamment par `QuestYamlLoader` puis fusionné. Ajouter un nouveau fichier dans `quests/` suffit — aucune modification Java requise.
+
 ### Modifier un fichier YAML — workflow obligatoire
 
 → Voir **⚠️ RÈGLES CRITIQUES** en début de fichier : toute modification impose la mise à jour du schéma JSON, du test de config associé, et le relancement de `SchemaGeneratorTest.updateSchemas()` si un enum est touché.
@@ -367,7 +369,7 @@ growth_items/<id>.yml → GrowthItemFileConfig → GrowthItemLoader → GrowthIt
 
 | Fichier YAML | Schéma |
 |---|---|
-| `quests.yml` | `schema/quests-schema.json` |
+| `quests/*.yml` | `schema/quests-schema.json` |
 | `monsters.yml` | `schema/monsters-schema.json` |
 | `roles.yml` | `schema/roles-schema.json` |
 | `villagers/*.yml` | `schema/villagers-schema.json` |
@@ -401,7 +403,7 @@ growth_items/<id>.yml → GrowthItemFileConfig → GrowthItemLoader → GrowthIt
 |---|---|
 | Joueurs | `AlphaPlayer`, `AlphaPlayerFactory`, `PlayerPersistenceService`, `PlayerAttributeService`, `PlayerEffectRestoreService`, `OfflineNotificationService`, `OfflineNotificationListener` |
 | Rôles | `ERole`, `RoleLoader`, `RoleManagementService`, `roles.yml` |
-| Quêtes | `QuestManager`, `GlobalQuestManager`, `Quest`, `EQuestType`, `QuestActionBarService`, `GlobalQuestBossBarService`, `quests.yml` |
+| Quêtes | `QuestManager`, `GlobalQuestManager`, `Quest`, `EQuestType`, `QuestActionBarService`, `GlobalQuestBossBarService`, `quests/*.yml` |
 | Histoirique & stats quêtes | `QuestHistoryEntry`, `QuestHistoryRepository`, `QuestCommand` (`history`), `PlayerCommand` |
 | Villageois | `VillagerFactory`, `VillagerLevel`, `BlessingLoader`, `villagers/*.yml` |
 | Monstres | `MobLevelManager`, `MobTypeConfig`, `monsters.yml` |
