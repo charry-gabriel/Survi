@@ -38,7 +38,6 @@ public class RoleManagementService {
 
         // Refresh
         if (player.getPlayer() != null && player.getPlayer().isOnline()) {
-            playerFactory.sendToPlayers(player);
             player.getPlayer().sendMessage(Component.text("Le role ").color(NamedTextColor.YELLOW).append(newRole.displayName()).append(Component.text(" a ete appliqué !").color(NamedTextColor.YELLOW)));
         }
 
@@ -60,12 +59,6 @@ public class RoleManagementService {
         // Apply
         if (player.addSubRole(subRole)) {
             persistenceService.updateSubRoles(player);
-
-            // Refresh
-            if (player.getPlayer() != null && player.getPlayer().isOnline()) {
-                playerFactory.sendToPlayers(player);
-            }
-
             return true;
         }
 
@@ -87,12 +80,6 @@ public class RoleManagementService {
         // Apply
         if (player.removeSubRole(subRole)) {
             persistenceService.updateSubRoles(player);
-
-            // Refresh
-            if (player.getPlayer() != null && player.getPlayer().isOnline()) {
-                playerFactory.sendToPlayers(player);
-            }
-
             return true;
         }
 

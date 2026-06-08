@@ -172,7 +172,6 @@ public class WorldListener implements Listener {
         }
 
         alphaPlayer.setWorld(mlWorld);
-        GameManager.getInstance().getAlphaPlayerFactory().sendToPlayers(alphaPlayer);
         GameManager.getInstance().getAlphaPlayerFactory().getAttributeService().reapplyAllRoleAttributes(alphaPlayer);
     }
 

@@ -36,10 +36,6 @@ public class AlphaPlayerListener implements Listener {
             
             if (!roleChangeEvent.isCancelled()) {
                 alphaPlayer.addSubRole(newRole);
-                
-                // Mettre à jour l'affichage pour les autres joueurs
-                if (alphaPlayer.getPlayer() != null && alphaPlayer.getPlayer().isOnline())
-                    GameManager.getInstance().getAlphaPlayerFactory().sendToPlayers(alphaPlayer);
             } else {
                 event.setCancelled(true);
             }

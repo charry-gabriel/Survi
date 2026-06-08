@@ -31,8 +31,6 @@ import java.util.logging.Level;
 
 public class AlphaPlayer extends MLPlayer implements Serializable {
     @Getter
-    private final AlphaScoreboard scoreboard;
-    @Getter
     private final AlphaLife alphaLife;
 
     @Getter
@@ -85,7 +83,6 @@ public class AlphaPlayer extends MLPlayer implements Serializable {
         this.damageModifier        = cfg.getNormalDamageModifier();
         this.endResistanceModifier = cfg.getEndResistanceModifier();
         this.endDamageModifier     = cfg.getEndDamageModifier();
-        this.scoreboard = new AlphaScoreboard();
         this.alphaLife = new AlphaLife(this);
     }
 
@@ -123,15 +120,11 @@ public class AlphaPlayer extends MLPlayer implements Serializable {
 
     @Override
     public void onJoinServer() {
-        this.player.setScoreboard(this.scoreboard.getScoreboard());
-
         checkOrTeleportToValidWorld();
 
         this.world = WorldRegistry.get(getPlayer().getWorld().getUID());
-        GameManager.getInstance().getAlphaPlayerFactory().sendToPlayers(this);
 
         GameManager.getInstance().getAlphaPlayerFactory().getEffectRestoreService().restoreOnJoin(this);
-        GameManager.getInstance().getAlphaPlayerFactory().setPlayersToTeam(this.scoreboard);
 
         this.getAlphaLife().actualizeDeath();
         this.getAlphaLife().actualizeSuccess();

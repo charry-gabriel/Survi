@@ -8,10 +8,12 @@ import fr.miuby.survi.quest.globalquest.GlobalQuestManager;
 import fr.miuby.survi.quest.quest.PlayerQuestData;
 import fr.miuby.survi.quest.quest.Quest;
 import fr.miuby.survi.role.Role;
+import io.papermc.paper.adventure.PaperAdventure;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.minecraft.network.protocol.game.ClientboundPlayerInfoRemovePacket;
 import net.minecraft.network.protocol.game.ClientboundPlayerInfoUpdatePacket;
+import net.minecraft.world.level.GameType;
 import org.bukkit.Bukkit;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
@@ -27,6 +29,7 @@ import java.text.DecimalFormat;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.List;
@@ -37,16 +40,19 @@ import java.util.UUID;
  * Gère le tab list :
  * <ul>
  *   <li><b>Header</b> — serveur + identité du joueur</li>
- *   <li><b>Colonne gauche</b> — vrais joueurs (ordre naturel Minecraft)</li>
+ *   <li><b>Colonne gauche</b> — vrais joueurs (triés par pseudo Minecraft)</li>
  *   <li><b>Colonne droite</b> — faux joueurs : villageois + métiers (via {@link TabInfoColumn})</li>
  *   <li><b>Footer</b> — stats + quêtes actives</li>
  * </ul>
  *
- * <h3>Mécanisme de tri sans listOrder</h3>
- * {@code listOrder} est ignoré dans Paper 26.1.  Le tri du tab repose sur les clés
- * d'équipe scoreboard ({@code teamName\0profileName}).  Les vrais joueurs sont dans des
- * équipes AlphaTeam nommées {@code "PseudoJoueur<random>"} (ex. "Miuby-845123").
- * Les faux joueurs d'info sont mis dans l'équipe {@value #SORT_TEAM} dont le nom
+ * <h3>Affichage des vrais joueurs</h3>
+ * Le nom de chaque vrai joueur est remplacé via {@code UPDATE_DISPLAY_NAME} et affiche :
+ * monde · sous-rôles · rôle · pseudo · PV actuels/max.
+ * Aucune équipe scoreboard n'est créée pour les vrais joueurs.
+ *
+ * <h3>Mécanisme de tri</h3>
+ * {@code listOrder} est ignoré dans Paper 26.1. Les vrais joueurs trient par pseudo Minecraft
+ * (sans équipe). Les faux joueurs d'info sont dans l'équipe {@value #SORT_TEAM} dont le nom
  * commence par {@code '~'} (ASCII 126 > {@code 'z'} = 122), garantissant qu'ils
  * trient <em>après</em> tout pseudo possible → colonne droite.
  *
@@ -70,6 +76,9 @@ public class TabDisplayManager {
                     ClientboundPlayerInfoUpdatePacket.Action.UPDATE_LISTED
             );
 
+    private static final EnumSet<ClientboundPlayerInfoUpdatePacket.Action> NAME_ACTIONS =
+            EnumSet.of(ClientboundPlayerInfoUpdatePacket.Action.UPDATE_DISPLAY_NAME);
+
     private static final Component SEP = Component.text("  ·  ", NamedTextColor.DARK_GRAY);
 
     /** Joueurs pour lesquels l'équipe de tri a déjà été créée cette session. */
@@ -89,6 +98,8 @@ public class TabDisplayManager {
 
     private void updateTabList() {
         int playerCount = Bukkit.getOnlinePlayers().size();
+        List<ClientboundPlayerInfoUpdatePacket.Entry> nameEntries = buildRealPlayerNameEntries();
+
         for (Player player : Bukkit.getOnlinePlayers()) {
             AlphaPlayer ap = AlphaPlayer.get(player.getUniqueId());
             if (ap == null || ap.getPlayer() == null) continue;
@@ -103,10 +114,75 @@ public class TabDisplayManager {
 
             // Supprime tous les anciens faux joueurs possibles, puis renvoie les nouveaux
             sendPacket(player, new ClientboundPlayerInfoRemovePacket(TabInfoColumn.FAKE_UUIDS));
-            sendPacket(player, new ClientboundPlayerInfoUpdatePacket(
-                    ADD_ACTIONS, TabInfoColumn.build(ap, playerCount)
+            sendPacket(player, new ClientboundPlayerInfoUpdatePacket(ADD_ACTIONS, TabInfoColumn.build(ap, playerCount)));
+
+            // Met à jour le nom affiché de chaque vrai joueur (monde + rôle + sous-rôle + pseudo + PV)
+            if (!nameEntries.isEmpty()) {
+                sendPacket(player, new ClientboundPlayerInfoUpdatePacket(NAME_ACTIONS, nameEntries));
+            }
+        }
+    }
+
+    // ─── Noms des vrais joueurs ───────────────────────────────────────────────────
+
+    /**
+     * Construit les entrées UPDATE_DISPLAY_NAME pour tous les vrais joueurs en ligne.
+     * Calculé une fois par tick et envoyé à chaque viewer.
+     */
+    private List<ClientboundPlayerInfoUpdatePacket.Entry> buildRealPlayerNameEntries() {
+        List<ClientboundPlayerInfoUpdatePacket.Entry> entries = new ArrayList<>();
+        for (Player online : Bukkit.getOnlinePlayers()) {
+            AlphaPlayer rap = GameManager.getInstance().getAlphaPlayerFactory().get(online.getUniqueId());
+            if (rap == null || rap.getPlayer() == null) continue;
+            entries.add(new ClientboundPlayerInfoUpdatePacket.Entry(
+                    online.getUniqueId(),
+                    null,
+                    false,
+                    0,
+                    GameType.SURVIVAL,
+                    PaperAdventure.asVanilla(buildPlayerTabName(rap)),
+                    false,
+                    0,
+                    null
             ));
         }
+        return entries;
+    }
+
+    /**
+     * Compose le nom affiché d'un vrai joueur dans le tab :
+     * [monde] [sous-rôles] [rôle] pseudo ❤ PV/PVmax
+     */
+    private Component buildPlayerTabName(AlphaPlayer ap) {
+        Player p = ap.getPlayer();
+        if (p == null) return Component.text(ap.getPseudo(), NamedTextColor.WHITE);
+
+        NamedTextColor worldColor = (ap.getWorld() != null && ap.getWorld().getColor() != null)
+                ? ap.getWorld().getColor()
+                : NamedTextColor.WHITE;
+
+        Component name = Component.empty();
+
+        // Monde
+        if (ap.getWorld() != null) {
+            name = name.append(Component.text(ap.getWorld().getName() + " - ", worldColor));
+        }
+
+        // Sous-rôles
+        for (Role sub : ap.getSubRoles()) {
+            name = name.append(sub.displayName());
+        }
+
+        // Rôle principal
+        Role role = ap.getRole();
+        if (role != null) {
+            name = name.append(role.displayName()).append(Component.text(" "));
+        }
+
+        // Pseudo du joueur
+        name = name.append(Component.text(ap.getPseudo(), worldColor));
+
+        return name;
     }
 
     // ─── Équipe de tri ────────────────────────────────────────────────────────────
@@ -117,7 +193,7 @@ public class TabDisplayManager {
      *
      * Le client Minecraft trie les entrées du tab par clé {@code teamName\0profileName}.
      * Comme {@value #SORT_TEAM} commence par {@code '~'}, ces entrées apparaissent
-     * après tous les vrais joueurs (dont les équipes AlphaTeam commencent par des lettres).
+     * après tous les vrais joueurs (dont les pseudos commencent par des caractères alphanumériques).
      */
     private void setupSortingTeam(Player player) {
         Scoreboard sb = player.getScoreboard();
@@ -284,7 +360,6 @@ public class TabDisplayManager {
     public void removeInfoColumn(Player player) {
         sendPacket(player, new ClientboundPlayerInfoRemovePacket(TabInfoColumn.FAKE_UUIDS));
         teamInitialized.remove(player.getUniqueId());
-        // L'équipe scoreboard est détruite automatiquement lors du reset de l'AlphaScoreboard.
     }
 
     // ─── Utilitaires ─────────────────────────────────────────────────────────────

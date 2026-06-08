@@ -1,6 +1,5 @@
 package fr.miuby.survi.player;
 
-import fr.miuby.lib.log.MLLogManager;
 import fr.miuby.lib.player.MLPlayerRegistry;
 import fr.miuby.survi.GameManager;
 import fr.miuby.survi.display.TutorialBookService;
@@ -9,13 +8,11 @@ import fr.miuby.survi.player.service.PlayerPersistenceService;
 import fr.miuby.survi.player.service.PlayerEffectRestoreService;
 import fr.miuby.survi.role.Role;
 import fr.miuby.survi.system.exception.AlphaPlayerNotFoundException;
-import fr.miuby.survi.system.log.ELogTag;
 import lombok.Getter;
 import org.bukkit.entity.Player;
 
 import java.util.Collection;
 import java.util.UUID;
-import java.util.logging.Level;
 
 public class AlphaPlayerFactory {
     private final MLPlayerRegistry<AlphaPlayer> registry = new MLPlayerRegistry<>();
@@ -50,44 +47,6 @@ public class AlphaPlayerFactory {
         if (alphaPlayer == null)
             throw new AlphaPlayerNotFoundException(pseudo);
         return alphaPlayer;
-    }
-
-    /**
-     * Ajoute tous les joueurs en ligne dans le scoreboard fourni (celui du joueur qui vient de rejoindre).
-     * Chaque joueur est placé dans une équipe colorée selon son monde et son rôle.
-     * Les erreurs individuelles sont absorbées pour ne pas interrompre l'ensemble.
-     */
-    public void setPlayersToTeam(AlphaScoreboard scoreboard) {
-        for (AlphaPlayer alphaPlayer : registry.getAll()) {
-            if (alphaPlayer.getPlayer() == null) continue;
-            try {
-                scoreboard.getTeam(alphaPlayer).addPlayer(alphaPlayer);
-            } catch (Exception e) {
-                MLLogManager.getInstance().log(Level.WARNING, ELogTag.PLAYER,
-                        "[AlphaTeam] Impossible de créer l'équipe pour " + alphaPlayer.getPseudo(), e);
-            }
-        }
-    }
-
-    /**
-     * Ajoute le joueur {@code player} dans le scoreboard de chacun des autres joueurs en ligne.
-     * <p>
-     * Note : on exclut intentionnellement le propre scoreboard de {@code player} — c'est
-     * {@link #setPlayersToTeam(AlphaScoreboard)} (appelé juste après) qui s'en charge,
-     * évitant ainsi la création de deux équipes redondantes pour ce joueur.
-     */
-    public void sendToPlayers(AlphaPlayer player) {
-        for (AlphaPlayer alphaPlayer : registry.getAll()) {
-            if (alphaPlayer.getPlayer() == null) continue;
-            // On saute le propre scoreboard du joueur qui rejoint — setPlayersToTeam le couvre.
-            if (alphaPlayer.getUuid().equals(player.getUuid())) continue;
-            try {
-                alphaPlayer.getScoreboard().getTeam(player).addPlayer(player);
-            } catch (Exception e) {
-                MLLogManager.getInstance().log(Level.WARNING, ELogTag.PLAYER,
-                        "[AlphaTeam] Impossible d'ajouter " + player.getPseudo() + " au scoreboard de " + alphaPlayer.getPseudo(), e);
-            }
-        }
     }
 
     public void onPlayerJoin(Player bukkitPlayer) {
