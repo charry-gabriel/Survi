@@ -169,12 +169,12 @@ public enum ECustomItem {
         item.setItemMeta(meta);
     }),
 
-    GROWTH_BOUSSOLE_AVENTURIER(Material.COMPASS, item -> {
+    GROWTH_BOUSSOLE_EXPLORER(Material.COMPASS, item -> {
         ItemMeta preMeta = item.getItemMeta();
-        createGrowthItem(preMeta, "GROWTH_BOUSSOLE_AVENTURIER");
+        createGrowthItem(preMeta, "GROWTH_BOUSSOLE_EXPLORER");
         item.setItemMeta(preMeta);
         new CustomItemBuilder(item, "GrowthBoussole")
-                .name("Boussole de l'Aventurier I", NamedTextColor.AQUA)
+                .name("Boussole de l'Explorateur I", NamedTextColor.AQUA)
                 .addAttribute(Attribute.MOVEMENT_SPEED, 0.01, ADD_NUMBER, EquipmentSlotGroup.HAND)
                 .unbreakable();
     }),

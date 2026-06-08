@@ -58,8 +58,8 @@ public class SurviConfig {
 
     @Getter private VillageZoneConfig villageZoneConfig;
 
-    /** Rayon Wilderness (en blocs XZ) autorisé par niveau Aventurier (index 0–10). */
-    @Getter private List<Integer> adventureWildernessRadii;
+    /** Rayon Wilderness (en blocs XZ) autorisé par niveau Explorateur (index 0–10). */
+    @Getter private List<Integer> exploreWildernessRadius;
 
     // ─── Initialisation ──────────────────────────────────────────────────────────
 
@@ -112,19 +112,19 @@ public class SurviConfig {
 
         EGlobalRank.initFromConfig(this);
 
-        // ─── Limites Aventurier ──────────────────────────────────────────────────────
-        adventureWildernessRadii = new ArrayList<>();
-        List<?> rawRadii = cfg.getList("adventure-limits.wilderness-radius-per-level");
+        // ─── Limites Explorateur ──────────────────────────────────────────────────────
+        exploreWildernessRadius = new ArrayList<>();
+        List<?> rawRadii = cfg.getList("explore-limits.wilderness-radius-per-level");
         if (rawRadii != null) {
             for (Object obj : rawRadii) {
                 if (obj instanceof Number n) {
-                    adventureWildernessRadii.add(n.intValue());
+                    exploreWildernessRadius.add(n.intValue());
                 }
             }
         }
-        if (adventureWildernessRadii.isEmpty()) {
+        if (exploreWildernessRadius.isEmpty()) {
             // Valeurs de secours si la clé est absente du config.yml
-            adventureWildernessRadii = List.of(500, 750, 1000, 1500, 2000, 3000, 4000, 6000, 8000, 12000, 200000);
+            exploreWildernessRadius = List.of(500, 750, 1000, 1500, 2000, 3000, 4000, 6000, 8000, 12000, 200000);
         }
 
         // ─── Zone Village ────────────────────────────────────────────────────────────

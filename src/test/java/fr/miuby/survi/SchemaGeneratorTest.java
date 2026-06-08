@@ -29,6 +29,7 @@ class SchemaGeneratorTest {
             updateMonstersSchema();
             updateRolesSchema();
             updateGrowthItemsSchema();
+            updateJobsSchema();
         });
     }
 
@@ -540,5 +541,17 @@ class SchemaGeneratorTest {
         } catch (IOException e) {
             return List.of();
         }
+    }
+
+    // ─── Jobs Schema ─────────────────────────────────────────────────────────────
+
+    /**
+     * Vérifie que {@code jobs-schema.json} est présent.
+     * Le schéma des jobs n'a pas de dépendances sur des enums externes (Material, EntityType, EJob) :
+     * ses contraintes sont purement numériques et ne nécessitent pas de régénération automatique.
+     */
+    private void updateJobsSchema() throws IOException {
+        Path path = Paths.get("src/main/resources/schema/jobs-schema.json");
+        Assertions.assertTrue(Files.exists(path), "jobs-schema.json introuvable dans src/main/resources/schema/");
     }
 }

@@ -13,13 +13,13 @@ import org.bukkit.event.block.BlockBreakEvent;
 import java.util.EnumSet;
 import java.util.Set;
 
-/** Multiplicateur de drops sur les minerais selon le niveau {@link EJob#MINEUR}. */
-public class MineurListener implements Listener {
+/** Multiplicateur de drops sur les minerais selon le niveau {@link EJob#MINER}. */
+public class MinerListener implements Listener {
 
     private static final Set<Material> ORE_BLOCKS = EnumSet.of(
             Material.COAL_ORE,            Material.DEEPSLATE_COAL_ORE,
             Material.IRON_ORE,            Material.DEEPSLATE_IRON_ORE,
-            Material.GOLD_ORE,            Material.DEEPSLATE_GOLD_ORE,            Material.NETHER_GOLD_ORE,
+            Material.GOLD_ORE,            Material.DEEPSLATE_GOLD_ORE,  Material.NETHER_GOLD_ORE,
             Material.DIAMOND_ORE,         Material.DEEPSLATE_DIAMOND_ORE,
             Material.EMERALD_ORE,         Material.DEEPSLATE_EMERALD_ORE,
             Material.LAPIS_ORE,           Material.DEEPSLATE_LAPIS_ORE,
@@ -36,8 +36,8 @@ public class MineurListener implements Listener {
         AlphaPlayer alpha = AlphaPlayer.get(player.getUniqueId());
         if (alpha == null) return;
 
-        try (var t = PerfTimer.start("MineurListener.dropWithMultiplier")) {
-            JobUtils.dropWithMultiplier(event, JobUtils.getMultiplier(alpha.getJobLevel(EJob.MINEUR)));
+        try (var t = PerfTimer.start("MinerListener.dropWithMultiplier")) {
+            JobUtils.dropWithMultiplier(event, JobUtils.getMultiplier(alpha.getJobLevel(EJob.MINER)));
         }
     }
 }

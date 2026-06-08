@@ -33,14 +33,14 @@
             "type": "string",
             "description": "Type d'action requis pour progresser",
             "enum": [
-              "BREED",
-              "CRAFT",
-              "FISH",
-              "KILL",
-              "MINE",
-              "SHEAR",
-              "SMELT"
-            ]
+        "BREED",
+        "CRAFT",
+        "FISH",
+        "KILL",
+        "MINE",
+        "SHEAR",
+        "SMELT"
+      ]
           },
           "targets": {
             "type": ["array", "null"],
@@ -1876,12 +1876,12 @@
                   "properties": {
                     "type": { "type": "string", "const": "UNLOCK_TOOL"},
                     "tool": { "type": "string", "description": "Type d'outil (ELockedToolType)", "enum": [
-                      "DIAMOND",
-                      "GOLD",
-                      "IRON",
-                      "STONE",
-                      "WOOD"
-                    ] }
+        "DIAMOND",
+        "GOLD",
+        "IRON",
+        "STONE",
+        "WOOD"
+      ] }
                   },
                   "required": ["type", "tool"],
                   "additionalProperties": false
@@ -1891,13 +1891,13 @@
                   "properties": {
                     "type": { "type": "string", "const": "UNLOCK_ARMOR"},
                     "armor": { "type": "string", "description": "Type d'armure (ELockedArmorType)", "enum": [
-                      "CHAINMAIL",
-                      "DIAMOND",
-                      "GOLD",
-                      "IRON",
-                      "LEATHER",
-                      "NETHERITE"
-                    ] }
+        "CHAINMAIL",
+        "DIAMOND",
+        "GOLD",
+        "IRON",
+        "LEATHER",
+        "NETHERITE"
+      ] }
                   },
                   "required": ["type", "armor"],
                   "additionalProperties": false
@@ -1907,12 +1907,12 @@
                   "properties": {
                     "type": { "type": "string", "const": "LOCK_WORLD"},
                     "world": { "type": "string", "description": "Monde à déverrouiller (EWorld)", "enum": [
-                      "ALL",
-                      "END",
-                      "NETHER",
-                      "VILLAGE",
-                      "WILDERNESS"
-                    ] }
+        "ALL",
+        "END",
+        "NETHER",
+        "VILLAGE",
+        "WILDERNESS"
+      ] }
                   },
                   "required": ["type", "world"],
                   "additionalProperties": false
@@ -1949,12 +1949,12 @@
                   "properties": {
                     "type": { "type": "string", "const": "LIMIT_WORLD"},
                     "world": { "type": "string", "description": "Monde concerné (EWorld)", "enum": [
-                      "ALL",
-                      "END",
-                      "NETHER",
-                      "VILLAGE",
-                      "WILDERNESS"
-                    ] },
+        "ALL",
+        "END",
+        "NETHER",
+        "VILLAGE",
+        "WILDERNESS"
+      ] },
                     "min-x": { "type": "integer" },
                     "max-x": { "type": "integer" },
                     "min-y": { "type": "integer" },
@@ -1970,13 +1970,13 @@
                   "properties": {
                     "type": { "type": "string", "const": "REPUTATION"},
                     "job": { "type": "string", "description": "Métier (EJob)", "enum": [
-                      "AVENTURIER",
-                      "BUCHERON",
-                      "ENCHANTEUR",
-                      "FERMIER",
-                      "MINEUR",
-                      "PECHEUR"
-                    ] },
+        "ENCHANTER",
+        "EXPLORER",
+        "FARMER",
+        "FISHERMAN",
+        "LUMBERJACK",
+        "MINER"
+      ] },
                     "value": { "type": "integer", "minimum": 1, "description": "Quantité de réputation accordée" }
                   },
                   "required": ["type", "job", "value"],

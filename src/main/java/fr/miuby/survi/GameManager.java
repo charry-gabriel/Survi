@@ -30,6 +30,7 @@ import fr.miuby.survi.world.WorldPortalManager;
 import fr.miuby.survi.world.WorldResetManager;
 import fr.miuby.survi.world.VillageZoneManager;
 import fr.miuby.survi.system.SurviConfig;
+import fr.miuby.survi.job.config.JobsLoader;
 import fr.miuby.survi.world.WorldInitializer;
 import lombok.Getter;
 import lombok.Setter;
@@ -93,6 +94,7 @@ public class GameManager {
 
     public void init(Survi plugin) {
         SurviConfig.getInstance().init(plugin);
+        JobsLoader.load(plugin);
         this.plugin = plugin;
         this.scheduler = this.plugin.getServer().getScheduler();
 

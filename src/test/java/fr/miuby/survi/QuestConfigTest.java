@@ -65,9 +65,7 @@ class QuestConfigTest {
             if (values != null && !values.isEmpty()) return new java.util.LinkedHashSet<>(values);
         } catch (IOException | ClassCastException | NullPointerException ignored) {}
         // Fallback statique
-        return Set.of("MINEUR", "BUCHERON", "FERMIER", "COMBATANT", "ALCHIMISTE",
-                "ENCHANTEUR", "FORGERON", "PECHEUR", "CHASSEUR", "MARCHAND",
-                "AVENTURIER", "BATISSEUR");
+        return Set.of("MINER", "LUMBERJACK", "FARMER", "ENCHANTER", "FISHERMAN", "EXPLORER");
     }
 
     // ─── Tests ────────────────────────────────────────────────────────────────────
