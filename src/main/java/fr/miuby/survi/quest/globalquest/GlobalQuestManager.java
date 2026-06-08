@@ -142,7 +142,7 @@ public class GlobalQuestManager extends AbstractQuestManager<GlobalQuest> {
         progress = Math.min(progress + amount, activeQuest.getGoal() + amount);
 
         if (progress >= activeQuest.getGoal()) {
-            onComplete();
+            onFinished();
         } else {
             GameManager.getInstance().getGlobalQuestBossBarService().onProgressUpdate(activeQuest, progress);
         }
@@ -157,7 +157,7 @@ public class GlobalQuestManager extends AbstractQuestManager<GlobalQuest> {
     // Logique interne
     // =========================================================================
 
-    private void onComplete() {
+    private void onFinished() {
         if (timerTask != null) { timerTask.cancel(); timerTask = null; }
 
         GlobalQuest quest = activeQuest;
@@ -169,8 +169,8 @@ public class GlobalQuestManager extends AbstractQuestManager<GlobalQuest> {
         endTime     = 0L;
         contributions.clear();
 
-        broadcastQuestComplete(quest, snapshot);
-        GameManager.getInstance().getGlobalQuestBossBarService().onQuestCompleted(quest);
+        broadcastQuestFinished(quest, snapshot);
+        GameManager.getInstance().getGlobalQuestBossBarService().onQuestFinished(quest);
 
         AlphaPlayerFactory factory = GameManager.getInstance().getAlphaPlayerFactory();
         OfflineNotificationService offlineNotif = GameManager.getInstance().getOfflineNotificationService();
@@ -265,7 +265,7 @@ public class GlobalQuestManager extends AbstractQuestManager<GlobalQuest> {
         }
     }
 
-    private void broadcastQuestComplete(GlobalQuest quest, Map<UUID, Integer> snapshot) {
+    private void broadcastQuestFinished(GlobalQuest quest, Map<UUID, Integer> snapshot) {
         int participantCount  = snapshot.size();
         int totalContribution = snapshot.values().stream().mapToInt(Integer::intValue).sum();
 

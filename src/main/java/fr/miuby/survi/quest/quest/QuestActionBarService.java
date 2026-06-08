@@ -86,12 +86,12 @@ public class QuestActionBarService {
      * Affiche le message de quête complétée et stoppe le rafraîchissement.
      *
      * @param player joueur concerné
-     * @param quest  définition de la quête complétée
+     * @param quest  définition de la quête terminée
      */
-    public void showCompleted(AlphaPlayer player, Quest quest) {
+    public void showFinished(AlphaPlayer player, Quest quest) {
         if (player.getPlayer() == null) return;
         stopRefresh(player.getUuid());
-        player.getPlayer().sendActionBar(buildCompletedMessage(quest));
+        player.getPlayer().sendActionBar(buildFinishedMessage(quest));
     }
 
     /**
@@ -139,7 +139,7 @@ public class QuestActionBarService {
                 .append(Component.text(data.getProgress() + "/" + quest.getGoal(), NamedTextColor.WHITE));
     }
 
-    private Component buildCompletedMessage(Quest quest) {
+    private Component buildFinishedMessage(Quest quest) {
         return Component.text("✔ Quête terminée : ", NamedTextColor.GREEN, TextDecoration.BOLD)
                 .append(Component.text(quest.getName(), NamedTextColor.GOLD))
                 .append(Component.text(" — Allez voir le Trader !", NamedTextColor.GRAY));

@@ -417,7 +417,7 @@ public class QuestManager extends AbstractQuestManager<Quest> {
     /**
      * Réclame la récompense de la quête complétée auprès du bon Trader.
      */
-    public boolean completeQuest(AlphaPlayer player, Trader trader, boolean force) {
+    public boolean claimQuest(AlphaPlayer player, Trader trader, boolean force) {
         PlayerQuestData data = player.getCurrentActiveQuest();
 
         if (data == null || (!force && !data.isCompleted()) || data.isClaimed())
@@ -475,27 +475,27 @@ public class QuestManager extends AbstractQuestManager<Quest> {
                 "[QuestProgress] " + player.getPseudo() + " — " + data.getQuestId() + " : " + data.getProgress() + "/" + quest.getGoal());
 
         if (data.getProgress() >= quest.getGoal()) {
-            completeQuestInternal(player, quest);
+            finishQuest(player, quest);
         } else {
             GameManager.getInstance().getDatabase().quests().updatePlayerQuest(player.getUuid(), data);
             GameManager.getInstance().getQuestActionBarService().showProgress(player, quest, data);
         }
     }
 
-    private void completeQuestInternal(AlphaPlayer player, Quest quest) {
+    private void finishQuest(AlphaPlayer player, Quest quest) {
         PlayerQuestData data = player.getCurrentActiveQuest();
         if (data == null) return;
 
         data.setProgress(quest.getGoal());
         data.setCompleted(true);
         MLLogManager.getInstance().log(Level.INFO, ELogTag.QUEST,
-                "[QuestComplete] " + player.getPseudo() + " — " + quest.getId());
+                "[QuestFinished] " + player.getPseudo() + " — " + quest.getId());
         GameManager.getInstance().getDatabase().quests().updatePlayerQuest(player.getUuid(), data);
 
         SoundService.play(player.getPlayer(), ESound.QUEST_COMPLETE);
         player.getPlayer().sendMessage(Component.text("Quête terminée : ", NamedTextColor.GREEN).append(Component.text(quest.getName(), NamedTextColor.GOLD)));
         player.getPlayer().sendMessage(Component.text("Allez voir le Trader pour obtenir votre récompense !", NamedTextColor.GRAY));
-        GameManager.getInstance().getQuestActionBarService().showCompleted(player, quest);
+        GameManager.getInstance().getQuestActionBarService().showFinished(player, quest);
 
         // Active le glow du Trader cible pour guider le joueur
         if (data.getTraderId() != null) {

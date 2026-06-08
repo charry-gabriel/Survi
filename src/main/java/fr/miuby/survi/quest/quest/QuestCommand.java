@@ -56,11 +56,11 @@ public class QuestCommand {
                                 .executes(QuestCommand::resetAllQuests)
                         )
                 )
-                .then(Commands.literal("complete")
+                .then(Commands.literal("claim")
                         .requires(source -> source.getSender().isOp())
                         .then(Commands.argument(playerArgument, AlphaPlayerArgument.alphaPlayer())
                                 .then(Commands.argument(villagerArgument, TraderArgument.trader())
-                                        .executes(QuestCommand::completeQuest)
+                                        .executes(QuestCommand::claimQuest)
                                 )
                         )
                 )
@@ -165,19 +165,19 @@ public class QuestCommand {
     }
 
     /**
-     * Force la complétion de la quête en cours (admin).
+     * Force la réception des récompenses de la quête en cours (admin).
      */
-    private static int completeQuest(CommandContext<CommandSourceStack> ctx) {
+    private static int claimQuest(CommandContext<CommandSourceStack> ctx) {
         AlphaPlayer alphaPlayer = AlphaPlayerArgument.getAlphaPlayer(ctx, playerArgument);
         Trader trader = TraderArgument.getTrader(ctx, villagerArgument);
 
-        if (GameManager.getInstance().getQuestManager().completeQuest(alphaPlayer, trader, true)) {
+        if (GameManager.getInstance().getQuestManager().claimQuest(alphaPlayer, trader, true)) {
             ctx.getSource().getSender().sendMessage(
-                    Component.text("Quête complétée pour " + alphaPlayer.getPseudo()).color(NamedTextColor.GREEN));
+                    Component.text("Récompenses réclamées pour " + alphaPlayer.getPseudo()).color(NamedTextColor.GREEN));
         } else {
             ctx.getSource().getSender().sendMessage(
-                    Component.text("Impossible de compléter la quête pour " + alphaPlayer.getPseudo()
-                            + " (aucune quête en cours ou déjà réclamée)").color(NamedTextColor.RED));
+                    Component.text("Impossible de réclamer les récompenses pour " + alphaPlayer.getPseudo()
+                            + " (aucune quête terminée ou déjà réclamée)").color(NamedTextColor.RED));
         }
         return Command.SINGLE_SUCCESS;
     }

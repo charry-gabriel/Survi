@@ -67,14 +67,14 @@ public class GlobalQuestBossBarService {
     }
 
     /**
-     * Appelé à la complétion : affiche la barre verte, puis la masque automatiquement
+     * Appelé à la fin : affiche la barre verte, puis la masque automatiquement
      * après {@value #COMPLETION_DISPLAY_TICKS} ticks.
      *
-     * @param quest quête qui vient d'être complétée
+     * @param quest quête qui vient d'être terminée
      */
-    public void onQuestCompleted(GlobalQuest quest) {
+    public void onQuestFinished(GlobalQuest quest) {
         active = false;
-        updateBar(buildCompletedName(quest), 1f, BossBar.Color.GREEN);
+        updateBar(buildFinishedName(quest), 1f, BossBar.Color.GREEN);
         scheduleHide(COMPLETION_DISPLAY_TICKS);
     }
 
@@ -142,7 +142,7 @@ public class GlobalQuestBossBarService {
                 .append(Component.text("  (" + percent + "%)", NamedTextColor.GRAY));
     }
 
-    private Component buildCompletedName(GlobalQuest quest) {
+    private Component buildFinishedName(GlobalQuest quest) {
         return Component.text("✔ ", NamedTextColor.GREEN)
                 .append(Component.text(quest.getName(), NamedTextColor.YELLOW))
                 .append(Component.text("  —  Complétée !", NamedTextColor.GREEN));

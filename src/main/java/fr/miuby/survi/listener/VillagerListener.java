@@ -98,7 +98,7 @@ public class VillagerListener implements Listener {
 
             if (isClaimableHere) {
                 player.closeInventory();
-                qm.completeQuest(alphaPlayer, trader, false);
+                qm.claimQuest(alphaPlayer, trader, false);
             } else if (canAccept) {
                 player.closeInventory();
                 qm.assignQuest(alphaPlayer, trader);

@@ -495,7 +495,7 @@ de `showProgress` et annulée par `showCompleted` ou `stopRefresh`.
 
 ```java
 gm.getQuestActionBarService().showProgress(player, quest, data); // met à jour + démarre rafraîchissement
-gm.getQuestActionBarService().showCompleted(player, quest);       // affiche message fin + stoppe rafraîchissement
+gm.getQuestActionBarService().showFinished(player, quest);        // affiche message fin + stoppe rafraîchissement
 gm.getQuestActionBarService().stopRefresh(uuid);                  // à appeler : déco, reset journalier, reset admin, reload
 ```
 
@@ -513,7 +513,7 @@ Les joueurs qui se connectent en cours de quête reçoivent la barre via `showTo
 ```java
 gm.getGlobalQuestBossBarService().onQuestStarted(quest);             // au démarrage (0 %, barre permanente)
 gm.getGlobalQuestBossBarService().onProgressUpdate(quest, progress);  // à chaque progression (pas de palier)
-gm.getGlobalQuestBossBarService().onQuestCompleted(quest);            // 100 % barre verte, masque après 10 s
+gm.getGlobalQuestBossBarService().onQuestFinished(quest);             // 100 % barre verte, masque après 10 s
 gm.getGlobalQuestBossBarService().onQuestEnded();                     // annulation / timeout → masquage immédiat
 gm.getGlobalQuestBossBarService().showToPlayer(player);              // join en cours de quête
 ```
