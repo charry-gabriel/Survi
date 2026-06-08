@@ -7,11 +7,11 @@ quests:
     type: SHEAR
     difficulty: 1
     jobs:
-      - FERMIER
+      - FARMER
     targets: [SHEEP]
     goal: 20
     rewards:
-      - {type: REPUTATION, job: FERMIER, value: 10}
+      - {type: REPUTATION, job: FARMER, value: 10}
       - {type: POTION, potion: speed, duration: 1728000, amplifier: 0}
 
   - id: "shear_rare"
@@ -20,9 +20,9 @@ quests:
     type: SHEAR
     difficulty: 2
     jobs:
-      - FERMIER
+      - FARMER
     targets: [SHEEP]
     goal: 50
     rewards:
-      - {type: REPUTATION, job: FERMIER, value: 26}
+      - {type: REPUTATION, job: FARMER, value: 26}
       - {type: POTION, potion: speed, duration: 1728000, amplifier: 1}

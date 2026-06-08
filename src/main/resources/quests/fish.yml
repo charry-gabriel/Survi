@@ -7,11 +7,11 @@ quests:
     type: FISH
     difficulty: 1
     jobs:
-      - PECHEUR
+      - FISHERMAN
     targets: null
     goal: 10
     rewards:
-      - {type: REPUTATION, job: PECHEUR, value: 12}
+      - {type: REPUTATION, job: FISHERMAN, value: 12}
       - {type: POTION, potion: luck, duration: 1728000, amplifier: 0}
 
   - id: "fish_rare"
@@ -20,11 +20,11 @@ quests:
     type: FISH
     difficulty: 2
     jobs:
-      - PECHEUR
+      - FISHERMAN
     targets: null
     goal: 30
     rewards:
-      - {type: REPUTATION, job: PECHEUR, value: 28}
+      - {type: REPUTATION, job: FISHERMAN, value: 28}
       - {type: POTION, potion: luck, duration: 1728000, amplifier: 1}
 
   - id: "fish_legendary"
@@ -33,9 +33,9 @@ quests:
     type: FISH
     difficulty: 3
     jobs:
-      - PECHEUR
+      - FISHERMAN
     targets: null
     goal: 60
     rewards:
-      - {type: REPUTATION, job: PECHEUR, value: 110}
+      - {type: REPUTATION, job: FISHERMAN, value: 110}
       - {type: POTION, potion: luck, duration: 1728000, amplifier: 2}

@@ -7,11 +7,11 @@ quests:
     type: SMELT
     difficulty: 1
     jobs:
-      - ENCHANTEUR
+      - ENCHANTER
     targets: [STONE]
     goal: 128
     rewards:
-      - {type: REPUTATION, job: ENCHANTEUR, value: 9}
+      - {type: REPUTATION, job: ENCHANTER, value: 9}
       - {type: POTION, potion: haste, duration: 1728000, amplifier: 0}
 
   - id: "smelt_iron"
@@ -20,11 +20,11 @@ quests:
     type: SMELT
     difficulty: 2
     jobs:
-      - ENCHANTEUR
+      - ENCHANTER
     targets: [IRON_INGOT]
     goal: 200
     rewards:
-      - {type: REPUTATION, job: ENCHANTEUR, value: 38}
+      - {type: REPUTATION, job: ENCHANTER, value: 38}
       - {type: POTION, potion: fire_resistance, duration: 1728000, amplifier: 0}
 
   - id: "smelt_copper"
@@ -33,11 +33,11 @@ quests:
     type: SMELT
     difficulty: 2
     jobs:
-      - ENCHANTEUR
+      - ENCHANTER
     targets: [COPPER_INGOT]
     goal: 150
     rewards:
-      - {type: REPUTATION, job: ENCHANTEUR, value: 32}
+      - {type: REPUTATION, job: ENCHANTER, value: 32}
       - {type: POTION, potion: haste, duration: 1728000, amplifier: 1}
 
   - id: "smelt_gold"
@@ -46,10 +46,10 @@ quests:
     type: SMELT
     difficulty: 3
     jobs:
-      - ENCHANTEUR
+      - ENCHANTER
     targets: [GOLD_INGOT]
     goal: 128
     rewards:
-      - {type: REPUTATION, job: ENCHANTEUR, value: 120}
+      - {type: REPUTATION, job: ENCHANTER, value: 120}
       - {type: POTION, potion: fire_resistance, duration: 1728000, amplifier: 0}
       - {type: POTION, potion: luck, duration: 1728000, amplifier: 1}

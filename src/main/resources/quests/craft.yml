@@ -7,11 +7,11 @@ quests:
     type: CRAFT
     difficulty: 1
     jobs:
-      - ENCHANTEUR
+      - ENCHANTER
     targets: [TORCH]
     goal: 64
     rewards:
-      - {type: REPUTATION, job: ENCHANTEUR, value: 8}
+      - {type: REPUTATION, job: ENCHANTER, value: 8}
       - {type: POTION, potion: night_vision, duration: 1728000, amplifier: 0}
 
   - id: "craft_bread"
@@ -20,11 +20,11 @@ quests:
     type: CRAFT
     difficulty: 2
     jobs:
-      - FERMIER
+      - FARMER
     targets: [BREAD]
     goal: 32
     rewards:
-      - {type: REPUTATION, job: FERMIER, value: 25}
+      - {type: REPUTATION, job: FARMER, value: 25}
       - {type: POTION, potion: regeneration, duration: 1728000, amplifier: 0}
 
   - id: "craft_iron_sword"
@@ -33,9 +33,9 @@ quests:
     type: CRAFT
     difficulty: 2
     jobs:
-      - ENCHANTEUR
+      - ENCHANTER
     targets: [IRON_SWORD]
     goal: 5
     rewards:
-      - {type: REPUTATION, job: ENCHANTEUR, value: 30}
+      - {type: REPUTATION, job: ENCHANTER, value: 30}
       - {type: POTION, potion: strength, duration: 1728000, amplifier: 0}

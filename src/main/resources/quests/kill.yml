@@ -9,11 +9,11 @@ quests:
     type: KILL
     difficulty: 1
     jobs:
-      - ENCHANTEUR
+      - ENCHANTER
     targets: [ZOMBIE]
     goal: 25
     rewards:
-      - {type: REPUTATION, job: ENCHANTEUR, value: 10}
+      - {type: REPUTATION, job: ENCHANTER, value: 10}
       - {type: POTION, potion: strength, duration: 1728000, amplifier: 0}
 
   - id: "kill_skeletons"
@@ -22,11 +22,11 @@ quests:
     type: KILL
     difficulty: 1
     jobs:
-      - ENCHANTEUR
+      - ENCHANTER
     targets: [SKELETON]
     goal: 20
     rewards:
-      - {type: REPUTATION, job: ENCHANTEUR, value: 10}
+      - {type: REPUTATION, job: ENCHANTER, value: 10}
       - {type: POTION, potion: speed, duration: 1728000, amplifier: 0}
 
   - id: "kill_spiders"
@@ -35,11 +35,11 @@ quests:
     type: KILL
     difficulty: 1
     jobs:
-      - ENCHANTEUR
+      - ENCHANTER
     targets: [SPIDER]
     goal: 25
     rewards:
-      - {type: REPUTATION, job: ENCHANTEUR, value: 9}
+      - {type: REPUTATION, job: ENCHANTER, value: 9}
       - {type: POTION, potion: speed, duration: 1728000, amplifier: 0}
 
   - id: "kill_creepers"
@@ -48,11 +48,11 @@ quests:
     type: KILL
     difficulty: 1
     jobs:
-      - ENCHANTEUR
+      - ENCHANTER
     targets: [CREEPER]
     goal: 15
     rewards:
-      - {type: REPUTATION, job: ENCHANTEUR, value: 12}
+      - {type: REPUTATION, job: ENCHANTER, value: 12}
       - {type: POTION, potion: resistance, duration: 1728000, amplifier: 0}
 
   # ─────────────────── DIFFICULTÉ 2 ───────────────────
@@ -63,11 +63,11 @@ quests:
     type: KILL
     difficulty: 2
     jobs:
-      - ENCHANTEUR
+      - ENCHANTER
     targets: [DROWNED]
     goal: 30
     rewards:
-      - {type: REPUTATION, job: ENCHANTEUR, value: 30}
+      - {type: REPUTATION, job: ENCHANTER, value: 30}
       - {type: POTION, potion: water_breathing, duration: 1728000, amplifier: 0}
       - {type: POTION, potion: strength, duration: 1728000, amplifier: 0}
 
@@ -77,11 +77,11 @@ quests:
     type: KILL
     difficulty: 2
     jobs:
-      - ENCHANTEUR
+      - ENCHANTER
     targets: [WITCH]
     goal: 10
     rewards:
-      - {type: REPUTATION, job: ENCHANTEUR, value: 35}
+      - {type: REPUTATION, job: ENCHANTER, value: 35}
       - {type: POTION, potion: luck, duration: 1728000, amplifier: 1}
       - {type: POTION, potion: regeneration, duration: 1728000, amplifier: 0}
 
@@ -91,11 +91,11 @@ quests:
     type: KILL
     difficulty: 2
     jobs:
-      - ENCHANTEUR
+      - ENCHANTER
     targets: [PILLAGER]
     goal: 20
     rewards:
-      - {type: REPUTATION, job: ENCHANTEUR, value: 30}
+      - {type: REPUTATION, job: ENCHANTER, value: 30}
       - {type: POTION, potion: strength, duration: 1728000, amplifier: 0}
       - {type: POTION, potion: resistance, duration: 1728000, amplifier: 0}
 
@@ -107,12 +107,12 @@ quests:
     type: KILL
     difficulty: 3
     jobs:
-      - ENCHANTEUR
-      - AVENTURIER
+      - ENCHANTER
+      - EXPLORER
     targets: [ENDERMAN]
     goal: 50
     rewards:
-      - {type: REPUTATION, job: ENCHANTEUR, value: 100}
+      - {type: REPUTATION, job: ENCHANTER, value: 100}
       - {type: POTION, potion: strength, duration: 1728000, amplifier: 1}
       - {type: POTION, potion: speed, duration: 1728000, amplifier: 1}
       - {type: POTION, potion: resistance, duration: 1728000, amplifier: 0}
@@ -123,12 +123,12 @@ quests:
     type: KILL
     difficulty: 3
     jobs:
-      - ENCHANTEUR
-      - AVENTURIER
+      - ENCHANTER
+      - EXPLORER
     targets: [WITHER_SKELETON]
     goal: 10
     rewards:
-      - {type: REPUTATION, job: ENCHANTEUR, value: 140}
+      - {type: REPUTATION, job: ENCHANTER, value: 140}
       - {type: POTION, potion: strength, duration: 1728000, amplifier: 1}
       - {type: POTION, potion: resistance, duration: 1728000, amplifier: 1}
 
@@ -138,12 +138,12 @@ quests:
     type: KILL
     difficulty: 3
     jobs:
-      - ENCHANTEUR
-      - AVENTURIER
+      - ENCHANTER
+      - EXPLORER
     targets: [BLAZE]
     goal: 30
     rewards:
-      - {type: REPUTATION, job: ENCHANTEUR, value: 120}
+      - {type: REPUTATION, job: ENCHANTER, value: 120}
       - {type: POTION, potion: fire_resistance, duration: 1728000, amplifier: 0}
       - {type: POTION, potion: strength, duration: 1728000, amplifier: 1}
 
@@ -153,11 +153,11 @@ quests:
     type: KILL
     difficulty: 3
     jobs:
-      - ENCHANTEUR
-      - AVENTURIER
+      - ENCHANTER
+      - EXPLORER
     targets: [GUARDIAN]
     goal: 20
     rewards:
-      - {type: REPUTATION, job: ENCHANTEUR, value: 130}
+      - {type: REPUTATION, job: ENCHANTER, value: 130}
       - {type: POTION, potion: water_breathing, duration: 1728000, amplifier: 0}
       - {type: POTION, potion: strength, duration: 1728000, amplifier: 1}

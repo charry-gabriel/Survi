@@ -4,16 +4,16 @@ quests:
   # ─────────────────── DIFFICULTÉ 1 ───────────────────
 
   - id: "mine_cobblestone"
-    name: "Mineur de Pierre"
+    name: "MINER de Pierre"
     description: "Minez {value} blocs de cobblestone."
     type: MINE
     difficulty: 1
     jobs:
-      - MINEUR
+      - MINER
     targets: [COBBLESTONE]
     goal: 128
     rewards:
-      - {type: REPUTATION, job: MINEUR, value: 1}
+      - {type: REPUTATION, job: MINER, value: 1}
       - {type: POTION, potion: haste, duration: 1728000, amplifier: 0}
 
   - id: "mine_coal"
@@ -22,11 +22,11 @@ quests:
     type: MINE
     difficulty: 1
     jobs:
-      - MINEUR
+      - MINER
     targets: [COAL_ORE]
     goal: 12
     rewards:
-      - {type: REPUTATION, job: MINEUR, value: 1}
+      - {type: REPUTATION, job: MINER, value: 1}
       - {type: POTION, potion: haste, duration: 1728000, amplifier: 0}
 
   - id: "mine_iron"
@@ -35,11 +35,11 @@ quests:
     type: MINE
     difficulty: 1
     jobs:
-      - MINEUR
+      - MINER
     targets: [IRON_ORE]
     goal: 10
     rewards:
-      - {type: REPUTATION, job: MINEUR, value: 1}
+      - {type: REPUTATION, job: MINER, value: 1}
       - {type: POTION, potion: haste, duration: 1728000, amplifier: 0}
 
   - id: "mine_copper"
@@ -48,11 +48,11 @@ quests:
     type: MINE
     difficulty: 1
     jobs:
-      - MINEUR
+      - MINER
     targets: [COPPER_ORE]
     goal: 16
     rewards:
-      - {type: REPUTATION, job: MINEUR, value: 1}
+      - {type: REPUTATION, job: MINER, value: 1}
       - {type: POTION, potion: haste, duration: 1728000, amplifier: 0}
 
   - id: "mine_redstone"
@@ -61,11 +61,11 @@ quests:
     type: MINE
     difficulty: 1
     jobs:
-      - MINEUR
+      - MINER
     targets: [REDSTONE_ORE]
     goal: 24
     rewards:
-      - {type: REPUTATION, job: MINEUR, value: 1}
+      - {type: REPUTATION, job: MINER, value: 1}
       - {type: POTION, potion: haste, duration: 1728000, amplifier: 0}
 
   - id: "mine_deepslate"
@@ -74,11 +74,11 @@ quests:
     type: MINE
     difficulty: 1
     jobs:
-      - MINEUR
+      - MINER
     targets: [DEEPSLATE_COPPER_ORE, DEEPSLATE_COAL_ORE, DEEPSLATE_GOLD_ORE]
     goal: 96
     rewards:
-      - {type: REPUTATION, job: MINEUR, value: 2}
+      - {type: REPUTATION, job: MINER, value: 2}
       - {type: POTION, potion: haste, duration: 1728000, amplifier: 0}
 
   - id: "mine_mixed_ores"
@@ -87,11 +87,11 @@ quests:
     type: MINE
     difficulty: 1
     jobs:
-      - MINEUR
+      - MINER
     targets: [DEEPSLATE_COPPER_ORE, DEEPSLATE_COAL_ORE, DEEPSLATE_GOLD_ORE]
     goal: 20
     rewards:
-      - {type: REPUTATION, job: MINEUR, value: 1}
+      - {type: REPUTATION, job: MINER, value: 1}
       - {type: POTION, potion: haste, duration: 1728000, amplifier: 0}
 
   - id: "mine_sand"
@@ -100,11 +100,11 @@ quests:
     type: MINE
     difficulty: 1
     jobs:
-      - MINEUR
+      - MINER
     targets: [SAND]
     goal: 250
     rewards:
-      - {type: REPUTATION, job: MINEUR, value: 8}
+      - {type: REPUTATION, job: MINER, value: 8}
       - {type: POTION, potion: speed, duration: 1728000, amplifier: 0}
 
   - id: "mine_gravel"
@@ -113,11 +113,11 @@ quests:
     type: MINE
     difficulty: 1
     jobs:
-      - MINEUR
+      - MINER
     targets: [GRAVEL]
     goal: 250
     rewards:
-      - {type: REPUTATION, job: MINEUR, value: 8}
+      - {type: REPUTATION, job: MINER, value: 8}
       - {type: POTION, potion: luck, duration: 1728000, amplifier: 0}
 
   - id: "mine_oak_log"
@@ -126,11 +126,11 @@ quests:
     type: MINE
     difficulty: 1
     jobs:
-      - BUCHERON
+      - LUMBERJACK
     targets: [OAK_LOG]
     goal: 80
     rewards:
-      - {type: REPUTATION, job: BUCHERON, value: 10}
+      - {type: REPUTATION, job: LUMBERJACK, value: 10}
       - {type: POTION, potion: haste, duration: 1728000, amplifier: 0}
 
   - id: "mine_birch_log"
@@ -139,11 +139,11 @@ quests:
     type: MINE
     difficulty: 1
     jobs:
-      - BUCHERON
+      - LUMBERJACK
     targets: [BIRCH_LOG]
     goal: 80
     rewards:
-      - {type: REPUTATION, job: BUCHERON, value: 10}
+      - {type: REPUTATION, job: LUMBERJACK, value: 10}
       - {type: POTION, potion: speed, duration: 1728000, amplifier: 0}
 
   - id: "mine_spruce_log"
@@ -152,11 +152,11 @@ quests:
     type: MINE
     difficulty: 1
     jobs:
-      - BUCHERON
+      - LUMBERJACK
     targets: [SPRUCE_LOG]
     goal: 80
     rewards:
-      - {type: REPUTATION, job: BUCHERON, value: 10}
+      - {type: REPUTATION, job: LUMBERJACK, value: 10}
       - {type: POTION, potion: speed, duration: 1728000, amplifier: 0}
 
   # ─────────────────── DIFFICULTÉ 2 ───────────────────
@@ -167,11 +167,11 @@ quests:
     type: MINE
     difficulty: 2
     jobs:
-      - MINEUR
+      - MINER
     targets: [DEEPSLATE_DIAMOND_ORE]
     goal: 8
     rewards:
-      - {type: REPUTATION, job: MINEUR, value: 3}
+      - {type: REPUTATION, job: MINER, value: 3}
       - {type: POTION, potion: haste, duration: 1728000, amplifier: 1}
       - {type: POTION, potion: night_vision, duration: 1728000, amplifier: 0}
 
@@ -181,11 +181,11 @@ quests:
     type: MINE
     difficulty: 2
     jobs:
-      - MINEUR
+      - MINER
     targets: [NETHER_QUARTZ_ORE]
     goal: 64
     rewards:
-      - {type: REPUTATION, job: MINEUR, value: 2}
+      - {type: REPUTATION, job: MINER, value: 2}
       - {type: POTION, potion: haste, duration: 1728000, amplifier: 1}
       - {type: POTION, potion: night_vision, duration: 1728000, amplifier: 0}
 
@@ -195,26 +195,26 @@ quests:
     type: MINE
     difficulty: 2
     jobs:
-      - MINEUR
+      - MINER
     targets: [NETHER_GOLD_ORE]
     goal: 32
     rewards:
-      - {type: REPUTATION, job: MINEUR, value: 2}
-      - {type: REPUTATION, job: AVENTURIER, value: 1}
+      - {type: REPUTATION, job: MINER, value: 2}
+      - {type: REPUTATION, job: EXPLORER, value: 1}
       - {type: POTION, potion: haste, duration: 1728000, amplifier: 1}
       - {type: POTION, potion: night_vision, duration: 1728000, amplifier: 0}
 
   - id: "mine_deepslate_iron"
-    name: "Mineur Profond"
+    name: "MINER Profond"
     description: "Minez {value} minerais de fer ardoisés."
     type: MINE
     difficulty: 2
     jobs:
-      - MINEUR
+      - MINER
     targets: [DEEPSLATE_IRON_ORE]
     goal: 60
     rewards:
-      - {type: REPUTATION, job: MINEUR, value: 2}
+      - {type: REPUTATION, job: MINER, value: 2}
       - {type: POTION, potion: haste, duration: 1728000, amplifier: 1}
 
   - id: "mine_amethyst_geode"
@@ -223,23 +223,23 @@ quests:
     type: MINE
     difficulty: 2
     jobs:
-      - MINEUR
+      - MINER
     targets: [AMETHYST_BLOCK]
     goal: 48
     rewards:
-      - {type: REPUTATION, job: MINEUR, value: 2}
+      - {type: REPUTATION, job: MINER, value: 2}
 
   - id: "mine_deepslate_iron2"
-    name: "Mineur Profond"
+    name: "MINER Profond"
     description: "Minez {value} minerais de fer ardoisés."
     type: MINE
     difficulty: 2
     jobs:
-      - MINEUR
+      - MINER
     targets: [DEEPSLATE_IRON_ORE]
     goal: 60
     rewards:
-      - {type: REPUTATION, job: MINEUR, value: 28}
+      - {type: REPUTATION, job: MINER, value: 28}
       - {type: POTION, potion: haste, duration: 1728000, amplifier: 1}
 
   - id: "mine_sculk_block"
@@ -248,12 +248,12 @@ quests:
     type: MINE
     difficulty: 2
     jobs:
-      - MINEUR
+      - MINER
     targets: [SCULK]
     goal: 64
     rewards:
-      - {type: REPUTATION, job: MINEUR, value: 3}
-      - {type: REPUTATION, job: AVENTURIER, value: 2}
+      - {type: REPUTATION, job: MINER, value: 3}
+      - {type: REPUTATION, job: EXPLORER, value: 2}
 
   # ─────────────────── DIFFICULTÉ 3 ───────────────────
 
@@ -263,12 +263,12 @@ quests:
     type: MINE
     difficulty: 3
     jobs:
-      - MINEUR
+      - MINER
     targets: [ANCIENT_DEBRIS]
     goal: 6
     rewards:
-      - {type: REPUTATION, job: MINEUR, value: 4}
-      - {type: REPUTATION, job: AVENTURIER, value: 1}
+      - {type: REPUTATION, job: MINER, value: 4}
+      - {type: REPUTATION, job: EXPLORER, value: 1}
 
   - id: "mine_end_stone_mass"
     name: "Colonisation de l'End"
@@ -276,11 +276,11 @@ quests:
     type: MINE
     difficulty: 3
     jobs:
-      - MINEUR
+      - MINER
     targets: [END_STONE]
     goal: 512
     rewards:
-      - {type: REPUTATION, job: MINEUR, value: 4}
+      - {type: REPUTATION, job: MINER, value: 4}
 
   - id: "mine_chorus_plants"
     name: "Écho de l'End"
@@ -288,11 +288,11 @@ quests:
     type: MINE
     difficulty: 3
     jobs:
-      - MINEUR
+      - MINER
     targets: [CHORUS_PLANT]
     goal: 64
     rewards:
-      - {type: REPUTATION, job: MINEUR, value: 4}
+      - {type: REPUTATION, job: MINER, value: 4}
 
   - id: "mine_emerald"
     name: "Richesse des Montagnes"
@@ -300,11 +300,11 @@ quests:
     type: MINE
     difficulty: 3
     jobs:
-      - MINEUR
+      - MINER
     targets: [EMERALD_ORE]
     goal: 2
     rewards:
-      - {type: REPUTATION, job: MINEUR, value: 5}
+      - {type: REPUTATION, job: MINER, value: 5}
 
   - id: "mine_obsidian"
     name: "Briseur d'Obsidienne"
@@ -312,12 +312,12 @@ quests:
     type: MINE
     difficulty: 3
     jobs:
-      - MINEUR
-      - AVENTURIER
+      - MINER
+      - EXPLORER
     targets: [OBSIDIAN]
     goal: 150
     rewards:
-      - {type: REPUTATION, job: MINEUR, value: 160}
+      - {type: REPUTATION, job: MINER, value: 160}
       - {type: POTION, potion: haste, duration: 1728000, amplifier: 2}
 
   - id: "mine_ancient_debris2"
@@ -326,11 +326,11 @@ quests:
     type: MINE
     difficulty: 3
     jobs:
-      - MINEUR
-      - AVENTURIER
+      - MINER
+      - EXPLORER
     targets: [ANCIENT_DEBRIS]
     goal: 10
     rewards:
-      - {type: REPUTATION, job: MINEUR, value: 200}
+      - {type: REPUTATION, job: MINER, value: 200}
       - {type: POTION, potion: haste, duration: 1728000, amplifier: 2}
       - {type: POTION, potion: fire_resistance, duration: 1728000, amplifier: 0}
