@@ -24,64 +24,48 @@ import org.bukkit.entity.Player;
  * agit directement sur la réputation du métier, indépendamment des traders.
  *
  * Usage :
- *   /reputation add    <joueur> <métier> <montant>
- *   /reputation remove <joueur> <métier> <montant>
- *   /reputation set    <joueur> <métier> <valeur>
- *   /reputation info   <joueur> <métier>
+ *   /reputation add    <métier> <joueur> <montant>
+ *   /reputation remove <métier> <joueur> <montant>
+ *   /reputation set    <métier> <joueur> <valeur>
+ *   /reputation info   <métier> <joueur>
  */
 @SuppressWarnings({"java:S3516", "SameReturnValue"})
-public class ReputationCommand {
+public class JobCommand {
     private static final String AMOUNT_ARG = "amount";
     private static final String PLAYER_ARG = "player";
     private static final String JOB_ARG    = "job";
 
-    private ReputationCommand() {}
+    private JobCommand() {}
 
     public static LiteralArgumentBuilder<CommandSourceStack> createReputationCommand() {
-        return Commands.literal("reputation")
+        return Commands.literal("job")
                 .requires(source -> source.getSender().isOp())
+                        .then(Commands.argument(JOB_ARG, JobArgument.job())
+                                .then(Commands.argument(PLAYER_ARG, AlphaPlayerArgument.alphaPlayer())
 
-                // /reputation add <player> <job> <amount>
-                .then(Commands.literal("add")
-                        .then(Commands.argument(PLAYER_ARG, AlphaPlayerArgument.alphaPlayer())
-                                .then(Commands.argument(JOB_ARG, JobArgument.job())
-                                        .then(Commands.argument(AMOUNT_ARG, IntegerArgumentType.integer(1, 10000))
-                                                .executes(ctx -> executeAdd(ctx, true))
+                                        .then(Commands.literal("add")
+                                                .then(Commands.argument(AMOUNT_ARG, IntegerArgumentType.integer(1, 10000))
+                                                        .executes(ctx -> executeAdd(ctx, true))
+                                                )
+                                        )
+
+                                        .then(Commands.literal("remove")
+                                                .then(Commands.argument(AMOUNT_ARG, IntegerArgumentType.integer(1, 10000))
+                                                        .executes(ctx -> executeAdd(ctx, false))
+                                                )
+                                        )
+
+                                        .then(Commands.literal("set")
+                                                .then(Commands.argument("value", IntegerArgumentType.integer(0, 100000))
+                                                        .executes(JobCommand::executeSet)
+                                                )
+                                        )
+
+                                        .then(Commands.literal("info")
+                                                .executes(JobCommand::executeOther)
                                         )
                                 )
-                        )
-                )
-
-                // /reputation remove <player> <job> <amount>
-                .then(Commands.literal("remove")
-                        .then(Commands.argument(PLAYER_ARG, AlphaPlayerArgument.alphaPlayer())
-                                .then(Commands.argument(JOB_ARG, JobArgument.job())
-                                        .then(Commands.argument(AMOUNT_ARG, IntegerArgumentType.integer(1, 10000))
-                                                .executes(ctx -> executeAdd(ctx, false))
-                                        )
-                                )
-                        )
-                )
-
-                // /reputation set <player> <job> <value>
-                .then(Commands.literal("set")
-                        .then(Commands.argument(PLAYER_ARG, AlphaPlayerArgument.alphaPlayer())
-                                .then(Commands.argument(JOB_ARG, JobArgument.job())
-                                        .then(Commands.argument("value", IntegerArgumentType.integer(0, 100000))
-                                                .executes(ReputationCommand::executeSet)
-                                        )
-                                )
-                        )
-                )
-
-                // /reputation info <player> <job>
-                .then(Commands.literal("info")
-                        .executes(ReputationCommand::executeSelf)
-                        .then(Commands.argument(PLAYER_ARG, AlphaPlayerArgument.alphaPlayer())
-                                .requires(source -> source.getSender().isOp())
-                                .executes(ReputationCommand::executeOther)
-                        )
-                );
+                        );
     }
 
     private static int executeAdd(CommandContext<CommandSourceStack> ctx, boolean isAdd) {
@@ -159,23 +143,6 @@ public class ReputationCommand {
             );
         }
 
-        return Command.SINGLE_SUCCESS;
-    }
-
-    private static int executeSelf(CommandContext<CommandSourceStack> ctx) {
-        CommandSender sender = ctx.getSource().getSender();
-        if (!(sender instanceof Player player)) {
-            sender.sendMessage(Component.text("Seul un joueur peut utiliser cette commande.").color(NamedTextColor.RED));
-            return Command.SINGLE_SUCCESS;
-        }
-
-        AlphaPlayer alphaPlayer = AlphaPlayer.get(player.getUniqueId());
-        if (alphaPlayer == null) {
-            sender.sendMessage(Component.text("Joueur non trouvé.").color(NamedTextColor.RED));
-            return Command.SINGLE_SUCCESS;
-        }
-
-        sendJobDisplay(player, alphaPlayer, true);
         return Command.SINGLE_SUCCESS;
     }
 
