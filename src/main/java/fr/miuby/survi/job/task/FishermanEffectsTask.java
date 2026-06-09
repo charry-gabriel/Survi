@@ -70,7 +70,7 @@ public class FishermanEffectsTask extends BukkitRunnable {
 
     private static void applyPressureDamage(Player player, int level, JobsConfig.FishermanCfg cfg) {
         int safeDepth = cfg.getPressureSafeDepth()[level];
-        if (safeDepth < 0) return; // -1 = illimité, aucun dégât
+        if (safeDepth == -1) return; // -1 = illimité, aucun dégât
         if (player.getLocation().getBlockY() < 63 - safeDepth) {
             player.damage(cfg.getPressureDamage());
         }

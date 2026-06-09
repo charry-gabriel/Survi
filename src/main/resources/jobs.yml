@@ -194,13 +194,13 @@ fisherman:
   # Profondeur maximale sûre (blocs d'eau au-dessus du joueur) avant dégâts de pression
   # -1 = aucun dégât de pression à ce niveau
   pressure-safe-depth:
-    - 0     # niveau  0  — tout contact avec l'eau cause des dégâts
-    - 1     # niveau  1
-    - 5     # niveau  2
-    - 9     # niveau  3
-    - 20    # niveau  4
-    - 35    # niveau  5
-    - 55    # niveau  6
+    - -500     # niveau  0  — tout contact avec l'eau cause des dégâts
+    - 0     # niveau  1
+    - 2     # niveau  2
+    - 5     # niveau  3
+    - 10    # niveau  4
+    - 20    # niveau  5
+    - 50    # niveau  6
     - 80    # niveau  7
     - 110   # niveau  8
     - 150   # niveau  9
