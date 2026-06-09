@@ -1,12 +1,8 @@
 package fr.miuby.survi.listener;
 
 import fr.miuby.survi.GameManager;
-import fr.miuby.survi.blessing.BlessingEffect;
-import fr.miuby.survi.blessing.PotionsEffect;
 import fr.miuby.survi.system.database.Errors;
 import fr.miuby.survi.player.AlphaPlayer;
-import fr.miuby.survi.quest.quest.PlayerQuestData;
-import fr.miuby.survi.quest.quest.Quest;
 import fr.miuby.survi.quest.quest.QuestGlowService;
 import fr.miuby.survi.system.log.ELogTag;
 import org.bukkit.NamespacedKey;
@@ -80,41 +76,20 @@ public class ServerListener implements Listener {
     public void onDailyReset(DailyResetEvent event) {
         GameManager.getInstance().getWorldResetManager().checkAndPerformResets();
 
-        MLLogManager.getInstance().log(Level.INFO, ELogTag.QUEST, "Reset des quêtes journalières...");
+        int capacity = GameManager.getInstance().getQuestManager().getTotalCapacity();
+        if (capacity == 0) return; // La partie n'a pas encore démarré — pas de notification
 
-        int resetCount = 0;
-        QuestGlowService glowService = GameManager.getInstance().getQuestGlowService();
+        MLLogManager.getInstance().log(Level.INFO, ELogTag.QUEST,
+                "Nouveau jour de jeu — capacité quêtes portée à " + capacity + ".");
 
         for (AlphaPlayer player : GameManager.getInstance().getAlphaPlayerFactory().getAlphaPlayers()) {
-            if (player.getActiveQuests().isEmpty()) continue;
-
-            boolean isOnline = player.getPlayer() != null;
-
-            if (isOnline) {
-                for (PlayerQuestData questData : player.getActiveQuests()) {
-                    if (questData.isClaimed()) {
-                        Quest quest = GameManager.getInstance().getQuestManager().getQuest(questData.getQuestId());
-                        if (quest != null) {
-                            for (BlessingEffect effect : quest.getRewards().blessingEffects()) {
-                                if (effect instanceof PotionsEffect) effect.resetEffect(player);
-                            }
-                        }
-                    }
-                }
-                player.getActiveQuests().clear();
-                GameManager.getInstance().getDatabase().quests().clearAllPlayerQuests(player.getUuid());
-                GameManager.getInstance().getQuestActionBarService().stopRefresh(player.getUuid());
-                player.getPlayer().sendMessage(Component.text("[Quêtes] ", NamedTextColor.GOLD)
-                        .append(Component.text("Vos quêtes du jour ont expiré.", NamedTextColor.YELLOW)));
-                if (glowService != null) glowService.disableGlow(player);
-            } else {
-                player.getActiveQuests().clear();
-                if (glowService != null) glowService.cleanupOnQuit(player.getUuid());
-            }
-
-            resetCount++;
+            if (player.getPlayer() == null) continue;
+            int used = player.getTotalDailyQuestsClaimed() + player.countActiveUnclaimedQuests();
+            int remaining = capacity - used;
+            if (remaining <= 0) continue;
+            player.getPlayer().sendMessage(Component.text("[Quêtes] ", NamedTextColor.GOLD)
+                    .append(Component.text(remaining + " nouveau(x) créneau(x) disponible(s) ! ", NamedTextColor.GREEN))
+                    .append(Component.text("(" + used + "/" + capacity + " utilisés)", NamedTextColor.DARK_GRAY)));
         }
-
-        MLLogManager.getInstance().log(Level.INFO, ELogTag.QUEST, resetCount + " joueurs réinitialisés !");
     }
 }

@@ -67,7 +67,10 @@ public class QuestActionBarService {
         if (player.getPlayer() == null) return;
         UUID uuid = player.getUuid();
 
-        Component message = buildProgressMessage(quest, data);
+        int done     = player.getTotalDailyQuestsClaimed() + player.countActiveUnclaimedQuests();
+        int capacity = GameManager.getInstance().getQuestManager().getTotalCapacity();
+
+        Component message = buildProgressMessage(quest, data, done, capacity);
         activeMessages.put(uuid, message);
         lastProgressAt.put(uuid, System.currentTimeMillis());
         player.getPlayer().sendActionBar(message);
@@ -132,11 +135,14 @@ public class QuestActionBarService {
     // Construction des messages
     // =========================================================================
 
-    private Component buildProgressMessage(Quest quest, PlayerQuestData data) {
+    private Component buildProgressMessage(Quest quest, PlayerQuestData data, int doneCount, int capacity) {
         return Component.text("⚔ ", NamedTextColor.AQUA)
                 .append(Component.text(quest.getFormattedDescription(), NamedTextColor.YELLOW))
                 .append(Component.text(" — ", NamedTextColor.DARK_GRAY))
-                .append(Component.text(data.getProgress() + "/" + quest.getGoal(), NamedTextColor.WHITE));
+                .append(Component.text(data.getProgress() + "/" + quest.getGoal(), NamedTextColor.WHITE))
+                .append(Component.text("  [", NamedTextColor.DARK_GRAY))
+                .append(Component.text(doneCount + "/" + capacity, NamedTextColor.GRAY))
+                .append(Component.text(" quêtes]", NamedTextColor.DARK_GRAY));
     }
 
     private Component buildFinishedMessage(Quest quest) {

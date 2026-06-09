@@ -149,11 +149,11 @@ class TabInfoColumn {
     }
 
     private static Component dailyProgressDisplay(AlphaPlayer ap) {
-        int done = ap.countTodayQuests();
-        int max  = QuestManager.DAILY_QUEST_LIMIT;
-        return Component.text("Quêtes du jour : ", NamedTextColor.GRAY)
-                .append(Component.text(done + "/" + max,
-                        done >= max ? NamedTextColor.GREEN : NamedTextColor.WHITE));
+        int done     = ap.getTotalDailyQuestsClaimed() + ap.countActiveUnclaimedQuests();
+        int capacity = GameManager.getInstance().getQuestManager().getTotalCapacity();
+        return Component.text("Quêtes : ", NamedTextColor.GRAY)
+                .append(Component.text(done + "/" + capacity,
+                        (capacity > 0 && done >= capacity) ? NamedTextColor.GREEN : NamedTextColor.WHITE));
     }
 
     private static Component personalQuestDisplay(PlayerQuestData data, Quest quest) {

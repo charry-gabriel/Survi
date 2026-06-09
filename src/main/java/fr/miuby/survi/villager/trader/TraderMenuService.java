@@ -75,8 +75,10 @@ public class TraderMenuService {
         lore.add(Component.text("Réputation totale : ", NamedTextColor.GRAY).decoration(TextDecoration.ITALIC, false)
                 .append(Component.text(alphaPlayer.getTotalReputation() + " pts", NamedTextColor.WHITE).decoration(TextDecoration.ITALIC, false)));
         lore.add(Component.empty());
-        lore.add(Component.text("Quêtes du jour : ", NamedTextColor.GRAY).decoration(TextDecoration.ITALIC, false)
-                .append(Component.text(alphaPlayer.countTodayQuests() + "/" + QuestManager.DAILY_QUEST_LIMIT, NamedTextColor.WHITE).decoration(TextDecoration.ITALIC, false)));
+        lore.add(Component.text("Quêtes complétées : ", NamedTextColor.GRAY).decoration(TextDecoration.ITALIC, false)
+                .append(Component.text(
+                        (alphaPlayer.getTotalDailyQuestsClaimed() + alphaPlayer.countActiveUnclaimedQuests()) + "/" + GameManager.getInstance().getQuestManager().getTotalCapacity(),
+                        NamedTextColor.WHITE).decoration(TextDecoration.ITALIC, false)));
         lore.add(Component.empty());
 
         meta.lore(lore);
@@ -119,11 +121,16 @@ public class TraderMenuService {
             ));
         }
 
-        // Limite journalière atteinte
-        if (alphaPlayer.countTodayQuests() >= QuestManager.DAILY_QUEST_LIMIT) {
-            return buildGreyItem("Limite journalière atteinte", List.of(
-                    "Vous avez effectué " + QuestManager.DAILY_QUEST_LIMIT + " quête(s) aujourd'hui.",
-                    "Revenez demain pour de nouvelles quêtes !"
+        // Capacité cumulative atteinte
+        int capacity  = GameManager.getInstance().getQuestManager().getTotalCapacity();
+        int usedSlots = alphaPlayer.getTotalDailyQuestsClaimed() + alphaPlayer.countActiveUnclaimedQuests();
+        if (capacity == 0 || usedSlots >= capacity) {
+            String msg = capacity == 0
+                    ? "La partie n'a pas encore démarré."
+                    : "Vous avez complété " + usedSlots + "/" + capacity + " quêtes disponibles.";
+            return buildGreyItem("Aucun créneau disponible", List.of(
+                    msg,
+                    "Revenez demain pour de nouveaux créneaux !"
             ));
         }
 

@@ -107,6 +107,20 @@ public class QuestHistoryRepository extends MLRepository {
         return 0;
     }
 
+    /** Nombre de quêtes journalières ({@code quest_type = 'daily'}) complétées par un joueur. */
+    public int countDailyCompleted(UUID playerUuid) {
+        try (PreparedStatement ps = connection.prepareStatement(
+                "SELECT COUNT(*) FROM quest_history WHERE player_uuid = ? AND quest_type = 'daily'")) {
+            ps.setString(1, playerUuid.toString());
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) return rs.getInt(1);
+            }
+        } catch (SQLException ex) {
+            MLLogManager.getInstance().log(Level.SEVERE, ELogTag.QUEST, "Failed to count daily completed quests for " + playerUuid, ex);
+        }
+        return 0;
+    }
+
     /**
      * Nombre de quêtes complétées par difficulté pour un joueur.
      * Clé {@code -1} = quêtes globales (difficulté = niveau du monde).

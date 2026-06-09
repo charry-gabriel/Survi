@@ -92,8 +92,11 @@ public class VillagerListener implements Listener {
             boolean isClaimableHere = current != null && current.isCompleted() && !current.isClaimed()
                     && (current.getTraderId() == null || current.getTraderId().equals(trader.getNameId()));
             int difficulty = qm.computeDifficulty(alphaPlayer, trader);
+            int capacity   = qm.getTotalCapacity();
+            int usedSlots  = alphaPlayer.getTotalDailyQuestsClaimed() + alphaPlayer.countActiveUnclaimedQuests();
             boolean canAccept = current == null
-                    && alphaPlayer.countTodayQuests() < QuestManager.DAILY_QUEST_LIMIT
+                    && capacity > 0
+                    && usedSlots < capacity
                     && qm.hasAvailableQuestFor(trader.getJob(), difficulty);
 
             if (isClaimableHere) {

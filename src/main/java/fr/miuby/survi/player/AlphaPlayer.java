@@ -22,7 +22,6 @@ import org.bukkit.Location;
 import org.bukkit.attribute.Attribute;
 
 import java.io.Serializable;
-import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
 import fr.miuby.survi.quest.quest.PlayerQuestData;
@@ -44,6 +43,14 @@ public class AlphaPlayer extends MLPlayer implements Serializable {
 
     @Getter
     private final List<PlayerQuestData> activeQuests = new ArrayList<>();
+
+    /**
+     * Nombre total de quêtes journalières réclamées par ce joueur depuis le début de la partie,
+     * chargé depuis {@code quest_history} à la connexion et incrémenté en mémoire à chaque réclamation.
+     */
+    @Getter
+    @Setter
+    private int totalDailyQuestsClaimed = 0;
 
     @Getter
     @Setter
@@ -101,8 +108,14 @@ public class AlphaPlayer extends MLPlayer implements Serializable {
                 .orElse(null);
     }
 
+    /** @deprecated Remplacé par {@link #countActiveUnclaimedQuests()} — conservé pour compatibilité interne. */
     public int countTodayQuests() {
-        return activeQuests.size();
+        return countActiveUnclaimedQuests();
+    }
+
+    /** Nombre de quêtes actives non encore réclamées (en cours ou terminées-non-réclamées). */
+    public int countActiveUnclaimedQuests() {
+        return (int) activeQuests.stream().filter(q -> !q.isClaimed()).count();
     }
 
     public void putQuest(PlayerQuestData data) {
@@ -140,9 +153,10 @@ public class AlphaPlayer extends MLPlayer implements Serializable {
             }
         });
 
-        LocalDate today = LocalDate.now();
-        GameManager.getInstance().getDatabase().quests().deleteExpiredPlayerQuests(this.getUuid(), today);
-        List<PlayerQuestData> loaded = GameManager.getInstance().getDatabase().quests().getActivePlayerQuests(this.getUuid(), today);
+        // Charge TOUTES les quêtes actives (non réclamées) — le système cumulatif ne les expire pas par date.
+        // Les quêtes réclamées sont déjà en quest_history ; on les déduit du total via countDailyCompleted.
+        this.totalDailyQuestsClaimed = GameManager.getInstance().getDatabase().questHistory().countDailyCompleted(this.getUuid());
+        List<PlayerQuestData> loaded = GameManager.getInstance().getDatabase().quests().getPlayerQuests(this.getUuid());
         GameManager.getInstance().getQuestManager().restoreQuestsOnJoin(this, loaded);
 
         // Calcul initial des niveaux de métier

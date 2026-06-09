@@ -176,6 +176,18 @@ public class VillageZoneManager {
         return (System.currentTimeMillis() - startTimestamp) / 60_000f;
     }
 
+    /**
+     * Retourne le numéro du jour de jeu courant (1-based) depuis le démarrage de la partie.
+     * Le jour 1 commence dès que {@link #start()} est appelé ; le jour 2 commence 24 h plus tard, etc.
+     * Retourne 0 si la partie n'a pas encore démarré.
+     */
+    public int getGameDayCount() {
+        if (!started || startTimestamp < 0) return 0;
+        long millisPerDay = 24L * 60 * 60 * 1000L;
+        long elapsed = System.currentTimeMillis() - startTimestamp;
+        return (int) (elapsed / millisPerDay) + 1;
+    }
+
     // ─── Logique interne ─────────────────────────────────────────────────────────
 
     private void startStageCheckTimer() {

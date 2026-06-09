@@ -3,8 +3,6 @@ package fr.miuby.survi.quest.quest;
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
-import fr.miuby.survi.blessing.BlessingEffect;
-import fr.miuby.survi.blessing.PotionsEffect;
 import fr.miuby.survi.player.AlphaPlayer;
 import fr.miuby.survi.quest.globalquest.GlobalQuest;
 import fr.miuby.survi.system.command.argument.AlphaPlayerArgument;
@@ -22,6 +20,7 @@ import org.bukkit.entity.Player;
 import fr.miuby.survi.GameManager;
 
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 
 @SuppressWarnings({"java:S3516", "SameReturnValue"})
@@ -114,38 +113,33 @@ public class QuestCommand {
     }
 
     /**
-     * Supprime TOUTES les quêtes du jour du joueur (reset complet journalier).
-     * Utile pour recommencer la journée à zéro.
+     * Supprime les quêtes actives (non réclamées) du joueur (reset admin).
+     * Les quêtes déjà réclamées restent dans quest_history et comptent dans le total cumulatif.
      */
     private static int resetAllQuests(CommandContext<CommandSourceStack> ctx) {
         AlphaPlayer alphaPlayer = AlphaPlayerArgument.getAlphaPlayer(ctx, playerArgument);
 
         if (alphaPlayer.getActiveQuests().isEmpty()) {
             ctx.getSource().getSender().sendMessage(
-                    Component.text("Aucune quête aujourd'hui pour " + alphaPlayer.getPseudo() + ".").color(NamedTextColor.RED));
+                    Component.text("Aucune quête active pour " + alphaPlayer.getPseudo() + ".").color(NamedTextColor.RED));
             return Command.SINGLE_SUCCESS;
         }
 
-        // Retirer les buffs de toutes les quêtes réclamées
-        for (PlayerQuestData data : alphaPlayer.getActiveQuests()) {
-            if (data.isClaimed() && alphaPlayer.getPlayer() != null) {
-                var quest = GameManager.getInstance().getQuestManager().getQuest(data.getQuestId());
-                if (quest != null) {
-                    for (BlessingEffect effect : quest.getRewards().blessingEffects()) {
-                        if (effect instanceof PotionsEffect) effect.resetEffect(alphaPlayer);
-                    }
-                }
-            }
+        // Supprime uniquement les quêtes non réclamées (les réclamées sont déjà en quest_history)
+        for (PlayerQuestData data : new ArrayList<>(alphaPlayer.getActiveQuests())) {
+            GameManager.getInstance().getDatabase().quests().deletePlayerQuestSlot(alphaPlayer.getUuid(), data.getSlot());
         }
-
         alphaPlayer.getActiveQuests().clear();
-        GameManager.getInstance().getDatabase().quests().clearAllPlayerQuests(alphaPlayer.getUuid());
+        GameManager.getInstance().getQuestActionBarService().stopRefresh(alphaPlayer.getUuid());
+
+        QuestGlowService glowService = GameManager.getInstance().getQuestGlowService();
+        if (glowService != null) glowService.disableGlow(alphaPlayer);
 
         if (alphaPlayer.getPlayer() != null) {
-            alphaPlayer.getPlayer().sendMessage(Component.text("Toutes vos quêtes du jour ont été réinitialisées par un administrateur.", NamedTextColor.YELLOW));
+            alphaPlayer.getPlayer().sendMessage(Component.text("Vos quêtes actives ont été réinitialisées par un administrateur.", NamedTextColor.YELLOW));
         }
         ctx.getSource().getSender().sendMessage(
-                Component.text("Toutes les quêtes du jour réinitialisées pour " + alphaPlayer.getPseudo() + ".").color(NamedTextColor.GREEN));
+                Component.text("Quêtes actives réinitialisées pour " + alphaPlayer.getPseudo() + ".").color(NamedTextColor.GREEN));
         return Command.SINGLE_SUCCESS;
     }
 
