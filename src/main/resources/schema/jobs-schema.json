@@ -67,6 +67,7 @@
       "required": [
         "vanilla-min-wait-ticks", "vanilla-max-wait-ticks",
         "fishing-wait-multiplier", "loot-multiplier",
+        "dirt-chance", "treasure-penalty",
         "pressure-safe-depth", "pressure-damage",
         "swim-speed-amplifier", "underwater-haste-amplifier",
         "effect-duration-ticks"
@@ -77,6 +78,14 @@
         "vanilla-max-wait-ticks":   { "type": "integer", "minimum": 1 },
         "fishing-wait-multiplier":  { "$ref": "#/definitions/non-negative-number-array" },
         "loot-multiplier":          { "$ref": "#/definitions/non-negative-number-array" },
+        "dirt-chance": {
+          "$ref": "#/definitions/probability-array",
+          "description": "Probabilité de remplacer tout item pêché par une dirt par niveau. Tombe à 0 au niveau 7."
+        },
+        "treasure-penalty": {
+          "$ref": "#/definitions/probability-array",
+          "description": "Malus supplémentaire sur les trésors (après dirt-chance). Tombe à 0 au niveau 6."
+        },
         "pressure-safe-depth": {
           "type": "array",
           "description": "Profondeur maximale sûre en blocs par niveau. -1 = aucun dégât de pression.",

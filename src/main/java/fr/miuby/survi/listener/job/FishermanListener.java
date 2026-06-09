@@ -12,15 +12,21 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerFishEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.EnchantmentStorageMeta;
+import org.bukkit.inventory.meta.ItemMeta;
 
+import java.util.EnumSet;
 import java.util.Random;
+import java.util.Set;
 
 /**
  * Gère les effets du métier {@link EJob#FISHERMAN} liés à la pêche :
  *
  * <ul>
  *   <li>Temps d'attente modulé par le niveau (2× plus long au niv.0, 4× plus rapide au niv.10).</li>
- *   <li>Multiplicateur de loot sur les items pêchés.</li>
+ *   <li>Chance de remplacer l'item pêché par une dirt (forte aux bas niveaux, 0 à partir du niv.7).</li>
+ *   <li>Malus supplémentaire sur les trésors (livres enchantés, arcs, cannes…) jusqu'au niv.6.</li>
+ *   <li>Multiplicateur de quantité sur les items non remplacés.</li>
  * </ul>
  *
  * <p>Les effets aquatiques passifs (pression, vitesse, respiration) sont gérés par
@@ -32,6 +38,14 @@ public class FishermanListener implements Listener {
 
     private static final Random RANDOM = new Random();
 
+    /** Matériaux considérés comme trésors sans enchantements visibles. */
+    private static final Set<Material> TREASURE_MATERIALS = EnumSet.of(
+            Material.NAME_TAG,
+            Material.SADDLE,
+            Material.NAUTILUS_SHELL,
+            Material.HEART_OF_THE_SEA
+    );
+
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onFish(PlayerFishEvent event) {
         Player player = event.getPlayer();
@@ -41,7 +55,7 @@ public class FishermanListener implements Listener {
 
         switch (event.getState()) {
             case FISHING     -> applyWaitTime(event.getHook(), level);
-            case CAUGHT_FISH -> applyLootMultiplier(event, level);
+            case CAUGHT_FISH -> applyLoot(event, level);
             default          -> { /* autres états non modifiés */ }
         }
     }
@@ -58,17 +72,44 @@ public class FishermanListener implements Listener {
         hook.setMaxWaitTime(max);
     }
 
-    // ─── Multiplicateur de loot ───────────────────────────────────────────────────
+    // ─── Loot ────────────────────────────────────────────────────────────────────
 
-    private static void applyLootMultiplier(PlayerFishEvent event, int level) {
+    private static void applyLoot(PlayerFishEvent event, int level) {
         if (!(event.getCaught() instanceof Item caughtItem)) return;
         ItemStack stack = caughtItem.getItemStack();
-        double multiplier = JobsConfig.getInstance().getFisherman().getLootMultiplier()[level];
+        JobsConfig.FishermanCfg cfg = JobsConfig.getInstance().getFisherman();
+
+        // Étape 1 : chance globale de remplacer tout item pêché par une dirt
+        if (RANDOM.nextDouble() < cfg.getDirtChance()[level]) {
+            caughtItem.setItemStack(new ItemStack(Material.DIRT));
+            return;
+        }
+
+        // Étape 2 : malus supplémentaire si l'item est un trésor (livre enchanté, arc, canne, selle…)
+        if (isTreasure(stack) && RANDOM.nextDouble() < cfg.getTreasurePenalty()[level]) {
+            caughtItem.setItemStack(new ItemStack(Material.DIRT));
+            return;
+        }
+
+        // Étape 3 : multiplicateur de quantité sur l'item normal
+        double multiplier = cfg.getLootMultiplier()[level];
         double totalAmount = stack.getAmount() * multiplier;
         int amount = (int) totalAmount;
         if (RANDOM.nextDouble() < totalAmount - amount)
             amount++;
-
         stack.setAmount(Math.clamp(amount, 0, stack.getMaxStackSize()));
+    }
+
+    /**
+     * Détecte si l'item est un trésor de pêche :
+     * item enchanté (arc, canne), livre enchanté, ou matériau spécifique (selle, name tag…).
+     */
+    private static boolean isTreasure(ItemStack stack) {
+        if (TREASURE_MATERIALS.contains(stack.getType())) return true;
+        ItemMeta meta = stack.getItemMeta();
+        if (meta == null) return false;
+        if (!meta.getEnchants().isEmpty()) return true;
+        if (meta instanceof EnchantmentStorageMeta esm) return !esm.getStoredEnchants().isEmpty();
+        return false;
     }
 }

@@ -157,6 +157,16 @@ class JobsConfigTest {
     }
 
     @Test
+    void fishermanDirtChanceValid() {
+        assertProbabilityArray(getSection("fisherman"), "dirt-chance");
+    }
+
+    @Test
+    void fishermanTreasurePenaltyValid() {
+        assertProbabilityArray(getSection("fisherman"), "treasure-penalty");
+    }
+
+    @Test
     void fishermanPressureSafeDepthValid() {
         List<Number> list = getNumberList(getSection("fisherman"), "pressure-safe-depth");
         assertSize(list, "fisherman.pressure-safe-depth");

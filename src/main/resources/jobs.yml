@@ -191,6 +191,34 @@ fisherman:
     - 1.50   # niveau  8
     - 1.75   # niveau  9
     - 2.00   # niveau 10
+  # Probabilité de remplacer l'item pêché par une dirt (s'applique à tous les loots)
+  # À 0,70 au niveau 0, la chance disparaît complètement au niveau 7
+  dirt-chance:
+    - 0.70   # niveau  0  — 70 % de chance d'obtenir une dirt
+    - 0.56   # niveau  1
+    - 0.43   # niveau  2
+    - 0.30   # niveau  3
+    - 0.18   # niveau  4
+    - 0.08   # niveau  5
+    - 0.02   # niveau  6
+    - 0.00   # niveau  7  — disparaît complètement
+    - 0.00   # niveau  8
+    - 0.00   # niveau  9
+    - 0.00   # niveau 10
+  # Malus supplémentaire sur les trésors (livres enchantés, arcs, cannes, selles, name tags…)
+  # Appliqué uniquement si dirt-chance n'a pas déjà remplacé l'item — retour à 0 au niveau 6
+  treasure-penalty:
+    - 0.92   # niveau  0
+    - 0.78   # niveau  1
+    - 0.62   # niveau  2
+    - 0.44   # niveau  3
+    - 0.24   # niveau  4
+    - 0.08   # niveau  5
+    - 0.00   # niveau  6
+    - 0.00   # niveau  7
+    - 0.00   # niveau  8
+    - 0.00   # niveau  9
+    - 0.00   # niveau 10
   # Profondeur maximale sûre (blocs d'eau au-dessus du joueur) avant dégâts de pression
   # -1 = aucun dégât de pression à ce niveau
   pressure-safe-depth:

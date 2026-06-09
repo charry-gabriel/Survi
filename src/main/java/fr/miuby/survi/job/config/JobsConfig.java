@@ -112,6 +112,10 @@ public final class JobsConfig {
         private final int      vanillaMaxWaitTicks;
         private final double[] fishingWaitMultiplier;
         private final double[] lootMultiplier;
+        /** Probabilité de remplacer tout item pêché par une dirt. Tombe à 0 au niveau 7. */
+        private final double[] dirtChance;
+        /** Probabilité supplémentaire de convertir un trésor en dirt, après dirt-chance. Tombe à 0 au niveau 6. */
+        private final double[] treasurePenalty;
         /** -1 = aucun dégât de pression à ce niveau. */
         private final int[]    pressureSafeDepth;
         private final double   pressureDamage;
@@ -123,6 +127,7 @@ public final class JobsConfig {
 
         FishermanCfg(int vanillaMinWaitTicks, int vanillaMaxWaitTicks,
                      double[] fishingWaitMultiplier, double[] lootMultiplier,
+                     double[] dirtChance, double[] treasurePenalty,
                      int[] pressureSafeDepth, double pressureDamage,
                      int[] swimSpeedAmplifier, int[] underwaterHasteAmplifier,
                      int effectDurationTicks) {
@@ -130,6 +135,8 @@ public final class JobsConfig {
             this.vanillaMaxWaitTicks      = vanillaMaxWaitTicks;
             this.fishingWaitMultiplier    = fishingWaitMultiplier;
             this.lootMultiplier           = lootMultiplier;
+            this.dirtChance               = dirtChance;
+            this.treasurePenalty          = treasurePenalty;
             this.pressureSafeDepth        = pressureSafeDepth;
             this.pressureDamage           = pressureDamage;
             this.swimSpeedAmplifier       = swimSpeedAmplifier;
