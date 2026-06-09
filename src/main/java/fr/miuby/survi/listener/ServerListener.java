@@ -1,8 +1,12 @@
 package fr.miuby.survi.listener;
 
 import fr.miuby.survi.GameManager;
+import fr.miuby.survi.blessing.BlessingEffect;
+import fr.miuby.survi.blessing.PotionsEffect;
 import fr.miuby.survi.system.database.Errors;
 import fr.miuby.survi.player.AlphaPlayer;
+import fr.miuby.survi.quest.quest.PlayerQuestData;
+import fr.miuby.survi.quest.quest.Quest;
 import fr.miuby.survi.quest.quest.QuestGlowService;
 import fr.miuby.survi.system.log.ELogTag;
 import org.bukkit.NamespacedKey;
@@ -20,6 +24,7 @@ import org.bukkit.inventory.EquipmentSlotGroup;
 import fr.miuby.lib.log.MLLogManager;
 import fr.miuby.survi.system.time.event.DailyResetEvent;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.logging.Level;
 
@@ -77,19 +82,59 @@ public class ServerListener implements Listener {
         GameManager.getInstance().getWorldResetManager().checkAndPerformResets();
 
         int capacity = GameManager.getInstance().getQuestManager().getTotalCapacity();
-        if (capacity == 0) return; // La partie n'a pas encore démarré — pas de notification
-
         MLLogManager.getInstance().log(Level.INFO, ELogTag.QUEST,
-                "Nouveau jour de jeu — capacité quêtes portée à " + capacity + ".");
+                "Reset journalier — annulation des effets des quêtes réclamées. Capacité cumulée : " + capacity + ".");
+
+        QuestGlowService glowService = GameManager.getInstance().getQuestGlowService();
 
         for (AlphaPlayer player : GameManager.getInstance().getAlphaPlayerFactory().getAlphaPlayers()) {
-            if (player.getPlayer() == null) continue;
-            int used = player.getTotalDailyQuestsClaimed() + player.countActiveUnclaimedQuests();
-            int remaining = capacity - used;
-            if (remaining <= 0) continue;
-            player.getPlayer().sendMessage(Component.text("[Quêtes] ", NamedTextColor.GOLD)
-                    .append(Component.text(remaining + " nouveau(x) créneau(x) disponible(s) ! ", NamedTextColor.GREEN))
-                    .append(Component.text("(" + used + "/" + capacity + " utilisés)", NamedTextColor.DARK_GRAY)));
+
+            List<PlayerQuestData> claimedQuests = player.getActiveQuests().stream()
+                    .filter(PlayerQuestData::isClaimed)
+                    .toList();
+
+            if (claimedQuests.isEmpty()) {
+                // Aucune quête réclamée — notifier quand même si de nouveaux créneaux s'ouvrent
+                if (player.getPlayer() != null && capacity > 0) notifyNewSlots(player, capacity);
+                continue;
+            }
+
+            boolean isOnline = player.getPlayer() != null;
+
+            // 1. Annuler les effets de potion des quêtes réclamées
+            if (isOnline) {
+                for (PlayerQuestData data : claimedQuests) {
+                    Quest quest = GameManager.getInstance().getQuestManager().getQuest(data.getQuestId());
+                    if (quest == null) continue;
+                    for (BlessingEffect effect : quest.getRewards().blessingEffects()) {
+                        if (effect instanceof PotionsEffect) effect.resetEffect(player);
+                    }
+                }
+            }
+
+            // 2. Supprimer les quêtes réclamées de player_quest et de la mémoire
+            for (PlayerQuestData data : claimedQuests) {
+                player.removeQuest(data.getSlot());
+                GameManager.getInstance().getDatabase().quests().deletePlayerQuestSlot(player.getUuid(), data.getSlot());
+            }
+
+            // 3. Arrêter le refresh d'actionbar uniquement si plus aucune quête active
+            if (player.getActiveQuests().stream().noneMatch(q -> !q.isClaimed())) {
+                GameManager.getInstance().getQuestActionBarService().stopRefresh(player.getUuid());
+                if (glowService != null && isOnline) glowService.disableGlow(player);
+            }
+
+            // 4. Notifier le joueur des nouveaux créneaux
+            if (isOnline) notifyNewSlots(player, capacity);
         }
+    }
+
+    private void notifyNewSlots(AlphaPlayer player, int capacity) {
+        int used      = player.getTotalDailyQuestsClaimed() + player.countActiveUnclaimedQuests();
+        int remaining = capacity - used;
+        if (remaining <= 0) return;
+        player.getPlayer().sendMessage(Component.text("[Quêtes] ", NamedTextColor.GOLD)
+                .append(Component.text(remaining + " nouveau(x) créneau(x) disponible(s) ! ", NamedTextColor.GREEN))
+                .append(Component.text("(" + used + "/" + capacity + " utilisés)", NamedTextColor.DARK_GRAY)));
     }
 }

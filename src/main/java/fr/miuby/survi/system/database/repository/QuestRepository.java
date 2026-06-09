@@ -105,7 +105,7 @@ public class QuestRepository extends MLRepository {
 
     /**
      * Retourne toutes les quêtes du joueur (tous les slots, toutes les dates).
-     * Réservé aux opérations admin/debug — préférer {@link #getActivePlayerQuests} à la connexion.
+     * Utilisé à la connexion pour charger quêtes réclamées et non réclamées ensemble
      */
     public List<PlayerQuestData> getPlayerQuests(UUID playerUuid) {
         List<PlayerQuestData> quests = new ArrayList<>();

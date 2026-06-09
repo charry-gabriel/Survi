@@ -130,14 +130,13 @@ public class QuestManager extends AbstractQuestManager<Quest> {
     /**
      * Applique les récompenses d'une quête orpheline directement, sans passer par un Trader.
      * Utilisé dans {@link #reload()} pour les quêtes terminées dont l'id a été supprimé du YAML.
+     * La quête est marquée {@code claimed=true} pour que le reset de 6h gère les effets normalement.
      */
     private void applyOrphanRewards(AlphaPlayer player, PlayerQuestData data, Quest quest) {
-        // Blessing effects (potions, réputation de blessing, etc.)
         for (BlessingEffect effect : quest.getRewards().blessingEffects()) {
             effect.applyEffect(player);
         }
 
-        // Réputation de métier — récupère le job du trader d'origine s'il est encore en jeu
         if (data.getTraderId() != null) {
             MLVillager villager = VillagerRegistry.get(data.getTraderId());
             if (villager instanceof Trader trader && trader.getJob() != null
@@ -146,12 +145,11 @@ public class QuestManager extends AbstractQuestManager<Quest> {
             }
         }
 
-        // Supprime de player_quest (même logique que claimQuest) et incrémente le compteur
-        player.removeQuest(data.getSlot());
-        GameManager.getInstance().getDatabase().quests().deletePlayerQuestSlot(player.getUuid(), data.getSlot());
+        // Marque claimed=true — le reset de 6h se chargera de supprimer la quête et d'annuler les effets
+        data.setClaimed(true);
+        GameManager.getInstance().getDatabase().quests().updatePlayerQuest(player.getUuid(), data);
         player.setTotalDailyQuestsClaimed(player.getTotalDailyQuestsClaimed() + 1);
 
-        // Historique persistant (marque la quête comme réclamée dans l'historique)
         GameManager.getInstance().getDatabase().questHistory().insert(
                 player.getUuid(),
                 player.getPseudo(),
@@ -255,43 +253,64 @@ public class QuestManager extends AbstractQuestManager<Quest> {
     // =========================================================================
 
     /**
-     * Appelé à la connexion d'un joueur : restaure ses quêtes actives (non réclamées) depuis la DB.
+     * Appelé à la connexion d'un joueur : restaure ses quêtes depuis la DB.
      *
-     * <p>Les quêtes réclamées encore présentes dans {@code player_quest} (données résiduelles d'une
-     * session précédente) sont supprimées de la table — elles sont déjà enregistrées dans
-     * {@code quest_history} et leur comptage est reflété dans {@link AlphaPlayer#getTotalDailyQuestsClaimed()}.
-     * Seules les quêtes non réclamées (en cours ou terminées-non-validées) sont conservées en mémoire
-     * et dans la DB.</p>
-     *
-     * <p>Active le glow du Trader cible si le joueur a une quête terminée non réclamée.</p>
+     * <h3>Règles de traitement</h3>
+     * <ul>
+     *   <li><b>Quête réclamée, datée d'aujourd'hui</b> — le joueur s'est reconnecté avant le reset de 6h ;
+     *       la quête est gardée en mémoire et ses effets de potion sont réappliqués.</li>
+     *   <li><b>Quête réclamée, datée d'un jour précédent</b> — le joueur était hors-ligne lors du reset ;
+     *       la quête est supprimée de player_quest (le reset ne l'a pas nettoyée) et ses effets ne
+     *       sont PAS réappliqués.</li>
+     *   <li><b>Quête non réclamée (en cours ou terminée-non-validée)</b> — conservée quel que soit son
+     *       âge (système cumulatif : le joueur peut la continuer le lendemain). Le glow du Trader cible
+     *       est activé si la quête est terminée.</li>
+     * </ul>
      */
     public void restoreQuestsOnJoin(AlphaPlayer player, List<PlayerQuestData> loaded) {
         player.getActiveQuests().clear();
 
-        List<PlayerQuestData> claimed   = new ArrayList<>();
-        List<PlayerQuestData> unclaimed = new ArrayList<>();
+        LocalDate today = LocalDate.now();
+
+        List<BlessingEffect> effectsToReapply = new ArrayList<>();
 
         for (PlayerQuestData q : loaded) {
-            if (q.isClaimed()) claimed.add(q);
-            else               unclaimed.add(q);
+            if (q.isClaimed()) {
+                if (today.isEqual(q.getLastAccepted())) {
+                    // Reconnexion avant le reset de 6h — garder en mémoire et réappliquer les effets
+                    player.getActiveQuests().add(q);
+                    Quest questDef = getQuest(q.getQuestId());
+                    if (questDef != null) {
+                        for (BlessingEffect effect : questDef.getRewards().blessingEffects()) {
+                            if (effect instanceof PotionsEffect) effectsToReapply.add(effect);
+                        }
+                    }
+                } else {
+                    // Joueur hors-ligne lors du reset — nettoyer le résidu en DB, pas d'effet
+                    GameManager.getInstance().getDatabase().quests().deletePlayerQuestSlot(player.getUuid(), q.getSlot());
+                    MLLogManager.getInstance().log(Level.FINE, ELogTag.QUEST,
+                            "Résidu post-reset (slot " + q.getSlot() + ") nettoyé pour " + player.getPseudo());
+                }
+            } else {
+                // Quête non réclamée : toujours conservée (système cumulatif)
+                player.getActiveQuests().add(q);
+            }
         }
 
-        // Supprime les quêtes réclamées résiduelles de player_quest (déjà dans quest_history).
-        for (PlayerQuestData q : claimed) {
-            GameManager.getInstance().getDatabase().quests().deletePlayerQuestSlot(player.getUuid(), q.getSlot());
-            MLLogManager.getInstance().log(Level.FINE, ELogTag.QUEST,
-                    "Quête réclamée résiduelle (slot " + q.getSlot() + ") nettoyée pour " + player.getPseudo());
+        if (!effectsToReapply.isEmpty()) {
+            GameManager.getInstance().getScheduler().runTaskLater(GameManager.getInstance().getPlugin(), () -> {
+                if (player.getPlayer() == null || !player.getPlayer().isOnline()) return;
+                for (BlessingEffect effect : effectsToReapply) effect.applyEffect(player);
+            }, 5L);
         }
 
-        player.getActiveQuests().addAll(unclaimed);
-
-        // Active le glow du Trader cible si le joueur a une quête terminée non réclamée.
+        // Active le glow du Trader cible si le joueur a une quête terminée non réclamée
         QuestGlowService glowService = GameManager.getInstance().getQuestGlowService();
         if (glowService != null) {
-            for (PlayerQuestData q : unclaimed) {
-                if (q.isCompleted() && q.getTraderId() != null) {
+            for (PlayerQuestData q : player.getActiveQuests()) {
+                if (q.isCompleted() && !q.isClaimed() && q.getTraderId() != null) {
                     glowService.enableGlow(player, q.getTraderId());
-                    break; // Au plus une quête active non réclamée à la fois
+                    break;
                 }
             }
         }
@@ -417,8 +436,11 @@ public class QuestManager extends AbstractQuestManager<Quest> {
 
     /**
      * Réclame la récompense de la quête complétée auprès du bon Trader.
-     * La quête est supprimée de {@code player_quest} après réclamation (elle est déjà dans {@code quest_history})
-     * et le compteur en mémoire {@link AlphaPlayer#getTotalDailyQuestsClaimed()} est incrémenté.
+     *
+     * <p>La quête est marquée {@code claimed=true} dans {@code player_quest} et conservée jusqu'au
+     * prochain reset de 6h — cela permet à {@code onDailyReset} de retrouver les effets de potion
+     * à annuler. Elle est également enregistrée dans {@code quest_history} et le compteur en mémoire
+     * {@link AlphaPlayer#getTotalDailyQuestsClaimed()} est incrémenté immédiatement.</p>
      */
     public boolean claimQuest(AlphaPlayer player, Trader trader, boolean force) {
         PlayerQuestData data = player.getCurrentActiveQuest();
@@ -442,22 +464,15 @@ public class QuestManager extends AbstractQuestManager<Quest> {
             player.addJobReputation(trader.getJob(), SurviConfig.getInstance().getQuestCompletionReputation());
         }
 
-        int capacity  = getTotalCapacity();
-        int usedAfter = player.getTotalDailyQuestsClaimed() + 1; // +1 = celle qu'on vient de réclamér
+        // Marque claimed=true en DB — la quête reste dans player_quest jusqu'au reset de 6h
+        // (nécessaire pour que onDailyReset puisse annuler les effets de potion)
+        data.setClaimed(true);
+        GameManager.getInstance().getDatabase().quests().updatePlayerQuest(player.getUuid(), data);
 
-        player.getPlayer().sendMessage(Component.text("Vous avez reçu les récompenses de la quête ! ", NamedTextColor.GREEN)
-                .append(Component.text(usedAfter + "/" + capacity, NamedTextColor.GOLD))
-                .append(Component.text(" quêtes complétées.", NamedTextColor.GREEN)));
-
-        // Supprime de player_quest (déjà sauvée dans quest_history) et met à jour le compteur en mémoire
-        player.removeQuest(data.getSlot());
-        GameManager.getInstance().getDatabase().quests().deletePlayerQuestSlot(player.getUuid(), data.getSlot());
+        // Incrémente le compteur cumulatif en mémoire et insère dans l'historique
+        int usedAfter = player.getTotalDailyQuestsClaimed() + 1;
         player.setTotalDailyQuestsClaimed(usedAfter);
 
-        QuestGlowService glowService = GameManager.getInstance().getQuestGlowService();
-        if (glowService != null) glowService.disableGlow(player);
-
-        // Historique persistant
         GameManager.getInstance().getDatabase().questHistory().insert(
                 player.getUuid(),
                 player.getPseudo(),
@@ -468,6 +483,14 @@ public class QuestManager extends AbstractQuestManager<Quest> {
                 "daily",
                 0
         );
+
+        int capacity = getTotalCapacity();
+        player.getPlayer().sendMessage(Component.text("Vous avez reçu les récompenses de la quête ! ", NamedTextColor.GREEN)
+                .append(Component.text(usedAfter + "/" + capacity, NamedTextColor.GOLD))
+                .append(Component.text(" quêtes complétées.", NamedTextColor.GREEN)));
+
+        QuestGlowService glowService = GameManager.getInstance().getQuestGlowService();
+        if (glowService != null) glowService.disableGlow(player);
 
         return true;
     }
