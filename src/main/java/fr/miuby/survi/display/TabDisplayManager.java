@@ -20,6 +20,10 @@ import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.craftbukkit.entity.CraftPlayer;
 import org.bukkit.entity.Player;
+import org.bukkit.scoreboard.Criteria;
+import org.bukkit.scoreboard.DisplaySlot;
+import org.bukkit.scoreboard.Objective;
+import org.bukkit.scoreboard.RenderType;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.Team;
 
@@ -35,6 +39,7 @@ import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 
@@ -88,6 +93,9 @@ public class TabDisplayManager {
 
     private final DecimalFormat df = new DecimalFormat("#.##");
 
+    /** Objectif scoreboard principal (RenderType.HEARTS, slot LIST) pour l'affichage des cœurs dans le tab. */
+    private Objective healthObjective;
+
     /**
      * Valeurs vanilla Minecraft pour chaque attribut affiché dans le footer.
      * On ne peut pas se fier à {@code AttributeInstance.getDefaultValue()} : Paper 26.1
@@ -107,12 +115,46 @@ public class TabDisplayManager {
         Bukkit.getScheduler().runTaskTimer(
                 GameManager.getInstance().getPlugin(), this::updateTabList, 0L, 20L
         );
+        initHealthObjective();
+    }
+
+    /**
+     * Crée (ou recrée) l'objectif {@code survi_health} sur le scoreboard principal.
+     * Aucun scoreboard par joueur n'est nécessaire : le scoreboard principal est
+     * partagé par tous et l'objectif en slot {@code PLAYER_LIST} est diffusé automatiquement.
+     */
+    private void initHealthObjective() {
+        Scoreboard sb = Objects.requireNonNull(Bukkit.getScoreboardManager()).getMainScoreboard();
+        Objective existing = sb.getObjective("survi_health");
+        if (existing != null) existing.unregister();
+        healthObjective = sb.registerNewObjective("survi_health", Criteria.DUMMY,
+                Component.text("❤", NamedTextColor.RED), RenderType.HEARTS);
+        healthObjective.setDisplaySlot(DisplaySlot.PLAYER_LIST);
     }
 
     // ─── Boucle principale (1 Hz) ─────────────────────────────────────────────────
 
+    /**
+     * Met à jour le score (cœurs) de chaque joueur en ligne dans l'objectif {@code survi_health}.
+     * Toujours 10 cœurs max : la vie actuelle est ramenée en ratio sur 20 demi-cœurs (= 10 cœurs)
+     * quelle que soit la santé maximale réelle du joueur.
+     * Exemple : 2 PV sur 4 max → score 10 → 5 cœurs affichés sur 10.
+     */
+    private void updateHealthScores() {
+        if (healthObjective == null) return;
+        for (Player p : Bukkit.getOnlinePlayers()) {
+            AttributeInstance maxHealthAttr = p.getAttribute(Attribute.MAX_HEALTH);
+            if (maxHealthAttr == null) continue;
+            double maxHealth = maxHealthAttr.getValue();
+            if (maxHealth <= 0) continue;
+            int score = (int) Math.round(p.getHealth() / maxHealth * 20.0);
+            healthObjective.getScore(p.getName()).setScore(Math.clamp(score, 0, 20));
+        }
+    }
+
     private void updateTabList() {
         int playerCount = Bukkit.getOnlinePlayers().size();
+        updateHealthScores();
         List<ClientboundPlayerInfoUpdatePacket.Entry> nameEntries = buildRealPlayerNameEntries();
 
         for (Player player : Bukkit.getOnlinePlayers()) {
@@ -345,6 +387,7 @@ public class TabDisplayManager {
     public void removeInfoColumn(Player player) {
         sendPacket(player, new ClientboundPlayerInfoRemovePacket(TabInfoColumn.FAKE_UUIDS));
         teamInitialized.remove(player.getUniqueId());
+        if (healthObjective != null) healthObjective.getScoreboard().resetScores(player.getName());
     }
 
     // ─── Utilitaires ─────────────────────────────────────────────────────────────
