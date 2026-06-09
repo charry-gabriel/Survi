@@ -6,7 +6,6 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
@@ -187,29 +186,29 @@ public final class DeathMessageService {
         if (jobCause == EJob.FISHERMAN
                 && lastDamage != null
                 && lastDamage.getCause() == EntityDamageEvent.DamageCause.CUSTOM) {
-            return gray(pick(FISHERMAN_MESSAGES), name);
+            return format(pick(FISHERMAN_MESSAGES), name);
         }
 
-        if (lastDamage == null) return gray(pick(GENERIC_MESSAGES), name);
+        if (lastDamage == null) return format(pick(GENERIC_MESSAGES), name);
 
         return switch (lastDamage.getCause()) {
-            case FALL                                          -> gray(pick(FALL_MESSAGES),        name);
-            case DROWNING                                      -> gray(pick(DROWNING_MESSAGES),    name);
-            case STARVATION                                    -> gray(pick(STARVATION_MESSAGES),  name);
-            case VOID                                          -> gray(pick(VOID_MESSAGES),        name);
-            case FIRE, FIRE_TICK                               -> gray(pick(FIRE_MESSAGES),        name);
-            case LAVA                                          -> gray(pick(LAVA_MESSAGES),        name);
-            case LIGHTNING                                     -> gray(pick(LIGHTNING_MESSAGES),   name);
-            case CONTACT                                       -> gray(pick(CONTACT_MESSAGES),     name);
-            case SUFFOCATION, FLY_INTO_WALL, CRAMMING          -> gray(pick(SUFFOCATION_MESSAGES), name);
-            case FREEZE                                        -> gray(pick(FREEZE_MESSAGES),      name);
-            case SONIC_BOOM                                    -> gray(pick(SONIC_BOOM_MESSAGES),  name);
-            case HOT_FLOOR                                     -> gray(pick(HOT_FLOOR_MESSAGES),   name);
-            case BLOCK_EXPLOSION, ENTITY_EXPLOSION             -> gray(pick(EXPLOSION_MESSAGES),   name);
-            case MAGIC, POISON                                 -> gray(pick(MAGIC_MESSAGES),       name);
-            case WITHER                                        -> gray(pick(WITHER_MESSAGES),      name);
+            case FALL                                          -> format(pick(FALL_MESSAGES),        name);
+            case DROWNING                                      -> format(pick(DROWNING_MESSAGES),    name);
+            case STARVATION                                    -> format(pick(STARVATION_MESSAGES),  name);
+            case VOID                                          -> format(pick(VOID_MESSAGES),        name);
+            case FIRE, FIRE_TICK                               -> format(pick(FIRE_MESSAGES),        name);
+            case LAVA                                          -> format(pick(LAVA_MESSAGES),        name);
+            case LIGHTNING                                     -> format(pick(LIGHTNING_MESSAGES),   name);
+            case CONTACT                                       -> format(pick(CONTACT_MESSAGES),     name);
+            case SUFFOCATION, FLY_INTO_WALL, CRAMMING          -> format(pick(SUFFOCATION_MESSAGES), name);
+            case FREEZE                                        -> format(pick(FREEZE_MESSAGES),      name);
+            case SONIC_BOOM                                    -> format(pick(SONIC_BOOM_MESSAGES),  name);
+            case HOT_FLOOR                                     -> format(pick(HOT_FLOOR_MESSAGES),   name);
+            case BLOCK_EXPLOSION, ENTITY_EXPLOSION             -> format(pick(EXPLOSION_MESSAGES),   name);
+            case MAGIC, POISON                                 -> format(pick(MAGIC_MESSAGES),       name);
+            case WITHER                                        -> format(pick(WITHER_MESSAGES),      name);
             case ENTITY_ATTACK, PROJECTILE, ENTITY_SWEEP_ATTACK -> buildEntityKillMessage(lastDamage, name);
-            default                                            -> gray(pick(GENERIC_MESSAGES),     name);
+            default                                            -> format(pick(GENERIC_MESSAGES),     name);
         };
     }
 
@@ -217,7 +216,7 @@ public final class DeathMessageService {
 
     private static Component buildEntityKillMessage(EntityDamageEvent lastDamage, String name) {
         if (!(lastDamage instanceof EntityDamageByEntityEvent byEntity))
-            return gray(pick(GENERIC_MESSAGES), name);
+            return format(pick(GENERIC_MESSAGES), name);
 
         Entity damager = byEntity.getDamager();
 
@@ -228,9 +227,9 @@ public final class DeathMessageService {
         }
 
         if (damager instanceof Player killer)
-            return gray(pick(PVP_MESSAGES), name, killer.getName());
+            return format(pick(PVP_MESSAGES), name, killer.getName());
 
-        return gray(pick(MOB_MESSAGES), name, getEntityName(damager));
+        return format(pick(MOB_MESSAGES), name, getEntityName(damager));
     }
 
     // ─── Utilitaires ─────────────────────────────────────────────────────────────
@@ -239,65 +238,15 @@ public final class DeathMessageService {
         Component customName = entity.customName();
         if (customName != null)
             return PlainTextComponentSerializer.plainText().serialize(customName);
-        return formatMobName(entity.getType());
-    }
-
-    private static String formatMobName(EntityType type) {
-        return switch (type) {
-            case ZOMBIE            -> "zombie";
-            case SKELETON          -> "squelette";
-            case CREEPER           -> "creeper";
-            case SPIDER            -> "araignée";
-            case CAVE_SPIDER       -> "araignée des cavernes";
-            case ENDERMAN          -> "enderman";
-            case WITCH             -> "sorcière";
-            case SLIME             -> "slime";
-            case BLAZE             -> "blaze";
-            case GHAST             -> "ghast";
-            case WITHER_SKELETON   -> "squelette du Nether";
-            case PIGLIN            -> "piglin";
-            case HOGLIN            -> "hoglin";
-            case DROWNED           -> "noyé";
-            case ZOMBIE_VILLAGER   -> "zombie-villageois";
-            case HUSK              -> "husk";
-            case STRAY             -> "stray";
-            case PILLAGER          -> "pillard";
-            case RAVAGER           -> "ravageur";
-            case VINDICATOR        -> "vindicateur";
-            case EVOKER            -> "évocateur";
-            case VEX               -> "vex";
-            case PHANTOM           -> "fantôme";
-            case ENDERMITE         -> "endermite";
-            case SILVERFISH        -> "poisson d'argent";
-            case GUARDIAN          -> "gardien";
-            case ELDER_GUARDIAN    -> "gardien ancien";
-            case SHULKER           -> "shulker";
-            case WARDEN            -> "vigile";
-            case WITHER            -> "wither";
-            case ENDER_DRAGON      -> "dragon de l'End";
-            case ZOGLIN            -> "zoglin";
-            case PIGLIN_BRUTE      -> "piglin brute";
-            case ZOMBIFIED_PIGLIN  -> "piglin zombifié";
-            case MAGMA_CUBE        -> "cube de magma";
-            case WOLF              -> "loup";
-            case BEE               -> "abeille";
-            case IRON_GOLEM        -> "golem de fer";
-            case LLAMA             -> "lama";
-            case POLAR_BEAR        -> "ours polaire";
-            case GOAT              -> "chèvre";
-            case BREEZE            -> "bourrasque";
-            case BOGGED            -> "bourbeux";
-            case TRADER_LLAMA      -> "lama de marchand";
-            default                -> type.name().toLowerCase().replace('_', ' ');
-        };
+        return entity.getName();
     }
 
     private static String pick(String[] pool) {
         return pool[RANDOM.nextInt(pool.length)];
     }
 
-    /** Construit un {@link Component} gris à partir d'un template {@link String#format}. */
-    private static Component gray(String template, Object... args) {
+    /** Construit un {@link Component} à partir d'un template {@link String#format}. */
+    private static Component format(String template, Object... args) {
         return Component.text(String.format(template, args), NamedTextColor.WHITE);
     }
 }
