@@ -106,6 +106,7 @@ public class BlessingLoader {
                 case "WORLD_LEVEL"  -> new WorldLevelEffect();
                 case "WORLD_RESET"  -> new WorldResetEffect(toInt(map.get("frequency"), 7));
                 case "LIMIT_WORLD"  -> parseLimitWorld(map);
+                case "START_VILLAGE_ZONE" -> new StartVillageZoneEffect();
                 case "REPUTATION"   -> parseReputation(map);
                 case "POTION"       -> parsePotion(contextId, map);
                 default -> {

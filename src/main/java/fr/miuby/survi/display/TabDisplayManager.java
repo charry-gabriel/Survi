@@ -17,6 +17,7 @@ import net.minecraft.world.level.GameType;
 import org.bukkit.Bukkit;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
+import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.craftbukkit.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.Scoreboard;
@@ -33,6 +34,7 @@ import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
@@ -85,6 +87,19 @@ public class TabDisplayManager {
     private final Set<UUID> teamInitialized = new HashSet<>();
 
     private final DecimalFormat df = new DecimalFormat("#.##");
+
+    /**
+     * Valeurs vanilla Minecraft pour chaque attribut affiché dans le footer.
+     * On ne peut pas se fier à {@code AttributeInstance.getDefaultValue()} : Paper 26.1
+     * y renvoie une valeur interne qui diffère du vanilla (ex. MOVEMENT_SPEED → ~0.35
+     * au lieu de 0.1), ce qui fausserait tous les pourcentages.
+     */
+    private static final Map<Attribute, Double> VANILLA_DEFAULTS = Map.of(
+            Attribute.MAX_HEALTH,     20.0,
+            Attribute.ATTACK_DAMAGE,   2.0,
+            Attribute.ARMOR,           0.0,
+            Attribute.MOVEMENT_SPEED,  0.1
+    );
 
     // ─── Init ─────────────────────────────────────────────────────────────────────
 
@@ -261,17 +276,13 @@ public class TabDisplayManager {
 
         Component footer = Component.empty()
                 .appendNewline()
+                .append(formatCombinedDamageStat(alphaPlayer))
+                .append(Component.text(" | ", NamedTextColor.DARK_GRAY))
+                .append(formatBlessingModifier("Résistance", alphaPlayer.getResistanceModifier()))
+                .append(Component.text(" | ", NamedTextColor.DARK_GRAY))
                 .append(formatStat(alphaPlayer, Attribute.MAX_HEALTH, "Vie"))
                 .append(Component.text(" | ", NamedTextColor.DARK_GRAY))
-                .append(formatStat(alphaPlayer, Attribute.ATTACK_DAMAGE, "Force"))
-                .append(Component.text(" | ", NamedTextColor.DARK_GRAY))
-                .append(formatStat(alphaPlayer, Attribute.ARMOR, "Armure"))
-                .appendNewline()
                 .append(formatStat(alphaPlayer, Attribute.MOVEMENT_SPEED, "Vitesse"))
-                .append(Component.text(" | ", NamedTextColor.DARK_GRAY))
-                .append(formatStat(alphaPlayer, Attribute.ATTACK_SPEED, "Vit. d'Attaque"))
-                .append(Component.text(" | ", NamedTextColor.DARK_GRAY))
-                .append(formatStat(alphaPlayer, Attribute.LUCK, "Chance"))
                 .appendNewline();
 
         // Quête journalière active
@@ -348,37 +359,121 @@ public class TabDisplayManager {
         return seconds + "s";
     }
 
+    /**
+     * Affiche la stat d'un attribut en pourcentage de la valeur vanilla Minecraft,
+     * en ne comptant que les modificateurs apportés par notre plugin (rôles, métiers…).
+     * Les modificateurs d'équipement (épée, armure portée…) sont ignorés.
+     *
+     * <ul>
+     *   <li>Attribut à base non nulle (Vie, Force, Vitesse…) → pourcentage (100 % = vanilla).</li>
+     *   <li>Attribut à base nulle avec ADD_NUMBER (Chance…) → valeur absolue (+1.0).</li>
+     *   <li>Attribut à base nulle avec ADD_SCALAR uniquement (Armure…) → multiplicateur de rôle (+20%).</li>
+     * </ul>
+     */
     private Component formatStat(AlphaPlayer alphaPlayer, Attribute attributeType, String statName) {
         Player player = alphaPlayer.getPlayer();
         if (player == null) return Component.empty();
 
-        AttributeInstance attributeInstance = player.getAttribute(attributeType);
-        if (attributeInstance == null) {
-            return Component.empty();
+        AttributeInstance attr = player.getAttribute(attributeType);
+        if (attr == null) return Component.empty();
+
+        String ns = GameManager.getInstance().getPlugin().getName().toLowerCase();
+
+        // Reconstruit la valeur effective en ne comptant que les modificateurs de notre plugin.
+        // Formule Minecraft : step2 = base + Σ ADD_NUMBER ; roleValue = step2 × (1 + Σ ADD_SCALAR) × Π (1 + MULTIPLY_SCALAR_1)
+        double base = attr.getBaseValue();
+        double addNum = 0, addScalar = 0, multiplyTotal = 1.0;
+        for (AttributeModifier mod : attr.getModifiers()) {
+            if (!mod.getKey().getNamespace().equalsIgnoreCase(ns)) continue;
+            switch (mod.getOperation()) {
+                case ADD_NUMBER        -> addNum        += mod.getAmount();
+                case ADD_SCALAR        -> addScalar     += mod.getAmount();
+                case MULTIPLY_SCALAR_1 -> multiplyTotal *= 1.0 + mod.getAmount();
+            }
+        }
+        double step2     = base + addNum;
+        double roleValue = step2 * (1.0 + addScalar) * multiplyTotal;
+
+        double vanilla = VANILLA_DEFAULTS.getOrDefault(attributeType, attr.getDefaultValue());
+
+        // ── Attribut à base nulle (Armure, Chance…) ──────────────────────────────
+        if (vanilla < 0.001) {
+            if (Math.abs(roleValue) > 0.001) {
+                // Contribution additive directe (ex : Chance +1.0 depuis ADD_NUMBER)
+                NamedTextColor c = roleValue > 0 ? NamedTextColor.GREEN : NamedTextColor.RED;
+                String sign = roleValue > 0 ? "+" : "";
+                return Component.text(statName + ": ", NamedTextColor.WHITE)
+                        .append(Component.text(sign + df.format(roleValue), c));
+            }
+            if (Math.abs(addScalar) < 0.001) {
+                // Aucune modification de rôle sur cet attribut
+                return Component.text(statName + ": ", NamedTextColor.WHITE)
+                        .append(Component.text("—", NamedTextColor.DARK_GRAY));
+            }
+            // Seul un ADD_SCALAR existe (ex : Armure ×1.2 depuis les rôles)
+            long scalarPct = Math.round(addScalar * 100.0);
+            NamedTextColor c = addScalar > 0 ? NamedTextColor.GREEN : NamedTextColor.RED;
+            String sign = addScalar > 0 ? "+" : "";
+            return Component.text(statName + ": ", NamedTextColor.WHITE)
+                    .append(Component.text(sign + scalarPct + "%", c));
         }
 
-        double baseValue = alphaPlayer.getBaseAttributes().getOrDefault(attributeType, attributeInstance.getBaseValue());
-        double currentValue = attributeInstance.getValue();
-        double diff = currentValue - baseValue;
-
-        String sign = "+";
-        NamedTextColor color;
-        if (Math.abs(diff) < 0.001) {
-            diff = 0;
-            color = NamedTextColor.GRAY;
-        } else if (diff > 0) {
-            color = NamedTextColor.GREEN;
-            sign = "+";
-        } else {
-            color = NamedTextColor.RED;
-            sign = "";
-        }
-
+        // ── Attribut à base non nulle : pourcentage de la valeur vanilla ─────────
+        double pct = roleValue / vanilla * 100.0;
+        long pctRounded = Math.round(pct);
+        NamedTextColor color = Math.abs(pct - 100.0) < 0.5 ? NamedTextColor.GRAY
+                : pct > 100.0 ? NamedTextColor.GREEN : NamedTextColor.RED;
         return Component.text(statName + ": ", NamedTextColor.WHITE)
-                .append(Component.text(formatDouble(baseValue) + sign + formatDouble(diff), color));
+                .append(Component.text(pctRounded + "%", color));
     }
 
-    private String formatDouble(double d) {
-        return df.format(d);
+    /**
+     * Affiche les dégâts effectifs du joueur : combinaison de l'attribut ATTACK_DAMAGE
+     * (bonus de rôle/métier) et du {@code damageModifier} (bénédictions/malédictions).
+     * 100 % = dégâts vanilla sans aucun modificateur de part et d'autre.
+     * Vert au-dessus de 100 %, rouge en-dessous, gris à 100 %.
+     */
+    private Component formatCombinedDamageStat(AlphaPlayer alphaPlayer) {
+        Player player = alphaPlayer.getPlayer();
+        if (player == null) return Component.empty();
+
+        AttributeInstance attr = player.getAttribute(Attribute.ATTACK_DAMAGE);
+        if (attr == null) return Component.empty();
+
+        String ns = GameManager.getInstance().getPlugin().getName().toLowerCase();
+
+        double base = attr.getBaseValue();
+        double addNum = 0, addScalar = 0, multiplyTotal = 1.0;
+        for (AttributeModifier mod : attr.getModifiers()) {
+            if (!mod.getKey().getNamespace().equalsIgnoreCase(ns)) continue;
+            switch (mod.getOperation()) {
+                case ADD_NUMBER        -> addNum        += mod.getAmount();
+                case ADD_SCALAR        -> addScalar     += mod.getAmount();
+                case MULTIPLY_SCALAR_1 -> multiplyTotal *= 1.0 + mod.getAmount();
+            }
+        }
+        double step2     = base + addNum;
+        double roleValue = step2 * (1.0 + addScalar) * multiplyTotal;
+
+        double vanilla    = VANILLA_DEFAULTS.getOrDefault(Attribute.ATTACK_DAMAGE, attr.getDefaultValue());
+        double pct        = (roleValue / vanilla) * alphaPlayer.getDamageModifier() * 100.0;
+        long   pctRounded = Math.round(pct);
+
+        NamedTextColor color = Math.abs(pct - 100.0) < 0.5 ? NamedTextColor.GRAY
+                : pct > 100.0 ? NamedTextColor.GREEN : NamedTextColor.RED;
+        return Component.text("Dégâts: ", NamedTextColor.WHITE)
+                .append(Component.text(pctRounded + "%", color));
+    }
+
+    /**
+     * Affiche un modifier de blessing en pourcentage absolu (1.0 = 100 %).
+     * Vert au-dessus de 100 %, rouge en-dessous, gris exactement à 100 %.
+     */
+    private Component formatBlessingModifier(String statName, float current) {
+        long displayPct = Math.round((double) current * 100.0);
+        NamedTextColor color = Math.abs(current - 1.0f) < 0.005f ? NamedTextColor.GRAY
+                : current > 1.0f ? NamedTextColor.GREEN : NamedTextColor.RED;
+        return Component.text(statName + ": ", NamedTextColor.WHITE)
+                .append(Component.text(displayPct + "%", color));
     }
 }

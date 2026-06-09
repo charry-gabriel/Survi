@@ -1920,9 +1920,11 @@
                       "type": "string",
                       "description": "Type d'outil (ELockedToolType)",
                       "enum": [
+        "COPPER",
         "DIAMOND",
         "GOLD",
         "IRON",
+        "NETHERITE",
         "STONE",
         "WOOD"
       ]
@@ -1946,6 +1948,7 @@
                       "description": "Type d'armure (ELockedArmorType)",
                       "enum": [
         "CHAINMAIL",
+        "COPPER",
         "DIAMOND",
         "GOLD",
         "IRON",

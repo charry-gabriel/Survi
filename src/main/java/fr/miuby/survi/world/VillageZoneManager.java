@@ -25,8 +25,8 @@ import java.util.logging.Level;
  *       rafraîchi pour tous les joueurs présents.</li>
  * </ul>
  *
- * @see #start()  Lance le timer (début de partie)
- * @see #reset()  Remet le timer à zéro (tests)
+ * @see #start()  Lance le timer (déclenché par {@code StartVillageZoneEffect} au levelup d'un villageois)
+ * @see #reset()  Remet le timer à zéro (tests — {@code /survi zone reset})
  */
 public class VillageZoneManager {
 
@@ -71,7 +71,7 @@ public class VillageZoneManager {
                             + " écoulé=" + String.format("%.2f", getElapsedMinutes() / 60f) + "h");
         } else {
             MLLogManager.getInstance().log(Level.INFO, ELogTag.WORLD,
-                    "[VillageZoneManager] Initialisé — en attente de /survi zone start");
+                    "[VillageZoneManager] Initialisé — en attente du premier levelup de villageois");
         }
     }
 
@@ -82,7 +82,7 @@ public class VillageZoneManager {
     // ─── Commandes ─────────────────────────────────────────────────────────────────
 
     /**
-     * Démarre le timer de partie (à appeler via {@code /survi zone start}).
+     * Démarre le timer de zone (déclenché par {@link StartVillageZoneEffect} au levelup d'un villageois).
      * Si le timer était déjà en cours, ne fait rien et retourne {@code false}.
      */
     public boolean start() {
@@ -256,7 +256,7 @@ public class VillageZoneManager {
 
         if (stored == null) {
             MLLogManager.getInstance().log(Level.INFO, ELogTag.WORLD,
-                    "[VillageZoneManager] Aucun timestamp en DB — en attente de /survi zone start");
+                    "[VillageZoneManager] Aucun timestamp en DB — en attente du premier levelup de villageois");
             return;
         }
 

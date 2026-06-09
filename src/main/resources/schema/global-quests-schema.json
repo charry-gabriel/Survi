@@ -1876,9 +1876,11 @@
                   "properties": {
                     "type": { "type": "string", "const": "UNLOCK_TOOL"},
                     "tool": { "type": "string", "description": "Type d'outil (ELockedToolType)", "enum": [
+        "COPPER",
         "DIAMOND",
         "GOLD",
         "IRON",
+        "NETHERITE",
         "STONE",
         "WOOD"
       ] }
@@ -1892,6 +1894,7 @@
                     "type": { "type": "string", "const": "UNLOCK_ARMOR"},
                     "armor": { "type": "string", "description": "Type d'armure (ELockedArmorType)", "enum": [
         "CHAINMAIL",
+        "COPPER",
         "DIAMOND",
         "GOLD",
         "IRON",

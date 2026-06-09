@@ -56,11 +56,12 @@ class SchemaGeneratorTest {
         defsPart = replaceEnum(defsPart, "material", getMaterialNames());
         defsPart = replaceEnum(defsPart, "customItem", getCustomItemNames());
 
-        List<String> blessingTypes = getEnumNamesFromSource("src/main/java/fr/miuby/survi/villager/villagerlevel/blessing/BlessingLoader.java");
+        List<String> blessingTypes = getEnumNamesFromSource("src/main/java/fr/miuby/survi/blessing/BlessingLoader.java");
         if (blessingTypes.isEmpty()) {
             blessingTypes = List.of("DAMAGE", "DISPEL", "FLY", "GAME_MODE", "ITEM", "LIMIT_WORLD",
-                    "LOCK_WORLD", "MAX_HEALTH", "MESSAGE", "RANDOM_ITEM", "REGEN",
-                    "RESISTANCE", "UNLOCK_ARMOR", "UNLOCK_TOOL", "WORLD_LEVEL", "WORLD_RESET");
+                    "LOCK_WORLD", "MAX_HEALTH", "MESSAGE", "POTION", "RANDOM_ITEM", "REGEN",
+                    "REPUTATION", "RESISTANCE", "START_VILLAGE_ZONE", "UNLOCK_ARMOR", "UNLOCK_TOOL",
+                    "WORLD_LEVEL", "WORLD_RESET");
         }
         defsPart = replaceEnum(defsPart, "type", blessingTypes);
         defsPart = replaceEnum(defsPart, "tool", getEnumNamesFromSource("src/main/java/fr/miuby/survi/item/locked_item/ELockedToolType.java"));
