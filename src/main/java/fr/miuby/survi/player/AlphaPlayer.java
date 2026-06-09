@@ -22,6 +22,7 @@ import org.bukkit.Location;
 import org.bukkit.attribute.Attribute;
 
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
 import fr.miuby.survi.quest.quest.PlayerQuestData;
@@ -66,6 +67,12 @@ public class AlphaPlayer extends MLPlayer implements Serializable {
     @Setter
     @Getter
     private Role role;
+
+    /** Métier responsable des derniers dégâts liés à un mécanisme de métier (null si aucun).
+     *  Positionné par les tâches/listeners de métier avant d'appliquer des dégâts custom,
+     *  consommé puis réinitialisé par {@link fr.miuby.survi.player.service.DeathMessageService}. */
+    @Getter @Setter
+    private EJob lastJobDamageCause;
 
     @Getter
     private final Map<Attribute, Double> baseAttributes = new HashMap<>();

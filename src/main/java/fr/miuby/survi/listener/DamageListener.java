@@ -25,6 +25,8 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
+import fr.miuby.survi.player.service.DeathMessageService;
+
 import static java.lang.Math.min;
 import static java.lang.Math.round;
 
@@ -133,6 +135,9 @@ public class DamageListener implements Listener {
 
     @EventHandler
     public void onPlayerDeath(PlayerDeathEvent event) {
-        AlphaPlayer.get(event.getPlayer().getUniqueId()).addMort(1);
+        AlphaPlayer alpha = AlphaPlayer.get(event.getPlayer().getUniqueId());
+        alpha.addMort(1);
+        event.deathMessage(DeathMessageService.build(event, alpha));
+        alpha.setLastJobDamageCause(null);
     }
 }

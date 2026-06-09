@@ -44,7 +44,7 @@ public class FishermanEffectsTask extends BukkitRunnable {
             applySwimSpeed(player, level, cfg);
             applyUnderwaterHaste(player, level, cfg);
             applyWaterBreathing(player, level, cfg);
-            applyPressureDamage(player, level, cfg);
+            applyPressureDamage(player, level, alpha, cfg);
         }
     }
 
@@ -68,10 +68,11 @@ public class FishermanEffectsTask extends BukkitRunnable {
                 PotionEffectType.WATER_BREATHING, cfg.getEffectDurationTicks(), 0, false, false, false));
     }
 
-    private static void applyPressureDamage(Player player, int level, JobsConfig.FishermanCfg cfg) {
+    private static void applyPressureDamage(Player player, int level, AlphaPlayer alpha, JobsConfig.FishermanCfg cfg) {
         int safeDepth = cfg.getPressureSafeDepth()[level];
         if (safeDepth == -1) return; // -1 = illimité, aucun dégât
         if (player.getLocation().getBlockY() < 63 - safeDepth) {
+            alpha.setLastJobDamageCause(EJob.FISHERMAN);
             player.damage(cfg.getPressureDamage());
         }
     }
