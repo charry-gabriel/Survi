@@ -75,7 +75,7 @@ quests:
     difficulty: 1
     jobs:
       - MINER
-    targets: [DEEPSLATE_COPPER_ORE, DEEPSLATE_COAL_ORE, DEEPSLATE_GOLD_ORE]
+    targets: [COBBLED_DEEPSLATE]
     goal: 96
     rewards:
       - {type: REPUTATION, job: MINER, value: 2}
@@ -88,37 +88,11 @@ quests:
     difficulty: 1
     jobs:
       - MINER
-    targets: [DEEPSLATE_COPPER_ORE, DEEPSLATE_COAL_ORE, DEEPSLATE_GOLD_ORE]
+    targets: [GOLD_ORE, COAL_ORE, COPPER_ORE, DIAMOND_ORE, IRON_ORE, LAPIS_ORE, REDSTONE_ORE]
     goal: 20
     rewards:
       - {type: REPUTATION, job: MINER, value: 1}
       - {type: POTION, potion: haste, duration: 1728000, amplifier: 0}
-
-  - id: "mine_sand"
-    name: "Carrier de Sable"
-    description: "Récoltez {value} blocs de sable."
-    type: MINE
-    difficulty: 1
-    jobs:
-      - MINER
-    targets: [SAND]
-    goal: 250
-    rewards:
-      - {type: REPUTATION, job: MINER, value: 8}
-      - {type: POTION, potion: speed, duration: 1728000, amplifier: 0}
-
-  - id: "mine_gravel"
-    name: "Carrier de Gravier"
-    description: "Récoltez {value} blocs de gravier."
-    type: MINE
-    difficulty: 1
-    jobs:
-      - MINER
-    targets: [GRAVEL]
-    goal: 250
-    rewards:
-      - {type: REPUTATION, job: MINER, value: 8}
-      - {type: POTION, potion: luck, duration: 1728000, amplifier: 0}
 
   - id: "mine_oak_log"
     name: "Bûcheron Chêne"
