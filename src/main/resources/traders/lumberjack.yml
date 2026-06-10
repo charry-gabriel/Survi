@@ -1,6 +1,6 @@
 # yaml-language-server: $schema=../schema/traders-schema.json
 nameId: "Barman"
-displayName: "Beorn le bucheron"
+displayName: "Beorn le bûcheron"
 type: SAVANNA
 profession: FLETCHER
 job: LUMBERJACK
