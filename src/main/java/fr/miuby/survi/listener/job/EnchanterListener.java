@@ -41,16 +41,12 @@ public class EnchanterListener implements Listener {
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onPrepareEnchant(PrepareItemEnchantEvent event) {
-        AlphaPlayer alpha = AlphaPlayer.get(event.getEnchanter().getUniqueId());
-        if (alpha == null) return;
-        int jobLevel = alpha.getJobLevel(EJob.ENCHANTER);
-        int maxXpCost = jobLevel * 3;
-        for (int i = 0; i < event.getOffers().length; i++) {
-            EnchantmentOffer offer = event.getOffers()[i];
-            if (offer == null) continue;
-            if (jobLevel == 0 || offer.getCost() > maxXpCost || offer.getEnchantmentLevel() > jobLevel)
-                event.getOffers()[i] = null;
+        EnchantmentOffer[] offers = event.getOffers();
+        int write = 0;
+        for (int read = 0; read < offers.length; read++) {
+            if (offers[read] != null) offers[write++] = offers[read];
         }
+        while (write < offers.length) offers[write++] = null;
     }
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
@@ -63,6 +59,14 @@ public class EnchanterListener implements Listener {
             event.getEnchanter().sendMessage(Component.text("✗ Vous ne pouvez pas encore enchanter. Progressez dans le métier ")
                     .color(NamedTextColor.RED).append(EJob.ENCHANTER.toComponent())
                     .append(Component.text(".", NamedTextColor.RED)));
+            return;
+        }
+        int maxXpCost = jobLevel * 3;
+        if (event.getExpLevelCost() > maxXpCost) {
+            event.setCancelled(true);
+            event.getEnchanter().sendMessage(Component.text("✗ Ce slot coûte trop de niveaux XP pour votre rang de métier ")
+                    .color(NamedTextColor.RED).append(EJob.ENCHANTER.toComponent())
+                    .append(Component.text(" (max " + maxXpCost + " niveaux).", NamedTextColor.RED)));
             return;
         }
         boolean tooHigh = event.getEnchantsToAdd().entrySet().stream()
