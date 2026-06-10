@@ -60,7 +60,7 @@ public class QuestManager extends AbstractQuestManager<Quest> {
     // =========================================================================
 
     /**
-     * Recharge le pool de quêtes depuis {@code quests.yml} à chaud, sans redémarrage.
+     * Recharge le pool de quêtes à chaud, sans redémarrage.
      *
      * <h3>Comportement sur les quêtes en cours (joueurs connectés)</h3>
      *
