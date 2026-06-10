@@ -27,7 +27,7 @@ import org.bukkit.plugin.java.JavaPlugin;
  *  niv.N → safeFallDistance[N] − 3.0
  * </pre>
  *
- * <p>La distance par niveau est configurable dans {@code jobs.yml → explorer.safe-fall-distance}.
+ * <p>La distance par niveau est configurable dans {@code explorer.yml → explorer.safe-fall-distance}.
  * Le modifier est transient : réappliqué à chaque connexion.
  * La base n'est jamais modifiée ; le calcul des dégâts et Feather Falling
  * sont entièrement délégués au moteur vanilla.</p>

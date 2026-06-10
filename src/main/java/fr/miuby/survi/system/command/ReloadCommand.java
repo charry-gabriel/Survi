@@ -5,6 +5,7 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import fr.miuby.survi.GameManager;
 import fr.miuby.survi.item.growth_item.GrowthItemLoader;
+import fr.miuby.survi.job.config.JobsLoader;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
 import io.papermc.paper.command.brigadier.Commands;
 import net.kyori.adventure.text.Component;
@@ -22,6 +23,7 @@ import net.kyori.adventure.text.format.NamedTextColor;
  *   /survi reload roles            → roles.yml + ré-application immédiate sur les joueurs connectés
  *   /survi reload growth_items     → growth_items/*.yml uniquement
  *   /survi reload villagers        → villagers/*.yml + traders/*.yml (entités en jeu mises à jour)
+ *   /survi reload jobs             → jobs/*.yml uniquement (actif immédiatement sur prochains drops/pêches)
  * </pre>
  *
  * <h3>Non-rechargeables (redémarrage requis)</h3>
@@ -44,7 +46,8 @@ public class ReloadCommand {
                 .then(Commands.literal("monsters").executes(ReloadCommand::reloadMonsters))
                 .then(Commands.literal("roles").executes(ReloadCommand::reloadRoles))
                 .then(Commands.literal("growth_items").executes(ReloadCommand::reloadGrowthItems))
-                .then(Commands.literal("villagers").executes(ReloadCommand::reloadVillagers));
+                .then(Commands.literal("villagers").executes(ReloadCommand::reloadVillagers))
+                .then(Commands.literal("jobs").executes(ReloadCommand::reloadJobs));
     }
 
     // =========================================================================
@@ -61,12 +64,14 @@ public class ReloadCommand {
         GameManager.getInstance().getRoleLoader().reload();           // clear + reload + ré-application joueurs
         GrowthItemLoader.reload();                                     // clear registre + clearCache + reload
         GameManager.getInstance().getVillagerFactory().reloadAll();   // clearCache + reload VillagerLevel + Traders
+        JobsLoader.reload();                                           // jobs/*.yml — actif immédiatement
 
         sender.sendMessage(Component.text("✔ Rechargement terminé :").color(NamedTextColor.GREEN));
         sender.sendMessage(Component.text("  quests/*.yml → ").color(NamedTextColor.GRAY).append(Component.text(quests + " quête(s)", NamedTextColor.WHITE)));
         sender.sendMessage(Component.text("  global_quests.yml → ").color(NamedTextColor.GRAY).append(Component.text(globalQuests + " quête(s) globale(s)", NamedTextColor.WHITE)));
         sender.sendMessage(Component.text("  monsters.yml ✔ — roles.yml ✔ (joueurs connectés mis à jour) — growth_items/*.yml ✔").color(NamedTextColor.GRAY));
         sender.sendMessage(Component.text("  villagers/*.yml + traders/*.yml ✔ (entités en jeu mises à jour, inventaires recalculés)").color(NamedTextColor.GRAY));
+        sender.sendMessage(Component.text("  jobs/*.yml ✔ (drops, multiplicateurs, matériaux de remplacement actifs immédiatement)").color(NamedTextColor.GRAY));
         sender.sendMessage(Component.text("  ⚠ recipes.yml et config.yml nécessitent un redémarrage.").color(NamedTextColor.YELLOW));
         return Command.SINGLE_SUCCESS;
     }
@@ -120,6 +125,14 @@ public class ReloadCommand {
         sender.sendMessage(Component.text("Rechargement de villagers/*.yml + traders/*.yml...").color(NamedTextColor.GRAY));
         GameManager.getInstance().getVillagerFactory().reloadAll();
         sender.sendMessage(Component.text("✔ Villageois et traders mis à jour en jeu. Inventaires tribute recalculés (items déjà donnés pris en compte).").color(NamedTextColor.GREEN));
+        return Command.SINGLE_SUCCESS;
+    }
+
+    private static int reloadJobs(CommandContext<CommandSourceStack> ctx) {
+        var sender = ctx.getSource().getSender();
+        sender.sendMessage(Component.text("Rechargement de jobs/*.yml...").color(NamedTextColor.GRAY));
+        JobsLoader.reload();
+        sender.sendMessage(Component.text("✔ jobs/*.yml rechargés. Drops, multiplicateurs et matériaux de remplacement actifs immédiatement sur les prochains événements.").color(NamedTextColor.GREEN));
         return Command.SINGLE_SUCCESS;
     }
 }

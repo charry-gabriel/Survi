@@ -1,0 +1,16 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "jobs/explorer.yml",
+  "description": "Configuration de l'Explorateur (EXPLORER). Tableau de 11 valeurs (index = niveau 0 à 10).",
+  "type": "object",
+  "required": ["safe-fall-distance"],
+  "additionalProperties": false,
+  "properties": {
+    "safe-fall-distance": {
+      "type": "array",
+      "description": "Distance de chute sécurisée en blocs par niveau. Modifier appliqué = valeur - 3.0 (base vanilla). Doit être croissant.",
+      "minItems": 11, "maxItems": 11,
+      "items": { "type": "number" }
+    }
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "jobs/enchanter.yml",
+  "description": "Configuration de l'Enchanteur (ENCHANTER). Tableaux de 11 valeurs (index = niveau 0 à 10). -1 = illimité.",
+  "type": "object",
+  "required": ["durability-loss-multiplier", "anvil-max-xp-cost", "repair-per-xp"],
+  "additionalProperties": false,
+  "properties": {
+    "durability-loss-multiplier": {
+      "$ref": "#/definitions/non-negative-number-array",
+      "description": "Multiplicateur de dégâts de durabilité (0.0 = aucun dommage, 1.0 = vanilla)."
+    },
+    "anvil-max-xp-cost": {
+      "type": "array",
+      "description": "Coût XP maximum pour une opération d'enclume. -1 = illimité.",
+      "minItems": 11, "maxItems": 11,
+      "items": { "type": "integer", "minimum": -1 }
+    },
+    "repair-per-xp": {
+      "type": "array",
+      "description": "Durabilité réparée par point d'XP gagné (0 = réparation désactivée).",
+      "minItems": 11, "maxItems": 11,
+      "items": { "type": "integer", "minimum": 0 }
+    }
+  },
+  "definitions": {
+    "non-negative-number-array": {
+      "type": "array", "minItems": 11, "maxItems": 11,
+      "items": { "type": "number", "minimum": 0 }
+    }
+  }
+}

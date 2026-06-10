@@ -1,0 +1,135 @@
+# ═══════════════════════════════════════════════════════════════════════════════
+#  Survi — Configuration du Pêcheur (FISHERMAN)
+# ═══════════════════════════════════════════════════════════════════════════════
+# Tableaux de 11 entrées (index = niveau 0 à 10).
+
+# Fenêtre d'attente vanilla de la canne à pêche (en ticks)
+vanilla-min-wait-ticks: 100
+vanilla-max-wait-ticks: 600
+
+# Multiplicateur appliqué aux temps d'attente vanilla (<1.0 = plus rapide, >1.0 = plus lent)
+fishing-wait-multiplier:
+  - 2.00   # niveau  0  — 2× plus long
+  - 1.75   # niveau  1
+  - 1.50   # niveau  2
+  - 1.25   # niveau  3
+  - 1.10   # niveau  4
+  - 1.00   # niveau  5  — vanilla
+  - 0.85   # niveau  6
+  - 0.70   # niveau  7
+  - 0.55   # niveau  8
+  - 0.40   # niveau  9
+  - 0.25   # niveau 10  — 4× plus rapide
+
+# Multiplicateur de loot appliqué aux items pêchés
+loot-multiplier:
+  - 0.20   # niveau  0
+  - 0.50   # niveau  1
+  - 0.80   # niveau  2
+  - 1.00   # niveau  3  — vanilla
+  - 1.10   # niveau  4
+  - 1.20   # niveau  5
+  - 1.30   # niveau  6
+  - 1.40   # niveau  7
+  - 1.50   # niveau  8
+  - 1.75   # niveau  9
+  - 2.00   # niveau 10
+
+# ─── Malus global ─────────────────────────────────────────────────────────────
+
+# Probabilité de remplacer l'item pêché par un matériau tiré de dirt-replacement-materials
+# (s'applique à tous les loots — disparaît complètement au niveau 7)
+dirt-chance:
+  - 0.70   # niveau  0  — 70 % de chance
+  - 0.56   # niveau  1
+  - 0.43   # niveau  2
+  - 0.30   # niveau  3
+  - 0.18   # niveau  4
+  - 0.08   # niveau  5
+  - 0.02   # niveau  6
+  - 0.00   # niveau  7  — disparaît complètement
+  - 0.00   # niveau  8
+  - 0.00   # niveau  9
+  - 0.00   # niveau 10
+
+# Matériaux de remplacement tirés aléatoirement quand dirt-chance se déclenche.
+# Accepte n'importe quel nom de Material Minecraft (insensible à la casse). Au moins 1 entrée requise.
+dirt-replacement-materials:
+  - DIRT
+
+# ─── Malus trésors ────────────────────────────────────────────────────────────
+
+# Malus supplémentaire sur les trésors (livres enchantés, arcs, cannes, selles, name tags…)
+# Appliqué uniquement si dirt-chance n'a pas déjà remplacé l'item. Retour à 0 au niveau 6.
+treasure-penalty:
+  - 0.92   # niveau  0
+  - 0.78   # niveau  1
+  - 0.62   # niveau  2
+  - 0.44   # niveau  3
+  - 0.24   # niveau  4
+  - 0.08   # niveau  5
+  - 0.00   # niveau  6
+  - 0.00   # niveau  7
+  - 0.00   # niveau  8
+  - 0.00   # niveau  9
+  - 0.00   # niveau 10
+
+# Matériaux de remplacement tirés aléatoirement quand treasure-penalty se déclenche.
+# Accepte n'importe quel nom de Material Minecraft (insensible à la casse). Au moins 1 entrée requise.
+treasure-replacement-materials:
+  - DIRT
+
+# ─── Pression sous-marine ─────────────────────────────────────────────────────
+
+# Profondeur maximale sûre (blocs d'eau au-dessus du joueur) avant dégâts de pression.
+# -1 = aucun dégât de pression.
+# Valeurs très négatives (ex : -500) = dégâts permanents dès que le joueur touche l'eau.
+pressure-safe-depth:
+  - -500   # niveau  0  — tout contact avec l'eau cause des dégâts
+  - 0      # niveau  1
+  - 2      # niveau  2
+  - 5      # niveau  3
+  - 10     # niveau  4
+  - 20     # niveau  5
+  - 50     # niveau  6
+  - 80     # niveau  7
+  - 110    # niveau  8
+  - 150    # niveau  9
+  - -1     # niveau 10  — aucun dégât de pression
+
+# Dégâts infligés par la pression sous-marine (en demi-cœurs, 1.0 = 0,5 cœur)
+pressure-damage: 1.0
+
+# ─── Effets aquatiques ────────────────────────────────────────────────────────
+
+# Amplificateur de vitesse de nage (DOLPHINS_GRACE) par niveau (actif à partir du niveau 3)
+swim-speed-amplifier:
+  - 0   # niveau  0
+  - 0   # niveau  1
+  - 0   # niveau  2
+  - 0   # niveau  3
+  - 0   # niveau  4
+  - 0   # niveau  5
+  - 1   # niveau  6
+  - 1   # niveau  7
+  - 1   # niveau  8
+  - 1   # niveau  9
+  - 1   # niveau 10
+
+# Amplificateur de hâte sous-marine (HASTE) par niveau (actif à partir du niveau 7)
+underwater-haste-amplifier:
+  - 0   # niveau  0
+  - 0   # niveau  1
+  - 0   # niveau  2
+  - 0   # niveau  3
+  - 0   # niveau  4
+  - 0   # niveau  5
+  - 0   # niveau  6
+  - 1   # niveau  7
+  - 1   # niveau  8
+  - 2   # niveau  9
+  - 2   # niveau 10
+
+# Durée en ticks des effets de potion passifs sous l'eau
+# (légèrement > période de la tâche FishermanEffectsTask pour éviter le clignotement d'icône)
+effect-duration-ticks: 25

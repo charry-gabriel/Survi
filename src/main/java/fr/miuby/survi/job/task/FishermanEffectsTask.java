@@ -20,7 +20,7 @@ import org.bukkit.scheduler.BukkitRunnable;
  *   <li>Niv. 10  — Aucun dégât de pression (pressure-safe-depth = -1).</li>
  * </ul>
  *
- * <p>Tous les paramètres numériques sont lus depuis {@link JobsConfig} ({@code jobs.yml}).</p>
+ * <p>Tous les paramètres numériques sont lus depuis {@link JobsConfig}.</p>
  *
  * <p>Enregistrement dans Survi.java :</p>
  * <pre>{@code new FishermanEffectsTask().runTaskTimer(this, 0L, FishermanEffectsTask.PERIOD_TICKS);}</pre>

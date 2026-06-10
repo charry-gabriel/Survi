@@ -70,6 +70,12 @@ Et si la modification touche un **enum du projet** (`EJob`, `ERole`, `EWorld`, `
 | `recipes.yml` | `schema/recipes-schema.json` | `RecipesConfigTest` |
 | `global_quests.yml` | `schema/global-quests-schema.json` | `GlobalQuestConfigTest` |
 | `growth_items/*.yml` | `schema/growth-items-schema.json` | `GrowthItemConfigTest` |
+| `jobs/miner.yml` | `schema/jobs/miner-schema.json` | `JobsConfigTest` |
+| `jobs/lumberjack.yml` | `schema/jobs/lumberjack-schema.json` | `JobsConfigTest` |
+| `jobs/farmer.yml` | `schema/jobs/farmer-schema.json` | `JobsConfigTest` |
+| `jobs/enchanter.yml` | `schema/jobs/enchanter-schema.json` | `JobsConfigTest` |
+| `jobs/fisherman.yml` | `schema/jobs/fisherman-schema.json` | `JobsConfigTest` — ⚠️ `SchemaGeneratorTest` requis (enum `Material`) |
+| `jobs/explorer.yml` | `schema/jobs/explorer-schema.json` | `JobsConfigTest` |
 
 ---
 
@@ -377,6 +383,7 @@ growth_items/<id>.yml → GrowthItemFileConfig → GrowthItemLoader → GrowthIt
 | `recipes.yml` | `schema/recipes-schema.json` |
 | `global_quests.yml` | `schema/global-quests-schema.json` |
 | `growth_items/*.yml` | `schema/growth-items-schema.json` |
+| `jobs/*.yml` | `schema/jobs/<metier>-schema.json` — un fichier par métier, chacun son schéma |
 
 ---
 
@@ -458,7 +465,10 @@ try (var t = PerfTimer.start("DamageListener.onEntityDamage")) {
 | `DamageListener.onEntityDamage` | Résistance + mécanique FÉE | moyen |
 | `DamageListener.FEE-propagation` | Itération `getAlphaPlayers()` FÉE | ⚠ élevé — à remplacer par `Set<UUID>` |
 | `PlayerListener.onPlayerMove` | Vérification limites monde | moyen |
-| `JobListener.dropWithMultiplier` | `block.getDrops(tool)` Bukkit | moyen |
+| `MinerListener.dropWithMultiplier` | `block.getDrops(tool)` Bukkit — Mineur | moyen |
+| `LumberjackListener.dropWithMultiplier` | `block.getDrops(tool)` Bukkit — Bûcheron | moyen |
+| `LumberjackListener.treeFeller` | BFS logs + drops — Bûcheron | ⚠ élevé sur grands arbres |
+| `FarmerListener.dropWithMultiplier` | `block.getDrops(tool)` Bukkit — Fermier | moyen |
 
 ---
 

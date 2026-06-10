@@ -45,8 +45,9 @@ public class FarmerListener implements Listener {
         if (!HARVEST_CROPS.contains(event.getBlock().getType())) return;
         AlphaPlayer alpha = AlphaPlayer.get(event.getPlayer().getUniqueId());
         if (alpha == null) return;
+        int level = alpha.getJobLevel(EJob.FARMER);
         try (var t = PerfTimer.start("FarmerListener.dropWithMultiplier")) {
-            JobUtils.dropWithMultiplier(event, JobUtils.getMultiplier(alpha.getJobLevel(EJob.FARMER)));
+            JobUtils.dropWithMultiplier(event, JobUtils.getMultiplier(EJob.FARMER, level));
         }
     }
 
@@ -59,6 +60,7 @@ public class FarmerListener implements Listener {
         if (killer == null) return;
         AlphaPlayer alpha = AlphaPlayer.get(killer.getUniqueId());
         if (alpha == null) return;
-        JobUtils.applyDropMultiplier(event.getDrops(), JobUtils.getMultiplier(alpha.getJobLevel(EJob.FARMER)));
+        int level = alpha.getJobLevel(EJob.FARMER);
+        JobUtils.applyDropMultiplier(event.getDrops(), JobUtils.getMultiplier(EJob.FARMER, level));
     }
 }

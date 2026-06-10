@@ -24,15 +24,18 @@ import java.util.Set;
  *
  * <ul>
  *   <li>Temps d'attente modulé par le niveau (2× plus long au niv.0, 4× plus rapide au niv.10).</li>
- *   <li>Chance de remplacer l'item pêché par une dirt (forte aux bas niveaux, 0 à partir du niv.7).</li>
- *   <li>Malus supplémentaire sur les trésors (livres enchantés, arcs, cannes…) jusqu'au niv.6.</li>
+ *   <li>Chance de remplacer l'item pêché par un matériau de {@code dirt-replacement-materials}
+ *       (forte aux bas niveaux, 0 à partir du niv.7).</li>
+ *   <li>Malus supplémentaire sur les trésors (livres enchantés, arcs, cannes…) jusqu'au niv.6 ;
+ *       remplacement par {@code treasure-replacement-materials}.</li>
  *   <li>Multiplicateur de quantité sur les items non remplacés.</li>
  * </ul>
  *
  * <p>Les effets aquatiques passifs (pression, vitesse, respiration) sont gérés par
  * {@link fr.miuby.survi.job.task.FishermanEffectsTask}.</p>
  *
- * <p>Tous les paramètres numériques sont lus depuis {@link JobsConfig} ({@code jobs.yml}).</p>
+ * <p>Tous les paramètres numériques et les listes de matériaux sont lus depuis
+ * {@link JobsConfig} ({@code jobs/fisherman.yml}).</p>
  */
 public class FishermanListener implements Listener {
 
@@ -79,15 +82,15 @@ public class FishermanListener implements Listener {
         ItemStack stack = caughtItem.getItemStack();
         JobsConfig.FishermanCfg cfg = JobsConfig.getInstance().getFisherman();
 
-        // Étape 1 : chance globale de remplacer tout item pêché par une dirt
+        // Étape 1 : chance globale de remplacer tout item pêché par un matériau de la liste
         if (RANDOM.nextDouble() < cfg.getDirtChance()[level]) {
-            caughtItem.setItemStack(new ItemStack(Material.DIRT));
+            caughtItem.setItemStack(new ItemStack(pickRandom(cfg.getDirtReplacementMaterials())));
             return;
         }
 
         // Étape 2 : malus supplémentaire si l'item est un trésor (livre enchanté, arc, canne, selle…)
         if (isTreasure(stack) && RANDOM.nextDouble() < cfg.getTreasurePenalty()[level]) {
-            caughtItem.setItemStack(new ItemStack(Material.DIRT));
+            caughtItem.setItemStack(new ItemStack(pickRandom(cfg.getTreasureReplacementMaterials())));
             return;
         }
 
@@ -111,5 +114,10 @@ public class FishermanListener implements Listener {
         if (!meta.getEnchants().isEmpty()) return true;
         if (meta instanceof EnchantmentStorageMeta esm) return !esm.getStoredEnchants().isEmpty();
         return false;
+    }
+
+    /** Tire un matériau aléatoire parmi le tableau fourni. */
+    private static Material pickRandom(Material[] materials) {
+        return materials[RANDOM.nextInt(materials.length)];
     }
 }

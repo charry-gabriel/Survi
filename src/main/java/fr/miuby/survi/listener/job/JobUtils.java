@@ -1,5 +1,6 @@
 package fr.miuby.survi.listener.job;
 
+import fr.miuby.survi.job.EJob;
 import fr.miuby.survi.job.config.JobsConfig;
 import org.bukkit.block.Block;
 import org.bukkit.event.block.BlockBreakEvent;
@@ -17,9 +18,18 @@ final class JobUtils {
 
     static final Random RANDOM = new Random();
 
-    /** Multiplicateur de drops pour un niveau donné, lu depuis {@link JobsConfig}. */
-    static double getMultiplier(int level) {
-        return JobsConfig.getInstance().getDropMultiplier()[level];
+    /**
+     * Multiplicateur de drops pour un niveau donné, lu depuis {@link JobsConfig}.
+     * Seuls MINER, LUMBERJACK et FARMER ont un drop-multiplier ; tout autre métier lève une exception.
+     */
+    static double getMultiplier(EJob job, int level) {
+        JobsConfig cfg = JobsConfig.getInstance();
+        return switch (job) {
+            case MINER      -> cfg.getMiner().getDropMultiplier()[level];
+            case LUMBERJACK -> cfg.getLumberjack().getDropMultiplier()[level];
+            case FARMER     -> cfg.getFarmer().getDropMultiplier()[level];
+            default -> throw new IllegalArgumentException("Pas de drop-multiplier pour le métier : " + job);
+        };
     }
 
     /**

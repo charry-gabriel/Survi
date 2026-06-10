@@ -37,7 +37,8 @@ public class MinerListener implements Listener {
         if (alpha == null) return;
 
         try (var t = PerfTimer.start("MinerListener.dropWithMultiplier")) {
-            JobUtils.dropWithMultiplier(event, JobUtils.getMultiplier(alpha.getJobLevel(EJob.MINER)));
+            int level = alpha.getJobLevel(EJob.MINER);
+            JobUtils.dropWithMultiplier(event, JobUtils.getMultiplier(EJob.MINER, level));
         }
     }
 }

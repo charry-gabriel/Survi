@@ -31,7 +31,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
  *   <li>Cultures plantées par un fermier (niv. 6-10) → croissance accélérée (tick(s) bonus).</li>
  * </ul>
  *
- * <p>Tous les paramètres numériques sont lus depuis {@link JobsConfig} ({@code jobs.yml}).</p>
+ * <p>Tous les paramètres numériques sont lus depuis {@link JobsConfig}.</p>
  */
 public class CropGrowthListener implements Listener {
 

@@ -1,0 +1,89 @@
+# ═══════════════════════════════════════════════════════════════════════════════
+#  Survi — Configuration du Bûcheron (LUMBERJACK)
+# ═══════════════════════════════════════════════════════════════════════════════
+# Tableaux de 11 entrées (index = niveau 0 à 10).
+
+# ─── Multiplicateur de drops ──────────────────────────────────────────────────
+# Appliqué aux bûches cassées par le Bûcheron.
+drop-multiplier:
+  - 0.20   # niveau  0
+  - 0.50   # niveau  1
+  - 0.80   # niveau  2
+  - 1.00   # niveau  3  — vanilla
+  - 1.10   # niveau  4
+  - 1.20   # niveau  5
+  - 1.30   # niveau  6
+  - 1.40   # niveau  7
+  - 1.50   # niveau  8
+  - 1.75   # niveau  9
+  - 2.00   # niveau 10
+
+# Probabilité d'obtenir du charbon de bois bonus en cassant un log
+charcoal-chance:
+  - 0.00   # niveau  0
+  - 0.00   # niveau  1
+  - 0.00   # niveau  2
+  - 0.15   # niveau  3
+  - 0.20   # niveau  4
+  - 0.25   # niveau  5
+  - 0.30   # niveau  6
+  - 0.35   # niveau  7
+  - 0.40   # niveau  8
+  - 0.45   # niveau  9
+  - 0.50   # niveau 10
+
+# Probabilité d'obtenir une pomme en cassant des feuilles de chêne/azalée
+apple-leaf-chance:
+  - 0.001  # niveau  0
+  - 0.002  # niveau  1
+  - 0.003  # niveau  2
+  - 0.005  # niveau  3
+  - 0.055  # niveau  4
+  - 0.085  # niveau  5
+  - 0.115  # niveau  6
+  - 0.155  # niveau  7
+  - 0.205  # niveau  8
+  - 0.275  # niveau  9
+  - 0.355  # niveau 10
+
+# Multiplicateur appliqué aux dégâts de feu reçus (1.0 = vanilla, >1 = plus de dégâts)
+fire-damage-multiplier:
+  - 2.00   # niveau  0
+  - 1.75   # niveau  1
+  - 1.50   # niveau  2
+  - 1.25   # niveau  3
+  - 1.10   # niveau  4
+  - 1.00   # niveau  5  — vanilla
+  - 1.00   # niveau  6
+  - 1.00   # niveau  7
+  - 1.00   # niveau  8
+  - 1.00   # niveau  9
+  - 1.00   # niveau 10
+
+# Logs supplémentaires abattus par le tree-feller (0 = désactivé)
+tree-feller-extra-logs:
+  - 0   # niveau  0
+  - 0   # niveau  1
+  - 0   # niveau  2
+  - 0   # niveau  3
+  - 0   # niveau  4
+  - 1   # niveau  5
+  - 2   # niveau  6
+  - 3   # niveau  7
+  - 4   # niveau  8
+  - 5   # niveau  9
+  - 6   # niveau 10
+
+# Durée en ticks de la résistance au feu accordée lors d'une ignition (0 = aucune résistance)
+fire-resistance-ticks:
+  - 0    # niveau  0
+  - 0    # niveau  1
+  - 0    # niveau  2
+  - 0    # niveau  3
+  - 0    # niveau  4
+  - 0    # niveau  5
+  - 0    # niveau  6
+  - 60   # niveau  7
+  - 100  # niveau  8
+  - 160  # niveau  9
+  - 240  # niveau 10

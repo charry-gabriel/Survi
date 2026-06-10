@@ -1,0 +1,19 @@
+# ═══════════════════════════════════════════════════════════════════════════════
+#  Survi — Configuration du Mineur (MINER)
+# ═══════════════════════════════════════════════════════════════════════════════
+# Tableau de 11 entrées (index = niveau 0 à 10).
+
+# ─── Multiplicateur de drops ──────────────────────────────────────────────────
+# Appliqué aux minerais (coal_ore, iron_ore, gold_ore, diamond_ore…) cassés par le Mineur.
+drop-multiplier:
+  - 0.20   # niveau  0
+  - 0.50   # niveau  1
+  - 0.80   # niveau  2
+  - 1.00   # niveau  3  — vanilla
+  - 1.10   # niveau  4
+  - 1.20   # niveau  5
+  - 1.30   # niveau  6
+  - 1.40   # niveau  7
+  - 1.50   # niveau  8
+  - 1.75   # niveau  9
+  - 2.00   # niveau 10

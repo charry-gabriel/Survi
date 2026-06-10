@@ -3,7 +3,6 @@ package fr.miuby.survi.listener.job;
 import fr.miuby.lib.MiubyLib;
 import fr.miuby.survi.job.EJob;
 import fr.miuby.survi.job.config.JobsConfig;
-import fr.miuby.survi.listener.PlacedBlockTracker;
 import fr.miuby.survi.player.AlphaPlayer;
 import fr.miuby.survi.system.perf.PerfTimer;
 import org.bukkit.Location;
@@ -29,15 +28,9 @@ import java.util.*;
  * multiplicateur de bûches, charbon bonus, pommes (courbe complète),
  * auto-replant (niv.5+), tree feller, dégâts de feu amplifiés et résistance au feu.
  *
- * <p>Tous les paramètres numériques sont lus depuis {@link JobsConfig} ({@code jobs.yml}).</p>
+ * <p>Tous les paramètres numériques sont lus depuis {@link JobsConfig} ({@code jobs/lumberjack.yml}).</p>
  */
 public class LumberjackListener implements Listener {
-
-    private final PlacedBlockTracker placedBlockTracker;
-
-    public LumberjackListener(PlacedBlockTracker placedBlockTracker) {
-        this.placedBlockTracker = placedBlockTracker;
-    }
 
     // ─── Blocs ───────────────────────────────────────────────────────────────────
 
@@ -104,7 +97,7 @@ public class LumberjackListener implements Listener {
         if (LOG_BLOCKS.contains(type)) {
             int level = alpha.getJobLevel(EJob.LUMBERJACK);
             try (var t = PerfTimer.start("LumberjackListener.dropWithMultiplier")) {
-                JobUtils.dropWithMultiplier(event, JobUtils.getMultiplier(level));
+                JobUtils.dropWithMultiplier(event, JobUtils.getMultiplier(EJob.LUMBERJACK, level));
             }
             if (lj.getCharcoalChance()[level] > 0) dropBonusCharcoal(block, level, lj);
             if (level >= 5) {
@@ -112,7 +105,7 @@ public class LumberjackListener implements Listener {
                 if (lj.getTreeFellerExtraLogs()[level] > 0
                         && AXE_MATERIALS.contains(player.getInventory().getItemInMainHand().getType())) {
                     try (var t = PerfTimer.start("LumberjackListener.treeFeller")) {
-                        treeFeller(block, player, level, lj, placedBlockTracker);
+                        treeFeller(block, player, level, lj);
                     }
                 }
             }
@@ -160,11 +153,11 @@ public class LumberjackListener implements Listener {
 
     // ─── Tree feller (BFS orthogonal) ────────────────────────────────────────────
 
-    private static void treeFeller(Block origin, Player player, int level, JobsConfig.LumberjackCfg lj, PlacedBlockTracker placedBlockTracker) {
+    private static void treeFeller(Block origin, Player player, int level, JobsConfig.LumberjackCfg lj) {
         int extra = lj.getTreeFellerExtraLogs()[level];
         if (extra <= 0) return;
         ItemStack tool = player.getInventory().getItemInMainHand();
-        double mult = JobUtils.getMultiplier(level);
+        double mult = JobUtils.getMultiplier(EJob.LUMBERJACK, level);
 
         List<Block> toBreak = new ArrayList<>(extra);
         Set<Block> visited = new HashSet<>();
@@ -179,7 +172,6 @@ public class LumberjackListener implements Listener {
                 Block nb = cur.getRelative(face);
                 if (!visited.add(nb)) continue;
                 if (!LOG_BLOCKS.contains(nb.getType())) continue;
-                if (placedBlockTracker.isPlaced(nb)) continue;
                 toBreak.add(nb);
                 if (toBreak.size() >= extra) break outer;
                 queue.add(nb);

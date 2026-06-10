@@ -31,7 +31,7 @@ import java.util.Map;
  * table d'enchantement, enclume (cap XP + bypass Too Expensive),
  * durabilité accélérée/réduite, réparation XP mending-like.
  *
- * <p>Tous les paramètres numériques sont lus depuis {@link JobsConfig} ({@code jobs.yml}).</p>
+ * <p>Tous les paramètres numériques sont lus depuis {@link JobsConfig}.</p>
  */
 public class EnchanterListener implements Listener {
 

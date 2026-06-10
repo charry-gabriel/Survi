@@ -14,17 +14,17 @@ import java.util.Map;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * Valide la structure et les plages de valeurs de {@code src/main/resources/jobs.yml}
+ * Valide la structure et les plages de valeurs des fichiers {@code jobs/*.yml}
  * sans runtime Bukkit.
  *
  * <h3>Ce qui est vérifié</h3>
  * <ul>
- *   <li>Présence du fichier et des sections racine.</li>
+ *   <li>Présence des 6 fichiers et de leurs schémas JSON associés.</li>
  *   <li>Chaque tableau a exactement 11 entrées (niveaux 0 à 10).</li>
  *   <li>Les tableaux de probabilités sont dans [0, 1].</li>
  *   <li>Les multiplicateurs et durées sont ≥ 0.</li>
+ *   <li>Les listes de matériaux sont non-vides et contiennent des chaînes non-vides.</li>
  *   <li>Les scalaires critiques (vanilla-min/max-wait, effect-duration) sont > 0.</li>
- *   <li>Le schéma JSON est présent.</li>
  * </ul>
  */
 @SuppressWarnings("unchecked")
@@ -32,97 +32,81 @@ class JobsConfigTest {
 
     private static final int LEVEL_COUNT = 11;
 
-    private static Map<String, Object> root;
+    private static Map<String, Object> minerRoot;
+    private static Map<String, Object> lumberjackRoot;
+    private static Map<String, Object> farmerRoot;
+    private static Map<String, Object> enchanterRoot;
+    private static Map<String, Object> fishermanRoot;
+    private static Map<String, Object> explorerRoot;
 
     @BeforeAll
-    static void loadYaml() throws IOException {
-        File file = new File("src/main/resources/jobs.yml");
-        assertTrue(file.exists(), "jobs.yml introuvable dans src/main/resources/");
+    static void loadYamls() throws IOException {
+        minerRoot      = loadYamlFile("src/main/resources/jobs/miner.yml");
+        lumberjackRoot = loadYamlFile("src/main/resources/jobs/lumberjack.yml");
+        farmerRoot     = loadYamlFile("src/main/resources/jobs/farmer.yml");
+        enchanterRoot  = loadYamlFile("src/main/resources/jobs/enchanter.yml");
+        fishermanRoot  = loadYamlFile("src/main/resources/jobs/fisherman.yml");
+        explorerRoot   = loadYamlFile("src/main/resources/jobs/explorer.yml");
+    }
+
+    private static Map<String, Object> loadYamlFile(String path) throws IOException {
+        File file = new File(path);
+        assertTrue(file.exists(), path + " introuvable dans src/main/resources/jobs/");
         try (FileInputStream fis = new FileInputStream(file)) {
-            root = (Map<String, Object>) new Yaml(new LoaderOptions()).load(fis);
+            Map<String, Object> m = (Map<String, Object>) new Yaml(new LoaderOptions()).load(fis);
+            assertNotNull(m, path + " est vide ou mal formé");
+            return m;
         }
-        assertNotNull(root, "jobs.yml est vide ou mal formé");
     }
 
-    // ─── Fichiers requis ─────────────────────────────────────────────────────────
+    // ─── Schémas requis ──────────────────────────────────────────────────────────
 
     @Test
-    void schemaExists() {
-        assertTrue(new File("src/main/resources/schema/jobs-schema.json").exists(),
-                "jobs-schema.json introuvable dans src/main/resources/schema/");
+    void schemasExist() {
+        for (String name : List.of("miner", "lumberjack", "farmer", "enchanter", "fisherman", "explorer")) {
+            assertTrue(new File("src/main/resources/schema/jobs/" + name + "-schema.json").exists(),
+                    "schema/jobs/" + name + "-schema.json introuvable");
+        }
     }
 
-    // ─── drop-multiplier ─────────────────────────────────────────────────────────
+    // ─── miner ───────────────────────────────────────────────────────────────────
 
     @Test
-    void dropMultiplierValid() {
-        List<Number> list = getNumberList("drop-multiplier");
-        assertSize(list, "drop-multiplier");
-        for (int i = 0; i < LEVEL_COUNT; i++) {
-            double v = list.get(i).doubleValue();
-            assertTrue(v >= 0, "drop-multiplier[" + i + "] doit être ≥ 0, valeur : " + v);
-        }
+    void minerDropMultiplierValid() {
+        assertNonNegativeDoubleArray(minerRoot, "drop-multiplier");
     }
 
     // ─── lumberjack ──────────────────────────────────────────────────────────────
 
-    @Test
-    void lumberjackCharcoalChanceValid() {
-        assertProbabilityArray(getSection("lumberjack"), "charcoal-chance");
-    }
-
-    @Test
-    void lumberjackAppleLeafChanceValid() {
-        assertProbabilityArray(getSection("lumberjack"), "apple-leaf-chance");
-    }
-
-    @Test
-    void lumberjackFireDamageMultiplierValid() {
-        assertNonNegativeDoubleArray(getSection("lumberjack"), "fire-damage-multiplier");
-    }
-
-    @Test
-    void lumberjackTreeFellerExtraLogsValid() {
-        assertNonNegativeIntArray(getSection("lumberjack"), "tree-feller-extra-logs");
-    }
-
-    @Test
-    void lumberjackFireResistanceTicksValid() {
-        assertNonNegativeIntArray(getSection("lumberjack"), "fire-resistance-ticks");
-    }
+    @Test void lumberjackDropMultiplierValid()       { assertNonNegativeDoubleArray(lumberjackRoot, "drop-multiplier"); }
+    @Test void lumberjackCharcoalChanceValid()       { assertProbabilityArray(lumberjackRoot, "charcoal-chance"); }
+    @Test void lumberjackAppleLeafChanceValid()      { assertProbabilityArray(lumberjackRoot, "apple-leaf-chance"); }
+    @Test void lumberjackFireDamageMultiplierValid() { assertNonNegativeDoubleArray(lumberjackRoot, "fire-damage-multiplier"); }
+    @Test void lumberjackTreeFellerExtraLogsValid()  { assertNonNegativeIntArray(lumberjackRoot, "tree-feller-extra-logs"); }
+    @Test void lumberjackFireResistanceTicksValid()  { assertNonNegativeIntArray(lumberjackRoot, "fire-resistance-ticks"); }
 
     // ─── farmer ──────────────────────────────────────────────────────────────────
 
-    @Test
-    void farmerCropGrowthAllowChanceValid() {
-        assertProbabilityArray(getSection("farmer"), "crop-growth-allow-chance");
-    }
-
-    @Test
-    void farmerCropExtraGrowthChanceValid() {
-        assertProbabilityArray(getSection("farmer"), "crop-extra-growth-chance");
-    }
+    @Test void farmerDropMultiplierValid()        { assertNonNegativeDoubleArray(farmerRoot, "drop-multiplier"); }
+    @Test void farmerCropGrowthAllowChanceValid() { assertProbabilityArray(farmerRoot, "crop-growth-allow-chance"); }
+    @Test void farmerCropExtraGrowthChanceValid() { assertProbabilityArray(farmerRoot, "crop-extra-growth-chance"); }
 
     @Test
     void farmerCropThirdTickChanceValid() {
-        Map<String, Object> farmer = getSection("farmer");
-        assertTrue(farmer.containsKey("crop-third-tick-chance-at-max"),
-                "farmer.crop-third-tick-chance-at-max manquant");
-        double v = ((Number) farmer.get("crop-third-tick-chance-at-max")).doubleValue();
+        assertTrue(farmerRoot.containsKey("crop-third-tick-chance-at-max"),
+                "farmer: crop-third-tick-chance-at-max manquant");
+        double v = ((Number) farmerRoot.get("crop-third-tick-chance-at-max")).doubleValue();
         assertTrue(v >= 0 && v <= 1,
                 "farmer.crop-third-tick-chance-at-max doit être dans [0,1], valeur : " + v);
     }
 
     // ─── enchanter ───────────────────────────────────────────────────────────────
 
-    @Test
-    void enchanterDurabilityLossMultiplierValid() {
-        assertNonNegativeDoubleArray(getSection("enchanter"), "durability-loss-multiplier");
-    }
+    @Test void enchanterDurabilityLossMultiplierValid() { assertNonNegativeDoubleArray(enchanterRoot, "durability-loss-multiplier"); }
 
     @Test
     void enchanterAnvilMaxXpCostValid() {
-        List<Number> list = getNumberList(getSection("enchanter"), "anvil-max-xp-cost");
+        List<Number> list = getNumberList(enchanterRoot, "anvil-max-xp-cost");
         assertSize(list, "enchanter.anvil-max-xp-cost");
         for (int i = 0; i < LEVEL_COUNT; i++) {
             int v = list.get(i).intValue();
@@ -130,103 +114,74 @@ class JobsConfigTest {
         }
     }
 
-    @Test
-    void enchanterRepairPerXpValid() {
-        assertNonNegativeIntArray(getSection("enchanter"), "repair-per-xp");
-    }
+    @Test void enchanterRepairPerXpValid() { assertNonNegativeIntArray(enchanterRoot, "repair-per-xp"); }
 
     // ─── fisherman ───────────────────────────────────────────────────────────────
 
     @Test
     void fishermanVanillaWaitTicksValid() {
-        Map<String, Object> fish = getSection("fisherman");
-        int min = ((Number) fish.get("vanilla-min-wait-ticks")).intValue();
-        int max = ((Number) fish.get("vanilla-max-wait-ticks")).intValue();
+        int min = ((Number) fishermanRoot.get("vanilla-min-wait-ticks")).intValue();
+        int max = ((Number) fishermanRoot.get("vanilla-max-wait-ticks")).intValue();
         assertTrue(min > 0, "fisherman.vanilla-min-wait-ticks doit être > 0");
         assertTrue(max > min, "fisherman.vanilla-max-wait-ticks doit être > vanilla-min-wait-ticks");
     }
 
+    @Test void fishermanFishingWaitMultiplierValid() { assertNonNegativeDoubleArray(fishermanRoot, "fishing-wait-multiplier"); }
+    @Test void fishermanLootMultiplierValid()        { assertNonNegativeDoubleArray(fishermanRoot, "loot-multiplier"); }
+    @Test void fishermanDirtChanceValid()            { assertProbabilityArray(fishermanRoot, "dirt-chance"); }
+    @Test void fishermanTreasurePenaltyValid()       { assertProbabilityArray(fishermanRoot, "treasure-penalty"); }
+
     @Test
-    void fishermanFishingWaitMultiplierValid() {
-        assertNonNegativeDoubleArray(getSection("fisherman"), "fishing-wait-multiplier");
+    void fishermanDirtReplacementMaterialsValid() {
+        assertMaterialList(fishermanRoot, "dirt-replacement-materials");
     }
 
     @Test
-    void fishermanLootMultiplierValid() {
-        assertNonNegativeDoubleArray(getSection("fisherman"), "loot-multiplier");
-    }
-
-    @Test
-    void fishermanDirtChanceValid() {
-        assertProbabilityArray(getSection("fisherman"), "dirt-chance");
-    }
-
-    @Test
-    void fishermanTreasurePenaltyValid() {
-        assertProbabilityArray(getSection("fisherman"), "treasure-penalty");
+    void fishermanTreasureReplacementMaterialsValid() {
+        assertMaterialList(fishermanRoot, "treasure-replacement-materials");
     }
 
     @Test
     void fishermanPressureSafeDepthValid() {
-        List<Number> list = getNumberList(getSection("fisherman"), "pressure-safe-depth");
+        List<Number> list = getNumberList(fishermanRoot, "pressure-safe-depth");
         assertSize(list, "fisherman.pressure-safe-depth");
         for (int i = 0; i < LEVEL_COUNT; i++) {
             int v = list.get(i).intValue();
-            assertTrue(v >= -1, "fisherman.pressure-safe-depth[" + i + "] doit être ≥ -1, valeur : " + v);
+            // -1 = aucun dégât ; valeurs très négatives (ex : -500 au niv. 0) = dégâts permanents ; ≥ 0 = profondeur sûre en blocs
+            assertTrue(v >= -500, "fisherman.pressure-safe-depth[" + i + "] valeur invalide : " + v);
         }
     }
 
     @Test
     void fishermanPressureDamageValid() {
-        Map<String, Object> fish = getSection("fisherman");
-        double v = ((Number) fish.get("pressure-damage")).doubleValue();
+        double v = ((Number) fishermanRoot.get("pressure-damage")).doubleValue();
         assertTrue(v >= 0, "fisherman.pressure-damage doit être ≥ 0, valeur : " + v);
     }
 
-    @Test
-    void fishermanSwimSpeedAmplifierValid() {
-        assertNonNegativeIntArray(getSection("fisherman"), "swim-speed-amplifier");
-    }
-
-    @Test
-    void fishermanUnderwaterHasteAmplifierValid() {
-        assertNonNegativeIntArray(getSection("fisherman"), "underwater-haste-amplifier");
-    }
+    @Test void fishermanSwimSpeedAmplifierValid()       { assertNonNegativeIntArray(fishermanRoot, "swim-speed-amplifier"); }
+    @Test void fishermanUnderwaterHasteAmplifierValid() { assertNonNegativeIntArray(fishermanRoot, "underwater-haste-amplifier"); }
 
     @Test
     void fishermanEffectDurationTicksValid() {
-        int v = ((Number) getSection("fisherman").get("effect-duration-ticks")).intValue();
+        int v = ((Number) fishermanRoot.get("effect-duration-ticks")).intValue();
         assertTrue(v > 0, "fisherman.effect-duration-ticks doit être > 0, valeur : " + v);
     }
 
-    // ─── explorer ──────────────────────────────────────────────────────────────
+    // ─── explorer ────────────────────────────────────────────────────────────────
 
     @Test
     void explorerSafeFallDistanceValid() {
-        List<Number> list = getNumberList(getSection("explorer"), "safe-fall-distance");
+        List<Number> list = getNumberList(explorerRoot, "safe-fall-distance");
         assertSize(list, "explorer.safe-fall-distance");
-        // Chaque niveau doit être > le précédent (progression croissante attendue)
         for (int i = 1; i < LEVEL_COUNT; i++) {
             double prev = list.get(i - 1).doubleValue();
             double curr = list.get(i).doubleValue();
             assertTrue(curr >= prev,
-                    "explorer.safe-fall-distance[" + i + "] (" + curr +
-                            ") ne doit pas être inférieur à l'index précédent (" + prev + ")");
+                    "explorer.safe-fall-distance[" + i + "] (" + curr + ") ne doit pas être inférieur à l'index précédent (" + prev + ")");
         }
     }
 
     // ─── Helpers ─────────────────────────────────────────────────────────────────
-
-    private Map<String, Object> getSection(String key) {
-        Object val = root.get(key);
-        assertNotNull(val, "Section racine manquante : " + key);
-        assertInstanceOf(Map.class, val, "La section '" + key + "' n'est pas un objet YAML");
-        return (Map<String, Object>) val;
-    }
-
-    private List<Number> getNumberList(String key) {
-        return getNumberList(root, key);
-    }
 
     private List<Number> getNumberList(Map<String, Object> section, String key) {
         Object val = section.get(key);
@@ -265,6 +220,24 @@ class JobsConfigTest {
         for (int i = 0; i < LEVEL_COUNT; i++) {
             int v = list.get(i).intValue();
             assertTrue(v >= 0, key + "[" + i + "] doit être ≥ 0, valeur : " + v);
+        }
+    }
+
+    /**
+     * Vérifie qu'une clé est une liste non-vide de chaînes non-vides (noms de Material Minecraft).
+     * La validation que le nom correspond à un Material existant est faite à l'exécution par JobsLoader
+     * (nécessite le runtime Bukkit, non disponible en test unitaire).
+     */
+    private void assertMaterialList(Map<String, Object> section, String key) {
+        Object val = section.get(key);
+        assertNotNull(val, "Clé manquante : " + key);
+        assertInstanceOf(List.class, val, "'" + key + "' n'est pas une liste");
+        List<?> list = (List<?>) val;
+        assertFalse(list.isEmpty(), key + " ne peut pas être vide (au moins 1 matériau requis)");
+        for (int i = 0; i < list.size(); i++) {
+            Object o = list.get(i);
+            assertInstanceOf(String.class, o, key + "[" + i + "] doit être une chaîne (nom de Material Minecraft)");
+            assertFalse(((String) o).isBlank(), key + "[" + i + "] ne peut pas être vide");
         }
     }
 }

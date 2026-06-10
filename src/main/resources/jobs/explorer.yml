@@ -1,0 +1,19 @@
+# ═══════════════════════════════════════════════════════════════════════════════
+#  Survi — Configuration de l'Explorateur (EXPLORER)
+# ═══════════════════════════════════════════════════════════════════════════════
+# Tableau de 11 entrées (index = niveau 0 à 10).
+
+# Distance de chute sécurisée en blocs par niveau (aucun dégât en dessous de cette hauteur).
+# La base vanilla est 3.0 blocs. Le modifier ADD_NUMBER appliqué = valeur - 3.0.
+safe-fall-distance:
+  - 0.7    # niveau  0
+  - 1.7    # niveau  1
+  - 2.7    # niveau  2
+  - 3.7    # niveau  3
+  - 4.7    # niveau  4
+  - 5.7    # niveau  5
+  - 6.7    # niveau  6
+  - 7.7    # niveau  7
+  - 8.7    # niveau  8
+  - 9.7    # niveau  9
+  - 10.7   # niveau 10

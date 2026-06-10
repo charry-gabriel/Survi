@@ -45,7 +45,7 @@ public class Survi extends JavaPlugin {
         pluginManager.registerEvents(new VillagerListener(), this);
         pluginManager.registerEvents(new GraveListener(), this);
         pluginManager.registerEvents(new MinerListener(), this);
-        pluginManager.registerEvents(new LumberjackListener(placedBlockTracker), this);
+        pluginManager.registerEvents(new LumberjackListener(), this);
         pluginManager.registerEvents(new FarmerListener(), this);
         pluginManager.registerEvents(new EnchanterListener(), this);
         pluginManager.registerEvents(new JobLevelUpListener(), this);
@@ -100,7 +100,7 @@ public class Survi extends JavaPlugin {
         MLResourceManager.deployFolder(this, "growth_items");
         MLResourceManager.deployFolder(this, "quests");
         MLResourceManager.deployFolder(this, "growth_items");
-        MLResourceManager.deploy(this, "jobs.yml");
+        MLResourceManager.deployFolder(this, "jobs");
         MLResourceManager.deploy(this, "config.yml");
         MLResourceManager.deploy(this, "global_quests.yml");
         MLResourceManager.deploy(this, "recipes.yml");

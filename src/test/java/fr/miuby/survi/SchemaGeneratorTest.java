@@ -547,12 +547,27 @@ class SchemaGeneratorTest {
     // ─── Jobs Schema ─────────────────────────────────────────────────────────────
 
     /**
-     * Vérifie que {@code jobs-schema.json} est présent.
-     * Le schéma des jobs n'a pas de dépendances sur des enums externes (Material, EntityType, EJob) :
-     * ses contraintes sont purement numériques et ne nécessitent pas de régénération automatique.
+     * Met à jour les schémas {@code schema/jobs/*.json} :
+     * <ul>
+     *   <li>Vérifie que les 6 fichiers de schéma existent.</li>
+     *   <li>Met à jour l'enum {@code material} dans {@code fisherman-schema.json}
+     *       (utilisé par {@code dirt-replacement-materials} et {@code treasure-replacement-materials}).</li>
+     * </ul>
      */
     private void updateJobsSchema() throws IOException {
-        Path path = Paths.get("src/main/resources/schema/jobs-schema.json");
-        Assertions.assertTrue(Files.exists(path), "jobs-schema.json introuvable dans src/main/resources/schema/");
+        // Mise à jour de l'enum Material dans fisherman-schema.json
+        Path fishermanPath = Paths.get("src/main/resources/schema/jobs/fisherman-schema.json");
+        if (Files.exists(fishermanPath)) {
+            String content = Files.readString(fishermanPath);
+            content = replaceEnum(content, "material", getMaterialNames());
+            Files.writeString(fishermanPath, content);
+        }
+
+        // Vérification de la présence de tous les schémas
+        for (String name : List.of("miner", "lumberjack", "farmer", "enchanter", "fisherman", "explorer")) {
+            Path schemaPath = Paths.get("src/main/resources/schema/jobs/" + name + "-schema.json");
+            Assertions.assertTrue(Files.exists(schemaPath),
+                    "schema/jobs/" + name + "-schema.json introuvable dans src/main/resources/schema/jobs/");
+        }
     }
 }
