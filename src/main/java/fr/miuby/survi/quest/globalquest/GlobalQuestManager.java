@@ -169,7 +169,8 @@ public class GlobalQuestManager extends AbstractQuestManager<GlobalQuest> {
         endTime     = 0L;
         contributions.clear();
 
-        broadcastQuestFinished(quest, snapshot);
+        Component announcement = buildQuestFinishedComponent(quest, snapshot);
+        broadcastQuestFinished(announcement);
         GameManager.getInstance().getGlobalQuestBossBarService().onQuestFinished(quest);
 
         AlphaPlayerFactory factory = GameManager.getInstance().getAlphaPlayerFactory();
@@ -189,8 +190,13 @@ public class GlobalQuestManager extends AbstractQuestManager<GlobalQuest> {
                 }
             }
 
-            if (!deferred.isEmpty()) offlineNotif.queueQuestReward(entry.getKey(), deferred, buildRewardMessage(quest));
-            if (online) p.sendMessage(buildRewardMessage(quest));
+            if (online) {
+                p.sendMessage(buildRewardMessage(quest));
+            } else {
+                // Le joueur hors ligne reçoit à la reconnexion l'annonce du classement + ses récompenses
+                Component offlineMsg = announcement.append(buildRewardMessage(quest));
+                offlineNotif.queueQuestReward(entry.getKey(), deferred, offlineMsg);
+            }
 
             // Historique persistant
             GameManager.getInstance().getDatabase().questHistory().insert(
@@ -265,7 +271,14 @@ public class GlobalQuestManager extends AbstractQuestManager<GlobalQuest> {
         }
     }
 
-    private void broadcastQuestFinished(GlobalQuest quest, Map<UUID, Integer> snapshot) {
+    private void broadcastQuestFinished(Component announcement) {
+        for (Player p : Bukkit.getOnlinePlayers()) {
+            p.sendMessage(announcement);
+            SoundService.play(p, ESound.GLOBAL_QUEST_COMPLETE);
+        }
+    }
+
+    private Component buildQuestFinishedComponent(GlobalQuest quest, Map<UUID, Integer> snapshot) {
         int participantCount  = snapshot.size();
         int totalContribution = snapshot.values().stream().mapToInt(Integer::intValue).sum();
 
@@ -302,14 +315,9 @@ public class GlobalQuestManager extends AbstractQuestManager<GlobalQuest> {
             }
         }
 
-        msg = msg.appendNewline()
+        return msg.appendNewline()
                 .append(Component.text("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━", NamedTextColor.GREEN))
                 .appendNewline();
-
-        for (Player p : Bukkit.getOnlinePlayers()) {
-            p.sendMessage(msg);
-            SoundService.play(p, ESound.GLOBAL_QUEST_COMPLETE);
-        }
     }
 
     private Component buildRewardMessage(GlobalQuest quest) {

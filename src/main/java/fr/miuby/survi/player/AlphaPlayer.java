@@ -115,11 +115,6 @@ public class AlphaPlayer extends MLPlayer implements Serializable {
                 .orElse(null);
     }
 
-    /** @deprecated Remplacé par {@link #countActiveUnclaimedQuests()} — conservé pour compatibilité interne. */
-    public int countTodayQuests() {
-        return countActiveUnclaimedQuests();
-    }
-
     /** Nombre de quêtes actives non encore réclamées (en cours ou terminées-non-réclamées). */
     public int countActiveUnclaimedQuests() {
         return (int) activeQuests.stream().filter(q -> !q.isClaimed()).count();
