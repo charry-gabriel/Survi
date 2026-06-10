@@ -3,6 +3,7 @@ package fr.miuby.survi.listener.job;
 import fr.miuby.lib.MiubyLib;
 import fr.miuby.survi.job.EJob;
 import fr.miuby.survi.job.config.JobsConfig;
+import fr.miuby.survi.listener.PlacedBlockTracker;
 import fr.miuby.survi.player.AlphaPlayer;
 import fr.miuby.survi.system.perf.PerfTimer;
 import org.bukkit.Location;
@@ -31,6 +32,12 @@ import java.util.*;
  * <p>Tous les paramètres numériques sont lus depuis {@link JobsConfig} ({@code jobs.yml}).</p>
  */
 public class LumberjackListener implements Listener {
+
+    private final PlacedBlockTracker placedBlockTracker;
+
+    public LumberjackListener(PlacedBlockTracker placedBlockTracker) {
+        this.placedBlockTracker = placedBlockTracker;
+    }
 
     // ─── Blocs ───────────────────────────────────────────────────────────────────
 
@@ -105,7 +112,7 @@ public class LumberjackListener implements Listener {
                 if (lj.getTreeFellerExtraLogs()[level] > 0
                         && AXE_MATERIALS.contains(player.getInventory().getItemInMainHand().getType())) {
                     try (var t = PerfTimer.start("LumberjackListener.treeFeller")) {
-                        treeFeller(block, player, level, lj);
+                        treeFeller(block, player, level, lj, placedBlockTracker);
                     }
                 }
             }
@@ -153,7 +160,7 @@ public class LumberjackListener implements Listener {
 
     // ─── Tree feller (BFS orthogonal) ────────────────────────────────────────────
 
-    private static void treeFeller(Block origin, Player player, int level, JobsConfig.LumberjackCfg lj) {
+    private static void treeFeller(Block origin, Player player, int level, JobsConfig.LumberjackCfg lj, PlacedBlockTracker placedBlockTracker) {
         int extra = lj.getTreeFellerExtraLogs()[level];
         if (extra <= 0) return;
         ItemStack tool = player.getInventory().getItemInMainHand();
@@ -172,6 +179,7 @@ public class LumberjackListener implements Listener {
                 Block nb = cur.getRelative(face);
                 if (!visited.add(nb)) continue;
                 if (!LOG_BLOCKS.contains(nb.getType())) continue;
+                if (placedBlockTracker.isPlaced(nb)) continue;
                 toBreak.add(nb);
                 if (toBreak.size() >= extra) break outer;
                 queue.add(nb);
