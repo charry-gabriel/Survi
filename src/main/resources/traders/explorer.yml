@@ -1,0 +1,19 @@
+nameId: "Barman"
+displayName: "Marco Polo l'exploreur"
+type: SAVANNA
+profession: FLETCHER
+job: EXPLORER
+openMessage: >
+  Bonjour, bienvenue au bar du Merveilleux Royal Bling-Bling Sexy-Baka Palace-Hôtel.
+  A la carte, nous proposons différents cocktails élaborés avec amour, tendresse et voluptuosité:
+  le Sex On the Beach, le Porn Star Martini, et notre fameux Shooter Orgasm.
+  D'autre part, je peux aussi proposer un Spicy Sweet Dreams Ticket si vous le désirez !
+mainHandItem: POTION
+
+recipes:
+  - result:
+      customItem: SEX_ON_THE_BEACH
+    ingredient:
+      material: GOLD_INGOT
+      amount: 10
+    message: "Très bon choix! Rendez-vous à minuit au casino au premier étage pour y admirer ces délicieuses peintures. Les dés sont lancés, puisse le sort et votre rencontre vous être favorables: votre regard sur votre voisin de la chambre 32, ou votre impression sur votre voisine du 2ième risque d'être chamboulés …"
