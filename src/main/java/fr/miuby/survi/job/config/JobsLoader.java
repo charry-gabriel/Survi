@@ -111,11 +111,12 @@ public final class JobsLoader {
                 readInt(fishermanCfg, "pressure-safe-depth",
                         new int[]{-500, 0, 2, 5, 10, 20, 50, 80, 110, 150, -1}),
                 fishermanCfg.getDouble("pressure-damage", 1.0),
-                readInt(fishermanCfg, "swim-speed-amplifier",
-                        new int[]{0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1}),
-                readInt(fishermanCfg, "underwater-haste-amplifier",
-                        new int[]{0, 0, 0, 0, 0, 0, 0, 1, 1, 2, 2}),
-                fishermanCfg.getInt("effect-duration-ticks", 25)
+                readDouble(fishermanCfg, "underwater-speed-modifier",
+                        new double[]{0.000, 0.000, 0.000, 0.010, 0.050, 0.100, 0.200, 0.400, 0.700, 1.000, 1.500}),
+                readInt(fishermanCfg, "oxygen-bonus-ticks",
+                        new int[]{0, 60, 120, 200, 300, 480, 720, 1200, 2400, 4200, 7200}),
+                readDouble(fishermanCfg, "submerged-mining-speed-modifier",
+                        new double[]{0.000, 0.000, 0.000, 0.000, 0.000, 0.100, 0.200, 0.350, 0.500, 0.650, 0.800})
         );
 
         JobsConfig.ExplorerCfg explorer = new JobsConfig.ExplorerCfg(

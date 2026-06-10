@@ -1,5 +1,6 @@
 package fr.miuby.survi.listener;
 
+import fr.miuby.survi.GameManager;
 import fr.miuby.survi.job.EJob;
 import fr.miuby.survi.player.AlphaPlayer;
 import fr.miuby.survi.player.event.AlphaPlayerJobLevelUpEvent;
@@ -22,10 +23,15 @@ import java.time.Duration;
  *   <li><b>Effets visuels</b> — title + subtitle affiché au joueur concerné</li>
  *   <li><b>Son</b>           — joué pour tous les joueurs en ligne</li>
  *   <li><b>Annonce</b>       — broadcast global en chat</li>
+ *   <li><b>Attributs</b>     — mise à jour des attributs persistants du métier :
+ *     <ul>
+ *       <li>FISHERMAN → {@link fr.miuby.survi.job.FishermanAttributeService}
+ *           ({@code PLAYER_UNDERWATER_MOVEMENT}, {@code PLAYER_OXYGEN_BONUS})</li>
+ *       <li>EXPLORER  → {@link fr.miuby.survi.job.ExplorerAttributeService}
+ *           ({@code SAFE_FALL_DISTANCE})</li>
+ *     </ul>
+ *   </li>
  * </ul>
- *
- * Le message de progression (rep actuelle / seuil suivant) et le log restent gérés
- * dans {@code AlphaPlayer.updateJobLevel()}.
  */
 public class JobLevelUpListener implements Listener {
 
@@ -63,5 +69,16 @@ public class JobLevelUpListener implements Listener {
 
         SoundService.broadcast(ESound.JOB_LEVEL_UP);
         Bukkit.broadcast(broadcast);
+
+        // ── Mise à jour des attributs persistants par métier ─────────────────────
+        if (player == null || !player.isOnline()) return;
+
+        switch (job) {
+            case FISHERMAN -> GameManager.getInstance().getAlphaPlayerFactory()
+                    .getFishermanAttributeService().applyAttributes(alphaPlayer);
+            case EXPLORER  -> GameManager.getInstance().getAlphaPlayerFactory()
+                    .getExplorerAttributeService().applyAttributes(alphaPlayer);
+            default        -> { /* pas d'attribut persistant pour ce métier */ }
+        }
     }
 }

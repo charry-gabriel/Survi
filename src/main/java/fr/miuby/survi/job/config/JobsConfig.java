@@ -33,7 +33,7 @@ public final class JobsConfig {
 
     // ─── Par métier ──────────────────────────────────────────────────────────────
 
-    private final MinerCfg     miner;
+    private final MinerCfg      miner;
     private final LumberjackCfg lumberjack;
     private final FarmerCfg     farmer;
     private final EnchanterCfg  enchanter;
@@ -132,19 +132,32 @@ public final class JobsConfig {
         /** -1 = aucun dégât de pression à ce niveau. Valeurs très négatives = dégâts permanents. */
         private final int[]    pressureSafeDepth;
         private final double   pressureDamage;
-        /** Amplificateur DOLPHINS_GRACE par niveau (actif à partir du niveau 3). */
-        private final int[]    swimSpeedAmplifier;
-        /** Amplificateur HASTE par niveau (actif à partir du niveau 7). */
-        private final int[]    underwaterHasteAmplifier;
-        private final int      effectDurationTicks;
+        /**
+         * Modificateur ADD_NUMBER sur {@code WATER_MOVEMENT_EFFICIENCY} par niveau.
+         * Appliqué en permanence par {@link fr.miuby.survi.job.FishermanAttributeService}.
+         * Valeur 0.0 = vitesse vanilla.
+         */
+        private final double[] underwaterSpeedModifier;
+        /**
+         * Bonus de ticks de respiration (ADD_NUMBER sur {@code OXYGEN_BONUS}) par niveau.
+         * Appliqué en permanence par {@link fr.miuby.survi.job.FishermanAttributeService}.
+         * Base vanilla = 300 ticks (15 s). Valeur 0 = pas de bonus.
+         */
+        private final int[]    oxygenBonusTicks;
+        /**
+         * Modificateur ADD_NUMBER sur {@code SUBMERGED_MINING_SPEED} par niveau.
+         * Appliqué en permanence par {@link fr.miuby.survi.job.FishermanAttributeService}.
+         * Valeur 0.0 = vitesse vanilla (pénalité normale). Actif à partir du niveau 5.
+         */
+        private final double[] submergedMiningSpeedModifier;
 
         FishermanCfg(int vanillaMinWaitTicks, int vanillaMaxWaitTicks,
                      double[] fishingWaitMultiplier, double[] lootMultiplier,
                      double[] dirtChance, Material[] dirtReplacementMaterials,
                      double[] treasurePenalty, Material[] treasureReplacementMaterials,
                      int[] pressureSafeDepth, double pressureDamage,
-                     int[] swimSpeedAmplifier, int[] underwaterHasteAmplifier,
-                     int effectDurationTicks) {
+                     double[] underwaterSpeedModifier, int[] oxygenBonusTicks,
+                     double[] submergedMiningSpeedModifier) {
             this.vanillaMinWaitTicks          = vanillaMinWaitTicks;
             this.vanillaMaxWaitTicks          = vanillaMaxWaitTicks;
             this.fishingWaitMultiplier        = fishingWaitMultiplier;
@@ -155,9 +168,9 @@ public final class JobsConfig {
             this.treasureReplacementMaterials = treasureReplacementMaterials;
             this.pressureSafeDepth            = pressureSafeDepth;
             this.pressureDamage               = pressureDamage;
-            this.swimSpeedAmplifier           = swimSpeedAmplifier;
-            this.underwaterHasteAmplifier     = underwaterHasteAmplifier;
-            this.effectDurationTicks          = effectDurationTicks;
+            this.underwaterSpeedModifier      = underwaterSpeedModifier;
+            this.oxygenBonusTicks             = oxygenBonusTicks;
+            this.submergedMiningSpeedModifier = submergedMiningSpeedModifier;
         }
     }
 

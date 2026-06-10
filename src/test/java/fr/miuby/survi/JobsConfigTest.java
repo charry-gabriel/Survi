@@ -147,7 +147,6 @@ class JobsConfigTest {
         assertSize(list, "fisherman.pressure-safe-depth");
         for (int i = 0; i < LEVEL_COUNT; i++) {
             int v = list.get(i).intValue();
-            // -1 = aucun dégât ; valeurs très négatives (ex : -500 au niv. 0) = dégâts permanents ; ≥ 0 = profondeur sûre en blocs
             assertTrue(v >= -500, "fisherman.pressure-safe-depth[" + i + "] valeur invalide : " + v);
         }
     }
@@ -158,14 +157,29 @@ class JobsConfigTest {
         assertTrue(v >= 0, "fisherman.pressure-damage doit être ≥ 0, valeur : " + v);
     }
 
-    @Test void fishermanSwimSpeedAmplifierValid()       { assertNonNegativeIntArray(fishermanRoot, "swim-speed-amplifier"); }
-    @Test void fishermanUnderwaterHasteAmplifierValid() { assertNonNegativeIntArray(fishermanRoot, "underwater-haste-amplifier"); }
+    @Test
+    void fishermanUnderwaterSpeedModifierValid() {
+        assertNonNegativeDoubleArray(fishermanRoot, "underwater-speed-modifier");
+    }
 
     @Test
-    void fishermanEffectDurationTicksValid() {
-        int v = ((Number) fishermanRoot.get("effect-duration-ticks")).intValue();
-        assertTrue(v > 0, "fisherman.effect-duration-ticks doit être > 0, valeur : " + v);
+    void fishermanOxygenBonusTicksValid() {
+        List<Number> list = getNumberList(fishermanRoot, "oxygen-bonus-ticks");
+        assertSize(list, "fisherman.oxygen-bonus-ticks");
+        for (int i = 0; i < LEVEL_COUNT; i++) {
+            int v = list.get(i).intValue();
+            assertTrue(v >= -300, "fisherman.oxygen-bonus-ticks[" + i + "] doit être ≥ -300, valeur : " + v);
+        }
+        // Vérification de la progression croissante
+        for (int i = 1; i < LEVEL_COUNT; i++) {
+            int prev = list.get(i - 1).intValue();
+            int curr = list.get(i).intValue();
+            assertTrue(curr >= prev,
+                    "fisherman.oxygen-bonus-ticks[" + i + "] (" + curr + ") ne doit pas être inférieur à l'index précédent (" + prev + ")");
+        }
     }
+
+    @Test void fishermanSubmergedMiningSpeedModifierValid() { assertNonNegativeDoubleArray(fishermanRoot, "submerged-mining-speed-modifier"); }
 
     // ─── explorer ────────────────────────────────────────────────────────────────
 

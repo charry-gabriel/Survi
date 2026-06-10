@@ -82,7 +82,8 @@ Et si la modification touche un **enum du projet** (`EJob`, `ERole`, `EWorld`, `
 ## 0. Instructions pour Claude
 
 - Mettre à jour `AI_DEV.md` si une modification touche grandement un système existant (nouveau sous-système, changement de convention, nouveau pattern d'architecture).
-- **Longueur de ligne** : ne pas couper les lignes de code artificiellement. L'écran est large — une ligne peut facilement dépasser 120 caractères sans problème. Ne couper que si la ligne est vraiment trop longue pour être lisible d'un bloc (150+ caractères), pas par convention "80 colonnes".
+- **Longueur de ligne** : ne pas couper les lignes de code artificiellement. L'écran est large — une ligne peut facilement dépasser 150 caractères sans problème. Ne couper que si la ligne est vraiment trop longue pour être lisible d'un bloc (180+ caractères), pas par convention "80 colonnes".
+- **Commentaires** : uniquement si la logique est non évidente. Jamais de commentaire narratif : pas d'historique de bug, pas d'explication de pourquoi on n'a pas fait autrement, pas de "On ne fait plus X ici car...". Un commentaire décrit ce que fait le code, pas son contexte de modification.
 
 ---
 

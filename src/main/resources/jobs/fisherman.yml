@@ -38,29 +38,24 @@ loot-multiplier:
 # ─── Malus global ─────────────────────────────────────────────────────────────
 
 # Probabilité de remplacer l'item pêché par un matériau tiré de dirt-replacement-materials
-# (s'applique à tous les loots — disparaît complètement au niveau 7)
 dirt-chance:
-  - 0.70   # niveau  0  — 70 % de chance
+  - 0.70   # niveau  0
   - 0.56   # niveau  1
   - 0.43   # niveau  2
   - 0.30   # niveau  3
   - 0.18   # niveau  4
   - 0.08   # niveau  5
   - 0.02   # niveau  6
-  - 0.00   # niveau  7  — disparaît complètement
+  - 0.00   # niveau  7
   - 0.00   # niveau  8
   - 0.00   # niveau  9
   - 0.00   # niveau 10
 
-# Matériaux de remplacement tirés aléatoirement quand dirt-chance se déclenche.
-# Accepte n'importe quel nom de Material Minecraft (insensible à la casse). Au moins 1 entrée requise.
 dirt-replacement-materials:
   - DIRT
 
 # ─── Malus trésors ────────────────────────────────────────────────────────────
 
-# Malus supplémentaire sur les trésors (livres enchantés, arcs, cannes, selles, name tags…)
-# Appliqué uniquement si dirt-chance n'a pas déjà remplacé l'item. Retour à 0 au niveau 6.
 treasure-penalty:
   - 0.92   # niveau  0
   - 0.78   # niveau  1
@@ -74,16 +69,13 @@ treasure-penalty:
   - 0.00   # niveau  9
   - 0.00   # niveau 10
 
-# Matériaux de remplacement tirés aléatoirement quand treasure-penalty se déclenche.
-# Accepte n'importe quel nom de Material Minecraft (insensible à la casse). Au moins 1 entrée requise.
 treasure-replacement-materials:
   - DIRT
 
 # ─── Pression sous-marine ─────────────────────────────────────────────────────
 
 # Profondeur maximale sûre (blocs d'eau au-dessus du joueur) avant dégâts de pression.
-# -1 = aucun dégât de pression.
-# Valeurs très négatives (ex : -500) = dégâts permanents dès que le joueur touche l'eau.
+# -1 = aucun dégât. Valeurs très négatives = dégâts permanents dès que le joueur touche l'eau.
 pressure-safe-depth:
   - -500   # niveau  0  — tout contact avec l'eau cause des dégâts
   - 0      # niveau  1
@@ -97,39 +89,52 @@ pressure-safe-depth:
   - 150    # niveau  9
   - -1     # niveau 10  — aucun dégât de pression
 
-# Dégâts infligés par la pression sous-marine (en demi-cœurs, 1.0 = 0,5 cœur)
 pressure-damage: 1.0
 
-# ─── Effets aquatiques ────────────────────────────────────────────────────────
+# ─── Attributs aquatiques ─────────────────────────────────────────────────────
 
-# Amplificateur de vitesse de nage (DOLPHINS_GRACE) par niveau (actif à partir du niveau 3)
-swim-speed-amplifier:
-  - 0   # niveau  0
-  - 0   # niveau  1
-  - 0   # niveau  2
-  - 0   # niveau  3
-  - 0   # niveau  4
-  - 0   # niveau  5
-  - 1   # niveau  6
-  - 1   # niveau  7
-  - 1   # niveau  8
-  - 1   # niveau  9
-  - 1   # niveau 10
+# Modificateur ADD_NUMBER sur WATER_MOVEMENT_EFFICIENCY (vitesse de nage).
+# Valeur 0.0 = vitesse vanilla. Active à partir du niveau 3.
+underwater-speed-modifier:
+  - 0.000   # niveau  0
+  - 0.000   # niveau  1
+  - 0.000   # niveau  2
+  - 0.010   # niveau  3
+  - 0.050   # niveau  4
+  - 0.100   # niveau  5
+  - 0.200   # niveau  6
+  - 0.400   # niveau  7
+  - 0.700   # niveau  8
+  - 1.000   # niveau  9
+  - 1.500   # niveau 10
 
-# Amplificateur de hâte sous-marine (HASTE) par niveau (actif à partir du niveau 7)
-underwater-haste-amplifier:
-  - 0   # niveau  0
-  - 0   # niveau  1
-  - 0   # niveau  2
-  - 0   # niveau  3
-  - 0   # niveau  4
-  - 0   # niveau  5
-  - 0   # niveau  6
-  - 1   # niveau  7
-  - 1   # niveau  8
-  - 2   # niveau  9
-  - 2   # niveau 10
+# Bonus de ticks de respiration (ADD_NUMBER sur OXYGEN_BONUS).
+# Réserve d'air de base : 300 ticks (15 s). Valeur 0 = durée vanilla.
+oxygen-bonus-ticks:
+  - 0      # niveau  0  — 300 ticks = 15 s (vanilla, court)
+  - 60     # niveau  1  — 360 ticks = 18 s
+  - 120    # niveau  2  — 420 ticks = 21 s
+  - 200    # niveau  3  — 500 ticks = 25 s
+  - 300    # niveau  4  — 600 ticks = 30 s
+  - 480    # niveau  5  — 780 ticks = 39 s
+  - 720    # niveau  6  — 1020 ticks = 51 s
+  - 1200   # niveau  7  — 1500 ticks = 1 m 15 s
+  - 2400   # niveau  8  — 2700 ticks = 2 m 15 s
+  - 4200   # niveau  9  — 4500 ticks = 3 m 45 s
+  - 7200   # niveau 10  — 7500 ticks ≈ 6 m 15 s
 
-# Durée en ticks des effets de potion passifs sous l'eau
-# (légèrement > période de la tâche FishermanEffectsTask pour éviter le clignotement d'icône)
-effect-duration-ticks: 25
+# Modificateur ADD_NUMBER sur SUBMERGED_MINING_SPEED (vitesse de minage sous l'eau).
+# Remplace l'ancien effet de potion HASTE. Valeur 0.0 = vitesse vanilla (pénalité normale).
+# Active à partir du niveau 5.
+submerged-mining-speed-modifier:
+  - 0.000   # niveau  0
+  - 0.000   # niveau  1
+  - 0.000   # niveau  2
+  - 0.000   # niveau  3
+  - 0.000   # niveau  4
+  - 0.100   # niveau  5
+  - 0.200   # niveau  6
+  - 0.350   # niveau  7
+  - 0.500   # niveau  8
+  - 0.650   # niveau  9
+  - 0.800   # niveau 10

@@ -3,6 +3,8 @@ package fr.miuby.survi.player;
 import fr.miuby.lib.player.MLPlayerRegistry;
 import fr.miuby.survi.GameManager;
 import fr.miuby.survi.display.TutorialBookService;
+import fr.miuby.survi.job.ExplorerAttributeService;
+import fr.miuby.survi.job.FishermanAttributeService;
 import fr.miuby.survi.player.service.PlayerAttributeService;
 import fr.miuby.survi.player.service.PlayerPersistenceService;
 import fr.miuby.survi.player.service.PlayerEffectRestoreService;
@@ -22,6 +24,10 @@ public class AlphaPlayerFactory {
     private final PlayerPersistenceService persistenceService = new PlayerPersistenceService(GameManager.getInstance().getDatabase().players());
     @Getter
     private final PlayerEffectRestoreService effectRestoreService = new PlayerEffectRestoreService();
+    @Getter
+    private final FishermanAttributeService fishermanAttributeService = new FishermanAttributeService();
+    @Getter
+    private final ExplorerAttributeService explorerAttributeService = new ExplorerAttributeService();
 
     public AlphaPlayer get(UUID uuid) {
         return registry.get(uuid);
@@ -67,6 +73,8 @@ public class AlphaPlayerFactory {
         alphaPlayer.setPlayer(bukkitPlayer);
         alphaPlayer.onJoinServer();
         attributeService.applyAllRoleAttributes(alphaPlayer);
+        fishermanAttributeService.applyAttributes(alphaPlayer);
+        explorerAttributeService.applyAttributes(alphaPlayer);
     }
 
     public AlphaPlayer registerAlphaPlayer(UUID uuid, String pseudo, Role role) {

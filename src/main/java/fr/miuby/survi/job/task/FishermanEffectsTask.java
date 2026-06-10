@@ -5,8 +5,6 @@ import fr.miuby.survi.job.config.JobsConfig;
 import fr.miuby.survi.player.AlphaPlayer;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
-import org.bukkit.potion.PotionEffect;
-import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 
 /**
@@ -14,13 +12,13 @@ import org.bukkit.scheduler.BukkitRunnable;
  *
  * <ul>
  *   <li>Niv. 0-9 — Dégâts de pression sous l'eau (si profondeur > seuil du niveau).</li>
- *   <li>Niv. 3+  — Vitesse de nage (DOLPHINS_GRACE, amplificateur configurable).</li>
- *   <li>Niv. 5+  — Hâte sous l'eau (HASTE, amplificateur configurable).</li>
- *   <li>Niv. 7+  — Respiration sous l'eau (WATER_BREATHING).</li>
  *   <li>Niv. 10  — Aucun dégât de pression (pressure-safe-depth = -1).</li>
  * </ul>
  *
- * <p>Tous les paramètres numériques sont lus depuis {@link JobsConfig}.</p>
+ * <p>La vitesse de nage ({@code WATER_MOVEMENT_EFFICIENCY}), la capacité respiratoire
+ * ({@code OXYGEN_BONUS}) et la vitesse de minage sous l'eau ({@code SUBMERGED_MINING_SPEED})
+ * sont des attributs persistants gérés par
+ * {@link fr.miuby.survi.job.FishermanAttributeService} — aucun effet de potion n'est appliqué ici.</p>
  *
  * <p>Enregistrement dans Survi.java :</p>
  * <pre>{@code new FishermanEffectsTask().runTaskTimer(this, 0L, FishermanEffectsTask.PERIOD_TICKS);}</pre>
@@ -41,31 +39,8 @@ public class FishermanEffectsTask extends BukkitRunnable {
 
             if (!player.isInWater()) continue;
 
-            applySwimSpeed(player, level, cfg);
-            applyUnderwaterHaste(player, level, cfg);
-            applyWaterBreathing(player, level, cfg);
             applyPressureDamage(player, level, alpha, cfg);
         }
-    }
-
-    private static void applySwimSpeed(Player player, int level, JobsConfig.FishermanCfg cfg) {
-        if (level < 3) return;
-        int amp = cfg.getSwimSpeedAmplifier()[level];
-        player.addPotionEffect(new PotionEffect(
-                PotionEffectType.DOLPHINS_GRACE, cfg.getEffectDurationTicks(), amp, false, false, false));
-    }
-
-    private static void applyUnderwaterHaste(Player player, int level, JobsConfig.FishermanCfg cfg) {
-        if (level < 5) return;
-        int amp = cfg.getUnderwaterHasteAmplifier()[level];
-        player.addPotionEffect(new PotionEffect(
-                PotionEffectType.HASTE, cfg.getEffectDurationTicks(), amp, false, false, false));
-    }
-
-    private static void applyWaterBreathing(Player player, int level, JobsConfig.FishermanCfg cfg) {
-        if (level < 7) return;
-        player.addPotionEffect(new PotionEffect(
-                PotionEffectType.WATER_BREATHING, cfg.getEffectDurationTicks(), 0, false, false, false));
     }
 
     private static void applyPressureDamage(Player player, int level, AlphaPlayer alpha, JobsConfig.FishermanCfg cfg) {

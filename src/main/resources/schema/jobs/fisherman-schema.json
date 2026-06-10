@@ -4,20 +4,40 @@
   "description": "Configuration du Pêcheur (FISHERMAN). Tableaux de 11 valeurs (index = niveau 0 à 10).",
   "type": "object",
   "required": [
-    "vanilla-min-wait-ticks", "vanilla-max-wait-ticks",
-    "fishing-wait-multiplier", "loot-multiplier",
-    "dirt-chance", "dirt-replacement-materials",
-    "treasure-penalty", "treasure-replacement-materials",
-    "pressure-safe-depth", "pressure-damage",
-    "swim-speed-amplifier", "underwater-haste-amplifier",
-    "effect-duration-ticks"
+    "vanilla-min-wait-ticks",
+    "vanilla-max-wait-ticks",
+    "fishing-wait-multiplier",
+    "loot-multiplier",
+    "dirt-chance",
+    "dirt-replacement-materials",
+    "treasure-penalty",
+    "treasure-replacement-materials",
+    "pressure-safe-depth",
+    "pressure-damage",
+    "underwater-speed-modifier",
+    "oxygen-bonus-ticks",
+    "submerged-mining-speed-modifier"
   ],
   "additionalProperties": false,
   "properties": {
-    "vanilla-min-wait-ticks":   { "type": "integer", "minimum": 1, "description": "Borne basse de l'attente vanilla (ticks)." },
-    "vanilla-max-wait-ticks":   { "type": "integer", "minimum": 1, "description": "Borne haute de l'attente vanilla (ticks)." },
-    "fishing-wait-multiplier":  { "$ref": "#/definitions/non-negative-number-array", "description": "Multiplicateur du temps d'attente par niveau (<1 = plus rapide)." },
-    "loot-multiplier":          { "$ref": "#/definitions/non-negative-number-array", "description": "Multiplicateur de quantité sur les items pêchés." },
+    "vanilla-min-wait-ticks": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "Borne basse de l'attente vanilla (ticks)."
+    },
+    "vanilla-max-wait-ticks": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "Borne haute de l'attente vanilla (ticks)."
+    },
+    "fishing-wait-multiplier": {
+      "$ref": "#/definitions/non-negative-number-array",
+      "description": "Multiplicateur du temps d'attente par niveau (<1 = plus rapide)."
+    },
+    "loot-multiplier": {
+      "$ref": "#/definitions/non-negative-number-array",
+      "description": "Multiplicateur de quantité sur les items pêchés."
+    },
     "dirt-chance": {
       "$ref": "#/definitions/probability-array",
       "description": "Probabilité de remplacer tout item pêché par un matériau de dirt-replacement-materials."
@@ -36,14 +56,37 @@
     },
     "pressure-safe-depth": {
       "type": "array",
-      "description": "Profondeur sûre par niveau. -1 = aucun dégât. Valeurs très négatives (ex: -500) = dégâts permanents dès que le joueur touche l'eau.",
-      "minItems": 11, "maxItems": 11,
-      "items": { "type": "integer", "minimum": -500 }
+      "description": "Profondeur sûre par niveau. -1 = aucun dégât. Valeurs très négatives (ex: -500) = dégâts permanents.",
+      "minItems": 11,
+      "maxItems": 11,
+      "items": {
+        "type": "integer",
+        "minimum": -500
+      }
     },
-    "pressure-damage":           { "type": "number", "minimum": 0, "description": "Dégâts de pression sous-marine (en demi-cœurs)." },
-    "swim-speed-amplifier":      { "$ref": "#/definitions/non-negative-int-array", "description": "Amplificateur DOLPHINS_GRACE par niveau (actif à partir du niveau 3)." },
-    "underwater-haste-amplifier":{ "$ref": "#/definitions/non-negative-int-array", "description": "Amplificateur HASTE par niveau (actif à partir du niveau 7)." },
-    "effect-duration-ticks":     { "type": "integer", "minimum": 1, "description": "Durée en ticks des effets de potion passifs sous l'eau." }
+    "pressure-damage": {
+      "type": "number",
+      "minimum": 0,
+      "description": "Dégâts de pression sous-marine (en demi-cœurs)."
+    },
+    "underwater-speed-modifier": {
+      "$ref": "#/definitions/non-negative-number-array",
+      "description": "Modificateur ADD_NUMBER sur PLAYER_UNDERWATER_MOVEMENT par niveau. 0.0 = vitesse vanilla."
+    },
+    "oxygen-bonus-ticks": {
+      "type": "array",
+      "description": "Bonus de ticks de respiration (ADD_NUMBER sur PLAYER_OXYGEN_BONUS). Base vanilla = 300 ticks (15 s). Valeurs négatives possibles.",
+      "minItems": 11,
+      "maxItems": 11,
+      "items": {
+        "type": "integer",
+        "minimum": -300
+      }
+    },
+    "submerged-mining-speed-modifier": {
+      "$ref": "#/definitions/non-negative-number-array",
+      "description": "Modificateur ADD_NUMBER sur SUBMERGED_MINING_SPEED par niveau. 0.0 = vitesse vanilla (pénalité normale). Actif à partir du niveau 5."
+    }
   },
   "definitions": {
     "material": {
@@ -1714,19 +1757,37 @@
     "material-list": {
       "type": "array",
       "minItems": 1,
-      "items": { "$ref": "#/definitions/material" }
+      "items": {
+        "$ref": "#/definitions/material"
+      }
     },
     "non-negative-number-array": {
-      "type": "array", "minItems": 11, "maxItems": 11,
-      "items": { "type": "number", "minimum": 0 }
+      "type": "array",
+      "minItems": 11,
+      "maxItems": 11,
+      "items": {
+        "type": "number",
+        "minimum": 0
+      }
     },
     "probability-array": {
-      "type": "array", "minItems": 11, "maxItems": 11,
-      "items": { "type": "number", "minimum": 0, "maximum": 1 }
+      "type": "array",
+      "minItems": 11,
+      "maxItems": 11,
+      "items": {
+        "type": "number",
+        "minimum": 0,
+        "maximum": 1
+      }
     },
     "non-negative-int-array": {
-      "type": "array", "minItems": 11, "maxItems": 11,
-      "items": { "type": "integer", "minimum": 0 }
+      "type": "array",
+      "minItems": 11,
+      "maxItems": 11,
+      "items": {
+        "type": "integer",
+        "minimum": 0
+      }
     }
   }
 }
