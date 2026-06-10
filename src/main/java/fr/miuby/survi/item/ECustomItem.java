@@ -120,16 +120,6 @@ public enum ECustomItem {
     }),
 
     CLE00(Material.NAME_TAG, createKey("00"), "cle00"),
-    CLE01(Material.NAME_TAG, createKey("01"), "cle01"),
-    CLE02(Material.NAME_TAG, createKey("02"), "cle02"),
-    CLE11(Material.NAME_TAG, createKey("11"), "cle11"),
-    CLE12(Material.NAME_TAG, createKey("12"), "cle12"),
-    CLE13(Material.NAME_TAG, createKey("13"), "cle13"),
-    CLE14(Material.NAME_TAG, createKey("14"), "cle14"),
-    CLE15(Material.NAME_TAG, createKey("15"), "cle15"),
-    CLE16(Material.NAME_TAG, createKey("16"), "cle16"),
-    CLE31(Material.NAME_TAG, createKey("31"), "cle31"),
-    CLE32(Material.NAME_TAG, createKey("32"), "cle32"),
 
     GROWTH_PICKAXE(Material.WOODEN_PICKAXE, item -> {
         ItemMeta meta = item.getItemMeta();
