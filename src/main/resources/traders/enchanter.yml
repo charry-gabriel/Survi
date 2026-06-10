@@ -1,0 +1,29 @@
+nameId: "Barman"
+displayName: "Merlin l'enchanteur"
+type: SAVANNA
+profession: FLETCHER
+job: ENCHANTER
+openMessage: >
+  Bonjour, bienvenue au bar du Merveilleux Royal Bling-Bling Sexy-Baka Palace-Hôtel.
+  A la carte, nous proposons différents cocktails élaborés avec amour, tendresse et voluptuosité:
+  le Sex On the Beach, le Porn Star Martini, et notre fameux Shooter Orgasm.
+  D'autre part, je peux aussi proposer un Spicy Sweet Dreams Ticket si vous le désirez !
+mainHandItem: POTION
+
+recipes:
+  - result:
+      customItem: FISHING_D_ROD
+    ingredient:
+      material: EMERALD_BLOCK
+      amount: 9
+    message: "Voici une canne à pêche !"
+    requiredReputation: 20
+
+  - result:
+      customItem: FISHING_D_ROD
+    ingredient:
+      material: EMERALD_BLOCK
+      amount: 9
+    message: "Voici une canne à pêche !"
+    requiredReputation: 20
+

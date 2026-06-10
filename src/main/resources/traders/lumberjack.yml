@@ -1,9 +1,9 @@
 # yaml-language-server: $schema=../schema/traders-schema.json
 nameId: "Barman"
-displayName: "Fruity Délice"
+displayName: "Beorn le bucheron"
 type: SAVANNA
 profession: FLETCHER
-job: ENCHANTER
+job: LUMBERJACK
 openMessage: >
   Bonjour, bienvenue au bar du Merveilleux Royal Bling-Bling Sexy-Baka Palace-Hôtel.
   A la carte, nous proposons différents cocktails élaborés avec amour, tendresse et voluptuosité:
