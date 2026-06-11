@@ -5,7 +5,7 @@ plugins {
 }
 
 group = "fr.miuby.survi"
-version = "4.1"
+version = "4.2"
 
 java {
     toolchain {
@@ -18,12 +18,10 @@ repositories {
     maven("https://repo.papermc.io/repository/maven-public/")
     maven("https://oss.sonatype.org/content/groups/public/")
     maven("https://jitpack.io")
-    maven("https://repo.dmulloy2.net/repository/public/")
 }
 
 dependencies {
     paperweight.paperDevBundle("26.1.2.build.66-stable")
-    compileOnly("com.comphenix.protocol:ProtocolLib:5.3.0")
 
     compileOnly("org.projectlombok:lombok:1.18.38")
     annotationProcessor("org.projectlombok:lombok:1.18.38")
