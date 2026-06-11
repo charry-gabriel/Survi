@@ -1,0 +1,87 @@
+# ═══════════════════════════════════════════════════════════════════════════════
+#  Survi — Traductions Français
+#  Format : MiniMessage (https://docs.advntr.dev/minimessage/format.html)
+#
+#  Placeholders positionnels : {0}, {1}… remplacés par des valeurs textuelles.
+#  Placeholders nommés       : <name>    remplacés par des composants Adventure.
+# ═══════════════════════════════════════════════════════════════════════════════
+
+# ─── Limite de zone ──────────────────────────────────────────────────────────
+boundary.warning: "<red>Tu ne peux pas aller plus loin !"
+
+# ─── Tombe ───────────────────────────────────────────────────────────────────
+grave.indestructible: "<red>Cette tombe est indestructible !"
+grave.created: "<green>☠ Votre tombe a été créée en {0}, {1}, {2} [{3}]"
+grave.not_yours: "<red>Ce n'est pas votre tombe !"
+grave.recovered: "<green>Vous avez récupéré votre tombe."
+
+# ─── Monde ───────────────────────────────────────────────────────────────────
+world.locked: "<red>✖ Ce monde n'est pas encore accessible !"
+world.level_up.broadcast: "<gold>✦ Le monde a évolué ! <yellow>Niveau {0} <gray>→ <gold>Niveau {1}"
+world.level_up.title: "<gold>✦ Monde — Niveau {0}"
+world.level_up.subtitle: "<yellow>Le monde devient plus difficile…"
+
+# ─── Métier ──────────────────────────────────────────────────────────────────
+job.level_up.title: "<gold>⚒ Niveau supérieur !"
+job.level_up.subtitle_suffix: "<yellow> · niv.{0}"
+job.level_up.broadcast: "<gold>⚒ <white><player> <gold>a atteint le niveau <yellow><level> <gold>en <job><gold> !"
+job.note_prefix: "<green>⚒ "
+
+# ─── Joueur ───────────────────────────────────────────────────────────────────
+player.subrole.added_prefix: "<yellow>Le sous-role "
+player.subrole.added_suffix: "<yellow> a ete ajouté !"
+player.subrole.removed_prefix: "<yellow>Le sous-role "
+player.subrole.removed_suffix: "<yellow> a ete retiré !"
+player.rank_up.prefix: "<gold>✦ Nouveau rang atteint : "
+player.rank_up.suffix: "<gray> (réputation totale : {0})"
+
+# ─── Quête ───────────────────────────────────────────────────────────────────
+quest.already_claimed: "<red>Vous avez déjà une quête terminée à réclamer !"
+quest.already_active: "<red>Vous avez déjà une quête en cours. Terminez-la d'abord !"
+quest.not_available: "<red>Aucune quête n'est encore disponible. Attendez le début de la partie !"
+quest.capacity_full: "<red>Vous avez complété {0}/{1} quêtes disponibles. Revenez demain !"
+quest.validate_trader_prefix: "<red>Cette quête doit être validée auprès de "
+quest.accepted.prefix: "<green>Nouvelle quête acceptée auprès de "
+quest.accepted.separator: "<green> : "
+quest.accepted.slots: "<dark_gray>Quête {0}/{1} disponibles."
+quest.completed.prefix: "<green>Quête terminée : "
+quest.completed.go_trader: "<gray>Allez voir le Trader pour obtenir votre récompense !"
+quest.rewards_received.prefix: "<green>Vous avez reçu les récompenses de la quête ! "
+quest.rewards_received.suffix: "<green> quêtes complétées."
+quest.reset_by_admin: "<yellow>Votre quête a été réinitialisée par un administrateur. Vous pouvez en accepter une nouvelle !"
+quest.dropped_on_reload: "<yellow>Votre quête en cours a été supprimée suite à une mise à jour. Vous pouvez en accepter une nouvelle auprès d'un Trader."
+quest.orphan_rewarded: "<green>Votre quête « {0} » a été récompensée automatiquement suite à une mise à jour."
+quest.test.prefix: "<yellow>[TEST] Quête de test assignée : "
+quest.test.details: "<dark_gray>Objectif : {0} | Difficulté : {1} | Métiers : {2}"
+quest.new_slots.prefix: "<gold>[Quêtes] "
+quest.new_slots.body: "<green>{0} nouveau(x) créneau(x) disponible(s) ! <dark_gray>({1}/{2} utilisés)"
+
+# ─── ActionBar quête journalière ─────────────────────────────────────────────
+quest.actionbar.quests_suffix: "<dark_gray> quêtes]"
+quest.actionbar.finished_prefix: "<bold><green>✔ Quête terminée : "
+quest.actionbar.finished_suffix: "<gray> — Allez voir le Trader !"
+
+# ─── BossBar quête globale ───────────────────────────────────────────────────
+quest.global.bossbar.content: "<gold>⚔ <white>{0}  <dark_gray>▶  <aqua>{1}/{2}  <gray>({3}%)"
+quest.global.bossbar.finished: "<green>✔ <yellow>{0}  <green>—  Complétée !"
+
+# ─── Notifications hors-ligne ─────────────────────────────────────────────────
+offline.header: "<dark_gray>─── Pendant votre absence ───"
+offline.job_level: "<gold>⚒ Métier <job><gold> : <gray>niv.<old> <gray>→ <yellow>niv.<new>"
+offline.world_level: "<gold>✦ Niveau du monde : <yellow>Niveau {0} <gray>→ <gold>Niveau {1}"
+offline.villager_level: "<gold>🏠 <villager><gold> : <gray>Niveau <old> <gray>→ <yellow>Niveau <new>"
+offline.global_quest.prefix: "<gold>⚔ Quête globale en cours : <yellow>« {0} »"
+offline.global_quest.progress: "<aqua>{0}/{1} ({2}%)  <gray>⏰ {3}"
+
+# ─── Récapitulatif d'effets à la connexion ────────────────────────────────────
+effect.restore.header: "<yellow>-------------------- Récap --------------------"
+effect.restore.world_level: "<yellow>Difficulté Niv. {0}"
+effect.restore.footer: "<yellow>----------------------------------------------"
+
+# ─── Enchanteur ───────────────────────────────────────────────────────────────
+enchanter.no_level: "<red>✗ Vous ne pouvez pas encore enchanter. Progressez dans le métier <job><red>."
+enchanter.xp_too_high: "<red>✗ Ce slot coûte trop de niveaux XP pour votre rang de métier <job><red> (max {0} niveaux)."
+enchanter.level_too_high: "<red>✗ Cet enchantement dépasse votre niveau de métier <job><red> (max niv.{0} d'enchantement)."
+
+# ─── Villageois ───────────────────────────────────────────────────────────────
+villager.locked: "<yellow>{0} est indisponible pendant encore {1}"

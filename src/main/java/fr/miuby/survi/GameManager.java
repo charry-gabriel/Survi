@@ -30,6 +30,7 @@ import fr.miuby.survi.world.WorldPortalManager;
 import fr.miuby.survi.world.WorldResetManager;
 import fr.miuby.survi.world.VillageZoneManager;
 import fr.miuby.survi.system.SurviConfig;
+import fr.miuby.survi.system.lang.LangService;
 import fr.miuby.survi.job.config.JobsLoader;
 import fr.miuby.survi.world.WorldInitializer;
 import lombok.Getter;
@@ -66,6 +67,7 @@ public class GameManager {
     @Getter private WorldPortalManager worldPortalManager;
     @Getter private WorldResetManager worldResetManager;
     @Getter private VillageZoneManager villageZoneManager;
+    @Getter private LangService langService;
 
     @Setter @Getter private int dispel = 0;
     @Setter @Getter private boolean isNight;
@@ -101,6 +103,9 @@ public class GameManager {
         // MiubyLib doit être initialisé avant MLLogManager (setupHandlers en a besoin)
         MiubyLib.init(plugin);
         MLLogManager.getInstance().registerTags(ELogTag.values());
+
+        // LangService — initialisé tôt car utilisé partout
+        this.langService = new LangService(plugin, SurviConfig.getInstance().getDefaultLanguage());
 
         MLLogManager.getInstance().log(Level.INFO, ELogTag.SYSTEM, "Initialisation du plugin...");
 

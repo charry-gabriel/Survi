@@ -1,0 +1,87 @@
+# ═══════════════════════════════════════════════════════════════════════════════
+#  Survi — English translations
+#  Format : MiniMessage (https://docs.advntr.dev/minimessage/format.html)
+#
+#  Positional placeholders : {0}, {1}… replaced with text values.
+#  Named placeholders      : <name>    replaced with Adventure components.
+# ═══════════════════════════════════════════════════════════════════════════════
+
+# ─── Boundary ────────────────────────────────────────────────────────────────
+boundary.warning: "<red>You can't go any further!"
+
+# ─── Grave ───────────────────────────────────────────────────────────────────
+grave.indestructible: "<red>This grave is indestructible!"
+grave.created: "<green>☠ Your grave was created at {0}, {1}, {2} [{3}]"
+grave.not_yours: "<red>This is not your grave!"
+grave.recovered: "<green>You have retrieved your grave."
+
+# ─── World ───────────────────────────────────────────────────────────────────
+world.locked: "<red>✖ This world is not yet accessible!"
+world.level_up.broadcast: "<gold>✦ The world has evolved! <yellow>Level {0} <gray>→ <gold>Level {1}"
+world.level_up.title: "<gold>✦ World — Level {0}"
+world.level_up.subtitle: "<yellow>The world grows more dangerous…"
+
+# ─── Job ─────────────────────────────────────────────────────────────────────
+job.level_up.title: "<gold>⚒ Level Up!"
+job.level_up.subtitle_suffix: "<yellow> · lv.{0}"
+job.level_up.broadcast: "<gold>⚒ <white><player> <gold>has reached <yellow><level> <gold>in <job><gold>!"
+job.note_prefix: "<green>⚒ "
+
+# ─── Player ──────────────────────────────────────────────────────────────────
+player.subrole.added_prefix: "<yellow>The sub-role "
+player.subrole.added_suffix: "<yellow> has been added!"
+player.subrole.removed_prefix: "<yellow>The sub-role "
+player.subrole.removed_suffix: "<yellow> has been removed!"
+player.rank_up.prefix: "<gold>✦ New rank achieved: "
+player.rank_up.suffix: "<gray> (total reputation: {0})"
+
+# ─── Quest ───────────────────────────────────────────────────────────────────
+quest.already_claimed: "<red>You already have a completed quest to claim!"
+quest.already_active: "<red>You already have an active quest. Finish it first!"
+quest.not_available: "<red>No quest is available yet. Wait for the game to start!"
+quest.capacity_full: "<red>You've completed {0}/{1} available quests. Come back tomorrow!"
+quest.validate_trader_prefix: "<red>This quest must be validated at "
+quest.accepted.prefix: "<green>New quest accepted from "
+quest.accepted.separator: "<green> : "
+quest.accepted.slots: "<dark_gray>Quest {0}/{1} available."
+quest.completed.prefix: "<green>Quest completed: "
+quest.completed.go_trader: "<gray>Go see the Trader to claim your reward!"
+quest.rewards_received.prefix: "<green>You have received the quest rewards! "
+quest.rewards_received.suffix: "<green> quests completed."
+quest.reset_by_admin: "<yellow>Your quest has been reset by an admin. You can now accept a new one!"
+quest.dropped_on_reload: "<yellow>Your active quest was removed due to an update. You can accept a new one from a Trader."
+quest.orphan_rewarded: "<green>Your quest «{0}» was automatically rewarded following an update."
+quest.test.prefix: "<yellow>[TEST] Test quest assigned: "
+quest.test.details: "<dark_gray>Goal: {0} | Difficulty: {1} | Jobs: {2}"
+quest.new_slots.prefix: "<gold>[Quests] "
+quest.new_slots.body: "<green>{0} new slot(s) available! <dark_gray>({1}/{2} used)"
+
+# ─── Quest ActionBar ─────────────────────────────────────────────────────────
+quest.actionbar.quests_suffix: "<dark_gray> quests]"
+quest.actionbar.finished_prefix: "<bold><green>✔ Quest completed: "
+quest.actionbar.finished_suffix: "<gray> — Go see the Trader!"
+
+# ─── Global quest BossBar ────────────────────────────────────────────────────
+quest.global.bossbar.content: "<gold>⚔ <white>{0}  <dark_gray>▶  <aqua>{1}/{2}  <gray>({3}%)"
+quest.global.bossbar.finished: "<green>✔ <yellow>{0}  <green>—  Completed!"
+
+# ─── Offline notifications ────────────────────────────────────────────────────
+offline.header: "<dark_gray>─── While you were away ───"
+offline.job_level: "<gold>⚒ Job <job><gold>: <gray>lv.<old> <gray>→ <yellow>lv.<new>"
+offline.world_level: "<gold>✦ World level: <yellow>Level {0} <gray>→ <gold>Level {1}"
+offline.villager_level: "<gold>🏠 <villager><gold>: <gray>Level <old> <gray>→ <yellow>Level <new>"
+offline.global_quest.prefix: "<gold>⚔ Global quest in progress: <yellow>«{0}»"
+offline.global_quest.progress: "<aqua>{0}/{1} ({2}%)  <gray>⏰ {3}"
+
+# ─── Effect restore recap ─────────────────────────────────────────────────────
+effect.restore.header: "<yellow>-------------------- Recap --------------------"
+effect.restore.world_level: "<yellow>Difficulty Lv. {0}"
+effect.restore.footer: "<yellow>----------------------------------------------"
+
+# ─── Enchanter ───────────────────────────────────────────────────────────────
+enchanter.no_level: "<red>✗ You can't enchant yet. Progress in the job <job><red>."
+enchanter.xp_too_high: "<red>✗ This slot costs too many XP levels for your job rank <job><red> (max {0} levels)."
+enchanter.level_too_high: "<red>✗ This enchantment exceeds your job level <job><red> (max lv.{0} enchantment)."
+
+# ─── Villager ────────────────────────────────────────────────────────────────
+villager.locked: "<yellow>{0} is unavailable for {1} more"

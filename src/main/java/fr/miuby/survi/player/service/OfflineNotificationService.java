@@ -9,11 +9,14 @@ import fr.miuby.survi.GameManager;
 import fr.miuby.survi.job.EJob;
 import fr.miuby.survi.player.AlphaPlayer;
 import fr.miuby.survi.player.event.AlphaPlayerJobLevelUpEvent;
+import fr.miuby.survi.system.lang.LangKey;
+import fr.miuby.survi.system.lang.LangService;
 import fr.miuby.survi.villager.villagerlevel.VillagerLevel;
 import fr.miuby.survi.villager.villagerlevel.event.VillagerLevelUpEvent;
 import fr.miuby.survi.world.event.WorldLevelUpEvent;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
@@ -26,30 +29,16 @@ import java.util.UUID;
 /**
  * Accumule les notifications survenues pendant qu'un joueur était déconnecté,
  * et les délivre dès sa reconnexion via {@link #deliverPending(UUID, Player)}.
- *
- * <p>Les notifications sont purement en mémoire : elles ne survivent pas à un redémarrage.
- *
- * <p>L'écoute des events Bukkit est déléguée à
- * {@link fr.miuby.survi.listener.OfflineNotificationListener}.
  */
 public class OfflineNotificationService {
 
     private record JobLevelUpRecord(EJob job, int oldLevel, int newLevel) {}
     private record VillagerLevelUpRecord(String nameId, int oldLevel, int newLevel) {}
 
-    /** Notifications de job en attente par joueur. */
-    private final Map<UUID, List<JobLevelUpRecord>> pendingJobLevelUps = new HashMap<>();
+    private final Map<UUID, List<JobLevelUpRecord>>      pendingJobLevelUps     = new HashMap<>();
+    private final Map<UUID, Integer>                     pendingWorldLevelFrom  = new HashMap<>();
+    private final Map<UUID, List<VillagerLevelUpRecord>> pendingVillagerLevelUps= new HashMap<>();
 
-    /**
-     * Niveau du monde au premier event manqué, par joueur.
-     * La valeur courante au moment du join sert de "newLevel".
-     */
-    private final Map<UUID, Integer> pendingWorldLevelFrom = new HashMap<>();
-
-    /** Montées de niveau de villageois manquées, par joueur. */
-    private final Map<UUID, List<VillagerLevelUpRecord>> pendingVillagerLevelUps = new HashMap<>();
-
-    /** Récompenses de quêtes globales reçues pendant que le joueur était déconnecté. */
     private record PendingQuestReward(List<BlessingEffect> effects, Component message) {}
     private final Map<UUID, List<PendingQuestReward>> pendingQuestRewards = new HashMap<>();
 
@@ -58,7 +47,6 @@ public class OfflineNotificationService {
     public void recordJobLevelUp(AlphaPlayerJobLevelUpEvent event) {
         Player player = event.getAlphaPlayer().getPlayer();
         if (player != null && player.isOnline()) return;
-
         UUID uuid = event.getAlphaPlayer().getUuid();
         pendingJobLevelUps.computeIfAbsent(uuid, k -> new ArrayList<>())
                 .add(new JobLevelUpRecord(event.getJob(), event.getOldLevel(), event.getNewLevel()));
@@ -68,17 +56,14 @@ public class OfflineNotificationService {
         for (AlphaPlayer alpha : GameManager.getInstance().getAlphaPlayerFactory().getAlphaPlayers()) {
             Player player = alpha.getPlayer();
             if (player != null && player.isOnline()) continue;
-            // Mémorise uniquement le premier "oldLevel" manqué — le "newLevel" sera le niveau actuel au join
             pendingWorldLevelFrom.putIfAbsent(alpha.getUuid(), event.getOldLevel());
         }
     }
 
     public void recordVillagerLevelUp(VillagerLevelUpEvent event) {
-        // L'event est fired avant this.level++ dans levelUp() — oldLevel = newLevel - 1
-        String nameId = event.getVillagerLevel().getNameId();
+        String nameId   = event.getVillagerLevel().getNameId();
         int oldLevel = event.getNewLevel() - 1;
         int newLevel = event.getNewLevel();
-
         for (AlphaPlayer alpha : GameManager.getInstance().getAlphaPlayerFactory().getAlphaPlayers()) {
             Player player = alpha.getPlayer();
             if (player != null && player.isOnline()) continue;
@@ -87,10 +72,6 @@ public class OfflineNotificationService {
         }
     }
 
-    /**
-     * Met en attente des effets de récompense pour un joueur hors ligne.
-     * Ils seront appliqués et notifiés à sa prochaine connexion.
-     */
     public void queueQuestReward(UUID uuid, List<BlessingEffect> effects, Component rewardMessage) {
         pendingQuestRewards.computeIfAbsent(uuid, k -> new ArrayList<>())
                 .add(new PendingQuestReward(List.copyOf(effects), rewardMessage));
@@ -98,14 +79,13 @@ public class OfflineNotificationService {
 
     // ─── Livraison ────────────────────────────────────────────────────────────────
 
-    /** Livre toutes les notifications en attente pour ce joueur, puis vide sa file. */
     public void deliverPending(UUID uuid, Player player) {
         boolean hasAny = pendingJobLevelUps.containsKey(uuid)
                 || pendingWorldLevelFrom.containsKey(uuid)
                 || pendingVillagerLevelUps.containsKey(uuid);
 
         if (hasAny) {
-            player.sendMessage(Component.text("─── Pendant votre absence ───", NamedTextColor.DARK_GRAY));
+            player.sendMessage(GameManager.getInstance().getLangService().text(player, LangKey.OFFLINE_HEADER));
         }
 
         deliverJobNotifications(uuid, player);
@@ -119,104 +99,85 @@ public class OfflineNotificationService {
         List<JobLevelUpRecord> pending = pendingJobLevelUps.remove(uuid);
         if (pending == null || pending.isEmpty()) return;
 
-        // Consolidation : par métier, on garde le premier oldLevel et le dernier newLevel
         Map<EJob, JobLevelUpRecord> consolidated = new LinkedHashMap<>();
         for (JobLevelUpRecord rec : pending) {
             consolidated.merge(rec.job(), rec, (existing, r) ->
-                    new JobLevelUpRecord(r.job(), Math.min(existing.oldLevel(), r.oldLevel()), Math.max(existing.newLevel(), r.newLevel())));
+                    new JobLevelUpRecord(r.job(),
+                            Math.min(existing.oldLevel(), r.oldLevel()),
+                            Math.max(existing.newLevel(), r.newLevel())));
         }
 
+        LangService ls = GameManager.getInstance().getLangService();
         for (JobLevelUpRecord rec : consolidated.values()) {
-            player.sendMessage(
-                    Component.text("⚒ Métier ", NamedTextColor.GOLD)
-                            .append(rec.job().toComponent())
-                            .append(Component.text(" : ", NamedTextColor.GOLD))
-                            .append(Component.text("niv." + rec.oldLevel(), NamedTextColor.GRAY))
-                            .append(Component.text(" → ", NamedTextColor.GRAY))
-                            .append(Component.text("niv." + rec.newLevel(), NamedTextColor.YELLOW))
-            );
+            player.sendMessage(ls.text(player, LangKey.OFFLINE_JOB_LEVEL,
+                    Placeholder.component("job", rec.job().toComponent()),
+                    Placeholder.unparsed("old", String.valueOf(rec.oldLevel())),
+                    Placeholder.unparsed("new", String.valueOf(rec.newLevel()))
+            ));
         }
     }
 
     private void deliverWorldNotification(UUID uuid, Player player) {
         Integer worldFrom = pendingWorldLevelFrom.remove(uuid);
         if (worldFrom == null) return;
-
         int worldNow = GameManager.getInstance().getWorldLevelManager().getLevel();
-        player.sendMessage(
-                Component.text("✦ Niveau du monde : ", NamedTextColor.GOLD)
-                        .append(Component.text("Niveau " + worldFrom, NamedTextColor.YELLOW))
-                        .append(Component.text(" → ", NamedTextColor.GRAY))
-                        .append(Component.text("Niveau " + worldNow, NamedTextColor.GOLD))
-        );
+        player.sendMessage(GameManager.getInstance().getLangService()
+                .text(player, LangKey.OFFLINE_WORLD_LEVEL, worldFrom, worldNow));
     }
 
     private void deliverVillagerNotifications(UUID uuid, Player player) {
         List<VillagerLevelUpRecord> pending = pendingVillagerLevelUps.remove(uuid);
         if (pending == null || pending.isEmpty()) return;
 
-        // Consolidation : par villageois, on garde le premier oldLevel et le dernier newLevel
         Map<String, VillagerLevelUpRecord> consolidated = new LinkedHashMap<>();
         for (VillagerLevelUpRecord rec : pending) {
             consolidated.merge(rec.nameId(), rec, (existing, r) ->
-                    new VillagerLevelUpRecord(r.nameId(), Math.min(existing.oldLevel(), r.oldLevel()), Math.max(existing.newLevel(), r.newLevel())));
+                    new VillagerLevelUpRecord(r.nameId(),
+                            Math.min(existing.oldLevel(), r.oldLevel()),
+                            Math.max(existing.newLevel(), r.newLevel())));
         }
 
+        LangService ls = GameManager.getInstance().getLangService();
         for (VillagerLevelUpRecord rec : consolidated.values()) {
             MLVillager villager = VillagerRegistry.get(rec.nameId());
             Component villagerName = villager instanceof VillagerLevel vl
                     ? vl.getDisplayName()
                     : Component.text(rec.nameId(), NamedTextColor.AQUA);
 
-            player.sendMessage(
-                    Component.text("🏠 ", NamedTextColor.GOLD)
-                            .append(villagerName)
-                            .append(Component.text(" : ", NamedTextColor.GOLD))
-                            .append(Component.text("Niveau " + rec.oldLevel(), NamedTextColor.GRAY))
-                            .append(Component.text(" → ", NamedTextColor.GRAY))
-                            .append(Component.text("Niveau " + rec.newLevel(), NamedTextColor.YELLOW))
-            );
+            player.sendMessage(ls.text(player, LangKey.OFFLINE_VILLAGER_LEVEL,
+                    Placeholder.component("villager", villagerName),
+                    Placeholder.unparsed("old", String.valueOf(rec.oldLevel())),
+                    Placeholder.unparsed("new", String.valueOf(rec.newLevel()))
+            ));
         }
     }
 
     private void deliverQuestRewards(UUID uuid, Player player) {
         List<PendingQuestReward> pending = pendingQuestRewards.remove(uuid);
         if (pending == null || pending.isEmpty()) return;
-
         AlphaPlayer ap = GameManager.getInstance().getAlphaPlayerFactory().getAlphaPlayer(uuid);
         for (PendingQuestReward reward : pending) {
-            for (BlessingEffect effect : reward.effects()) {
-                effect.applyEffect(ap);
-            }
+            for (BlessingEffect effect : reward.effects()) effect.applyEffect(ap);
             player.sendMessage(reward.message());
         }
     }
 
-    /**
-     * Notifie le joueur au join s'il y a une quête globale en cours.
-     * Envoie le nom, la description, la progression et le temps restant.
-     */
     private void deliverGlobalQuestStatus(Player player) {
         GlobalQuestManager gqm = GameManager.getInstance().getGlobalQuestManager();
         GlobalQuest activeQuest = gqm.getActiveQuest();
         if (activeQuest == null) return;
 
         int gProgress = gqm.getProgress();
-        int gGoal = activeQuest.getGoal();
-        int percent = gGoal > 0 ? Math.min(100, (gProgress * 100) / gGoal) : 0;
+        int gGoal     = activeQuest.getGoal();
+        int percent   = gGoal > 0 ? Math.min(100, (gProgress * 100) / gGoal) : 0;
+        String remaining = GlobalQuestManager.formatSeconds(gqm.getRemainingSeconds());
 
-        player.sendMessage(
-                Component.text("⚔ Quête globale en cours : ", NamedTextColor.GOLD)
-                        .append(Component.text("« " + activeQuest.getName() + " »", NamedTextColor.YELLOW))
-        );
-        player.sendMessage(
-                Component.text("   ", NamedTextColor.DARK_GRAY)
-                        .append(Component.text(activeQuest.getFormattedDescription(), NamedTextColor.WHITE))
-        );
-        player.sendMessage(
-                Component.text("   ", NamedTextColor.DARK_GRAY)
-                        .append(Component.text(gProgress + "/" + gGoal + " (" + percent + "%)", NamedTextColor.AQUA))
-                        .append(Component.text("  ⏰ " + GlobalQuestManager.formatSeconds(gqm.getRemainingSeconds()), NamedTextColor.GRAY))
-        );
+        LangService ls = GameManager.getInstance().getLangService();
+        player.sendMessage(ls.text(player, LangKey.OFFLINE_GLOBAL_QUEST_PREFIX, activeQuest.getName()));
+        player.sendMessage(Component.text("   ", NamedTextColor.DARK_GRAY)
+                .append(Component.text(activeQuest.getFormattedDescription(), NamedTextColor.WHITE)));
+        player.sendMessage(Component.text("   ", NamedTextColor.DARK_GRAY)
+                .append(ls.text(player, LangKey.OFFLINE_GLOBAL_QUEST_PROGRESS,
+                        gProgress, gGoal, percent, remaining)));
     }
 }

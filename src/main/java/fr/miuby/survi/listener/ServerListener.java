@@ -16,8 +16,7 @@ import org.bukkit.entity.EnderDragon;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntitySpawnEvent;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.NamedTextColor;
+import fr.miuby.survi.system.lang.LangKey;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.EquipmentSlotGroup;
@@ -133,8 +132,9 @@ public class ServerListener implements Listener {
         int used      = player.getTotalDailyQuestsClaimed() + player.countActiveUnclaimedQuests();
         int remaining = capacity - used;
         if (remaining <= 0) return;
-        player.getPlayer().sendMessage(Component.text("[Quêtes] ", NamedTextColor.GOLD)
-                .append(Component.text(remaining + " nouveau(x) créneau(x) disponible(s) ! ", NamedTextColor.GREEN))
-                .append(Component.text("(" + used + "/" + capacity + " utilisés)", NamedTextColor.DARK_GRAY)));
+        var ls = GameManager.getInstance().getLangService();
+        player.getPlayer().sendMessage(
+                ls.text(player.getPlayer(), LangKey.QUEST_NEW_SLOTS_PREFIX)
+                        .append(ls.text(player.getPlayer(), LangKey.QUEST_NEW_SLOTS_BODY, remaining, used, capacity)));
     }
 }

@@ -2,6 +2,11 @@
 #  Survi — Configuration principale
 # ═══════════════════════════════════════════════════════════════════════════════
 
+# ─── Localisation ────────────────────────────────────────────────────────────────
+# Langue par défaut du serveur utilisée si la langue du client Minecraft n'est pas
+# supportée. Valeurs acceptées : fr, en
+default-language: fr
+
 # ─── Temps ──────────────────────────────────────────────────────────────────────
 time:
   # Heure réelle (0–23) à laquelle le lever/coucher du soleil est simulé en jeu
