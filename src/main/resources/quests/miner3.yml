@@ -1,0 +1,96 @@
+# yaml-language-server: $schema=../schema/quests-schema.json
+quests:
+
+  # ─────────────────── DIFFICULTÉ 2 (5/7) ───────────────────
+
+  - id: "mine_end_stone_mass"
+    name: "Colonisation de l'End"
+    description: "Minez {value} blocs d'End Stone dans l'End."
+    type: MINE
+    difficulty: 3
+    jobs:
+      - MINER
+    targets: [END_STONE]
+    goal: 512
+    rewards:
+      - {type: REPUTATION, job: MINER, value: 1}
+
+  - id: "mine_chorus_plants"
+    name: "Écho de l'End"
+    description: "Récoltez {value} Chorus dans l'End."
+    type: MINE
+    difficulty: 3
+    jobs:
+      - MINER
+    targets: [CHORUS_PLANT]
+    goal: 64
+    rewards:
+      - {type: REPUTATION, job: FARMER, value: 1}
+
+  - id: "mine_obsidian"
+    name: "Briseur d'Obsidienne"
+    description: "Minez {value} obsidiennes."
+    type: MINE
+    difficulty: 3
+    jobs:
+      - MINER
+    targets: [OBSIDIAN]
+    goal: 150
+    rewards:
+      - {type: REPUTATION, job: MINER, value: 2}
+      - {type: POTION, potion: haste, duration: 1728000, amplifier: 2}
+
+  - id: "maj"
+    name: "maj"
+    description: "maj"
+    type: MINE
+    difficulty: 3
+    jobs:
+      - MINER
+    targets:
+    goal: 1
+    rewards:
+      - {type: REPUTATION, job: MINER, value: 2}
+      - {type: POTION, potion: haste, duration: 1728000, amplifier: 2}
+
+  - id: "mine_ancient_debris"
+    name: "Trésor du Nether"
+    description: "Minez {value} block d'or."
+    type: MINE
+    difficulty: 3
+    jobs:
+      - MINER
+    targets: [GOLD_BLOCK]
+    goal: 12
+    rewards:
+      - {type: REPUTATION, job: MINER, value: 2}
+      - {type: REPUTATION, job: EXPLORER, value: 1}
+
+
+  - id: "mine_ancient_debris"
+    name: "Trésor du Nether"
+    description: "Minez {value} débris antiques."
+    type: MINE
+    difficulty: 3
+    jobs:
+      - MINER
+    targets: [ANCIENT_DEBRIS]
+    goal: 6
+    rewards:
+      - {type: REPUTATION, job: MINER, value: 3}
+      - {type: REPUTATION, job: EXPLORER, value: 1}
+
+
+
+
+  - id: "mine_emerald"
+    name: "Richesse des Montagnes"
+    description: "Minez {value} minerais d'émeraude dans les biomes de montagne"
+    type: MINE
+    difficulty: 3
+    jobs:
+      - MINER
+    targets: [EMERALD_ORE,DEEPSLATE_EMERALD_ORE]
+    goal: 2
+    rewards:
+      - {type: REPUTATION, job: MINER, value: 5}
