@@ -19,6 +19,7 @@ import org.bukkit.event.player.PlayerExpChangeEvent;
 import org.bukkit.event.player.PlayerItemDamageEvent;
 import org.bukkit.inventory.AnvilInventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.view.AnvilView;
 import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.EnchantmentStorageMeta;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -91,14 +92,15 @@ public class EnchanterListener implements Listener {
         int jobLevel = alpha.getJobLevel(EJob.ENCHANTER);
         JobsConfig.EnchanterCfg enc = JobsConfig.getInstance().getEnchanter();
         AnvilInventory anvil = event.getInventory();
+        AnvilView anvilView  = (AnvilView) event.getView();
         ItemStack first  = anvil.getItem(0);
         ItemStack second = anvil.getItem(1);
 
         // Résultat nul → niv.10 : reconstruction pour bypasser "Too Expensive"
         if (event.getResult() == null || event.getResult().getType() == Material.AIR) {
             if (enc.getAnvilMaxXpCost()[jobLevel] < 0 && first != null && !first.getType().isAir()) {
-                ItemStack rebuilt = constructAnvilResult(first, second, anvil.getRenameText(), jobLevel);
-                if (rebuilt != null) { event.setResult(rebuilt); anvil.setRepairCost(39); }
+                ItemStack rebuilt = constructAnvilResult(first, second, anvilView.getRenameText(), jobLevel);
+                if (rebuilt != null) { event.setResult(rebuilt); anvilView.setRepairCost(39); }
             }
             return;
         }
@@ -119,7 +121,7 @@ public class EnchanterListener implements Listener {
 
         // Vérification du cap XP (-1 = illimité)
         int maxCost = enc.getAnvilMaxXpCost()[jobLevel];
-        if (maxCost >= 0 && anvil.getRepairCost() > maxCost) { event.setResult(null); return; }
+        if (maxCost >= 0 && anvilView.getRepairCost() > maxCost) { event.setResult(null); return; }
 
         // Réinitialisation du RepairCost → plus jamais "Too Expensive"
         ItemStack finalResult = event.getResult().clone();
