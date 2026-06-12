@@ -1,7 +1,6 @@
 package fr.miuby.survi.quest.globalquest;
 
 import fr.miuby.survi.GameManager;
-import fr.miuby.survi.system.lang.LangKey;
 import net.kyori.adventure.bossbar.BossBar;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
@@ -95,7 +94,7 @@ public class GlobalQuestBossBarService {
         int percent = goal > 0 ? Math.min(100, (progress * 100) / goal) : 0;
         return GameManager.getInstance().getLangService().text(
                 GameManager.getInstance().getLangService().getServerDefault(),
-                LangKey.QUEST_GLOBAL_BOSSBAR_CONTENT,
+                "quest.global.bossbar.content",
                 quest.getName(), progress, goal, percent
         );
     }
@@ -103,7 +102,7 @@ public class GlobalQuestBossBarService {
     private Component buildFinishedName(GlobalQuest quest) {
         return GameManager.getInstance().getLangService().text(
                 GameManager.getInstance().getLangService().getServerDefault(),
-                LangKey.QUEST_GLOBAL_BOSSBAR_FINISHED,
+                "quest.global.bossbar.finished",
                 quest.getName()
         );
     }

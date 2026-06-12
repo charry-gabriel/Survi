@@ -4,7 +4,6 @@ import fr.miuby.survi.sound.ESound;
 import fr.miuby.survi.sound.SoundService;
 import fr.miuby.survi.world.event.WorldLevelUpEvent;
 import fr.miuby.survi.GameManager;
-import fr.miuby.survi.system.lang.LangKey;
 import fr.miuby.survi.system.lang.LangService;
 import net.kyori.adventure.title.Title;
 import org.bukkit.Bukkit;
@@ -40,11 +39,11 @@ public class WorldLevelUpListener implements Listener {
         for (Player p : Bukkit.getOnlinePlayers()) {
             SoundService.play(p, ESound.WORLD_LEVEL_UP);
             p.showTitle(Title.title(
-                    ls.text(p, LangKey.WORLD_LEVEL_UP_TITLE, newLevel),
-                    ls.text(p, LangKey.WORLD_LEVEL_UP_SUBTITLE),
+                    ls.text(p, "world.level_up.title", newLevel),
+                    ls.text(p, "world.level_up.subtitle"),
                     TITLE_TIMES
             ));
-            p.sendMessage(ls.text(p, LangKey.WORLD_LEVEL_UP_BROADCAST, oldLevel, newLevel));
+            p.sendMessage(ls.text(p, "world.level_up.broadcast", oldLevel, newLevel));
         }
     }
 }

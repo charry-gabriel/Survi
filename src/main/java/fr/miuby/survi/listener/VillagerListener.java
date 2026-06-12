@@ -20,7 +20,6 @@ import fr.miuby.survi.villager.villagerlevel.VillagerLevel;
 import fr.miuby.survi.villager.VillagerPostLoadActions;
 import fr.miuby.survi.blessing.BlessingEffect;
 import fr.miuby.survi.villager.villagerlevel.event.VillagerLevelUpEvent;
-import fr.miuby.survi.system.lang.LangKey;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
@@ -51,7 +50,7 @@ public class VillagerListener implements Listener {
                 case VillagerLevel level when level.getTribute() == null || !level.isUnlocked() -> {
                     player.sendMessage(Component.text("<", NamedTextColor.AQUA).append(level.getDisplayName()).append(Component.text("> ", NamedTextColor.AQUA)).append(level.getMessage()));
                     if (!level.isUnlocked())
-                        player.sendMessage(GameManager.getInstance().getLangService().text(player, LangKey.VILLAGER_LOCKED, villager.getName(), level.getRemainingLock()));
+                        player.sendMessage(GameManager.getInstance().getLangService().text(player, "villager.locked", villager.getName(), level.getRemainingLock()));
                     event.setCancelled(true);
                 }
                 case VillagerLevel level -> {

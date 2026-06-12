@@ -3,7 +3,6 @@ package fr.miuby.survi.listener;
 import fr.miuby.lib.world.WorldRegistry;
 import fr.miuby.survi.GameManager;
 import fr.miuby.survi.world.EWorld;
-import fr.miuby.survi.system.lang.LangKey;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -41,7 +40,7 @@ public class GraveListener implements Listener {
     public void onBlockBreak(BlockBreakEvent event) {
         if (GameManager.getInstance().getGraveManager().isGrave(event.getBlock().getLocation())) {
             event.setCancelled(true);
-            event.getPlayer().sendMessage(GameManager.getInstance().getLangService().text(event.getPlayer(), LangKey.GRAVE_INDESTRUCTIBLE));
+            event.getPlayer().sendMessage(GameManager.getInstance().getLangService().text(event.getPlayer(), "grave.indestructible"));
         }
     }
 

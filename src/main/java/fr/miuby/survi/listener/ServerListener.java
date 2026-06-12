@@ -16,7 +16,6 @@ import org.bukkit.entity.EnderDragon;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntitySpawnEvent;
-import fr.miuby.survi.system.lang.LangKey;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.EquipmentSlotGroup;
@@ -134,7 +133,7 @@ public class ServerListener implements Listener {
         if (remaining <= 0) return;
         var ls = GameManager.getInstance().getLangService();
         player.getPlayer().sendMessage(
-                ls.text(player.getPlayer(), LangKey.QUEST_NEW_SLOTS_PREFIX)
-                        .append(ls.text(player.getPlayer(), LangKey.QUEST_NEW_SLOTS_BODY, remaining, used, capacity)));
+                ls.text(player.getPlayer(), "quest.new_slots.prefix")
+                        .append(ls.text(player.getPlayer(), "quest.new_slots.body", remaining, used, capacity)));
     }
 }

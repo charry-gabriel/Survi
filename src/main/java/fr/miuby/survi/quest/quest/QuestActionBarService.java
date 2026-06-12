@@ -2,7 +2,6 @@ package fr.miuby.survi.quest.quest;
 
 import fr.miuby.survi.GameManager;
 import fr.miuby.survi.player.AlphaPlayer;
-import fr.miuby.survi.system.lang.LangKey;
 import fr.miuby.survi.system.lang.LangService;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -99,13 +98,13 @@ public class QuestActionBarService {
                 .append(Component.text(data.getProgress() + "/" + quest.getGoal(), NamedTextColor.WHITE))
                 .append(Component.text("  [", NamedTextColor.DARK_GRAY))
                 .append(Component.text(doneCount + "/" + capacity, NamedTextColor.GRAY))
-                .append(ls.text(player.getPlayer(), LangKey.QUEST_ACTIONBAR_QUESTS_SUFFIX));
+                .append(ls.text(player.getPlayer(), "quest.actionbar.quests_suffix"));
     }
 
     private Component buildFinishedMessage(AlphaPlayer player, Quest quest) {
         LangService ls = GameManager.getInstance().getLangService();
-        return ls.text(player.getPlayer(), LangKey.QUEST_ACTIONBAR_FINISHED_PREFIX)
+        return ls.text(player.getPlayer(), "quest.actionbar.finished_prefix")
                 .append(Component.text(quest.getName(), NamedTextColor.GOLD))
-                .append(ls.text(player.getPlayer(), LangKey.QUEST_ACTIONBAR_FINISHED_SUFFIX));
+                .append(ls.text(player.getPlayer(), "quest.actionbar.finished_suffix"));
     }
 }

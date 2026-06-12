@@ -6,7 +6,6 @@ import fr.miuby.survi.player.AlphaPlayer;
 import fr.miuby.survi.player.event.AlphaPlayerJobLevelUpEvent;
 import fr.miuby.survi.sound.ESound;
 import fr.miuby.survi.sound.SoundService;
-import fr.miuby.survi.system.lang.LangKey;
 import fr.miuby.survi.system.lang.LangService;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.kyori.adventure.title.Title;
@@ -54,15 +53,15 @@ public class JobLevelUpListener implements Listener {
         // ── Effets visuels — title affiché uniquement au joueur concerné ─────────
         if (player != null && player.isOnline()) {
             player.showTitle(Title.title(
-                    ls.text(player, LangKey.JOB_LEVEL_UP_TITLE),
-                    job.toComponent().append(ls.text(player, LangKey.JOB_LEVEL_UP_SUBTITLE_SUFFIX, levelStr)),
+                    ls.text(player, "job.level_up.title"),
+                    job.toComponent().append(ls.text(player, "job.level_up.subtitle_suffix", levelStr)),
                     TITLE_TIMES
             ));
         }
 
         // ── Annonce + son — tous les joueurs en ligne (chacun dans sa langue) ────
         SoundService.broadcast(ESound.JOB_LEVEL_UP);
-        ls.broadcast(LangKey.JOB_LEVEL_UP_BROADCAST,
+        ls.broadcast("job.level_up.broadcast",
                 Placeholder.unparsed("player", alphaPlayer.getPseudo()),
                 Placeholder.unparsed("level", levelStr),
                 Placeholder.component("job", job.toComponent())

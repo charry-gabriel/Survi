@@ -4,7 +4,6 @@ import fr.miuby.survi.job.EJob;
 import fr.miuby.survi.job.config.JobsConfig;
 import fr.miuby.survi.player.AlphaPlayer;
 import fr.miuby.survi.GameManager;
-import fr.miuby.survi.system.lang.LangKey;
 import fr.miuby.survi.system.lang.LangService;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.kyori.adventure.text.Component;
@@ -63,7 +62,7 @@ public class EnchanterListener implements Listener {
         if (jobLevel == 0) {
             event.setCancelled(true);
             event.getEnchanter().sendMessage(langService.text(
-                    event.getEnchanter(), LangKey.ENCHANTER_NO_LEVEL,
+                    event.getEnchanter(), "enchanter.no_level",
                     Placeholder.component("job", EJob.ENCHANTER.toComponent())));
             return;
         }
@@ -71,7 +70,7 @@ public class EnchanterListener implements Listener {
         if (event.getExpLevelCost() > maxXpCost) {
             event.setCancelled(true);
             event.getEnchanter().sendMessage(langService.text(
-                    event.getEnchanter(), LangKey.ENCHANTER_XP_TOO_HIGH,
+                    event.getEnchanter(), "enchanter.xp_too_high",
                     Placeholder.component("job", EJob.ENCHANTER.toComponent()),
                     Placeholder.unparsed("0", String.valueOf(maxXpCost))));
             return;
@@ -81,7 +80,7 @@ public class EnchanterListener implements Listener {
         if (tooHigh) {
             event.setCancelled(true);
             event.getEnchanter().sendMessage(langService.text(
-                    event.getEnchanter(), LangKey.ENCHANTER_LEVEL_TOO_HIGH,
+                    event.getEnchanter(), "enchanter.level_too_high",
                     Placeholder.component("job", EJob.ENCHANTER.toComponent()),
                     Placeholder.unparsed("0", String.valueOf(jobLevel))));
         }

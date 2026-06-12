@@ -4,7 +4,6 @@ import fr.miuby.survi.GameManager;
 import fr.miuby.lib.log.MLLogManager;
 import fr.miuby.survi.system.database.repository.GraveRepository;
 import fr.miuby.survi.system.log.ELogTag;
-import fr.miuby.survi.system.lang.LangKey;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -101,7 +100,7 @@ public class GraveManager {
         // Vide uniquement les 36 slots de l'inventaire, pas l'armure
         player.getInventory().setStorageContents(new ItemStack[36]);
 
-        player.sendMessage(GameManager.getInstance().getLangService().text(player, LangKey.GRAVE_CREATED,
+        player.sendMessage(GameManager.getInstance().getLangService().text(player, "grave.created",
                 loc.getBlockX(), loc.getBlockY(), loc.getBlockZ(), loc.getWorld().getName()));
         return true;
     }
@@ -140,7 +139,7 @@ public class GraveManager {
         if (grave == null) return false;
 
         if (!grave.ownerId().equals(player.getUniqueId()) && !player.hasPermission("survi.grave.bypass")) {
-            player.sendMessage(GameManager.getInstance().getLangService().text(player, LangKey.GRAVE_NOT_YOURS));
+            player.sendMessage(GameManager.getInstance().getLangService().text(player, "grave.not_yours"));
             return true;
         }
 
@@ -154,7 +153,7 @@ public class GraveManager {
 
         removeGrave(grave);
         MLLogManager.getInstance().log(Level.FINE, ELogTag.GRAVE, "[CollectGrave] " + player.getName() + " a récupéré la tombe " + grave.id());
-        player.sendMessage(GameManager.getInstance().getLangService().text(player, LangKey.GRAVE_RECOVERED));
+        player.sendMessage(GameManager.getInstance().getLangService().text(player, "grave.recovered"));
         return true;
     }
 

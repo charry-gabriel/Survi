@@ -4,7 +4,6 @@ import fr.miuby.lib.villager.MLVillager;
 import fr.miuby.lib.villager.VillagerRegistry;
 import fr.miuby.survi.GameManager;
 import fr.miuby.survi.player.AlphaPlayer;
-import fr.miuby.survi.system.lang.LangKey;
 import fr.miuby.survi.system.lang.LangService;
 import fr.miuby.survi.villager.villagerlevel.VillagerLevel;
 import net.kyori.adventure.text.Component;
@@ -36,10 +35,10 @@ public class PlayerEffectRestoreService {
         int worldLevel = GameManager.getInstance().getWorldLevelManager().getLevel();
 
         player.getPlayer().sendMessage(Component.text()
-                .append(ls.text(player.getPlayer(), LangKey.EFFECT_RESTORE_HEADER)).appendNewline()
-                .append(ls.text(player.getPlayer(), LangKey.EFFECT_RESTORE_WORLD_LEVEL, worldLevel)).appendNewline()
+                .append(ls.text(player.getPlayer(), "effect.restore.header")).appendNewline()
+                .append(ls.text(player.getPlayer(), "effect.restore.world_level", worldLevel)).appendNewline()
                 .append(globalText)
-                .append(ls.text(player.getPlayer(), LangKey.EFFECT_RESTORE_FOOTER))
+                .append(ls.text(player.getPlayer(), "effect.restore.footer"))
                 .build());
     }
 }

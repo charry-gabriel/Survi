@@ -15,7 +15,6 @@ import fr.miuby.survi.system.perf.PerfTimer;
 import fr.miuby.survi.world.EWorld;
 import fr.miuby.survi.world.VillageZoneManager;
 import io.papermc.paper.advancement.AdvancementDisplay;
-import fr.miuby.survi.system.lang.LangKey;
 import fr.miuby.survi.blessing.BlessingEffect;
 import fr.miuby.survi.blessing.PotionsEffect;
 import fr.miuby.survi.quest.quest.PlayerQuestData;
@@ -134,7 +133,7 @@ public class PlayerListener implements Listener {
         UUID uuid = player.getUniqueId();
         if (!warnCooldown.isOnCooldown(uuid)) {
             warnCooldown.set(uuid);
-            player.sendMessage(gm.getLangService().text(player, LangKey.BOUNDARY_WARNING));
+            player.sendMessage(gm.getLangService().text(player, "boundary.warning"));
         }
     }
 

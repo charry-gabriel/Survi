@@ -9,7 +9,6 @@ import fr.miuby.survi.GameManager;
 import fr.miuby.survi.job.EJob;
 import fr.miuby.survi.player.AlphaPlayer;
 import fr.miuby.survi.player.event.AlphaPlayerJobLevelUpEvent;
-import fr.miuby.survi.system.lang.LangKey;
 import fr.miuby.survi.system.lang.LangService;
 import fr.miuby.survi.villager.villagerlevel.VillagerLevel;
 import fr.miuby.survi.villager.villagerlevel.event.VillagerLevelUpEvent;
@@ -85,7 +84,7 @@ public class OfflineNotificationService {
                 || pendingVillagerLevelUps.containsKey(uuid);
 
         if (hasAny) {
-            player.sendMessage(GameManager.getInstance().getLangService().text(player, LangKey.OFFLINE_HEADER));
+            player.sendMessage(GameManager.getInstance().getLangService().text(player, "offline.header"));
         }
 
         deliverJobNotifications(uuid, player);
@@ -109,7 +108,7 @@ public class OfflineNotificationService {
 
         LangService ls = GameManager.getInstance().getLangService();
         for (JobLevelUpRecord rec : consolidated.values()) {
-            player.sendMessage(ls.text(player, LangKey.OFFLINE_JOB_LEVEL,
+            player.sendMessage(ls.text(player, "offline.job_level",
                     Placeholder.component("job", rec.job().toComponent()),
                     Placeholder.unparsed("old", String.valueOf(rec.oldLevel())),
                     Placeholder.unparsed("new", String.valueOf(rec.newLevel()))
@@ -122,7 +121,7 @@ public class OfflineNotificationService {
         if (worldFrom == null) return;
         int worldNow = GameManager.getInstance().getWorldLevelManager().getLevel();
         player.sendMessage(GameManager.getInstance().getLangService()
-                .text(player, LangKey.OFFLINE_WORLD_LEVEL, worldFrom, worldNow));
+                .text(player, "offline.world_level", worldFrom, worldNow));
     }
 
     private void deliverVillagerNotifications(UUID uuid, Player player) {
@@ -144,7 +143,7 @@ public class OfflineNotificationService {
                     ? vl.getDisplayName()
                     : Component.text(rec.nameId(), NamedTextColor.AQUA);
 
-            player.sendMessage(ls.text(player, LangKey.OFFLINE_VILLAGER_LEVEL,
+            player.sendMessage(ls.text(player, "offline.villager_level",
                     Placeholder.component("villager", villagerName),
                     Placeholder.unparsed("old", String.valueOf(rec.oldLevel())),
                     Placeholder.unparsed("new", String.valueOf(rec.newLevel()))
@@ -173,11 +172,11 @@ public class OfflineNotificationService {
         String remaining = GlobalQuestManager.formatSeconds(gqm.getRemainingSeconds());
 
         LangService ls = GameManager.getInstance().getLangService();
-        player.sendMessage(ls.text(player, LangKey.OFFLINE_GLOBAL_QUEST_PREFIX, activeQuest.getName()));
+        player.sendMessage(ls.text(player, "offline.global_quest.prefix", activeQuest.getName()));
         player.sendMessage(Component.text("   ", NamedTextColor.DARK_GRAY)
                 .append(Component.text(activeQuest.getFormattedDescription(), NamedTextColor.WHITE)));
         player.sendMessage(Component.text("   ", NamedTextColor.DARK_GRAY)
-                .append(ls.text(player, LangKey.OFFLINE_GLOBAL_QUEST_PROGRESS,
+                .append(ls.text(player, "offline.global_quest.progress",
                         gProgress, gGoal, percent, remaining)));
     }
 }

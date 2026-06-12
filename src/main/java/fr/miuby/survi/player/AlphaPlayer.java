@@ -16,7 +16,6 @@ import fr.miuby.lib.world.MLWorld;
 import fr.miuby.survi.world.WorldInitializer;
 import lombok.Getter;
 import lombok.Setter;
-import fr.miuby.survi.system.lang.LangKey;
 import fr.miuby.survi.system.lang.LangService;
 import org.bukkit.Location;
 import org.bukkit.attribute.Attribute;
@@ -228,9 +227,9 @@ public class AlphaPlayer extends MLPlayer implements Serializable {
         if (this.getPlayer() != null && this.getPlayer().isOnline()) {
             LangService langService = GameManager.getInstance().getLangService();
             this.getPlayer().sendMessage(
-                    langService.text(this.getPlayer(), LangKey.PLAYER_SUBROLE_ADDED_PREFIX)
+                    langService.text(this.getPlayer(), "player.subrole.added_prefix")
                             .append(role.displayName())
-                            .append(langService.text(this.getPlayer(), LangKey.PLAYER_SUBROLE_ADDED_SUFFIX))
+                            .append(langService.text(this.getPlayer(), "player.subrole.added_suffix"))
             );
         }
         return true;
@@ -243,9 +242,9 @@ public class AlphaPlayer extends MLPlayer implements Serializable {
         if (this.getPlayer() != null && this.getPlayer().isOnline()) {
             LangService langService = GameManager.getInstance().getLangService();
             this.getPlayer().sendMessage(
-                    langService.text(this.getPlayer(), LangKey.PLAYER_SUBROLE_REMOVED_PREFIX)
+                    langService.text(this.getPlayer(), "player.subrole.removed_prefix")
                             .append(role.displayName())
-                            .append(langService.text(this.getPlayer(), LangKey.PLAYER_SUBROLE_REMOVED_SUFFIX))
+                            .append(langService.text(this.getPlayer(), "player.subrole.removed_suffix"))
             );
         }
         return true;
@@ -292,9 +291,9 @@ public class AlphaPlayer extends MLPlayer implements Serializable {
         if (newRank != previousRank && getPlayer() != null) {
             LangService langService = GameManager.getInstance().getLangService();
             getPlayer().sendMessage(
-                    langService.text(getPlayer(), LangKey.PLAYER_RANK_UP_PREFIX)
+                    langService.text(getPlayer(), "player.rank_up.prefix")
                             .append(newRank.displayComponent())
-                            .append(langService.text(getPlayer(), LangKey.PLAYER_RANK_UP_SUFFIX, getTotalReputation()))
+                            .append(langService.text(getPlayer(), "player.rank_up.suffix", getTotalReputation()))
             );
         }
     }
@@ -330,7 +329,7 @@ public class AlphaPlayer extends MLPlayer implements Serializable {
         }
 
         if (newLevel > oldLevel && getPlayer() != null && getPlayer().isOnline()) {
-            getPlayer().sendMessage(GameManager.getInstance().getLangService().text(getPlayer(), LangKey.JOB_NOTE_PREFIX).append(job.toComponent()));
+            getPlayer().sendMessage(GameManager.getInstance().getLangService().text(getPlayer(), "job.note_prefix").append(job.toComponent()));
             MLLogManager.getInstance().log(Level.INFO, ELogTag.JOB,
                     getPseudo() + " : " + job.name() + " niv. " + oldLevel + " -> " + newLevel);
         }

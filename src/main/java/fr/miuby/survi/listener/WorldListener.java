@@ -8,7 +8,6 @@ import fr.miuby.lib.log.MLLogManager;
 import fr.miuby.survi.system.log.ELogTag;
 import fr.miuby.survi.world.EWorld;
 import fr.miuby.survi.world.WorldInitializer;
-import fr.miuby.survi.system.lang.LangKey;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -59,7 +58,7 @@ public class WorldListener implements Listener {
 
         if (WorldRegistry.get(EWorld.NETHER).isLocked()) {
             event.setCancelled(true);
-            event.getPlayer().sendMessage(GameManager.getInstance().getLangService().text(event.getPlayer(), LangKey.WORLD_LOCKED));
+            event.getPlayer().sendMessage(GameManager.getInstance().getLangService().text(event.getPlayer(), "world.locked"));
             return;
         }
 
@@ -104,7 +103,7 @@ public class WorldListener implements Listener {
 
         MLWorld endMLWorld = WorldRegistry.get(EWorld.END);
         if (endMLWorld != null && endMLWorld.isLocked()) {
-            player.sendMessage(GameManager.getInstance().getLangService().text(player, LangKey.WORLD_LOCKED));
+            player.sendMessage(GameManager.getInstance().getLangService().text(player, "world.locked"));
             return;
         }
 
