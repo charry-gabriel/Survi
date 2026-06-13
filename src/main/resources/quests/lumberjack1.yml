@@ -1,0 +1,90 @@
+# yaml-language-server: $schema=../schema/quests-schema.json
+quests:
+
+# ─────────────────── DIFFICULTÉ 1 (7/7) ───────────────────
+
+  - id: "chop_oak"
+    name: "Premier Abattage"
+    description: "Coupez {value} bûches de chêne."
+    type: MINE
+    difficulty: 1
+    jobs:
+      - LUMBERJACK
+    targets: [OAK_LOG]
+    goal: 32
+    rewards:
+      - {type: REPUTATION, job: LUMBERJACK, value: 1}
+
+  - id: "collect_logs"
+    name: "Réserve de Bois"
+    description: "Coupez {value} bûches au total."
+    type: MINE
+    difficulty: 1
+    jobs:
+      - LUMBERJACK
+    targets: [OAK_LOG, BIRCH_LOG, SPRUCE_LOG, JUNGLE_LOG, ACACIA_LOG, DARK_OAK_LOG, CHERRY_LOG]
+    goal: 64
+    rewards:
+      - {type: REPUTATION, job: LUMBERJACK, value: 2}
+
+  - id: "chop_birch"
+    name: "Bois Clair"
+    description: "Coupez {value} bûches de bouleau."
+    type: MINE
+    difficulty: 1
+    jobs:
+      - LUMBERJACK
+    targets: [ BIRCH_LOG ]
+    goal: 32
+    rewards:
+      - { type: REPUTATION, job: LUMBERJACK, value: 1 }
+
+  - id: "break_leaves"
+    name: "Élagage"
+    description: "Détruisez {value} feuilles."
+    type: MINE
+    difficulty: 1
+    jobs:
+      - LUMBERJACK
+    targets: [ OAK_LEAVES, BIRCH_LEAVES, SPRUCE_LEAVES, JUNGLE_LEAVES, ACACIA_LEAVES, DARK_OAK_LEAVES, CHERRY_LEAVES ]
+    goal: 64
+    rewards:
+      - { type: REPUTATION, job: LUMBERJACK, value: 2 }
+
+  - id: "collect_saplings"
+    name: "Reboisement"
+    description: "Récoltez {value} jeunes pousses."
+    type: COLLECT
+    difficulty: 1
+    jobs:
+      - LUMBERJACK
+    targets: [ OAK_SAPLING, BIRCH_SAPLING, SPRUCE_SAPLING ]
+    goal: 8
+    rewards:
+      - { type: REPUTATION, job: LUMBERJACK, value: 2 }
+      - { type: REPUTATION, job: FARMER, value: 1 }
+
+  - id: "chop_spruce"
+    name: "Forêt Boréale"
+    description: "Coupez {value} bûches de sapin."
+    type: MINE
+    difficulty: 1
+    jobs:
+      - LUMBERJACK
+    targets: [ SPRUCE_LOG ]
+    goal: 32
+    rewards:
+      - { type: REPUTATION, job: LUMBERJACK, value: 2 }
+
+  - id: "discover_cherry"
+    name: "Bois Rosé"
+    description: "Coupez {value} bûches de cerisier."
+    type: MINE
+    difficulty: 1
+    jobs:
+      - LUMBERJACK
+    targets: [ CHERRY_LOG ]
+    goal: 16
+    rewards:
+      - { type: REPUTATION, job: LUMBERJACK, value: 3 }
+      - { type: REPUTATION, job: EXPLORER, value: 1 }
