@@ -8,7 +8,8 @@ import fr.miuby.survi.quest.globalquest.GlobalQuest;
 import fr.miuby.survi.quest.globalquest.GlobalQuestManager;
 import fr.miuby.survi.quest.quest.PlayerQuestData;
 import fr.miuby.survi.quest.quest.Quest;
-import fr.miuby.survi.quest.quest.QuestManager;
+import fr.miuby.survi.system.lang.ELang;
+import fr.miuby.survi.system.lang.LangService;
 import fr.miuby.survi.villager.villagerlevel.VillagerLevel;
 import com.mojang.authlib.properties.Property;
 import io.papermc.paper.adventure.PaperAdventure;
@@ -49,6 +50,9 @@ class TabInfoColumn {
     private TabInfoColumn() {}
 
     static List<ClientboundPlayerInfoUpdatePacket.Entry> build(AlphaPlayer ap, int playerCount) {
+        LangService ls   = GameManager.getInstance().getLangService();
+        ELang       lang = ap.getPlayer() != null ? ls.resolveLanguage(ap.getPlayer()) : ls.getServerDefault();
+
         int padding    = Math.max(0, 20 - playerCount);
         int totalSlots = padding + HEIGHT;
         List<ClientboundPlayerInfoUpdatePacket.Entry> entries = new ArrayList<>(totalSlots);
@@ -61,20 +65,20 @@ class TabInfoColumn {
         }
 
         // ── Section Villageois ───────────────────────────────────────────────
-        entries.add(entry(slot++, section("Villageois"),   TabSkins.blue()));
+        entries.add(entry(slot++, section(ls, lang, "tab.info.section.villagers"), TabSkins.blue()));
 
         int maxV = Math.min(villagers.size(), MAX_VILLAGERS);
         for (int i = 0; i < maxV; i++) {
-            entries.add(entry(slot++, villagerDisplay(villagers.get(i)), TabSkins.gray()));
+            entries.add(entry(slot++, villagerDisplay(ls, lang, villagers.get(i)), TabSkins.gray()));
         }
 
         // ── Section Métiers ──────────────────────────────────────────────────
-        entries.add(entry(slot++, Component.empty(),    TabSkins.gray()));
-        entries.add(entry(slot++, section("Métiers"),   TabSkins.blue()));
+        entries.add(entry(slot++, Component.empty(),                                TabSkins.gray()));
+        entries.add(entry(slot++, section(ls, lang, "tab.info.section.jobs"),       TabSkins.blue()));
 
         for (EJob job : sortedJobs(ap)) {
             Property skin = TabSkins.JOB_PROPS.getOrDefault(job, TabSkins.gray());
-            entries.add(entry(slot++, jobDisplay(ap, job), skin));
+            entries.add(entry(slot++, jobDisplay(ls, lang, ap, job), skin));
         }
 
         // ── Section Quêtes ───────────────────────────────────────────────────
@@ -85,20 +89,20 @@ class TabInfoColumn {
                 ? GameManager.getInstance().getQuestManager().getQuest(questData.getQuestId())
                 : null;
 
-        entries.add(entry(slot++, Component.empty(), TabSkins.gray()));
-        entries.add(entry(slot++, section("Quêtes"),  TabSkins.blue()));
+        entries.add(entry(slot++, Component.empty(),                                  TabSkins.gray()));
+        entries.add(entry(slot++, section(ls, lang, "tab.info.section.quests"),       TabSkins.blue()));
 
         if (quest != null) {
-            entries.add(entry(slot++, personalQuestDisplay(questData, quest), TabSkins.gray()));
+            entries.add(entry(slot++, personalQuestDisplay(ls, lang, questData, quest), TabSkins.gray()));
         } else {
-            entries.add(entry(slot++, Component.text("Aucune quête en cours", NamedTextColor.GRAY), TabSkins.gray()));
+            entries.add(entry(slot++, ls.text(lang, "tab.info.no_quest"), TabSkins.gray()));
         }
 
         if (gq != null) {
             entries.add(entry(slot++, globalQuestDisplay(gqm, gq), TabSkins.gray()));
         }
 
-        entries.add(entry(slot++, dailyProgressDisplay(ap), TabSkins.gray()));
+        entries.add(entry(slot++, dailyProgressDisplay(ls, lang, ap), TabSkins.gray()));
 
         // ── Padding bas de contenu ───────────────────────────────────────────
         while (slot < totalSlots) {
@@ -133,35 +137,35 @@ class TabInfoColumn {
 
     // ── Affichage ────────────────────────────────────────────────────────────
 
-    private static Component section(String name) {
-        return Component.text("─── " + name + " ───", NamedTextColor.DARK_AQUA);
+    private static Component section(LangService ls, ELang lang, String key) {
+        return Component.text("─── ", NamedTextColor.DARK_AQUA)
+                .append(ls.text(lang, key).colorIfAbsent(NamedTextColor.DARK_AQUA))
+                .append(Component.text(" ───", NamedTextColor.DARK_AQUA));
     }
 
-    private static Component villagerDisplay(VillagerLevel vl) {
-        return vl.getDisplayName().append(Component.text(": niv." + vl.getLevel(), NamedTextColor.WHITE));
+    private static Component villagerDisplay(LangService ls, ELang lang, VillagerLevel vl) {
+        return vl.getDisplayName().append(ls.text(lang, "tab.info.level", vl.getLevel()).colorIfAbsent(NamedTextColor.WHITE));
     }
 
-    private static Component jobDisplay(AlphaPlayer ap, EJob job) {
+    private static Component jobDisplay(LangService ls, ELang lang, AlphaPlayer ap, EJob job) {
         int level = ap.getJobLevel(job);
-        return job.toComponent()
-                .append(Component.text(": ", NamedTextColor.WHITE))
-                .append(Component.text("niv." + level, NamedTextColor.WHITE));
+        return job.toComponent().append(ls.text(lang, "tab.info.level", level).colorIfAbsent(NamedTextColor.WHITE));
     }
 
-    private static Component dailyProgressDisplay(AlphaPlayer ap) {
+    private static Component dailyProgressDisplay(LangService ls, ELang lang, AlphaPlayer ap) {
         int done     = ap.getTotalDailyQuestsClaimed() + ap.countActiveUnclaimedQuests();
         int capacity = GameManager.getInstance().getQuestManager().getTotalCapacity();
-        return Component.text("Quêtes : ", NamedTextColor.GRAY)
+        return ls.text(lang, "tab.info.quests_label")
                 .append(Component.text(done + "/" + capacity,
                         (capacity > 0 && done >= capacity) ? NamedTextColor.GREEN : NamedTextColor.WHITE));
     }
 
-    private static Component personalQuestDisplay(PlayerQuestData data, Quest quest) {
+    private static Component personalQuestDisplay(LangService ls, ELang lang, PlayerQuestData data, Quest quest) {
         int progress = data.getProgress();
         int goal     = quest.getGoal();
         Component line = Component.text(quest.getName() + " ", NamedTextColor.WHITE)
                 .append(Component.text(progress + "/" + goal, NamedTextColor.DARK_GRAY));
-        if (data.isCompleted()) line = line.append(Component.text(" ✔ Trader !", NamedTextColor.GREEN));
+        if (data.isCompleted()) line = line.append(ls.text(lang, "tab.info.completed_marker"));
         return line;
     }
 

@@ -12,28 +12,18 @@ import fr.miuby.survi.system.command.argument.AlphaPlayerArgument;
 import fr.miuby.survi.system.command.argument.JobArgument;
 import fr.miuby.survi.system.database.repository.QuestHistoryRepository.PlayerRankEntry;
 import fr.miuby.survi.system.database.repository.QuestRepository.ReputationRankEntry;
+import fr.miuby.survi.system.lang.ELang;
+import fr.miuby.survi.system.lang.LangService;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
 import io.papermc.paper.command.brigadier.Commands;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
-import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.List;
 import java.util.Map;
 
-/**
- * Commandes de stats et classements joueurs.
- *
- * <pre>
- *   /player info [joueur]           — profil complet (soi ou autre si op)
- *   /player top quests [N]          — classement par quêtes complétées
- *   /player top reputation [N]      — classement par réputation totale
- *   /player top job &lt;métier&gt; [N]   — classement par métier spécifique
- * </pre>
- */
 @SuppressWarnings({"java:S3516", "SameReturnValue"})
 public class PlayerCommand {
 
@@ -46,7 +36,6 @@ public class PlayerCommand {
     public static LiteralArgumentBuilder<CommandSourceStack> createCommand() {
         return Commands.literal("player")
 
-                // /player info [joueur]
                 .then(Commands.literal("info")
                         .executes(PlayerCommand::infoSelf)
                         .then(Commands.argument(PLAYER_ARG, AlphaPlayerArgument.alphaPlayer())
@@ -55,10 +44,8 @@ public class PlayerCommand {
                         )
                 )
 
-                // /player top ...
                 .then(Commands.literal("top")
 
-                        // /player top quests [N]
                         .then(Commands.literal("quests")
                                 .executes(ctx -> topQuests(ctx, 10))
                                 .then(Commands.argument(LIMIT_ARG, IntegerArgumentType.integer(1, 50))
@@ -66,7 +53,6 @@ public class PlayerCommand {
                                 )
                         )
 
-                        // /player top reputation [N]
                         .then(Commands.literal("reputation")
                                 .executes(ctx -> topReputation(ctx, 10))
                                 .then(Commands.argument(LIMIT_ARG, IntegerArgumentType.integer(1, 50))
@@ -74,7 +60,6 @@ public class PlayerCommand {
                                 )
                         )
 
-                        // /player top job <métier> [N]
                         .then(Commands.literal("job")
                                 .then(Commands.argument(JOB_ARG, JobArgument.job())
                                         .executes(ctx -> topJob(ctx, 10))
@@ -93,7 +78,8 @@ public class PlayerCommand {
     private static int infoSelf(CommandContext<CommandSourceStack> ctx) {
         CommandSender sender = ctx.getSource().getSender();
         if (!(sender instanceof Player player)) {
-            sender.sendMessage(Component.text("Cette commande est réservée aux joueurs en jeu. Utilisez /player info <joueur> depuis la console.").color(NamedTextColor.RED));
+            LangService ls   = GameManager.getInstance().getLangService();
+            sender.sendMessage(ls.text(ls.getServerDefault(), "cmd.player.console_only"));
             return Command.SINGLE_SUCCESS;
         }
         displayPlayerInfo(sender, AlphaPlayer.get(player.getUniqueId()), true);
@@ -106,7 +92,8 @@ public class PlayerCommand {
     }
 
     private static void displayPlayerInfo(CommandSender sender, AlphaPlayer ap, boolean isSelf) {
-        String title = isSelf ? "✦ Votre Profil" : "✦ Profil de " + ap.getPseudo();
+        LangService ls   = GameManager.getInstance().getLangService();
+        ELang       lang = sender instanceof Player p ? ls.resolveLanguage(p) : ls.getServerDefault();
 
         int totalQuests  = GameManager.getInstance().getDatabase().questHistory().countCompleted(ap.getUuid());
         Map<Integer, Integer> byDiff = GameManager.getInstance().getDatabase().questHistory().countByDifficulty(ap.getUuid());
@@ -114,55 +101,46 @@ public class PlayerCommand {
         int dailyCount  = byType.getOrDefault("daily", 0);
         int globalCount = byType.getOrDefault("global", 0);
 
-        sender.sendMessage(Component.text("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━").color(NamedTextColor.GOLD));
-        sender.sendMessage(Component.text("  " + title).color(NamedTextColor.GOLD).decoration(TextDecoration.BOLD, true));
-        sender.sendMessage(Component.text("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━").color(NamedTextColor.GOLD));
+        Component sep = ls.text(lang, "cmd.player.separator");
+        sender.sendMessage(sep);
+        sender.sendMessage(isSelf ? ls.text(lang, "cmd.player.info.title_self") : ls.text(lang, "cmd.player.info.title_other", ap.getPseudo()));
+        sender.sendMessage(sep);
 
-        // Rang & stats générales
+        // Rang & stats
         sender.sendMessage(
-                Component.text("  Rang : ", NamedTextColor.GRAY)
+                ls.text(lang, "cmd.player.info.rank_label")
                         .append(ap.getGlobalRank().displayComponent())
-                        .append(Component.text("    Morts : ", NamedTextColor.GRAY))
+                        .append(ls.text(lang, "cmd.player.info.deaths_label"))
                         .append(Component.text(String.valueOf(ap.getMort()), NamedTextColor.RED))
-                        .append(Component.text("    Succès : ", NamedTextColor.GRAY))
+                        .append(ls.text(lang, "cmd.player.info.success_label"))
                         .append(Component.text(String.valueOf(ap.getSuccess()), NamedTextColor.GREEN))
         );
 
         // Quêtes
-        sender.sendMessage(
-                Component.text("  Quêtes : ", NamedTextColor.GRAY)
-                        .append(Component.text(totalQuests + " complétée(s)", NamedTextColor.AQUA))
-                        .append(Component.text("  (", NamedTextColor.DARK_GRAY))
-                        .append(Component.text(dailyCount + " journalières", NamedTextColor.YELLOW))
-                        .append(Component.text(" · ", NamedTextColor.DARK_GRAY))
-                        .append(Component.text(globalCount + " globales", NamedTextColor.LIGHT_PURPLE))
-                        .append(Component.text(")", NamedTextColor.DARK_GRAY))
-        );
+        sender.sendMessage(ls.text(lang, "cmd.player.info.quests", totalQuests, dailyCount, globalCount));
 
+        // Par difficulté
         if (!byDiff.isEmpty()) {
-            Component diffLine = Component.text("  Par difficulté : ", NamedTextColor.GRAY);
+            Component diffLine = ls.text(lang, "cmd.player.info.difficulty_label");
             boolean first = true;
             for (Map.Entry<Integer, Integer> entry : byDiff.entrySet()) {
                 if (!first) diffLine = diffLine.append(Component.text("  ", NamedTextColor.DARK_GRAY));
-                diffLine = diffLine
-                        .append(Component.text("diff." + entry.getKey(), NamedTextColor.WHITE))
-                        .append(Component.text(" → " + entry.getValue(), NamedTextColor.DARK_GRAY));
+                diffLine = diffLine.append(ls.text(lang, "cmd.player.info.difficulty_entry", entry.getKey(), entry.getValue()));
                 first = false;
             }
             sender.sendMessage(diffLine);
         }
 
         // Métiers
-        sender.sendMessage(Component.text("  ─ Métiers ─", NamedTextColor.DARK_GRAY));
+        sender.sendMessage(ls.text(lang, "cmd.player.info.jobs_header"));
         for (EJob job : EJob.values()) {
             int level = ap.getJobLevel(job);
-            TextComponent line = Component.text("    ")
+            sender.sendMessage(Component.text("    ")
                     .append(job.toComponent())
-                    .append(Component.text(" niv." + level, NamedTextColor.WHITE));
-            sender.sendMessage(line);
+                    .append(ls.text(lang, "cmd.player.info.job_entry", level)));
         }
 
-        sender.sendMessage(Component.text("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━").color(NamedTextColor.GOLD));
+        sender.sendMessage(sep);
     }
 
     // =========================================================================
@@ -170,64 +148,82 @@ public class PlayerCommand {
     // =========================================================================
 
     private static int topQuests(CommandContext<CommandSourceStack> ctx, int limit) {
+        CommandSender sender = ctx.getSource().getSender();
+        LangService   ls     = GameManager.getInstance().getLangService();
+        ELang         lang   = sender instanceof Player p ? ls.resolveLanguage(p) : ls.getServerDefault();
         List<PlayerRankEntry> top = GameManager.getInstance().getDatabase().questHistory().getTopByCompletions(limit);
-        sendLeaderboard(ctx.getSource().getSender(), "Classement — Quêtes complétées",
-                top.stream().map(e -> Map.entry(e.pseudo(), e.count())).toList(), "quêtes");
+        sendLeaderboard(sender, ls, lang,
+                ls.text(lang, "cmd.player.top.quests_title"),
+                top.stream().map(e -> Map.entry(e.pseudo(), e.count())).toList(),
+                ls.getString(lang, "cmd.player.top.unit_quests"),
+                null);
         return Command.SINGLE_SUCCESS;
     }
 
     private static int topReputation(CommandContext<CommandSourceStack> ctx, int limit) {
+        CommandSender sender = ctx.getSource().getSender();
+        LangService   ls     = GameManager.getInstance().getLangService();
+        ELang         lang   = sender instanceof Player p ? ls.resolveLanguage(p) : ls.getServerDefault();
         List<ReputationRankEntry> top = GameManager.getInstance().getDatabase().quests().getTopByTotalReputation(limit);
-        sendLeaderboard(ctx.getSource().getSender(), "Classement — Réputation totale",
-                top.stream().map(e -> Map.entry(e.pseudo(), e.value())).toList(), "rep");
+        sendLeaderboard(sender, ls, lang,
+                ls.text(lang, "cmd.player.top.reputation_title"),
+                top.stream().map(e -> Map.entry(e.pseudo(), e.value())).toList(),
+                ls.getString(lang, "cmd.player.top.unit_rep"),
+                null);
         return Command.SINGLE_SUCCESS;
     }
 
     private static int topJob(CommandContext<CommandSourceStack> ctx, int limit) {
-        EJob job = JobArgument.getJob(ctx, JOB_ARG);
-        List<ReputationRankEntry> top = GameManager.getInstance().getDatabase().quests().getTopByJob(job.name(), limit);
-
+        EJob          job    = JobArgument.getJob(ctx, JOB_ARG);
         CommandSender sender = ctx.getSource().getSender();
+        LangService   ls     = GameManager.getInstance().getLangService();
+        ELang         lang   = sender instanceof Player p ? ls.resolveLanguage(p) : ls.getServerDefault();
+
+        List<ReputationRankEntry> top = GameManager.getInstance().getDatabase().quests().getTopByJob(job.name(), limit);
         if (top.isEmpty()) {
-            sender.sendMessage(Component.text("Aucune donnée disponible pour ce classement.").color(NamedTextColor.GRAY));
+            sender.sendMessage(ls.text(lang, "cmd.player.no_data"));
             return Command.SINGLE_SUCCESS;
         }
 
-        String[] medals = {"⚜ ", "✦ ", "● "};
+        String[]         medals = {"⚜ ", "✦ ", "● "};
         NamedTextColor[] colors = {NamedTextColor.GOLD, NamedTextColor.GRAY, NamedTextColor.DARK_AQUA};
+        Component        sep    = ls.text(lang, "cmd.player.separator");
 
-        sender.sendMessage(Component.text("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━").color(NamedTextColor.GOLD));
-        sender.sendMessage(Component.text("  Classement — " + job.getDisplayName()).color(NamedTextColor.GOLD).decoration(TextDecoration.BOLD, true));
-        sender.sendMessage(Component.text("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━").color(NamedTextColor.GOLD));
+        sender.sendMessage(sep);
+        sender.sendMessage(ls.text(lang, "cmd.player.top.job_title", job.getDisplayName()));
+        sender.sendMessage(sep);
 
         for (int i = 0; i < top.size(); i++) {
-            String medal = i < medals.length ? medals[i] : (i + 1) + ". ";
+            String         medal = i < medals.length ? medals[i] : (i + 1) + ". ";
             NamedTextColor color = i < colors.length ? colors[i] : NamedTextColor.WHITE;
             ReputationRankEntry e = top.get(i);
             int level = JobLevelConfig.computeLevel((int) e.value());
             sender.sendMessage(
                     Component.text("  " + medal, color)
                             .append(Component.text(e.pseudo(), NamedTextColor.WHITE))
-                            .append(Component.text("  niv." + level, NamedTextColor.DARK_GRAY))
+                            .append(ls.text(lang, "cmd.player.top.entry_level", level))
             );
         }
 
-        sender.sendMessage(Component.text("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━").color(NamedTextColor.GOLD));
+        sender.sendMessage(sep);
         return Command.SINGLE_SUCCESS;
     }
 
-    private static void sendLeaderboard(CommandSender sender, String title, List<Map.Entry<String, Long>> entries, String unit) {
+    private static void sendLeaderboard(CommandSender sender, LangService ls, ELang lang,
+                                        Component title, List<Map.Entry<String, Long>> entries,
+                                        String unit, @SuppressWarnings("unused") Object unused) {
         if (entries.isEmpty()) {
-            sender.sendMessage(Component.text("Aucune donnée disponible pour ce classement.").color(NamedTextColor.GRAY));
+            sender.sendMessage(ls.text(lang, "cmd.player.no_data"));
             return;
         }
 
         String[]         medals = {"⚜ ", "✦ ", "● "};
         NamedTextColor[] colors = {NamedTextColor.GOLD, NamedTextColor.GRAY, NamedTextColor.DARK_AQUA};
+        Component        sep    = ls.text(lang, "cmd.player.separator");
 
-        sender.sendMessage(Component.text("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━").color(NamedTextColor.GOLD));
-        sender.sendMessage(Component.text("  " + title).color(NamedTextColor.GOLD).decoration(TextDecoration.BOLD, true));
-        sender.sendMessage(Component.text("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━").color(NamedTextColor.GOLD));
+        sender.sendMessage(sep);
+        sender.sendMessage(title);
+        sender.sendMessage(sep);
 
         for (int i = 0; i < entries.size(); i++) {
             String         medal = i < medals.length ? medals[i] : (i + 1) + ". ";
@@ -240,6 +236,6 @@ public class PlayerCommand {
             );
         }
 
-        sender.sendMessage(Component.text("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━").color(NamedTextColor.GOLD));
+        sender.sendMessage(sep);
     }
 }

@@ -198,6 +198,15 @@ public class LangService {
     }
 
     // =========================================================================
+    // getString() — chaîne brute (pour insertion dans d'autres templates)
+    // =========================================================================
+
+    /** Retourne la chaîne brute (non parsée) d'une clé, utile pour la passer en arg positionnel. */
+    public String getString(ELang lang, String key) {
+        return resolve(lang, key);
+    }
+
+    // =========================================================================
     // Résolution interne du template
     // =========================================================================
 

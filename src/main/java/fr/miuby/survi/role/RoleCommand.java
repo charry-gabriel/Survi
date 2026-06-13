@@ -5,24 +5,23 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import fr.miuby.survi.GameManager;
 import fr.miuby.survi.player.AlphaPlayer;
-
 import fr.miuby.survi.system.command.argument.AlphaPlayerArgument;
 import fr.miuby.survi.system.command.argument.RoleArgument;
 import fr.miuby.survi.system.command.argument.SubRoleArgument;
+import fr.miuby.survi.system.lang.ELang;
+import fr.miuby.survi.system.lang.LangService;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
 import io.papermc.paper.command.brigadier.Commands;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.TextComponent;
-import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
 public class RoleCommand {
-    private static final String playerArgument = "player";
-    private static final String roleArgument = "role";
+    private static final String playerArgument  = "player";
+    private static final String roleArgument    = "role";
     private static final String subRoleArgument = "subrole";
 
-    private RoleCommand() {
-        /* This utility class should not be instantiated */
-    }
+    private RoleCommand() {}
 
     public static LiteralArgumentBuilder<CommandSourceStack> createRoleCommand() {
         return Commands.literal("role")
@@ -55,14 +54,15 @@ public class RoleCommand {
 
     private static int executeRole(CommandContext<CommandSourceStack> ctx) {
         AlphaPlayer alphaPlayer = AlphaPlayerArgument.getAlphaPlayer(ctx, playerArgument);
-        Role role = RoleArgument.getRole(ctx, roleArgument);
+        Role        role        = RoleArgument.getRole(ctx, roleArgument);
 
         if (GameManager.getInstance().getRoleManagementService().changeMainRole(alphaPlayer, role)) {
-            ctx.getSource().getSender().sendMessage(
-                    Component.text("Le role ").color(NamedTextColor.GREEN)
-                            .append(role.displayName())
-                            .append(Component.text(" a ete ajouté a " + alphaPlayer.getPseudo()).color(NamedTextColor.GREEN))
-            );
+            LangService    ls   = GameManager.getInstance().getLangService();
+            CommandSender  sender = ctx.getSource().getSender();
+            ELang          lang = sender instanceof Player p ? ls.resolveLanguage(p) : ls.getServerDefault();
+            sender.sendMessage(ls.text(lang, "cmd.role.assigned",
+                    Placeholder.component("role", role.displayName()),
+                    Placeholder.unparsed("player", alphaPlayer.getPseudo())));
         }
 
         return Command.SINGLE_SUCCESS;
@@ -70,22 +70,21 @@ public class RoleCommand {
 
     private static int executeSubRole(CommandContext<CommandSourceStack> ctx, boolean isAdd) {
         AlphaPlayer alphaPlayer = AlphaPlayerArgument.getAlphaPlayer(ctx, playerArgument);
-        Role role = SubRoleArgument.getSubRole(ctx, subRoleArgument);
+        Role        role        = SubRoleArgument.getSubRole(ctx, subRoleArgument);
 
         RoleManagementService service = GameManager.getInstance().getRoleManagementService();
+        boolean actionDone = isAdd ? service.addSubRole(alphaPlayer, role) : service.removeSubRole(alphaPlayer, role);
 
-        TextComponent message = Component.text("Le sous-role ").color(NamedTextColor.GREEN).append(role.displayName());
-        boolean actionDone;
-        if (isAdd) {
-            message = message.append(Component.text(" a ete ajouté a ").color(NamedTextColor.GREEN));
-            actionDone = service.addSubRole(alphaPlayer, role);
-        } else {
-            message = message.append(Component.text(" a ete supprimé a ").color(NamedTextColor.GREEN));
-            actionDone = service.removeSubRole(alphaPlayer, role);
+        if (actionDone) {
+            LangService   ls   = GameManager.getInstance().getLangService();
+            CommandSender sender = ctx.getSource().getSender();
+            ELang         lang = sender instanceof Player p ? ls.resolveLanguage(p) : ls.getServerDefault();
+            String        key  = isAdd ? "cmd.subrole.added" : "cmd.subrole.removed";
+            sender.sendMessage(ls.text(lang, key,
+                    Placeholder.component("role", role.displayName()),
+                    Placeholder.unparsed("player", alphaPlayer.getPseudo())));
         }
 
-        if (actionDone)
-            ctx.getSource().getSender().sendMessage(message.append(Component.text(alphaPlayer.getPseudo() + " !").color(NamedTextColor.GREEN)));
         return Command.SINGLE_SUCCESS;
     }
 }

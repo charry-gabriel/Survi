@@ -267,36 +267,39 @@ public class TabDisplayManager {
     // ─── HEADER : serveur + identité ─────────────────────────────────────────────
 
     private Component buildHeader(AlphaPlayer ap) {
-        EGlobalRank rank = ap.getGlobalRank();
-        int worldLevel   = GameManager.getInstance().getWorldLevelManager().getLevel();
+        var ls   = GameManager.getInstance().getLangService();
+        var lang = ap.getPlayer() != null ? ls.resolveLanguage(ap.getPlayer()) : ls.getServerDefault();
+
+        EGlobalRank rank       = ap.getGlobalRank();
+        int         worldLevel = GameManager.getInstance().getWorldLevelManager().getLevel();
 
         // Ligne 1 : titre seul
         Component header = Component.empty()
                 .appendNewline()
-                .append(Component.text("◆  Survie  ◆", NamedTextColor.GOLD))
+                .append(ls.text(lang, "tab.header.title"))
                 .appendNewline();
 
         // Ligne 2 : monde · difficulté · reset wilderness
+        NamedTextColor levelColor = worldLevel >= 5 ? NamedTextColor.RED : NamedTextColor.GOLD;
         header = header
                 .append(Component.text(ap.getWorld().getName(), ap.getWorld().getColor()))
                 .append(SEP)
-                .append(Component.text("Difficulté ", NamedTextColor.GRAY))
-                .append(Component.text("Niv. " + worldLevel,
-                        worldLevel >= 5 ? NamedTextColor.RED : NamedTextColor.GOLD));
+                .append(ls.text(lang, "tab.header.difficulty_label"))
+                .append(ls.text(lang, "tab.header.level", worldLevel).colorIfAbsent(levelColor));
 
-        Component resetComponent = buildWildernessResetLine();
+        Component resetComponent = buildWildernessResetLine(lang);
         if (!resetComponent.equals(Component.empty())) {
             header = header.append(SEP).append(resetComponent);
         }
         header = header.appendNewline();
 
-        // Ligne 3 : rang · morts · succès · rôle(s)  (sans réputation — visible dans les métiers)
+        // Ligne 3 : rang · morts · succès · rôle(s)
         header = header
                 .append(rank.displayComponent())
                 .append(SEP)
-                .append(Component.text("☠ " + ap.getMort(), NamedTextColor.DARK_RED))
+                .append(ls.text(lang, "tab.header.deaths", ap.getMort()))
                 .append(SEP)
-                .append(Component.text("★ " + ap.getSuccess(), NamedTextColor.YELLOW));
+                .append(ls.text(lang, "tab.header.successes", ap.getSuccess()));
 
         Role mainRole = ap.getRole();
         if (mainRole != null) {
@@ -316,15 +319,18 @@ public class TabDisplayManager {
         Player p = alphaPlayer.getPlayer();
         if (p == null) return Component.empty();
 
+        var ls   = GameManager.getInstance().getLangService();
+        var lang = ls.resolveLanguage(p);
+
         Component footer = Component.empty()
                 .appendNewline()
-                .append(formatCombinedDamageStat(alphaPlayer))
+                .append(formatCombinedDamageStat(alphaPlayer, ls.text(lang, "tab.stat.damage")))
                 .append(Component.text(" | ", NamedTextColor.DARK_GRAY))
-                .append(formatBlessingModifier("Résistance", alphaPlayer.getResistanceModifier()))
+                .append(formatBlessingModifier(ls.text(lang, "tab.stat.resistance"), alphaPlayer.getResistanceModifier()))
                 .append(Component.text(" | ", NamedTextColor.DARK_GRAY))
-                .append(formatStat(alphaPlayer, Attribute.MAX_HEALTH, "Vie"))
+                .append(formatStat(alphaPlayer, Attribute.MAX_HEALTH, ls.text(lang, "tab.stat.health")))
                 .append(Component.text(" | ", NamedTextColor.DARK_GRAY))
-                .append(formatStat(alphaPlayer, Attribute.MOVEMENT_SPEED, "Vitesse"))
+                .append(formatStat(alphaPlayer, Attribute.MOVEMENT_SPEED, ls.text(lang, "tab.stat.speed")))
                 .appendNewline();
 
         // Quête journalière active
@@ -336,7 +342,7 @@ public class TabDisplayManager {
                 String description = quest.getDescription().replace("{value}", String.valueOf(remaining));
                 footer = footer
                         .appendNewline()
-                        .append(Component.text("Quête : ", NamedTextColor.GOLD))
+                        .append(ls.text(lang, "tab.footer.quest_label"))
                         .append(Component.text(description, NamedTextColor.GRAY));
             }
         }
@@ -347,12 +353,11 @@ public class TabDisplayManager {
         if (activeGlobalQuest != null) {
             int remaining = Math.max(0, activeGlobalQuest.getGoal() - gqm.getProgress());
             String description = activeGlobalQuest.getDescription().replace("{value}", String.valueOf(remaining));
-
             footer = footer
                     .appendNewline()
-                    .append(Component.text("Quête globale : ", NamedTextColor.GOLD))
+                    .append(ls.text(lang, "tab.footer.global_quest_label"))
                     .append(Component.text(description, NamedTextColor.GRAY))
-                    .append(Component.text("  ⏰ " + GlobalQuestManager.formatSeconds(gqm.getRemainingSeconds()), NamedTextColor.GRAY));
+                    .append(ls.text(lang, "tab.footer.global_quest_timer", GlobalQuestManager.formatSeconds(gqm.getRemainingSeconds())));
         }
 
         return footer.appendNewline();
@@ -360,22 +365,21 @@ public class TabDisplayManager {
 
     // ─── Reset Wilderness ─────────────────────────────────────────────────────
 
-    private Component buildWildernessResetLine() {
+    private Component buildWildernessResetLine(fr.miuby.survi.system.lang.ELang lang) {
         WorldResetManager wrm = GameManager.getInstance().getWorldResetManager();
         TimeManager tm = GameManager.getInstance().getTimeManager();
 
         ZonedDateTime nextReset = wrm.getNextWildernessResetTime(tm.getServerTimezone());
-        if (nextReset == null) return Component.empty(); // resets désactivés
+        if (nextReset == null) return Component.empty();
 
+        var ls = GameManager.getInstance().getLangService();
         ZonedDateTime now = ZonedDateTime.now(tm.getServerTimezone());
         if (!now.isBefore(nextReset)) {
-            return Component.text("Reset ", NamedTextColor.GRAY)
-                    .append(Component.text("imminent !", NamedTextColor.YELLOW));
+            return ls.text(lang, "tab.footer.reset_imminent");
         }
 
         Duration remaining = Duration.between(now, nextReset);
-        return Component.text("Reset dans ", NamedTextColor.GRAY)
-                .append(Component.text(TimeManager.formatTime(remaining), NamedTextColor.YELLOW));
+        return ls.text(lang, "tab.footer.reset_in", TimeManager.formatTime(remaining));
     }
 
     // ─── Nettoyage déconnexion ────────────────────────────────────────────────────
@@ -413,7 +417,7 @@ public class TabDisplayManager {
      *   <li>Attribut à base nulle avec ADD_SCALAR uniquement (Armure…) → multiplicateur de rôle (+20%).</li>
      * </ul>
      */
-    private Component formatStat(AlphaPlayer alphaPlayer, Attribute attributeType, String statName) {
+    private Component formatStat(AlphaPlayer alphaPlayer, Attribute attributeType, Component statLabel) {
         Player player = alphaPlayer.getPlayer();
         if (player == null) return Component.empty();
 
@@ -422,8 +426,6 @@ public class TabDisplayManager {
 
         String ns = GameManager.getInstance().getPlugin().getName().toLowerCase();
 
-        // Reconstruit la valeur effective en ne comptant que les modificateurs de notre plugin.
-        // Formule Minecraft : step2 = base + Σ ADD_NUMBER ; roleValue = step2 × (1 + Σ ADD_SCALAR) × Π (1 + MULTIPLY_SCALAR_1)
         double base = attr.getBaseValue();
         double addNum = 0, addScalar = 0, multiplyTotal = 1.0;
         for (AttributeModifier mod : attr.getModifiers()) {
@@ -439,44 +441,31 @@ public class TabDisplayManager {
 
         double vanilla = VANILLA_DEFAULTS.getOrDefault(attributeType, attr.getDefaultValue());
 
-        // ── Attribut à base nulle (Armure, Chance…) ──────────────────────────────
+        Component label = statLabel.colorIfAbsent(NamedTextColor.WHITE).append(Component.text(": ", NamedTextColor.WHITE));
+
         if (vanilla < 0.001) {
             if (Math.abs(roleValue) > 0.001) {
-                // Contribution additive directe (ex : Chance +1.0 depuis ADD_NUMBER)
                 NamedTextColor c = roleValue > 0 ? NamedTextColor.GREEN : NamedTextColor.RED;
                 String sign = roleValue > 0 ? "+" : "";
-                return Component.text(statName + ": ", NamedTextColor.WHITE)
-                        .append(Component.text(sign + df.format(roleValue), c));
+                return label.append(Component.text(sign + df.format(roleValue), c));
             }
             if (Math.abs(addScalar) < 0.001) {
-                // Aucune modification de rôle sur cet attribut
-                return Component.text(statName + ": ", NamedTextColor.WHITE)
-                        .append(Component.text("—", NamedTextColor.DARK_GRAY));
+                return label.append(Component.text("—", NamedTextColor.DARK_GRAY));
             }
-            // Seul un ADD_SCALAR existe (ex : Armure ×1.2 depuis les rôles)
             long scalarPct = Math.round(addScalar * 100.0);
             NamedTextColor c = addScalar > 0 ? NamedTextColor.GREEN : NamedTextColor.RED;
             String sign = addScalar > 0 ? "+" : "";
-            return Component.text(statName + ": ", NamedTextColor.WHITE)
-                    .append(Component.text(sign + scalarPct + "%", c));
+            return label.append(Component.text(sign + scalarPct + "%", c));
         }
 
-        // ── Attribut à base non nulle : pourcentage de la valeur vanilla ─────────
         double pct = roleValue / vanilla * 100.0;
         long pctRounded = Math.round(pct);
         NamedTextColor color = Math.abs(pct - 100.0) < 0.5 ? NamedTextColor.GRAY
                 : pct > 100.0 ? NamedTextColor.GREEN : NamedTextColor.RED;
-        return Component.text(statName + ": ", NamedTextColor.WHITE)
-                .append(Component.text(pctRounded + "%", color));
+        return label.append(Component.text(pctRounded + "%", color));
     }
 
-    /**
-     * Affiche les dégâts effectifs du joueur : combinaison de l'attribut ATTACK_DAMAGE
-     * (bonus de rôle/métier) et du {@code damageModifier} (bénédictions/malédictions).
-     * 100 % = dégâts vanilla sans aucun modificateur de part et d'autre.
-     * Vert au-dessus de 100 %, rouge en-dessous, gris à 100 %.
-     */
-    private Component formatCombinedDamageStat(AlphaPlayer alphaPlayer) {
+    private Component formatCombinedDamageStat(AlphaPlayer alphaPlayer, Component statLabel) {
         Player player = alphaPlayer.getPlayer();
         if (player == null) return Component.empty();
 
@@ -504,19 +493,17 @@ public class TabDisplayManager {
 
         NamedTextColor color = Math.abs(pct - 100.0) < 0.5 ? NamedTextColor.GRAY
                 : pct > 100.0 ? NamedTextColor.GREEN : NamedTextColor.RED;
-        return Component.text("Dégâts: ", NamedTextColor.WHITE)
+        return statLabel.colorIfAbsent(NamedTextColor.WHITE)
+                .append(Component.text(": ", NamedTextColor.WHITE))
                 .append(Component.text(pctRounded + "%", color));
     }
 
-    /**
-     * Affiche un modifier de blessing en pourcentage absolu (1.0 = 100 %).
-     * Vert au-dessus de 100 %, rouge en-dessous, gris exactement à 100 %.
-     */
-    private Component formatBlessingModifier(String statName, float current) {
+    private Component formatBlessingModifier(Component statLabel, float current) {
         long displayPct = Math.round((double) current * 100.0);
         NamedTextColor color = Math.abs(current - 1.0f) < 0.005f ? NamedTextColor.GRAY
                 : current > 1.0f ? NamedTextColor.GREEN : NamedTextColor.RED;
-        return Component.text(statName + ": ", NamedTextColor.WHITE)
+        return statLabel.colorIfAbsent(NamedTextColor.WHITE)
+                .append(Component.text(": ", NamedTextColor.WHITE))
                 .append(Component.text(displayPct + "%", color));
     }
 }
