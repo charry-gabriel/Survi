@@ -22,7 +22,7 @@ import java.util.logging.Level;
  * Charge la liste de {@link Blessing} depuis la section {@code blessings} d'un
  * fichier villager YAML, ou depuis une liste de maps pour les quêtes.
  *
- * <p>Types d'effets supportés : MAX_HEALTH, RESISTANCE, DAMAGE, DISPEL,
+ * <p>Types d'effets supportés : ACID_RAIN, MAX_HEALTH, RESISTANCE, DAMAGE, DISPEL,
  * UNLOCK_TOOL, UNLOCK_ARMOR, LOCK_WORLD, MESSAGE, WORLD_LEVEL,
  * WORLD_RESET, LIMIT_WORLD, REPUTATION, POTION.
  */
@@ -95,6 +95,7 @@ public class BlessingLoader {
         String type = String.valueOf(map.get("type")).toUpperCase();
         try {
             return switch (type) {
+                case "ACID_RAIN"    -> new AcidRainEffect();
                 case "MAX_HEALTH"   -> new MaxHealthEffect(toInt(map.get("value"), 0));
                 case "RESISTANCE"   -> new ResistanceEffect(toFloat(map.get("value"), 1f));
                 case "DAMAGE"       -> new DamageEffect(toFloat(map.get("value"), 1f));

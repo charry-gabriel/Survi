@@ -138,3 +138,11 @@ submerged-mining-speed-modifier:
   - 0.500   # niveau  8
   - 0.650   # niveau  9
   - 0.800   # niveau 10
+  -
+# ─── Pluie acide ──────────────────────────────────────────────────────────────
+
+# Dégâts infligés par tick d'exposition à la pluie acide (en demi-cœurs).
+acid-rain-damage: 1
+
+# Niveau Pêcheur minimum pour être immunisé à la pluie acide.
+acid-rain-fisherman-level-threshold: 5

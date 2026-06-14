@@ -132,24 +132,16 @@ public final class JobsConfig {
         /** -1 = aucun dégât de pression à ce niveau. Valeurs très négatives = dégâts permanents. */
         private final int[]    pressureSafeDepth;
         private final double   pressureDamage;
-        /**
-         * Modificateur ADD_NUMBER sur {@code WATER_MOVEMENT_EFFICIENCY} par niveau.
-         * Appliqué en permanence par {@link fr.miuby.survi.job.FishermanAttributeService}.
-         * Valeur 0.0 = vitesse vanilla.
-         */
+        /** Modificateur ADD_NUMBER sur {@code WATER_MOVEMENT_EFFICIENCY} par niveau. Valeur 0.0 = vitesse vanilla. */
         private final double[] underwaterSpeedModifier;
-        /**
-         * Bonus de ticks de respiration (ADD_NUMBER sur {@code OXYGEN_BONUS}) par niveau.
-         * Appliqué en permanence par {@link fr.miuby.survi.job.FishermanAttributeService}.
-         * Base vanilla = 300 ticks (15 s). Valeur 0 = pas de bonus.
-         */
+        /** Bonus de ticks de respiration (ADD_NUMBER sur {@code OXYGEN_BONUS}) par niveau. Base vanilla = 300 ticks. */
         private final int[]    oxygenBonusTicks;
-        /**
-         * Modificateur ADD_NUMBER sur {@code SUBMERGED_MINING_SPEED} par niveau.
-         * Appliqué en permanence par {@link fr.miuby.survi.job.FishermanAttributeService}.
-         * Valeur 0.0 = vitesse vanilla (pénalité normale). Actif à partir du niveau 5.
-         */
+        /** Modificateur ADD_NUMBER sur {@code SUBMERGED_MINING_SPEED} par niveau. Valeur 0.0 = vitesse vanilla. */
         private final double[] submergedMiningSpeedModifier;
+        /** Dégâts infligés par tick de pluie acide aux joueurs sous le seuil (demi-cœurs). */
+        private final double   acidRainDamage;
+        /** Niveau Pêcheur minimum pour être immunisé à la pluie acide. */
+        private final int      acidRainFishermanLevelThreshold;
 
         FishermanCfg(int vanillaMinWaitTicks, int vanillaMaxWaitTicks,
                      double[] fishingWaitMultiplier, double[] lootMultiplier,
@@ -157,20 +149,23 @@ public final class JobsConfig {
                      double[] treasurePenalty, Material[] treasureReplacementMaterials,
                      int[] pressureSafeDepth, double pressureDamage,
                      double[] underwaterSpeedModifier, int[] oxygenBonusTicks,
-                     double[] submergedMiningSpeedModifier) {
-            this.vanillaMinWaitTicks          = vanillaMinWaitTicks;
-            this.vanillaMaxWaitTicks          = vanillaMaxWaitTicks;
-            this.fishingWaitMultiplier        = fishingWaitMultiplier;
-            this.lootMultiplier               = lootMultiplier;
-            this.dirtChance                   = dirtChance;
-            this.dirtReplacementMaterials     = dirtReplacementMaterials;
-            this.treasurePenalty              = treasurePenalty;
-            this.treasureReplacementMaterials = treasureReplacementMaterials;
-            this.pressureSafeDepth            = pressureSafeDepth;
-            this.pressureDamage               = pressureDamage;
-            this.underwaterSpeedModifier      = underwaterSpeedModifier;
-            this.oxygenBonusTicks             = oxygenBonusTicks;
-            this.submergedMiningSpeedModifier = submergedMiningSpeedModifier;
+                     double[] submergedMiningSpeedModifier,
+                     double acidRainDamage, int acidRainFishermanLevelThreshold) {
+            this.vanillaMinWaitTicks              = vanillaMinWaitTicks;
+            this.vanillaMaxWaitTicks              = vanillaMaxWaitTicks;
+            this.fishingWaitMultiplier            = fishingWaitMultiplier;
+            this.lootMultiplier                   = lootMultiplier;
+            this.dirtChance                       = dirtChance;
+            this.dirtReplacementMaterials         = dirtReplacementMaterials;
+            this.treasurePenalty                  = treasurePenalty;
+            this.treasureReplacementMaterials     = treasureReplacementMaterials;
+            this.pressureSafeDepth                = pressureSafeDepth;
+            this.pressureDamage                   = pressureDamage;
+            this.underwaterSpeedModifier          = underwaterSpeedModifier;
+            this.oxygenBonusTicks                 = oxygenBonusTicks;
+            this.submergedMiningSpeedModifier     = submergedMiningSpeedModifier;
+            this.acidRainDamage                   = acidRainDamage;
+            this.acidRainFishermanLevelThreshold  = acidRainFishermanLevelThreshold;
         }
     }
 

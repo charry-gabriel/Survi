@@ -162,3 +162,25 @@ village-zone:
         max-x: -80
         max-y: 64
         max-z: -82
+
+# ─── Pluie ──────────────────────────────────────────────────────────────────────
+# Mondes dans lesquels Survi prend le contrôle de la météo.
+# Les transitions vanilla sont bloquées (setWeatherDuration = MAX_VALUE).
+# Valeurs possibles : VILLAGE, WILDERNESS, NETHER, END
+rain:
+  worlds:
+    - WILDERNESS
+
+  # Durée d'un épisode de pluie en secondes.
+  duration-seconds: 60
+
+  # Intervalle avant la prochaine pluie : délai aléatoire uniforme dans [min, max].
+  cooldown-min-seconds: 600
+  cooldown-max-seconds: 1500
+
+  # Pluie acide — activée via /blessing <joueur> acid_rain, désactivée via acid_rain_reset.
+  # Quand active : les joueurs exposés à la pluie (player.isInRain()) sans le niveau
+  # Pêcheur requis subissent des dégâts périodiques.
+  acid:
+    # Intervalle entre deux ticks de dégâts (secondes).
+    damage-interval-seconds: 3

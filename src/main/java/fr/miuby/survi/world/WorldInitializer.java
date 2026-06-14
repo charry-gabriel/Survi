@@ -81,6 +81,8 @@ public class WorldInitializer {
         village.setGameRule(GameRules.ADVANCE_TIME, false);
         village.setGameRule(GameRules.MOB_GRIEFING, false);
         village.setGameRule(GameRules.KEEP_INVENTORY, true);
+        village.setClearWeatherDuration(Integer.MAX_VALUE);
+        village.setViewDistance(32);
 
         // --- Wilderness (NORMAL, réinitialisable) ---
         String wildName = worlds.get(EWorld.WILDERNESS);
@@ -88,6 +90,7 @@ public class WorldInitializer {
         MLWorld mvWild = new MLWorld(wilderness, "Wilderness", NamedTextColor.GOLD, EWorld.WILDERNESS);
         WorldRegistry.register(mvWild);
         wilderness.setGameRule(GameRules.NATURAL_HEALTH_REGENERATION, false);
+        wilderness.setViewDistance(10);
 
         // --- Nether (NETHER, réinitialisable, verrouillé par défaut) ---
         String netherName = worlds.get(EWorld.NETHER);
@@ -186,6 +189,7 @@ public class WorldInitializer {
             throw new IllegalStateException("Échec de la création du monde : " + name + " (" + env + ")");
         }
         created.setGameRule(GameRules.NATURAL_HEALTH_REGENERATION, false);
+        created.setViewDistance(10);
         return created;
     }
 

@@ -116,7 +116,9 @@ public final class JobsLoader {
                 readInt(fishermanCfg, "oxygen-bonus-ticks",
                         new int[]{0, 60, 120, 200, 300, 480, 720, 1200, 2400, 4200, 7200}),
                 readDouble(fishermanCfg, "submerged-mining-speed-modifier",
-                        new double[]{0.000, 0.000, 0.000, 0.000, 0.000, 0.100, 0.200, 0.350, 0.500, 0.650, 0.800})
+                        new double[]{0.000, 0.000, 0.000, 0.000, 0.000, 0.100, 0.200, 0.350, 0.500, 0.650, 0.800}),
+                fishermanCfg.getDouble("acid-rain-damage", 1.0),
+                fishermanCfg.getInt("acid-rain-fisherman-level-threshold", 5)
         );
 
         JobsConfig.ExplorerCfg explorer = new JobsConfig.ExplorerCfg(

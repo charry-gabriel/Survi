@@ -88,6 +88,7 @@ public class WorldResetManager {
         Bukkit.getScheduler().runTaskLater(GameManager.getInstance().getPlugin(), () -> {
             setLastResetDate(LocalDate.now());
             buildWorldPortal(newWildName);
+            GameManager.getInstance().getRainManager().applyCurrentStateToManagedWorlds();
 
             MLLogManager.getInstance().log(Level.INFO, ELogTag.WORLD,
                     "Reset terminé. Mondes actifs : " + newWildName + ", " + newNetherName + ", " + newEndName);

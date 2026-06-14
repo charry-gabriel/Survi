@@ -16,7 +16,9 @@
     "pressure-damage",
     "underwater-speed-modifier",
     "oxygen-bonus-ticks",
-    "submerged-mining-speed-modifier"
+    "submerged-mining-speed-modifier",
+    "acid-rain-damage",
+    "acid-rain-fisherman-level-threshold"
   ],
   "additionalProperties": false,
   "properties": {
@@ -86,6 +88,17 @@
     "submerged-mining-speed-modifier": {
       "$ref": "#/definitions/non-negative-number-array",
       "description": "Modificateur ADD_NUMBER sur SUBMERGED_MINING_SPEED par niveau. 0.0 = vitesse vanilla (pénalité normale). Actif à partir du niveau 5."
+    },
+    "acid-rain-damage": {
+      "type": "number",
+      "minimum": 0,
+      "description": "Dégâts infligés par tick d'exposition à la pluie acide (demi-cœurs)."
+    },
+    "acid-rain-fisherman-level-threshold": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 10,
+      "description": "Niveau Pêcheur minimum pour être immunisé à la pluie acide."
     }
   },
   "definitions": {

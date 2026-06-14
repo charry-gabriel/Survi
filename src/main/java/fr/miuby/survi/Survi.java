@@ -3,6 +3,7 @@ package fr.miuby.survi;
 import fr.miuby.lib.resource.MLResourceManager;
 import fr.miuby.survi.display.TabSkins;
 import fr.miuby.survi.job.JobCommand;
+import fr.miuby.survi.job.task.AcidRainDamageTask;
 import fr.miuby.survi.listener.job.*;
 import fr.miuby.survi.mob.MobCommand;
 import fr.miuby.survi.system.database.SqlCommand;
@@ -19,6 +20,7 @@ import fr.miuby.survi.system.command.PlayerCommand;
 import fr.miuby.survi.system.time.TimeManager;
 import fr.miuby.survi.villager.VillagerCommand;
 import fr.miuby.survi.blessing.BlessingCommand;
+import fr.miuby.survi.world.RainManager;
 import fr.miuby.survi.world.WorldCommand;
 import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
 import org.bukkit.plugin.PluginManager;
@@ -59,6 +61,7 @@ public class Survi extends JavaPlugin {
         pluginManager.registerEvents(placedBlockTracker, this);
 
         new FishermanEffectsTask().runTaskTimer(this, 0L, FishermanEffectsTask.PERIOD_TICKS);
+        new AcidRainDamageTask().runTaskTimer(this, 0L, AcidRainDamageTask.periodTicks());
 
         getConfig().options().copyDefaults(true);
         saveConfig();
@@ -87,10 +90,12 @@ public class Survi extends JavaPlugin {
     @Override
     public void onDisable() {
         TimeManager tm = GameManager.getInstance().getTimeManager();
-        if (tm != null) {
-            tm.stop();
-        }
+        if (tm != null) tm.stop();
+
         GameManager.getInstance().getVillageZoneManager().stop();
+
+        RainManager rm = GameManager.getInstance().getRainManager();
+        if (rm != null) rm.stop();
     }
 
     private void updateResources() {

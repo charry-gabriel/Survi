@@ -2,6 +2,7 @@ package fr.miuby.survi.system;
 
 import fr.miuby.survi.player.EGlobalRank;
 import fr.miuby.survi.system.log.ELogTag;
+import fr.miuby.survi.world.EWorld;
 import fr.miuby.survi.world.config.VillageZoneConfig;
 import fr.miuby.lib.log.MLLogManager;
 import lombok.Getter;
@@ -60,6 +61,19 @@ public class SurviConfig {
 
     /** Rayon Wilderness (en blocs XZ) autorisé par niveau Explorateur (index 0–10). */
     @Getter private List<Integer> exploreWildernessRadius;
+
+    // ─── Pluie ───────────────────────────────────────────────────────────────────
+
+    /** Mondes dans lesquels le cycle pluie est géré par {@link fr.miuby.survi.world.RainManager}. */
+    @Getter private List<EWorld> rainWorlds;
+    /** Durée d'un épisode de pluie en secondes. */
+    @Getter private int rainDurationSeconds;
+    /** Borne basse du délai aléatoire entre deux pluies (secondes). */
+    @Getter private int rainCooldownMinSeconds;
+    /** Borne haute du délai aléatoire entre deux pluies (secondes). */
+    @Getter private int rainCooldownMaxSeconds;
+    /** Intervalle entre deux ticks de dégâts pluie acide (secondes). */
+    @Getter private int acidRainDamageIntervalSeconds;
 
     // ─── Initialisation ──────────────────────────────────────────────────────────
 
@@ -122,7 +136,6 @@ public class SurviConfig {
             }
         }
         if (exploreWildernessRadius.isEmpty()) {
-            // Valeurs de secours si la clé est absente du config.yml
             exploreWildernessRadius = List.of(500, 750, 1000, 1500, 2000, 3000, 4000, 6000, 8000, 12000, 200000);
         }
 
@@ -139,8 +152,7 @@ public class SurviConfig {
                     int  radius     = ((Number) stageMap.get("radius")).intValue();
 
                     @SuppressWarnings("unchecked")
-                    java.util.Map<String, Object> spawnMap =
-                            (java.util.Map<String, Object>) stageMap.get("spawn");
+                    java.util.Map<String, Object> spawnMap = (java.util.Map<String, Object>) stageMap.get("spawn");
                     VillageZoneConfig.VillageZoneSpawn spawn = new VillageZoneConfig.VillageZoneSpawn(
                             ((Number) spawnMap.get("x")).intValue(),
                             ((Number) spawnMap.get("y")).intValue(),
@@ -150,8 +162,7 @@ public class SurviConfig {
                     );
 
                     @SuppressWarnings("unchecked")
-                    java.util.Map<String, Object> portalMap =
-                            (java.util.Map<String, Object>) stageMap.get("portal");
+                    java.util.Map<String, Object> portalMap = (java.util.Map<String, Object>) stageMap.get("portal");
 
                     VillageZoneConfig.VillageZonePortal portal = new VillageZoneConfig.VillageZonePortal(
                             ((Number) portalMap.get("min-x")).intValue(),
@@ -167,9 +178,29 @@ public class SurviConfig {
         }
         villageZoneConfig = new VillageZoneConfig(centerX, centerZ, zoneStages);
 
+        // ─── Pluie ───────────────────────────────────────────────────────────────────
+        rainDurationSeconds       = cfg.getInt("rain.duration-seconds",        60);
+        rainCooldownMinSeconds    = cfg.getInt("rain.cooldown-min-seconds",     600);
+        rainCooldownMaxSeconds    = cfg.getInt("rain.cooldown-max-seconds",    1500);
+        acidRainDamageIntervalSeconds = cfg.getInt("rain.acid.damage-interval-seconds", 3);
+
+        rainWorlds = new ArrayList<>();
+        List<?> rawRainWorlds = cfg.getList("rain.worlds");
+        if (rawRainWorlds != null) {
+            for (Object obj : rawRainWorlds) {
+                try {
+                    rainWorlds.add(EWorld.valueOf(String.valueOf(obj).toUpperCase()));
+                } catch (IllegalArgumentException e) {
+                    MLLogManager.getInstance().log(Level.WARNING, ELogTag.WORLD, "[SurviConfig] Monde pluie inconnu : " + obj);
+                }
+            }
+        }
+        if (rainWorlds.isEmpty()) rainWorlds = List.of(EWorld.WILDERNESS);
+
         MLLogManager.getInstance().log(Level.INFO, ELogTag.SYSTEM,
                 "[SurviConfig] Configuration chargée (" + rankEntries.size() + " rangs, "
                         + jobLevelEntries.size() + " niveaux de métier, "
-                        + zoneStages.size() + " paliers de zone village)");
+                        + zoneStages.size() + " paliers de zone village, "
+                        + rainWorlds.size() + " monde(s) pluie)");
     }
 }

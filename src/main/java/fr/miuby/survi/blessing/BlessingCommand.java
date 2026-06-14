@@ -24,6 +24,8 @@ import java.util.Arrays;
  * Commande admin : /blessing <joueur> <effet> [paramètres...]
  *
  * Effets disponibles :
+ *   acid_rain                — active la pluie acide globalement
+ *   acid_rain_reset          — désactive la pluie acide
  *   damage <float>           — modificateur de dégâts (ex: 0.5 = 50%)
  *   resistance <float>       — modificateur de résistance
  *   max_health <int>         — bonus de vie max (peut être négatif)
@@ -49,6 +51,26 @@ public class BlessingCommand {
         return Commands.literal("blessing")
                 .requires(src -> src.getSender().hasPermission("survi.admin"))
                 .then(Commands.argument(playerArgument, AlphaPlayerArgument.alphaPlayer())
+
+                        // ── acid_rain ────────────────────────────────────
+                        .then(Commands.literal("acid_rain")
+                                .executes(ctx -> {
+                                    AlphaPlayer target = AlphaPlayerArgument.getAlphaPlayer(ctx, playerArgument);
+                                    new AcidRainEffect().applyEffect(target);
+                                    ctx.getSource().getSender().sendMessage(Component.text("[Blessing] Pluie acide activée.", NamedTextColor.YELLOW));
+                                    return Command.SINGLE_SUCCESS;
+                                })
+                        )
+
+                        // ── acid_rain_reset ──────────────────────────────
+                        .then(Commands.literal("acid_rain_reset")
+                                .executes(ctx -> {
+                                    AlphaPlayer target = AlphaPlayerArgument.getAlphaPlayer(ctx, playerArgument);
+                                    new AcidRainEffect().resetEffect(target);
+                                    ctx.getSource().getSender().sendMessage(Component.text("[Blessing] Pluie acide désactivée.", NamedTextColor.YELLOW));
+                                    return Command.SINGLE_SUCCESS;
+                                })
+                        )
 
                         // ── damage <float> ──────────────────────────────
                         .then(Commands.literal("damage")
@@ -90,7 +112,6 @@ public class BlessingCommand {
                         )
 
                         // ── lock_world <eworld> ─────────────────────────
-                        // (déverrouille le monde malgré le nom "lock" — c'est l'effet existant)
                         .then(Commands.literal("lock_world")
                                 .then(Commands.argument("world", WorldArgument.world())
                                         .executes(ctx -> {
@@ -121,8 +142,7 @@ public class BlessingCommand {
                                             try {
                                                 armorType = ELockedArmorType.valueOf(typeStr);
                                             } catch (IllegalArgumentException e) {
-                                                ctx.getSource().getSender().sendMessage(
-                                                        Component.text("Type invalide : " + typeStr, NamedTextColor.RED));
+                                                ctx.getSource().getSender().sendMessage(Component.text("Type invalide : " + typeStr, NamedTextColor.RED));
                                                 return 0;
                                             }
                                             new UnlockArmorEffect(armorType).applyEffect(target);
@@ -150,8 +170,7 @@ public class BlessingCommand {
                                             try {
                                                 toolType = ELockedToolType.valueOf(typeStr);
                                             } catch (IllegalArgumentException e) {
-                                                ctx.getSource().getSender().sendMessage(
-                                                        Component.text("Type invalide : " + typeStr, NamedTextColor.RED));
+                                                ctx.getSource().getSender().sendMessage(Component.text("Type invalide : " + typeStr, NamedTextColor.RED));
                                                 return 0;
                                             }
                                             new UnlockToolEffect(toolType).applyEffect(target);
@@ -161,7 +180,7 @@ public class BlessingCommand {
                                 )
                         )
 
-                        // ── fly (pas de paramètre) ──────────────────────
+                        // ── fly ─────────────────────────────────────────
                         .then(Commands.literal("fly")
                                 .executes(ctx -> {
                                     AlphaPlayer target = AlphaPlayerArgument.getAlphaPlayer(ctx, playerArgument);
@@ -171,7 +190,7 @@ public class BlessingCommand {
                                 })
                         )
 
-                        // ── regen (pas de paramètre) ────────────────────
+                        // ── regen ────────────────────────────────────────
                         .then(Commands.literal("regen")
                                 .executes(ctx -> {
                                     AlphaPlayer target = AlphaPlayerArgument.getAlphaPlayer(ctx, playerArgument);
@@ -181,7 +200,7 @@ public class BlessingCommand {
                                 })
                         )
 
-                        // ── dispel (pas de paramètre) ───────────────────
+                        // ── dispel ───────────────────────────────────────
                         .then(Commands.literal("dispel")
                                 .executes(ctx -> {
                                     AlphaPlayer target = AlphaPlayerArgument.getAlphaPlayer(ctx, playerArgument);
@@ -191,17 +210,16 @@ public class BlessingCommand {
                                 })
                         )
 
-                        // ── world_reset <monde> ─────────────────────────
+                        // ── world_reset ──────────────────────────────────
                         .then(Commands.literal("world_reset")
                                 .executes(ctx -> {
                                     AlphaPlayer target = AlphaPlayerArgument.getAlphaPlayer(ctx, playerArgument);
-
                                     new WorldResetEffect(1).applyEffect(target);
                                     return Command.SINGLE_SUCCESS;
                                 })
                         )
 
-                        // ── world_level ─────────────────────────────────
+                        // ── world_level ──────────────────────────────────
                         .then(Commands.literal("world_level")
                                 .executes(ctx -> {
                                     AlphaPlayer target = AlphaPlayerArgument.getAlphaPlayer(ctx, playerArgument);

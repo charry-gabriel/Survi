@@ -8,6 +8,7 @@ import fr.miuby.survi.player.service.OfflineNotificationService;
 import fr.miuby.survi.quest.quest.QuestGlowService;
 import fr.miuby.survi.system.log.ELogTag;
 import fr.miuby.survi.system.log.LogPersistence;
+import fr.miuby.survi.world.RainManager;
 import fr.miuby.survi.world.crops.PlantedCropsManager;
 import fr.miuby.survi.display.TabDisplayManager;
 import fr.miuby.survi.quest.globalquest.GlobalQuestManager;
@@ -66,6 +67,7 @@ public class GameManager {
     @Getter private WorldPortalManager worldPortalManager;
     @Getter private WorldResetManager worldResetManager;
     @Getter private VillageZoneManager villageZoneManager;
+    @Getter private RainManager rainManager;
 
     @Setter @Getter private int dispel = 0;
     @Setter @Getter private boolean isNight;
@@ -150,6 +152,9 @@ public class GameManager {
 
         this.mobLevelManager = new MobLevelManager();
         this.mobLevelManager.init();
+
+        this.rainManager = new RainManager();
+        this.rainManager.init();
 
         MLLogManager.getInstance().log(Level.INFO, ELogTag.PLAYER, "Initialisation des joueurs...");
         this.initPlayers();
