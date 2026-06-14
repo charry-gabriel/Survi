@@ -368,6 +368,22 @@ public class MobLevelManager {
         return java.util.Collections.unmodifiableSet(configs.keySet());
     }
 
+    /**
+     * Component compact pour les messages de mort : {@code Zombie[5]}.
+     * La couleur du niveau est la même que sur le nametag.
+     * Si le mob n'a pas de niveau en PDC, retourne simplement le nom du type.
+     */
+    public Component buildDeathName(LivingEntity entity) {
+        String mobName = formatMobName(entity.getType());
+        int level = getStoredLevel(entity);
+        if (level < 0) return Component.text(mobName, NamedTextColor.WHITE);
+        NamedTextColor levelColor = getLevelColor(level);
+        return Component.text(mobName, NamedTextColor.WHITE)
+                .append(Component.text("[", NamedTextColor.GRAY))
+                .append(Component.text(String.valueOf(level), levelColor, TextDecoration.BOLD))
+                .append(Component.text("]", NamedTextColor.GRAY));
+    }
+
     // ─── Utilitaires privés ───────────────────────────────────────────────────────
 
     private EntityType parseEntityType(String key) {
