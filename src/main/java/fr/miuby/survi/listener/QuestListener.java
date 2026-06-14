@@ -3,16 +3,22 @@ package fr.miuby.survi.listener;
 import fr.miuby.survi.GameManager;
 import fr.miuby.survi.player.AlphaPlayer;
 import fr.miuby.survi.quest.EQuestType;
+import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
-import org.bukkit.event.entity.EntityDeathEvent;
+import org.bukkit.event.enchantment.EnchantItemEvent;
 import org.bukkit.event.entity.EntityBreedEvent;
-import org.bukkit.event.player.PlayerFishEvent;
+import org.bukkit.event.entity.EntityDeathEvent;
+import org.bukkit.event.entity.EntityTameEvent;
 import org.bukkit.event.inventory.CraftItemEvent;
 import org.bukkit.event.inventory.FurnaceExtractEvent;
+import org.bukkit.event.player.PlayerFishEvent;
+import org.bukkit.event.player.PlayerHarvestBlockEvent;
+import org.bukkit.event.player.PlayerLevelChangeEvent;
 import org.bukkit.event.player.PlayerShearEntityEvent;
 
 public class QuestListener implements Listener {
@@ -99,6 +105,65 @@ public class QuestListener implements Listener {
         if (player != null) {
             GameManager.getInstance().getQuestManager().progressQuest(player, EQuestType.SHEAR, event.getEntity().getType(), 1);
             GameManager.getInstance().getGlobalQuestManager().progressGlobalQuest(player, EQuestType.SHEAR, event.getEntity().getType(), 1);
+        }
+    }
+
+    /** Apprivoiser un animal (cheval, loup, chat, lama, etc.). Target : EntityType de l'animal. */
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onTame(EntityTameEvent event) {
+        if (!(event.getOwner() instanceof Player p)) return;
+        AlphaPlayer player = AlphaPlayer.get(p.getUniqueId());
+        if (player != null) {
+            GameManager.getInstance().getQuestManager().progressQuest(player, EQuestType.TAME, event.getEntityType(), 1);
+            GameManager.getInstance().getGlobalQuestManager().progressGlobalQuest(player, EQuestType.TAME, event.getEntityType(), 1);
+        }
+    }
+
+    /**
+     * Récolter une ruche ou un nid d'abeilles.
+     * Target : Material du drop (HONEY_BOTTLE si bouteille, HONEYCOMB si cisailles).
+     * L'event se déclenche uniquement si le bloc est BEEHIVE ou BEE_NEST.
+     */
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onHarvestBeehive(PlayerHarvestBlockEvent event) {
+        Block block = event.getHarvestedBlock();
+        if (block.getType() != Material.BEEHIVE && block.getType() != Material.BEE_NEST) return;
+        if (event.getItemsHarvested().isEmpty()) return;
+        Material drop = event.getItemsHarvested().getFirst().getType();
+        AlphaPlayer player = AlphaPlayer.get(event.getPlayer().getUniqueId());
+        if (player != null) {
+            GameManager.getInstance().getQuestManager().progressQuest(player, EQuestType.HARVEST_BEEHIVE, drop, 1);
+            GameManager.getInstance().getGlobalQuestManager().progressGlobalQuest(player, EQuestType.HARVEST_BEEHIVE, drop, 1);
+        }
+    }
+
+    /**
+     * Enchanter un item à la table d'enchantement.
+     * Target : Material de l'item enchanté.
+     * Tourne en MONITOR pour ne pas progresser si l'EnchanterListener a annulé l'action (job trop bas).
+     */
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onEnchant(EnchantItemEvent event) {
+        AlphaPlayer player = AlphaPlayer.get(event.getEnchanter().getUniqueId());
+        if (player != null) {
+            GameManager.getInstance().getQuestManager().progressQuest(player, EQuestType.ENCHANT, event.getItem().getType(), 1);
+            GameManager.getInstance().getGlobalQuestManager().progressGlobalQuest(player, EQuestType.ENCHANT, event.getItem().getType(), 1);
+        }
+    }
+
+    /**
+     * Gagner des niveaux d'XP.
+     * S'incrémente du nombre de niveaux effectivement gagnés (newLevel - oldLevel).
+     * Ignorer les pertes de niveau (mort, etc.).
+     */
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onLevelGain(PlayerLevelChangeEvent event) {
+        int gained = event.getNewLevel() - event.getOldLevel();
+        if (gained <= 0) return;
+        AlphaPlayer player = AlphaPlayer.get(event.getPlayer().getUniqueId());
+        if (player != null) {
+            GameManager.getInstance().getQuestManager().progressQuest(player, EQuestType.GAIN_XP_LEVELS, null, gained);
+            GameManager.getInstance().getGlobalQuestManager().progressGlobalQuest(player, EQuestType.GAIN_XP_LEVELS, null, gained);
         }
     }
 }

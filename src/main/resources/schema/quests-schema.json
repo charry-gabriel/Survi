@@ -21,11 +21,15 @@
             "enum": [
         "BREED",
         "CRAFT",
+        "ENCHANT",
         "FISH",
+        "GAIN_XP_LEVELS",
+        "HARVEST_BEEHIVE",
         "KILL",
         "MINE",
         "SHEAR",
-        "SMELT"
+        "SMELT",
+        "TAME"
       ]
           },
           "difficulty": {

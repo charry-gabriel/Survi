@@ -7,5 +7,9 @@ public enum EQuestType {
     FISH,
     SHEAR,
     CRAFT,
-    SMELT
+    SMELT,
+    TAME,
+    HARVEST_BEEHIVE,
+    ENCHANT,
+    GAIN_XP_LEVELS
 }

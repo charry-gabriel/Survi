@@ -197,7 +197,14 @@ public final class QuestYamlLoader {
      *   <li>{@code targets: [IRON_ORE, DEEPSLATE_IRON_ORE]} — cibles multiples</li>
      * </ul>
      *
-     * @return liste des objets Material/EntityType correspondants, ou {@code null} pour FISH ou si {@code targets} est absent/null
+     * <p>Correspondance type → classe de target :</p>
+     * <ul>
+     *   <li>MINE, CRAFT, SMELT, ENCHANT, HARVEST_BEEHIVE → {@link Material}</li>
+     *   <li>KILL, SHEAR, BREED, TAME → {@link EntityType}</li>
+     *   <li>FISH, GAIN_XP_LEVELS → pas de target (targets doit être null)</li>
+     * </ul>
+     *
+     * @return liste des objets Material/EntityType correspondants, ou {@code null} si targets est absent/null
      */
     @SuppressWarnings("unchecked")
     private static List<Object> parseTargets(Map<String, Object> map, EQuestType type) {
@@ -217,8 +224,8 @@ public final class QuestYamlLoader {
         List<Object> parsed = targetStrings.stream()
                 .filter(s -> s != null && !s.isBlank())
                 .map(s -> (Object) switch (type) {
-                    case MINE, CRAFT, SMELT -> Material.valueOf(s);
-                    case KILL, SHEAR, BREED -> EntityType.valueOf(s);
+                    case MINE, CRAFT, SMELT, ENCHANT, HARVEST_BEEHIVE -> Material.valueOf(s);
+                    case KILL, SHEAR, BREED, TAME -> EntityType.valueOf(s);
                     default -> null;
                 })
                 .filter(Objects::nonNull)

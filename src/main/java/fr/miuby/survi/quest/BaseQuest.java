@@ -22,7 +22,8 @@ public abstract class BaseQuest {
     private final EQuestType type;
 
     /**
-     * Liste des cibles acceptées : Materials (MINE/CRAFT/SMELT), EntityTypes (KILL/SHEAR/BREED) ou null (FISH).
+     * Liste des cibles acceptées : Materials (MINE/CRAFT/SMELT/ENCHANT/HARVEST_BEEHIVE),
+     * EntityTypes (KILL/SHEAR/BREED/TAME) ou null (FISH, GAIN_XP_LEVELS).
      * Une seule entrée = comportement identique à l'ancienne cible unique.
      * Plusieurs entrées = toute cible de la liste est acceptée (ex: IRON_ORE + DEEPSLATE_IRON_ORE).
      */
@@ -43,10 +44,13 @@ public abstract class BaseQuest {
     /**
      * Vérifie si une action de jeu correspond à cette quête.
      * Centralise la logique type + cible partagée par QuestManager et GlobalQuestManager.
+     *
+     * <p>Types sans cible (FISH, GAIN_XP_LEVELS) : toujours vrai dès que le type correspond,
+     * quelle que soit la valeur de {@code targets} dans le YAML.</p>
      */
     public boolean matchesAction(EQuestType actionType, Object actionTarget) {
         if (this.type != actionType) return false;
-        return (actionType == EQuestType.FISH)
+        return (actionType == EQuestType.FISH || actionType == EQuestType.GAIN_XP_LEVELS)
                 || (this.targets == null || this.targets.isEmpty())
                 || this.targets.contains(actionTarget);
     }
