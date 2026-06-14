@@ -11,7 +11,7 @@ quests:
     jobs:
       - LUMBERJACK
     targets: [OAK_LOG]
-    goal: 32
+    goal: 64
     rewards:
       - {type: REPUTATION, job: LUMBERJACK, value: 1}
 
@@ -22,10 +22,10 @@ quests:
     difficulty: 1
     jobs:
       - LUMBERJACK
-    targets: [OAK_LOG, BIRCH_LOG, SPRUCE_LOG, JUNGLE_LOG, ACACIA_LOG, DARK_OAK_LOG, CHERRY_LOG]
+    targets: [OAK_LOG, BIRCH_LOG, SPRUCE_LOG, JUNGLE_LOG, ACACIA_LOG, DARK_OAK_LOG, CHERRY_LOG, PALE_OAK_LOG, MANGROVE_LOG]
     goal: 64
     rewards:
-      - {type: REPUTATION, job: LUMBERJACK, value: 2}
+      - {type: REPUTATION, job: LUMBERJACK, value: 1}
 
   - id: "chop_birch"
     name: "Bois Clair"
@@ -34,35 +34,10 @@ quests:
     difficulty: 1
     jobs:
       - LUMBERJACK
-    targets: [ BIRCH_LOG ]
+    targets: [BIRCH_LOG]
     goal: 32
     rewards:
-      - { type: REPUTATION, job: LUMBERJACK, value: 1 }
-
-  - id: "break_leaves"
-    name: "Élagage"
-    description: "Détruisez {value} feuilles."
-    type: MINE
-    difficulty: 1
-    jobs:
-      - LUMBERJACK
-    targets: [ OAK_LEAVES, BIRCH_LEAVES, SPRUCE_LEAVES, JUNGLE_LEAVES, ACACIA_LEAVES, DARK_OAK_LEAVES, CHERRY_LEAVES ]
-    goal: 64
-    rewards:
-      - { type: REPUTATION, job: LUMBERJACK, value: 2 }
-
-  - id: "collect_saplings"
-    name: "Reboisement"
-    description: "Récoltez {value} jeunes pousses."
-    type: COLLECT
-    difficulty: 1
-    jobs:
-      - LUMBERJACK
-    targets: [ OAK_SAPLING, BIRCH_SAPLING, SPRUCE_SAPLING ]
-    goal: 8
-    rewards:
-      - { type: REPUTATION, job: LUMBERJACK, value: 2 }
-      - { type: REPUTATION, job: FARMER, value: 1 }
+      - { type: REPUTATION, job: LUMBERJACK, value: 2}
 
   - id: "chop_spruce"
     name: "Forêt Boréale"
@@ -74,7 +49,20 @@ quests:
     targets: [ SPRUCE_LOG ]
     goal: 32
     rewards:
-      - { type: REPUTATION, job: LUMBERJACK, value: 2 }
+      - { type: REPUTATION, job: LUMBERJACK, value: 3}
+
+  - id: "break_leaves"
+    name: "Élagage"
+    description: "Détruisez {value} feuilles."
+    type: MINE
+    difficulty: 1
+    jobs:
+      - LUMBERJACK
+    targets: [OAK_LEAVES, BIRCH_LEAVES, SPRUCE_LEAVES, JUNGLE_LEAVES, ACACIA_LEAVES, DARK_OAK_LEAVES, CHERRY_LEAVES]
+    goal: 64
+    rewards:
+      - { type: REPUTATION, job: LUMBERJACK, value: 4}
+
 
   - id: "discover_cherry"
     name: "Bois Rosé"
@@ -86,5 +74,17 @@ quests:
     targets: [ CHERRY_LOG ]
     goal: 16
     rewards:
-      - { type: REPUTATION, job: LUMBERJACK, value: 3 }
+      - { type: REPUTATION, job: LUMBERJACK, value: 4}
       - { type: REPUTATION, job: EXPLORER, value: 1 }
+
+  - id: "craft_campfire"
+    name: "Feu de Camp"
+    description: "Craftez {value} feu de camp."
+    type: CRAFT
+    difficulty: 1
+    jobs:
+      - LUMBERJACK
+    targets: [ CAMPFIRE ]
+    goal: 1
+    rewards:
+      - { type: REPUTATION, job: LUMBERJACK, value: 5}

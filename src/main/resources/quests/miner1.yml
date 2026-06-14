@@ -53,7 +53,7 @@ quests:
     targets: [IRON_ORE]
     goal: 10
     rewards:
-      - {type: REPUTATION, job: MINER, value: 2}
+      - {type: REPUTATION, job: MINER, value: 3}
       - {type: POTION, potion: haste, duration: 1728000, amplifier: 0}
 
   - id: "mine_redstone"
@@ -66,7 +66,7 @@ quests:
     targets: [REDSTONE_ORE]
     goal: 24
     rewards:
-      - {type: REPUTATION, job: MINER, value: 2}
+      - {type: REPUTATION, job: MINER, value: 3}
       - { type: REPUTATION, job: EXPLORER, value: 1}
       - {type: POTION, potion: haste, duration: 1728000, amplifier: 0}
 
@@ -80,7 +80,7 @@ quests:
     targets: [COBBLED_DEEPSLATE]
     goal: 96
     rewards:
-      - {type: REPUTATION, job: MINER, value: 4}
+      - {type: REPUTATION, job: MINER, value: 5}
       - {type: POTION, potion: haste, duration: 1728000, amplifier: 0}
 
   - id: "mine_mixed_ores"

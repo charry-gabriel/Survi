@@ -56,7 +56,7 @@ quests:
     goal: 64
     rewards:
       - {type: REPUTATION, job: MINER, value: 1}
-      - { type: REPUTATION, job: EXPLORER, value: 1 }
+      - { type: REPUTATION, job: EXPLORER, value: 2}
       - {type: POTION, potion: haste, duration: 1728000, amplifier: 1}
       - {type: POTION, potion: night_vision, duration: 1728000, amplifier: 0}
 
@@ -71,7 +71,7 @@ quests:
     goal: 64
     rewards:
       - {type: REPUTATION, job: MINER, value: 2}
-      - {type: REPUTATION, job: EXPLORER, value: 1}
+      - {type: REPUTATION, job: EXPLORER, value: 2}
       - {type: POTION, potion: haste, duration: 1728000, amplifier: 1}
       - {type: POTION, potion: night_vision, duration: 1728000, amplifier: 0}
 
@@ -85,7 +85,7 @@ quests:
     targets: [AMETHYST_BLOCK]
     goal: 48
     rewards:
-      - {type: REPUTATION, job: MINER, value: 2}
+      - {type: REPUTATION, job: MINER, value: 3}
       - {type: REPUTATION, job: EXPLORER, value: 2}
       - {type: POTION, potion: haste, duration: 1728000, amplifier: 1}
       - {type: POTION, potion: night_vision, duration: 1728000, amplifier: 0}

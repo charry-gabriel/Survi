@@ -1,0 +1,16 @@
+# yaml-language-server: $schema=../schema/quests-schema.json
+quests:
+
+  # ─────────────────── DIFFICULTÉ 3 (0/7) ───────────────────
+
+  - id: "stone_tools_enchant"
+    name: "Premiers Outils Magiques"
+    description: "Enchantez {value} outils en fer (épée, pioche, hache, pelle ou houe)."
+    type: ENCHANT
+    difficulty: 1
+    jobs:
+      - ENCHANTER
+    targets: [ IRON_SWORD, IRON_PICKAXE, IRON_AXE, IRON_SHOVEL, IRON_HOE ]
+    goal: 10
+    rewards:
+      - { type: REPUTATION, job: ENCHANTER, value: 1 }

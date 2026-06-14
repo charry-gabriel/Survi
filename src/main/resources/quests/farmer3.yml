@@ -1,0 +1,96 @@
+# yaml-language-server: $schema=../schema/quests-schema.json
+quests:
+
+# ─────────────────── DIFFICULTÉ 3 (7/7) ───────────────────
+
+  - id: "cocoa"
+    name: "Plantation Tropicale"
+    description: "Récoltez {value} fèves de cacao."
+    type: MINE
+    difficulty: 3
+    jobs:
+      - FARMER
+    targets: [ COCOA_BEANS ]
+    goal: 128
+    rewards:
+      - { type: REPUTATION, job: FARMER, value: 1}
+
+  - id: "cactus_industry"
+    name: "Ferme du Désert"
+    description: "Récoltez {value} cactus."
+    type: MINE
+    difficulty: 3
+    jobs:
+      - FARMER
+    targets: [ CACTUS ]
+    goal: 128
+    rewards:
+      - { type: REPUTATION, job: FARMER, value: 1}
+
+  - id: "cookie_factory"
+    name: "Usine à Cookies"
+    description: "Craftez {value} cookies."
+    type: CRAFT
+    difficulty: 3
+    jobs:
+      - FARMER
+    targets: [ COOKIE ]
+    goal: 256
+    rewards:
+      - { type: REPUTATION, job: FARMER, value: 2}
+
+  - id: "end_farming"
+    name: "Agriculteur Dimensionnel"
+    description: "Récoltez {value} cultures dans l’End."
+    type: MINE
+    difficulty: 3
+    jobs:
+      - FARMER
+    targets: [CHORUS_PLANT, CHORUS_FRUIT]
+    goal: 256
+    rewards:
+      - {type: REPUTATION, job: FARMER, value: 2}
+      - {type: REPUTATION, job: EXPLORER, value: 1}
+
+  - id: "mushroom_harvest"
+    name: "Cueilleur Mycologique"
+    description: "Récoltez {value} champignons (rouges et bruns)."
+    type: MINE
+    difficulty: 3
+    jobs:
+      - FARMER
+    targets: [ RED_MUSHROOM, BROWN_MUSHROOM ]
+    goal: 256
+    rewards:
+      - { type: REPUTATION, job: FARMER, value: 3}
+      - { type: REPUTATION, job: EXPLORER, value: 1 }
+
+  - id: "enchant_diamond_hoe"
+    name: "Terre Bénie"
+    description: "Enchantez {value} houe en diamant."
+    type: ENCHANT
+    difficulty: 3
+    jobs:
+      - FARMER
+    targets: [ DIAMOND_HOE ]
+    goal: 1
+    rewards:
+      - { type: REPUTATION, job: FARMER, value: 3}
+      - { type: REPUTATION, job: ENCHANTER, value: 2}
+
+  - id: "ultimate_farm_variety"
+    name: "Maître Agriculteur"
+    description: "Récoltez {value} cultures variées."
+    type: MINE
+    difficulty: 3
+    jobs:
+      - FARMER
+    targets: [ WHEAT, CARROT, POTATO, BEETROOT, PUMPKIN, MELON, SUGAR_CANE, COCOA_BEANS, NETHER_WART, CHORUS_FRUIT ]
+    goal: 5000
+    rewards:
+      - { type: REPUTATION, job: FARMER, value: 5 }
+
+
+
+
+

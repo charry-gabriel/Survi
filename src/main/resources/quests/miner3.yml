@@ -1,7 +1,7 @@
 # yaml-language-server: $schema=../schema/quests-schema.json
 quests:
 
-  # ─────────────────── DIFFICULTÉ 2 (5/7) ───────────────────
+  # ─────────────────── DIFFICULTÉ 3 (6/7) ───────────────────
 
   - id: "mine_end_stone_mass"
     name: "Colonisation de l'End"
@@ -50,7 +50,7 @@ quests:
     targets:
     goal: 1
     rewards:
-      - {type: REPUTATION, job: MINER, value: 2}
+      - {type: REPUTATION, job: MINER, value: 3}
       - {type: POTION, potion: haste, duration: 1728000, amplifier: 2}
 
   - id: "mine_ancient_debris"
@@ -64,7 +64,7 @@ quests:
     goal: 12
     rewards:
       - {type: REPUTATION, job: MINER, value: 2}
-      - {type: REPUTATION, job: EXPLORER, value: 1}
+      - {type: REPUTATION, job: EXPLORER, value: 2}
 
 
   - id: "mine_ancient_debris"
@@ -78,10 +78,7 @@ quests:
     goal: 6
     rewards:
       - {type: REPUTATION, job: MINER, value: 3}
-      - {type: REPUTATION, job: EXPLORER, value: 1}
-
-
-
+      - {type: REPUTATION, job: EXPLORER, value: 2}
 
   - id: "mine_emerald"
     name: "Richesse des Montagnes"

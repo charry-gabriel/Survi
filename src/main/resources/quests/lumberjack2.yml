@@ -1,0 +1,93 @@
+# yaml-language-server: $schema=../schema/quests-schema.json
+quests:
+
+# ─────────────────── DIFFICULTÉ 2 (7/7) ───────────────────
+
+
+  - id: "chop_mangrove"
+    name: "Marécages Exotiques"
+    description: "Coupez {value} bûches de palétuvier."
+    type: MINE
+    difficulty: 2
+    jobs:
+      - LUMBERJACK
+    targets: [MANGROVE_LOG]
+    goal: 64
+    rewards:
+      - {type: REPUTATION, job: LUMBERJACK, value: 1}
+
+  - id: "chop_jungle"
+    name: "Cœur de la Jungle"
+    description: "Coupez {value} bûches de jungle."
+    type: MINE
+    difficulty: 2
+    jobs:
+      - LUMBERJACK
+    targets: [ JUNGLE_LOG ]
+    goal: 48
+    rewards:
+      - { type: REPUTATION, job: LUMBERJACK, value: 1}
+
+  - id: "nether_crimson_wood"
+    name: "Bois Carmes"
+    description: "Coupez {value} tiges carmin du Nether."
+    type: MINE
+    difficulty: 2
+    jobs:
+      - LUMBERJACK
+    targets: [ CRIMSON_STEM ]
+    goal: 32
+    rewards:
+      - { type: REPUTATION, job: LUMBERJACK, value: 1}
+      - { type: REPUTATION, job: EXPLORER, value: 1}
+
+  - id: "nether_warped_wood"
+    name: "Bois Tordu"
+    description: "Coupez {value} tiges biscornues du Nether."
+    type: MINE
+    difficulty: 2
+    jobs:
+      - LUMBERJACK
+    targets: [ WARPED_STEM ]
+    goal: 32
+    rewards:
+      - { type: REPUTATION, job: LUMBERJACK, value: 2}
+      - { type: REPUTATION, job: EXPLORER, value: 1}
+
+  - id: "collect_logs_2"
+    name: "Réserve de Bois"
+    description: "Coupez {value} bûches au total."
+    type: MINE
+    difficulty: 1
+    jobs:
+      - LUMBERJACK
+    targets: [ OAK_LOG, BIRCH_LOG, SPRUCE_LOG, JUNGLE_LOG, ACACIA_LOG, DARK_OAK_LOG, CHERRY_LOG, PALE_OAK_LOG, MANGROVE_LOG ]
+    goal: 640
+    rewards:
+      - { type: REPUTATION, job: LUMBERJACK, value: 4}
+
+  - id: "bee_harvest"
+    name: "Récolte Douce"
+    description: "Récoltez {value} rayons de miel ou bouteilles de miel sans détruire la ruche."
+    type: SMELT
+    difficulty: 2
+    jobs:
+      - LUMBERJACK
+    targets: [ HONEYCOMB, HONEY_BOTTLE ]
+    goal: 12
+    rewards:
+      - { type: REPUTATION, job: LUMBERJACK, value: 2}
+      - { type: REPUTATION, job: FARMER, value: 3}
+
+  - id: "craft_diamond_axe"
+    name: "Outil d’Excellence"
+    description: "Craftez {value} hache en diamant."
+    type: CRAFT
+    difficulty: 2
+    jobs:
+      - LUMBERJACK
+    targets: [DIAMOND_AXE]
+    goal: 1
+    rewards:
+      - { type: REPUTATION, job: LUMBERJACK, value: 1}
+      - { type: REPUTATION, job: MINER, value: 4}

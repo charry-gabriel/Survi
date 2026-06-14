@@ -1,0 +1,91 @@
+# yaml-language-server: $schema=../schema/quests-schema.json
+quests:
+
+# ─────────────────── DIFFICULTÉ 1 (7/7) ───────────────────
+
+
+  - id: "harvest_wheat"
+    name: "Première Récolte"
+    description: "Récoltez {value} blés."
+    type: MINE
+    difficulty: 1
+    jobs:
+      - FARMER
+    targets: [WHEAT]
+    goal: 32
+    rewards:
+      - {type: REPUTATION, job: FARMER, value: 1}
+
+  - id: "harvest_carrots_potatoes"
+    name: "Potager de Carottes et champ de Pommes de Terre"
+    description: "Récoltez {value} carottes ou patates."
+    type: MINE
+    difficulty: 1
+    jobs:
+      - FARMER
+    targets: [CARROT, POTATO]
+    goal: 64
+    rewards:
+      - { type: REPUTATION, job: FARMER, value: 1 }
+
+  - id: "harvest_beetroot"
+    name: "Cultivateur de Betteraves"
+    description: "Récoltez {value} betteraves."
+    type: MINE
+    difficulty: 1
+    jobs:
+      - FARMER
+    targets: [ BEETROOT ]
+    goal: 32
+    rewards:
+      - { type: REPUTATION, job: FARMER, value: 2 }
+
+  - id: "shear_sheep"
+    name: "Tonte de Printemps"
+    description: "Tondez {value} moutons."
+    type: SHEAR
+    difficulty: 1
+    jobs:
+      - FARMER
+    targets: [ SHEEP ]
+    goal: 32
+    rewards:
+      - { type: REPUTATION, job: FARMER, value: 2}
+      - { type: REPUTATION, job: EXPLORER, value: 1 }
+
+  - id: "breed_chickens"
+    name: "Poulailler"
+    description: "Faites se reproduire {value} poules."
+    type: BREED
+    difficulty: 1
+    jobs:
+      - FARMER
+    targets: [ CHICKEN ]
+    goal: 32
+    rewards:
+      - { type: REPUTATION, job: FARMER, value: 4}
+
+  - id: "breed_cows"
+    name: "Éleveur de Bovins et berger Débutant"
+    description: "Faites se reproduire {value} vaches ou mouton."
+    type: BREED
+    difficulty: 1
+    jobs:
+      - FARMER
+    targets: [ COW, SHEEP ]
+    goal: 32
+    rewards:
+      - { type: REPUTATION, job: FARMER, value: 5}
+
+  - id: "tame_horse"
+    name: "Premier Compagnon"
+    description: "Apprivoisez {value} cheval."
+    type: TAME
+    difficulty: 1
+    jobs:
+      - FARMER
+    targets: [ HORSE ]
+    goal: 1
+    rewards:
+      - { type: REPUTATION, job: FARMER, value: 4 }
+      - { type: REPUTATION, job: EXPLORER, value: 1 }

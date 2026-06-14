@@ -1,0 +1,95 @@
+# yaml-language-server: $schema=../schema/quests-schema.json
+quests:
+
+# ─────────────────── DIFFICULTÉ 3 (7/7) ───────────────────
+
+  - id: "nether_stem_master"
+    name: "Bois du Nether Ancien"
+    description: "Coupez {value} tiges du Nether (carmin et biscornues)."
+    type: MINE
+    difficulty: 3
+    jobs:
+      - LUMBERJACK
+    targets: [ CRIMSON_STEM, WARPED_STEM ]
+    goal: 200
+    rewards:
+      - { type: REPUTATION, job: LUMBERJACK, value: 1 }
+
+  - id: "pale_oak_harvest"
+    name: "Le Bois Fantomatique"
+    description: "Coupez {value} bûches de chêne pâle."
+    type: MINE
+    difficulty: 3
+    jobs:
+      - LUMBERJACK
+    targets: [ PALE_OAK_LOG ]
+    goal: 128
+    rewards:
+      - { type: REPUTATION, job: LUMBERJACK, value: 1}
+
+
+  - id: "chop_bamboo_master"
+    name: "Forêt de Bambou"
+    description: "Craftez {value} blocs de bambou."
+    type: CRAFT
+    difficulty: 3
+    jobs:
+      - LUMBERJACK
+    targets: [BAMBOO]
+    goal: 640
+    rewards:
+      - {type: REPUTATION, job: LUMBERJACK, value: 1}
+      - { type: REPUTATION, job: EXPLORER, value: 1 }
+
+  - id: "overworld_fungus"
+    name: "Forêt Mycologique"
+    description: "Récoltez {value} champignons (rouges et bruns)."
+    type: MINE
+    difficulty: 3
+    jobs:
+      - LUMBERJACK
+    targets: [ RED_MUSHROOM_BLOCK, BROWN_MUSHROOM_BLOCK ]
+    goal: 100
+    rewards:
+      - { type: REPUTATION, job: LUMBERJACK, value: 2}
+      - { type: REPUTATION, job: EXPLORER, value: 1 }
+
+  - id: "bee_master"
+    name: "Maître des Abeilles"
+    description: "Récoltez {value} produits liés aux abeilles sans détruire les ruches."
+    type: SMELT
+    difficulty: 3
+    jobs:
+      - LUMBERJACK
+    targets: [ HONEYCOMB, HONEY_BOTTLE ]
+    goal: 32
+    rewards:
+      - { type: REPUTATION, job: LUMBERJACK, value: 1}
+      - { type: REPUTATION, job: FARMER, value: 3}
+
+
+  - id: "end_explorer_wood"
+    name: "Bois de l’End"
+    description: "Coupez {value} blocs de matériaux trouvés dans l’End."
+    type: MINE
+    difficulty: 3
+    jobs:
+      - LUMBERJACK
+    targets: [ CHORUS_PLANT, CHORUS_FLOWER ]
+    goal: 128
+    rewards:
+      - { type: REPUTATION, job: LUMBERJACK, value: 2}
+      - { type: REPUTATION, job: FARMER, value: 2}
+      - { type: REPUTATION, job: EXPLORER, value: 1 }
+
+  - id: "strip_acacia_logs"
+    name: "Menuisier d'Acacia"
+    description: "Écorcez {value} bûches d'acacia avec une hache."
+    type: MINE
+    difficulty: 3
+    jobs:
+      - LUMBERJACK
+    targets: [ STRIPPED_ACACIA_LOG ]
+    goal: 200
+    rewards:
+      - { type: REPUTATION, job: LUMBERJACK, value: 5}

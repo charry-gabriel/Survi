@@ -1,0 +1,57 @@
+# yaml-language-server: $schema=../schema/quests-schema.json
+quests:
+
+# ─────────────────── DIFFICULTÉ 1 (7/7) ───────────────────
+
+  - id: "sugar_cane_start"
+    name: "Premiers Écrits"
+    description: "Récoltez {value} cannes à sucre."
+    type: MINE
+    difficulty: 1
+    jobs:
+      - ENCHANTER
+    targets: [SUGAR_CANE]
+    goal: 64
+    rewards:
+      - {type: REPUTATION, job: ENCHANTER, value: 1}
+      - { type: REPUTATION, job: FARMER, value: 1 }
+
+  - id: "book_basic"
+    name: "Apprentissage"
+    description: "Craftez {value} livres."
+    type: CRAFT
+    difficulty: 1
+    jobs:
+      - ENCHANTER
+    targets: [ BOOK ]
+    goal: 64
+    rewards:
+      - { type: REPUTATION, job: ENCHANTER, value: 2}
+      - { type: REPUTATION, job: FARMER, value: 1 }
+
+  - id: "first_bookshelf"
+    name: "Première Bibliothèque"
+    description: "Craftez {value} bibliothèque."
+    type: CRAFT
+    difficulty: 1
+    jobs:
+      - ENCHANTER
+    targets: [ BOOKSHELF ]
+    goal: 15
+    rewards:
+      - { type: REPUTATION, job: ENCHANTER, value: 3 }
+      - { type: REPUTATION, job: FARMER, value: 1 }
+
+  - id: "lapis_intro"
+    name: "Pierre Bleue"
+    description: "Minez {value} lapis-lazuli."
+    type: MINE
+    difficulty: 1
+    jobs:
+      - ENCHANTER
+    targets: [ LAPIS_ORE ]
+    goal: 640
+    rewards:
+      - { type: REPUTATION, job: ENCHANTER, value: 1}
+      - { type: REPUTATION, job: MINER, value: 4 }
+

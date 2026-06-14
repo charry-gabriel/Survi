@@ -1,0 +1,17 @@
+# yaml-language-server: $schema=../schema/quests-schema.json
+quests:
+
+# ─────────────────── DIFFICULTÉ 2 (0/7) ───────────────────
+
+  - id: "fish_common"
+    name: "Pêcheur du Dimanche"
+    description: "Pêchez {value} poissons."
+    type: FISH
+    difficulty: 2
+    jobs:
+      - FISHERMAN
+    targets: [TROPICAL_FISH]
+    goal: 10
+    rewards:
+      - {type: REPUTATION, job: FISHERMAN, value: 12}
+      - {type: POTION, potion: luck, duration: 1728000, amplifier: 0}

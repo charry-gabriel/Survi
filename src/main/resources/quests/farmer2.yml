@@ -1,0 +1,90 @@
+# yaml-language-server: $schema=../schema/quests-schema.json
+quests:
+
+# ─────────────────── DIFFICULTÉ 2 (7/7) ───────────────────
+
+
+  - id: "pumpkin_melon_harvest"
+    name: "Champ de Citrouilles et Melon"
+    description: "Récoltez {value} citrouilles et melon."
+    type: MINE
+    difficulty: 2
+    jobs:
+      - FARMER
+    targets: [PUMPKIN, MELON]
+    goal: 128
+    rewards:
+      - {type: REPUTATION, job: FARMER, value: 1}
+
+  - id: "bread_craft"
+    name: "Boulanger Amateur"
+    description: "Fabriquez {value} pains."
+    type: CRAFT
+    difficulty: 2
+    jobs:
+      - FARMER
+    targets: [ BREAD ]
+    goal: 64
+    rewards:
+      - { type: REPUTATION, job: FARMER, value: 1}
+
+  - id: "cake_craft"
+    name: "Premiers Desserts"
+    description: "Fabriquez {value} gâteaux."
+    type: CRAFT
+    difficulty: 2
+    jobs:
+      - FARMER
+    targets: [ CAKE ]
+    goal: 16
+    rewards:
+      - { type: REPUTATION, job: FARMER, value: 2}
+
+  - id: "sugar_cane"
+    name: "Production Sucrée"
+    description: "Récoltez {value} cannes à sucre."
+    type: MINE
+    difficulty: 2
+    jobs:
+      - FARMER
+    targets: [ SUGAR_CANE ]
+    goal: 136
+    rewards:
+      - { type: REPUTATION, job: FARMER, value: 3}
+
+  - id: "nether_wart_d2"
+    name: "Premier Pas en Alchimie"
+    description: "Récoltez {value} verrues du Nether."
+    type: MINE
+    difficulty: 2
+    jobs:
+      - FARMER
+    targets: [ NETHER_WART ]
+    goal: 128
+    rewards:
+      - { type: REPUTATION, job: FARMER, value: 2}
+      - { type: REPUTATION, job: EXPLORER, value: 2 }
+
+  - id: "animal_breeding_d2"
+    name: "Élevage Structuré"
+    description: "Faites se reproduire {value} animaux communs."
+    type: BREED
+    difficulty: 2
+    jobs:
+      - FARMER
+    targets: [ COW, SHEEP, PIG, CHICKEN ]
+    goal: 200
+    rewards:
+      - { type: REPUTATION, job: FARMER, value: 5}
+
+  - id: "ultimate_farmland"
+    name: "Magnat de l'Agriculture"
+    description: "Récoltez {value} cultures variées."
+    type: MINE
+    difficulty: 10
+    jobs:
+      - FARMER
+    targets: [ WHEAT, CARROT, POTATO, BEETROOT, PUMPKIN, MELON, SUGAR_CANE, COCOA_BEANS, NETHER_WART ]
+    goal: 2000
+    rewards:
+      - { type: REPUTATION, job: FARMER, value: 5 }
