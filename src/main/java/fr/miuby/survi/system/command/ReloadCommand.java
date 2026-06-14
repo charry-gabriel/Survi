@@ -38,7 +38,7 @@ public class ReloadCommand {
 
         sender.sendMessage(ls.text(lang, "cmd.reload.all.start"));
 
-        int quests      = GameManager.getInstance().getQuestManager().reload();
+        int quests       = GameManager.getInstance().getQuestManager().reload();
         int globalQuests = GameManager.getInstance().getGlobalQuestManager().reload();
         GameManager.getInstance().getMobLevelManager().reload();
         GameManager.getInstance().getRoleLoader().reload();
@@ -46,13 +46,7 @@ public class ReloadCommand {
         GameManager.getInstance().getVillagerFactory().reloadAll();
         JobsLoader.reload();
 
-        sender.sendMessage(ls.text(lang, "cmd.reload.all.done"));
-        sender.sendMessage(ls.text(lang, "cmd.reload.all.quests",       quests));
-        sender.sendMessage(ls.text(lang, "cmd.reload.all.global_quests", globalQuests));
-        sender.sendMessage(ls.text(lang, "cmd.reload.all.misc"));
-        sender.sendMessage(ls.text(lang, "cmd.reload.all.villagers"));
-        sender.sendMessage(ls.text(lang, "cmd.reload.all.jobs"));
-        sender.sendMessage(ls.text(lang, "cmd.reload.all.warning"));
+        sender.sendMessage(ls.text(lang, "cmd.reload.all.done", quests, globalQuests));
         return Command.SINGLE_SUCCESS;
     }
 

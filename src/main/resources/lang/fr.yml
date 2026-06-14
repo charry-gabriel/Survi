@@ -195,13 +195,6 @@ cmd.system.zone.status_final: "<aqua>║ Palier final atteint."
 
 # ─── Commandes — reload (admin) ───────────────────────────────────────────────
 cmd.reload.all.start: "<gray>Rechargement global en cours..."
-cmd.reload.all.done: "<green>✔ Rechargement terminé :"
-cmd.reload.all.quests: "<gray>  quests/*.yml → <white>{0} quête(s)"
-cmd.reload.all.global_quests: "<gray>  global_quests.yml → <white>{0} quête(s) globale(s)"
-cmd.reload.all.misc: "<gray>  monsters.yml ✔ — roles.yml ✔ (joueurs connectés mis à jour) — growth_items/*.yml ✔"
-cmd.reload.all.villagers: "<gray>  villagers/*.yml + traders/*.yml ✔ (entités en jeu mises à jour, inventaires recalculés)"
-cmd.reload.all.jobs: "<gray>  jobs/*.yml ✔ (drops, multiplicateurs, matériaux de remplacement actifs immédiatement)"
-cmd.reload.all.warning: "<yellow>  ⚠ recipes.yml et config.yml nécessitent un redémarrage."
 cmd.reload.quests.start: "<gray>Rechargement de quests/*.yml..."
 cmd.reload.quests.done: "<green>✔ {0} quête(s). Quêtes orphelines traitées (voir console)."
 cmd.reload.global_quests.start: "<gray>Rechargement de global_quests.yml..."
@@ -226,17 +219,6 @@ world.reset_warning: "<gold>[Monde] <yellow>Le monde est en cours de réinitiali
 # ─── Quête globale — broadcasts ───────────────────────────────────────────────
 globalquest.cancelled: "<red><bold>⚔ Quête Globale </bold><yellow>« {0} » annulée par un administrateur. Aucune récompense."
 globalquest.timeout: "<red><bold>⏰ Quête Globale </bold><yellow>« {0} »</yellow><red> non complétée dans les temps ! Aucune récompense."
-globalquest.separator.gold: "<gold>━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-globalquest.separator.green: "<green>━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-globalquest.start.title: "<gold><bold>  ⚔  QUÊTE GLOBALE LANCÉE  ⚔"
-globalquest.start.objective_label: "<gray>  Objectif : "
-globalquest.start.time_label: "<gray>| Temps : "
-globalquest.start.rewards_label: "<gray>  Récompenses :"
-globalquest.complete.title: "<green><bold>  ✔  QUÊTE GLOBALE COMPLÉTÉE  ✔"
-globalquest.complete.participants: "<white>  {0} participant(s) récompensé(s) !"
-globalquest.complete.top_label: "<dark_gray>  ─ Top contributeurs ─"
-globalquest.rewards.header: "<gold><bold>[Quête Globale] <green>Récompenses reçues :"
-globalquest.rewards.rep_label: "<gray> rép. "
 
 # ─── Commandes — quest (admin) ────────────────────────────────────────────────
 cmd.quest.exists: "<red>Une quête existe déjà pour {0}"
@@ -297,3 +279,38 @@ cmd.villager.reset_done: "<green>Villager {0} reset au niveau 0 !"
 cmd.villager.unlocked: "<green>Villager unlocked !"
 cmd.villager.teleported: "<green>Villager teleported !"
 cmd.villager.already_max: "<red>Villager already at max level !"
+
+# ─── Quête globale — broadcast start (message unique multi-ligne) ──────────────
+globalquest.start: |-
+
+  <gold>━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  <gold><bold>  ⚔  QUÊTE GLOBALE LANCÉE  ⚔
+  <yellow>  <name>
+  <white>  <description>
+  <gray>  Objectif : <aqua><goal><gray> | Temps : <aqua><time>
+  <gray>  Récompenses :<rewards>
+  <gold>━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+# ─── Quête globale — broadcast fin (message unique multi-ligne) ───────────────
+globalquest.complete: |-
+
+  <green>━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  <green><bold>  ✔  QUÊTE GLOBALE COMPLÉTÉE  ✔
+  <yellow>  <name>
+  <white>  <participants> participant(s) récompensé(s) !
+  <dark_gray>  ─ Top contributeurs ─<top>
+  <green>━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+# ─── Quête globale — entrée récompense & message personnel ────────────────────
+globalquest.reward_entry: "<green>    +<amount> <gray>rép. <job>"
+globalquest.rewards.message: "<gold><bold>[Quête Globale] <green>Récompenses reçues :<rewards>"
+
+# ─── Reload all — résultat complet (message unique multi-ligne) ───────────────
+cmd.reload.all.done: |-
+  <green>✔ Rechargement terminé :
+  <gray>  quests/*.yml → <white>{0} quête(s)
+  <gray>  global_quests.yml → <white>{1} quête(s) globale(s)
+  <gray>  monsters.yml ✔ — roles.yml ✔ (joueurs connectés mis à jour) — growth_items/*.yml ✔
+  <gray>  villagers/*.yml + traders/*.yml ✔ (entités en jeu mises à jour, inventaires recalculés)
+  <gray>  jobs/*.yml ✔ (drops, multiplicateurs, matériaux de remplacement actifs immédiatement)
+  <yellow>  ⚠ recipes.yml et config.yml nécessitent un redémarrage.

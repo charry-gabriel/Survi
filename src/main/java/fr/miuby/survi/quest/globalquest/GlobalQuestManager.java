@@ -18,6 +18,7 @@ import fr.miuby.survi.system.log.ELogTag;
 import lombok.Getter;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitTask;
@@ -237,30 +238,24 @@ public class GlobalQuestManager extends AbstractQuestManager<GlobalQuest> {
         for (Player p : Bukkit.getOnlinePlayers()) {
             ELang lang = ls.resolveLanguage(p);
 
-            Component msg = Component.newline()
-                    .append(ls.text(lang, "globalquest.separator.gold")).appendNewline()
-                    .append(ls.text(lang, "globalquest.start.title")).appendNewline()
-                    .append(Component.text("  " + quest.getName(), NamedTextColor.YELLOW)).appendNewline()
-                    .append(Component.text("  " + quest.getFormattedDescription(), NamedTextColor.WHITE)).appendNewline()
-                    .append(ls.text(lang, "globalquest.start.objective_label"))
-                    .append(Component.text(quest.getGoal() + " ", NamedTextColor.AQUA))
-                    .append(ls.text(lang, "globalquest.start.time_label"))
-                    .append(Component.text(timeStr, NamedTextColor.AQUA)).appendNewline()
-                    .append(ls.text(lang, "globalquest.start.rewards_label"));
-
+            // Construit la liste des récompenses (composant pré-assemblé)
+            Component rewards = Component.empty();
             for (BlessingEffect effect : quest.getRewards().blessingEffects()) {
                 if (effect instanceof ReputationEffect re) {
-                    msg = msg.appendNewline()
-                            .append(Component.text("    +" + re.getReputation(), NamedTextColor.GREEN))
-                            .append(ls.text(lang, "globalquest.rewards.rep_label"))
-                            .append(re.getJob().toComponent());
+                    rewards = rewards.append(Component.newline())
+                            .append(ls.text(lang, "globalquest.reward_entry",
+                                    Placeholder.unparsed("amount", String.valueOf(re.getReputation())),
+                                    Placeholder.component("job", re.getJob().toComponent())));
                 }
             }
 
-            msg = msg.appendNewline()
-                    .append(ls.text(lang, "globalquest.separator.gold")).appendNewline();
+            p.sendMessage(ls.text(lang, "globalquest.start",
+                    Placeholder.unparsed("name",        quest.getName()),
+                    Placeholder.unparsed("description", quest.getFormattedDescription()),
+                    Placeholder.unparsed("goal",        String.valueOf(quest.getGoal())),
+                    Placeholder.unparsed("time",        timeStr),
+                    Placeholder.component("rewards",    rewards)));
 
-            p.sendMessage(msg);
             SoundService.play(p, ESound.GLOBAL_QUEST_START);
         }
     }
@@ -286,42 +281,39 @@ public class GlobalQuestManager extends AbstractQuestManager<GlobalQuest> {
         AlphaPlayerFactory factory = GameManager.getInstance().getAlphaPlayerFactory();
         String[] medals = {"🥇", "🥈", "🥉"};
 
-        Component msg = Component.newline()
-                .append(ls.text(lang, "globalquest.separator.green")).appendNewline()
-                .append(ls.text(lang, "globalquest.complete.title")).appendNewline()
-                .append(Component.text("  " + quest.getName(), NamedTextColor.YELLOW)).appendNewline()
-                .append(ls.text(lang, "globalquest.complete.participants", participantCount));
-
-        if (!top3.isEmpty()) {
-            msg = msg.appendNewline().append(ls.text(lang, "globalquest.complete.top_label"));
-            for (int i = 0; i < top3.size(); i++) {
-                Map.Entry<UUID, Integer> entry = top3.get(i);
-                String pseudo = factory.getAlphaPlayer(entry.getKey()).getPseudo();
-                int pct = totalContribution > 0 ? (int) ((long) entry.getValue() * 100 / totalContribution) : 0;
-                msg = msg.appendNewline()
-                        .append(Component.text("  " + medals[i] + " ", NamedTextColor.YELLOW))
-                        .append(Component.text(pseudo, NamedTextColor.WHITE))
-                        .append(Component.text("  " + pct + "%", NamedTextColor.AQUA))
-                        .append(Component.text("  (" + entry.getValue() + " actions)", NamedTextColor.DARK_GRAY));
-            }
+        // Construit le bloc top contributeurs (composant pré-assemblé)
+        Component top = Component.empty();
+        for (int i = 0; i < top3.size(); i++) {
+            Map.Entry<UUID, Integer> entry = top3.get(i);
+            String pseudo = factory.getAlphaPlayer(entry.getKey()).getPseudo();
+            int pct = totalContribution > 0 ? (int) ((long) entry.getValue() * 100 / totalContribution) : 0;
+            top = top.appendNewline()
+                    .append(Component.text("  " + medals[i] + " ", NamedTextColor.YELLOW))
+                    .append(Component.text(pseudo,                   NamedTextColor.WHITE))
+                    .append(Component.text("  " + pct + "%",         NamedTextColor.AQUA))
+                    .append(Component.text("  (" + entry.getValue() + " actions)", NamedTextColor.DARK_GRAY));
         }
 
-        return msg.appendNewline()
-                .append(ls.text(lang, "globalquest.separator.green")).appendNewline();
+        return ls.text(lang, "globalquest.complete",
+                Placeholder.unparsed("name",         quest.getName()),
+                Placeholder.unparsed("participants",  String.valueOf(participantCount)),
+                Placeholder.component("top",          top));
     }
 
     private Component buildRewardMessage(GlobalQuest quest) {
-        LangService ls   = GameManager.getInstance().getLangService();
-        ELang       lang = ls.getServerDefault();
-        Component   msg  = ls.text(lang, "globalquest.rewards.header");
+        LangService ls      = GameManager.getInstance().getLangService();
+        ELang       lang    = ls.getServerDefault();
+        Component   rewards = Component.empty();
         for (BlessingEffect effect : quest.getRewards().blessingEffects()) {
             if (effect instanceof ReputationEffect re) {
-                msg = msg.append(Component.text(" +" + re.getReputation(), NamedTextColor.GREEN))
-                        .append(ls.text(lang, "globalquest.rewards.rep_label"))
-                        .append(re.getJob().toComponent());
+                rewards = rewards
+                        .append(Component.text(" "))
+                        .append(ls.text(lang, "globalquest.reward_entry",
+                                Placeholder.unparsed("amount", String.valueOf(re.getReputation())),
+                                Placeholder.component("job", re.getJob().toComponent())));
             }
         }
-        return msg;
+        return ls.text(lang, "globalquest.rewards.message", Placeholder.component("rewards", rewards));
     }
 
     private void broadcastLocalized(String key, Object... args) {

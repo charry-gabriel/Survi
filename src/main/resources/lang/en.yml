@@ -195,13 +195,6 @@ cmd.system.zone.status_final: "<aqua>║ Final stage reached."
 
 # ─── Commands — reload (admin) ────────────────────────────────────────────────
 cmd.reload.all.start: "<gray>Global reload in progress..."
-cmd.reload.all.done: "<green>✔ Reload complete:"
-cmd.reload.all.quests: "<gray>  quests/*.yml → <white>{0} quest(s)"
-cmd.reload.all.global_quests: "<gray>  global_quests.yml → <white>{0} global quest(s)"
-cmd.reload.all.misc: "<gray>  monsters.yml ✔ — roles.yml ✔ (online players updated) — growth_items/*.yml ✔"
-cmd.reload.all.villagers: "<gray>  villagers/*.yml + traders/*.yml ✔ (in-game entities updated, inventories recalculated)"
-cmd.reload.all.jobs: "<gray>  jobs/*.yml ✔ (drops, multipliers, replacement materials active immediately)"
-cmd.reload.all.warning: "<yellow>  ⚠ recipes.yml and config.yml require a restart."
 cmd.reload.quests.start: "<gray>Reloading quests/*.yml..."
 cmd.reload.quests.done: "<green>✔ {0} quest(s). Orphaned quests handled (see console)."
 cmd.reload.global_quests.start: "<gray>Reloading global_quests.yml..."
@@ -226,17 +219,6 @@ world.reset_warning: "<gold>[World] <yellow>The world is being reset. Returning 
 # ─── Global quest — broadcasts ────────────────────────────────────────────────
 globalquest.cancelled: "<red><bold>⚔ Global Quest </bold><yellow>« {0} » cancelled by an admin. No rewards."
 globalquest.timeout: "<red><bold>⏰ Global Quest </bold><yellow>« {0} »</yellow><red> not completed in time! No rewards."
-globalquest.separator.gold: "<gold>━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-globalquest.separator.green: "<green>━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-globalquest.start.title: "<gold><bold>  ⚔  GLOBAL QUEST STARTED  ⚔"
-globalquest.start.objective_label: "<gray>  Objective: "
-globalquest.start.time_label: "<gray>| Time: "
-globalquest.start.rewards_label: "<gray>  Rewards:"
-globalquest.complete.title: "<green><bold>  ✔  GLOBAL QUEST COMPLETED  ✔"
-globalquest.complete.participants: "<white>  {0} participant(s) rewarded!"
-globalquest.complete.top_label: "<dark_gray>  ─ Top contributors ─"
-globalquest.rewards.header: "<gold><bold>[Global Quest] <green>Rewards received:"
-globalquest.rewards.rep_label: "<gray> rep. "
 
 # ─── Commands — quest (admin) ─────────────────────────────────────────────────
 cmd.quest.exists: "<red>A quest already exists for {0}"
@@ -297,3 +279,38 @@ cmd.villager.reset_done: "<green>Villager {0} reset to level 0!"
 cmd.villager.unlocked: "<green>Villager unlocked!"
 cmd.villager.teleported: "<green>Villager teleported!"
 cmd.villager.already_max: "<red>Villager already at max level!"
+
+# ─── Global quest — broadcast start (single multi-line message) ───────────────
+globalquest.start: |-
+
+  <gold>━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  <gold><bold>  ⚔  GLOBAL QUEST STARTED  ⚔
+  <yellow>  <name>
+  <white>  <description>
+  <gray>  Objective: <aqua><goal><gray> | Time: <aqua><time>
+  <gray>  Rewards:<rewards>
+  <gold>━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+# ─── Global quest — broadcast complete (single multi-line message) ────────────
+globalquest.complete: |-
+
+  <green>━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  <green><bold>  ✔  GLOBAL QUEST COMPLETED  ✔
+  <yellow>  <name>
+  <white>  <participants> participant(s) rewarded!
+  <dark_gray>  ─ Top contributors ─<top>
+  <green>━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+# ─── Global quest — reward entry & personal message ───────────────────────────
+globalquest.reward_entry: "<green>    +<amount> <gray>rep. <job>"
+globalquest.rewards.message: "<gold><bold>[Global Quest] <green>Rewards received:<rewards>"
+
+# ─── Reload all — full result (single multi-line message) ─────────────────────
+cmd.reload.all.done: |-
+  <green>✔ Reload complete:
+  <gray>  quests/*.yml → <white>{0} quest(s)
+  <gray>  global_quests.yml → <white>{1} global quest(s)
+  <gray>  monsters.yml ✔ — roles.yml ✔ (online players updated) — growth_items/*.yml ✔
+  <gray>  villagers/*.yml + traders/*.yml ✔ (in-game entities updated, inventories recalculated)
+  <gray>  jobs/*.yml ✔ (drops, multipliers, replacement materials active immediately)
+  <yellow>  ⚠ recipes.yml and config.yml require a restart.
