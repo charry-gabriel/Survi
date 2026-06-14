@@ -12,11 +12,12 @@ import fr.miuby.survi.quest.EQuestType;
 import fr.miuby.survi.quest.QuestYamlLoader;
 import fr.miuby.survi.sound.ESound;
 import fr.miuby.survi.sound.SoundService;
+import fr.miuby.survi.system.lang.ELang;
+import fr.miuby.survi.system.lang.LangService;
 import fr.miuby.survi.system.log.ELogTag;
 import lombok.Getter;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
-import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitTask;
@@ -126,8 +127,7 @@ public class GlobalQuestManager extends AbstractQuestManager<GlobalQuest> {
         endTime     = 0L;
         contributions.clear();
 
-        broadcastMessage(Component.text("⚔ Quête Globale ", NamedTextColor.RED, TextDecoration.BOLD)
-                .append(Component.text("« " + name + " » annulée par un administrateur. Aucune récompense.", NamedTextColor.YELLOW)));
+        broadcastLocalized("globalquest.cancelled", name);
         GameManager.getInstance().getGlobalQuestBossBarService().onQuestEnded();
 
         MLLogManager.getInstance().log(Level.INFO, ELogTag.QUEST,
@@ -219,11 +219,7 @@ public class GlobalQuestManager extends AbstractQuestManager<GlobalQuest> {
         contributions.clear();
         timerTask   = null;
 
-        broadcastMessage(
-                Component.text("⏰ Quête Globale ", NamedTextColor.RED, TextDecoration.BOLD)
-                        .append(Component.text("« " + name + " »", NamedTextColor.YELLOW))
-                        .append(Component.text(" non complétée dans les temps ! Aucune récompense.", NamedTextColor.RED))
-        );
+        broadcastLocalized("globalquest.timeout", name);
         GameManager.getInstance().getGlobalQuestBossBarService().onQuestEnded();
 
         MLLogManager.getInstance().log(Level.INFO, ELogTag.QUEST,
@@ -235,37 +231,35 @@ public class GlobalQuestManager extends AbstractQuestManager<GlobalQuest> {
     // =========================================================================
 
     private void broadcastQuestStart(GlobalQuest quest) {
-        String timeStr = formatSeconds(quest.getTimeLimitSeconds());
-
-        Component msg = Component.newline()
-                .append(Component.text("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━", NamedTextColor.GOLD))
-                .appendNewline()
-                .append(Component.text("  ⚔  QUÊTE GLOBALE LANCÉE  ⚔", NamedTextColor.GOLD, TextDecoration.BOLD))
-                .appendNewline()
-                .append(Component.text("  " + quest.getName(), NamedTextColor.YELLOW, TextDecoration.BOLD))
-                .appendNewline()
-                .append(Component.text("  " + quest.getFormattedDescription(), NamedTextColor.WHITE))
-                .appendNewline()
-                .append(Component.text("  Objectif : ", NamedTextColor.GRAY))
-                .append(Component.text(quest.getGoal() + " ", NamedTextColor.AQUA))
-                .append(Component.text("| Temps : ", NamedTextColor.GRAY))
-                .append(Component.text(timeStr, NamedTextColor.AQUA))
-                .appendNewline()
-                .append(Component.text("  Récompenses :", NamedTextColor.GRAY));
-
-        for (BlessingEffect effect : quest.getRewards().blessingEffects()) {
-            if (effect instanceof ReputationEffect re) {
-                msg = msg.appendNewline()
-                        .append(Component.text("    +" + re.getReputation() + " rép. ", NamedTextColor.GREEN))
-                        .append(re.getJob().toComponent());
-            }
-        }
-
-        msg = msg.appendNewline()
-                .append(Component.text("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━", NamedTextColor.GOLD))
-                .appendNewline();
+        LangService ls      = GameManager.getInstance().getLangService();
+        String      timeStr = formatSeconds(quest.getTimeLimitSeconds());
 
         for (Player p : Bukkit.getOnlinePlayers()) {
+            ELang lang = ls.resolveLanguage(p);
+
+            Component msg = Component.newline()
+                    .append(ls.text(lang, "globalquest.separator.gold")).appendNewline()
+                    .append(ls.text(lang, "globalquest.start.title")).appendNewline()
+                    .append(Component.text("  " + quest.getName(), NamedTextColor.YELLOW)).appendNewline()
+                    .append(Component.text("  " + quest.getFormattedDescription(), NamedTextColor.WHITE)).appendNewline()
+                    .append(ls.text(lang, "globalquest.start.objective_label"))
+                    .append(Component.text(quest.getGoal() + " ", NamedTextColor.AQUA))
+                    .append(ls.text(lang, "globalquest.start.time_label"))
+                    .append(Component.text(timeStr, NamedTextColor.AQUA)).appendNewline()
+                    .append(ls.text(lang, "globalquest.start.rewards_label"));
+
+            for (BlessingEffect effect : quest.getRewards().blessingEffects()) {
+                if (effect instanceof ReputationEffect re) {
+                    msg = msg.appendNewline()
+                            .append(Component.text("    +" + re.getReputation(), NamedTextColor.GREEN))
+                            .append(ls.text(lang, "globalquest.rewards.rep_label"))
+                            .append(re.getJob().toComponent());
+                }
+            }
+
+            msg = msg.appendNewline()
+                    .append(ls.text(lang, "globalquest.separator.gold")).appendNewline();
+
             p.sendMessage(msg);
             SoundService.play(p, ESound.GLOBAL_QUEST_START);
         }
@@ -279,10 +273,11 @@ public class GlobalQuestManager extends AbstractQuestManager<GlobalQuest> {
     }
 
     private Component buildQuestFinishedComponent(GlobalQuest quest, Map<UUID, Integer> snapshot) {
-        int participantCount  = snapshot.size();
-        int totalContribution = snapshot.values().stream().mapToInt(Integer::intValue).sum();
+        LangService ls             = GameManager.getInstance().getLangService();
+        ELang       lang           = ls.getServerDefault();
+        int         participantCount  = snapshot.size();
+        int         totalContribution = snapshot.values().stream().mapToInt(Integer::intValue).sum();
 
-        // Top 3 contributeurs triés par contribution décroissante
         List<Map.Entry<UUID, Integer>> top3 = snapshot.entrySet().stream()
                 .sorted(Map.Entry.<UUID, Integer>comparingByValue().reversed())
                 .limit(3)
@@ -292,17 +287,13 @@ public class GlobalQuestManager extends AbstractQuestManager<GlobalQuest> {
         String[] medals = {"🥇", "🥈", "🥉"};
 
         Component msg = Component.newline()
-                .append(Component.text("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━", NamedTextColor.GREEN))
-                .appendNewline()
-                .append(Component.text("  ✔  QUÊTE GLOBALE COMPLÉTÉE  ✔", NamedTextColor.GREEN, TextDecoration.BOLD))
-                .appendNewline()
-                .append(Component.text("  " + quest.getName(), NamedTextColor.YELLOW, TextDecoration.BOLD))
-                .appendNewline()
-                .append(Component.text("  " + participantCount + " participant(s) récompensé(s) !", NamedTextColor.WHITE));
+                .append(ls.text(lang, "globalquest.separator.green")).appendNewline()
+                .append(ls.text(lang, "globalquest.complete.title")).appendNewline()
+                .append(Component.text("  " + quest.getName(), NamedTextColor.YELLOW)).appendNewline()
+                .append(ls.text(lang, "globalquest.complete.participants", participantCount));
 
         if (!top3.isEmpty()) {
-            msg = msg.appendNewline()
-                    .append(Component.text("  ─ Top contributeurs ─", NamedTextColor.DARK_GRAY));
+            msg = msg.appendNewline().append(ls.text(lang, "globalquest.complete.top_label"));
             for (int i = 0; i < top3.size(); i++) {
                 Map.Entry<UUID, Integer> entry = top3.get(i);
                 String pseudo = factory.getAlphaPlayer(entry.getKey()).getPseudo();
@@ -316,21 +307,28 @@ public class GlobalQuestManager extends AbstractQuestManager<GlobalQuest> {
         }
 
         return msg.appendNewline()
-                .append(Component.text("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━", NamedTextColor.GREEN))
-                .appendNewline();
+                .append(ls.text(lang, "globalquest.separator.green")).appendNewline();
     }
 
     private Component buildRewardMessage(GlobalQuest quest) {
-        Component msg = Component.text("[Quête Globale] ", NamedTextColor.GOLD, TextDecoration.BOLD)
-                .append(Component.text("Récompenses reçues :", NamedTextColor.GREEN));
+        LangService ls   = GameManager.getInstance().getLangService();
+        ELang       lang = ls.getServerDefault();
+        Component   msg  = ls.text(lang, "globalquest.rewards.header");
         for (BlessingEffect effect : quest.getRewards().blessingEffects()) {
             if (effect instanceof ReputationEffect re) {
                 msg = msg.append(Component.text(" +" + re.getReputation(), NamedTextColor.GREEN))
-                        .append(Component.text(" rép. ", NamedTextColor.GRAY))
+                        .append(ls.text(lang, "globalquest.rewards.rep_label"))
                         .append(re.getJob().toComponent());
             }
         }
         return msg;
+    }
+
+    private void broadcastLocalized(String key, Object... args) {
+        LangService ls = GameManager.getInstance().getLangService();
+        for (Player p : Bukkit.getOnlinePlayers()) {
+            p.sendMessage(ls.text(ls.resolveLanguage(p), key, args));
+        }
     }
 
     private void broadcastMessage(Component msg) {

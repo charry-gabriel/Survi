@@ -13,11 +13,11 @@ import io.papermc.paper.command.brigadier.CommandSourceStack;
 import io.papermc.paper.command.brigadier.Commands;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
-import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import fr.miuby.survi.GameManager;
+import fr.miuby.survi.system.lang.LangService;
 
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -84,48 +84,46 @@ public class QuestCommand {
      * Donne une nouvelle quête.
      */
     private static int giveQuest(CommandContext<CommandSourceStack> ctx) {
-        AlphaPlayer alphaPlayer = AlphaPlayerArgument.getAlphaPlayer(ctx, playerArgument);
-        Trader trader = TraderArgument.getTrader(ctx, villagerArgument);
+        AlphaPlayer   alphaPlayer = AlphaPlayerArgument.getAlphaPlayer(ctx, playerArgument);
+        Trader        trader      = TraderArgument.getTrader(ctx, villagerArgument);
+        CommandSender sender      = ctx.getSource().getSender();
+        LangService   ls          = GameManager.getInstance().getLangService();
 
         if (alphaPlayer.getCurrentActiveQuest() == null) {
             GameManager.getInstance().getQuestManager().assignQuest(alphaPlayer, trader, true);
         } else {
-            ctx.getSource().getSender().sendMessage(Component.text("Une quête existe déjà pour " + alphaPlayer.getPseudo()).color(NamedTextColor.RED));
+            sender.sendMessage(ls.text(ls.resolveOrDefault(sender), "cmd.quest.exists", alphaPlayer.getPseudo()));
         }
         return Command.SINGLE_SUCCESS;
     }
 
     /**
      * Supprime la quête en cours (non réclamée) du joueur.
-     * Le joueur récupère un slot et peut en accepter une nouvelle.
      */
     private static int removeQuest(CommandContext<CommandSourceStack> ctx) {
-        AlphaPlayer alphaPlayer = AlphaPlayerArgument.getAlphaPlayer(ctx, playerArgument);
+        AlphaPlayer   alphaPlayer = AlphaPlayerArgument.getAlphaPlayer(ctx, playerArgument);
+        CommandSender sender      = ctx.getSource().getSender();
+        LangService   ls          = GameManager.getInstance().getLangService();
 
-        if (GameManager.getInstance().getQuestManager().resetQuest(alphaPlayer)) {
-            ctx.getSource().getSender().sendMessage(
-                    Component.text("Quête en cours réinitialisée pour " + alphaPlayer.getPseudo() + ". Il peut en accepter une nouvelle.").color(NamedTextColor.GREEN));
-        } else {
-            ctx.getSource().getSender().sendMessage(
-                    Component.text("Aucune quête en cours pour " + alphaPlayer.getPseudo() + " (toutes déjà réclamées ou aucune quête).").color(NamedTextColor.RED));
-        }
+        String key = GameManager.getInstance().getQuestManager().resetQuest(alphaPlayer)
+                ? "cmd.quest.removed" : "cmd.quest.no_active";
+        sender.sendMessage(ls.text(ls.resolveOrDefault(sender), key, alphaPlayer.getPseudo()));
         return Command.SINGLE_SUCCESS;
     }
 
     /**
      * Supprime les quêtes actives (non réclamées) du joueur (reset admin).
-     * Les quêtes déjà réclamées restent dans quest_history et comptent dans le total cumulatif.
      */
     private static int resetAllQuests(CommandContext<CommandSourceStack> ctx) {
-        AlphaPlayer alphaPlayer = AlphaPlayerArgument.getAlphaPlayer(ctx, playerArgument);
+        AlphaPlayer   alphaPlayer = AlphaPlayerArgument.getAlphaPlayer(ctx, playerArgument);
+        CommandSender sender      = ctx.getSource().getSender();
+        LangService   ls          = GameManager.getInstance().getLangService();
 
         if (alphaPlayer.getActiveQuests().isEmpty()) {
-            ctx.getSource().getSender().sendMessage(
-                    Component.text("Aucune quête active pour " + alphaPlayer.getPseudo() + ".").color(NamedTextColor.RED));
+            sender.sendMessage(ls.text(ls.resolveOrDefault(sender), "cmd.quest.reset_empty", alphaPlayer.getPseudo()));
             return Command.SINGLE_SUCCESS;
         }
 
-        // Supprime uniquement les quêtes non réclamées (les réclamées sont déjà en quest_history)
         for (PlayerQuestData data : new ArrayList<>(alphaPlayer.getActiveQuests())) {
             GameManager.getInstance().getDatabase().quests().deletePlayerQuestSlot(alphaPlayer.getUuid(), data.getSlot());
         }
@@ -136,25 +134,24 @@ public class QuestCommand {
         if (glowService != null) glowService.disableGlow(alphaPlayer);
 
         if (alphaPlayer.getPlayer() != null) {
-            alphaPlayer.getPlayer().sendMessage(Component.text("Vos quêtes actives ont été réinitialisées par un administrateur.", NamedTextColor.YELLOW));
+            alphaPlayer.getPlayer().sendMessage(ls.text(alphaPlayer.getPlayer(), "cmd.quest.reset_notify"));
         }
-        ctx.getSource().getSender().sendMessage(
-                Component.text("Quêtes actives réinitialisées pour " + alphaPlayer.getPseudo() + ".").color(NamedTextColor.GREEN));
+        sender.sendMessage(ls.text(ls.resolveOrDefault(sender), "cmd.quest.reset_done", alphaPlayer.getPseudo()));
         return Command.SINGLE_SUCCESS;
     }
 
     /**
      * Assigne une quête spécifique à un joueur pour la tester (admin).
-     * Remplace toute quête active non réclamée. Aucun Trader requis pour la validation.
      */
     private static int testQuest(CommandContext<CommandSourceStack> ctx) {
-        AlphaPlayer alphaPlayer = AlphaPlayerArgument.getAlphaPlayer(ctx, playerArgument);
-        Quest quest = QuestArgument.getQuest(ctx, questArgument);
+        AlphaPlayer   alphaPlayer = AlphaPlayerArgument.getAlphaPlayer(ctx, playerArgument);
+        Quest         quest       = QuestArgument.getQuest(ctx, questArgument);
+        CommandSender sender      = ctx.getSource().getSender();
+        LangService   ls          = GameManager.getInstance().getLangService();
 
         GameManager.getInstance().getQuestManager().assignSpecificQuest(alphaPlayer, quest);
-
-        ctx.getSource().getSender().sendMessage(
-                Component.text("[TEST] Quête « " + quest.getName() + " » assignée à " + alphaPlayer.getPseudo() + ".").color(NamedTextColor.YELLOW));
+        sender.sendMessage(ls.text(ls.resolveOrDefault(sender), "cmd.quest.test_done",
+                quest.getName(), alphaPlayer.getPseudo()));
         return Command.SINGLE_SUCCESS;
     }
 
@@ -162,17 +159,14 @@ public class QuestCommand {
      * Force la réception des récompenses de la quête en cours (admin).
      */
     private static int claimQuest(CommandContext<CommandSourceStack> ctx) {
-        AlphaPlayer alphaPlayer = AlphaPlayerArgument.getAlphaPlayer(ctx, playerArgument);
-        Trader trader = TraderArgument.getTrader(ctx, villagerArgument);
+        AlphaPlayer   alphaPlayer = AlphaPlayerArgument.getAlphaPlayer(ctx, playerArgument);
+        Trader        trader      = TraderArgument.getTrader(ctx, villagerArgument);
+        CommandSender sender      = ctx.getSource().getSender();
+        LangService   ls          = GameManager.getInstance().getLangService();
 
-        if (GameManager.getInstance().getQuestManager().claimQuest(alphaPlayer, trader, true)) {
-            ctx.getSource().getSender().sendMessage(
-                    Component.text("Récompenses réclamées pour " + alphaPlayer.getPseudo()).color(NamedTextColor.GREEN));
-        } else {
-            ctx.getSource().getSender().sendMessage(
-                    Component.text("Impossible de réclamer les récompenses pour " + alphaPlayer.getPseudo()
-                            + " (aucune quête terminée ou déjà réclamée)").color(NamedTextColor.RED));
-        }
+        String key = GameManager.getInstance().getQuestManager().claimQuest(alphaPlayer, trader, true)
+                ? "cmd.quest.claim_done" : "cmd.quest.claim_fail";
+        sender.sendMessage(ls.text(ls.resolveOrDefault(sender), key, alphaPlayer.getPseudo()));
         return Command.SINGLE_SUCCESS;
     }
 
@@ -183,8 +177,9 @@ public class QuestCommand {
     /** Affiche l'historique de l'expéditeur (doit être un joueur en jeu). */
     private static int historyself(CommandContext<CommandSourceStack> ctx) {
         CommandSender sender = ctx.getSource().getSender();
+        LangService   ls     = GameManager.getInstance().getLangService();
         if (!(sender instanceof Player player)) {
-            sender.sendMessage(Component.text("Utilisez /quest history <joueur> depuis la console.").color(NamedTextColor.RED));
+            sender.sendMessage(ls.text(ls.getServerDefault(), "cmd.quest.history_console_only"));
             return Command.SINGLE_SUCCESS;
         }
         showHistory(sender, AlphaPlayer.get(player.getUniqueId()));
@@ -198,21 +193,21 @@ public class QuestCommand {
     }
 
     private static void showHistory(CommandSender sender, AlphaPlayer ap) {
+        LangService           ls      = GameManager.getInstance().getLangService();
+        var                   lang    = ls.resolveOrDefault(sender);
         List<QuestHistoryEntry> entries = GameManager.getInstance().getDatabase().questHistory().getHistory(ap.getUuid(), 10);
         DateTimeFormatter fmt = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
-        sender.sendMessage(Component.text("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━").color(NamedTextColor.GOLD));
-        sender.sendMessage(Component.text("  ✦ Historique de " + ap.getPseudo())
-                .color(NamedTextColor.GOLD).decoration(TextDecoration.BOLD, true));
-        sender.sendMessage(Component.text("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━").color(NamedTextColor.GOLD));
+        sender.sendMessage(ls.text(lang, "cmd.quest.history_separator"));
+        sender.sendMessage(ls.text(lang, "cmd.quest.history_title", ap.getPseudo()));
+        sender.sendMessage(ls.text(lang, "cmd.quest.history_separator"));
 
         if (entries.isEmpty()) {
-            sender.sendMessage(Component.text("  Aucune quête complétée pour l'instant.").color(NamedTextColor.GRAY));
+            sender.sendMessage(ls.text(lang, "cmd.quest.history_empty"));
         } else {
             for (int i = 0; i < entries.size(); i++) {
                 QuestHistoryEntry e = entries.get(i);
 
-                // Lookup du nom de la quête dans les pools (daily ou global)
                 String questName = null;
                 if ("daily".equals(e.questType())) {
                     Quest q = GameManager.getInstance().getQuestManager().getQuest(e.questId());
@@ -223,12 +218,9 @@ public class QuestCommand {
                 }
                 String displayName = questName != null ? questName : e.questId();
 
-                // Libellé de difficulté
                 String diffLabel = "daily".equals(e.questType())
-                        ? "diff." + e.difficulty()
-                        : "mondiale";
-
-                // Libellé de métier
+                        ? ls.getString(lang, "cmd.quest.history_diff_daily").replace("{0}", String.valueOf(e.difficulty()))
+                        : ls.getString(lang, "cmd.quest.history_diff_global");
                 String jobLabel = e.job() != null ? e.job() : "—";
 
                 Component line = Component.text("  #" + (i + 1) + " ", NamedTextColor.DARK_GRAY)
@@ -238,13 +230,13 @@ public class QuestCommand {
                         .append(Component.text(displayName, NamedTextColor.GRAY));
 
                 if ("global".equals(e.questType()) && e.contribution() > 0) {
-                    line = line.append(Component.text(" — contrib:" + e.contribution(), NamedTextColor.DARK_GRAY));
+                    line = line.append(ls.text(lang, "cmd.quest.history_contrib", e.contribution()));
                 }
 
                 sender.sendMessage(line);
             }
         }
 
-        sender.sendMessage(Component.text("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━").color(NamedTextColor.GOLD));
+        sender.sendMessage(ls.text(lang, "cmd.quest.history_separator"));
     }
 }

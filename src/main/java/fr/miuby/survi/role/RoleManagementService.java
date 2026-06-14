@@ -5,8 +5,7 @@ import fr.miuby.survi.player.AlphaPlayer;
 import fr.miuby.survi.player.AlphaPlayerFactory;
 import fr.miuby.survi.player.event.AlphaPlayerRoleChangeEvent;
 import fr.miuby.survi.player.service.PlayerPersistenceService;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.NamedTextColor;
+import fr.miuby.survi.system.lang.LangService;
 
 public class RoleManagementService {
     private final PlayerPersistenceService persistenceService;
@@ -38,7 +37,10 @@ public class RoleManagementService {
 
         // Refresh
         if (player.getPlayer() != null && player.getPlayer().isOnline()) {
-            player.getPlayer().sendMessage(Component.text("Le role ").color(NamedTextColor.YELLOW).append(newRole.displayName()).append(Component.text(" a ete appliqué !").color(NamedTextColor.YELLOW)));
+            LangService ls = GameManager.getInstance().getLangService();
+            player.getPlayer().sendMessage(
+                    ls.text(player.getPlayer(), "player.role.applied",
+                            net.kyori.adventure.text.minimessage.tag.resolver.Placeholder.component("role", newRole.displayName())));
         }
 
         return true;

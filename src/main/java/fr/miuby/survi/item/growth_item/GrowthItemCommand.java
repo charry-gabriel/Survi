@@ -10,10 +10,10 @@ import fr.miuby.survi.item.growth_item.effect.ItemEffect;
 import fr.miuby.survi.player.AlphaPlayer;
 import fr.miuby.survi.system.command.argument.AlphaPlayerArgument;
 import fr.miuby.survi.system.command.argument.GrowthItemArgument;
+import fr.miuby.survi.GameManager;
+import fr.miuby.survi.system.lang.LangService;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
 import io.papermc.paper.command.brigadier.Commands;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -97,14 +97,15 @@ public class GrowthItemCommand {
         GrowthConfig config = GrowthItemRegistry.get(growthId);
         int maxLevel = config.tiers().size();
 
+        LangService ls = GameManager.getInstance().getLangService();
         if (targetLevel > maxLevel) {
-            sender.sendMessage(Component.text("Niveau trop élevé. Max pour " + growthId + " : " + maxLevel + ".", NamedTextColor.RED));
+            sender.sendMessage(ls.text(ls.resolveOrDefault(sender), "cmd.growth.level_too_high", growthId, maxLevel));
             return Command.SINGLE_SUCCESS;
         }
 
         ECustomItem customItem = ECustomItem.fromString(growthId.toLowerCase());
         if (customItem == null) {
-            sender.sendMessage(Component.text("Aucune entrée ECustomItem pour l'ID : " + growthId + ".", NamedTextColor.RED));
+            sender.sendMessage(ls.text(ls.resolveOrDefault(sender), "cmd.growth.no_item", growthId));
             return Command.SINGLE_SUCCESS;
         }
 
@@ -124,18 +125,13 @@ public class GrowthItemCommand {
 
         target.getInventory().addItem(item);
 
-        sender.sendMessage(
-                Component.text("✓ ", NamedTextColor.GREEN)
-                        .append(Component.text(growthId, NamedTextColor.GOLD))
-                        .append(Component.text(" palier " + targetLevel + "/" + maxLevel + " donné à ", NamedTextColor.GREEN))
-                        .append(Component.text(alpha.getPseudo(), NamedTextColor.YELLOW)));
+        sender.sendMessage(ls.text(ls.resolveOrDefault(sender), "cmd.growth.given_admin",
+                growthId, targetLevel, maxLevel, alpha.getPseudo()));
 
-        boolean senderIsTarget = sender instanceof Player senderPlayer && senderPlayer.getUniqueId().equals(target.getUniqueId());
+        boolean senderIsTarget = sender instanceof Player sp && sp.getUniqueId().equals(target.getUniqueId());
         if (!senderIsTarget)
-            target.sendMessage(
-                    Component.text("Vous avez reçu ", NamedTextColor.GREEN)
-                            .append(Component.text(growthId, NamedTextColor.GOLD))
-                            .append(Component.text(" (palier " + targetLevel + "/" + maxLevel + ").", NamedTextColor.GREEN)));
+            target.sendMessage(ls.text(target, "cmd.growth.given_player",
+                    growthId, targetLevel, maxLevel));
 
         return Command.SINGLE_SUCCESS;
     }
@@ -161,7 +157,8 @@ public class GrowthItemCommand {
             heldItem = offHand;
             isOffHand = true;
         } else {
-            sender.sendMessage(Component.text(alpha.getPseudo() + " ne tient pas de growth item.", NamedTextColor.RED));
+            LangService ls = GameManager.getInstance().getLangService();
+            sender.sendMessage(ls.text(ls.resolveOrDefault(sender), "cmd.growth.no_held", alpha.getPseudo()));
             return Command.SINGLE_SUCCESS;
         }
 
@@ -180,10 +177,9 @@ public class GrowthItemCommand {
 
         ItemWithCommit found = findInFullInventory(player, growthId);
         if (found == null) {
-            sender.sendMessage(
-                    Component.text(alpha.getPseudo() + " n'a pas ", NamedTextColor.RED)
-                            .append(Component.text(growthId, NamedTextColor.GOLD))
-                            .append(Component.text(" dans son inventaire.", NamedTextColor.RED)));
+            LangService ls = GameManager.getInstance().getLangService();
+            sender.sendMessage(ls.text(ls.resolveOrDefault(sender), "cmd.growth.not_in_inventory",
+                    alpha.getPseudo(), growthId));
             return Command.SINGLE_SUCCESS;
         }
 
@@ -201,9 +197,9 @@ public class GrowthItemCommand {
 
         int currentTier = item.getItemMeta().getPersistentDataContainer().getOrDefault(GrowthItems.TIER_KEY, PersistentDataType.INTEGER, 0);
         if (currentTier >= config.tiers().size()) {
-            sender.sendMessage(
-                    Component.text(growthId, NamedTextColor.GOLD)
-                            .append(Component.text(" est déjà au palier maximum (" + currentTier + "/" + config.tiers().size() + ").", NamedTextColor.RED)));
+            LangService ls = GameManager.getInstance().getLangService();
+            sender.sendMessage(ls.text(ls.resolveOrDefault(sender), "cmd.growth.already_maxed",
+                    growthId, currentTier, config.tiers().size()));
             return Command.SINGLE_SUCCESS;
         }
 
@@ -211,19 +207,15 @@ public class GrowthItemCommand {
         commit.run();
 
         int newTier = item.getItemMeta().getPersistentDataContainer().getOrDefault(GrowthItems.TIER_KEY, PersistentDataType.INTEGER, 0);
+        LangService ls = GameManager.getInstance().getLangService();
 
-        sender.sendMessage(
-                Component.text("✓ ", NamedTextColor.GREEN)
-                        .append(Component.text(growthId, NamedTextColor.GOLD))
-                        .append(Component.text(" de " + alpha.getPseudo() + " : palier ", NamedTextColor.GREEN))
-                        .append(Component.text(newTier + "/" + config.tiers().size(), NamedTextColor.WHITE)));
+        sender.sendMessage(ls.text(ls.resolveOrDefault(sender), "cmd.growth.lvlup_admin",
+                growthId, alpha.getPseudo(), newTier, config.tiers().size()));
 
-        boolean senderIsTarget = sender instanceof Player senderPlayer && senderPlayer.getUniqueId().equals(player.getUniqueId());
+        boolean senderIsTarget = sender instanceof Player sp && sp.getUniqueId().equals(player.getUniqueId());
         if (!senderIsTarget)
-            player.sendMessage(
-                    Component.text("Votre ", NamedTextColor.GREEN)
-                            .append(Component.text(growthId, NamedTextColor.GOLD))
-                            .append(Component.text(" est passé au palier " + newTier + " !", NamedTextColor.GREEN)));
+            player.sendMessage(ls.text(player, "cmd.growth.lvlup_player",
+                    growthId, newTier));
 
         return Command.SINGLE_SUCCESS;
     }
@@ -236,12 +228,11 @@ public class GrowthItemCommand {
 
         List<ItemStack> items = findAllGrowthItems(alpha.getPlayer());
 
-        sender.sendMessage(Component.text("══ Growth items de ", NamedTextColor.GOLD)
-                .append(Component.text(alpha.getPseudo(), NamedTextColor.YELLOW))
-                .append(Component.text(" ══", NamedTextColor.GOLD)));
+        LangService ls = GameManager.getInstance().getLangService();
+        sender.sendMessage(ls.text(ls.resolveOrDefault(sender), "cmd.growth.info_header", alpha.getPseudo()));
 
         if (items.isEmpty()) {
-            sender.sendMessage(Component.text("  Aucun.", NamedTextColor.GRAY));
+            sender.sendMessage(ls.text(ls.resolveOrDefault(sender), "cmd.growth.info_none"));
             return Command.SINGLE_SUCCESS;
         }
 
@@ -252,14 +243,9 @@ public class GrowthItemCommand {
             int tier = pdc.getOrDefault(GrowthItems.TIER_KEY, PersistentDataType.INTEGER, 0);
             int uses = pdc.getOrDefault(GrowthItems.USES_KEY, PersistentDataType.INTEGER, 0);
             int maxTier = config != null ? config.tiers().size() : 0;
-            boolean maxed = tier >= maxTier;
 
-            sender.sendMessage(
-                    Component.text("  » ", NamedTextColor.GRAY)
-                            .append(Component.text(id, NamedTextColor.GOLD))
-                            .append(Component.text(" — palier ", NamedTextColor.YELLOW))
-                            .append(Component.text(tier + "/" + maxTier, maxed ? NamedTextColor.GREEN : NamedTextColor.WHITE))
-                            .append(Component.text(" — " + uses + " uses", NamedTextColor.GRAY)));
+            sender.sendMessage(ls.text(ls.resolveOrDefault(sender), "cmd.growth.info_entry",
+                    id, tier, maxTier, uses));
         }
 
         return Command.SINGLE_SUCCESS;
@@ -272,9 +258,8 @@ public class GrowthItemCommand {
         GrowthConfig config = GrowthItemRegistry.get(growthId);
         var sender = ctx.getSource().getSender();
 
-        sender.sendMessage(Component.text("══ Joueurs avec ", NamedTextColor.AQUA)
-                .append(Component.text(growthId, NamedTextColor.GOLD))
-                .append(Component.text(" (en ligne uniquement) ══", NamedTextColor.AQUA)));
+        LangService ls = GameManager.getInstance().getLangService();
+        sender.sendMessage(ls.text(ls.resolveOrDefault(sender), "cmd.growth.track_header", growthId));
 
         int found = 0;
         for (Player online : Bukkit.getOnlinePlayers()) {
@@ -285,21 +270,15 @@ public class GrowthItemCommand {
             int tier = pdc.getOrDefault(GrowthItems.TIER_KEY, PersistentDataType.INTEGER, 0);
             int uses = pdc.getOrDefault(GrowthItems.USES_KEY, PersistentDataType.INTEGER, 0);
             int maxTier = config.tiers().size();
-            boolean maxed = tier >= maxTier;
 
-            sender.sendMessage(
-                    Component.text("  » ", NamedTextColor.GRAY)
-                            .append(Component.text(online.getName(), NamedTextColor.YELLOW))
-                            .append(Component.text(" — palier ", NamedTextColor.WHITE))
-                            .append(Component.text(tier + "/" + maxTier, maxed ? NamedTextColor.GREEN : NamedTextColor.WHITE))
-                            .append(Component.text(" — " + uses + " uses", NamedTextColor.GRAY)));
+            sender.sendMessage(ls.text(ls.resolveOrDefault(sender), "cmd.growth.track_entry",
+                    online.getName(), tier, maxTier, uses));
             found++;
         }
 
-        Component summary = found == 0
-                ? Component.text("  Aucun joueur en ligne ne possède cet item.", NamedTextColor.GRAY)
-                : Component.text("  " + found + " joueur(s) trouvé(s).", NamedTextColor.GRAY);
-        sender.sendMessage(summary);
+        sender.sendMessage(found == 0
+                ? ls.text(ls.resolveOrDefault(sender), "cmd.growth.track_none")
+                : ls.text(ls.resolveOrDefault(sender), "cmd.growth.track_found", found));
 
         return Command.SINGLE_SUCCESS;
     }

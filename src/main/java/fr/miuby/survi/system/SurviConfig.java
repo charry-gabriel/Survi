@@ -65,6 +65,13 @@ public class SurviConfig {
     /** Langue par défaut du serveur (utilisée si la langue du client n'est pas supportée). */
     @Getter private ELang defaultLanguage = ELang.FR;
 
+    /**
+     * Si {@code true}, tous les joueurs reçoivent les messages dans {@link #defaultLanguage},
+     * indépendamment de la langue de leur client Minecraft.
+     * Si {@code false}, chaque joueur reçoit les messages dans sa propre langue.
+     */
+    @Getter private boolean forceLanguage = false;
+
     // ─── Initialisation ──────────────────────────────────────────────────────────
 
     public void init(JavaPlugin plugin) {
@@ -173,11 +180,13 @@ public class SurviConfig {
 
         // ─── Langue par défaut ───────────────────────────────────────────────────────
         defaultLanguage = ELang.fromCode(cfg.getString("default-language", "fr"));
+        forceLanguage   = cfg.getBoolean("force-language", false);
 
         MLLogManager.getInstance().log(Level.INFO, ELogTag.SYSTEM,
                 "[SurviConfig] Configuration chargée (" + rankEntries.size() + " rangs, "
                         + jobLevelEntries.size() + " niveaux de métier, "
                         + zoneStages.size() + " paliers de zone village)"
-                        + " — langue : " + defaultLanguage.getCode());
+                        + " — langue : " + defaultLanguage.getCode()
+                        + (forceLanguage ? " (forcée pour tous)" : " (par client)"));
     }
 }

@@ -85,17 +85,25 @@ public class LangService {
     @Getter
     private final ELang serverDefault;
 
+    /**
+     * Si {@code true}, {@link #resolveLanguage(Player)} renvoie toujours {@link #serverDefault},
+     * ignorant la langue du client Minecraft du joueur.
+     */
+    private final boolean forceLanguage;
+
     // =========================================================================
     // Initialisation
     // =========================================================================
 
-    public LangService(JavaPlugin plugin, ELang serverDefault) {
+    public LangService(JavaPlugin plugin, ELang serverDefault, boolean forceLanguage) {
         this.serverDefault = serverDefault;
+        this.forceLanguage = forceLanguage;
         for (ELang lang : ELang.values()) {
             translations.put(lang, loadFile(plugin, lang));
         }
         MLLogManager.getInstance().log(Level.INFO, ELogTag.SYSTEM,
                 "[LangService] Initialisé — langue serveur : " + serverDefault.getCode()
+                        + (forceLanguage ? " (forcée pour tous)" : " (détection par client)")
                         + " — FR=" + translations.get(ELang.FR).size() + " clés"
                         + ", EN=" + translations.get(ELang.EN).size() + " clés");
     }
@@ -121,10 +129,14 @@ public class LangService {
 
     /**
      * Détermine la langue à utiliser pour ce joueur.
-     * Utilise {@code player.locale().getLanguage()} et replie sur {@link #serverDefault}.
+     * <ul>
+     *   <li>Si {@code force-language: true} dans le config → retourne toujours {@link #serverDefault}.</li>
+     *   <li>Sinon → utilise {@code player.locale().getLanguage()} avec repli sur {@link #serverDefault}
+     *       si la langue du client n'est pas supportée.</li>
+     * </ul>
      */
     public ELang resolveLanguage(Player player) {
-        if (player == null) return serverDefault;
+        if (player == null || forceLanguage) return serverDefault;
         String code = player.locale().getLanguage();
         for (ELang lang : ELang.values()) {
             if (lang.getCode().equalsIgnoreCase(code)) return lang;
@@ -195,6 +207,11 @@ public class LangService {
      */
     public void broadcast(String key, TagResolver... resolvers) {
         for (Player p : Bukkit.getOnlinePlayers()) p.sendMessage(text(p, key, resolvers));
+    }
+
+    /** Résout la langue d'un CommandSender, en tombant sur le défaut serveur si c'est la console. */
+    public ELang resolveOrDefault(org.bukkit.command.CommandSender sender) {
+        return sender instanceof Player p ? resolveLanguage(p) : getServerDefault();
     }
 
     // =========================================================================
