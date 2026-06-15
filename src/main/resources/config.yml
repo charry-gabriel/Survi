@@ -2,18 +2,6 @@
 #  Survi — Configuration principale
 # ═══════════════════════════════════════════════════════════════════════════════
 
-# ─── Localisation ────────────────────────────────────────────────────────────────
-# Langue par défaut du serveur utilisée si la langue du client Minecraft n'est pas
-# supportée. Valeurs acceptées : fr, en
-default-language: fr
-
-# Forcer la langue du serveur pour tous les joueurs.
-#   true  → tous les joueurs voient les messages dans la langue ci-dessus,
-#            peu importe la langue configurée dans leur client Minecraft.
-#   false → chaque joueur reçoit les messages dans la langue de son client Minecraft
-#            (avec repli automatique sur default-language si elle n'est pas supportée).
-force-language: true
-
 # ─── Temps ──────────────────────────────────────────────────────────────────────
 time:
   # Heure réelle (0–23) à laquelle le lever/coucher du soleil est simulé en jeu

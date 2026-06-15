@@ -1,7 +1,6 @@
 package fr.miuby.survi.system;
 
 import fr.miuby.survi.player.EGlobalRank;
-import fr.miuby.survi.system.lang.ELang;
 import fr.miuby.survi.system.log.ELogTag;
 import fr.miuby.survi.world.config.VillageZoneConfig;
 import fr.miuby.lib.log.MLLogManager;
@@ -61,16 +60,6 @@ public class SurviConfig {
 
     /** Rayon Wilderness (en blocs XZ) autorisé par niveau Explorateur (index 0–10). */
     @Getter private List<Integer> exploreWildernessRadius;
-
-    /** Langue par défaut du serveur (utilisée si la langue du client n'est pas supportée). */
-    @Getter private ELang defaultLanguage = ELang.FR;
-
-    /**
-     * Si {@code true}, tous les joueurs reçoivent les messages dans {@link #defaultLanguage},
-     * indépendamment de la langue de leur client Minecraft.
-     * Si {@code false}, chaque joueur reçoit les messages dans sa propre langue.
-     */
-    @Getter private boolean forceLanguage = false;
 
     // ─── Initialisation ──────────────────────────────────────────────────────────
 
@@ -178,15 +167,9 @@ public class SurviConfig {
         }
         villageZoneConfig = new VillageZoneConfig(centerX, centerZ, zoneStages);
 
-        // ─── Langue par défaut ───────────────────────────────────────────────────────
-        defaultLanguage = ELang.fromCode(cfg.getString("default-language", "fr"));
-        forceLanguage   = cfg.getBoolean("force-language", false);
-
         MLLogManager.getInstance().log(Level.INFO, ELogTag.SYSTEM,
                 "[SurviConfig] Configuration chargée (" + rankEntries.size() + " rangs, "
                         + jobLevelEntries.size() + " niveaux de métier, "
-                        + zoneStages.size() + " paliers de zone village)"
-                        + " — langue : " + defaultLanguage.getCode()
-                        + (forceLanguage ? " (forcée pour tous)" : " (par client)"));
+                        + zoneStages.size() + " paliers de zone village)");
     }
 }

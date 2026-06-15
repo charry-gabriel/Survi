@@ -105,9 +105,7 @@ public class GameManager {
         MLLogManager.getInstance().registerTags(ELogTag.values());
 
         // LangService — initialisé tôt car utilisé partout
-        this.langService = new LangService(plugin,
-                SurviConfig.getInstance().getDefaultLanguage(),
-                SurviConfig.getInstance().isForceLanguage());
+        this.langService = new LangService(plugin);
 
         MLLogManager.getInstance().log(Level.INFO, ELogTag.SYSTEM, "Initialisation du plugin...");
 

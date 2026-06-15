@@ -205,7 +205,9 @@ QUEST_NOT_FOUND, CUSTOM_ITEM_NOT_FOUND, WORLD_NOT_FOUND, JOB_NOT_FOUND, NOT_A_LE
 
 ---
 
-## 7. Textes — Adventure uniquement
+## 7. Textes — Adventure + traductions
+
+### Adventure uniquement
 
 ```java
 Component.text("Message", NamedTextColor.GREEN)
@@ -216,6 +218,41 @@ player.sendMessage(Component.text("...").color(NamedTextColor.RED))
 ChatColor.GREEN + "Message"
 player.sendMessage("texte brut")
 ```
+
+### Texte visible par un joueur → `LangService`
+
+`GameManager.getInstance().getLangService()` — façade fine sur `MLMessageService`
+(MiubyLib, mono-FR — voir **Annexe MiubyLib**). Les clés vivent dans
+`src/main/resources/lang/fr.yml` (YAML + MiniMessage). Survi est mono-langue :
+`ELang` n'a qu'une seule valeur (`FR`), conservée uniquement pour les signatures
+existantes de `LangService`.
+
+```java
+LangService ls = GameManager.getInstance().getLangService();
+
+// Simple
+player.sendMessage(ls.text(player, "world.locked"));
+
+// Placeholders positionnels {0}, {1}… (texte échappé pour MiniMessage)
+player.sendMessage(ls.text(player, "grave.created", x, y, z, worldName));
+
+// TagResolver — <name> remplacé par un Component (couleurs, etc.)
+player.sendMessage(ls.text(player, "job.level_up.broadcast",
+        Placeholder.unparsed("player", pseudo),
+        Placeholder.component("job", job.toComponent())
+));
+
+// Tous les joueurs en ligne
+ls.broadcast("world.level_up.broadcast", oldLevel, newLevel);
+
+// CommandSender (console incluse)
+ELang lang = ls.resolveOrDefault(sender);
+sender.sendMessage(ls.text(lang, "cmd.role.assigned", roleName));
+```
+
+**Nouvelle clé** → l'ajouter dans `lang/fr.yml` uniquement (format `{0}`, `{1}`…
+ou `<name>`). Clé absente → le joueur voit "⚠ Traduction manquante (clé)" et un
+warning est loggé une seule fois côté serveur (tag `MESSAGE`).
 
 ---
 
@@ -421,6 +458,7 @@ growth_items/<id>.yml → GrowthItemFileConfig → GrowthItemLoader → GrowthIt
 | Growth items | `GrowthItems`, `GrowthItemLoader`, `GrowthItemFileConfig`, `GrowthItemListener`, `GrowthItemRegistry`, `growth_items/*.yml` |
 | Métiers | `EJob`, `JobLevelConfig`, `JobListener` |
 | DB | `MLSQLite` + `MLRepository` (MiubyLib — voir Annexe), `Database`, `SQLite`, repositories dans `system/database/repository/` |
+| Traductions | `LangService`, `ELang`, `MLMessageService` (MiubyLib — voir Annexe), `lang/fr.yml` |
 
 ---
 
@@ -775,6 +813,35 @@ MLResourceManager.clearCache(); // dans onDisable() si rechargement à chaud
 ```
 
 `VillagerLevelLoader.load(id)` et `TraderLoader.loadAll()` sont de simples délégations vers `MLResourceManager`.
+
+### `MLMessageService` — traductions YAML + MiniMessage (mono- ou multi-langue)
+
+Templates dans `<resourceFolder>/<locale>.yml` (déployés via `MLResourceManager.deployFolder`),
+format YAML + MiniMessage — placeholders `{0}`, `{1}`… (texte échappé) et `<name>` (`TagResolver`).
+
+```java
+MLMessageService msg = new MLMessageService(plugin, "lang", List.of("fr"), true);
+// locales.get(0) = locale par défaut. locales.size() == 1 → mono-langue :
+// resolveLanguage() retourne toujours cette locale, forceDefault ignoré.
+
+msg.resolveLanguage(player);    // code de locale ("fr", "en"...)
+msg.resolveOrDefault(sender);   // idem, locale par défaut si pas un Player
+msg.getDefaultLocale();         // locales.get(0)
+
+msg.text(player, "key");
+msg.text(player, "key", arg0, arg1);                            // {0}, {1}…
+msg.text(player, "key", Placeholder.unparsed("name", value));   // <name>
+msg.text("fr", "key", ...);     // variantes par code de locale explicite
+
+msg.broadcast("key", arg0, arg1);  // tous les joueurs en ligne, dans leur langue
+msg.getString("fr", "key");        // chaîne brute, pour l'insérer dans un autre template
+```
+
+**Clé manquante** : message visible (rouge/gras, contient la clé — template overridable
+via le constructeur à 5 arguments) + log `MLLogManager` (`WARNING`, tag `MESSAGE`) une
+seule fois par clé. Fallback : locale demandée → locale par défaut → "clé manquante".
+
+`LangService` (Survi) est une façade fine dessus — voir section 7.
 
 ### `MLSQLite` — base abstraite SQLite
 
