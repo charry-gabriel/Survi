@@ -16,8 +16,6 @@ import net.minecraft.network.protocol.game.ClientboundPlayerInfoUpdatePacket;
 import net.minecraft.world.level.GameType;
 import org.bukkit.Bukkit;
 import org.bukkit.attribute.Attribute;
-import org.bukkit.attribute.AttributeInstance;
-import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.craftbukkit.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.Criteria;
@@ -30,7 +28,6 @@ import org.bukkit.scoreboard.Team;
 import fr.miuby.survi.system.time.TimeManager;
 import fr.miuby.survi.world.WorldResetManager;
 
-import java.text.DecimalFormat;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
@@ -38,7 +35,6 @@ import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
@@ -48,8 +44,8 @@ import java.util.UUID;
  * <ul>
  *   <li><b>Header</b> — serveur + identité du joueur</li>
  *   <li><b>Colonne gauche</b> — vrais joueurs (triés par pseudo Minecraft)</li>
- *   <li><b>Colonne droite</b> — faux joueurs : villageois + métiers (via {@link TabInfoColumn})</li>
- *   <li><b>Footer</b> — stats + quêtes actives</li>
+ *   <li><b>Colonne droite</b> — faux joueurs : villageois + métiers + stats (via {@link TabInfoColumn})</li>
+ *   <li><b>Footer</b> — quêtes actives</li>
  * </ul>
  *
  * <h3>Affichage des vrais joueurs</h3>
@@ -91,23 +87,8 @@ public class TabDisplayManager {
     /** Joueurs pour lesquels l'équipe de tri a déjà été créée cette session. */
     private final Set<UUID> teamInitialized = new HashSet<>();
 
-    private final DecimalFormat df = new DecimalFormat("#.##");
-
     /** Objectif scoreboard principal (RenderType.HEARTS, slot LIST) pour l'affichage des cœurs dans le tab. */
     private Objective healthObjective;
-
-    /**
-     * Valeurs vanilla Minecraft pour chaque attribut affiché dans le footer.
-     * On ne peut pas se fier à {@code AttributeInstance.getDefaultValue()} : Paper 26.1
-     * y renvoie une valeur interne qui diffère du vanilla (ex. MOVEMENT_SPEED → ~0.35
-     * au lieu de 0.1), ce qui fausserait tous les pourcentages.
-     */
-    private static final Map<Attribute, Double> VANILLA_DEFAULTS = Map.of(
-            Attribute.MAX_HEALTH,     20.0,
-            Attribute.ATTACK_DAMAGE,   2.0,
-            Attribute.ARMOR,           0.0,
-            Attribute.MOVEMENT_SPEED,  0.1
-    );
 
     // ─── Init ─────────────────────────────────────────────────────────────────────
 
@@ -143,7 +124,7 @@ public class TabDisplayManager {
     private void updateHealthScores() {
         if (healthObjective == null) return;
         for (Player p : Bukkit.getOnlinePlayers()) {
-            AttributeInstance maxHealthAttr = p.getAttribute(Attribute.MAX_HEALTH);
+            var maxHealthAttr = p.getAttribute(Attribute.MAX_HEALTH);
             if (maxHealthAttr == null) continue;
             double maxHealth = maxHealthAttr.getValue();
             if (maxHealth <= 0) continue;
@@ -310,22 +291,10 @@ public class TabDisplayManager {
         return header.appendNewline().appendNewline();
     }
 
-    // ─── FOOTER : stats ──────────────────────────────────────────────────────────
+    // ─── FOOTER : quêtes ─────────────────────────────────────────────────────────
 
     private Component buildFooter(AlphaPlayer alphaPlayer) {
-        Player p = alphaPlayer.getPlayer();
-        if (p == null) return Component.empty();
-
-        Component footer = Component.empty()
-                .appendNewline()
-                .append(formatCombinedDamageStat(alphaPlayer))
-                .append(Component.text(" | ", NamedTextColor.DARK_GRAY))
-                .append(formatBlessingModifier("Résistance", alphaPlayer.getResistanceModifier()))
-                .append(Component.text(" | ", NamedTextColor.DARK_GRAY))
-                .append(formatStat(alphaPlayer, Attribute.MAX_HEALTH, "Vie"))
-                .append(Component.text(" | ", NamedTextColor.DARK_GRAY))
-                .append(formatStat(alphaPlayer, Attribute.MOVEMENT_SPEED, "Vitesse"))
-                .appendNewline();
+        Component footer = Component.empty();
 
         // Quête journalière active
         PlayerQuestData questData = alphaPlayer.getCurrentActiveQuest();
@@ -334,10 +303,14 @@ public class TabDisplayManager {
             if (quest != null) {
                 int remaining = Math.max(0, quest.getGoal() - questData.getProgress());
                 String description = quest.getDescription().replace("{value}", String.valueOf(remaining));
-                footer = footer
-                        .appendNewline()
-                        .append(Component.text("Quête : ", NamedTextColor.GOLD))
-                        .append(Component.text(description, NamedTextColor.GRAY));
+                Component questLine = Component.text("Quête : ", NamedTextColor.GOLD)
+                        .append(Component.text(quest.getName() + "  ", NamedTextColor.WHITE))
+                        .append(Component.text(questData.getProgress() + "/" + quest.getGoal(), NamedTextColor.DARK_GRAY));
+                if (questData.isCompleted()) {
+                    questLine = questLine.append(Component.text("  ✔ Trader !", NamedTextColor.GREEN));
+                }
+                footer = footer.appendNewline().append(questLine)
+                        .appendNewline().append(Component.text(description, NamedTextColor.GRAY));
             }
         }
 
@@ -345,15 +318,21 @@ public class TabDisplayManager {
         GlobalQuestManager gqm = GameManager.getInstance().getGlobalQuestManager();
         GlobalQuest activeGlobalQuest = gqm.getActiveQuest();
         if (activeGlobalQuest != null) {
-            int remaining = Math.max(0, activeGlobalQuest.getGoal() - gqm.getProgress());
-            String description = activeGlobalQuest.getDescription().replace("{value}", String.valueOf(remaining));
-
             footer = footer
                     .appendNewline()
-                    .append(Component.text("Quête globale : ", NamedTextColor.GOLD))
-                    .append(Component.text(description, NamedTextColor.GRAY))
+                    .append(Component.text("⚔ ", NamedTextColor.YELLOW))
+                    .append(Component.text(activeGlobalQuest.getName() + "  ", NamedTextColor.WHITE))
+                    .append(Component.text(gqm.getProgress() + "/" + activeGlobalQuest.getGoal(), NamedTextColor.DARK_GRAY))
                     .append(Component.text("  ⏰ " + GlobalQuestManager.formatSeconds(gqm.getRemainingSeconds()), NamedTextColor.GRAY));
         }
+
+        // Compteur journalier (toujours visible)
+        int done     = alphaPlayer.getTotalDailyQuestsClaimed() + alphaPlayer.countActiveUnclaimedQuests();
+        int capacity = GameManager.getInstance().getQuestManager().getTotalCapacity();
+        footer = footer
+                .appendNewline()
+                .append(Component.text("Quêtes : ", NamedTextColor.GRAY))
+                .append(Component.text(done + "/" + capacity, (capacity > 0 && done >= capacity) ? NamedTextColor.GREEN : NamedTextColor.WHITE));
 
         return footer.appendNewline();
     }
@@ -400,123 +379,5 @@ public class TabDisplayManager {
         if (seconds >= 3600) return (seconds / 3600) + "h" + String.format("%02d", (seconds % 3600) / 60) + "m";
         if (seconds >= 60)   return (seconds / 60)   + "m" + String.format("%02d", seconds % 60) + "s";
         return seconds + "s";
-    }
-
-    /**
-     * Affiche la stat d'un attribut en pourcentage de la valeur vanilla Minecraft,
-     * en ne comptant que les modificateurs apportés par notre plugin (rôles, métiers…).
-     * Les modificateurs d'équipement (épée, armure portée…) sont ignorés.
-     *
-     * <ul>
-     *   <li>Attribut à base non nulle (Vie, Force, Vitesse…) → pourcentage (100 % = vanilla).</li>
-     *   <li>Attribut à base nulle avec ADD_NUMBER (Chance…) → valeur absolue (+1.0).</li>
-     *   <li>Attribut à base nulle avec ADD_SCALAR uniquement (Armure…) → multiplicateur de rôle (+20%).</li>
-     * </ul>
-     */
-    private Component formatStat(AlphaPlayer alphaPlayer, Attribute attributeType, String statName) {
-        Player player = alphaPlayer.getPlayer();
-        if (player == null) return Component.empty();
-
-        AttributeInstance attr = player.getAttribute(attributeType);
-        if (attr == null) return Component.empty();
-
-        String ns = GameManager.getInstance().getPlugin().getName().toLowerCase();
-
-        // Reconstruit la valeur effective en ne comptant que les modificateurs de notre plugin.
-        // Formule Minecraft : step2 = base + Σ ADD_NUMBER ; roleValue = step2 × (1 + Σ ADD_SCALAR) × Π (1 + MULTIPLY_SCALAR_1)
-        double base = attr.getBaseValue();
-        double addNum = 0, addScalar = 0, multiplyTotal = 1.0;
-        for (AttributeModifier mod : attr.getModifiers()) {
-            if (!mod.getKey().getNamespace().equalsIgnoreCase(ns)) continue;
-            switch (mod.getOperation()) {
-                case ADD_NUMBER        -> addNum        += mod.getAmount();
-                case ADD_SCALAR        -> addScalar     += mod.getAmount();
-                case MULTIPLY_SCALAR_1 -> multiplyTotal *= 1.0 + mod.getAmount();
-            }
-        }
-        double step2     = base + addNum;
-        double roleValue = step2 * (1.0 + addScalar) * multiplyTotal;
-
-        double vanilla = VANILLA_DEFAULTS.getOrDefault(attributeType, attr.getDefaultValue());
-
-        // ── Attribut à base nulle (Armure, Chance…) ──────────────────────────────
-        if (vanilla < 0.001) {
-            if (Math.abs(roleValue) > 0.001) {
-                // Contribution additive directe (ex : Chance +1.0 depuis ADD_NUMBER)
-                NamedTextColor c = roleValue > 0 ? NamedTextColor.GREEN : NamedTextColor.RED;
-                String sign = roleValue > 0 ? "+" : "";
-                return Component.text(statName + ": ", NamedTextColor.WHITE)
-                        .append(Component.text(sign + df.format(roleValue), c));
-            }
-            if (Math.abs(addScalar) < 0.001) {
-                // Aucune modification de rôle sur cet attribut
-                return Component.text(statName + ": ", NamedTextColor.WHITE)
-                        .append(Component.text("—", NamedTextColor.DARK_GRAY));
-            }
-            // Seul un ADD_SCALAR existe (ex : Armure ×1.2 depuis les rôles)
-            long scalarPct = Math.round(addScalar * 100.0);
-            NamedTextColor c = addScalar > 0 ? NamedTextColor.GREEN : NamedTextColor.RED;
-            String sign = addScalar > 0 ? "+" : "";
-            return Component.text(statName + ": ", NamedTextColor.WHITE)
-                    .append(Component.text(sign + scalarPct + "%", c));
-        }
-
-        // ── Attribut à base non nulle : pourcentage de la valeur vanilla ─────────
-        double pct = roleValue / vanilla * 100.0;
-        long pctRounded = Math.round(pct);
-        NamedTextColor color = Math.abs(pct - 100.0) < 0.5 ? NamedTextColor.GRAY
-                : pct > 100.0 ? NamedTextColor.GREEN : NamedTextColor.RED;
-        return Component.text(statName + ": ", NamedTextColor.WHITE)
-                .append(Component.text(pctRounded + "%", color));
-    }
-
-    /**
-     * Affiche les dégâts effectifs du joueur : combinaison de l'attribut ATTACK_DAMAGE
-     * (bonus de rôle/métier) et du {@code damageModifier} (bénédictions/malédictions).
-     * 100 % = dégâts vanilla sans aucun modificateur de part et d'autre.
-     * Vert au-dessus de 100 %, rouge en-dessous, gris à 100 %.
-     */
-    private Component formatCombinedDamageStat(AlphaPlayer alphaPlayer) {
-        Player player = alphaPlayer.getPlayer();
-        if (player == null) return Component.empty();
-
-        AttributeInstance attr = player.getAttribute(Attribute.ATTACK_DAMAGE);
-        if (attr == null) return Component.empty();
-
-        String ns = GameManager.getInstance().getPlugin().getName().toLowerCase();
-
-        double base = attr.getBaseValue();
-        double addNum = 0, addScalar = 0, multiplyTotal = 1.0;
-        for (AttributeModifier mod : attr.getModifiers()) {
-            if (!mod.getKey().getNamespace().equalsIgnoreCase(ns)) continue;
-            switch (mod.getOperation()) {
-                case ADD_NUMBER        -> addNum        += mod.getAmount();
-                case ADD_SCALAR        -> addScalar     += mod.getAmount();
-                case MULTIPLY_SCALAR_1 -> multiplyTotal *= 1.0 + mod.getAmount();
-            }
-        }
-        double step2     = base + addNum;
-        double roleValue = step2 * (1.0 + addScalar) * multiplyTotal;
-
-        double vanilla    = VANILLA_DEFAULTS.getOrDefault(Attribute.ATTACK_DAMAGE, attr.getDefaultValue());
-        double pct        = (roleValue / vanilla) * alphaPlayer.getDamageModifier() * 100.0;
-        long   pctRounded = Math.round(pct);
-
-        NamedTextColor color = Math.abs(pct - 100.0) < 0.5 ? NamedTextColor.GRAY
-                : pct > 100.0 ? NamedTextColor.GREEN : NamedTextColor.RED;
-        return Component.text("Dégâts: ", NamedTextColor.WHITE)
-                .append(Component.text(pctRounded + "%", color));
-    }
-
-    /**
-     * Affiche un modifier de blessing en pourcentage absolu (1.0 = 100 %).
-     * Vert au-dessus de 100 %, rouge en-dessous, gris exactement à 100 %.
-     */
-    private Component formatBlessingModifier(String statName, float current) {
-        long displayPct = Math.round((double) current * 100.0);
-        NamedTextColor color = Math.abs(current - 1.0f) < 0.005f ? NamedTextColor.GRAY
-                : current > 1.0f ? NamedTextColor.GREEN : NamedTextColor.RED;
-        return Component.text(statName + ": ", NamedTextColor.WHITE)
-                .append(Component.text(displayPct + "%", color));
     }
 }
