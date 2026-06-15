@@ -296,21 +296,29 @@ public class TabDisplayManager {
     private Component buildFooter(AlphaPlayer alphaPlayer) {
         Component footer = Component.empty();
 
+        // Compteur journalier (toujours visible)
+        int done     = alphaPlayer.getTotalDailyQuestsClaimed() + alphaPlayer.countActiveUnclaimedQuests();
+        int capacity = GameManager.getInstance().getQuestManager().getTotalCapacity();
+        footer = footer
+                .append(Component.text("Quêtes journalières : ", NamedTextColor.GRAY))
+                .append(Component.text(done + "/" + capacity, (capacity > 0 && done >= capacity) ? NamedTextColor.GREEN : NamedTextColor.WHITE));
+
         // Quête journalière active
         PlayerQuestData questData = alphaPlayer.getCurrentActiveQuest();
         if (questData != null && !questData.isClaimed() && questData.getLastAccepted().isEqual(LocalDate.now())) {
             Quest quest = GameManager.getInstance().getQuestManager().getQuest(questData.getQuestId());
             if (quest != null) {
-                int remaining = Math.max(0, quest.getGoal() - questData.getProgress());
-                String description = quest.getDescription().replace("{value}", String.valueOf(remaining));
                 Component questLine = Component.text("Quête : ", NamedTextColor.GOLD)
                         .append(Component.text(quest.getName() + "  ", NamedTextColor.WHITE))
                         .append(Component.text(questData.getProgress() + "/" + quest.getGoal(), NamedTextColor.DARK_GRAY));
                 if (questData.isCompleted()) {
                     questLine = questLine.append(Component.text("  ✔ Trader !", NamedTextColor.GREEN));
                 }
-                footer = footer.appendNewline().append(questLine)
-                        .appendNewline().append(Component.text(description, NamedTextColor.GRAY));
+                footer = footer
+                        .appendNewline()
+                        .appendNewline()
+                        .append(questLine)
+                        .appendNewline().append(Component.text(quest.getDescription(), NamedTextColor.GRAY));
             }
         }
 
@@ -320,19 +328,14 @@ public class TabDisplayManager {
         if (activeGlobalQuest != null) {
             footer = footer
                     .appendNewline()
-                    .append(Component.text("⚔ ", NamedTextColor.YELLOW))
+                    .appendNewline()
+                    .append(Component.text("Quête globale : ", NamedTextColor.GOLD))
                     .append(Component.text(activeGlobalQuest.getName() + "  ", NamedTextColor.WHITE))
                     .append(Component.text(gqm.getProgress() + "/" + activeGlobalQuest.getGoal(), NamedTextColor.DARK_GRAY))
-                    .append(Component.text("  ⏰ " + GlobalQuestManager.formatSeconds(gqm.getRemainingSeconds()), NamedTextColor.GRAY));
+                    .append(Component.text("  ⏰ " + GlobalQuestManager.formatSeconds(gqm.getRemainingSeconds()), NamedTextColor.GRAY))
+                    .appendNewline()
+                    .append(Component.text(activeGlobalQuest.getDescription(), NamedTextColor.GRAY));
         }
-
-        // Compteur journalier (toujours visible)
-        int done     = alphaPlayer.getTotalDailyQuestsClaimed() + alphaPlayer.countActiveUnclaimedQuests();
-        int capacity = GameManager.getInstance().getQuestManager().getTotalCapacity();
-        footer = footer
-                .appendNewline()
-                .append(Component.text("Quêtes : ", NamedTextColor.GRAY))
-                .append(Component.text(done + "/" + capacity, (capacity > 0 && done >= capacity) ? NamedTextColor.GREEN : NamedTextColor.WHITE));
 
         return footer.appendNewline();
     }
@@ -373,11 +376,5 @@ public class TabDisplayManager {
 
     private void sendPacket(Player player, net.minecraft.network.protocol.Packet<?> packet) {
         ((CraftPlayer) player).getHandle().connection.send(packet);
-    }
-
-    private String formatTime(long seconds) {
-        if (seconds >= 3600) return (seconds / 3600) + "h" + String.format("%02d", (seconds % 3600) / 60) + "m";
-        if (seconds >= 60)   return (seconds / 60)   + "m" + String.format("%02d", seconds % 60) + "s";
-        return seconds + "s";
     }
 }

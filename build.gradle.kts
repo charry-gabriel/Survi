@@ -5,7 +5,7 @@ plugins {
 }
 
 group = "fr.miuby.survi"
-version = "4.2"
+version = "4.3"
 
 java {
     toolchain {
@@ -21,20 +21,20 @@ repositories {
 }
 
 dependencies {
-    paperweight.paperDevBundle("26.1.2.build.66-stable")
+    paperweight.paperDevBundle("26.2-rc-2.build.9-alpha")
 
     compileOnly("org.projectlombok:lombok:1.18.38")
     annotationProcessor("org.projectlombok:lombok:1.18.38")
     testAnnotationProcessor("org.projectlombok:lombok:1.18.38")
 
-    implementation("com.github.charry-gabriel:MiubyLib:v1.13")
+    implementation("com.github.charry-gabriel:MiubyLib:v1.14")
 
     testImplementation(platform("org.junit:junit-bom:5.10.2"))
     testImplementation("org.junit.jupiter:junit-jupiter")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 
     // Les tests n'ont pas accès au dev bundle → on re-déclare paper-api pour eux
-    testImplementation("io.papermc.paper:paper-api:26.1.2.build.66-stable")
+    testImplementation("io.papermc.paper:paper-api:26.2-rc-2.build.9-alpha")
     testImplementation("org.yaml:snakeyaml:2.3")
     compileOnly("org.apache.logging.log4j:log4j-core:2.19.0")
 }
@@ -60,18 +60,7 @@ tasks {
 
     build {
         dependsOn(shadowJar)
-        // Pas de reobfJar nécessaire : Paper 26.1 tourne nativement avec les Mojang mappings
     }
-}
-tasks.register<Exec>("deployTest") {
-    dependsOn(tasks.shadowJar)
-
-    commandLine(
-        "scp",
-        "-P", "2222",
-        tasks.shadowJar.get().archiveFile.get().asFile.absolutePath,
-        "admin@timeuhalefa.fr:/opt/minecraft/test/plugins/"
-    )
 }
 tasks.register<Exec>("deployMain") {
     dependsOn(tasks.shadowJar)
