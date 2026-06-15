@@ -3,7 +3,6 @@ package fr.miuby.survi;
 import fr.miuby.lib.resource.MLResourceManager;
 import fr.miuby.survi.display.TabSkins;
 import fr.miuby.survi.job.JobCommand;
-import fr.miuby.survi.job.task.AcidRainDamageTask;
 import fr.miuby.survi.listener.job.*;
 import fr.miuby.survi.mob.MobCommand;
 import fr.miuby.survi.system.database.SqlCommand;
@@ -61,7 +60,6 @@ public class Survi extends JavaPlugin {
         pluginManager.registerEvents(placedBlockTracker, this);
 
         new FishermanEffectsTask().runTaskTimer(this, 0L, FishermanEffectsTask.PERIOD_TICKS);
-        new AcidRainDamageTask().runTaskTimer(this, 0L, AcidRainDamageTask.periodTicks());
 
         getConfig().options().copyDefaults(true);
         saveConfig();

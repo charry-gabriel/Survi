@@ -22,10 +22,6 @@ import java.util.logging.Level;
  * </ol>
  * {@code setWeatherDuration(MAX_VALUE)} est appliqué sur tous les mondes gérés après chaque
  * transition pour bloquer les changements vanilla.
- *
- * <p>L'état {@code acidRainActive} est un flag global : quand {@code true},
- * {@link fr.miuby.survi.job.task.AcidRainDamageTask} applique des dégâts aux joueurs
- * exposés à la pluie sans niveau Pêcheur suffisant.
  */
 public class RainManager {
 

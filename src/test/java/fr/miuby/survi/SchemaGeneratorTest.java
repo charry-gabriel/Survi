@@ -60,7 +60,7 @@ class SchemaGeneratorTest {
         if (blessingTypes.isEmpty()) {
             blessingTypes = List.of("DAMAGE", "DISPEL", "FLY", "GAME_MODE", "ITEM", "LIMIT_WORLD",
                     "LOCK_WORLD", "MAX_HEALTH", "MESSAGE", "POTION", "RANDOM_ITEM", "REGEN",
-                    "REPUTATION", "RESISTANCE", "START_VILLAGE_ZONE", "UNLOCK_ARMOR", "UNLOCK_TOOL",
+                    "REPUTATION", "RESISTANCE", "UNLOCK_ARMOR", "UNLOCK_TOOL",
                     "WORLD_LEVEL", "WORLD_RESET");
         }
         defsPart = replaceEnum(defsPart, "type", blessingTypes);

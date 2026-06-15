@@ -72,8 +72,6 @@ public class SurviConfig {
     @Getter private int rainCooldownMinSeconds;
     /** Borne haute du délai aléatoire entre deux pluies (secondes). */
     @Getter private int rainCooldownMaxSeconds;
-    /** Intervalle entre deux ticks de dégâts pluie acide (secondes). */
-    @Getter private int acidRainDamageIntervalSeconds;
 
     // ─── Initialisation ──────────────────────────────────────────────────────────
 
@@ -182,7 +180,6 @@ public class SurviConfig {
         rainDurationSeconds       = cfg.getInt("rain.duration-seconds",        60);
         rainCooldownMinSeconds    = cfg.getInt("rain.cooldown-min-seconds",     600);
         rainCooldownMaxSeconds    = cfg.getInt("rain.cooldown-max-seconds",    1500);
-        acidRainDamageIntervalSeconds = cfg.getInt("rain.acid.damage-interval-seconds", 3);
 
         rainWorlds = new ArrayList<>();
         List<?> rawRainWorlds = cfg.getList("rain.worlds");

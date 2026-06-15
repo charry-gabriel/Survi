@@ -89,21 +89,21 @@ Et si la modification touche un **enum du projet** (`EJob`, `ERole`, `EWorld`, `
 
 ## 1. Contexte technique
 
-- **Plateforme** : Paper `api-version: 26.1` (version 1.21.x, notation changée en 2026)
+- **Plateforme** : Paper `api-version: 26.2` (version 1.21.x, notation changée en 2026)
 - **Package racine** : `fr.miuby.survi`
 - **Bibliothèque interne** : `fr.miuby.lib` (MiubyLib — shadowjarisée dans `fr.miuby.survi.shaded.lib` à la compilation — voir **Annexe MiubyLib** en fin de fichier)
 - **Build** : Lombok est disponible (`@Getter`, `@Setter`, `@RequiredArgsConstructor`, etc.)
 - **DB** : SQLite via repositories
 - **Java** : 25
 - **Lombok** : 1.18.38
-- **Paper API** : `26.1.2.build.66-stable`
+- **Paper API** : `26.2-rc-2.build.9-alpha`
 
-### ⚠️ Compatibilité Paper 26.1
+### ⚠️ Compatibilité Paper 26.x
 
 La structure des dimensions a changé. Les noms de dossiers/mondes suivent désormais
 la convention `<worldName>_nether` et `<worldName>_the_end`. Voir `WorldInitializer` pour la convention exacte du projet.
 
-Essayer de ne pas générer de code qui utilise des APIs marquées `@Deprecated` dans Paper 26.1.
+Essayer de ne pas générer de code qui utilise des APIs marquées `@Deprecated` dans Paper 26.x.
 
 ---
 
