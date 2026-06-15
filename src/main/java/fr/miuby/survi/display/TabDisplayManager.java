@@ -297,7 +297,7 @@ public class TabDisplayManager {
         Component footer = Component.empty();
 
         // Compteur journalier (toujours visible)
-        int done     = alphaPlayer.getTotalDailyQuestsClaimed() + alphaPlayer.countActiveUnclaimedQuests();
+        int done     = alphaPlayer.getTotalDailyQuestsClaimed();
         int capacity = GameManager.getInstance().getQuestManager().getTotalCapacity();
         footer = footer
                 .append(Component.text("Quêtes journalières : ", NamedTextColor.GRAY))
