@@ -10,7 +10,7 @@ quests:
     difficulty: 1
     jobs:
       - ENCHANTER
-    targets: [ LEATHER ]
+    targets: [COW]
     goal: 20
     rewards:
       - { type: REPUTATION, job: FARMER, value: 1 }
@@ -22,7 +22,7 @@ quests:
     difficulty: 1
     jobs:
       - ENCHANTER
-    targets: [ PAPER ]
+    targets: [PAPER]
     goal: 1
     rewards:
       - { type: REPUTATION, job: ENCHANTER, value: 1 }

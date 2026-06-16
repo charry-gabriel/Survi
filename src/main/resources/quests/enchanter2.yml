@@ -65,7 +65,7 @@ quests:
     rewards:
       - { type: REPUTATION, job: ENCHANTER, value: 4}
 
-  - id: "mine_nether_quartz"
+  - id: "mine_nether_quartz2"
     name: "Cristaux Magiques"
     description: "Minez {value} minerais de quartz du Nether."
     type: MINE

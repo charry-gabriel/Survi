@@ -2,7 +2,6 @@
 quests:
 
 # ─────────────────── DIFFICULTÉ 1 (1/7) ───────────────────
-  -
   - id: "fish_common"
     name: "Pêcheur du Dimanche"
     description: "Pêchez {value} poissons."

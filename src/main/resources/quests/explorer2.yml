@@ -2,3 +2,15 @@
 quests:
 
 # ─────────────────── DIFFICULTÉ 2 (0/7) ───────────────────
+
+  - id: "paper_production2"
+    name: "Fabricant de Papier"
+    description: "Fabriquez {value} papiers."
+    type: CRAFT
+    difficulty: 1
+    jobs:
+      - ENCHANTER
+    targets: [PAPER]
+    goal: 1
+    rewards:
+      - { type: REPUTATION, job: ENCHANTER, value: 1 }

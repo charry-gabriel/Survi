@@ -2,8 +2,7 @@
 quests:
 
 # ─────────────────── DIFFICULTÉ 3 (0/7) ───────────────────
-  -
-  - id: "fish_common"
+  - id: "fish_common3"
     name: "Pêcheur du Dimanche"
     description: "Pêchez {value} poissons."
     type: FISH
