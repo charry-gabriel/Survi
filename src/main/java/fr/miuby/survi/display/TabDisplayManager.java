@@ -34,8 +34,10 @@ import java.time.LocalDate;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.EnumSet;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
@@ -83,10 +85,20 @@ public class TabDisplayManager {
     private static final EnumSet<ClientboundPlayerInfoUpdatePacket.Action> NAME_LISTED_ACTIONS =
             EnumSet.of(ClientboundPlayerInfoUpdatePacket.Action.UPDATE_DISPLAY_NAME, ClientboundPlayerInfoUpdatePacket.Action.UPDATE_LISTED);
 
+    /** Mise à jour légère : ne touche que le texte des faux joueurs déjà présents — zéro clignotement. */
+    private static final EnumSet<ClientboundPlayerInfoUpdatePacket.Action> TEXT_UPDATE_ACTIONS =
+            EnumSet.of(ClientboundPlayerInfoUpdatePacket.Action.UPDATE_DISPLAY_NAME);
+
     private static final Component SEP = Component.text("  ·  ", NamedTextColor.DARK_GRAY);
 
     /** Joueurs pour lesquels l'équipe de tri a déjà été créée cette session. */
     private final Set<UUID> teamInitialized = new HashSet<>();
+
+    /** Dernier playerCount envoyé à chaque viewer — évite le remove+re-add quand le compte n'a pas changé. */
+    private final Map<UUID, Integer> lastSentPlayerCount = new HashMap<>();
+
+    /** État du chargement des skins au dernier tick — déclenche un re-add unique quand ils deviennent disponibles. */
+    private boolean lastSkinLoaded = false;
 
     /** Objectif scoreboard principal (RenderType.HEARTS, slot LIST) pour l'affichage des cœurs dans le tab. */
     private Objective healthObjective;
@@ -139,6 +151,10 @@ public class TabDisplayManager {
         updateHealthScores();
         List<ClientboundPlayerInfoUpdatePacket.Entry> nameEntries = buildRealPlayerNameEntries();
 
+        boolean skinsNowLoaded  = TabSkins.gray() != null;
+        boolean skinStateChanged = skinsNowLoaded != lastSkinLoaded;
+        lastSkinLoaded = skinsNowLoaded;
+
         for (Player player : Bukkit.getOnlinePlayers()) {
             AlphaPlayer ap = AlphaPlayer.get(player.getUniqueId());
             if (ap == null || ap.getPlayer() == null) continue;
@@ -151,9 +167,18 @@ public class TabDisplayManager {
 
             player.sendPlayerListHeaderAndFooter(buildHeader(ap), buildFooter(ap));
 
-            // Supprime tous les anciens faux joueurs possibles, puis renvoie les nouveaux
-            sendPacket(player, new ClientboundPlayerInfoRemovePacket(TabInfoColumn.FAKE_UUIDS));
-            sendPacket(player, new ClientboundPlayerInfoUpdatePacket(ADD_ACTIONS, TabInfoColumn.build(ap, playerCount)));
+            List<ClientboundPlayerInfoUpdatePacket.Entry> fakeEntries = TabInfoColumn.build(ap, playerCount);
+            int lastCount = lastSentPlayerCount.getOrDefault(player.getUniqueId(), -1);
+
+            if (lastCount != playerCount || skinStateChanged) {
+                // Nombre de joueurs changé ou skins fraîchement chargés : remove + re-add complet
+                if (lastCount != -1) sendPacket(player, new ClientboundPlayerInfoRemovePacket(TabInfoColumn.FAKE_UUIDS));
+                sendPacket(player, new ClientboundPlayerInfoUpdatePacket(ADD_ACTIONS, fakeEntries));
+                lastSentPlayerCount.put(player.getUniqueId(), playerCount);
+            } else {
+                // Cas normal : mise à jour du texte uniquement, les entrées existent déjà côté client
+                sendPacket(player, new ClientboundPlayerInfoUpdatePacket(TEXT_UPDATE_ACTIONS, fakeEntries));
+            }
 
             // Met à jour le nom affiché de chaque vrai joueur (monde + rôle + sous-rôle + pseudo + PV)
             if (!nameEntries.isEmpty()) {
@@ -377,6 +402,7 @@ public class TabDisplayManager {
     public void removeInfoColumn(Player player) {
         sendPacket(player, new ClientboundPlayerInfoRemovePacket(TabInfoColumn.FAKE_UUIDS));
         teamInitialized.remove(player.getUniqueId());
+        lastSentPlayerCount.remove(player.getUniqueId());
         if (healthObjective != null) healthObjective.getScoreboard().resetScores(player.getName());
     }
 
