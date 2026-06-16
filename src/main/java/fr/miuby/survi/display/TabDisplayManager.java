@@ -24,6 +24,7 @@ import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.RenderType;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.Team;
+import org.bukkit.GameMode;
 
 import fr.miuby.survi.system.time.TimeManager;
 import fr.miuby.survi.world.WorldResetManager;
@@ -79,8 +80,8 @@ public class TabDisplayManager {
                     ClientboundPlayerInfoUpdatePacket.Action.UPDATE_LISTED
             );
 
-    private static final EnumSet<ClientboundPlayerInfoUpdatePacket.Action> NAME_ACTIONS =
-            EnumSet.of(ClientboundPlayerInfoUpdatePacket.Action.UPDATE_DISPLAY_NAME);
+    private static final EnumSet<ClientboundPlayerInfoUpdatePacket.Action> NAME_LISTED_ACTIONS =
+            EnumSet.of(ClientboundPlayerInfoUpdatePacket.Action.UPDATE_DISPLAY_NAME, ClientboundPlayerInfoUpdatePacket.Action.UPDATE_LISTED);
 
     private static final Component SEP = Component.text("  ·  ", NamedTextColor.DARK_GRAY);
 
@@ -134,7 +135,7 @@ public class TabDisplayManager {
     }
 
     private void updateTabList() {
-        int playerCount = Bukkit.getOnlinePlayers().size();
+        int playerCount = (int) Bukkit.getOnlinePlayers().stream().filter(p -> p.getGameMode() != GameMode.SPECTATOR).count();
         updateHealthScores();
         List<ClientboundPlayerInfoUpdatePacket.Entry> nameEntries = buildRealPlayerNameEntries();
 
@@ -156,7 +157,7 @@ public class TabDisplayManager {
 
             // Met à jour le nom affiché de chaque vrai joueur (monde + rôle + sous-rôle + pseudo + PV)
             if (!nameEntries.isEmpty()) {
-                sendPacket(player, new ClientboundPlayerInfoUpdatePacket(NAME_ACTIONS, nameEntries));
+                sendPacket(player, new ClientboundPlayerInfoUpdatePacket(NAME_LISTED_ACTIONS, nameEntries));
             }
         }
     }
@@ -175,7 +176,7 @@ public class TabDisplayManager {
             entries.add(new ClientboundPlayerInfoUpdatePacket.Entry(
                     online.getUniqueId(),
                     null,
-                    false,
+                    online.getGameMode() != GameMode.SPECTATOR,
                     0,
                     GameType.SURVIVAL,
                     PaperAdventure.asVanilla(buildPlayerTabName(rap)),
