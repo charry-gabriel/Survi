@@ -3,8 +3,8 @@ package fr.miuby.survi.listener;
 import fr.miuby.survi.sound.ESound;
 import fr.miuby.survi.sound.SoundService;
 import fr.miuby.survi.world.event.WorldLevelUpEvent;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.NamedTextColor;
+import fr.miuby.survi.GameManager;
+import fr.miuby.survi.system.lang.LangService;
 import net.kyori.adventure.title.Title;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -32,21 +32,18 @@ public class WorldLevelUpListener implements Listener {
 
     @EventHandler
     public void onWorldLevelUp(WorldLevelUpEvent event) {
-        Component broadcast = Component.text("✦ Le monde a évolué ! ", NamedTextColor.GOLD)
-                .append(Component.text("Niveau " + event.getOldLevel(), NamedTextColor.YELLOW))
-                .append(Component.text(" → ", NamedTextColor.GRAY))
-                .append(Component.text("Niveau " + event.getNewLevel(), NamedTextColor.GOLD));
-
-        Title title = Title.title(
-                Component.text("✦ Monde — Niveau " + event.getNewLevel(), NamedTextColor.GOLD),
-                Component.text("Le monde devient plus difficile…", NamedTextColor.YELLOW),
-                TITLE_TIMES
-        );
+        LangService ls = GameManager.getInstance().getLangService();
+        int oldLevel = event.getOldLevel();
+        int newLevel = event.getNewLevel();
 
         for (Player p : Bukkit.getOnlinePlayers()) {
             SoundService.play(p, ESound.WORLD_LEVEL_UP);
-            p.showTitle(title);
+            p.showTitle(Title.title(
+                    ls.text(p, "world.level_up.title", newLevel),
+                    ls.text(p, "world.level_up.subtitle"),
+                    TITLE_TIMES
+            ));
+            p.sendMessage(ls.text(p, "world.level_up.broadcast", oldLevel, newLevel));
         }
-        Bukkit.broadcast(broadcast);
     }
 }

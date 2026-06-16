@@ -50,7 +50,7 @@ public class VillagerListener implements Listener {
                 case VillagerLevel level when level.getTribute() == null || !level.isUnlocked() -> {
                     player.sendMessage(Component.text("<", NamedTextColor.AQUA).append(level.getDisplayName()).append(Component.text("> ", NamedTextColor.AQUA)).append(level.getMessage()));
                     if (!level.isUnlocked())
-                        player.sendMessage(Component.text(villager.getName() + " est indisponible pendant encore " + level.getRemainingLock(), NamedTextColor.YELLOW));
+                        player.sendMessage(GameManager.getInstance().getLangService().text(player, "villager.locked", villager.getName(), level.getRemainingLock()));
                     event.setCancelled(true);
                 }
                 case VillagerLevel level -> {

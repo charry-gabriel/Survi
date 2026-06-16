@@ -3,6 +3,9 @@ package fr.miuby.survi.listener.job;
 import fr.miuby.survi.job.EJob;
 import fr.miuby.survi.job.config.JobsConfig;
 import fr.miuby.survi.player.AlphaPlayer;
+import fr.miuby.survi.GameManager;
+import fr.miuby.survi.system.lang.LangService;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Material;
@@ -55,28 +58,31 @@ public class EnchanterListener implements Listener {
         AlphaPlayer alpha = AlphaPlayer.get(event.getEnchanter().getUniqueId());
         if (alpha == null) return;
         int jobLevel = alpha.getJobLevel(EJob.ENCHANTER);
+        LangService langService = GameManager.getInstance().getLangService();
         if (jobLevel == 0) {
             event.setCancelled(true);
-            event.getEnchanter().sendMessage(Component.text("✗ Vous ne pouvez pas encore enchanter. Progressez dans le métier ")
-                    .color(NamedTextColor.RED).append(EJob.ENCHANTER.toComponent())
-                    .append(Component.text(".", NamedTextColor.RED)));
+            event.getEnchanter().sendMessage(langService.text(
+                    event.getEnchanter(), "enchanter.no_level",
+                    Placeholder.component("job", EJob.ENCHANTER.toComponent())));
             return;
         }
         int maxXpCost = jobLevel * 3;
         if (event.getExpLevelCost() > maxXpCost) {
             event.setCancelled(true);
-            event.getEnchanter().sendMessage(Component.text("✗ Ce slot coûte trop de niveaux XP pour votre rang de métier ")
-                    .color(NamedTextColor.RED).append(EJob.ENCHANTER.toComponent())
-                    .append(Component.text(" (max " + maxXpCost + " niveaux).", NamedTextColor.RED)));
+            event.getEnchanter().sendMessage(langService.text(
+                    event.getEnchanter(), "enchanter.xp_too_high",
+                    Placeholder.component("job", EJob.ENCHANTER.toComponent()),
+                    Placeholder.unparsed("max", String.valueOf(maxXpCost))));
             return;
         }
         boolean tooHigh = event.getEnchantsToAdd().entrySet().stream()
                 .anyMatch(e -> e.getValue() > jobLevel);
         if (tooHigh) {
             event.setCancelled(true);
-            event.getEnchanter().sendMessage(Component.text("✗ Cet enchantement dépasse votre niveau de métier ")
-                    .color(NamedTextColor.RED).append(EJob.ENCHANTER.toComponent())
-                    .append(Component.text(" (max niv." + jobLevel + " d'enchantement).", NamedTextColor.RED)));
+            event.getEnchanter().sendMessage(langService.text(
+                    event.getEnchanter(), "enchanter.level_too_high",
+                    Placeholder.component("job", EJob.ENCHANTER.toComponent()),
+                    Placeholder.unparsed("max", String.valueOf(jobLevel))));
         }
     }
 

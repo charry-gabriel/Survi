@@ -4,6 +4,12 @@ import fr.miuby.lib.villager.VillagerRegistry;
 import fr.miuby.survi.GameManager;
 import fr.miuby.survi.job.EJob;
 import fr.miuby.survi.player.AlphaPlayer;
+import fr.miuby.survi.quest.globalquest.GlobalQuest;
+import fr.miuby.survi.quest.globalquest.GlobalQuestManager;
+import fr.miuby.survi.quest.quest.PlayerQuestData;
+import fr.miuby.survi.quest.quest.Quest;
+import fr.miuby.survi.system.lang.ELang;
+import fr.miuby.survi.system.lang.LangService;
 import fr.miuby.survi.villager.villagerlevel.VillagerLevel;
 import com.mojang.authlib.properties.Property;
 import io.papermc.paper.adventure.PaperAdventure;
@@ -64,6 +70,9 @@ class TabInfoColumn {
     private TabInfoColumn() {}
 
     static List<ClientboundPlayerInfoUpdatePacket.Entry> build(AlphaPlayer ap, int playerCount) {
+        LangService ls   = GameManager.getInstance().getLangService();
+        ELang       lang = ap.getPlayer() != null ? ls.resolveLanguage(ap.getPlayer()) : ls.getServerDefault();
+
         int padding    = Math.max(0, 20 - playerCount);
         int totalSlots = padding + HEIGHT;
         List<ClientboundPlayerInfoUpdatePacket.Entry> entries = new ArrayList<>(totalSlots);
@@ -76,20 +85,20 @@ class TabInfoColumn {
         }
 
         // ── Section Villageois ───────────────────────────────────────────────
-        entries.add(entry(slot++, section("Villageois"), TabSkins.blue()));
+        entries.add(entry(slot++, section(ls, lang, "tab.info.section.villagers"), TabSkins.blue()));
 
         int maxV = Math.min(villagers.size(), MAX_VILLAGERS);
         for (int i = 0; i < maxV; i++) {
-            entries.add(entry(slot++, villagerDisplay(villagers.get(i)), TabSkins.gray()));
+            entries.add(entry(slot++, villagerDisplay(ls, lang, villagers.get(i)), TabSkins.gray()));
         }
 
         // ── Section Métiers ──────────────────────────────────────────────────
-        entries.add(entry(slot++, Component.empty(),  TabSkins.gray()));
-        entries.add(entry(slot++, section("Métiers"), TabSkins.blue()));
+        entries.add(entry(slot++, Component.empty(),                                TabSkins.gray()));
+        entries.add(entry(slot++, section(ls, lang, "tab.info.section.jobs"),       TabSkins.blue()));
 
         for (EJob job : sortedJobs(ap)) {
             Property skin = TabSkins.JOB_PROPS.getOrDefault(job, TabSkins.gray());
-            entries.add(entry(slot++, jobDisplay(ap, job), skin));
+            entries.add(entry(slot++, jobDisplay(ls, lang, ap, job), skin));
         }
 
         // ── Section Stats ────────────────────────────────────────────────────
@@ -132,19 +141,19 @@ class TabInfoColumn {
 
     // ── Affichage — structure ────────────────────────────────────────────────
 
-    private static Component section(String name) {
-        return Component.text("─── " + name + " ───", NamedTextColor.DARK_AQUA);
+    private static Component section(LangService ls, ELang lang, String key) {
+        return Component.text("─── ", NamedTextColor.DARK_AQUA)
+                .append(ls.text(lang, key).colorIfAbsent(NamedTextColor.DARK_AQUA))
+                .append(Component.text(" ───", NamedTextColor.DARK_AQUA));
     }
 
-    private static Component villagerDisplay(VillagerLevel vl) {
-        return vl.getDisplayName().append(Component.text(": niv." + vl.getLevel(), NamedTextColor.WHITE));
+    private static Component villagerDisplay(LangService ls, ELang lang, VillagerLevel vl) {
+        return vl.getDisplayName().append(ls.text(lang, "tab.info.level", vl.getLevel()).colorIfAbsent(NamedTextColor.WHITE));
     }
 
-    private static Component jobDisplay(AlphaPlayer ap, EJob job) {
+    private static Component jobDisplay(LangService ls, ELang lang, AlphaPlayer ap, EJob job) {
         int level = ap.getJobLevel(job);
-        return job.toComponent()
-                .append(Component.text(": ", NamedTextColor.WHITE))
-                .append(Component.text("niv." + level, NamedTextColor.WHITE));
+        return job.toComponent().append(ls.text(lang, "tab.info.level", level).colorIfAbsent(NamedTextColor.WHITE));
     }
 
     // ── Affichage — stats ────────────────────────────────────────────────────

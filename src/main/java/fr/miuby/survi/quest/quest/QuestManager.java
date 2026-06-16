@@ -16,6 +16,7 @@ import fr.miuby.survi.sound.SoundService;
 import fr.miuby.survi.system.SurviConfig;
 import fr.miuby.survi.system.log.ELogTag;
 import fr.miuby.survi.villager.trader.Trader;
+import fr.miuby.survi.system.lang.LangService;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 
@@ -106,9 +107,7 @@ public class QuestManager extends AbstractQuestManager<Quest> {
                     player.removeQuest(data.getSlot());
                     GameManager.getInstance().getDatabase().quests().deletePlayerQuestSlot(player.getUuid(), data.getSlot());
                     GameManager.getInstance().getQuestActionBarService().stopRefresh(player.getUuid());
-                    player.getPlayer().sendMessage(Component.text(
-                            "Votre quête en cours a été supprimée suite à une mise à jour. Vous pouvez en accepter une nouvelle auprès d'un Trader.",
-                            NamedTextColor.YELLOW));
+                    player.getPlayer().sendMessage(GameManager.getInstance().getLangService().text(player.getPlayer(), "quest.dropped_on_reload"));
                     droppedCount++;
                 }
                 // Cas data.isCompleted() && data.isClaimed() : déjà réclamée → rien à faire
@@ -162,9 +161,8 @@ public class QuestManager extends AbstractQuestManager<Quest> {
         );
 
         if (player.getPlayer() != null) {
-            player.getPlayer().sendMessage(Component.text(
-                    "Votre quête « " + quest.getName() + " » a été récompensée automatiquement suite à une mise à jour.",
-                    NamedTextColor.GREEN));
+            player.getPlayer().sendMessage(GameManager.getInstance().getLangService()
+                    .text(player.getPlayer(), "quest.orphan_rewarded", quest.getName()));
         }
 
         MLLogManager.getInstance().log(Level.INFO, ELogTag.QUEST,
@@ -345,7 +343,7 @@ public class QuestManager extends AbstractQuestManager<Quest> {
         GameManager.getInstance().getQuestActionBarService().stopRefresh(player.getUuid());
 
         if (player.getPlayer() != null) {
-            player.getPlayer().sendMessage(Component.text("Votre quête a été réinitialisée par un administrateur. Vous pouvez en accepter une nouvelle !", NamedTextColor.YELLOW));
+            player.getPlayer().sendMessage(GameManager.getInstance().getLangService().text(player.getPlayer(), "quest.reset_by_admin"));
         }
         return true;
     }
@@ -359,11 +357,12 @@ public class QuestManager extends AbstractQuestManager<Quest> {
      */
     public void assignQuest(AlphaPlayer player, Trader trader, boolean force) {
         PlayerQuestData current = player.getCurrentActiveQuest();
+        LangService langService = GameManager.getInstance().getLangService();
         if (current != null) {
             if (current.isCompleted()) {
-                player.getPlayer().sendMessage(Component.text("Vous avez déjà une quête terminée à réclamer !", NamedTextColor.RED));
+                player.getPlayer().sendMessage(langService.text(player.getPlayer(), "quest.already_claimed"));
             } else {
-                player.getPlayer().sendMessage(Component.text("Vous avez déjà une quête en cours. Terminez-la d'abord !", NamedTextColor.RED));
+                player.getPlayer().sendMessage(langService.text(player.getPlayer(), "quest.already_active"));
             }
             return;
         }
@@ -372,14 +371,12 @@ public class QuestManager extends AbstractQuestManager<Quest> {
         int usedSlots = player.getTotalDailyQuestsClaimed() + player.countActiveUnclaimedQuests();
 
         if (capacity == 0) {
-            player.getPlayer().sendMessage(Component.text("Aucune quête n'est encore disponible. Attendez le début de la partie !", NamedTextColor.RED));
+            player.getPlayer().sendMessage(langService.text(player.getPlayer(), "quest.not_available"));
             return;
         }
 
         if (!force && usedSlots >= capacity) {
-            player.getPlayer().sendMessage(Component.text("Vous avez complété ", NamedTextColor.RED)
-                    .append(Component.text(usedSlots + "/" + capacity, NamedTextColor.GOLD))
-                    .append(Component.text(" quêtes. Revenez demain pour de nouveaux créneaux !", NamedTextColor.RED)));
+            player.getPlayer().sendMessage(langService.text(player.getPlayer(), "quest.capacity_full", usedSlots, capacity));
             return;
         }
 
@@ -395,12 +392,11 @@ public class QuestManager extends AbstractQuestManager<Quest> {
 
         MLLogManager.getInstance().log(Level.FINE, ELogTag.QUEST,
                 "[AssignQuest] " + player.getPseudo() + " → " + quest.getId() + " (diff=" + difficulty + ") slot=" + nextSlot + " [" + (usedSlots + 1) + "/" + capacity + "]");
-        player.getPlayer().sendMessage(Component.text("Nouvelle quête acceptée auprès de ", NamedTextColor.GREEN)
-                .append(Component.text(trader.getNameId(), NamedTextColor.AQUA))
-                .append(Component.text(" : ", NamedTextColor.GREEN))
-                .append(Component.text(quest.getName(), NamedTextColor.GOLD)));
+
+        player.getPlayer().sendMessage(langService.text(player.getPlayer(), "quest.accepted",
+                trader.getNameId(), quest.getName()));
         player.getPlayer().sendMessage(Component.text(quest.getFormattedDescription(), NamedTextColor.GRAY));
-        player.getPlayer().sendMessage(Component.text("Quête " + (usedSlots + 1) + "/" + capacity + " disponibles.", NamedTextColor.DARK_GRAY));
+        player.getPlayer().sendMessage(langService.text(player.getPlayer(), "quest.accepted.slots", usedSlots + 1, capacity));
     }
 
     /**
@@ -424,9 +420,10 @@ public class QuestManager extends AbstractQuestManager<Quest> {
 
         if (player.getPlayer() != null) {
             String jobsStr = quest.getJobs().isEmpty() ? "tous" : quest.getJobs().stream().map(EJob::getDisplayName).reduce((a, b) -> a + ", " + b).orElse("tous");
-            player.getPlayer().sendMessage(Component.text("[TEST] Quête de test assignée : ", NamedTextColor.YELLOW).append(Component.text(quest.getName(), NamedTextColor.GOLD)));
+            LangService langService = GameManager.getInstance().getLangService();
+            player.getPlayer().sendMessage(langService.text(player.getPlayer(), "quest.test.assigned", quest.getName()));
             player.getPlayer().sendMessage(Component.text(quest.getFormattedDescription(), NamedTextColor.GRAY));
-            player.getPlayer().sendMessage(Component.text("Objectif : " + quest.getGoal() + " | Difficulté : " + quest.getDifficulty() + " | Métiers : " + jobsStr, NamedTextColor.DARK_GRAY));
+            player.getPlayer().sendMessage(langService.text(player.getPlayer(), "quest.test.details", quest.getGoal(), quest.getDifficulty(), jobsStr));
         }
     }
 
@@ -449,8 +446,7 @@ public class QuestManager extends AbstractQuestManager<Quest> {
             return false;
 
         if (data.getTraderId() != null && !data.getTraderId().equals(trader.getNameId())) {
-            player.getPlayer().sendMessage(Component.text("Cette quête doit être validée auprès de ", NamedTextColor.RED)
-                    .append(Component.text(data.getTraderId(), NamedTextColor.AQUA)));
+            player.getPlayer().sendMessage(GameManager.getInstance().getLangService().text(player.getPlayer(), "quest.validate_trader", data.getTraderId()));
             return false;
         }
 
@@ -485,9 +481,8 @@ public class QuestManager extends AbstractQuestManager<Quest> {
         );
 
         int capacity = getTotalCapacity();
-        player.getPlayer().sendMessage(Component.text("Vous avez reçu les récompenses de la quête ! ", NamedTextColor.GREEN)
-                .append(Component.text(usedAfter + "/" + capacity, NamedTextColor.GOLD))
-                .append(Component.text(" quêtes complétées.", NamedTextColor.GREEN)));
+        LangService langService = GameManager.getInstance().getLangService();
+        player.getPlayer().sendMessage(langService.text(player.getPlayer(), "quest.rewards_received", usedAfter, capacity));
 
         QuestGlowService glowService = GameManager.getInstance().getQuestGlowService();
         if (glowService != null) glowService.disableGlow(player);
@@ -528,8 +523,9 @@ public class QuestManager extends AbstractQuestManager<Quest> {
         GameManager.getInstance().getDatabase().quests().updatePlayerQuest(player.getUuid(), data);
 
         SoundService.play(player.getPlayer(), ESound.QUEST_COMPLETE);
-        player.getPlayer().sendMessage(Component.text("Quête terminée : ", NamedTextColor.GREEN).append(Component.text(quest.getName(), NamedTextColor.GOLD)));
-        player.getPlayer().sendMessage(Component.text("Allez voir le Trader pour obtenir votre récompense !", NamedTextColor.GRAY));
+        LangService langService = GameManager.getInstance().getLangService();
+        player.getPlayer().sendMessage(langService.text(player.getPlayer(), "quest.completed", quest.getName()));
+        player.getPlayer().sendMessage(langService.text(player.getPlayer(), "quest.completed.go_trader"));
         GameManager.getInstance().getQuestActionBarService().showFinished(player, quest);
 
         // Active le glow du Trader cible pour guider le joueur

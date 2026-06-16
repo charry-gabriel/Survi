@@ -144,10 +144,10 @@ public class WorldResetManager {
     private void teleportPlayersToVillage(String worldName, Location destination) {
         World world = Bukkit.getWorld(worldName);
         if (world == null) return;
+        var ls = GameManager.getInstance().getLangService();
         for (var player : world.getPlayers()) {
             player.teleport(destination);
-            player.sendMessage(Component.text("[Monde] ", NamedTextColor.GOLD)
-                    .append(Component.text("Le monde est en cours de réinitialisation. Retour au Village.", NamedTextColor.YELLOW)));
+            player.sendMessage(ls.text(player, "world.reset_warning"));
         }
     }
 

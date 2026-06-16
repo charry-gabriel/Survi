@@ -8,8 +8,6 @@ import fr.miuby.lib.log.MLLogManager;
 import fr.miuby.survi.system.log.ELogTag;
 import fr.miuby.survi.world.EWorld;
 import fr.miuby.survi.world.WorldInitializer;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -60,7 +58,7 @@ public class WorldListener implements Listener {
 
         if (WorldRegistry.get(EWorld.NETHER).isLocked()) {
             event.setCancelled(true);
-            event.getPlayer().sendMessage(Component.text("✖ Ce monde n'est pas encore accessible !", NamedTextColor.RED));
+            event.getPlayer().sendMessage(GameManager.getInstance().getLangService().text(event.getPlayer(), "world.locked"));
             return;
         }
 
@@ -105,7 +103,7 @@ public class WorldListener implements Listener {
 
         MLWorld endMLWorld = WorldRegistry.get(EWorld.END);
         if (endMLWorld != null && endMLWorld.isLocked()) {
-            player.sendMessage(Component.text("✖ Ce monde n'est pas encore accessible !", NamedTextColor.RED));
+            player.sendMessage(GameManager.getInstance().getLangService().text(player, "world.locked"));
             return;
         }
 

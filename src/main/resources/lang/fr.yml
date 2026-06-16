@@ -1,0 +1,310 @@
+# ═══════════════════════════════════════════════════════════════════════════════
+#  Survi — Traductions Français
+#  Format : MiniMessage (https://docs.advntr.dev/minimessage/format.html)
+#
+#  Placeholders positionnels : {0}, {1}… remplacés par des valeurs textuelles.
+#  Placeholders nommés       : <name>    remplacés par des composants Adventure.
+# ═══════════════════════════════════════════════════════════════════════════════
+
+# ─── Limite de zone ──────────────────────────────────────────────────────────
+boundary.warning: "<red>Tu ne peux pas aller plus loin !"
+
+# ─── Tombe ───────────────────────────────────────────────────────────────────
+grave.indestructible: "<red>Cette tombe est indestructible !"
+grave.created: "<green>☠ Votre tombe a été créée en {0}, {1}, {2} [{3}]"
+grave.not_yours: "<red>Ce n'est pas votre tombe !"
+grave.recovered: "<green>Vous avez récupéré votre tombe."
+
+# ─── Monde ───────────────────────────────────────────────────────────────────
+world.locked: "<red>✖ Ce monde n'est pas encore accessible !"
+world.level_up.broadcast: "<gold>✦ Le monde a évolué ! <yellow>Niveau {0} <gray>→ <gold>Niveau {1}"
+world.level_up.title: "<gold>✦ Monde — Niveau {0}"
+world.level_up.subtitle: "<yellow>Le monde devient plus difficile…"
+
+# ─── Métier ──────────────────────────────────────────────────────────────────
+job.level_up.title: "<gold>⚒ Niveau supérieur !"
+job.level_up.subtitle: "<job><yellow> · niv.<level>"
+job.level_up.broadcast: "<gold>⚒ <white><player> <gold>a atteint le niveau <yellow><level> <gold>en <job><gold> !"
+job.note: "<green>⚒ <job>"
+
+# ─── Joueur ───────────────────────────────────────────────────────────────────
+player.subrole.added: "<yellow>Le sous-role <role><yellow> a ete ajouté !"
+player.subrole.removed: "<yellow>Le sous-role <role><yellow> a ete retiré !"
+player.rank_up: "<gold>✦ Nouveau rang atteint : <rank><gray> (réputation totale : <total>)"
+
+# ─── Quête ───────────────────────────────────────────────────────────────────
+quest.already_claimed: "<red>Vous avez déjà une quête terminée à réclamer !"
+quest.already_active: "<red>Vous avez déjà une quête en cours. Terminez-la d'abord !"
+quest.not_available: "<red>Aucune quête n'est encore disponible. Attendez le début de la partie !"
+quest.capacity_full: "<red>Vous avez complété {0}/{1} quêtes disponibles. Revenez demain !"
+quest.validate_trader: "<red>Cette quête doit être validée auprès de <aqua>{0}"
+quest.accepted: "<green>Nouvelle quête acceptée auprès de <aqua>{0}<green> : <gold>{1}"
+quest.accepted.slots: "<dark_gray>Quête {0}/{1} disponibles."
+quest.completed: "<green>Quête terminée : <gold>{0}"
+quest.completed.go_trader: "<gray>Allez voir le Trader pour obtenir votre récompense !"
+quest.rewards_received: "<green>Vous avez reçu les récompenses de la quête ! <gold>{0}/{1}<green> quêtes complétées."
+quest.reset_by_admin: "<yellow>Votre quête a été réinitialisée par un administrateur. Vous pouvez en accepter une nouvelle !"
+quest.dropped_on_reload: "<yellow>Votre quête en cours a été supprimée suite à une mise à jour. Vous pouvez en accepter une nouvelle auprès d'un Trader."
+quest.orphan_rewarded: "<green>Votre quête « {0} » a été récompensée automatiquement suite à une mise à jour."
+quest.test.assigned: "<yellow>[TEST] Quête de test assignée : <gold>{0}"
+quest.test.details: "<dark_gray>Objectif : {0} | Difficulté : {1} | Métiers : {2}"
+quest.new_slots: "<gold>[Quêtes] <green>{0} nouveau(x) créneau(x) disponible(s) ! <dark_gray>({1}/{2} utilisés)"
+
+# ─── ActionBar quête journalière ─────────────────────────────────────────────
+quest.actionbar.progress: "<aqua>⚔ <yellow>{0}<dark_gray> — <white>{1}<dark_gray>  [<gray>{2}<dark_gray> quêtes]"
+quest.actionbar.finished: "<bold><green>✔ Quête terminée : <gold>{0}<gray> — Allez voir le Trader !"
+
+# ─── BossBar quête globale ───────────────────────────────────────────────────
+quest.global.bossbar.content: "<gold>⚔ <white>{0}  <dark_gray>▶  <aqua>{1}/{2}  <gray>({3}%)"
+quest.global.bossbar.finished: "<green>✔ <yellow>{0}  <green>—  Complétée !"
+
+# ─── Notifications hors-ligne ─────────────────────────────────────────────────
+offline.header: "<dark_gray>─── Pendant votre absence ───"
+offline.job_level: "<gold>⚒ Métier <job><gold> : <gray>niv.<old> <gray>→ <yellow>niv.<new>"
+offline.world_level: "<gold>✦ Niveau du monde : <yellow>Niveau {0} <gray>→ <gold>Niveau {1}"
+offline.villager_level: "<gold>🏠 <villager><gold> : <gray>Niveau <old> <gray>→ <yellow>Niveau <new>"
+offline.global_quest.prefix: "<gold>⚔ Quête globale en cours : <yellow>« {0} »"
+offline.global_quest.progress: "<aqua>{0}/{1} ({2}%)  <gray>⏰ {3}"
+
+# ─── Récapitulatif d'effets à la connexion ────────────────────────────────────
+effect.restore.header: "<yellow>-------------------- Récap --------------------"
+effect.restore.world_level: "<yellow>Difficulté Niv. {0}"
+effect.restore.footer: "<yellow>----------------------------------------------"
+
+# ─── Enchanteur ───────────────────────────────────────────────────────────────
+enchanter.no_level: "<red>✗ Vous ne pouvez pas encore enchanter. Progressez dans le métier <job><red>."
+enchanter.xp_too_high: "<red>✗ Ce slot coûte trop de niveaux XP pour votre rang de métier <job><red> (max <max> niveaux)."
+enchanter.level_too_high: "<red>✗ Cet enchantement dépasse votre niveau de métier <job><red> (max niv.<max> d'enchantement)."
+
+# ─── Villageois ───────────────────────────────────────────────────────────────
+villager.locked: "<yellow>{0} est indisponible pendant encore {1}"
+
+# ─── Tab — entête ─────────────────────────────────────────────────────────────
+tab.header.title: "<gold>◆  Survie  ◆"
+tab.header.difficulty_label: "<gray>Difficulté "
+tab.header.level: "Niv. {0}"
+tab.header.deaths: "<dark_red>☠ {0}"
+tab.header.successes: "<yellow>★ {0}"
+
+# ─── Tab — pied de page ───────────────────────────────────────────────────────
+tab.footer.quest_label: "<gold>Quête : "
+tab.footer.global_quest_label: "<gold>Quête globale : "
+tab.footer.global_quest_timer: "<gray>  ⏰ {0}"
+tab.footer.reset_imminent: "<gray>Reset <yellow>imminent !"
+tab.footer.reset_in: "<gray>Reset dans <yellow>{0}"
+
+# ─── Tab — colonne info ────────────────────────────────────────────────────────
+tab.info.section.villagers: "Villageois"
+tab.info.section.jobs: "Métiers"
+tab.info.section.quests: "Quêtes"
+tab.info.no_quest: "<gray>Aucune quête en cours"
+tab.info.completed_marker: "<green> ✔ Trader !"
+tab.info.quests_label: "<gray>Quêtes : "
+tab.info.level: ": niv.{0}"
+
+# ─── Tab — stats joueur ────────────────────────────────────────────────────────
+tab.stat.damage: "Dégâts"
+tab.stat.resistance: "Résistance"
+tab.stat.health: "Vie"
+tab.stat.speed: "Vitesse"
+
+# ─── Commandes — rôle (feedback admin) ───────────────────────────────────────
+cmd.role.assigned: "<green>Le role <role> a ete ajouté a <player>"
+cmd.subrole.added: "<green>Le sous-role <role> a ete ajouté a <player> !"
+cmd.subrole.removed: "<green>Le sous-role <role> a ete supprimé a <player> !"
+
+# ─── Commandes — métier (admin + notification joueur) ───────────────────────
+cmd.job.already_zero: "<yellow><player> est déjà à 0 réputation en métier <job>."
+cmd.job.added: "<green>Ajouté <amount> rep à <player> en métier <job> (<before> → <after>)"
+cmd.job.removed: "<gold>Retiré <amount> rep à <player> en métier <job> (<before> → <after>)"
+cmd.job.set: "<green>Réputation de <player> en métier <job> fixée à <value> (était <before>)"
+cmd.job.displayed: "<gray>Métiers de {0} affichés."
+cmd.job.notify.added: "<green>✦ Un administrateur vous a accordé de la réputation dans le métier <job>."
+cmd.job.notify.removed: "<gold>✦ Un administrateur vous a retiré de la réputation dans le métier <job>."
+cmd.job.notify.set: "<green>✦ Un administrateur a modifié votre réputation en métier <job>."
+cmd.job.info.separator: "<dark_gray>────────────────────────"
+cmd.job.info.title_self: "<gold><bold>  ✦ Vos Métiers"
+cmd.job.info.title_other: "<gold><bold>  ✦ Métiers de {0}"
+cmd.job.info.level: "<dark_gray> — <white>niv.{0}"
+cmd.job.info.hint_1: "<gray>  Complétez des quêtes auprès des marchands"
+cmd.job.info.hint_2: "<gray>  pour progresser dans chaque métier."
+cmd.job.console.header: "=== Métiers de {0} ==="
+
+# ─── Commandes — joueur ───────────────────────────────────────────────────────
+cmd.player.console_only: "<red>Cette commande est réservée aux joueurs en jeu. Utilisez /player info <joueur> depuis la console."
+cmd.player.no_data: "<gray>Aucune donnée disponible pour ce classement."
+cmd.player.separator: "<gold>━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+cmd.player.info.title_self: "<gold><bold>  ✦ Votre Profil"
+cmd.player.info.title_other: "<gold><bold>  ✦ Profil de {0}"
+cmd.player.info.rank_label: "<gray>  Rang : "
+cmd.player.info.deaths_label: "<gray>    Morts : "
+cmd.player.info.success_label: "<gray>    Succès : "
+cmd.player.info.quests: "<gray>  Quêtes : <aqua>{0} complétée(s)  <dark_gray>(<yellow>{1} journalières<dark_gray> · <light_purple>{2} globales<dark_gray>)"
+cmd.player.info.difficulty_label: "<gray>  Par difficulté : "
+cmd.player.info.difficulty_entry: "<white>diff.{0}<dark_gray> → {1}"
+cmd.player.info.jobs_header: "<dark_gray>  ─ Métiers ─"
+cmd.player.info.job_entry: "<white> niv.{0}"
+cmd.player.top.quests_title: "<gold><bold>  Classement — Quêtes complétées"
+cmd.player.top.reputation_title: "<gold><bold>  Classement — Réputation totale"
+cmd.player.top.job_title: "<gold><bold>  Classement — {0}"
+cmd.player.top.unit_quests: "quêtes"
+cmd.player.top.unit_rep: "rep"
+cmd.player.top.entry_level: "<dark_gray>  niv.{0}"
+
+# ─── Commandes — système (admin) ─────────────────────────────────────────────
+cmd.system.blocktracker.on: "<yellow>🧱 Block Tracker <green>activé <gray>— les blocs posés ne comptent plus pour les quêtes."
+cmd.system.blocktracker.off: "<yellow>🧱 Block Tracker <red>désactivé <gray>— mode test : les blocs posés comptent comme naturels."
+cmd.system.blocktracker.status_on: "<yellow>🧱 Block Tracker : <green>ON ✓ — blocs posés ignorés"
+cmd.system.blocktracker.status_off: "<yellow>🧱 Block Tracker : <red>OFF — mode test actif"
+cmd.system.perf.on: "<yellow>⏱ PerfTimers <green>activés <gray>— seuil 0,5 ms · tag PERF · désactivez avec /survi perf off"
+cmd.system.perf.off: "<yellow>⏱ PerfTimers <red>désactivés <gray>— overhead nul."
+cmd.system.perf.status_on: "<yellow>⏱ PerfTimers : <green>ON ✓"
+cmd.system.perf.status_off: "<yellow>⏱ PerfTimers : <red>OFF"
+cmd.system.time.not_init: "<red>TimeManager non initialisé !"
+cmd.system.time.header: "<gold>═══ Time Manager ═══"
+cmd.system.time.timezone: "<yellow>Timezone: <white>{0}"
+cmd.system.time.has_reset: "<yellow>A reset aujourd'hui: <white>{0}"
+cmd.system.time.last_reset: "<yellow>Dernier reset: jour <white>{0}"
+cmd.system.time.next_reset: "<yellow>Prochain reset: <white>{0}"
+cmd.system.time.force_reset: "<gold>Force le reset quotidien..."
+cmd.system.time.reset_done: "<green>✓ Reset effectué avec succès !"
+cmd.system.time.yes: "Oui"
+cmd.system.time.no: "Non"
+cmd.system.zone.started: "<green>✓ Partie démarrée ! Zone village active (palier 0)."
+cmd.system.zone.already_started: "<yellow>⚠ Le timer est déjà en cours. Utilisez /survi zone reset pour le relancer."
+cmd.system.zone.reset: "<green>✓ Timer réinitialisé — palier 0 restauré (rayon {0} blocs)."
+cmd.system.zone.status_header: "<gold>╔═══════════════════════════════╗"
+cmd.system.zone.status_title: "<gold>║    VILLAGE ZONE STATUS        ║"
+cmd.system.zone.status_sep: "<gold>╠═══════════════════════════════╣"
+cmd.system.zone.status_footer: "<gold>╚═══════════════════════════════╝"
+cmd.system.zone.status_started_yes: "<yellow>║ Démarrée : <green>Oui"
+cmd.system.zone.status_started_no: "<yellow>║ Démarrée : <red>Non"
+cmd.system.zone.status_elapsed: "<yellow>║ Temps écoulé : <white>{0}h"
+cmd.system.zone.status_stage: "<yellow>║ Palier actuel : <white>{0}"
+cmd.system.zone.status_radius: "<yellow>║ Rayon : <white>{0} blocs"
+cmd.system.zone.status_center: "<yellow>║ Centre : <white>({0}, {1})"
+cmd.system.zone.status_next: "<yellow>║ Prochain palier dans : <white>{0}h → rayon {1} blocs"
+cmd.system.zone.status_final: "<aqua>║ Palier final atteint."
+
+# ─── Commandes — reload (admin) ───────────────────────────────────────────────
+cmd.reload.all.start: "<gray>Rechargement global en cours..."
+cmd.reload.quests.start: "<gray>Rechargement de quests/*.yml..."
+cmd.reload.quests.done: "<green>✔ {0} quête(s). Quêtes orphelines traitées (voir console)."
+cmd.reload.global_quests.start: "<gray>Rechargement de global_quests.yml..."
+cmd.reload.global_quests.done: "<green>✔ {0} quête(s) globale(s). La quête active en cours n'est pas interrompue."
+cmd.reload.monsters.start: "<gray>Rechargement de monsters.yml..."
+cmd.reload.monsters.done: "<green>✔ monsters.yml rechargé. Les mobs déjà spawnés conservent leurs stats actuelles."
+cmd.reload.roles.start: "<gray>Rechargement de roles.yml..."
+cmd.reload.roles.done: "<green>✔ roles.yml rechargé. Attributs ré-appliqués immédiatement sur les joueurs connectés."
+cmd.reload.growth_items.start: "<gray>Rechargement de growth_items/*.yml..."
+cmd.reload.growth_items.done: "<green>✔ growth_items/*.yml rechargés. Les items des joueurs fonctionnent immédiatement avec la nouvelle config."
+cmd.reload.villagers.start: "<gray>Rechargement de villagers/*.yml + traders/*.yml..."
+cmd.reload.villagers.done: "<green>✔ Villageois et traders mis à jour en jeu. Inventaires tribute recalculés (items déjà donnés pris en compte)."
+cmd.reload.jobs.start: "<gray>Rechargement de jobs/*.yml..."
+cmd.reload.jobs.done: "<green>✔ jobs/*.yml rechargés. Drops, multiplicateurs et matériaux de remplacement actifs immédiatement."
+# ─── Rôle — notification joueur ───────────────────────────────────────────────
+player.role.applied: "<yellow>Le role <role> a ete appliqué !"
+
+# ─── Monde ────────────────────────────────────────────────────────────────────
+world.level_up: "<gold>[Monde] <yellow>Le niveau du monde est passé à <aqua>{0}<yellow>. Les monstres et récompenses s'adaptent !"
+world.reset_warning: "<gold>[Monde] <yellow>Le monde est en cours de réinitialisation. Retour au Village."
+
+# ─── Quête globale — broadcasts ───────────────────────────────────────────────
+globalquest.cancelled: "<red><bold>⚔ Quête Globale </bold><yellow>« {0} » annulée par un administrateur. Aucune récompense."
+globalquest.timeout: "<red><bold>⏰ Quête Globale </bold><yellow>« {0} »</yellow><red> non complétée dans les temps ! Aucune récompense."
+
+# ─── Commandes — quest (admin) ────────────────────────────────────────────────
+cmd.quest.exists: "<red>Une quête existe déjà pour {0}"
+cmd.quest.removed: "<green>Quête en cours réinitialisée pour {0}. Il peut en accepter une nouvelle."
+cmd.quest.no_active: "<red>Aucune quête en cours pour {0} (toutes déjà réclamées ou aucune quête)."
+cmd.quest.reset_empty: "<red>Aucune quête active pour {0}."
+cmd.quest.reset_done: "<green>Quêtes actives réinitialisées pour {0}."
+cmd.quest.reset_notify: "<yellow>Vos quêtes actives ont été réinitialisées par un administrateur."
+cmd.quest.test_done: "<yellow>[TEST] Quête « {0} » assignée à {1}."
+cmd.quest.claim_done: "<green>Récompenses réclamées pour {0}"
+cmd.quest.claim_fail: "<red>Impossible de réclamer les récompenses pour {0} (aucune quête terminée ou déjà réclamée)"
+cmd.quest.history_separator: "<gold>━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+cmd.quest.history_title: "<gold><bold>  ✦ Historique de {0}"
+cmd.quest.history_empty: "<gray>  Aucune quête complétée pour l'instant."
+cmd.quest.history_console_only: "<red>Utilisez /quest history <joueur> depuis la console."
+cmd.quest.history_diff_daily: "diff.{0}"
+cmd.quest.history_diff_global: "mondiale"
+cmd.quest.history_contrib: "<dark_gray> — contrib:{0}"
+
+# ─── Commandes — globalquest (admin) ──────────────────────────────────────────
+cmd.globalquest.already_active: "<red>Une quête globale est déjà en cours : <yellow>{0}"
+cmd.globalquest.started: "<green>Quête globale « {0} » lancée !"
+cmd.globalquest.none_active: "<red>Aucune quête globale en cours."
+cmd.globalquest.cancelled: "<yellow>Quête globale annulée."
+cmd.globalquest.no_config: "<red>Aucune quête globale configurée dans global_quests.yml."
+cmd.globalquest.list_header: "<gold>── Quêtes globales disponibles ──"
+cmd.globalquest.list_entry: "<yellow>  {0} <white>— {1} <gray>(objectif: <aqua>{2}<gray> | temps: <aqua>{3}<gray>)"
+cmd.globalquest.list_time: "<gray> (objectif: <aqua>{0}<gray> | temps: <aqua>{1}<gray>)"
+cmd.globalquest.status_header: "<gold>── Quête Globale en cours ──"
+cmd.globalquest.status_name: "<gray>  Nom : <yellow>{0}"
+cmd.globalquest.status_progress: "<gray>  Progression : <aqua>{0}/{1}"
+cmd.globalquest.status_time: "<gray>  Temps restant : <aqua>{0}"
+cmd.globalquest.status_participants: "<gray>  Participants : <aqua>{0}"
+
+# ─── Commandes — blessing (admin) ─────────────────────────────────────────────
+cmd.blessing.invalid_type: "<red>Type invalide : {0}"
+cmd.blessing.feedback: "<yellow>[Blessing] <yellow>{0} → appliqué à {1}"
+
+# ─── Commandes — growthitem (admin + notification joueur) ─────────────────────
+cmd.growth.level_too_high: "<red>Niveau trop élevé. Max pour {0} : {1}."
+cmd.growth.no_item: "<red>Aucune entrée ECustomItem pour l'ID : {0}."
+cmd.growth.given_admin: "<green>✓ <gold>{0}<green> palier {1}/{2} donné à <yellow>{3}"
+cmd.growth.given_player: "<green>Vous avez reçu <gold>{0}<green> (palier {1}/{2})."
+cmd.growth.no_held: "<red>{0} ne tient pas de growth item."
+cmd.growth.not_in_inventory: "<red>{0} n'a pas <gold>{1}<red> dans son inventaire."
+cmd.growth.already_maxed: "<gold>{0}<red> est déjà au palier maximum ({1}/{2})."
+cmd.growth.lvlup_admin: "<green>✓ <gold>{0}<green> de {1} : palier <white>{2}/{3}"
+cmd.growth.lvlup_player: "<green>Votre <gold>{0}<green> est passé au palier {1} !"
+cmd.growth.info_header: "<gold>══ Growth items de <yellow>{0}<gold> ══"
+cmd.growth.info_none: "<gray>  Aucun."
+cmd.growth.info_entry: "<gray>  » <gold>{0}<yellow> — palier {1}/{2}<gray> — {3} uses"
+cmd.growth.track_header: "<aqua>══ Joueurs avec <gold>{0}<aqua> (en ligne uniquement) ══"
+cmd.growth.track_entry: "<gray>  » <yellow>{0}<white> — palier {1}/{2}<gray> — {3} uses"
+cmd.growth.track_none: "<gray>  Aucun joueur en ligne ne possède cet item."
+cmd.growth.track_found: "<gray>  {0} joueur(s) trouvé(s)."
+
+# ─── VillagerCommand (admin debug) ────────────────────────────────────────────
+cmd.villager.reset_done: "<green><villager> reset au niveau 0 !"
+cmd.villager.unlocked: "<green>Villager unlocked !"
+cmd.villager.teleported: "<green>Villager teleported !"
+cmd.villager.already_max: "<red>Villager already at max level !"
+
+# ─── Quête globale — broadcast start (message unique multi-ligne) ──────────────
+globalquest.start: |-
+
+  <gold>━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  <gold><bold>  ⚔  QUÊTE GLOBALE LANCÉE  ⚔
+  <yellow>  <name>
+  <white>  <description>
+  <gray>  Objectif : <aqua><goal><gray> | Temps : <aqua><time>
+  <gray>  Récompenses :<rewards>
+  <gold>━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+# ─── Quête globale — broadcast fin (message unique multi-ligne) ───────────────
+globalquest.complete: |-
+
+  <green>━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  <green><bold>  ✔  QUÊTE GLOBALE COMPLÉTÉE  ✔
+  <yellow>  <name>
+  <white>  <participants> participant(s) récompensé(s) !
+  <dark_gray>  ─ Top contributeurs ─<top>
+  <green>━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+# ─── Quête globale — entrée récompense & message personnel ────────────────────
+globalquest.reward_entry: "<green>    +<amount> <gray>rép. <job>"
+globalquest.rewards.message: "<gold><bold>[Quête Globale] <green>Récompenses reçues :<rewards>"
+
+# ─── Reload all — résultat complet (message unique multi-ligne) ───────────────
+cmd.reload.all.done: |-
+  <green>✔ Rechargement terminé :
+  <gray>  quests/*.yml → <white>{0} quête(s)
+  <gray>  global_quests.yml → <white>{1} quête(s) globale(s)
+  <gray>  monsters.yml ✔ — roles.yml ✔ (joueurs connectés mis à jour) — growth_items/*.yml ✔
+  <gray>  villagers/*.yml + traders/*.yml ✔ (entités en jeu mises à jour, inventaires recalculés)
+  <gray>  jobs/*.yml ✔ (drops, multiplicateurs, matériaux de remplacement actifs immédiatement)
+  <yellow>  ⚠ recipes.yml et config.yml nécessitent un redémarrage.

@@ -6,205 +6,158 @@ import fr.miuby.lib.command.MLLogCommand;
 import fr.miuby.survi.GameManager;
 import fr.miuby.survi.listener.PlacedBlockTracker;
 import fr.miuby.survi.system.SurviConfig;
+import fr.miuby.survi.system.lang.ELang;
+import fr.miuby.survi.system.lang.LangService;
 import fr.miuby.survi.system.perf.PerfTimer;
 import fr.miuby.survi.system.time.TimeManager;
 import fr.miuby.survi.world.VillageZoneManager;
 import fr.miuby.survi.world.config.VillageZoneConfig;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
 import io.papermc.paper.command.brigadier.Commands;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.NamedTextColor;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
 import java.time.format.DateTimeFormatter;
 
 public class SystemCommand {
-    private SystemCommand() {
-        /* This utility class should not be instantiated */
-    }
+    private SystemCommand() {}
 
     public static LiteralArgumentBuilder<CommandSourceStack> createCommand() {
         return Commands.literal("survi")
                 .requires(sender -> sender.getSender().isOp())
 
-                // === LOG COMMANDS — gérés par MLLogCommand dans MiubyLib ===
                 .then(MLLogCommand.create())
-
-                // === RELOAD COMMANDS ===
                 .then(ReloadCommand.create())
 
-                // === BLOCK TRACKER COMMANDS ===
-                // /survi blocktracker on     → active le tracking (comportement normal)
-                // /survi blocktracker off    → désactive (mode test — blocs posés comptent comme naturels)
-                // /survi blocktracker status → état actuel
+                // === BLOCK TRACKER ===
                 .then(Commands.literal("blocktracker")
-                        .then(Commands.literal("on")
-                                .executes(ctx -> {
-                                    PlacedBlockTracker.setEnabled(true);
-                                    ctx.getSource().getSender().sendMessage(
-                                            Component.text("🧱 Block Tracker ", NamedTextColor.YELLOW)
-                                                    .append(Component.text("activé", NamedTextColor.GREEN))
-                                                    .append(Component.text(" — les blocs posés ne comptent plus pour les quêtes.", NamedTextColor.GRAY)));
-                                    return Command.SINGLE_SUCCESS;
-                                })
-                        )
-                        .then(Commands.literal("off")
-                                .executes(ctx -> {
-                                    PlacedBlockTracker.setEnabled(false);
-                                    ctx.getSource().getSender().sendMessage(
-                                            Component.text("🧱 Block Tracker ", NamedTextColor.YELLOW)
-                                                    .append(Component.text("désactivé", NamedTextColor.RED))
-                                                    .append(Component.text(" — mode test : les blocs posés comptent comme naturels.", NamedTextColor.GRAY)));
-                                    return Command.SINGLE_SUCCESS;
-                                })
-                        )
-                        .then(Commands.literal("status")
-                                .executes(ctx -> {
-                                    boolean on = PlacedBlockTracker.isEnabled();
-                                    ctx.getSource().getSender().sendMessage(
-                                            Component.text("🧱 Block Tracker : ", NamedTextColor.YELLOW)
-                                                    .append(Component.text(
-                                                            on ? "ON ✓ — blocs posés ignorés" : "OFF — mode test actif",
-                                                            on ? NamedTextColor.GREEN : NamedTextColor.RED)));
-                                    return Command.SINGLE_SUCCESS;
-                                })
-                        )
+                        .then(Commands.literal("on").executes(ctx -> {
+                            PlacedBlockTracker.setEnabled(true);
+                            ctx.getSource().getSender().sendMessage(ls(ctx).text(lang(ctx), "cmd.system.blocktracker.on"));
+                            return Command.SINGLE_SUCCESS;
+                        }))
+                        .then(Commands.literal("off").executes(ctx -> {
+                            PlacedBlockTracker.setEnabled(false);
+                            ctx.getSource().getSender().sendMessage(ls(ctx).text(lang(ctx), "cmd.system.blocktracker.off"));
+                            return Command.SINGLE_SUCCESS;
+                        }))
+                        .then(Commands.literal("status").executes(ctx -> {
+                            boolean on = PlacedBlockTracker.isEnabled();
+                            ctx.getSource().getSender().sendMessage(ls(ctx).text(lang(ctx), on ? "cmd.system.blocktracker.status_on" : "cmd.system.blocktracker.status_off"));
+                            return Command.SINGLE_SUCCESS;
+                        }))
                 )
 
-                // === PERF COMMANDS ===
-                // /survi perf off  → désactive (overhead nul immédiatement)
-                // /survi perf status → état actuel
+                // === PERF ===
                 .then(Commands.literal("perf")
-                        .then(Commands.literal("on")
-                                .executes(ctx -> {
-                                    PerfTimer.setEnabled(true);
-                                    ctx.getSource().getSender().sendMessage(
-                                            Component.text("⏱ PerfTimers ", NamedTextColor.YELLOW)
-                                                    .append(Component.text("activés", NamedTextColor.GREEN))
-                                                    .append(Component.text(
-                                                            " — seuil 0,5 ms · tag PERF · désactivez avec /survi perf off",
-                                                            NamedTextColor.GRAY)));
-                                    return Command.SINGLE_SUCCESS;
-                                })
-                        )
-                        .then(Commands.literal("off")
-                                .executes(ctx -> {
-                                    PerfTimer.setEnabled(false);
-                                    ctx.getSource().getSender().sendMessage(
-                                            Component.text("⏱ PerfTimers ", NamedTextColor.YELLOW)
-                                                    .append(Component.text("désactivés", NamedTextColor.RED))
-                                                    .append(Component.text(
-                                                            " — overhead nul.",
-                                                            NamedTextColor.GRAY)));
-                                    return Command.SINGLE_SUCCESS;
-                                })
-                        )
-                        .then(Commands.literal("status")
-                                .executes(ctx -> {
-                                    boolean on = PerfTimer.isEnabled();
-                                    ctx.getSource().getSender().sendMessage(
-                                            Component.text("⏱ PerfTimers : ", NamedTextColor.YELLOW)
-                                                    .append(Component.text(
-                                                            on ? "ON ✓" : "OFF",
-                                                            on ? NamedTextColor.GREEN : NamedTextColor.RED)));
-                                    return Command.SINGLE_SUCCESS;
-                                })
-                        )
+                        .then(Commands.literal("on").executes(ctx -> {
+                            PerfTimer.setEnabled(true);
+                            ctx.getSource().getSender().sendMessage(ls(ctx).text(lang(ctx), "cmd.system.perf.on"));
+                            return Command.SINGLE_SUCCESS;
+                        }))
+                        .then(Commands.literal("off").executes(ctx -> {
+                            PerfTimer.setEnabled(false);
+                            ctx.getSource().getSender().sendMessage(ls(ctx).text(lang(ctx), "cmd.system.perf.off"));
+                            return Command.SINGLE_SUCCESS;
+                        }))
+                        .then(Commands.literal("status").executes(ctx -> {
+                            boolean on = PerfTimer.isEnabled();
+                            ctx.getSource().getSender().sendMessage(ls(ctx).text(lang(ctx), on ? "cmd.system.perf.status_on" : "cmd.system.perf.status_off"));
+                            return Command.SINGLE_SUCCESS;
+                        }))
                 )
 
-                // === TIME COMMANDS ===
+                // === TIME ===
                 .then(Commands.literal("time")
-                        .then(Commands.literal("info")
-                                .executes(ctx -> {
-                                    TimeManager tm = GameManager.getInstance().getTimeManager();
-                                    if (tm == null) {
-                                        ctx.getSource().getSender().sendMessage(Component.text("TimeManager non initialisé !", NamedTextColor.RED));
-                                        return Command.SINGLE_SUCCESS;
-                                    }
-
-                                    var sender = ctx.getSource().getSender();
-                                    sender.sendMessage(Component.text("═══ Time Manager ═══", NamedTextColor.GOLD));
-                                    sender.sendMessage(Component.text("Timezone: ", NamedTextColor.YELLOW).append(Component.text(tm.getServerTimezone().getId(), NamedTextColor.WHITE)));
-                                    sender.sendMessage(Component.text("A reset aujourd'hui: ", NamedTextColor.YELLOW).append(Component.text(tm.hasResetToday() ? "Oui" : "Non", NamedTextColor.WHITE)));
-                                    sender.sendMessage(Component.text("Dernier reset: jour ", NamedTextColor.YELLOW).append(Component.text(tm.getLastResetDay(), NamedTextColor.WHITE)));
-                                    sender.sendMessage(Component.text("Prochain reset: ", NamedTextColor.YELLOW)
-                                            .append(Component.text(tm.getNextResetTime().format(DateTimeFormatter.ofPattern("dd/MM HH:mm")), NamedTextColor.WHITE)));
-                                    return Command.SINGLE_SUCCESS;
-                                })
-                        )
+                        .then(Commands.literal("info").executes(ctx -> {
+                            TimeManager tm = GameManager.getInstance().getTimeManager();
+                            CommandSender sender = ctx.getSource().getSender();
+                            LangService ls = ls(ctx);
+                            ELang lang = lang(ctx);
+                            if (tm == null) { sender.sendMessage(ls.text(lang, "cmd.system.time.not_init")); return Command.SINGLE_SUCCESS; }
+                            sender.sendMessage(ls.text(lang, "cmd.system.time.header"));
+                            sender.sendMessage(ls.text(lang, "cmd.system.time.timezone",   tm.getServerTimezone().getId()));
+                            sender.sendMessage(ls.text(lang, "cmd.system.time.has_reset",  ls.getString(lang, tm.hasResetToday() ? "cmd.system.time.yes" : "cmd.system.time.no")));
+                            sender.sendMessage(ls.text(lang, "cmd.system.time.last_reset", tm.getLastResetDay()));
+                            sender.sendMessage(ls.text(lang, "cmd.system.time.next_reset", tm.getNextResetTime().format(DateTimeFormatter.ofPattern("dd/MM HH:mm"))));
+                            return Command.SINGLE_SUCCESS;
+                        }))
                         .then(Commands.literal("reset")
                                 .requires(sender -> sender.getSender().hasPermission("survi.time.admin"))
                                 .executes(ctx -> {
                                     TimeManager tm = GameManager.getInstance().getTimeManager();
-                                    if (tm == null) {
-                                        ctx.getSource().getSender().sendMessage(Component.text("TimeManager non initialisé !", NamedTextColor.RED));
-                                        return Command.SINGLE_SUCCESS;
-                                    }
-                                    ctx.getSource().getSender().sendMessage(Component.text("Force le reset quotidien...", NamedTextColor.GOLD));
+                                    CommandSender sender = ctx.getSource().getSender();
+                                    LangService ls = ls(ctx);
+                                    ELang lang = lang(ctx);
+                                    if (tm == null) { sender.sendMessage(ls.text(lang, "cmd.system.time.not_init")); return Command.SINGLE_SUCCESS; }
+                                    sender.sendMessage(ls.text(lang, "cmd.system.time.force_reset"));
                                     tm.forceReset();
-                                    ctx.getSource().getSender().sendMessage(Component.text("✓ Reset effectué avec succès !", NamedTextColor.GREEN));
+                                    sender.sendMessage(ls.text(lang, "cmd.system.time.reset_done"));
                                     return Command.SINGLE_SUCCESS;
                                 })
                         )
                 )
 
-                // === ZONE COMMANDS ===
+                // === ZONE ===
                 .then(Commands.literal("zone")
-                        .then(Commands.literal("start")
-                                .executes(ctx -> {
-                                    var sender = ctx.getSource().getSender();
-                                    boolean ok = GameManager.getInstance().getVillageZoneManager().start();
-                                    if (ok) {
-                                        sender.sendMessage(Component.text("✓ Partie démarrée ! Zone village active (palier 0).", NamedTextColor.GREEN));
-                                    } else {
-                                        sender.sendMessage(Component.text("⚠ Le timer est déjà en cours. Utilisez /survi zone reset pour le relancer.", NamedTextColor.YELLOW));
-                                    }
-                                    return Command.SINGLE_SUCCESS;
-                                })
-                        )
-                        .then(Commands.literal("reset")
-                                .executes(ctx -> {
-                                    GameManager.getInstance().getVillageZoneManager().reset();
-                                    ctx.getSource().getSender().sendMessage(Component.text(
-                                            "✓ Timer réinitialisé — palier 0 restauré (rayon "
-                                                    + GameManager.getInstance().getVillageZoneManager().getCurrentRadius() + " blocs).",
-                                            NamedTextColor.GREEN));
-                                    return Command.SINGLE_SUCCESS;
-                                })
-                        )
-                        .then(Commands.literal("status")
-                                .executes(ctx -> {
-                                    var sender = ctx.getSource().getSender();
-                                    VillageZoneManager vzm = GameManager.getInstance().getVillageZoneManager();
-                                    VillageZoneConfig cfg = SurviConfig.getInstance().getVillageZoneConfig();
+                        .then(Commands.literal("start").executes(ctx -> {
+                            CommandSender sender = ctx.getSource().getSender();
+                            LangService ls = ls(ctx);
+                            ELang lang = lang(ctx);
+                            boolean ok = GameManager.getInstance().getVillageZoneManager().start();
+                            sender.sendMessage(ls.text(lang, ok ? "cmd.system.zone.started" : "cmd.system.zone.already_started"));
+                            return Command.SINGLE_SUCCESS;
+                        }))
+                        .then(Commands.literal("reset").executes(ctx -> {
+                            GameManager.getInstance().getVillageZoneManager().reset();
+                            int radius = GameManager.getInstance().getVillageZoneManager().getCurrentRadius();
+                            ctx.getSource().getSender().sendMessage(ls(ctx).text(lang(ctx), "cmd.system.zone.reset", radius));
+                            return Command.SINGLE_SUCCESS;
+                        }))
+                        .then(Commands.literal("status").executes(ctx -> {
+                            CommandSender sender = ctx.getSource().getSender();
+                            LangService ls = ls(ctx);
+                            ELang lang = lang(ctx);
+                            VillageZoneManager vzm = GameManager.getInstance().getVillageZoneManager();
+                            VillageZoneConfig  cfg = SurviConfig.getInstance().getVillageZoneConfig();
 
-                                    sender.sendMessage(Component.text("╔═══════════════════════════════╗", NamedTextColor.GOLD));
-                                    sender.sendMessage(Component.text("║    VILLAGE ZONE STATUS        ║", NamedTextColor.GOLD));
-                                    sender.sendMessage(Component.text("╠═══════════════════════════════╣", NamedTextColor.GOLD));
-                                    sender.sendMessage(Component.text("║ Démarrée : ", NamedTextColor.YELLOW)
-                                            .append(Component.text(vzm.isStarted() ? "Oui" : "Non", vzm.isStarted() ? NamedTextColor.GREEN : NamedTextColor.RED)));
+                            sender.sendMessage(ls.text(lang, "cmd.system.zone.status_header"));
+                            sender.sendMessage(ls.text(lang, "cmd.system.zone.status_title"));
+                            sender.sendMessage(ls.text(lang, "cmd.system.zone.status_sep"));
+                            sender.sendMessage(ls.text(lang, vzm.isStarted() ? "cmd.system.zone.status_started_yes" : "cmd.system.zone.status_started_no"));
 
-                                    if (vzm.isStarted()) {
-                                        float elapsed = vzm.getElapsedMinutes() / 60f;
-                                        sender.sendMessage(Component.text("║ Temps écoulé : ", NamedTextColor.YELLOW).append(Component.text(String.format("%.2f", elapsed) + "h", NamedTextColor.WHITE)));
-                                        sender.sendMessage(Component.text("║ Palier actuel : ", NamedTextColor.YELLOW).append(Component.text(vzm.getCurrentStageIndex(), NamedTextColor.WHITE)));
-                                        sender.sendMessage(Component.text("║ Rayon : ", NamedTextColor.YELLOW).append(Component.text(vzm.getCurrentRadius() + " blocs", NamedTextColor.WHITE)));
-                                        sender.sendMessage(Component.text("║ Centre : ", NamedTextColor.YELLOW).append(Component.text("(" + cfg.centerX() + ", " + cfg.centerZ() + ")", NamedTextColor.WHITE)));
+                            if (vzm.isStarted()) {
+                                float elapsed = vzm.getElapsedMinutes() / 60f;
+                                sender.sendMessage(ls.text(lang, "cmd.system.zone.status_elapsed", String.format("%.2f", elapsed)));
+                                sender.sendMessage(ls.text(lang, "cmd.system.zone.status_stage",   vzm.getCurrentStageIndex()));
+                                sender.sendMessage(ls.text(lang, "cmd.system.zone.status_radius",  vzm.getCurrentRadius()));
+                                sender.sendMessage(ls.text(lang, "cmd.system.zone.status_center",  cfg.centerX(), cfg.centerZ()));
 
-                                        var stages = cfg.stages();
-                                        int next = vzm.getCurrentStageIndex() + 1;
-                                        if (next < stages.size()) {
-                                            float hoursLeft = stages.get(next).afterHours() - elapsed;
-                                            sender.sendMessage(Component.text("║ Prochain palier dans : ", NamedTextColor.YELLOW)
-                                                    .append(Component.text(String.format("%.2f", hoursLeft) + "h → rayon " + stages.get(next).radius() + " blocs", NamedTextColor.WHITE)));
-                                        } else {
-                                            sender.sendMessage(Component.text("║ Palier final atteint.", NamedTextColor.AQUA));
-                                        }
-                                    }
+                                var stages = cfg.stages();
+                                int next = vzm.getCurrentStageIndex() + 1;
+                                if (next < stages.size()) {
+                                    float hoursLeft = stages.get(next).afterHours() - elapsed;
+                                    sender.sendMessage(ls.text(lang, "cmd.system.zone.status_next", String.format("%.2f", hoursLeft), stages.get(next).radius()));
+                                } else {
+                                    sender.sendMessage(ls.text(lang, "cmd.system.zone.status_final"));
+                                }
+                            }
 
-                                    sender.sendMessage(Component.text("╚═══════════════════════════════╝", NamedTextColor.GOLD));
-                                    return Command.SINGLE_SUCCESS;
-                                })
-                        )
+                            sender.sendMessage(ls.text(lang, "cmd.system.zone.status_footer"));
+                            return Command.SINGLE_SUCCESS;
+                        }))
                 );
+    }
+
+    // ── Helpers ──────────────────────────────────────────────────────────────
+
+    private static LangService ls(com.mojang.brigadier.context.CommandContext<CommandSourceStack> ctx) {
+        return GameManager.getInstance().getLangService();
+    }
+
+    private static ELang lang(com.mojang.brigadier.context.CommandContext<CommandSourceStack> ctx) {
+        LangService ls = GameManager.getInstance().getLangService();
+        CommandSender sender = ctx.getSource().getSender();
+        return sender instanceof Player p ? ls.resolveLanguage(p) : ls.getServerDefault();
     }
 }

@@ -17,7 +17,7 @@ import io.papermc.paper.command.brigadier.argument.ArgumentTypes;
 import io.papermc.paper.command.brigadier.argument.resolvers.FinePositionResolver;
 import io.papermc.paper.command.brigadier.argument.resolvers.selector.PlayerSelectorArgumentResolver;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.Location;
 
 public class VillagerCommand {
@@ -77,10 +77,10 @@ public class VillagerCommand {
 
         villagerLevel.resetLevel();
 
-        ctx.getSource().getSender().sendMessage(
-                Component.text("Villager ")
-                        .append(villagerLevel.getDisplayName())
-                        .append(Component.text(" reset au niveau 0 !").color(NamedTextColor.GREEN)));
+        var ls = GameManager.getInstance().getLangService();
+        var sender = ctx.getSource().getSender();
+        sender.sendMessage(ls.text(ls.resolveOrDefault(sender), "cmd.villager.reset_done",
+                Placeholder.component("villager", villagerLevel.getDisplayName())));
         return Command.SINGLE_SUCCESS;
     }
 
@@ -88,8 +88,11 @@ public class VillagerCommand {
         AVillager villager = VillagerArgument.getVillager(ctx, villagerArgument);
 
         if (villager instanceof VillagerLevel villagerLevel) {
-            if (villagerLevel.unlock())
-                ctx.getSource().getSender().sendMessage(Component.text("Villager unlocked !").color(NamedTextColor.GREEN));
+            if (villagerLevel.unlock()) {
+                var ls = GameManager.getInstance().getLangService();
+                var sender = ctx.getSource().getSender();
+                sender.sendMessage(ls.text(ls.resolveOrDefault(sender), "cmd.villager.unlocked"));
+            }
         } else {
             throw CommandErrors.NOT_A_LEVEL_VILLAGER.create();
         }
@@ -120,7 +123,9 @@ public class VillagerCommand {
 
         GameManager.getInstance().getDatabase().villagers().updateLocation(villager.getVillager().getUniqueId(), location);
         villager.getVillager().teleport(location);
-        ctx.getSource().getSender().sendMessage(Component.text("Villager teleported !").color(NamedTextColor.GREEN));
+        var ls = GameManager.getInstance().getLangService();
+        var sender = ctx.getSource().getSender();
+        sender.sendMessage(ls.text(ls.resolveOrDefault(sender), "cmd.villager.teleported"));
         return Command.SINGLE_SUCCESS;
     }
 
@@ -128,8 +133,11 @@ public class VillagerCommand {
         AVillager villager = VillagerArgument.getVillager(ctx, villagerArgument);
 
         if (villager instanceof VillagerLevel villagerLevel) {
-            if (!villagerLevel.levelUp())
-                ctx.getSource().getSender().sendMessage(Component.text("Villager already at max level !").color(NamedTextColor.RED));
+            if (!villagerLevel.levelUp()) {
+                var ls = GameManager.getInstance().getLangService();
+                var sender = ctx.getSource().getSender();
+                sender.sendMessage(ls.text(ls.resolveOrDefault(sender), "cmd.villager.already_max"));
+            }
         } else {
             throw CommandErrors.NOT_A_LEVEL_VILLAGER.create();
         }

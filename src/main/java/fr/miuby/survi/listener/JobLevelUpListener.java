@@ -6,10 +6,9 @@ import fr.miuby.survi.player.AlphaPlayer;
 import fr.miuby.survi.player.event.AlphaPlayerJobLevelUpEvent;
 import fr.miuby.survi.sound.ESound;
 import fr.miuby.survi.sound.SoundService;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.NamedTextColor;
+import fr.miuby.survi.system.lang.LangService;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.kyori.adventure.title.Title;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -48,27 +47,26 @@ public class JobLevelUpListener implements Listener {
         EJob job = event.getJob();
         int newLevel = event.getNewLevel();
 
+        LangService ls = GameManager.getInstance().getLangService();
+
         // ── Effets visuels — title affiché uniquement au joueur concerné ─────────
         if (player != null && player.isOnline()) {
             player.showTitle(Title.title(
-                    Component.text("⚒ Niveau supérieur !", NamedTextColor.GOLD),
-                    Component.text(job.getDisplayName(), job.getColor())
-                            .append(Component.text(" · niv." + newLevel, NamedTextColor.YELLOW)),
+                    ls.text(player, "job.level_up.title"),
+                    ls.text(player, "job.level_up.subtitle",
+                            Placeholder.component("job", job.toComponent()),
+                            Placeholder.unparsed("level", String.valueOf(newLevel))),
                     TITLE_TIMES
             ));
         }
 
-        // ── Annonce + son — tous les joueurs en ligne ─────────────────────────────
-        Component broadcast = Component.text("⚒ ", NamedTextColor.GOLD)
-                .append(Component.text(alphaPlayer.getPseudo(), NamedTextColor.WHITE))
-                .append(Component.text(" a atteint le niveau ", NamedTextColor.GOLD))
-                .append(Component.text("niv." + newLevel, NamedTextColor.YELLOW))
-                .append(Component.text(" en ", NamedTextColor.GOLD))
-                .append(job.toComponent())
-                .append(Component.text(" !", NamedTextColor.GOLD));
-
+        // ── Annonce + son — tous les joueurs en ligne (chacun dans sa langue) ────
         SoundService.broadcast(ESound.JOB_LEVEL_UP);
-        Bukkit.broadcast(broadcast);
+        ls.broadcast("job.level_up.broadcast",
+                Placeholder.unparsed("player", alphaPlayer.getPseudo()),
+                Placeholder.unparsed("level", String.valueOf(newLevel)),
+                Placeholder.component("job", job.toComponent())
+        );
 
         // ── Mise à jour des attributs persistants par métier ─────────────────────
         if (player == null || !player.isOnline()) return;

@@ -248,36 +248,39 @@ public class TabDisplayManager {
     // ─── HEADER : serveur + identité ─────────────────────────────────────────────
 
     private Component buildHeader(AlphaPlayer ap) {
-        EGlobalRank rank = ap.getGlobalRank();
-        int worldLevel   = GameManager.getInstance().getWorldLevelManager().getLevel();
+        var ls   = GameManager.getInstance().getLangService();
+        var lang = ap.getPlayer() != null ? ls.resolveLanguage(ap.getPlayer()) : ls.getServerDefault();
+
+        EGlobalRank rank       = ap.getGlobalRank();
+        int         worldLevel = GameManager.getInstance().getWorldLevelManager().getLevel();
 
         // Ligne 1 : titre seul
         Component header = Component.empty()
                 .appendNewline()
-                .append(Component.text("◆  Survie  ◆", NamedTextColor.GOLD))
+                .append(ls.text(lang, "tab.header.title"))
                 .appendNewline();
 
         // Ligne 2 : monde · difficulté · reset wilderness
+        NamedTextColor levelColor = worldLevel >= 5 ? NamedTextColor.RED : NamedTextColor.GOLD;
         header = header
                 .append(Component.text(ap.getWorld().getName(), ap.getWorld().getColor()))
                 .append(SEP)
-                .append(Component.text("Difficulté ", NamedTextColor.GRAY))
-                .append(Component.text("Niv. " + worldLevel,
-                        worldLevel >= 5 ? NamedTextColor.RED : NamedTextColor.GOLD));
+                .append(ls.text(lang, "tab.header.difficulty_label"))
+                .append(ls.text(lang, "tab.header.level", worldLevel).colorIfAbsent(levelColor));
 
-        Component resetComponent = buildWildernessResetLine();
+        Component resetComponent = buildWildernessResetLine(lang);
         if (!resetComponent.equals(Component.empty())) {
             header = header.append(SEP).append(resetComponent);
         }
         header = header.appendNewline();
 
-        // Ligne 3 : rang · morts · succès · rôle(s)  (sans réputation — visible dans les métiers)
+        // Ligne 3 : rang · morts · succès · rôle(s)
         header = header
                 .append(rank.displayComponent())
                 .append(SEP)
-                .append(Component.text("☠ " + ap.getMort(), NamedTextColor.DARK_RED))
+                .append(ls.text(lang, "tab.header.deaths", ap.getMort()))
                 .append(SEP)
-                .append(Component.text("★ " + ap.getSuccess(), NamedTextColor.YELLOW));
+                .append(ls.text(lang, "tab.header.successes", ap.getSuccess()));
 
         Role mainRole = ap.getRole();
         if (mainRole != null) {
@@ -296,6 +299,7 @@ public class TabDisplayManager {
     private Component buildFooter(AlphaPlayer alphaPlayer) {
         Component footer = Component.empty();
 
+        //TODO
         // Compteur journalier (toujours visible)
         int done     = alphaPlayer.getTotalDailyQuestsClaimed();
         int capacity = GameManager.getInstance().getQuestManager().getTotalCapacity();
@@ -317,8 +321,8 @@ public class TabDisplayManager {
                 footer = footer
                         .appendNewline()
                         .appendNewline()
-                        .append(questLine)
-                        .appendNewline().append(Component.text(quest.getDescription(), NamedTextColor.GRAY));
+                        .append(ls.text(lang, "tab.footer.quest_label"))
+                        .append(Component.text(description, NamedTextColor.GRAY));
             }
         }
 
@@ -326,13 +330,14 @@ public class TabDisplayManager {
         GlobalQuestManager gqm = GameManager.getInstance().getGlobalQuestManager();
         GlobalQuest activeGlobalQuest = gqm.getActiveQuest();
         if (activeGlobalQuest != null) {
+            int remaining = Math.max(0, activeGlobalQuest.getGoal() - gqm.getProgress());
+            String description = activeGlobalQuest.getDescription().replace("{value}", String.valueOf(remaining));
             footer = footer
                     .appendNewline()
                     .appendNewline()
-                    .append(Component.text("Quête globale : ", NamedTextColor.GOLD))
-                    .append(Component.text(activeGlobalQuest.getName() + "  ", NamedTextColor.WHITE))
-                    .append(Component.text(gqm.getProgress() + "/" + activeGlobalQuest.getGoal(), NamedTextColor.DARK_GRAY))
-                    .append(Component.text("  ⏰ " + GlobalQuestManager.formatSeconds(gqm.getRemainingSeconds()), NamedTextColor.GRAY))
+                    .append(ls.text(lang, "tab.footer.global_quest_label"))
+                    .append(Component.text(description, NamedTextColor.GRAY))
+                    .append(ls.text(lang, "tab.footer.global_quest_timer", GlobalQuestManager.formatSeconds(gqm.getRemainingSeconds())))
                     .appendNewline()
                     .append(Component.text(activeGlobalQuest.getDescription(), NamedTextColor.GRAY));
         }
@@ -342,22 +347,21 @@ public class TabDisplayManager {
 
     // ─── Reset Wilderness ─────────────────────────────────────────────────────
 
-    private Component buildWildernessResetLine() {
+    private Component buildWildernessResetLine(fr.miuby.survi.system.lang.ELang lang) {
         WorldResetManager wrm = GameManager.getInstance().getWorldResetManager();
         TimeManager tm = GameManager.getInstance().getTimeManager();
 
         ZonedDateTime nextReset = wrm.getNextWildernessResetTime(tm.getServerTimezone());
-        if (nextReset == null) return Component.empty(); // resets désactivés
+        if (nextReset == null) return Component.empty();
 
+        var ls = GameManager.getInstance().getLangService();
         ZonedDateTime now = ZonedDateTime.now(tm.getServerTimezone());
         if (!now.isBefore(nextReset)) {
-            return Component.text("Reset ", NamedTextColor.GRAY)
-                    .append(Component.text("imminent !", NamedTextColor.YELLOW));
+            return ls.text(lang, "tab.footer.reset_imminent");
         }
 
         Duration remaining = Duration.between(now, nextReset);
-        return Component.text("Reset dans ", NamedTextColor.GRAY)
-                .append(Component.text(TimeManager.formatTime(remaining), NamedTextColor.YELLOW));
+        return ls.text(lang, "tab.footer.reset_in", TimeManager.formatTime(remaining));
     }
 
     // ─── Nettoyage déconnexion ────────────────────────────────────────────────────

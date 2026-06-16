@@ -4,8 +4,6 @@ import fr.miuby.survi.GameManager;
 import fr.miuby.lib.log.MLLogManager;
 import fr.miuby.survi.system.database.repository.GraveRepository;
 import fr.miuby.survi.system.log.ELogTag;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -102,8 +100,8 @@ public class GraveManager {
         // Vide uniquement les 36 slots de l'inventaire, pas l'armure
         player.getInventory().setStorageContents(new ItemStack[36]);
 
-        player.sendMessage(Component.text("☠ Votre tombe a été créée en " + loc.getBlockX() + ", " + loc.getBlockY() + ", " + loc.getBlockZ()
-                + " [" + loc.getWorld().getName() + "]").color(NamedTextColor.GREEN));
+        player.sendMessage(GameManager.getInstance().getLangService().text(player, "grave.created",
+                loc.getBlockX(), loc.getBlockY(), loc.getBlockZ(), loc.getWorld().getName()));
         return true;
     }
 
@@ -141,7 +139,7 @@ public class GraveManager {
         if (grave == null) return false;
 
         if (!grave.ownerId().equals(player.getUniqueId()) && !player.hasPermission("survi.grave.bypass")) {
-            player.sendMessage(Component.text("Ce n'est pas votre tombe !").color(NamedTextColor.RED));
+            player.sendMessage(GameManager.getInstance().getLangService().text(player, "grave.not_yours"));
             return true;
         }
 
@@ -155,7 +153,7 @@ public class GraveManager {
 
         removeGrave(grave);
         MLLogManager.getInstance().log(Level.FINE, ELogTag.GRAVE, "[CollectGrave] " + player.getName() + " a récupéré la tombe " + grave.id());
-        player.sendMessage(Component.text("Vous avez récupéré votre tombe.").color(NamedTextColor.GREEN));
+        player.sendMessage(GameManager.getInstance().getLangService().text(player, "grave.recovered"));
         return true;
     }
 

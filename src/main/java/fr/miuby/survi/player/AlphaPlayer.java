@@ -16,18 +16,17 @@ import fr.miuby.lib.world.MLWorld;
 import fr.miuby.survi.world.WorldInitializer;
 import lombok.Getter;
 import lombok.Setter;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.NamedTextColor;
+import fr.miuby.survi.system.lang.LangService;
 import org.bukkit.Location;
 import org.bukkit.attribute.Attribute;
 
 import java.io.Serializable;
-import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
 import fr.miuby.survi.quest.quest.PlayerQuestData;
 import java.util.*;
 import java.util.logging.Level;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 
 public class AlphaPlayer extends MLPlayer implements Serializable {
     @Getter
@@ -227,10 +226,10 @@ public class AlphaPlayer extends MLPlayer implements Serializable {
         this.subRoles.add(role);
 
         if (this.getPlayer() != null && this.getPlayer().isOnline()) {
+            LangService langService = GameManager.getInstance().getLangService();
             this.getPlayer().sendMessage(
-                    Component.text("Le sous-role ").color(NamedTextColor.YELLOW)
-                            .append(role.displayName())
-                            .append(Component.text(" a ete ajouté !").color(NamedTextColor.YELLOW))
+                    langService.text(this.getPlayer(), "player.subrole.added",
+                            Placeholder.component("role", role.displayName()))
             );
         }
         return true;
@@ -241,10 +240,10 @@ public class AlphaPlayer extends MLPlayer implements Serializable {
             return false;
 
         if (this.getPlayer() != null && this.getPlayer().isOnline()) {
-            this.getPlayer().sendMessage(Component
-                    .text("Le sous-role ").color(NamedTextColor.YELLOW)
-                    .append(role.displayName())
-                    .append(Component.text(" a ete retire !").color(NamedTextColor.YELLOW))
+            LangService langService = GameManager.getInstance().getLangService();
+            this.getPlayer().sendMessage(
+                    langService.text(this.getPlayer(), "player.subrole.removed",
+                            Placeholder.component("role", role.displayName()))
             );
         }
         return true;
@@ -289,11 +288,10 @@ public class AlphaPlayer extends MLPlayer implements Serializable {
 
         EGlobalRank newRank = getGlobalRank();
         if (newRank != previousRank && getPlayer() != null) {
-            getPlayer().sendMessage(
-                    Component.text("✦ Nouveau rang atteint : ", NamedTextColor.GOLD)
-                            .append(newRank.displayComponent())
-                            .append(Component.text(" (réputation totale : " + getTotalReputation() + ")", NamedTextColor.GRAY))
-            );
+            LangService langService = GameManager.getInstance().getLangService();
+            getPlayer().sendMessage(langService.text(getPlayer(), "player.rank_up",
+                    Placeholder.component("rank", newRank.displayComponent()),
+                    Placeholder.unparsed("total", String.valueOf(getTotalReputation()))));
         }
     }
 
@@ -328,7 +326,8 @@ public class AlphaPlayer extends MLPlayer implements Serializable {
         }
 
         if (newLevel > oldLevel && getPlayer() != null && getPlayer().isOnline()) {
-            getPlayer().sendMessage(Component.text("⚒ ", NamedTextColor.GREEN).append(job.toComponent()));
+            getPlayer().sendMessage(GameManager.getInstance().getLangService().text(getPlayer(), "job.note",
+                    Placeholder.component("job", job.toComponent())));
             MLLogManager.getInstance().log(Level.INFO, ELogTag.JOB,
                     getPseudo() + " : " + job.name() + " niv. " + oldLevel + " -> " + newLevel);
         }

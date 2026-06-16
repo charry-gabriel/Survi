@@ -103,6 +103,7 @@ public class Survi extends JavaPlugin {
         MLResourceManager.deployFolder(this, "quests");
         MLResourceManager.deployFolder(this, "growth_items");
         MLResourceManager.deployFolder(this, "jobs");
+        MLResourceManager.deployFolder(this, "lang");
         MLResourceManager.deploy(this, "config.yml");
         MLResourceManager.deploy(this, "global_quests.yml");
         MLResourceManager.deploy(this, "recipes.yml");
