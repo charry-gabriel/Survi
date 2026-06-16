@@ -102,12 +102,12 @@ class TabInfoColumn {
         }
 
         // ── Section Stats ────────────────────────────────────────────────────
-        entries.add(entry(slot++, Component.empty(), TabSkins.gray()));
-        entries.add(entry(slot++, section("Stats"),  TabSkins.blue()));
-        entries.add(entry(slot++, formatCombinedDamageStat(ap),                                   TabSkins.gray()));
-        entries.add(entry(slot++, formatBlessingModifier("Résistance", ap.getResistanceModifier()), TabSkins.gray()));
-        entries.add(entry(slot++, formatStat(ap, Attribute.MAX_HEALTH,     "Vie"),                 TabSkins.gray()));
-        entries.add(entry(slot++, formatStat(ap, Attribute.MOVEMENT_SPEED, "Vitesse"),             TabSkins.gray()));
+        entries.add(entry(slot++, Component.empty(),                                                                            TabSkins.gray()));
+        entries.add(entry(slot++, section(ls, lang, "tab.info.section.stats"),                                                  TabSkins.blue()));
+        entries.add(entry(slot++, formatCombinedDamageStat(ap, ls.text(lang, "tab.stat.damage")),                               TabSkins.gray()));
+        entries.add(entry(slot++, formatBlessingModifier(ls.text(lang, "tab.stat.resistance"), ap.getResistanceModifier()),     TabSkins.gray()));
+        entries.add(entry(slot++, formatStat(ap, Attribute.MAX_HEALTH,     ls.text(lang, "tab.stat.health")),                   TabSkins.gray()));
+        entries.add(entry(slot++, formatStat(ap, Attribute.MOVEMENT_SPEED, ls.text(lang, "tab.stat.speed")),                    TabSkins.gray()));
 
         // ── Padding bas de contenu ───────────────────────────────────────────
         while (slot < totalSlots) {
@@ -169,7 +169,7 @@ class TabInfoColumn {
      *   <li>Attribut à base nulle avec ADD_SCALAR uniquement (Armure…) → multiplicateur de rôle (+20%).</li>
      * </ul>
      */
-    private static Component formatStat(AlphaPlayer ap, Attribute attributeType, String statName) {
+    private static Component formatStat(AlphaPlayer ap, Attribute attributeType, Component statLabel) {
         Player player = ap.getPlayer();
         if (player == null) return Component.empty();
 
@@ -194,24 +194,22 @@ class TabInfoColumn {
         double roleValue = step2 * (1.0 + addScalar) * multiplyTotal;
 
         double vanilla = VANILLA_DEFAULTS.getOrDefault(attributeType, attr.getDefaultValue());
+        Component label = statLabel.colorIfAbsent(NamedTextColor.WHITE).append(Component.text(": ", NamedTextColor.WHITE));
 
         // ── Attribut à base nulle (Armure, Chance…) ──────────────────────────────
         if (vanilla < 0.001) {
             if (Math.abs(roleValue) > 0.001) {
                 NamedTextColor c = roleValue > 0 ? NamedTextColor.GREEN : NamedTextColor.RED;
                 String sign = roleValue > 0 ? "+" : "";
-                return Component.text(statName + ": ", NamedTextColor.WHITE)
-                        .append(Component.text(sign + DF.format(roleValue), c));
+                return label.append(Component.text(sign + DF.format(roleValue), c));
             }
             if (Math.abs(addScalar) < 0.001) {
-                return Component.text(statName + ": ", NamedTextColor.WHITE)
-                        .append(Component.text("—", NamedTextColor.DARK_GRAY));
+                return label.append(Component.text("—", NamedTextColor.DARK_GRAY));
             }
             long scalarPct = Math.round(addScalar * 100.0);
             NamedTextColor c = addScalar > 0 ? NamedTextColor.GREEN : NamedTextColor.RED;
             String sign = addScalar > 0 ? "+" : "";
-            return Component.text(statName + ": ", NamedTextColor.WHITE)
-                    .append(Component.text(sign + scalarPct + "%", c));
+            return label.append(Component.text(sign + scalarPct + "%", c));
         }
 
         // ── Attribut à base non nulle : pourcentage de la valeur vanilla ─────────
@@ -219,8 +217,7 @@ class TabInfoColumn {
         long pctRounded = Math.round(pct);
         NamedTextColor color = Math.abs(pct - 100.0) < 0.5 ? NamedTextColor.GRAY
                 : pct > 100.0 ? NamedTextColor.GREEN : NamedTextColor.RED;
-        return Component.text(statName + ": ", NamedTextColor.WHITE)
-                .append(Component.text(pctRounded + "%", color));
+        return label.append(Component.text(pctRounded + "%", color));
     }
 
     /**
@@ -229,7 +226,7 @@ class TabInfoColumn {
      * 100 % = dégâts vanilla sans aucun modificateur de part et d'autre.
      * Vert au-dessus de 100 %, rouge en-dessous, gris à 100 %.
      */
-    private static Component formatCombinedDamageStat(AlphaPlayer ap) {
+    private static Component formatCombinedDamageStat(AlphaPlayer ap, Component statLabel) {
         Player player = ap.getPlayer();
         if (player == null) return Component.empty();
 
@@ -257,7 +254,8 @@ class TabInfoColumn {
 
         NamedTextColor color = Math.abs(pct - 100.0) < 0.5 ? NamedTextColor.GRAY
                 : pct > 100.0 ? NamedTextColor.GREEN : NamedTextColor.RED;
-        return Component.text("Dégâts: ", NamedTextColor.WHITE)
+        return statLabel.colorIfAbsent(NamedTextColor.WHITE)
+                .append(Component.text(": ", NamedTextColor.WHITE))
                 .append(Component.text(pctRounded + "%", color));
     }
 
@@ -265,11 +263,12 @@ class TabInfoColumn {
      * Affiche un modifier de blessing en pourcentage absolu (1.0 = 100 %).
      * Vert au-dessus de 100 %, rouge en-dessous, gris exactement à 100 %.
      */
-    private static Component formatBlessingModifier(String statName, float current) {
+    private static Component formatBlessingModifier(Component statLabel, float current) {
         long displayPct = Math.round((double) current * 100.0);
         NamedTextColor color = Math.abs(current - 1.0f) < 0.005f ? NamedTextColor.GRAY
                 : current > 1.0f ? NamedTextColor.GREEN : NamedTextColor.RED;
-        return Component.text(statName + ": ", NamedTextColor.WHITE)
+        return statLabel.colorIfAbsent(NamedTextColor.WHITE)
+                .append(Component.text(": ", NamedTextColor.WHITE))
                 .append(Component.text(displayPct + "%", color));
     }
 

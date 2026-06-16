@@ -297,14 +297,16 @@ public class TabDisplayManager {
     // ─── FOOTER : quêtes ─────────────────────────────────────────────────────────
 
     private Component buildFooter(AlphaPlayer alphaPlayer) {
+        var ls   = GameManager.getInstance().getLangService();
+        var lang = alphaPlayer.getPlayer() != null ? ls.resolveLanguage(alphaPlayer.getPlayer()) : ls.getServerDefault();
+
         Component footer = Component.empty();
 
-        //TODO
         // Compteur journalier (toujours visible)
         int done     = alphaPlayer.getTotalDailyQuestsClaimed();
         int capacity = GameManager.getInstance().getQuestManager().getTotalCapacity();
         footer = footer
-                .append(Component.text("Quêtes journalières : ", NamedTextColor.GRAY))
+                .append(ls.text(lang, "tab.footer.daily_label"))
                 .append(Component.text(done + "/" + capacity, (capacity > 0 && done >= capacity) ? NamedTextColor.GREEN : NamedTextColor.WHITE));
 
         // Quête journalière active
@@ -312,17 +314,18 @@ public class TabDisplayManager {
         if (questData != null && !questData.isClaimed() && questData.getLastAccepted().isEqual(LocalDate.now())) {
             Quest quest = GameManager.getInstance().getQuestManager().getQuest(questData.getQuestId());
             if (quest != null) {
-                Component questLine = Component.text("Quête : ", NamedTextColor.GOLD)
-                        .append(Component.text(quest.getName() + "  ", NamedTextColor.WHITE))
-                        .append(Component.text(questData.getProgress() + "/" + quest.getGoal(), NamedTextColor.DARK_GRAY));
-                if (questData.isCompleted()) {
-                    questLine = questLine.append(Component.text("  ✔ Trader !", NamedTextColor.GREEN));
-                }
+                String description = quest.getDescription().replace("{value}", String.valueOf(quest.getGoal()));
                 footer = footer
                         .appendNewline()
                         .appendNewline()
                         .append(ls.text(lang, "tab.footer.quest_label"))
+                        .append(Component.text(quest.getName() + "  ", NamedTextColor.WHITE))
+                        .append(Component.text(questData.getProgress() + "/" + quest.getGoal(), NamedTextColor.DARK_GRAY))
+                        .appendNewline()
                         .append(Component.text(description, NamedTextColor.GRAY));
+                if (questData.isCompleted()) {
+                    footer = footer.append(ls.text(lang, "tab.info.completed_marker"));
+                }
             }
         }
 
@@ -330,16 +333,16 @@ public class TabDisplayManager {
         GlobalQuestManager gqm = GameManager.getInstance().getGlobalQuestManager();
         GlobalQuest activeGlobalQuest = gqm.getActiveQuest();
         if (activeGlobalQuest != null) {
-            int remaining = Math.max(0, activeGlobalQuest.getGoal() - gqm.getProgress());
-            String description = activeGlobalQuest.getDescription().replace("{value}", String.valueOf(remaining));
+            String description = activeGlobalQuest.getDescription().replace("{value}", String.valueOf(activeGlobalQuest.getGoal()));
             footer = footer
                     .appendNewline()
                     .appendNewline()
                     .append(ls.text(lang, "tab.footer.global_quest_label"))
-                    .append(Component.text(description, NamedTextColor.GRAY))
+                    .append(Component.text(activeGlobalQuest.getName(), NamedTextColor.WHITE))
+                    .append(Component.text(gqm.getProgress() + "/" + activeGlobalQuest.getGoal(), NamedTextColor.DARK_GRAY))
                     .append(ls.text(lang, "tab.footer.global_quest_timer", GlobalQuestManager.formatSeconds(gqm.getRemainingSeconds())))
                     .appendNewline()
-                    .append(Component.text(activeGlobalQuest.getDescription(), NamedTextColor.GRAY));
+                    .append(Component.text(description, NamedTextColor.GRAY));
         }
 
         return footer.appendNewline();

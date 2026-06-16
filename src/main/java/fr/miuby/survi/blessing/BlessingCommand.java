@@ -56,10 +56,7 @@ public class BlessingCommand {
                                 .executes(ctx -> {
                                     AlphaPlayer target = AlphaPlayerArgument.getAlphaPlayer(ctx, playerArgument);
                                     new AcidRainEffect().applyEffect(target);
-
-                                    LangService ls = GameManager.getInstance().getLangService();
-                                    ctx.getSource().getSender().sendMessage(ls.text(ls.resolveOrDefault(ctx.getSource().getSender()), "cmd.blessing.acidrain.active", typeStr));
-                                    ctx.getSource().getSender().sendMessage(Component.text("[Blessing] Pluie acide activée.", NamedTextColor.YELLOW));
+                                    feedback(ctx, target, "Pluie acide activée");
                                     return Command.SINGLE_SUCCESS;
                                 })
                         )
@@ -69,8 +66,7 @@ public class BlessingCommand {
                                 .executes(ctx -> {
                                     AlphaPlayer target = AlphaPlayerArgument.getAlphaPlayer(ctx, playerArgument);
                                     new AcidRainEffect().resetEffect(target);
-                                    ctx.getSource().getSender().sendMessage(ls.text(ls.resolveOrDefault(ctx.getSource().getSender()), "cmd.blessing.acidrain.inactive", typeStr));
-                                    ctx.getSource().getSender().sendMessage(Component.text("[Blessing] Pluie acide désactivée.", NamedTextColor.YELLOW));
+                                    feedback(ctx, target, "Pluie acide désactivée");
                                     return Command.SINGLE_SUCCESS;
                                 })
                         )
