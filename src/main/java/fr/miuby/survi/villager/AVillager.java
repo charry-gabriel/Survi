@@ -7,15 +7,13 @@ import fr.miuby.survi.villager.villagerlevel.AlphaVillagerData;
 import fr.miuby.survi.world.WorldInitializer;
 import net.kyori.adventure.text.TextComponent;
 import org.bukkit.Location;
-import org.bukkit.entity.Villager;
-
 import org.jetbrains.annotations.Nullable;
 
 public abstract class AVillager extends MLVillager {
     protected TextComponent[] messages;
 
-    protected AVillager(String nameId, Villager.Type type, Villager.Profession profession, TextComponent[] messages) {
-        super(nameId, type, profession);
+    protected AVillager(String nameId, TextComponent[] messages) {
+        super(nameId);
         this.messages = messages;
     }
 

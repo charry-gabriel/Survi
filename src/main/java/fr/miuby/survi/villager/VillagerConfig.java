@@ -6,7 +6,6 @@ import java.util.List;
 
 public class VillagerConfig {
     public String name;
-    public String type;
-    public String profession;
+    public String skin;
     public List<VillagerLevelConfig> levels;
 }

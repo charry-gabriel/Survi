@@ -1,11 +1,10 @@
 # yaml-language-server: $schema=../schema/traders-schema.json
-nameId: "GoldRoger"
+nameId: "farmer"
 displayName: "Tom Hook le fermier"
-type: SAVANNA
-profession: WEAPONSMITH
+skin: "27bf6318-bb9f-4dc0-97bc-ae44f97cc95f"
 job: FARMER
 openMessage: "Veux-tu une belle canne à pêche ?"
-mainHandItem: FISHING_ROD
+mainHandItem: DIAMOND_HOE
 
 recipes:
   - result:

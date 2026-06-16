@@ -1,38 +1,77 @@
 package fr.miuby.survi.villager.trader;
 
-import fr.miuby.survi.job.EJob;
+import fr.miuby.lib.log.MLLogManager;
+import fr.miuby.survi.system.log.ELogTag;
 import fr.miuby.survi.villager.AVillager;
+import io.papermc.paper.datacomponent.item.ResolvableProfile;
 import lombok.Getter;
 import lombok.Setter;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
-import org.bukkit.entity.Villager;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Mannequin;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.MerchantRecipe;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
+import java.util.logging.Level;
 
 public class Trader extends AVillager {
-    private final MerchantRecipe[] merchantRecipe;
     private final List<ReputationRecipe> reputationRecipes = new ArrayList<>();
 
-    @Getter
-    protected TextComponent openMessage;
+    @Getter private @Nullable String skinName;
+    @Getter protected TextComponent openMessage;
+    @Getter @Setter private fr.miuby.survi.job.EJob job = null;
 
-    @Getter @Setter
-    private EJob job = null;
+    public Trader(String nameId, TextComponent displayName, @Nullable String skinName,
+                  MerchantRecipe[] initialRecipes, TextComponent[] messages, TextComponent openMessage) {
+        super(nameId, messages);
+        this.skinName    = skinName;
+        this.displayName = displayName.color(NamedTextColor.AQUA);
+        this.openMessage = openMessage.color(NamedTextColor.WHITE);
 
-    public Trader(String nameId, TextComponent displayName, Villager.Type type, Villager.Profession profession,
-                  MerchantRecipe[] merchantRecipe, TextComponent[] messages, TextComponent openMessage) {
-        super(nameId, type, profession, messages);
-        this.merchantRecipe = merchantRecipe;
-        this.displayName    = displayName.color(NamedTextColor.AQUA);
-        this.openMessage    = openMessage.color(NamedTextColor.WHITE);
+        for (int i = 0; i < initialRecipes.length; i++) {
+            reputationRecipes.add(new ReputationRecipe(initialRecipes[i], 0, messages[i]));
+        }
+    }
 
-        for (int i = 0; i < merchantRecipe.length; i++) {
-            reputationRecipes.add(new ReputationRecipe(merchantRecipe[i], 0, messages[i]));
+    // =========================================================================
+    // EntityType — Mannequin comme VillagerLevel
+    // =========================================================================
+
+    @Override
+    protected EntityType getEntityType() {
+        return EntityType.MANNEQUIN;
+    }
+
+    // =========================================================================
+    // Skin
+    // =========================================================================
+
+    @Override
+    protected void onInitialized() {
+        if (getVillager() instanceof Mannequin mannequin) {
+            mannequin.setImmovable(true);
+            mannequin.setDescription(null);
+            applySkin(mannequin);
+        }
+        super.onInitialized();
+    }
+
+    private void applySkin(Mannequin mannequin) {
+        if (skinName == null || skinName.isBlank()) return;
+        try {
+            ResolvableProfile profile = ResolvableProfile.resolvableProfile()
+                    .uuid(UUID.fromString(skinName))
+                    .build();
+            mannequin.setProfile(profile);
+        } catch (IllegalArgumentException e) {
+            MLLogManager.getInstance().log(Level.WARNING, ELogTag.VILLAGER,
+                    getNameId() + " : skin invalide — UUID attendu, valeur : \"" + skinName + "\"");
         }
     }
 
@@ -40,34 +79,13 @@ public class Trader extends AVillager {
     // Reload à chaud
     // =========================================================================
 
-    /**
-     * Recharge la configuration de ce Trader depuis le {@link TraderConfig} fourni,
-     * sans recréer l'entité Bukkit.
-     *
-     * <h3>Ce qui change immédiatement en jeu</h3>
-     * <ul>
-     *   <li>Nametag du villageois (displayName).</li>
-     *   <li>Recettes de commerce (accessible aux joueurs qui ré-ouvrent le menu).</li>
-     *   <li>Message d'ouverture et messages par recette.</li>
-     *   <li>Métier (EJob) pour les récompenses de réputation.</li>
-     * </ul>
-     *
-     * <p>Les joueurs qui ont actuellement le menu de commerce ouvert voient les changements
-     * à leur prochaine ouverture (Bukkit ne permet pas la mise à jour à chaud d'un MerchantInventory déjà ouvert).</p>
-     */
     public void reload(TraderConfig config) {
         this.displayName = Component.text(config.displayName).color(NamedTextColor.AQUA);
         this.openMessage = Component.text(config.openMessage).color(NamedTextColor.WHITE);
-        this.job         = (config.job != null && !config.job.isEmpty()) ? EJob.valueOf(config.job.toUpperCase()) : null;
+        this.skinName    = config.skin;
+        this.job         = (config.job != null && !config.job.isEmpty())
+                ? fr.miuby.survi.job.EJob.valueOf(config.job.toUpperCase()) : null;
 
-        // Mise à jour des messages pour les recettes de base (réputation = 0)
-        TextComponent[] newMessages = config.recipes.stream()
-                .filter(r -> r.requiredReputation <= 0)
-                .map(r -> Component.text(r.message))
-                .toArray(TextComponent[]::new);
-        this.messages = newMessages;
-
-        // Reconstruction complète des recettes (base + réputation)
         reputationRecipes.clear();
         config.recipes.stream()
                 .filter(r -> r.requiredReputation <= 0)
@@ -84,15 +102,14 @@ public class Trader extends AVillager {
                     reputationRecipes.add(new ReputationRecipe(recipe, r.requiredReputation, Component.text(r.message)));
                 });
 
-        // Applique sur l'entité villageois en jeu
         if (getVillager() != null) {
             getVillager().customName(displayName);
-            getVillager().setRecipes(getRecipesForPlayer(0));
+            if (getVillager() instanceof Mannequin m) applySkin(m);
         }
     }
 
     // =========================================================================
-    // API publique
+    // API marchand — recettes calculées à la volée, sans état sur l'entité
     // =========================================================================
 
     public void addReputationRecipe(MerchantRecipe recipe, int requiredReputation, TextComponent message) {
@@ -107,18 +124,15 @@ public class Trader extends AVillager {
     }
 
     public TextComponent getMessage(ItemStack itemStack) {
-        for (ReputationRecipe reputationRecipe : reputationRecipes) {
-            if (reputationRecipe.recipe().getResult().isSimilar(itemStack))
-                return reputationRecipe.message();
+        for (ReputationRecipe rr : reputationRecipes) {
+            if (rr.recipe().getResult().isSimilar(itemStack)) return rr.message();
         }
         return Component.text("");
     }
 
+    /** Pas d'inventaire persistant sur l'entité — le Merchant est créé à la volée dans VillagerListener. */
     @Override
-    public void createInventory() {
-        this.getVillager().setRecipes(getRecipesForPlayer(0));
-        this.inventory = this.getVillager().getInventory();
-    }
+    public void createInventory() {}
 
     public record ReputationRecipe(MerchantRecipe recipe, int requiredReputation, TextComponent message) {}
 }

@@ -1,7 +1,6 @@
 # yaml-language-server: $schema=../schema/villagers-schema.json
 name: "Nain"
-type: SWAMP
-profession: NITWIT
+skin: "36a1175b-0115-47d3-aaa7-d1335428c3ea"
 
 levels:
   - name: "Nain Roux I"

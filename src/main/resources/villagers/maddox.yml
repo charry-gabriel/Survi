@@ -1,7 +1,6 @@
 # yaml-language-server: $schema=../schema/villagers-schema.json
 name: "Maddox"
-type: TAIGA
-profession: BUTCHER
+skin: "e858efb6-1bf2-40df-acc1-6cb6890d8173"
 
 levels:
   - name: "Maddox I"

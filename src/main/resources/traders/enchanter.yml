@@ -1,7 +1,7 @@
-nameId: "Barman"
+# yaml-language-server: $schema=../schema/traders-schema.json
+nameId: "enchanter"
 displayName: "Merlin l'enchanteur"
-type: SAVANNA
-profession: FLETCHER
+skin: "b12a902c-a52c-4a39-9bcf-1ad431d364c2"
 job: ENCHANTER
 openMessage: >
   Bonjour, bienvenue au bar du Merveilleux Royal Bling-Bling Sexy-Baka Palace-Hôtel.

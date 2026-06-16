@@ -14,6 +14,7 @@ import fr.miuby.survi.villager.AVillager;
 import fr.miuby.survi.villager.VillagerConfig;
 import fr.miuby.survi.villager.villagerlevel.event.VillagerLevelUpEvent;
 import fr.miuby.survi.world.WorldInitializer;
+import io.papermc.paper.datacomponent.item.ResolvableProfile;
 import lombok.Getter;
 import lombok.Setter;
 import net.kyori.adventure.text.Component;
@@ -21,8 +22,9 @@ import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Mannequin;
 import org.bukkit.entity.Player;
-import org.bukkit.entity.Villager;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -43,21 +45,49 @@ public class VillagerLevel extends AVillager {
     private Blessing[]      blessings;
     /** locks[N] est appliqué quand le niveau N est complété. Null = pas de lock. */
     private Duration[]      locks;
+    private @Nullable String skinName;
 
     @Getter @Setter
     private int level = 0;
     private final List<ItemStack> givenItems = new ArrayList<>();
     private Instant unlockedInstant = Instant.EPOCH;
 
-    public VillagerLevel(String nameId, Villager.Type type, Villager.Profession profession,
+    public VillagerLevel(String nameId, @Nullable String skinName,
                          Blessing[] blessings, Duration[] locks, TextComponent[] messages,
                          Tribute[] tributes, TextComponent[] names, TextComponent[] recap) {
-        super(nameId, type, profession, messages);
+        super(nameId, messages);
+        this.skinName = skinName;
         this.blessings = blessings;
         this.locks = locks;
         this.tributes = tributes;
         this.names = names;
         this.recapMessages = recap;
+    }
+
+    // =========================================================================
+    // EntityType
+    // =========================================================================
+
+    @Override
+    protected EntityType getEntityType() {
+        return EntityType.MANNEQUIN;
+    }
+
+    // =========================================================================
+    // Initialisation — skin Mannequin
+    // =========================================================================
+
+    @Override
+    protected void onInitialized() {
+        if (getVillager() instanceof Mannequin mannequin) {
+            mannequin.setImmovable(true);
+            mannequin.setDescription(null); // cache le label "NPC" affiché par défaut
+            if (skinName != null && !skinName.isBlank()) {
+                ResolvableProfile profile = ResolvableProfile.resolvableProfile().name(skinName).build();
+                mannequin.setProfile(profile);
+            }
+        }
+        super.onInitialized();
     }
 
     // =========================================================================
@@ -67,22 +97,6 @@ public class VillagerLevel extends AVillager {
     /**
      * Recharge la configuration de ce villageois depuis le {@link VillagerConfig} fourni,
      * sans recréer l'entité Bukkit ni toucher la progression des joueurs.
-     *
-     * <h3>Ce qui change immédiatement en jeu</h3>
-     * <ul>
-     *   <li>Nametag du villageois (via {@code getDisplayName()}).</li>
-     *   <li>Inventaire tribute : le contenu est recalculé à partir du nouveau tribute
-     *       <b>moins les items déjà donnés par les joueurs</b> pour le niveau actuel
-     *       (préservés dans {@code givenItems}).</li>
-     * </ul>
-     *
-     * <h3>Ce qui ne change pas</h3>
-     * <ul>
-     *   <li>Niveau actuel du villageois.</li>
-     *   <li>Items déjà donnés pour le niveau en cours.</li>
-     *   <li>Lock actif et instant de déverrouillage.</li>
-     *   <li>Blessings déjà appliqués aux joueurs connectés.</li>
-     * </ul>
      */
     public void reloadConfig(VillagerConfig config) {
         this.names         = config.levels.stream().map(l -> Component.text(l.name)).toArray(TextComponent[]::new);
@@ -99,8 +113,14 @@ public class VillagerLevel extends AVillager {
                 .map(l -> l.lock != null ? Duration.ofDays(l.lock) : null)
                 .toArray(Duration[]::new);
 
+        this.skinName = config.skin;
+
         if (getVillager() != null) {
             getVillager().customName(getDisplayName());
+            if (getVillager() instanceof Mannequin mannequin && skinName != null && !skinName.isBlank()) {
+                ResolvableProfile profile = ResolvableProfile.resolvableProfile().name(skinName).build();
+                mannequin.setProfile(profile);
+            }
             refreshInventoryContent();
         }
 
@@ -111,11 +131,6 @@ public class VillagerLevel extends AVillager {
     /**
      * Reconstruit le contenu de l'inventaire existant avec le nouveau tribute
      * en déduisant les items déjà remis par les joueurs pour le niveau actuel.
-     *
-     * <p>Contrairement à {@link #updateInventory()} qui ignore {@code givenItems},
-     * cette méthode fait exactement ce que {@link #createInventory()} ferait
-     * mais sans recréer l'objet {@link Inventory} (l'inventaire reste ouvert
-     * pour les joueurs qui auraient la fenêtre ouverte au moment du reload).</p>
      */
     public void refreshInventoryContent() {
         if (this.inventory == null) return;
@@ -127,7 +142,6 @@ public class VillagerLevel extends AVillager {
         for (ItemStack item : tribute.getItemStacks())
             this.inventory.addItem(item);
 
-        // Déduit exactement ce que les joueurs ont déjà remis pour ce niveau
         for (ItemStack given : givenItems)
             createItemStack(this.inventory, new ItemStack(given));
     }
@@ -153,6 +167,30 @@ public class VillagerLevel extends AVillager {
                 this.unlockedInstant = Instant.ofEpochMilli(data.getUnlockToEpochMilli());
         }
         return data;
+    }
+
+    // =========================================================================
+    // Inventaire tribut
+    // =========================================================================
+
+    @Override
+    public void createInventory() {
+        VillagerTributeHolder holder = new VillagerTributeHolder(this);
+        Inventory inv = Bukkit.createInventory(holder, InventoryType.CHEST, Objects.requireNonNull(getDisplayName()));
+
+        Tribute tribute = getTribute();
+        if (tribute == null) {
+            this.inventory = inv;
+            return;
+        }
+
+        for (ItemStack item : tribute.getItemStacks())
+            inv.addItem(item);
+
+        for (ItemStack item : givenItems)
+            createItemStack(inv, new ItemStack(item));
+
+        this.inventory = inv;
     }
 
     // =========================================================================
@@ -227,22 +265,6 @@ public class VillagerLevel extends AVillager {
         }
 
         return true;
-    }
-
-    @Override
-    public void createInventory() {
-        Inventory inv = Bukkit.createInventory(getVillager(), InventoryType.CHEST, Objects.requireNonNull(getVillager().customName()));
-
-        Tribute tribute = getTribute();
-        if (tribute == null) return;
-
-        for (ItemStack item : tribute.getItemStacks())
-            inv.addItem(item);
-
-        for (ItemStack item : givenItems)
-            createItemStack(inv, new ItemStack(item));
-
-        this.inventory = inv;
     }
 
     public void updateInventory() {

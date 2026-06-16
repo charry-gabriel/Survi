@@ -1,8 +1,7 @@
 # yaml-language-server: $schema=../schema/traders-schema.json
-nameId: "GoldRoger"
+nameId: "fisherman"
 displayName: "Maui le pêcheur"
-type: SAVANNA
-profession: WEAPONSMITH
+skin: "0d4c7b6b-3072-40f2-a88e-b456e4f98e46"
 job: FISHERMAN
 openMessage: "Veux-tu une belle canne à pêche ?"
 mainHandItem: FISHING_ROD

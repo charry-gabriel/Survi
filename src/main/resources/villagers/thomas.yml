@@ -1,7 +1,6 @@
 # yaml-language-server: $schema=../schema/villagers-schema.json
 name: "Thomas"
-type: SNOW
-profession: FISHERMAN
+skin: "47ab7b48-44aa-4588-ad48-83d5258582c7"
 
 levels:
   - name: "Thomas Pesquet I"

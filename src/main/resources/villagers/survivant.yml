@@ -1,7 +1,6 @@
 # yaml-language-server: $schema=../schema/villagers-schema.json
 name: "Survivant"
-type: SAVANNA
-profession: FARMER
+skin: "11284e26-024e-4b1b-a6d7-fa8ae08faa10"
 
 levels:
   - name: "Survivant I"

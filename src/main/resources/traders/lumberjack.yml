@@ -1,15 +1,14 @@
 # yaml-language-server: $schema=../schema/traders-schema.json
-nameId: "Barman"
+nameId: "lumberjack"
 displayName: "Beorn le bûcheron"
-type: SAVANNA
-profession: FLETCHER
+skin: "84ab2cc8-aaa3-43f6-92fe-3ce722ad36cd"
 job: LUMBERJACK
 openMessage: >
   Bonjour, bienvenue au bar du Merveilleux Royal Bling-Bling Sexy-Baka Palace-Hôtel.
   A la carte, nous proposons différents cocktails élaborés avec amour, tendresse et voluptuosité:
   le Sex On the Beach, le Porn Star Martini, et notre fameux Shooter Orgasm.
   D'autre part, je peux aussi proposer un Spicy Sweet Dreams Ticket si vous le désirez !
-mainHandItem: POTION
+mainHandItem: DIAMOND_AXE
 
 recipes:
   - result:

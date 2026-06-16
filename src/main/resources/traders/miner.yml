@@ -1,11 +1,10 @@
 # yaml-language-server: $schema=../schema/traders-schema.json
-nameId: "GoldRoger"
+nameId: "miner"
 displayName: "Steve le mineur"
-type: SAVANNA
-profession: WEAPONSMITH
+skin: "e8e16852-4bbc-4d78-afab-68dfd7ece8fc"
 job: MINER
 openMessage: "Veux-tu une belle canne à pêche ?"
-mainHandItem: FISHING_ROD
+mainHandItem: DIAMOND_PICKAXE
 
 recipes:
   - result:
