@@ -1,0 +1,76 @@
+# yaml-language-server: $schema=../schema/quests-schema.json
+quests:
+
+# ─────────────────── DIFFICULTÉ 0 (0/6) ───────────────────
+
+  - id: "miner0"
+    name: "Premier coup de pioche"
+    description: "Récoltez {value} bloc de pierre."
+    type: MINE
+    difficulty: 0
+    jobs:
+      - MINER
+    targets: [COBBLESTONE]
+    goal: 1
+    rewards:
+      - {type: REPUTATION, job: MINER, value: 5 }
+
+  - id: "lumberjack0"
+    name: "Premier arbre"
+    description: "Coupez {value} bûche de chêne."
+    type: MINE
+    difficulty: 0
+    jobs:
+      - LUMBERJACK
+    targets: [OAK_LOG]
+    goal: 1
+    rewards:
+      - {type: REPUTATION, job: LUMBERJACK, value: 5 }
+
+  - id: "farmer0"
+    name: "Premières graines"
+    description: "Ramassez {value} graine de blé."
+    type: MINE
+    difficulty: 0
+    jobs:
+      - FARMER
+    targets: [SHORT_GRASS]
+    goal: 1
+    rewards:
+      - {type: REPUTATION, job: FARMER, value: 5 }
+
+  - id: "fisherman0"
+    name: "Première prise"
+    description: "Pêchez {value} poisson."
+    type: FISH
+    difficulty: 0
+    jobs:
+      - FISHERMAN
+    targets: [COD]
+    goal: 1
+    rewards:
+      - {type: REPUTATION, job: FISHERMAN, value: 5 }
+
+  - id: "enchanter0"
+    name: "Premiers papiers"
+    description: "Récoltez {value} cannes à sucre."
+    type: MINE
+    difficulty: 0
+    jobs:
+      - ENCHANTER
+    targets: [SUGAR_CANE]
+    goal: 1
+    rewards:
+      - {type: REPUTATION, job: ENCHANTER, value: 5 }
+
+  - id: "explorer0"
+    name: "Premier combat"
+    description: "Tuez {value} zombie."
+    type: KILL
+    difficulty: 0
+    jobs:
+      - EXPLORER
+    targets: [ZOMBIE]
+    goal: 1
+    rewards:
+      - {type: REPUTATION, job: EXPLORER, value: 5 }

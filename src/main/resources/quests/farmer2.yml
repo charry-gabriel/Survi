@@ -65,7 +65,7 @@ quests:
       - { type: REPUTATION, job: FARMER, value: 2}
       - { type: REPUTATION, job: EXPLORER, value: 2 }
 
-  - id: "animal_breeding_d2"
+  - id: "animal_breeding"
     name: "Élevage Structuré"
     description: "Faites se reproduire {value} animaux communs."
     type: BREED
@@ -73,7 +73,7 @@ quests:
     jobs:
       - FARMER
     targets: [ COW, SHEEP, PIG, CHICKEN ]
-    goal: 200
+    goal: 100
     rewards:
       - { type: REPUTATION, job: FARMER, value: 5}
 
@@ -81,7 +81,7 @@ quests:
     name: "Magnat de l'Agriculture"
     description: "Récoltez {value} cultures variées."
     type: MINE
-    difficulty: 10
+    difficulty: 2
     jobs:
       - FARMER
     targets: [ WHEAT, CARROT, POTATO, BEETROOT, PUMPKIN, MELON, SUGAR_CANE, COCOA_BEANS, NETHER_WART ]

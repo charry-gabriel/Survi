@@ -3,14 +3,53 @@ quests:
 
   # ─────────────────── DIFFICULTÉ 3 (0/7) ───────────────────
 
-  - id: "stone_tools_enchant"
-    name: "Premiers Outils Magiques"
-    description: "Enchantez {value} outils en fer (épée, pioche, hache, pelle ou houe)."
+  - id: "enchant_diamond_tools"
+    name: "Outils de Maître"
+    description: "Enchantez {value} outils en diamant ou en netherite."
     type: ENCHANT
-    difficulty: 1
+    difficulty: 3
     jobs:
       - ENCHANTER
-    targets: [ IRON_SWORD, IRON_PICKAXE, IRON_AXE, IRON_SHOVEL, IRON_HOE ]
+    targets: [DIAMOND_PICKAXE, DIAMOND_AXE, DIAMOND_SHOVEL, DIAMOND_HOE,
+              NETHERITE_PICKAXE, NETHERITE_AXE, NETHERITE_SHOVEL, NETHERITE_HOE]
     goal: 10
     rewards:
-      - { type: REPUTATION, job: ENCHANTER, value: 1 }
+      - {type: REPUTATION, job: ENCHANTER, value: 8}
+
+  - id: "enchant_diamond_weapons"
+    name: "Arsenal Enchanté"
+    description: "Enchantez {value} épées en diamant ou en netherite."
+    type: ENCHANT
+    difficulty: 3
+    jobs:
+      - ENCHANTER
+    targets: [DIAMOND_SWORD, NETHERITE_SWORD]
+    goal: 5
+    rewards:
+      - { type: REPUTATION, job: ENCHANTER, value: 8 }
+      - { type: REPUTATION, job: EXPLORER, value: 2 }
+
+
+  - id: "gain_xp_levels"
+    name: "Sagesse Accumulée"
+    description: "Atteignez le niveau {value} d'expérience."
+    type: GAIN_XP_LEVELS
+    difficulty: 3
+    jobs:
+      - ENCHANTER
+    targets: null
+    goal: 50
+    rewards:
+      - { type: REPUTATION, job: ENCHANTER, value: 5}
+
+  - id: "enchant_books"
+    name: "Bibliothèque Mystique"
+    description: "Enchantez {value} livres."
+    type: ENCHANT
+    difficulty: 3
+    jobs:
+      - ENCHANTER
+    targets: [ BOOK ]
+    goal: 32
+    rewards:
+      - { type: REPUTATION, job: ENCHANTER, value: 9 }

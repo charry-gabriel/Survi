@@ -3,6 +3,30 @@ quests:
 
 # ─────────────────── DIFFICULTÉ 1 (7/7) ───────────────────
 
+  - id: "collect_leather"
+    name: "Relieur Débutant"
+    description: "Tuez {value} vaches."
+    type: KILL
+    difficulty: 1
+    jobs:
+      - ENCHANTER
+    targets: [ LEATHER ]
+    goal: 20
+    rewards:
+      - { type: REPUTATION, job: FARMER, value: 1 }
+
+  - id: "paper_production"
+    name: "Fabricant de Papier"
+    description: "Fabriquez {value} papiers."
+    type: CRAFT
+    difficulty: 1
+    jobs:
+      - ENCHANTER
+    targets: [ PAPER ]
+    goal: 1
+    rewards:
+      - { type: REPUTATION, job: ENCHANTER, value: 1 }
+
   - id: "sugar_cane_start"
     name: "Premiers Écrits"
     description: "Récoltez {value} cannes à sucre."
@@ -14,7 +38,7 @@ quests:
     goal: 64
     rewards:
       - {type: REPUTATION, job: ENCHANTER, value: 1}
-      - { type: REPUTATION, job: FARMER, value: 1 }
+      - {type: REPUTATION, job: FARMER, value: 1 }
 
   - id: "book_basic"
     name: "Apprentissage"
@@ -49,9 +73,23 @@ quests:
     difficulty: 1
     jobs:
       - ENCHANTER
-    targets: [ LAPIS_ORE ]
+    targets: [ LAPIS_ORE, DEEPSLATE_LAPIS_ORE ]
     goal: 640
     rewards:
       - { type: REPUTATION, job: ENCHANTER, value: 1}
       - { type: REPUTATION, job: MINER, value: 4 }
+
+  - id: "diams_intro"
+    name: "Pierre Rare"
+    description: "Minez {value} diamants."
+    type: MINE
+    difficulty: 1
+    jobs:
+      - ENCHANTER
+    targets: [DIAMOND_ORE, DEEPSLATE_DIAMOND_ORE]
+    goal: 2
+    rewards:
+      - {type: REPUTATION, job: ENCHANTER, value: 1}
+      - {type: REPUTATION, job: MINER, value: 4}
+
 
