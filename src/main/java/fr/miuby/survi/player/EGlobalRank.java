@@ -18,13 +18,13 @@ import net.kyori.adventure.text.format.NamedTextColor;
 @Getter
 public enum EGlobalRank {
 
-    INCONNU    (NamedTextColor.DARK_GRAY),
-    NOVICE     (NamedTextColor.GRAY),
-    APPRENTI   (NamedTextColor.WHITE),
-    MARCHAND   (NamedTextColor.GREEN),
-    EXPERT     (NamedTextColor.AQUA),
+    NOMADE     (NamedTextColor.DARK_GRAY),
+    DEBUTANT   (NamedTextColor.GRAY),
+    VILLAGEOIS (NamedTextColor.WHITE),
+    CITOYEN    (NamedTextColor.GREEN),
+    ELITE      (NamedTextColor.AQUA),
     MAITRE     (NamedTextColor.GOLD),
-    LEGENDAIRE (NamedTextColor.LIGHT_PURPLE);
+    LEGENDE    (NamedTextColor.LIGHT_PURPLE);
 
     // Mutable : surchargés par initFromConfig()
     private String displayName;
@@ -65,7 +65,7 @@ public enum EGlobalRank {
 
     /** Retourne le rang correspondant à {@code total} points de réputation. */
     public static EGlobalRank fromReputation(int total) {
-        EGlobalRank result = INCONNU;
+        EGlobalRank result = NOMADE;
         for (EGlobalRank rank : values()) {
             if (total >= rank.threshold) result = rank;
         }
