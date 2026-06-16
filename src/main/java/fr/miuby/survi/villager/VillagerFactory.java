@@ -23,6 +23,7 @@ import org.bukkit.inventory.MerchantRecipe;
 
 import java.time.Duration;
 import java.util.List;
+import java.util.UUID;
 
 @Getter
 public class VillagerFactory {
@@ -77,7 +78,7 @@ public class VillagerFactory {
             Trader trader = new Trader(
                     config.nameId,
                     Component.text(config.displayName),
-                    config.skin,
+                    UUID.fromString(config.skin),
                     recipes,
                     messages,
                     Component.text(config.openMessage)
@@ -127,7 +128,7 @@ public class VillagerFactory {
                 .map(l -> l.lock != null ? Duration.ofDays(l.lock) : null)
                 .toArray(Duration[]::new);
 
-        MLVillager.spawn(() -> new VillagerLevel(config.name, config.skin, blessings, locks, messages, tributes, names, recap));
+        MLVillager.spawn(() -> new VillagerLevel(config.name, UUID.fromString(config.skin), blessings, locks, messages, tributes, names, recap));
     }
 
     // =========================================================================

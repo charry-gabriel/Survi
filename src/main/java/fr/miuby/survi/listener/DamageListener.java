@@ -87,9 +87,8 @@ public class DamageListener implements Listener {
     @EventHandler(ignoreCancelled = true)
     public void onEntityDamage(EntityDamageEvent event) {
 
-        if (event.getEntityType() == EntityType.VILLAGER) {
-            Villager villager = (Villager) event.getEntity();
-            if (VillagerRegistry.get(villager.getUniqueId()) != null)
+        if (event.getEntityType() == EntityType.MANNEQUIN) {
+            if (VillagerRegistry.get(event.getEntity().getUniqueId()) != null)
                 event.setCancelled(true);
             return;
         }

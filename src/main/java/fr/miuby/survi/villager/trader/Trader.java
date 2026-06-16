@@ -23,14 +23,14 @@ import java.util.logging.Level;
 public class Trader extends AVillager {
     private final List<ReputationRecipe> reputationRecipes = new ArrayList<>();
 
-    @Getter private @Nullable String skinName;
+    @Getter private @Nullable UUID skinUuid;
     @Getter protected TextComponent openMessage;
     @Getter @Setter private fr.miuby.survi.job.EJob job = null;
 
-    public Trader(String nameId, TextComponent displayName, @Nullable String skinName,
+    public Trader(String nameId, TextComponent displayName, @Nullable UUID skinUuid,
                   MerchantRecipe[] initialRecipes, TextComponent[] messages, TextComponent openMessage) {
         super(nameId, messages);
-        this.skinName    = skinName;
+        this.skinUuid = skinUuid;
         this.displayName = displayName.color(NamedTextColor.AQUA);
         this.openMessage = openMessage.color(NamedTextColor.WHITE);
 
@@ -63,15 +63,15 @@ public class Trader extends AVillager {
     }
 
     private void applySkin(Mannequin mannequin) {
-        if (skinName == null || skinName.isBlank()) return;
+        if (skinUuid == null) return;
         try {
             ResolvableProfile profile = ResolvableProfile.resolvableProfile()
-                    .uuid(UUID.fromString(skinName))
+                    .uuid(skinUuid)
                     .build();
             mannequin.setProfile(profile);
         } catch (IllegalArgumentException e) {
             MLLogManager.getInstance().log(Level.WARNING, ELogTag.VILLAGER,
-                    getNameId() + " : skin invalide — UUID attendu, valeur : \"" + skinName + "\"");
+                    getNameId() + " : skin invalide — UUID attendu, valeur : \"" + skinUuid + "\"");
         }
     }
 
@@ -82,7 +82,7 @@ public class Trader extends AVillager {
     public void reload(TraderConfig config) {
         this.displayName = Component.text(config.displayName).color(NamedTextColor.AQUA);
         this.openMessage = Component.text(config.openMessage).color(NamedTextColor.WHITE);
-        this.skinName    = config.skin;
+        this.skinUuid = UUID.fromString(config.skin);
         this.job         = (config.job != null && !config.job.isEmpty())
                 ? fr.miuby.survi.job.EJob.valueOf(config.job.toUpperCase()) : null;
 

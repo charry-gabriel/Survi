@@ -15,6 +15,7 @@ import fr.miuby.survi.villager.VillagerConfig;
 import fr.miuby.survi.villager.villagerlevel.event.VillagerLevelUpEvent;
 import fr.miuby.survi.world.WorldInitializer;
 import io.papermc.paper.datacomponent.item.ResolvableProfile;
+import java.util.UUID;
 import lombok.Getter;
 import lombok.Setter;
 import net.kyori.adventure.text.Component;
@@ -45,18 +46,18 @@ public class VillagerLevel extends AVillager {
     private Blessing[]      blessings;
     /** locks[N] est appliqué quand le niveau N est complété. Null = pas de lock. */
     private Duration[]      locks;
-    private @Nullable String skinName;
+    private @Nullable UUID skinUuid;
 
     @Getter @Setter
     private int level = 0;
     private final List<ItemStack> givenItems = new ArrayList<>();
     private Instant unlockedInstant = Instant.EPOCH;
 
-    public VillagerLevel(String nameId, @Nullable String skinName,
+    public VillagerLevel(String nameId, @Nullable UUID skinUuid,
                          Blessing[] blessings, Duration[] locks, TextComponent[] messages,
                          Tribute[] tributes, TextComponent[] names, TextComponent[] recap) {
         super(nameId, messages);
-        this.skinName = skinName;
+        this.skinUuid = skinUuid;
         this.blessings = blessings;
         this.locks = locks;
         this.tributes = tributes;
@@ -82,9 +83,14 @@ public class VillagerLevel extends AVillager {
         if (getVillager() instanceof Mannequin mannequin) {
             mannequin.setImmovable(true);
             mannequin.setDescription(null); // cache le label "NPC" affiché par défaut
-            if (skinName != null && !skinName.isBlank()) {
-                ResolvableProfile profile = ResolvableProfile.resolvableProfile().name(skinName).build();
-                mannequin.setProfile(profile);
+            if (skinUuid != null) {
+                try {
+                    ResolvableProfile profile = ResolvableProfile.resolvableProfile().uuid(skinUuid).build();
+                    mannequin.setProfile(profile);
+                } catch (IllegalArgumentException e) {
+                    MLLogManager.getInstance().log(Level.WARNING, ELogTag.VILLAGER,
+                            nameId + " : skin invalide — UUID attendu, valeur : \"" + skinUuid + "\"");
+                }
             }
         }
         super.onInitialized();
@@ -113,13 +119,18 @@ public class VillagerLevel extends AVillager {
                 .map(l -> l.lock != null ? Duration.ofDays(l.lock) : null)
                 .toArray(Duration[]::new);
 
-        this.skinName = config.skin;
+        this.skinUuid = UUID.fromString(config.skin);
 
         if (getVillager() != null) {
             getVillager().customName(getDisplayName());
-            if (getVillager() instanceof Mannequin mannequin && skinName != null && !skinName.isBlank()) {
-                ResolvableProfile profile = ResolvableProfile.resolvableProfile().name(skinName).build();
-                mannequin.setProfile(profile);
+            if (getVillager() instanceof Mannequin mannequin && skinUuid != null) {
+                try {
+                    ResolvableProfile profile = ResolvableProfile.resolvableProfile().uuid(skinUuid).build();
+                    mannequin.setProfile(profile);
+                } catch (IllegalArgumentException e) {
+                    MLLogManager.getInstance().log(Level.WARNING, ELogTag.VILLAGER,
+                            nameId + " : skin invalide — UUID attendu, valeur : \"" + skinUuid + "\"");
+                }
             }
             refreshInventoryContent();
         }
