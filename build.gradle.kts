@@ -27,7 +27,7 @@ dependencies {
     annotationProcessor("org.projectlombok:lombok:1.18.38")
     testAnnotationProcessor("org.projectlombok:lombok:1.18.38")
 
-    implementation("com.github.charry-gabriel:MiubyLib:v1.14")
+    implementation("com.github.charry-gabriel:MiubyLib:v1.15")
 
     testImplementation(platform("org.junit:junit-bom:5.10.2"))
     testImplementation("org.junit.jupiter:junit-jupiter")
