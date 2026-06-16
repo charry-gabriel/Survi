@@ -190,7 +190,7 @@ public class RoleLoader {
 
     public Role getRole(ERole role)       { return INSTANCE.get(role); }
     public Collection<Role> getRoles()    { return INSTANCE.getAll(); }
-    public Role getDefaultRole()          { return INSTANCE.get(ERole.NAIN); }
+    public Role getDefaultRole()          { return INSTANCE.get(ERole.NEUTRE); }
 
     public Role getRole(String roleType) {
         try { return getRole(ERole.valueOf(roleType)); }

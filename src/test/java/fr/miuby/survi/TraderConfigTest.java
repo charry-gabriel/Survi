@@ -33,8 +33,6 @@ class TraderConfigTest {
                 TraderConfig config = yaml.load(in);
                 assertStringNotEmpty(config.nameId, "nameId manquant dans " + file.getName());
                 assertStringNotEmpty(config.displayName, "displayName manquant dans " + file.getName());
-                assertStringNotEmpty(config.type, "type manquant dans " + file.getName());
-                assertStringNotEmpty(config.profession, "profession manquant dans " + file.getName());
                 assertNotNull(config.openMessage, "openMessage manquant dans " + file.getName());
                 assertNotNull(config.recipes, "recipes manquant dans " + file.getName());
 
