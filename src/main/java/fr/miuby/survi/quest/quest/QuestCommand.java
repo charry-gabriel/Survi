@@ -218,14 +218,16 @@ public class QuestCommand {
                 }
                 String displayName = questName != null ? questName : e.questId();
 
-                String diffLabel = "daily".equals(e.questType())
-                        ? ls.getString(lang, "cmd.quest.history_diff_daily").replace("{0}", String.valueOf(e.difficulty()))
-                        : ls.getString(lang, "cmd.quest.history_diff_global");
+                Component diffComp = "daily".equals(e.questType())
+                        ? ls.text(lang, "cmd.quest.history_diff_daily", e.difficulty())
+                        : ls.text(lang, "cmd.quest.history_diff_global");
                 String jobLabel = e.job() != null ? e.job() : "—";
 
                 Component line = Component.text("  #" + (i + 1) + " ", NamedTextColor.DARK_GRAY)
                         .append(Component.text(e.completedAt().format(fmt) + " ", NamedTextColor.WHITE))
-                        .append(Component.text("[" + diffLabel + "] ", NamedTextColor.YELLOW))
+                        .append(Component.text("[", NamedTextColor.YELLOW))
+                        .append(diffComp)
+                        .append(Component.text("] ", NamedTextColor.YELLOW))
                         .append(Component.text("[" + jobLabel + "] ", NamedTextColor.AQUA))
                         .append(Component.text(displayName, NamedTextColor.GRAY));
 

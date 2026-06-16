@@ -133,10 +133,10 @@ public class JobCommand {
         sendJobDisplay(ls, lang, senderPlayer, target, false);
 
         if (senderPlayer == null) {
-            sender.sendMessage(ls.getString(lang, "cmd.job.console.header").replace("{0}", target.getPseudo()));
+            sender.sendMessage(ls.text(lang, "cmd.job.console.header", target.getPseudo()));
             for (EJob job : EJob.values()) {
-                sender.sendMessage("  " + job.getDisplayName()
-                        + ls.getString(lang, "cmd.job.info.level").replace("{0}", String.valueOf(target.getJobLevel(job))));
+                sender.sendMessage(Component.text("  " + job.getDisplayName())
+                        .append(ls.text(lang, "cmd.job.info.level", target.getJobLevel(job))));
             }
         }
 

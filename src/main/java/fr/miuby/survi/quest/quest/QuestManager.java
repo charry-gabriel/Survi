@@ -393,10 +393,8 @@ public class QuestManager extends AbstractQuestManager<Quest> {
         MLLogManager.getInstance().log(Level.FINE, ELogTag.QUEST,
                 "[AssignQuest] " + player.getPseudo() + " → " + quest.getId() + " (diff=" + difficulty + ") slot=" + nextSlot + " [" + (usedSlots + 1) + "/" + capacity + "]");
 
-        player.getPlayer().sendMessage(langService.text(player.getPlayer(), "quest.accepted.prefix")
-                .append(Component.text(trader.getNameId(), net.kyori.adventure.text.format.NamedTextColor.AQUA))
-                .append(langService.text(player.getPlayer(), "quest.accepted.separator"))
-                .append(Component.text(quest.getName(), net.kyori.adventure.text.format.NamedTextColor.GOLD)));
+        player.getPlayer().sendMessage(langService.text(player.getPlayer(), "quest.accepted",
+                trader.getNameId(), quest.getName()));
         player.getPlayer().sendMessage(Component.text(quest.getFormattedDescription(), NamedTextColor.GRAY));
         player.getPlayer().sendMessage(langService.text(player.getPlayer(), "quest.accepted.slots", usedSlots + 1, capacity));
     }
@@ -423,8 +421,7 @@ public class QuestManager extends AbstractQuestManager<Quest> {
         if (player.getPlayer() != null) {
             String jobsStr = quest.getJobs().isEmpty() ? "tous" : quest.getJobs().stream().map(EJob::getDisplayName).reduce((a, b) -> a + ", " + b).orElse("tous");
             LangService langService = GameManager.getInstance().getLangService();
-            player.getPlayer().sendMessage(langService.text(player.getPlayer(), "quest.test.prefix")
-                    .append(Component.text(quest.getName(), NamedTextColor.GOLD)));
+            player.getPlayer().sendMessage(langService.text(player.getPlayer(), "quest.test.assigned", quest.getName()));
             player.getPlayer().sendMessage(Component.text(quest.getFormattedDescription(), NamedTextColor.GRAY));
             player.getPlayer().sendMessage(langService.text(player.getPlayer(), "quest.test.details", quest.getGoal(), quest.getDifficulty(), jobsStr));
         }
@@ -449,8 +446,7 @@ public class QuestManager extends AbstractQuestManager<Quest> {
             return false;
 
         if (data.getTraderId() != null && !data.getTraderId().equals(trader.getNameId())) {
-            player.getPlayer().sendMessage(GameManager.getInstance().getLangService().text(player.getPlayer(), "quest.validate_trader_prefix")
-                    .append(Component.text(data.getTraderId(), NamedTextColor.AQUA)));
+            player.getPlayer().sendMessage(GameManager.getInstance().getLangService().text(player.getPlayer(), "quest.validate_trader", data.getTraderId()));
             return false;
         }
 
@@ -486,9 +482,7 @@ public class QuestManager extends AbstractQuestManager<Quest> {
 
         int capacity = getTotalCapacity();
         LangService langService = GameManager.getInstance().getLangService();
-        player.getPlayer().sendMessage(langService.text(player.getPlayer(), "quest.rewards_received.prefix")
-                .append(Component.text(usedAfter + "/" + capacity, NamedTextColor.GOLD))
-                .append(langService.text(player.getPlayer(), "quest.rewards_received.suffix")));
+        player.getPlayer().sendMessage(langService.text(player.getPlayer(), "quest.rewards_received", usedAfter, capacity));
 
         QuestGlowService glowService = GameManager.getInstance().getQuestGlowService();
         if (glowService != null) glowService.disableGlow(player);
@@ -530,8 +524,7 @@ public class QuestManager extends AbstractQuestManager<Quest> {
 
         SoundService.play(player.getPlayer(), ESound.QUEST_COMPLETE);
         LangService langService = GameManager.getInstance().getLangService();
-        player.getPlayer().sendMessage(langService.text(player.getPlayer(), "quest.completed.prefix")
-                .append(Component.text(quest.getName(), NamedTextColor.GOLD)));
+        player.getPlayer().sendMessage(langService.text(player.getPlayer(), "quest.completed", quest.getName()));
         player.getPlayer().sendMessage(langService.text(player.getPlayer(), "quest.completed.go_trader"));
         GameManager.getInstance().getQuestActionBarService().showFinished(player, quest);
 

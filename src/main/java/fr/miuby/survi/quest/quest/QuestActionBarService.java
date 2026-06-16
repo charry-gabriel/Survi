@@ -4,7 +4,6 @@ import fr.miuby.survi.GameManager;
 import fr.miuby.survi.player.AlphaPlayer;
 import fr.miuby.survi.system.lang.LangService;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.scheduler.BukkitTask;
 
 import java.util.HashMap;
@@ -92,19 +91,14 @@ public class QuestActionBarService {
     private Component buildProgressMessage(AlphaPlayer player, Quest quest,
                                            PlayerQuestData data, int doneCount, int capacity) {
         LangService ls = GameManager.getInstance().getLangService();
-        return Component.text("⚔ ", NamedTextColor.AQUA)
-                .append(Component.text(quest.getFormattedDescription(), NamedTextColor.YELLOW))
-                .append(Component.text(" — ", NamedTextColor.DARK_GRAY))
-                .append(Component.text(data.getProgress() + "/" + quest.getGoal(), NamedTextColor.WHITE))
-                .append(Component.text("  [", NamedTextColor.DARK_GRAY))
-                .append(Component.text(doneCount + "/" + capacity, NamedTextColor.GRAY))
-                .append(ls.text(player.getPlayer(), "quest.actionbar.quests_suffix"));
+        return ls.text(player.getPlayer(), "quest.actionbar.progress",
+                quest.getFormattedDescription(),
+                data.getProgress() + "/" + quest.getGoal(),
+                doneCount + "/" + capacity);
     }
 
     private Component buildFinishedMessage(AlphaPlayer player, Quest quest) {
         LangService ls = GameManager.getInstance().getLangService();
-        return ls.text(player.getPlayer(), "quest.actionbar.finished_prefix")
-                .append(Component.text(quest.getName(), NamedTextColor.GOLD))
-                .append(ls.text(player.getPlayer(), "quest.actionbar.finished_suffix"));
+        return ls.text(player.getPlayer(), "quest.actionbar.finished", quest.getName());
     }
 }

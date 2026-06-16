@@ -17,7 +17,7 @@ import io.papermc.paper.command.brigadier.argument.ArgumentTypes;
 import io.papermc.paper.command.brigadier.argument.resolvers.FinePositionResolver;
 import io.papermc.paper.command.brigadier.argument.resolvers.selector.PlayerSelectorArgumentResolver;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.Location;
 
 public class VillagerCommand {
@@ -79,9 +79,8 @@ public class VillagerCommand {
 
         var ls = GameManager.getInstance().getLangService();
         var sender = ctx.getSource().getSender();
-        sender.sendMessage(Component.empty()
-                .append(villagerLevel.getDisplayName())
-                .append(ls.text(ls.resolveOrDefault(sender), "cmd.villager.reset_done", "")));
+        sender.sendMessage(ls.text(ls.resolveOrDefault(sender), "cmd.villager.reset_done",
+                Placeholder.component("villager", villagerLevel.getDisplayName())));
         return Command.SINGLE_SUCCESS;
     }
 

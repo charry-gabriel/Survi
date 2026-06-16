@@ -12,11 +12,10 @@ import fr.miuby.survi.item.locked_item.ELockedToolType;
 import fr.miuby.survi.player.AlphaPlayer;
 import fr.miuby.survi.system.command.argument.AlphaPlayerArgument;
 import fr.miuby.survi.system.command.argument.WorldArgument;
+import fr.miuby.survi.system.lang.LangService;
 import fr.miuby.survi.world.EWorld;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
 import io.papermc.paper.command.brigadier.Commands;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.NamedTextColor;
 
 import java.util.Arrays;
 
@@ -121,8 +120,10 @@ public class BlessingCommand {
                                             try {
                                                 armorType = ELockedArmorType.valueOf(typeStr);
                                             } catch (IllegalArgumentException e) {
+                                                LangService ls = GameManager.getInstance().getLangService();
                                                 ctx.getSource().getSender().sendMessage(
-                                                        Component.text("Type invalide : " + typeStr, NamedTextColor.RED));
+                                                        ls.text(ls.resolveOrDefault(ctx.getSource().getSender()),
+                                                                "cmd.blessing.invalid_type", typeStr));
                                                 return 0;
                                             }
                                             new UnlockArmorEffect(armorType).applyEffect(target);
@@ -150,8 +151,10 @@ public class BlessingCommand {
                                             try {
                                                 toolType = ELockedToolType.valueOf(typeStr);
                                             } catch (IllegalArgumentException e) {
+                                                LangService ls = GameManager.getInstance().getLangService();
                                                 ctx.getSource().getSender().sendMessage(
-                                                        Component.text("Type invalide : " + typeStr, NamedTextColor.RED));
+                                                        ls.text(ls.resolveOrDefault(ctx.getSource().getSender()),
+                                                                "cmd.blessing.invalid_type", typeStr));
                                                 return 0;
                                             }
                                             new UnlockToolEffect(toolType).applyEffect(target);
@@ -224,11 +227,9 @@ public class BlessingCommand {
     }
 
     private static void feedback(com.mojang.brigadier.context.CommandContext<CommandSourceStack> ctx, AlphaPlayer target, String effectDesc) {
-        ctx.getSource().getSender().sendMessage(
-                Component.text("[Blessing] ", NamedTextColor.YELLOW)
-                        .append(Component.text(effectDesc, NamedTextColor.YELLOW))
-                        .append(Component.text(" → appliqué à ", NamedTextColor.YELLOW))
-                        .append(Component.text(target.getPlayer() != null ? target.getPlayer().getName() : target.getUuid().toString(), NamedTextColor.YELLOW))
-        );
+        LangService ls     = GameManager.getInstance().getLangService();
+        var         sender = ctx.getSource().getSender();
+        String      name   = target.getPlayer() != null ? target.getPlayer().getName() : target.getUuid().toString();
+        sender.sendMessage(ls.text(ls.resolveOrDefault(sender), "cmd.blessing.feedback", effectDesc, name));
     }
 }

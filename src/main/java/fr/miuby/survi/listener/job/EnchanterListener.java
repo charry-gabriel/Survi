@@ -72,7 +72,7 @@ public class EnchanterListener implements Listener {
             event.getEnchanter().sendMessage(langService.text(
                     event.getEnchanter(), "enchanter.xp_too_high",
                     Placeholder.component("job", EJob.ENCHANTER.toComponent()),
-                    Placeholder.unparsed("0", String.valueOf(maxXpCost))));
+                    Placeholder.unparsed("max", String.valueOf(maxXpCost))));
             return;
         }
         boolean tooHigh = event.getEnchantsToAdd().entrySet().stream()
@@ -82,7 +82,7 @@ public class EnchanterListener implements Listener {
             event.getEnchanter().sendMessage(langService.text(
                     event.getEnchanter(), "enchanter.level_too_high",
                     Placeholder.component("job", EJob.ENCHANTER.toComponent()),
-                    Placeholder.unparsed("0", String.valueOf(jobLevel))));
+                    Placeholder.unparsed("max", String.valueOf(jobLevel))));
         }
     }
 

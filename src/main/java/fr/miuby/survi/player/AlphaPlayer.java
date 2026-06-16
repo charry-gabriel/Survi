@@ -26,6 +26,7 @@ import java.util.Map;
 import fr.miuby.survi.quest.quest.PlayerQuestData;
 import java.util.*;
 import java.util.logging.Level;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 
 public class AlphaPlayer extends MLPlayer implements Serializable {
     @Getter
@@ -227,9 +228,8 @@ public class AlphaPlayer extends MLPlayer implements Serializable {
         if (this.getPlayer() != null && this.getPlayer().isOnline()) {
             LangService langService = GameManager.getInstance().getLangService();
             this.getPlayer().sendMessage(
-                    langService.text(this.getPlayer(), "player.subrole.added_prefix")
-                            .append(role.displayName())
-                            .append(langService.text(this.getPlayer(), "player.subrole.added_suffix"))
+                    langService.text(this.getPlayer(), "player.subrole.added",
+                            Placeholder.component("role", role.displayName()))
             );
         }
         return true;
@@ -242,9 +242,8 @@ public class AlphaPlayer extends MLPlayer implements Serializable {
         if (this.getPlayer() != null && this.getPlayer().isOnline()) {
             LangService langService = GameManager.getInstance().getLangService();
             this.getPlayer().sendMessage(
-                    langService.text(this.getPlayer(), "player.subrole.removed_prefix")
-                            .append(role.displayName())
-                            .append(langService.text(this.getPlayer(), "player.subrole.removed_suffix"))
+                    langService.text(this.getPlayer(), "player.subrole.removed",
+                            Placeholder.component("role", role.displayName()))
             );
         }
         return true;
@@ -290,11 +289,9 @@ public class AlphaPlayer extends MLPlayer implements Serializable {
         EGlobalRank newRank = getGlobalRank();
         if (newRank != previousRank && getPlayer() != null) {
             LangService langService = GameManager.getInstance().getLangService();
-            getPlayer().sendMessage(
-                    langService.text(getPlayer(), "player.rank_up.prefix")
-                            .append(newRank.displayComponent())
-                            .append(langService.text(getPlayer(), "player.rank_up.suffix", getTotalReputation()))
-            );
+            getPlayer().sendMessage(langService.text(getPlayer(), "player.rank_up",
+                    Placeholder.component("rank", newRank.displayComponent()),
+                    Placeholder.unparsed("total", String.valueOf(getTotalReputation()))));
         }
     }
 
@@ -329,7 +326,8 @@ public class AlphaPlayer extends MLPlayer implements Serializable {
         }
 
         if (newLevel > oldLevel && getPlayer() != null && getPlayer().isOnline()) {
-            getPlayer().sendMessage(GameManager.getInstance().getLangService().text(getPlayer(), "job.note_prefix").append(job.toComponent()));
+            getPlayer().sendMessage(GameManager.getInstance().getLangService().text(getPlayer(), "job.note",
+                    Placeholder.component("job", job.toComponent())));
             MLLogManager.getInstance().log(Level.INFO, ELogTag.JOB,
                     getPseudo() + " : " + job.name() + " niv. " + oldLevel + " -> " + newLevel);
         }

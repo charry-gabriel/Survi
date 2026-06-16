@@ -48,13 +48,14 @@ public class JobLevelUpListener implements Listener {
         int newLevel = event.getNewLevel();
 
         LangService ls = GameManager.getInstance().getLangService();
-        String levelStr = "niv." + newLevel;
 
         // ── Effets visuels — title affiché uniquement au joueur concerné ─────────
         if (player != null && player.isOnline()) {
             player.showTitle(Title.title(
                     ls.text(player, "job.level_up.title"),
-                    job.toComponent().append(ls.text(player, "job.level_up.subtitle_suffix", levelStr)),
+                    ls.text(player, "job.level_up.subtitle",
+                            Placeholder.component("job", job.toComponent()),
+                            Placeholder.unparsed("level", String.valueOf(newLevel))),
                     TITLE_TIMES
             ));
         }
@@ -63,7 +64,7 @@ public class JobLevelUpListener implements Listener {
         SoundService.broadcast(ESound.JOB_LEVEL_UP);
         ls.broadcast("job.level_up.broadcast",
                 Placeholder.unparsed("player", alphaPlayer.getPseudo()),
-                Placeholder.unparsed("level", levelStr),
+                Placeholder.unparsed("level", String.valueOf(newLevel)),
                 Placeholder.component("job", job.toComponent())
         );
 

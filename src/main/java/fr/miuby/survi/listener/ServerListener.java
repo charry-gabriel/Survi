@@ -132,8 +132,6 @@ public class ServerListener implements Listener {
         int remaining = capacity - used;
         if (remaining <= 0) return;
         var ls = GameManager.getInstance().getLangService();
-        player.getPlayer().sendMessage(
-                ls.text(player.getPlayer(), "quest.new_slots.prefix")
-                        .append(ls.text(player.getPlayer(), "quest.new_slots.body", remaining, used, capacity)));
+        player.getPlayer().sendMessage(ls.text(player.getPlayer(), "quest.new_slots", remaining, used, capacity));
     }
 }

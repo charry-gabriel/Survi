@@ -7,8 +7,6 @@ import fr.miuby.survi.GameManager;
 import fr.miuby.survi.system.command.argument.GlobalQuestArgument;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
 import io.papermc.paper.command.brigadier.Commands;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.NamedTextColor;
 
 @SuppressWarnings({"java:S3516", "SameReturnValue"})
 public class GlobalQuestCommand {
@@ -45,99 +43,78 @@ public class GlobalQuestCommand {
     }
 
     private static int startQuest(CommandContext<CommandSourceStack> ctx) {
-        GlobalQuest quest = GlobalQuestArgument.getGlobalQuest(ctx, questArgument);
-        GlobalQuestManager manager = GameManager.getInstance().getGlobalQuestManager();
+        var sender  = ctx.getSource().getSender();
+        var manager = GameManager.getInstance().getGlobalQuestManager();
+        var ls      = GameManager.getInstance().getLangService();
+        var lang    = ls.resolveOrDefault(sender);
 
         if (manager.getActiveQuest() != null) {
-            ctx.getSource().getSender().sendMessage(
-                    Component.text("Une quête globale est déjà en cours : ")
-                            .color(NamedTextColor.RED)
-                            .append(Component.text(manager.getActiveQuest().getName(), NamedTextColor.YELLOW))
-            );
+            sender.sendMessage(ls.text(lang, "cmd.globalquest.already_active",
+                    manager.getActiveQuest().getName()));
             return Command.SINGLE_SUCCESS;
         }
 
+        GlobalQuest quest = GlobalQuestArgument.getGlobalQuest(ctx, questArgument);
         manager.startQuest(quest.getId());
-        ctx.getSource().getSender().sendMessage(
-                Component.text("Quête globale « " + quest.getName() + " » lancée !").color(NamedTextColor.GREEN)
-        );
+        sender.sendMessage(ls.text(lang, "cmd.globalquest.started", quest.getName()));
         return Command.SINGLE_SUCCESS;
     }
 
     private static int stopQuest(CommandContext<CommandSourceStack> ctx) {
-        GlobalQuestManager manager = GameManager.getInstance().getGlobalQuestManager();
+        var sender  = ctx.getSource().getSender();
+        var manager = GameManager.getInstance().getGlobalQuestManager();
+        var ls      = GameManager.getInstance().getLangService();
+        var lang    = ls.resolveOrDefault(sender);
 
         if (manager.getActiveQuest() == null) {
-            ctx.getSource().getSender().sendMessage(
-                    Component.text("Aucune quête globale en cours.").color(NamedTextColor.RED)
-            );
+            sender.sendMessage(ls.text(lang, "cmd.globalquest.none_active"));
             return Command.SINGLE_SUCCESS;
         }
 
         manager.cancelQuest();
-        ctx.getSource().getSender().sendMessage(
-                Component.text("Quête globale annulée.").color(NamedTextColor.YELLOW)
-        );
+        sender.sendMessage(ls.text(lang, "cmd.globalquest.cancelled"));
         return Command.SINGLE_SUCCESS;
     }
 
     private static int listQuests(CommandContext<CommandSourceStack> ctx) {
-        GlobalQuestManager manager = GameManager.getInstance().getGlobalQuestManager();
+        var sender  = ctx.getSource().getSender();
+        var manager = GameManager.getInstance().getGlobalQuestManager();
+        var ls      = GameManager.getInstance().getLangService();
+        var lang    = ls.resolveOrDefault(sender);
 
         if (manager.getQuestPool().isEmpty()) {
-            ctx.getSource().getSender().sendMessage(
-                    Component.text("Aucune quête globale configurée dans global_quests.yml.").color(NamedTextColor.RED)
-            );
+            sender.sendMessage(ls.text(lang, "cmd.globalquest.no_config"));
             return Command.SINGLE_SUCCESS;
         }
 
-        ctx.getSource().getSender().sendMessage(
-                Component.text("── Quêtes globales disponibles ──").color(NamedTextColor.GOLD)
-        );
+        sender.sendMessage(ls.text(lang, "cmd.globalquest.list_header"));
         for (GlobalQuest q : manager.getQuestPool()) {
             String timeStr = GlobalQuestManager.formatSeconds(q.getTimeLimitSeconds());
-            ctx.getSource().getSender().sendMessage(
-                    Component.text("  " + q.getId(), NamedTextColor.YELLOW)
-                            .append(Component.text(" — " + q.getName(), NamedTextColor.WHITE))
-                            .append(Component.text(" (objectif: " + q.getGoal()
-                                    + " | temps: " + timeStr + ")", NamedTextColor.GRAY))
-            );
+            sender.sendMessage(ls.text(lang, "cmd.globalquest.list_entry",
+                    q.getId(), q.getName(), q.getGoal(), timeStr));
         }
         return Command.SINGLE_SUCCESS;
     }
 
     private static int statusQuest(CommandContext<CommandSourceStack> ctx) {
-        GlobalQuestManager manager = GameManager.getInstance().getGlobalQuestManager();
+        var sender  = ctx.getSource().getSender();
+        var manager = GameManager.getInstance().getGlobalQuestManager();
+        var ls      = GameManager.getInstance().getLangService();
+        var lang    = ls.resolveOrDefault(sender);
 
         if (manager.getActiveQuest() == null) {
-            ctx.getSource().getSender().sendMessage(
-                    Component.text("Aucune quête globale en cours.").color(NamedTextColor.RED)
-            );
+            sender.sendMessage(ls.text(lang, "cmd.globalquest.none_active"));
             return Command.SINGLE_SUCCESS;
         }
 
-        GlobalQuest q = manager.getActiveQuest();
-        String timeLeft = GlobalQuestManager.formatSeconds(manager.getRemainingSeconds());
+        GlobalQuest q        = manager.getActiveQuest();
+        String      timeLeft = GlobalQuestManager.formatSeconds(manager.getRemainingSeconds());
 
-        ctx.getSource().getSender().sendMessage(
-                Component.text("── Quête Globale en cours ──").color(NamedTextColor.GOLD)
-        );
-        ctx.getSource().getSender().sendMessage(
-                Component.text("  Nom : ").color(NamedTextColor.GRAY)
-                        .append(Component.text(q.getName(), NamedTextColor.YELLOW))
-        );
-        ctx.getSource().getSender().sendMessage(
-                Component.text("  Progression : ").color(NamedTextColor.GRAY)
-                        .append(Component.text(manager.getProgress() + "/" + q.getGoal(), NamedTextColor.AQUA))
-        );
-        ctx.getSource().getSender().sendMessage(
-                Component.text("  Temps restant : ").color(NamedTextColor.GRAY)
-                        .append(Component.text(timeLeft, NamedTextColor.AQUA))
-        );
-        ctx.getSource().getSender().sendMessage(
-                Component.text("  Participants : ").color(NamedTextColor.GRAY)
-                        .append(Component.text(manager.getParticipants().size(), NamedTextColor.AQUA))
-        );
+        sender.sendMessage(ls.text(lang, "cmd.globalquest.status_header"));
+        sender.sendMessage(ls.text(lang, "cmd.globalquest.status_name",        q.getName()));
+        sender.sendMessage(ls.text(lang, "cmd.globalquest.status_progress",    manager.getProgress(), q.getGoal()));
+        sender.sendMessage(ls.text(lang, "cmd.globalquest.status_time",        timeLeft));
+        sender.sendMessage(ls.text(lang, "cmd.globalquest.status_participants",manager.getParticipants().size()));
         return Command.SINGLE_SUCCESS;
     }
 }
