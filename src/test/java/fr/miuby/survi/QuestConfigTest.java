@@ -134,7 +134,7 @@ class QuestConfigTest {
             // difficulty
             assertTrue(quest.containsKey("difficulty"), ctx + " : champ 'difficulty' manquant");
             assertInstanceOf(Integer.class, quest.get("difficulty"), ctx + " : 'difficulty' doit être un entier");
-            assertTrue((Integer) quest.get("difficulty") >= 1, ctx + " : 'difficulty' doit être ≥ 1");
+            assertTrue((Integer) quest.get("difficulty") >= 0, ctx + " : 'difficulty' doit être ≥ 0");
 
             // targets (null autorisé pour FISH et GAIN_XP_LEVELS, sinon liste non vide de strings)
             assertTrue(quest.containsKey("targets"),

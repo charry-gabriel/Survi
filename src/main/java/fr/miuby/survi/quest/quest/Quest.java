@@ -17,8 +17,7 @@ import java.util.List;
 public class Quest extends BaseQuest {
 
     /**
-     * Niveau de difficulté de la quête (entier ≥ 1, croissant = plus difficile).
-     * Remplace l'ancienne enum EQuestDifficulty (COMMON/RARE/LEGENDARY → 1/2/3).
+     * Niveau de difficulté de la quête (entier ≥ 0, croissant = plus difficile).
      */
     private final int difficulty;
 
