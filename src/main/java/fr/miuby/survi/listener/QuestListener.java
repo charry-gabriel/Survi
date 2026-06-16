@@ -79,14 +79,21 @@ public class QuestListener implements Listener {
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onCraft(CraftItemEvent event) {
-        if (event.getWhoClicked() instanceof Player killer) {
-            AlphaPlayer player = AlphaPlayer.get(killer.getUniqueId());
-            if (player != null) {
-                int amount = event.getRecipe().getResult().getAmount();
-                GameManager.getInstance().getQuestManager().progressQuest(player, EQuestType.CRAFT, event.getRecipe().getResult().getType(), amount);
-                GameManager.getInstance().getGlobalQuestManager().progressGlobalQuest(player, EQuestType.CRAFT, event.getRecipe().getResult().getType(), amount);
-            }
-        }
+        if (!(event.getWhoClicked() instanceof Player p)) return;
+        AlphaPlayer player = AlphaPlayer.get(p.getUniqueId());
+        if (player == null) return;
+
+        Material result = event.getRecipe().getResult().getType();
+        int amount = event.getRecipe().getResult().getAmount();
+
+        // Global quests : comportement event-based conservé (progression partagée)
+        GameManager.getInstance().getGlobalQuestManager().progressGlobalQuest(player, EQuestType.CRAFT, result, amount);
+
+        // Daily quests : l'item n'est pas encore dans l'inventaire au moment de l'event — délai 1 tick
+        GameManager.getInstance().getScheduler().runTaskLater(GameManager.getInstance().getPlugin(), () -> {
+            if (player.getPlayer() == null || !player.getPlayer().isOnline()) return;
+            GameManager.getInstance().getQuestManager().syncCraftProgress(player, result);
+        }, 1L);
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)

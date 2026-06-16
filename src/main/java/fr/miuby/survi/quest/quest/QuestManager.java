@@ -20,6 +20,9 @@ import fr.miuby.survi.system.lang.LangService;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 
+import org.bukkit.Material;
+import org.bukkit.inventory.ItemStack;
+
 import java.time.LocalDate;
 import java.util.*;
 import java.util.logging.Level;
@@ -488,6 +491,40 @@ public class QuestManager extends AbstractQuestManager<Quest> {
         if (glowService != null) glowService.disableGlow(player);
 
         return true;
+    }
+
+    /**
+     * Met à jour la progression d'une quête CRAFT en comptant les items correspondants
+     * dans l'inventaire du joueur. Appelé avec 1 tick de délai après {@code CraftItemEvent}
+     * pour que l'item soit déjà dans l'inventaire au moment du scan.
+     *
+     * <p>La progression est uniquement avancée (jamais réduite) : si le joueur consomme
+     * des items après avoir atteint un certain seuil, la progression reste acquise.</p>
+     */
+    public void syncCraftProgress(AlphaPlayer player, Material material) {
+        PlayerQuestData data = player.getCurrentActiveQuest();
+        if (data == null || data.isCompleted()) return;
+
+        Quest quest = getQuest(data.getQuestId());
+        if (quest == null || !quest.matchesAction(EQuestType.CRAFT, material)) return;
+
+        int count = 0;
+        for (ItemStack item : player.getPlayer().getInventory().getContents()) {
+            if (item != null && item.getType() == material) count += item.getAmount();
+        }
+        int newProgress = Math.min(count, quest.getGoal());
+        if (newProgress <= data.getProgress()) return;
+
+        data.setProgress(newProgress);
+        MLLogManager.getInstance().log(Level.FINE, ELogTag.QUEST,
+                "[CraftProgress] " + player.getPseudo() + " — " + data.getQuestId() + " : " + data.getProgress() + "/" + quest.getGoal());
+
+        if (data.getProgress() >= quest.getGoal()) {
+            finishQuest(player, quest);
+        } else {
+            GameManager.getInstance().getDatabase().quests().updatePlayerQuest(player.getUuid(), data);
+            GameManager.getInstance().getQuestActionBarService().showProgress(player, quest, data);
+        }
     }
 
     /**
