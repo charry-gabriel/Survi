@@ -15,6 +15,7 @@ import net.kyori.adventure.text.format.NamedTextColor;
 public enum ERole {
 
     DRAGON      ("Dragon \uD83D\uDC09",   NamedTextColor.GOLD),
+    NEUTRE      ("Neutre",                  NamedTextColor.GRAY),
     LOUP_GAROU  ("Loup Garou \uD83D\uDC3A", NamedTextColor.DARK_RED),
     FEE         ("Fée \uD83E\uDDDA",      NamedTextColor.LIGHT_PURPLE),
     NAIN        ("Nain \uD83C\uDF44",     NamedTextColor.DARK_GRAY),

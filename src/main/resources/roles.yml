@@ -143,3 +143,8 @@ roles:
       - { world: VILLAGE,    attribute: BLOCK_BREAK_SPEED, value:  0.15 }
       - { world: END,        attribute: BLOCK_BREAK_SPEED, value:  0.25 }
       - { world: END,        attribute: MOVEMENT_SPEED,    value:  0.1, operation: ADD_NUMBER }
+
+  NEUTRE:
+    roleId: neutre
+    attributes:
+      - { world: ALL,        attribute: MOVEMENT_SPEED,    value:  0.0, operation: ADD_NUMBER }
