@@ -3,6 +3,8 @@ package fr.miuby.survi.system.command;
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import fr.miuby.lib.command.MLLogCommand;
+import fr.miuby.lib.utils.Rect;
+import fr.miuby.lib.world.MLWorld;
 import fr.miuby.lib.world.WorldRegistry;
 import fr.miuby.survi.GameManager;
 import fr.miuby.survi.listener.PlacedBlockTracker;
@@ -12,6 +14,7 @@ import fr.miuby.survi.system.perf.PerfTimer;
 import fr.miuby.survi.system.time.TimeManager;
 import fr.miuby.survi.world.EWorld;
 import fr.miuby.survi.world.VillageZoneManager;
+import fr.miuby.survi.world.WorldInitializer;
 import fr.miuby.survi.world.config.VillageZoneConfig;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
 import io.papermc.paper.command.brigadier.Commands;
@@ -21,8 +24,11 @@ import org.bukkit.block.BlockState;
 import org.bukkit.block.Container;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 
 public class SystemCommand {
     private SystemCommand() {}
@@ -159,8 +165,7 @@ public class SystemCommand {
                 // === CONTAINERS ===
                 .then(Commands.literal("containers")
                         .then(Commands.literal("clear").executes(ctx -> {
-                            int cleared = clearVillageContainers();
-                            ctx.getSource().getSender().sendMessage(ls(ctx).text(lang(ctx), "cmd.system.containers.clear_done", cleared));
+                            clearVillageContainers(ctx.getSource().getSender());
                             return Command.SINGLE_SUCCESS;
                         }))
                 );
@@ -168,21 +173,64 @@ public class SystemCommand {
 
     // ── Conteneurs village ──────────────────────────────────────────────────
 
-    private static int clearVillageContainers() {
-        World world = WorldRegistry.get(EWorld.VILLAGE).getWorld();
-        int cleared = 0;
+    /** Nombre de chunks à charger "à froid" par tick. Les chunks déjà chargés sont traités sans limite (coût négligeable). */
+    private static final int VILLAGE_CHUNK_LOAD_BUDGET_PER_TICK = 8;
 
-        for (Chunk chunk : world.getLoadedChunks()) {
-            for (BlockState state : chunk.getTileEntities()) {
-                if (state instanceof Container container) {
-                    container.getInventory().clear();
-                    container.update();
-                    cleared++;
+    private static void clearVillageContainers(CommandSender sender) {
+        MLWorld village = WorldRegistry.get(EWorld.VILLAGE);
+        World world = village.getWorld();
+        Rect bounds = village.getLimit();
+
+        int minChunkX = Math.floorDiv(bounds.xMin(), 16);
+        int maxChunkX = Math.floorDiv(bounds.xMax(), 16);
+        int minChunkZ = Math.floorDiv(bounds.zMin(), 16);
+        int maxChunkZ = Math.floorDiv(bounds.zMax(), 16);
+
+        List<int[]> chunkCoords = new ArrayList<>();
+        for (int x = minChunkX; x <= maxChunkX; x++)
+            for (int z = minChunkZ; z <= maxChunkZ; z++)
+                chunkCoords.add(new int[]{x, z});
+
+        LangService ls = GameManager.getInstance().getLangService();
+        ELang lang = sender instanceof Player p ? ls.resolveLanguage(p) : ls.getServerDefault();
+        sender.sendMessage(ls.text(lang, "cmd.system.containers.clear_start", chunkCoords.size()));
+
+        new BukkitRunnable() {
+            int index = 0;
+            int cleared = 0;
+
+            @Override
+            public void run() {
+                int loadBudget = VILLAGE_CHUNK_LOAD_BUDGET_PER_TICK;
+
+                while (index < chunkCoords.size() && loadBudget > 0) {
+                    int[] coord = chunkCoords.get(index++);
+                    boolean wasLoaded = world.isChunkLoaded(coord[0], coord[1]);
+                    Chunk chunk = world.getChunkAt(coord[0], coord[1]);
+
+                    // useSnapshot=false : état lié directement au tile entity réel.
+                    // (en snapshot, getInventory() renvoie une copie détachée et le
+                    //  clear() peut ne pas être correctement réappliqué par update())
+                    for (BlockState state : chunk.getTileEntities(false)) {
+                        if (state instanceof Container container) {
+                            container.getInventory().clear();
+                            container.update();
+                            cleared++;
+                        }
+                    }
+
+                    if (!wasLoaded) {
+                        world.unloadChunk(chunk.getX(), chunk.getZ(), true);
+                        loadBudget--;
+                    }
+                }
+
+                if (index >= chunkCoords.size()) {
+                    sender.sendMessage(ls.text(lang, "cmd.system.containers.clear_done", cleared));
+                    cancel();
                 }
             }
-        }
-
-        return cleared;
+        }.runTaskTimer(GameManager.getInstance().getPlugin(), 0L, 1L);
     }
 
     // ── Helpers ──────────────────────────────────────────────────────────────
