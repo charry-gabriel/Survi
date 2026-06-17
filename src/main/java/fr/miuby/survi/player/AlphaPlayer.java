@@ -342,5 +342,13 @@ public class AlphaPlayer extends MLPlayer implements Serializable {
     public int getJobLevel(EJob job) {
         return jobLevels.getOrDefault(job, 0);
     }
+
+    /**
+     * @param job le métier voulu
+     * @return true si ce métier a atteint son niveau maximum pour ce joueur
+     */
+    public boolean isJobMaxLevel(EJob job) {
+        return getJobLevel(job) >= JobLevelConfig.getMaxLevel();
+    }
     //endregion
 }

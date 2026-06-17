@@ -53,13 +53,6 @@ public class PlayerCommand {
                                 )
                         )
 
-                        .then(Commands.literal("reputation")
-                                .executes(ctx -> topReputation(ctx, 10))
-                                .then(Commands.argument(LIMIT_ARG, IntegerArgumentType.integer(1, 50))
-                                        .executes(ctx -> topReputation(ctx, IntegerArgumentType.getInteger(ctx, LIMIT_ARG)))
-                                )
-                        )
-
                         .then(Commands.literal("job")
                                 .then(Commands.argument(JOB_ARG, JobArgument.job())
                                         .executes(ctx -> topJob(ctx, 10))
@@ -135,9 +128,10 @@ public class PlayerCommand {
         sender.sendMessage(ls.text(lang, "cmd.player.info.jobs_header"));
         for (EJob job : EJob.values()) {
             int level = ap.getJobLevel(job);
+            String key = ap.isJobMaxLevel(job) ? "cmd.player.info.job_entry_max" : "cmd.player.info.job_entry";
             sender.sendMessage(Component.text("    ")
                     .append(job.toComponent())
-                    .append(ls.text(lang, "cmd.player.info.job_entry", level)));
+                    .append(ls.text(lang, key, level)));
         }
 
         sender.sendMessage(sep);
@@ -156,19 +150,6 @@ public class PlayerCommand {
                 ls.text(lang, "cmd.player.top.quests_title"),
                 top.stream().map(e -> Map.entry(e.pseudo(), e.count())).toList(),
                 ls.getString(lang, "cmd.player.top.unit_quests"),
-                null);
-        return Command.SINGLE_SUCCESS;
-    }
-
-    private static int topReputation(CommandContext<CommandSourceStack> ctx, int limit) {
-        CommandSender sender = ctx.getSource().getSender();
-        LangService   ls     = GameManager.getInstance().getLangService();
-        ELang         lang   = sender instanceof Player p ? ls.resolveLanguage(p) : ls.getServerDefault();
-        List<ReputationRankEntry> top = GameManager.getInstance().getDatabase().quests().getTopByTotalReputation(limit);
-        sendLeaderboard(sender, ls, lang,
-                ls.text(lang, "cmd.player.top.reputation_title"),
-                top.stream().map(e -> Map.entry(e.pseudo(), e.value())).toList(),
-                ls.getString(lang, "cmd.player.top.unit_rep"),
                 null);
         return Command.SINGLE_SUCCESS;
     }

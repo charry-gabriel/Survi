@@ -61,19 +61,16 @@ public class TraderMenuService {
 
         EJob job = trader.getJob();
         if (job != null) {
+            String jobLevelText = alphaPlayer.isJobMaxLevel(job) ? "MAX" : String.valueOf(alphaPlayer.getJobLevel(job));
             lore.add(Component.text("Métier : ", NamedTextColor.GRAY).decoration(TextDecoration.ITALIC, false)
                     .append(job.toComponent().decoration(TextDecoration.ITALIC, false)));
-            lore.add(Component.text("Réputation : ", NamedTextColor.GRAY).decoration(TextDecoration.ITALIC, false)
-                    .append(Component.text(alphaPlayer.getJobReputation(job) + " pts", NamedTextColor.WHITE).decoration(TextDecoration.ITALIC, false)));
             lore.add(Component.text("Niveau métier : ", NamedTextColor.GRAY).decoration(TextDecoration.ITALIC, false)
-                    .append(Component.text(alphaPlayer.getJobLevel(job), NamedTextColor.WHITE).decoration(TextDecoration.ITALIC, false)));
+                    .append(Component.text(jobLevelText, NamedTextColor.WHITE).decoration(TextDecoration.ITALIC, false)));
             lore.add(Component.empty());
         }
 
         lore.add(Component.text("Rang global : ", NamedTextColor.GRAY).decoration(TextDecoration.ITALIC, false)
                 .append(alphaPlayer.getGlobalRank().displayComponent().decoration(TextDecoration.ITALIC, false)));
-        lore.add(Component.text("Réputation totale : ", NamedTextColor.GRAY).decoration(TextDecoration.ITALIC, false)
-                .append(Component.text(alphaPlayer.getTotalReputation() + " pts", NamedTextColor.WHITE).decoration(TextDecoration.ITALIC, false)));
         lore.add(Component.empty());
         lore.add(Component.text("Quêtes complétées : ", NamedTextColor.GRAY).decoration(TextDecoration.ITALIC, false)
                 .append(Component.text(

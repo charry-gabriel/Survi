@@ -143,12 +143,14 @@ class TabInfoColumn {
     }
 
     private static Component villagerDisplay(LangService ls, ELang lang, VillagerLevel vl) {
-        return vl.getDisplayName().append(ls.text(lang, "tab.info.level", vl.getLevel()).colorIfAbsent(NamedTextColor.WHITE));
+        String key = vl.isMaxLevel() ? "tab.info.level_max" : "tab.info.level";
+        return vl.getDisplayName().append(ls.text(lang, key, vl.getLevel()).colorIfAbsent(NamedTextColor.WHITE));
     }
 
     private static Component jobDisplay(LangService ls, ELang lang, AlphaPlayer ap, EJob job) {
         int level = ap.getJobLevel(job);
-        return job.toComponent().append(ls.text(lang, "tab.info.level", level).colorIfAbsent(NamedTextColor.WHITE));
+        String key = ap.isJobMaxLevel(job) ? "tab.info.level_max" : "tab.info.level";
+        return job.toComponent().append(ls.text(lang, key, level).colorIfAbsent(NamedTextColor.WHITE));
     }
 
     // ── Affichage — stats ────────────────────────────────────────────────────
