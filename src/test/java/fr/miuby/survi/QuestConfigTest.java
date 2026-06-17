@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.*;
  *   <li>Pour chaque quête : {@code id}, {@code name}, {@code description}, {@code type},
  *       {@code difficulty}, {@code targets}, {@code goal} et {@code rewards} requis.</li>
  *   <li>Unicité des {@code id} sur l'ensemble des fichiers du dossier.</li>
- *   <li>{@code type} ∈ {MINE, KILL, BREED, FISH, SHEAR, CRAFT, SMELT, TAME, HARVEST_BEEHIVE, ENCHANT, GAIN_XP_LEVELS}.</li>
+ *   <li>{@code type} ∈ {MINE, KILL, BREED, FISH, SHEAR, CRAFT, SMELT, TAME, HARVEST_BEEHIVE, ENCHANT, GAIN_XP_LEVELS, ANVIL_ENCHANT}.</li>
  *   <li>{@code difficulty} : entier ≥ 1.</li>
  *   <li>{@code goal} : entier ≥ 1.</li>
  *   <li>{@code targets} : null ou liste non vide de strings non vides.</li>
@@ -43,7 +43,7 @@ class QuestConfigTest {
 
     private static final Set<String> VALID_QUEST_TYPES = Set.of(
             "MINE", "KILL", "BREED", "FISH", "SHEAR", "CRAFT", "SMELT",
-            "TAME", "HARVEST_BEEHIVE", "ENCHANT", "GAIN_XP_LEVELS"
+            "TAME", "HARVEST_BEEHIVE", "ENCHANT", "GAIN_XP_LEVELS", "ANVIL_ENCHANT"
     );
 
     private static final Set<String> VALID_REWARD_TYPES = Set.of(

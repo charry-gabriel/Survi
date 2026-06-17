@@ -33,6 +33,7 @@
             "type": "string",
             "description": "Type d'action requis pour progresser",
             "enum": [
+        "ANVIL_ENCHANT",
         "BREED",
         "CRAFT",
         "ENCHANT",

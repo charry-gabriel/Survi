@@ -19,6 +19,7 @@
           "type": {
             "type": "string",
             "enum": [
+        "ANVIL_ENCHANT",
         "BREED",
         "CRAFT",
         "ENCHANT",

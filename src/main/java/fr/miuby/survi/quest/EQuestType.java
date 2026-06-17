@@ -11,5 +11,6 @@ public enum EQuestType {
     TAME,
     HARVEST_BEEHIVE,
     ENCHANT,
-    GAIN_XP_LEVELS
+    GAIN_XP_LEVELS,
+    ANVIL_ENCHANT
 }

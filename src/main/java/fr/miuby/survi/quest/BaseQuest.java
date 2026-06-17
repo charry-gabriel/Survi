@@ -22,7 +22,7 @@ public abstract class BaseQuest {
     private final EQuestType type;
 
     /**
-     * Liste des cibles acceptées : Materials (MINE/CRAFT/SMELT/ENCHANT/HARVEST_BEEHIVE),
+     * Liste des cibles acceptées : Materials (MINE/CRAFT/SMELT/ENCHANT/HARVEST_BEEHIVE/ANVIL_ENCHANT),
      * EntityTypes (KILL/SHEAR/BREED/TAME) ou null (FISH, GAIN_XP_LEVELS).
      * Une seule entrée = comportement identique à l'ancienne cible unique.
      * Plusieurs entrées = toute cible de la liste est acceptée (ex: IRON_ORE + DEEPSLATE_IRON_ORE).

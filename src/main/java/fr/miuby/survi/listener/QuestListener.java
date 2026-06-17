@@ -5,6 +5,7 @@ import fr.miuby.survi.player.AlphaPlayer;
 import fr.miuby.survi.quest.EQuestType;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -16,10 +17,17 @@ import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityTameEvent;
 import org.bukkit.event.inventory.CraftItemEvent;
 import org.bukkit.event.inventory.FurnaceExtractEvent;
+import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerFishEvent;
 import org.bukkit.event.player.PlayerHarvestBlockEvent;
 import org.bukkit.event.player.PlayerLevelChangeEvent;
 import org.bukkit.event.player.PlayerShearEntityEvent;
+import org.bukkit.inventory.AnvilInventory;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.EnchantmentStorageMeta;
+import org.bukkit.inventory.meta.ItemMeta;
+
+import java.util.Map;
 
 public class QuestListener implements Listener {
 
@@ -172,5 +180,45 @@ public class QuestListener implements Listener {
             GameManager.getInstance().getQuestManager().progressQuest(player, EQuestType.GAIN_XP_LEVELS, null, gained);
             GameManager.getInstance().getGlobalQuestManager().progressGlobalQuest(player, EQuestType.GAIN_XP_LEVELS, null, gained);
         }
+    }
+
+    /**
+     * Ajouter un enchantement (type inédit, pas juste un niveau supérieur) sur un item via l'enclume.
+     * Target : Material de l'item résultant. Amount : nombre de nouveaux types d'enchantement ajoutés.
+     */
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onAnvilEnchant(InventoryClickEvent event) {
+        if (!(event.getClickedInventory() instanceof AnvilInventory anvil) || event.getSlot() != 2) return;
+        if (!(event.getWhoClicked() instanceof Player p)) return;
+
+        ItemStack before = anvil.getItem(0);
+        ItemStack after = event.getCurrentItem();
+        if (before == null || before.getType().isAir() || after == null || after.getType().isAir()) return;
+
+        int added = countNewEnchants(before, after);
+        if (added <= 0) return;
+
+        AlphaPlayer player = AlphaPlayer.get(p.getUniqueId());
+        if (player != null) {
+            GameManager.getInstance().getQuestManager().progressQuest(player, EQuestType.ANVIL_ENCHANT, after.getType(), added);
+            GameManager.getInstance().getGlobalQuestManager().progressGlobalQuest(player, EQuestType.ANVIL_ENCHANT, after.getType(), added);
+        }
+    }
+
+    private static int countNewEnchants(ItemStack before, ItemStack after) {
+        Map<Enchantment, Integer> beforeEnchants = getEnchants(before);
+        int added = 0;
+        for (Enchantment e : getEnchants(after).keySet()) {
+            if (!beforeEnchants.containsKey(e)) added++;
+        }
+        return added;
+    }
+
+    // Les livres enchantés stockent leurs enchantements via EnchantmentStorageMeta, pas ItemMeta#getEnchants().
+    private static Map<Enchantment, Integer> getEnchants(ItemStack item) {
+        ItemMeta meta = item.getItemMeta();
+        if (meta == null) return Map.of();
+        if (meta instanceof EnchantmentStorageMeta esm) return esm.getStoredEnchants();
+        return meta.getEnchants();
     }
 }
