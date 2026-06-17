@@ -22,6 +22,7 @@ import fr.miuby.survi.blessing.BlessingEffect;
 import fr.miuby.survi.villager.villagerlevel.event.VillagerLevelUpEvent;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -72,7 +73,9 @@ public class VillagerListener implements Listener {
                         .append(Component.text("> ", NamedTextColor.AQUA))
                         .append(level.getMessage()));
                 if (!level.isUnlocked())
-                    player.sendMessage(GameManager.getInstance().getLangService().text(player, "villager.locked", level.getDisplayName(), level.getRemainingLock()));
+                    player.sendMessage(GameManager.getInstance().getLangService().text(player, "villager.locked",
+                            Placeholder.component("villager", level.getDisplayName()),
+                            Placeholder.unparsed("remaining", level.getRemainingLock())));
                 event.setCancelled(true);
             }
             case VillagerLevel level -> {

@@ -123,7 +123,7 @@ trader.menu.close.title: "<red>Fermer"
 trader.menu.close.1: "<gray>Ferme ce menu."
 
 # ─── Villageois ───────────────────────────────────────────────────────────────
-villager.locked: "<yellow>{0} est indisponible pendant encore {1}"
+villager.locked: "<yellow><villager> est indisponible pendant encore <remaining>"
 
 # ─── Tab — entête ─────────────────────────────────────────────────────────────
 tab.header.title: "<gold>◆  Survie  ◆"
