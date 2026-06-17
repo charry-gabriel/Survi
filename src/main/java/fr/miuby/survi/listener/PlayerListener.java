@@ -13,7 +13,6 @@ import fr.miuby.survi.system.SurviConfig;
 import fr.miuby.survi.system.log.ELogTag;
 import fr.miuby.survi.system.perf.PerfTimer;
 import fr.miuby.survi.world.EWorld;
-import fr.miuby.survi.world.VillageZoneManager;
 import io.papermc.paper.advancement.AdvancementDisplay;
 import fr.miuby.survi.blessing.BlessingEffect;
 import fr.miuby.survi.blessing.PotionsEffect;
@@ -49,16 +48,14 @@ public class PlayerListener implements Listener {
     // ─── Références stables pré-cachées ──────────────────────────────────────────
 
     private final GameManager gm;
-    private final VillageZoneManager villageZoneManager;
     private final SurviConfig surviConfig;
 
     /** Cooldown d'avertissement par joueur — remplace l'ancien Map<UUID, Long>. */
     private final Cooldown<UUID> warnCooldown = new Cooldown<>(WARN_COOLDOWN_MS);
 
     public PlayerListener() {
-        this.gm                  = GameManager.getInstance();
-        this.villageZoneManager  = gm.getVillageZoneManager();
-        this.surviConfig         = SurviConfig.getInstance();
+        this.gm          = GameManager.getInstance();
+        this.surviConfig = SurviConfig.getInstance();
     }
 
     // ─── Hot path : mouvement joueur ─────────────────────────────────────────────
@@ -70,14 +67,13 @@ public class PlayerListener implements Listener {
         try (var t = PerfTimer.start("PlayerListener.onPlayerMove")) {
             Player player = event.getPlayer();
 
-            // Un seul lookup par UUID — évite les 3 lookups par WorldType + comparaisons String
             MLWorld mlWorld = WorldRegistry.get(player.getWorld().getUID());
             if (mlWorld == null) return;
 
             WorldType worldType = mlWorld.getType();
             boolean outOfBounds;
             if (worldType == EWorld.VILLAGE) {
-                outOfBounds = villageZoneManager.isLocationOutOfBounds(event.getTo());
+                outOfBounds = gm.getVillageZoneManager().isLocationOutOfBounds(event.getTo());
             } else if (worldType == EWorld.WILDERNESS) {
                 outOfBounds = isOutOfExploreLimit(player, event.getTo(), false);
             } else if (worldType == EWorld.NETHER) {
@@ -98,8 +94,8 @@ public class PlayerListener implements Listener {
     /**
      * Vérifie si le joueur dépasse la limite d'exploration liée à son niveau Explorateur.
      *
-     * @param player  le joueur à tester
-     * @param to      la destination du mouvement
+     * @param player   le joueur à tester
+     * @param to       la destination du mouvement
      * @param isNether {@code true} pour le Nether (rayon divisé par 8)
      * @return {@code true} si la position est hors des limites autorisées
      */
@@ -195,7 +191,6 @@ public class PlayerListener implements Listener {
         AlphaPlayer alphaPlayer = AlphaPlayer.get(player.getUniqueId());
         alphaPlayer.getAlphaLife().actualizeDeath();
 
-        // Forcer le respawn dans Village — sans ça Paper utilise son monde par défaut ("world").
         event.setRespawnLocation(WorldRegistry.get(EWorld.VILLAGE).getWorld().getSpawnLocation());
 
         for (RoleAttribute roleAttribute : alphaPlayer.getRole().attributes()) {

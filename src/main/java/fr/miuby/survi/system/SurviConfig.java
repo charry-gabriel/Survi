@@ -3,7 +3,6 @@ package fr.miuby.survi.system;
 import fr.miuby.survi.player.EGlobalRank;
 import fr.miuby.survi.system.log.ELogTag;
 import fr.miuby.survi.world.EWorld;
-import fr.miuby.survi.world.config.VillageZoneConfig;
 import fr.miuby.lib.log.MLLogManager;
 import lombok.Getter;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -56,8 +55,6 @@ public class SurviConfig {
     @Getter private double mobRarityCap;
     @Getter private double mobDifficultyBase;
     @Getter private double mobDifficultyPerLevel;
-
-    @Getter private VillageZoneConfig villageZoneConfig;
 
     /** Rayon Wilderness (en blocs XZ) autorisé par niveau Explorateur (index 0–10). */
     @Getter private List<Integer> exploreWildernessRadius;
@@ -137,46 +134,7 @@ public class SurviConfig {
             exploreWildernessRadius = List.of(500, 750, 1000, 1500, 2000, 3000, 4000, 6000, 8000, 12000, 200000);
         }
 
-        // ─── Zone Village ────────────────────────────────────────────────────────────
-        int centerX = cfg.getInt("village-zone.center.x", 0);
-        int centerZ = cfg.getInt("village-zone.center.z", 0);
-
-        List<VillageZoneConfig.VillageZoneStage> zoneStages = new ArrayList<>();
-        List<?> rawStages = cfg.getList("village-zone.stages");
-        if (rawStages != null) {
-            for (Object obj : rawStages) {
-                if (obj instanceof java.util.Map<?, ?> stageMap) {
-                    float afterHours = ((Number) stageMap.get("after-hours")).floatValue();
-                    int  radius     = ((Number) stageMap.get("radius")).intValue();
-
-                    @SuppressWarnings("unchecked")
-                    java.util.Map<String, Object> spawnMap = (java.util.Map<String, Object>) stageMap.get("spawn");
-                    VillageZoneConfig.VillageZoneSpawn spawn = new VillageZoneConfig.VillageZoneSpawn(
-                            ((Number) spawnMap.get("x")).intValue(),
-                            ((Number) spawnMap.get("y")).intValue(),
-                            ((Number) spawnMap.get("z")).intValue(),
-                            spawnMap.containsKey("yaw")   ? ((Number) spawnMap.get("yaw")).floatValue()   : 0f,
-                            spawnMap.containsKey("pitch") ? ((Number) spawnMap.get("pitch")).floatValue() : 0f
-                    );
-
-                    @SuppressWarnings("unchecked")
-                    java.util.Map<String, Object> portalMap = (java.util.Map<String, Object>) stageMap.get("portal");
-
-                    VillageZoneConfig.VillageZonePortal portal = new VillageZoneConfig.VillageZonePortal(
-                            ((Number) portalMap.get("min-x")).intValue(),
-                            ((Number) portalMap.get("min-y")).intValue(),
-                            ((Number) portalMap.get("min-z")).intValue(),
-                            ((Number) portalMap.get("max-x")).intValue(),
-                            ((Number) portalMap.get("max-y")).intValue(),
-                            ((Number) portalMap.get("max-z")).intValue()
-                    );
-                    zoneStages.add(new VillageZoneConfig.VillageZoneStage(afterHours, radius, spawn, portal));
-                }
-            }
-        }
-        villageZoneConfig = new VillageZoneConfig(centerX, centerZ, zoneStages);
-
-        // ─── Pluie ───────────────────────────────────────────────────────────────────
+        // ─── Pluie ─────────────────────────────────────────────────────────────────── ───────────────────────────────────────────────────────────────────
         rainDurationSeconds       = cfg.getInt("rain.duration-seconds",        60);
         rainCooldownMinSeconds    = cfg.getInt("rain.cooldown-min-seconds",     600);
         rainCooldownMaxSeconds    = cfg.getInt("rain.cooldown-max-seconds",    1500);
@@ -197,7 +155,6 @@ public class SurviConfig {
         MLLogManager.getInstance().log(Level.INFO, ELogTag.SYSTEM,
                 "[SurviConfig] Configuration chargée (" + rankEntries.size() + " rangs, "
                         + jobLevelEntries.size() + " niveaux de métier, "
-                        + zoneStages.size() + " paliers de zone village, "
                         + rainWorlds.size() + " monde(s) pluie)");
     }
 }

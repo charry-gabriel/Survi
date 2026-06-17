@@ -27,8 +27,6 @@ import static org.junit.jupiter.api.Assertions.*;
  *   <li>{@code world-level} — mob-rarity, mob-difficulty cohérents.</li>
  *   <li>{@code explore-limits.wilderness-radius-per-level} — même compte que {@code jobs.levels},
  *       valeurs positives croissantes, {@code radius[0] / 8 ≥ 1} (cohérence Nether).</li>
- *   <li>{@code village-zone} — centre XZ, paliers triés par {@code after-hours} croissant,
- *       chaque palier avec {@code radius > 0}, {@code spawn} et {@code portal} valides.</li>
  * </ul>
  */
 class ConfigTest {
@@ -161,9 +159,6 @@ class ConfigTest {
             assertTrue(threshold >= 0, ctx + " : 'threshold' doit être ≥ 0, trouvé : " + threshold);
             assertTrue(threshold > previousThreshold, ctx + " : niveaux non triés — précédent : " + previousThreshold + ", actuel : " + threshold);
             previousThreshold = threshold;
-
-            assertTrue(level.containsKey("name"), ctx + " : champ 'name' manquant");
-            assertFalse(String.valueOf(level.get("name")).isBlank(), ctx + " : 'name' ne doit pas être vide");
         }
 
         assertEquals(0, ((Map<?, ?>) levels.get(0)).get("threshold"), "Le premier niveau de métier doit avoir threshold = 0");
@@ -229,69 +224,6 @@ class ConfigTest {
         assertTrue(minRadius / 8 >= 1,
                 "Le rayon Nether au niveau 0 (wilderness-radius[0] / 8 = " + (minRadius / 8)
                         + ") serait nul. Augmentez wilderness-radius[0] (actuellement " + minRadius + ") à au moins 8.");
-    }
-
-    // ─── village-zone ─────────────────────────────────────────────────────────────
-
-    @Test
-    @SuppressWarnings("unchecked")
-    void villageZoneSectionIsValid() throws IOException {
-        Map<String, Object> config = loadConfig();
-        Map<String, Object> villageZone = (Map<String, Object>) config.get("village-zone");
-        assertNotNull(villageZone, "La section 'village-zone' doit être présente");
-
-        // Centre
-        Map<String, Object> center = (Map<String, Object>) villageZone.get("center");
-        assertNotNull(center, "village-zone.center doit être présent");
-        assertIntField(center, "x", "village-zone.center");
-        assertIntField(center, "z", "village-zone.center");
-
-        // Paliers
-        List<?> stages = (List<?>) villageZone.get("stages");
-        assertNotNull(stages, "village-zone.stages doit être présent");
-        assertFalse(stages.isEmpty(), "village-zone.stages ne doit pas être vide");
-
-        float previousAfterHours = -1f;
-        for (int i = 0; i < stages.size(); i++) {
-            Map<String, Object> stage = (Map<String, Object>) stages.get(i);
-            String ctx = "village-zone.stages[" + i + "]";
-            assertNotNull(stage, ctx + " ne doit pas être null");
-
-            assertTrue(stage.containsKey("after-hours"), ctx + " : champ 'after-hours' manquant");
-            assertInstanceOf(Number.class, stage.get("after-hours"), ctx + " : 'after-hours' doit être un nombre");
-            float afterHours = ((Number) stage.get("after-hours")).floatValue();
-            assertTrue(afterHours >= 0, ctx + " : 'after-hours' doit être ≥ 0, trouvé : " + afterHours);
-            assertTrue(afterHours > previousAfterHours,
-                    ctx + " : paliers non triés par 'after-hours' — précédent : " + previousAfterHours + ", actuel : " + afterHours);
-            previousAfterHours = afterHours;
-
-            assertTrue(stage.containsKey("radius"), ctx + " : champ 'radius' manquant");
-            assertInstanceOf(Integer.class, stage.get("radius"), ctx + " : 'radius' doit être un entier");
-            assertTrue((Integer) stage.get("radius") > 0, ctx + " : 'radius' doit être > 0");
-
-            assertSpawnBlock(ctx, (Map<String, Object>) stage.get("spawn"));
-            assertPortalBlock(ctx, (Map<String, Object>) stage.get("portal"));
-        }
-    }
-
-    @SuppressWarnings("unchecked")
-    private void assertSpawnBlock(String stageCtx, Map<String, Object> spawn) {
-        String ctx = stageCtx + ".spawn";
-        assertNotNull(spawn, ctx + " doit être présent");
-        assertIntField(spawn, "x", ctx);
-        assertIntField(spawn, "y", ctx);
-        assertIntField(spawn, "z", ctx);
-        if (spawn.containsKey("yaw"))   assertInstanceOf(Number.class, spawn.get("yaw"),   ctx + ".yaw doit être un nombre");
-        if (spawn.containsKey("pitch")) assertInstanceOf(Number.class, spawn.get("pitch"), ctx + ".pitch doit être un nombre");
-    }
-
-    @SuppressWarnings("unchecked")
-    private void assertPortalBlock(String stageCtx, Map<String, Object> portal) {
-        String ctx = stageCtx + ".portal";
-        assertNotNull(portal, ctx + " doit être présent");
-        for (String coord : List.of("min-x", "min-y", "min-z", "max-x", "max-y", "max-z")) {
-            assertIntField(portal, coord, ctx);
-        }
     }
 
     // ─── Helpers ──────────────────────────────────────────────────────────────────

@@ -5,7 +5,6 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import fr.miuby.lib.command.MLLogCommand;
 import fr.miuby.survi.GameManager;
 import fr.miuby.survi.listener.PlacedBlockTracker;
-import fr.miuby.survi.system.SurviConfig;
 import fr.miuby.survi.system.lang.ELang;
 import fr.miuby.survi.system.lang.LangService;
 import fr.miuby.survi.system.perf.PerfTimer;
@@ -109,9 +108,9 @@ public class SystemCommand {
                             return Command.SINGLE_SUCCESS;
                         }))
                         .then(Commands.literal("reset").executes(ctx -> {
-                            GameManager.getInstance().getVillageZoneManager().reset();
-                            int radius = GameManager.getInstance().getVillageZoneManager().getCurrentRadius();
-                            ctx.getSource().getSender().sendMessage(ls(ctx).text(lang(ctx), "cmd.system.zone.reset", radius));
+                            VillageZoneManager vzm = GameManager.getInstance().getVillageZoneManager();
+                            vzm.reset();
+                            ctx.getSource().getSender().sendMessage(ls(ctx).text(lang(ctx), "cmd.system.zone.reset", vzm.getCurrentHalfWidth(), vzm.getCurrentHalfDepth()));
                             return Command.SINGLE_SUCCESS;
                         }))
                         .then(Commands.literal("status").executes(ctx -> {
@@ -119,7 +118,7 @@ public class SystemCommand {
                             LangService ls = ls(ctx);
                             ELang lang = lang(ctx);
                             VillageZoneManager vzm = GameManager.getInstance().getVillageZoneManager();
-                            VillageZoneConfig  cfg = SurviConfig.getInstance().getVillageZoneConfig();
+                            VillageZoneConfig  cfg = vzm.getConfig();
 
                             sender.sendMessage(ls.text(lang, "cmd.system.zone.status_header"));
                             sender.sendMessage(ls.text(lang, "cmd.system.zone.status_title"));
@@ -128,16 +127,19 @@ public class SystemCommand {
 
                             if (vzm.isStarted()) {
                                 float elapsed = vzm.getElapsedMinutes() / 60f;
-                                sender.sendMessage(ls.text(lang, "cmd.system.zone.status_elapsed", String.format("%.2f", elapsed)));
-                                sender.sendMessage(ls.text(lang, "cmd.system.zone.status_stage",   vzm.getCurrentStageIndex()));
-                                sender.sendMessage(ls.text(lang, "cmd.system.zone.status_radius",  vzm.getCurrentRadius()));
-                                sender.sendMessage(ls.text(lang, "cmd.system.zone.status_center",  cfg.centerX(), cfg.centerZ()));
+                                int stageIdx  = vzm.getCurrentStageIndex();
+                                VillageZoneConfig.VillageZoneStage currentStage = cfg.stages().get(stageIdx);
 
-                                var stages = cfg.stages();
-                                int next = vzm.getCurrentStageIndex() + 1;
-                                if (next < stages.size()) {
-                                    float hoursLeft = stages.get(next).afterHours() - elapsed;
-                                    sender.sendMessage(ls.text(lang, "cmd.system.zone.status_next", String.format("%.2f", hoursLeft), stages.get(next).radius()));
+                                sender.sendMessage(ls.text(lang, "cmd.system.zone.status_elapsed", String.format("%.2f", elapsed)));
+                                sender.sendMessage(ls.text(lang, "cmd.system.zone.status_stage",   stageIdx));
+                                sender.sendMessage(ls.text(lang, "cmd.system.zone.status_radius",  vzm.getCurrentHalfWidth(), vzm.getCurrentHalfDepth()));
+                                sender.sendMessage(ls.text(lang, "cmd.system.zone.status_center",  currentStage.centerX(), currentStage.centerZ()));
+
+                                int next = stageIdx + 1;
+                                if (next < cfg.stages().size()) {
+                                    VillageZoneConfig.VillageZoneStage nextStage = cfg.stages().get(next);
+                                    float hoursLeft = nextStage.afterHours() - elapsed;
+                                    sender.sendMessage(ls.text(lang, "cmd.system.zone.status_next", String.format("%.2f", hoursLeft), nextStage.halfWidth(), nextStage.halfDepth()));
                                 } else {
                                     sender.sendMessage(ls.text(lang, "cmd.system.zone.status_final"));
                                 }

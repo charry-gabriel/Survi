@@ -1,7 +1,6 @@
 package fr.miuby.survi.world;
 
 import fr.miuby.survi.GameManager;
-import fr.miuby.survi.system.SurviConfig;
 import fr.miuby.survi.system.log.ELogTag;
 import fr.miuby.survi.world.config.VillageZoneConfig;
 import fr.miuby.lib.log.MLLogManager;
@@ -18,8 +17,10 @@ import java.util.logging.Level;
  * Gère la zone autorisée dans le Village et le spawn associé.
  *
  * <ul>
- *   <li>Le rayon et le spawn évoluent selon les paliers définis dans {@code config.yml}
- *       (section {@code village-zone.stages}).</li>
+ *   <li>Les dimensions (centre + largeur/profondeur) et le spawn évoluent selon les paliers
+ *       définis dans {@code zone.yml} (section {@code stages}).</li>
+ *   <li>La zone est rectangulaire : {@code half-width} sur l'axe X, {@code half-depth} sur l'axe Z.</li>
+ *   <li>Le centre peut changer à chaque palier via {@code center-x} / {@code center-z}.</li>
  *   <li>Le timestamp de démarrage est persisté en DB (survit aux redémarrages).</li>
  *   <li>À chaque changement de palier : spawn monde mis à jour + portail village
  *       rafraîchi pour tous les joueurs présents.</li>
@@ -34,40 +35,43 @@ public class VillageZoneManager {
     private static final String DB_KEY_START = "village_zone_start_timestamp";
 
     /** Intervalle de vérification de changement de palier (en ticks). */
-    private static final long CHECK_INTERVAL_TICKS = 20L * 60; // toutes les minutes
+    private static final long CHECK_INTERVAL_TICKS = 20L * 60;
+
     public VillageZoneManager() {}
 
     // ─── État ────────────────────────────────────────────────────────────────────
 
     /** Epoch millis du début de la partie (-1 = pas encore démarré). */
-    @Getter
-    private long startTimestamp = -1L;
+    @Getter private long startTimestamp = -1L;
 
     /** Index du palier actuellement actif (-1 = non initialisé). */
-    @Getter
-    private int currentStageIndex = -1;
+    @Getter private int currentStageIndex = -1;
 
     /** {@code true} si le timer a été démarré (via {@link #start()} ou chargé depuis la DB). */
-    @Getter
-    private boolean started = false;
+    @Getter private boolean started = false;
+
+    @Getter private VillageZoneConfig config;
 
     private BukkitTask stageCheckTask;
 
     // ─── Initialisation (appelée par GameManager) ─────────────────────────────────
 
     /**
-     * Charge le timestamp éventuellement persisté en DB.
-     * S'il existe, reprend le timer là où il en était.
+     * Charge la configuration zone depuis zone.yml, puis le timestamp éventuellement
+     * persisté en DB. S'il existe, reprend le timer là où il en était.
      */
     public void init() {
+        this.config = ZoneLoader.load(GameManager.getInstance().getPlugin());
+
         loadStartTimestampFromDB();
 
         if (started) {
             applyCurrentStage(true);
             startStageCheckTimer();
+            VillageZoneConfig.VillageZoneStage stage = config.stages().isEmpty() ? null : config.stages().get(computeStageIndex());
             MLLogManager.getInstance().log(Level.INFO, ELogTag.WORLD,
                     "[VillageZoneManager] Reprise depuis DB — palier=" + currentStageIndex
-                            + " rayon=" + getCurrentRadius() + " blocs"
+                            + " zone=" + (stage != null ? stage.halfWidth() + "×" + stage.halfDepth() : "N/A") + " blocs"
                             + " écoulé=" + String.format("%.2f", getElapsedMinutes() / 60f) + "h");
         } else {
             MLLogManager.getInstance().log(Level.INFO, ELogTag.WORLD,
@@ -123,17 +127,6 @@ public class VillageZoneManager {
     // ─── API publique ─────────────────────────────────────────────────────────────
 
     /**
-     * Retourne le rayon autorisé (blocs XZ) pour le palier actif.
-     * Retourne {@link Integer#MAX_VALUE} si le timer n'est pas démarré.
-     */
-    public int getCurrentRadius() {
-        if (!started) return Integer.MAX_VALUE;
-        List<VillageZoneConfig.VillageZoneStage> stages = SurviConfig.getInstance().getVillageZoneConfig().stages();
-        if (stages.isEmpty()) return Integer.MAX_VALUE;
-        return stages.get(computeStageIndex()).radius();
-    }
-
-    /**
      * Retourne le spawn du village pour le palier actif, ou le spawn par défaut du monde
      * si le timer n'est pas démarré / aucun stage configuré.
      */
@@ -141,38 +134,50 @@ public class VillageZoneManager {
         String villageName = WorldInitializer.getWorlds().get(EWorld.VILLAGE);
         World world = villageName != null ? Bukkit.getWorld(villageName) : null;
 
-        if (!started || world == null) {
-            return world != null ? world.getSpawnLocation() : null;
-        }
+        if (!started || world == null) return world != null ? world.getSpawnLocation() : null;
+        if (config.stages().isEmpty()) return world.getSpawnLocation();
 
-        List<VillageZoneConfig.VillageZoneStage> stages = SurviConfig.getInstance().getVillageZoneConfig().stages();
-        if (stages.isEmpty()) return world.getSpawnLocation();
-
-        VillageZoneConfig.VillageZoneSpawn s = stages.get(computeStageIndex()).spawn();
+        VillageZoneConfig.VillageZoneSpawn s = config.stages().get(computeStageIndex()).spawn();
         return new Location(world, s.x() + 0.5, s.y(), s.z() + 0.5, s.yaw(), s.pitch());
     }
 
     /**
+     * Demi-largeur (axe X) de la zone rectangulaire pour le palier actif.
+     * Retourne {@link Integer#MAX_VALUE} si le timer n'est pas démarré.
+     */
+    public int getCurrentHalfWidth() {
+        if (!started || config.stages().isEmpty()) return Integer.MAX_VALUE;
+        return config.stages().get(computeStageIndex()).halfWidth();
+    }
+
+    /**
+     * Demi-profondeur (axe Z) de la zone rectangulaire pour le palier actif.
+     * Retourne {@link Integer#MAX_VALUE} si le timer n'est pas démarré.
+     */
+    public int getCurrentHalfDepth() {
+        if (!started || config.stages().isEmpty()) return Integer.MAX_VALUE;
+        return config.stages().get(computeStageIndex()).halfDepth();
+    }
+
+    /**
      * Indique si une {@link Location} dépasse la zone autorisée (contrôle XZ uniquement).
+     * La zone est rectangulaire : {@code half-width} sur X, {@code half-depth} sur Z,
+     * centrée sur le {@code center-x/z} du palier actif.
      * Retourne toujours {@code false} si le timer n'est pas démarré.
      */
     public boolean isLocationOutOfBounds(Location loc) {
-        if (!started) return false;
+        if (!started || config.stages().isEmpty()) return false;
 
-        VillageZoneConfig cfg = SurviConfig.getInstance().getVillageZoneConfig();
-        if (cfg.stages().isEmpty()) return false;
+        VillageZoneConfig.VillageZoneStage stage = config.stages().get(computeStageIndex());
+        double dx = Math.abs(loc.getX() - stage.centerX());
+        double dz = Math.abs(loc.getZ() - stage.centerZ());
 
-        double dx = Math.abs(loc.getX() - cfg.centerX());
-        double dz = Math.abs(loc.getZ() - cfg.centerZ());
-
-        double radius = getCurrentRadius();
-
-        return dx > radius || dz > radius;
+        return dx > stage.halfWidth() || dz > stage.halfDepth();
     }
 
-    /** Nombre d'heures entières écoulées depuis le début de la partie. */
+    /** Nombre de minutes écoulées depuis le début de la partie. */
     public float getElapsedMinutes() {
-        if (!started || startTimestamp < 0) return 0L;
+        if (!started || startTimestamp < 0) return 0f;
         return (System.currentTimeMillis() - startTimestamp) / 60_000f;
     }
 
@@ -208,15 +213,15 @@ public class VillageZoneManager {
 
     /**
      * Calcule l'index du palier actif selon le temps écoulé.
-     * Les stages doivent être triés par {@code afterHours} croissant dans le config.
+     * Les stages doivent être triés par {@code afterHours} croissant dans zone.yml.
      */
     private int computeStageIndex() {
-        float elapsedMinutes = getElapsedMinutes() / 60f;
-        List<VillageZoneConfig.VillageZoneStage> stages = SurviConfig.getInstance().getVillageZoneConfig().stages();
+        float elapsedHours = getElapsedMinutes() / 60f;
+        List<VillageZoneConfig.VillageZoneStage> stages = config.stages();
 
         int best = 0;
         for (int i = 0; i < stages.size(); i++) {
-            if (elapsedMinutes >= stages.get(i).afterHours()) best = i;
+            if (elapsedHours >= stages.get(i).afterHours()) best = i;
         }
         return best;
     }
@@ -232,7 +237,7 @@ public class VillageZoneManager {
         if (!force && newIndex == currentStageIndex) return;
         currentStageIndex = newIndex;
 
-        List<VillageZoneConfig.VillageZoneStage> stages = SurviConfig.getInstance().getVillageZoneConfig().stages();
+        List<VillageZoneConfig.VillageZoneStage> stages = config.stages();
         if (stages.isEmpty()) return;
 
         VillageZoneConfig.VillageZoneStage stage = stages.get(currentStageIndex);
@@ -254,7 +259,8 @@ public class VillageZoneManager {
 
         MLLogManager.getInstance().log(Level.INFO, ELogTag.WORLD,
                 "[VillageZoneManager] Palier " + currentStageIndex
-                        + " — rayon=" + stage.radius() + " blocs"
+                        + " — zone=" + stage.halfWidth() + "×" + stage.halfDepth() + " blocs"
+                        + " | centre=(" + stage.centerX() + "," + stage.centerZ() + ")"
                         + " | spawn=(" + sp.x() + "," + sp.y() + "," + sp.z() + ")"
                         + " | portail=(" + portalCfg.minX() + "," + portalCfg.minY() + "," + portalCfg.minZ()
                         + ")→(" + portalCfg.maxX() + "," + portalCfg.maxY() + "," + portalCfg.maxZ() + ")");

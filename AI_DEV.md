@@ -76,6 +76,7 @@ Et si la modification touche un **enum du projet** (`EJob`, `ERole`, `EWorld`, `
 | `jobs/enchanter.yml` | `schema/jobs/enchanter-schema.json` | `JobsConfigTest` |
 | `jobs/fisherman.yml` | `schema/jobs/fisherman-schema.json` | `JobsConfigTest` — ⚠️ `SchemaGeneratorTest` requis (enum `Material`) |
 | `jobs/explorer.yml` | `schema/jobs/explorer-schema.json` | `JobsConfigTest` |
+| `zone.yml` | `schema/zone-schema.json` | `ZoneConfigTest` |
 
 ---
 
@@ -453,6 +454,7 @@ growth_items/<id>.yml → GrowthItemFileConfig → GrowthItemLoader → GrowthIt
 | Villageois | `VillagerFactory`, `VillagerLevel`, `BlessingLoader`, `villagers/*.yml` |
 | Monstres | `MobLevelManager`, `MobTypeConfig`, `monsters.yml` |
 | Mondes | `WorldInitializer`, `WorldLevelManager`, `WorldResetManager`, `EWorld` |
+| Zone village | `VillageZoneManager`, `ZoneLoader`, `VillageZoneConfig`, `zone.yml` |
 | Tombes | `GraveManager`, `GraveData`, `GraveRepository`, `GraveListener` |
 | Items | `ECustomItem`, `CustomItemBuilder`, `CustomRecipeFactory`, `recipes.yml` |
 | Growth items | `GrowthItems`, `GrowthItemLoader`, `GrowthItemFileConfig`, `GrowthItemListener`, `GrowthItemRegistry`, `growth_items/*.yml` |
@@ -468,7 +470,7 @@ growth_items/<id>.yml → GrowthItemFileConfig → GrowthItemLoader → GrowthIt
 - **DB toujours async, sans exception.** Même pour les events ponctuels (`onDailyReset`, `onPlayerQuit`…).
 - Ne pas allouer d'objets inutiles dans les listeners chauds.
 - `ignoreCancelled = true` sur tous les `@EventHandler` sauf cas explicite.
-- **Pré-cacher les références stables** (`GameManager.getInstance().getXxxManager()`) dans des champs `private final` initialisés dans le constructeur du listener — pas à chaque appel.
+- **Pré-cacher les références stables** (`GameManager.getInstance().getXxxManager()`) dans des champs `private final` initialisés dans le constructeur du listener — pas à chaque appel. **Exception : `VillageZoneManager`** — initialisé dans `GameManager.initAfterWorldsLoad()`, il est `null` quand les listeners sont enregistrés dans `Survi.onEnable()`. Toujours appeler `gm.getVillageZoneManager()` inline dans le handler.
 - **Ne jamais cacher `WorldRegistry.get(EWorld.XXX)` dans un champ.** Les mondes Wilderness, Nether et End peuvent être réinitialisés à tout moment — la référence deviendrait invalide silencieusement. Toujours appeler `WorldRegistry.get()` inline dans le handler. Un lookup `EnumMap` coûte ~10 ns : c'est négligeable.
 - **Jamais `getAlphaPlayers()` / `getAll()` dans un hot path.** Pour des états rares (joueurs avec un rôle spécifique), maintenir un `Set<UUID>` dédié mis à jour sur l'event de changement d'état (`AlphaPlayerRoleChangeEvent`, etc.).
 
@@ -804,6 +806,7 @@ Si suggestions dépendent du contexte → surcharger `listSuggestions` directeme
 ```java
 // Déploiement JAR → disque (avant MiubyLib.init())
 MLResourceManager.deploy(this, "config.yml");
+MLResourceManager.deploy(this, "zone.yml");     // zone village — déployé dans Survi.updateResources()
 MLResourceManager.deployFolder(this, "villagers");
 
 // Chargement POJO (résultats mis en cache)
