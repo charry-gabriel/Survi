@@ -3,16 +3,22 @@ package fr.miuby.survi.system.command;
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import fr.miuby.lib.command.MLLogCommand;
+import fr.miuby.lib.world.WorldRegistry;
 import fr.miuby.survi.GameManager;
 import fr.miuby.survi.listener.PlacedBlockTracker;
 import fr.miuby.survi.system.lang.ELang;
 import fr.miuby.survi.system.lang.LangService;
 import fr.miuby.survi.system.perf.PerfTimer;
 import fr.miuby.survi.system.time.TimeManager;
+import fr.miuby.survi.world.EWorld;
 import fr.miuby.survi.world.VillageZoneManager;
 import fr.miuby.survi.world.config.VillageZoneConfig;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
 import io.papermc.paper.command.brigadier.Commands;
+import org.bukkit.Chunk;
+import org.bukkit.World;
+import org.bukkit.block.BlockState;
+import org.bukkit.block.Container;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -148,7 +154,35 @@ public class SystemCommand {
                             sender.sendMessage(ls.text(lang, "cmd.system.zone.status_footer"));
                             return Command.SINGLE_SUCCESS;
                         }))
+                )
+
+                // === CONTAINERS ===
+                .then(Commands.literal("containers")
+                        .then(Commands.literal("clear").executes(ctx -> {
+                            int cleared = clearVillageContainers();
+                            ctx.getSource().getSender().sendMessage(ls(ctx).text(lang(ctx), "cmd.system.containers.clear_done", cleared));
+                            return Command.SINGLE_SUCCESS;
+                        }))
                 );
+    }
+
+    // ── Conteneurs village ──────────────────────────────────────────────────
+
+    private static int clearVillageContainers() {
+        World world = WorldRegistry.get(EWorld.VILLAGE).getWorld();
+        int cleared = 0;
+
+        for (Chunk chunk : world.getLoadedChunks()) {
+            for (BlockState state : chunk.getTileEntities()) {
+                if (state instanceof Container container) {
+                    container.getInventory().clear();
+                    container.update();
+                    cleared++;
+                }
+            }
+        }
+
+        return cleared;
     }
 
     // ── Helpers ──────────────────────────────────────────────────────────────

@@ -189,6 +189,7 @@ cmd.system.zone.status_radius: "<yellow>║ Zone (demi-larg.×demi-prof.) : <whi
 cmd.system.zone.status_center: "<yellow>║ Centre : <white>({0}, {1})"
 cmd.system.zone.status_next: "<yellow>║ Prochain palier dans : <white>{0}h → zone {1}×{2} blocs"
 cmd.system.zone.status_final: "<aqua>║ Palier final atteint."
+cmd.system.containers.clear_done: "<green>✓ {0} conteneur(s) vidé(s) dans le village."
 
 # ─── Commandes — reload (admin) ───────────────────────────────────────────────
 cmd.reload.all.start: "<gray>Rechargement global en cours..."
