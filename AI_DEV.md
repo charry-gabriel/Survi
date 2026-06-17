@@ -38,9 +38,69 @@ Ce fichier est destiné à Claude pour générer du code cohérent avec ce proje
 
 > Ces règles s'appliquent **à chaque tâche**, sans exception.
 
+## 🪙 OPTIMISATION DES TOKENS — obligatoire
+
+Objectif : minimiser la consommation de tokens sans réduire la qualité du code.
+
+### ❌ Interdictions
+
+- Ne jamais réfléchir plusieurs fois au même problème.
+- Ne jamais générer plusieurs hypothèses si une information manque.
+- Ne jamais essayer de deviner l'intention de l'utilisateur.
+- Ne jamais explorer des alternatives non demandées.
+- Ne jamais proposer des améliorations non sollicitées.
+- Ne jamais réanalyser une décision déjà prise.
+- Ne jamais faire de brainstorming interne.
+
+### ❓ Gestion des ambiguïtés
+
+Avant toute tâche :
+
+1. Vérifier si toutes les informations nécessaires sont disponibles.
+2. Si une information critique manque → AskUserQuestion.
+3. Si plusieurs interprétations existent → AskUserQuestion.
+4. Si une deuxième hypothèse devient nécessaire → AskUserQuestion immédiatement.
+
+Interdiction de tourner en boucle pour résoudre une ambiguïté.
+
+### 🧠 Budget de réflexion
+
+Autorisé :
+
+- 1 passe pour comprendre la demande.
+- 1 passe pour vérifier la cohérence.
+
+Interdit :
+
+- Raisonnement récursif.
+- Réévaluation des mêmes hypothèses.
+- Exploration de scénarios multiples.
+- Relecture complète du contexte plusieurs fois.
+
+### ⚡ Workflow obligatoire
+
+1. Lire la demande.
+2. Vérifier les informations disponibles.
+3. Si une information critique manque → AskUserQuestion.
+4. Exécuter.
+5. Arrêter.
+
+Ne jamais recommencer le workflow pendant l'exécution.
+
 ### ❌ Pas d'explications
 
-Ne jamais écrire de résumé, d'explication, de "voici ce que j'ai fait", de liste de modifications. Fournir les fichiers directement — c'est suffisant. L'utilisateur lit le code.
+Ne jamais écrire :
+
+- de résumé ;
+- d'explication ;
+- de liste des modifications ;
+- de justification des choix ;
+- de plan d'action ;
+- de commentaire narratif.
+
+Produire directement le résultat attendu.
+
+Exception : si une ambiguïté existe, utiliser AskUserQuestion.
 
 ### ❓ Poser une question si quelque chose est ambigu
 

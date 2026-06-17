@@ -46,7 +46,7 @@ public class VillagerLevel extends AVillager {
     private Blessing[]      blessings;
     /** locks[N] est appliqué quand le niveau N est complété. Null = pas de lock. */
     private Duration[]      locks;
-    private @Nullable UUID skinUuid;
+    @Getter private @Nullable UUID skinUuid;
 
     @Getter @Setter
     private int level = 0;

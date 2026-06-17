@@ -7,8 +7,11 @@ import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
 import com.mojang.authlib.properties.PropertyMap;
 import fr.miuby.lib.log.MLLogManager;
+import fr.miuby.lib.villager.VillagerRegistry;
 import fr.miuby.survi.job.EJob;
 import fr.miuby.survi.system.log.ELogTag;
+import fr.miuby.survi.villager.trader.Trader;
+import fr.miuby.survi.villager.villagerlevel.VillagerLevel;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -16,9 +19,9 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.util.EnumMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 
 /**
@@ -52,7 +55,7 @@ public final class TabSkins {
     private static final String GRAY_UUID = "3202e327-87fd-4b6b-9beb-d0a926077b6d";
 
     /** UUID du compte MHF_Villager (ou autre compte avec le skin villageois voulu). */
-    private static final String BLUE_UUID = "545d2f32-e796-4554-a2d1-d6a6b3e5f619";
+    private static final String BLUE_UUID = "734692e5-d9d4-4003-b923-ad281966baa5";
 
     // ─────────────────────────────────────────────────────────────────────────
     // Cache des Property signées — chargées async dans load()
@@ -62,14 +65,12 @@ public final class TabSkins {
     private static volatile Property BLUE_PROP = null;
 
     /**
-     * Textures des métiers. Alimenter dans {@link #load} :
-     * <pre>
-     *   JOB_PROPS.put(EJob.MINER,      fetchSigned("UUID_MINER",      "miner"));
-     *   JOB_PROPS.put(EJob.LUMBERJACK, fetchSigned("UUID_LUMBERJACK", "lumberjack"));
-     * </pre>
-     * Les métiers absents utilisent {@link #gray()} comme fallback (voir TabInfoColumn).
+     * Textures des métiers. Peuplé dynamiquement par {@link #loadEntitySkins} à partir
+     * du {@link fr.miuby.survi.villager.trader.Trader} associé à chaque {@link fr.miuby.survi.job.EJob}.
+     * Les métiers sans trader configuré affichent {@link #gray()} en fallback (voir TabInfoColumn).
      */
-    static final Map<EJob, Property> JOB_PROPS = new EnumMap<>(EJob.class);
+    static final Map<EJob, Property>    JOB_PROPS      = new ConcurrentHashMap<>();
+    static final Map<String, Property>  VILLAGER_PROPS = new ConcurrentHashMap<>();
 
     private static final HttpClient HTTP = HttpClient.newHttpClient();
 
@@ -91,17 +92,31 @@ public final class TabSkins {
      */
     public static void load(JavaPlugin plugin) {
         Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
-            GRAY_PROP     = fetchSigned(GRAY_UUID,     "gray");
+            GRAY_PROP = fetchSigned(GRAY_UUID, "gray");
             BLUE_PROP = fetchSigned(BLUE_UUID, "blue");
-
-            // ── Skins de métiers ──────────────────────────────────────────────
-            // JOB_PROPS.put(EJob.MINER,      fetchSigned("UUID_MINER",      "miner"));
-            // JOB_PROPS.put(EJob.LUMBERJACK, fetchSigned("UUID_LUMBERJACK", "lumberjack"));
         });
     }
 
     /**
-     * Crée un {@link GameProfile} avec la {@link Property} signée fournie.
+     * Charge les textures signées pour tous les villageois et traders depuis le session server Mojang (async).
+     * Peuple {@link #VILLAGER_PROPS} (par nameId) et {@link #JOB_PROPS} (par EJob via le trader associé).
+     * <b>À appeler après {@code GameManager.init()}, une seule fois dans {@code JavaPlugin#onEnable()}.</b>
+     */
+    public static void loadEntitySkins(JavaPlugin plugin) {
+        Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
+            for (var v : VillagerRegistry.getAll()) {
+                if (v instanceof VillagerLevel vl && vl.getSkinUuid() != null) {
+                    Property prop = fetchSigned(vl.getSkinUuid().toString(), vl.getNameId());
+                    if (prop != null) VILLAGER_PROPS.put(vl.getNameId(), prop);
+                } else if (v instanceof Trader t && t.getJob() != null && t.getSkinUuid() != null) {
+                    Property prop = fetchSigned(t.getSkinUuid().toString(), t.getNameId());
+                    if (prop != null) JOB_PROPS.put(t.getJob(), prop);
+                }
+            }
+        });
+    }
+
+    /**
      *
      * @param skinProp Property issue de {@link #gray()}, {@link #blue()} ou {@link #JOB_PROPS}.
      *                 Si {@code null} (UUID non configuré ou fetch raté), retourne un profil sans texture.

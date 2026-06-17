@@ -4,10 +4,6 @@ import fr.miuby.lib.villager.VillagerRegistry;
 import fr.miuby.survi.GameManager;
 import fr.miuby.survi.job.EJob;
 import fr.miuby.survi.player.AlphaPlayer;
-import fr.miuby.survi.quest.globalquest.GlobalQuest;
-import fr.miuby.survi.quest.globalquest.GlobalQuestManager;
-import fr.miuby.survi.quest.quest.PlayerQuestData;
-import fr.miuby.survi.quest.quest.Quest;
 import fr.miuby.survi.system.lang.ELang;
 import fr.miuby.survi.system.lang.LangService;
 import fr.miuby.survi.villager.villagerlevel.VillagerLevel;
@@ -38,7 +34,6 @@ class TabInfoColumn {
 
     static final int HEIGHT        = 20;
     static final int MAX_FAKE      = 40;
-    static final int MAX_VILLAGERS = HEIGHT - 16;
 
     static final List<String> PROFILE_NAMES;
     static final List<UUID>   FAKE_UUIDS;
@@ -87,9 +82,9 @@ class TabInfoColumn {
         // ── Section Villageois ───────────────────────────────────────────────
         entries.add(entry(slot++, section(ls, lang, "tab.info.section.villagers"), TabSkins.blue()));
 
-        int maxV = Math.min(villagers.size(), MAX_VILLAGERS);
-        for (int i = 0; i < maxV; i++) {
-            entries.add(entry(slot++, villagerDisplay(ls, lang, villagers.get(i)), TabSkins.gray()));
+        for (VillagerLevel vl : villagers) {
+            Property skin = TabSkins.VILLAGER_PROPS.getOrDefault(vl.getNameId(), TabSkins.gray());
+            entries.add(entry(slot++, villagerDisplay(ls, lang, vl), skin));
         }
 
         // ── Section Métiers ──────────────────────────────────────────────────
@@ -142,9 +137,9 @@ class TabInfoColumn {
     // ── Affichage — structure ────────────────────────────────────────────────
 
     private static Component section(LangService ls, ELang lang, String key) {
-        return Component.text("─── ", NamedTextColor.DARK_AQUA)
-                .append(ls.text(lang, key).colorIfAbsent(NamedTextColor.DARK_AQUA))
-                .append(Component.text(" ───", NamedTextColor.DARK_AQUA));
+        return Component.text("─── ", NamedTextColor.YELLOW)
+                .append(ls.text(lang, key).colorIfAbsent(NamedTextColor.YELLOW))
+                .append(Component.text(" ───", NamedTextColor.YELLOW));
     }
 
     private static Component villagerDisplay(LangService ls, ELang lang, VillagerLevel vl) {

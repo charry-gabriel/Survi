@@ -83,6 +83,7 @@ public class Survi extends JavaPlugin {
         });
 
         GameManager.getInstance().init(this);
+        TabSkins.loadEntitySkins(this);
     }
 
     @Override
