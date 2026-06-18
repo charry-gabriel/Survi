@@ -41,6 +41,15 @@ public class SystemRepository extends MLRepository {
         }
     }
 
+    public void deleteServerData(String key) {
+        try (PreparedStatement ps = connection.prepareStatement("DELETE FROM server_data WHERE key = ?")) {
+            ps.setString(1, key);
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            MLLogManager.getInstance().log(Level.SEVERE, ELogTag.SYSTEM, "Erreur deleteServerData: " + key, e);
+        }
+    }
+
     public int getWorldLevel() {
         String raw = getServerData("world_level");
         try {

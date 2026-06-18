@@ -125,6 +125,14 @@ public class SystemCommand {
                             ctx.getSource().getSender().sendMessage(ls(ctx).text(lang(ctx), "cmd.system.zone.reset", vzm.getCurrentHalfWidth(), vzm.getCurrentHalfDepth()));
                             return Command.SINGLE_SUCCESS;
                         }))
+                        .then(Commands.literal("stop").executes(ctx -> {
+                            CommandSender sender = ctx.getSource().getSender();
+                            LangService ls = ls(ctx);
+                            ELang lang = ls.resolveOrDefault(sender);
+                            GameManager.getInstance().getVillageZoneManager().stop();
+                            sender.sendMessage(ls.text(lang, "cmd.system.zone.stopped"));
+                            return Command.SINGLE_SUCCESS;
+                        }))
                         .then(Commands.literal("status").executes(ctx -> {
                             CommandSender sender = ctx.getSource().getSender();
                             LangService ls = ls(ctx);

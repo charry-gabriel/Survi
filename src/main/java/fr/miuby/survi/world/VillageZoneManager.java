@@ -79,14 +79,10 @@ public class VillageZoneManager {
         }
     }
 
-    public void stop() {
-        cancelStageCheckTimer();
-    }
-
     // ─── Commandes ─────────────────────────────────────────────────────────────────
 
     /**
-     * Démarre le timer de zone (déclenché par {@link StartVillageZoneEffect} au levelup d'un villageois).
+     * Démarre le timer de zone (déclenché par une commande).
      * Si le timer était déjà en cours, ne fait rien et retourne {@code false}.
      */
     public boolean start() {
@@ -106,22 +102,29 @@ public class VillageZoneManager {
     }
 
     /**
-     * Remet le timer à zéro (tests uniquement).
-     * Arrête le timer en cours, efface la DB, repart de l'heure 0.
+     * Arrête complètement le timer et efface tout l'état (DB incluse).
+     * Après un stop, {@link #start()} repart de zéro comme au premier démarrage.
      */
-    public void reset() {
+    public void stop() {
         cancelStageCheckTimer();
 
-        startTimestamp    = System.currentTimeMillis();
-        started           = true;
+        started           = false;
+        startTimestamp    = -1L;
         currentStageIndex = -1;
 
-        saveStartTimestampToDB();
-        applyCurrentStage(true);
-        startStageCheckTimer();
+        deleteStartTimestampFromDB();
 
-        MLLogManager.getInstance().log(Level.INFO, ELogTag.WORLD,
-                "[VillageZoneManager] Timer réinitialisé — palier 0 restauré");
+        MLLogManager.getInstance().log(Level.INFO, ELogTag.WORLD, "[VillageZoneManager] Arrêté — état et DB effacés");
+    }
+
+    /**
+     * Raccourci : stop complet puis redémarrage immédiat.
+     * Équivalent à appeler {@link #stop()} puis {@link #start()}.
+     */
+    public void reset() {
+        stop();
+        start();
+        MLLogManager.getInstance().log(Level.INFO, ELogTag.WORLD, "[VillageZoneManager] Timer réinitialisé — palier 0 restauré");
     }
 
     // ─── API publique ─────────────────────────────────────────────────────────────
@@ -315,5 +318,9 @@ public class VillageZoneManager {
     private void saveStartTimestampToDB() {
         GameManager.getInstance().getDatabase().system()
                 .saveServerData(DB_KEY_START, String.valueOf(startTimestamp));
+    }
+
+    private void deleteStartTimestampFromDB() {
+        GameManager.getInstance().getDatabase().system().deleteServerData(DB_KEY_START);
     }
 }
