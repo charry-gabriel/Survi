@@ -91,7 +91,7 @@ public class WorldInitializer {
         MLWorld mvWild = new MLWorld(wilderness, "Wilderness", NamedTextColor.GOLD, EWorld.WILDERNESS);
         WorldRegistry.register(mvWild);
         wilderness.setGameRule(GameRules.NATURAL_HEALTH_REGENERATION, false);
-        wilderness.setViewDistance(10);
+        wilderness.setViewDistance(8);
 
         // --- Nether (NETHER, réinitialisable, verrouillé par défaut) ---
         String netherName = worlds.get(EWorld.NETHER);
@@ -190,7 +190,7 @@ public class WorldInitializer {
             throw new IllegalStateException("Échec de la création du monde : " + name + " (" + env + ")");
         }
         created.setGameRule(GameRules.NATURAL_HEALTH_REGENERATION, false);
-        created.setViewDistance(10);
+        created.setViewDistance(8);
         return created;
     }
 

@@ -76,6 +76,50 @@ class JobsConfigTest {
         assertNonNegativeDoubleArray(minerRoot, "drop-multiplier");
     }
 
+    @Test
+    void minerCaveViewDistanceThresholdYValid() {
+        List<Number> list = getNumberList(minerRoot, "cave-view-distance-threshold-y");
+        assertSize(list, "miner.cave-view-distance-threshold-y");
+        for (int i = 0; i < LEVEL_COUNT; i++) {
+            int v = list.get(i).intValue();
+            assertTrue(v == -1 || v >= -64,
+                    "miner.cave-view-distance-threshold-y[" + i + "] invalide : " + v);
+        }
+        for (int i = 1; i < LEVEL_COUNT; i++) {
+            int prev = list.get(i - 1).intValue();
+            int curr = list.get(i).intValue();
+            assertTrue(curr == -1 || curr <= prev,
+                    "miner.cave-view-distance-threshold-y[" + i + "] (" + curr
+                            + ") ne devrait pas dépasser l'index précédent (" + prev + ")");
+        }
+    }
+
+    @Test
+    void minerCaveViewDistanceHysteresisValid() {
+        assertTrue(minerRoot.containsKey("cave-view-distance-hysteresis"),
+                "miner: cave-view-distance-hysteresis manquant");
+        int v = ((Number) minerRoot.get("cave-view-distance-hysteresis")).intValue();
+        assertTrue(v >= 1, "miner.cave-view-distance-hysteresis doit être >= 1, valeur : " + v);
+    }
+
+    @Test
+    void minerCaveDarknessThresholdYValid() {
+        List<Number> list = getNumberList(minerRoot, "cave-darkness-threshold-y");
+        assertSize(list, "miner.cave-darkness-threshold-y");
+        for (int i = 0; i < LEVEL_COUNT; i++) {
+            int v = list.get(i).intValue();
+            assertTrue(v == -1 || v >= -64,
+                    "miner.cave-darkness-threshold-y[" + i + "] invalide : " + v);
+        }
+        for (int i = 1; i < LEVEL_COUNT; i++) {
+            int prev = list.get(i - 1).intValue();
+            int curr = list.get(i).intValue();
+            assertTrue(curr == -1 || curr <= prev,
+                    "miner.cave-darkness-threshold-y[" + i + "] (" + curr
+                            + ") ne devrait pas dépasser l'index précédent (" + prev + ")");
+        }
+    }
+
     // ─── lumberjack ──────────────────────────────────────────────────────────────
 
     @Test void lumberjackDropMultiplierValid()       { assertNonNegativeDoubleArray(lumberjackRoot, "drop-multiplier"); }

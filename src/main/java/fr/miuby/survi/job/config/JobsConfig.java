@@ -57,8 +57,28 @@ public final class JobsConfig {
         /** Multiplicateur de drops sur les minerais. Index = niveau. */
         private final double[] dropMultiplier;
 
-        MinerCfg(double[] dropMultiplier) {
-            this.dropMultiplier = dropMultiplier;
+        /**
+         * Coordonnée Y sous laquelle la view-distance est réduite à 2 chunks. {@code -1} = immunisé. Index = niveau.
+         */
+        private final int[] caveViewDistanceThresholdY;
+
+        /**
+         * Nombre de blocs au-dessus du seuil Y avant que la view-distance soit restaurée.
+         * Évite les changements répétés quand le joueur oscille autour du seuil.
+         */
+        private final int caveViewDistanceHysteresis;
+
+        /**
+         * Coordonnée Y sous laquelle l'effet DARKNESS est appliqué (sans icône ni minuteur). {@code -1} = immunisé. Index = niveau.
+         */
+        private final int[] caveDarknessThresholdY;
+
+        MinerCfg(double[] dropMultiplier, int[] caveViewDistanceThresholdY,
+                 int caveViewDistanceHysteresis, int[] caveDarknessThresholdY) {
+            this.dropMultiplier             = dropMultiplier;
+            this.caveViewDistanceThresholdY = caveViewDistanceThresholdY;
+            this.caveViewDistanceHysteresis = caveViewDistanceHysteresis;
+            this.caveDarknessThresholdY     = caveDarknessThresholdY;
         }
     }
 
