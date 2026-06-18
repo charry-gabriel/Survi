@@ -26,7 +26,7 @@ class GrowthItemConfigTest {
     );
 
     private static final Set<String> VALID_EFFECT_TYPES = Set.of(
-            "name", "message", "haste", "potion", "add_enchantment", "set_attribute"
+            "name", "message", "haste", "potion", "fire_enemies", "add_enchantment", "set_attribute"
     );
 
     /**
@@ -176,6 +176,9 @@ class GrowthItemConfigTest {
 
             case "haste" ->
                     assertTrue(effect.seconds >= 1, ctx + " : 'seconds' doit être >= 1");
+
+            case "fire_enemies" ->
+                    assertTrue(effect.seconds >= 1, ctx + " : 'seconds' doit être >= 1 pour type=fire_enemies");
 
             case "potion" -> {
                 assertStringNotEmpty(effect.effect,

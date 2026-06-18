@@ -151,11 +151,32 @@ public enum ECustomItem {
                 .addItemFlag(ItemFlag.HIDE_ARMOR_TRIM);
     }),
 
+    GROWTH_JAMBIERES_MINEUR(Material.LEATHER_LEGGINGS, item -> {
+        ItemMeta preMeta = item.getItemMeta();
+        createGrowthItem(preMeta, "GROWTH_JAMBIERES_MINEUR");
+        item.setItemMeta(preMeta);
+        new CustomItemBuilder(item, "GrowthJambieresMineur")
+                .name("Jambières du Mineur I", NamedTextColor.GOLD)
+                .leatherArmor(TrimMaterial.GOLD, TrimPattern.FLOW, Color.fromRGB(0xC8960A))
+                .addAttribute(Attribute.ARMOR, 2.0, ADD_NUMBER, EquipmentSlotGroup.LEGS)
+                .unbreakable()
+                .addItemFlag(ItemFlag.HIDE_DYE)
+                .addItemFlag(ItemFlag.HIDE_ARMOR_TRIM);
+    }),
+
     GROWTH_BATON_FERMIER(Material.BLAZE_ROD, item -> {
         ItemMeta meta = item.getItemMeta();
         createGrowthItem(meta, "GROWTH_BATON_FERMIER");
         meta.setUnbreakable(true);
         meta.customName(Component.text("Bâton du Fermier I", NamedTextColor.GREEN).decoration(TextDecoration.ITALIC, false));
+        item.setItemMeta(meta);
+    }),
+
+    GROWTH_HOUE_FERMIER(Material.GOLDEN_HOE, item -> {
+        ItemMeta meta = item.getItemMeta();
+        createGrowthItem(meta, "GROWTH_HOUE_FERMIER");
+        meta.setUnbreakable(true);
+        meta.customName(Component.text("Houe du Fermier I", NamedTextColor.GREEN).decoration(TextDecoration.ITALIC, false));
         item.setItemMeta(meta);
     }),
 

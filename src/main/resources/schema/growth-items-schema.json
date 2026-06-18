@@ -116,7 +116,7 @@
       "properties": {
         "type": {
           "type": "string",
-          "enum": ["name", "message", "haste", "potion", "add_enchantment", "set_attribute"]
+          "enum": ["name", "message", "haste", "potion", "fire_enemies", "add_enchantment", "set_attribute"]
         },
         "value":          { "type": "string",  "description": "[name / message]" },
         "seconds":        { "type": "integer", "minimum": 1,  "description": "[haste / potion]" },
@@ -164,11 +164,15 @@
             "if":   { "properties": { "type": { "const": "potion" } } },
             "then": { "required": ["effect", "seconds"] },
             "else": {
-              "if":   { "properties": { "type": { "const": "add_enchantment" } } },
-              "then": { "required": ["enchantment", "amount"] },
+              "if":   { "properties": { "type": { "const": "fire_enemies" } } },
+              "then": { "required": ["seconds"] },
               "else": {
-                "if":   { "properties": { "type": { "const": "set_attribute" } } },
-                "then": { "required": ["attribute", "attributeValue", "operation", "slot"] }
+                "if":   { "properties": { "type": { "const": "add_enchantment" } } },
+                "then": { "required": ["enchantment", "amount"] },
+                "else": {
+                  "if":   { "properties": { "type": { "const": "set_attribute" } } },
+                  "then": { "required": ["attribute", "attributeValue", "operation", "slot"] }
+                }
               }
             }
           }

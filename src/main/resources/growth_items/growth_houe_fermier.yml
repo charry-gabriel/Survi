@@ -1,0 +1,30 @@
+# yaml-language-server: $schema=../../schema/growth-items-schema.json
+id: GROWTH_HOUE_FERMIER
+eventType: CropBreakEvent
+
+# Stats de base : speed+, défense- et vie- actives tant que la houe est tenue en main.
+baseEffects:
+  - { type: set_attribute, attribute: movement_speed, attributeValue: 0.03,  operation: ADD_NUMBER, slot: HAND }
+  - { type: set_attribute, attribute: armor,          attributeValue: -1.0,  operation: ADD_NUMBER, slot: HAND }
+  - { type: set_attribute, attribute: max_health,     attributeValue: -2.0,  operation: ADD_NUMBER, slot: HAND }
+
+tiers:
+  - requiredUses: 20
+    effects:
+      - { type: name,          value: "Houe du Fermier II" }
+      - { type: fire_enemies,  seconds: 3 }
+      - { type: message,       value: "Ta houe s'embrase — tes ennemis vont brûler !" }
+
+  - requiredUses: 50
+    effects:
+      - { type: name,          value: "Houe du Fermier III" }
+      - { type: fire_enemies,  seconds: 6 }
+      - { type: set_attribute, attribute: movement_speed, attributeValue: 0.05, operation: ADD_NUMBER, slot: HAND }
+      - { type: message,       value: "Tu cours plus vite et tes ennemis brûlent plus longtemps !" }
+
+  - requiredUses: 90
+    effects:
+      - { type: name,          value: "Houe du Grand Fermier" }
+      - { type: fire_enemies,  seconds: 10 }
+      - { type: set_attribute, attribute: movement_speed, attributeValue: 0.07, operation: ADD_NUMBER, slot: HAND }
+      - { type: message,       value: "Houe de légende. Tes ennemis fuient les flammes de tes champs." }

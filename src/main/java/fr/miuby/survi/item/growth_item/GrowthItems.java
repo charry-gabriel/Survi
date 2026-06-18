@@ -47,6 +47,10 @@ public final class GrowthItems {
     public static final NamespacedKey KILLED_MOB_TYPES_KEY =
             new NamespacedKey(GameManager.getInstance().getPlugin(), "growth_killed_mob_types");
 
+    /** Secondes de feu infligées aux ennemis frappés — stockées dans le PDC de l'item par {@link fr.miuby.survi.item.growth_item.effect.FireEnemiesItemEffect}. */
+    public static final NamespacedKey FIRE_SECONDS_KEY =
+            new NamespacedKey(GameManager.getInstance().getPlugin(), "growth_fire_seconds");
+
     private GrowthItems() {}
 
     public static void init() {
@@ -103,6 +107,31 @@ public final class GrowthItems {
 
         doIncrement(helmet, meta, pdc, player, config);
         player.getInventory().setHelmet(helmet); // getHelmet() retourne une copie
+    }
+
+    // ─── IncrementUsesFromLeggings — item en slot LEGS ───────────────────────
+
+    public static void IncrementUsesFromLeggings(Player player, String event) {
+        ItemStack leggings = player.getInventory().getLeggings();
+        if (leggings == null || leggings.getType().isAir()) return;
+
+        ItemMeta meta = leggings.getItemMeta();
+        PersistentDataContainer pdc = meta.getPersistentDataContainer();
+        if (!pdc.has(USES_KEY, PersistentDataType.INTEGER)) return;
+
+        String growthId = pdc.get(ID_KEY, PersistentDataType.STRING);
+        if (growthId == null) return;
+
+        GrowthConfig config = GrowthItemRegistry.get(growthId);
+        if (config == null || !config.eventType().equals(event)) return;
+
+        if (checkAndReapplyIfStale(leggings, player)) {
+            meta = leggings.getItemMeta();
+            pdc  = meta.getPersistentDataContainer();
+        }
+
+        doIncrement(leggings, meta, pdc, player, config);
+        player.getInventory().setLeggings(leggings); // getLeggings() retourne une copie
     }
 
     // ─── IncrementUsesOnNewBiome — boussole ───────────────────────────────────

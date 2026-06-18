@@ -11,12 +11,15 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.player.PlayerItemHeldEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
+import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.persistence.PersistentDataType;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -140,6 +143,7 @@ public class GrowthItemListener implements Listener {
         if (!ORE_BLOCKS.contains(event.getBlock().getType())) return;
         if (placedBlockTracker.isPlaced(event.getBlock())) return;
         GrowthItems.IncrementUsesFromHelmet(event.getPlayer(), "OreBreakEvent");
+        GrowthItems.IncrementUsesFromLeggings(event.getPlayer(), "OreBreakEvent");
     }
 
     // ═════════════════════════════════════════════════════════════════════════
@@ -182,6 +186,27 @@ public class GrowthItemListener implements Listener {
             }
         }
         bonusDrops.forEach(d -> block.getWorld().dropItemNaturally(block.getLocation(), d));
+    }
+
+    // ═════════════════════════════════════════════════════════════════════════
+    //  GROWTH_HOUE_FERMIER — met les ennemis en feu au corps à corps
+    // ═════════════════════════════════════════════════════════════════════════
+
+    @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
+    public void onEntityDamageByEntity(EntityDamageByEntityEvent event) {
+        if (!(event.getDamager() instanceof Player player)) return;
+        if (!(event.getEntity() instanceof LivingEntity target)) return;
+
+        ItemStack hand = player.getInventory().getItemInMainHand();
+        if (hand.getType().isAir()) return;
+        ItemMeta meta = hand.getItemMeta();
+        if (meta == null) return;
+
+        Integer fireSeconds = meta.getPersistentDataContainer()
+                .get(GrowthItems.FIRE_SECONDS_KEY, PersistentDataType.INTEGER);
+        if (fireSeconds == null || fireSeconds <= 0) return;
+
+        target.setFireTicks(fireSeconds * 20);
     }
 
     // ═════════════════════════════════════════════════════════════════════════
