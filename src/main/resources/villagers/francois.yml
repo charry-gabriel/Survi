@@ -3,7 +3,7 @@ name: "Francois"
 skin: "43cda05c-21c5-4f97-89d8-43e6c6c394e2"
 
 levels:
-  - name: "François I"
+  - name: "François"
     tribute:
       - material: BELL
         amount: 1
@@ -12,7 +12,7 @@ levels:
     message: "Vos 10 dernières morts sont annulées."
     recap: ""
 
-  - name: "François II"
+  - name: "François"
     tribute:
       - material: CANDLE
         amount: 10
@@ -21,70 +21,96 @@ levels:
     message: "Vos 20 dernières morts sont annulées."
     recap: "Les 10 dernières morts sont annulées !"
 
-  - name: "François III"
+  - name: "François"
     tribute:
       - material: YELLOW_CANDLE
         amount: 100
+      - material: GOLDEN_APPLE
+        amount: 30
+      - material: TOTEM_OF_UNDYING
+        amount: 1
     blessings:
       - { type: DISPEL, value: 3 }
     message: "Vos 30 dernières morts sont annulées."
     recap: "Les 20 dernières morts sont annulées !"
 
-  - name: "François IV"
+  - name: "François"
     tribute:
       - material: RED_CANDLE
         amount: 200
+      - material: HONEY_BLOCK
+        amount: 40
+      - material: TOTEM_OF_UNDYING
+        amount: 1
     blessings:
       - { type: DISPEL, value: 4 }
     message: "Vos 40 dernières morts sont annulées."
     recap: "Les 30 dernières morts sont annulées !"
 
-  - name: "François V"
+  - name: "François"
     tribute:
       - material: ORANGE_CANDLE
         amount: 300
+      - material: BONE_BLOCK
+        amount: 50
+      - material: TOTEM_OF_UNDYING
+        amount: 1
     blessings:
       - { type: DISPEL, value: 5 }
     message: "Vos 50 dernières morts sont annulées."
     recap: "Les 40 dernières morts sont annulées !"
 
-  - name: "François VI"
+  - name: "François"
     tribute:
       - material: LIGHT_BLUE_CANDLE
         amount: 400
+      - material: NETHER_STAR
+        amount: 1
+      - material: TOTEM_OF_UNDYING
+        amount: 1
     blessings:
       - { type: DISPEL, value: 6 }
     message: "Vos 60 dernières morts sont annulées."
     recap: "Les 50 dernières morts sont annulées !"
 
-  - name: "François VII"
+  - name: "François"
     tribute:
       - material: GREEN_CANDLE
         amount: 500
+      - material: ENCHANTED_GOLDEN_APPLE
+        amount: 1
+      - material: TOTEM_OF_UNDYING
+        amount: 1
     blessings:
       - { type: DISPEL, value: 7 }
     message: "Vos 70 dernières morts sont annulées."
     recap: "Les 60 dernières morts sont annulées !"
 
-  - name: "François VIII"
+  - name: "François"
     tribute:
       - material: PINK_CANDLE
-        amount: 600
+        amount: 666
+      - material: TOTEM_OF_UNDYING
+        amount: 1
     blessings:
       - { type: DISPEL, value: 8 }
     message: "Vos 80 dernières morts sont annulées."
     recap: "Les 70 dernières morts sont annulées !"
 
-  - name: "François IX"
+  - name: "François"
     tribute:
       - material: WHITE_CANDLE
         amount: 700
+      - material: SPONGE
+        amount: 1
+      - material: TOTEM_OF_UNDYING
+        amount: 1
     blessings:
       - { type: DISPEL, value: 9 }
     message: "Vos 90 dernières morts sont annulées."
     recap: "Les 80 dernières morts sont annulées !"
 
-  - name: "François X"
+  - name: "François"
     tribute:
       - material: TOTEM_OF_UNDYING
         amount: 27
@@ -93,7 +119,7 @@ levels:
     message: "Toutes vos morts sont annulées"
     recap: "Les 90 dernières morts sont annulées !"
 
-  - name: "François MAX"
+  - name: "François"
     tribute: []
     message: "Toutes vos morts sont annulées"
     recap: "Toutes les morts sont annulées !"

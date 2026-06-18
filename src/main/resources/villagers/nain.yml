@@ -3,53 +3,142 @@ name: "Nain"
 skin: "36a1175b-0115-47d3-aaa7-d1335428c3ea"
 
 levels:
-  - name: "Nain Roux I"
+  - name: "Nain Roux"
     tribute:
-      - material: DIORITE_WALL
+      - material: COBBLESTONE_STAIRS
+        amount: 64
+      - material: GRANITE_STAIRS
+        amount: 64
+      - material: ANDESITE_STAIRS
+        amount: 64
+      - material: DIORITE_STAIRS
+        amount: 64
+      - material: STONE_STAIRS
+        amount: 64
+      - material: COBBLED_DEEPSLATE_STAIRS
         amount: 64
     blessings:
-      - { type: RESISTANCE, value: 0.4 }
-    message: "Merci, vouth êteth maintenant pluth résistant face aux ennemith de l'autre monde."
+      - { type: RESISTANCE, value: 0.3}
+    message: "Merci, vous êtes maintenant plus résistant face aux ennemis de l'autre monde."
     recap: ""
 
-  - name: "Nain Roux II"
+  - name: "Nain Roux"
+    tribute:
+      - material: STONE_BRICKS
+        amount: 64
+      - material: MOSSY_STONE_BRICKS
+        amount: 64
+    blessings:
+      - { type: RESISTANCE, value: 0.4}
+    message: "Bravo, vous êtes maintenant plus résistant face aux ennemis de l'autre monde."
+    recap: "Augmentation de votre résistance : 20% --> 30%"
+
+  - name: "Nain Roux"
+    tribute:
+      - material: BRICKS
+        amount: 64
+      - material: MUD_BRICKS
+        amount: 64
+    blessings:
+      - {type: RESISTANCE, value: 0.5}
+    message: "Bravo, vous êtes maintenant plus résistant face aux ennemis de l'autre monde."
+    recap: "Augmentation de votre résistance : 30% --> 40%"
+
+  - name: "Nain Roux"
+    tribute:
+      - material: COAL_BLOCK
+        amount: 16
+      - material: COPPER_BLOCK
+        amount: 32
+      - material: IRON_BLOCK
+        amount: 48
+      - material: GOLD_BLOCK
+        amount: 64
+      - material: DIAMOND_BLOCK
+        amount: 1
+    blessings:
+      - { type: RESISTANCE, value: 0.6}
+    message: "Bravo, vous êtes maintenant plus résistant face aux ennemis de l'autre monde."
+    recap: "Augmentation de votre résistance : 40% --> 50%"
+
+  - name: "Nain Roux"
+    tribute:
+      - material: CINNABAR_BRICKS
+        amount: 64
+      - material: SULFUR_BRICKS
+        amount: 64
+      - material: RESIN_BRICKS
+        amount: 64
+    blessings:
+      - { type: RESISTANCE, value: 0.7}
+    message: "Bravo, vous êtes maintenant plus résistant face aux ennemis de l'autre monde."
+    recap: "Augmentation de votre résistance : 50% --> 60%"
+
+  - name: "Nain Roux"
     tribute:
       - material: AMETHYST_BLOCK
-        amount: 128
+        amount: 64
+      - material: MAGMA_BLOCK
+        amount: 64
+      - material: BAMBOO_BLOCK
+        amount: 64
     blessings:
-      - { type: RESISTANCE, value: 0.6 }
-    message: "Bravo, vouth êteth maintenant pluth résistant face aux ennemith de l'autre monde."
-    recap: "Résistance I débloqué !"
+      - { type: RESISTANCE, value: 0.8}
+    message: "Bravo, vous êtes maintenant plus résistant face aux ennemis de l'autre monde."
+    recap: "Augmentation de votre résistance : 60% --> 70%"
 
-  - name: "Nain Roux III"
+  - name: "Nain Roux"
     tribute:
+      - material: NETHER_BRICK
+        amount: 64
       - material: RED_NETHER_BRICKS
-        amount: 192
+        amount: 64
+      - material: QUARTZ_BRICKS
+        amount: 64
     blessings:
-      - { type: RESISTANCE, value: 1.0 }
-    message: "Félicitation, vouth êteth maintenant pluth résistant face aux ennemith de l'autre monde."
-    recap: "Résistance II débloqué !"
+      - { type: RESISTANCE, value: 0.9}
+    message: "Félicitation, vous êtes maintenant plus résistant face aux ennemis de l'autre monde."
+    recap: "Augmentation de votre résistance : 70% --> 80%"
 
-  - name: "Nain Roux IV"
+  - name: "Nain Roux"
     tribute:
-      - material: SCULK_CATALYST
-        amount: 256
+      - material: PRISMARINE_BRICKS
+        amount: 64
+      - material: END_STONE_BRICKS
+        amount: 64
     blessings:
-      - { type: RESISTANCE, value: 1.2 }
-    message: "Beau travail, leth ennemith de l'autre monde ne vouth ferronth pluth jamaith de mlin."
-    recap: "Résistance III débloqué !"
+      - { type: RESISTANCE, value: 1.0}
+    message: "Beau travail, vous êtes maintenant plus résistant face aux ennemis de l'autre monde."
+    recap: "Augmentation de votre résistance : 80% --> 90%"
 
-  - name: "Nain Roux V"
+  - name: "Nain Roux"
+    tribute:
+      - material: WAXED_COPPER_BARS
+        amount: 64
+      - material: WAXED_EXPOSED_COPPER_BARS
+        amount: 64
+      - material: WAXED_WEATHERED_COPPER_BARS
+        amount: 64
+      - material: WAXED_OXIDIZED_COPPER_BARS
+        amount: 64
+    blessings:
+      - { type: RESISTANCE, value: 1.2}
+    message: "Beau travail, vous êtes maintenant plus résistant face aux ennemis de l'autre monde."
+    recap: "Augmentation de votre résistance : 90% --> 100%"
+
+  - name: "Nain Roux"
     tribute:
       - material: SPIRE_ARMOR_TRIM_SMITHING_TEMPLATE
-        amount: 64
-      - material: RESIN_BRICK_STAIRS
-        amount: 32
+        amount: 20
       - material: DRAGON_BREATH
         amount: 1
       - material: WOLF_ARMOR
         amount: 1
       - material: RECOVERY_COMPASS
+        amount: 1
+      - material: SPYGLASS
+        amount: 1
+      - material: MUSIC_DISC_LAVA_CHICKEN
         amount: 1
       - material: VERDANT_FROGLIGHT
         amount: 20
@@ -57,13 +146,31 @@ levels:
         amount: 20
       - material: PEARLESCENT_FROGLIGHT
         amount: 20
+      - material: NAUTILUS_SHELL
+        amount: 20
+      - material: SNIFFER_EGG
+        amount: 20
+      - material: EGG
+        amount: 16
+      - material: BROWN_EGG
+        amount: 16
+      - material: BLUE_EGG
+        amount: 16
+      - material: NETHERITE_BLOCK
+        amount: 10
+      - material: NETHERITE_UPGRADE_SMITHING_TEMPLATE
+        amount: 1
+      - material: NETHERITE_HORSE_ARMOR
+        amount: 16
+      - material: NETHERITE_NAUTILUS_ARMOR
+        amount: 16
     blessings:
-      - { type: RESISTANCE, value: 1.4 }
-    message: "Félicitation, thèth beau travail, je pense que vouth êteth assez résistant, je peux tidndre ma onatraite. Merci à vouth."
-    recap: "Résistance IV débloqué !"
+      - { type: RESISTANCE, value: 1.5}
+    message: "Félicitation, très beau travail, je pense que vous êtes assez résistant, je peux maintenant prendre ma retraite. Merci à vous."
+    recap: "Augmentation de votre résistance : 100% --> 120%"
 
   - name: "Nain Roux MAX"
     tribute: []
-    message: "Félicitation, thèth beau travail, je pense que vouth êteth assez résistant, je peux tidndre ma onatraite. Merci à vouth."
-    recap: "Résistance V débloqué !"
+    message: "Félicitation, très beau travail, je pense que vous êtes assez résistant, je peux maintenant prendre ma retraite. Merci à vous."
+    recap: "Toutes les quêtes du Nain Roux sont terminées. Vous avez 150% de résistance."
 
