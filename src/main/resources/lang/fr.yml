@@ -285,6 +285,9 @@ cmd.quest.history_console_only: "<red>Utilisez /quest history <joueur> depuis la
 cmd.quest.history_diff_daily: "diff.{0}"
 cmd.quest.history_diff_global: "mondiale"
 cmd.quest.history_contrib: "<dark_gray> — contrib:{0}"
+cmd.quest.extraslot_added: "<green>+{0} slot(s) de quête journalière accordé(s) à tout le monde. Bonus total : <white>{1}</white>."
+cmd.quest.extraslot_removed: "<yellow>-{0} slot(s) de quête journalière retirés. Bonus restant : <white>{1}</white>."
+cmd.quest.extraslot_status: "<gold>Slots bonus journaliers : <white>{0}</white> | Base : <white>{1}</white> | Capacité totale : <white>{2}</white>."
 
 # ─── Commandes — globalquest (admin) ──────────────────────────────────────────
 cmd.globalquest.already_active: "<red>Une quête globale est déjà en cours : <yellow>{0}"

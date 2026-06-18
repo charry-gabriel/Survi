@@ -17,6 +17,7 @@ import fr.miuby.survi.system.SurviConfig;
 import fr.miuby.survi.system.log.ELogTag;
 import fr.miuby.survi.villager.trader.Trader;
 import fr.miuby.survi.system.lang.LangService;
+import lombok.Getter;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 
@@ -37,17 +38,26 @@ public class QuestManager extends AbstractQuestManager<Quest> {
     public static final int DAILY_QUEST_BONUS = 2;
 
     /**
+     * Slots de quêtes journalières supplémentaires accordés manuellement à tout le monde via {@code /quest extraslot add}.
+     * Persisté dans {@code server_data} (clé {@code quest_extra_global_slots}).
+     */
+    @Getter
+    private int extraGlobalSlots = 0;
+
+    /**
      * Capacité totale de quêtes journalières disponibles pour tous les joueurs au moment de l'appel.
      * Vaut 0 si la partie n'a pas encore démarré (avant le premier levelup de villageois).
+     * Inclut les slots bonus accordés manuellement.
      */
     public int getTotalCapacity() {
-        return GameManager.getInstance().getVillageZoneManager().getGameDayCount() * DAILY_QUEST_BONUS;
+        return GameManager.getInstance().getVillageZoneManager().getGameDayCount() * DAILY_QUEST_BONUS + extraGlobalSlots;
     }
 
     private final Random random = new Random();
 
     public QuestManager() {
         loadQuests();
+        loadExtraSlots();
     }
 
     // =========================================================================
@@ -57,6 +67,33 @@ public class QuestManager extends AbstractQuestManager<Quest> {
     @Override
     protected List<Quest> fetchPool() {
         return QuestYamlLoader.loadQuests();
+    }
+
+    // =========================================================================
+    // Slots bonus globaux
+    // =========================================================================
+
+    private static final String EXTRA_SLOTS_KEY = "quest_extra_global_slots";
+
+    private void loadExtraSlots() {
+        String raw = GameManager.getInstance().getDatabase().system().getServerData(EXTRA_SLOTS_KEY);
+        if (raw != null) {
+            try { extraGlobalSlots = Integer.parseInt(raw); } catch (NumberFormatException ignored) {}
+        }
+    }
+
+    /** Ajoute {@code amount} slots bonus globaux et les persiste. */
+    public void addExtraSlots(int amount) {
+        extraGlobalSlots += amount;
+        GameManager.getInstance().getDatabase().system().saveExtraGlobalSlots(extraGlobalSlots);
+        MLLogManager.getInstance().log(Level.INFO, ELogTag.QUEST, "[ExtraSlots] +" + amount + " → total bonus=" + extraGlobalSlots);
+    }
+
+    /** Retire {@code amount} slots bonus globaux (minimum 0) et les persiste. */
+    public void removeExtraSlots(int amount) {
+        extraGlobalSlots = Math.max(0, extraGlobalSlots - amount);
+        GameManager.getInstance().getDatabase().system().saveExtraGlobalSlots(extraGlobalSlots);
+        MLLogManager.getInstance().log(Level.INFO, ELogTag.QUEST, "[ExtraSlots] -" + amount + " → total bonus=" + extraGlobalSlots);
     }
 
     // =========================================================================

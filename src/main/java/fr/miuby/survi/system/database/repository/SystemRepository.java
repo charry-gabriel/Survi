@@ -63,6 +63,16 @@ public class SystemRepository extends MLRepository {
         saveServerData("world_level", String.valueOf(level));
     }
 
+    public void saveExtraGlobalSlots(int value) {
+        runAsync(conn -> {
+            try (PreparedStatement ps = conn.prepareStatement("INSERT OR REPLACE INTO server_data (key, value) VALUES (?, ?)")) {
+                ps.setString(1, "quest_extra_global_slots");
+                ps.setString(2, String.valueOf(value));
+                ps.executeUpdate();
+            }
+        }, ELogTag.SYSTEM, "Erreur saveExtraGlobalSlots");
+    }
+
     //region log
 
     /** Récupère l'état d'un tag de log (VILLAGER, QUEST, etc.). @return true/false ou null si pas trouvé */

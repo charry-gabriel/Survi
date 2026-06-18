@@ -77,6 +77,22 @@ public class QuestCommand {
                                 .requires(source -> source.getSender().isOp())
                                 .executes(QuestCommand::historyOf)
                         )
+                )
+                .then(Commands.literal("extraslot")
+                        .requires(source -> source.getSender().isOp())
+                        .then(Commands.literal("add")
+                                .then(Commands.argument("amount", com.mojang.brigadier.arguments.IntegerArgumentType.integer(1))
+                                        .executes(QuestCommand::extraSlotAdd)
+                                )
+                        )
+                        .then(Commands.literal("remove")
+                                .then(Commands.argument("amount", com.mojang.brigadier.arguments.IntegerArgumentType.integer(1))
+                                        .executes(QuestCommand::extraSlotRemove)
+                                )
+                        )
+                        .then(Commands.literal("status")
+                                .executes(QuestCommand::extraSlotStatus)
+                        )
                 );
     }
 
@@ -240,5 +256,41 @@ public class QuestCommand {
         }
 
         sender.sendMessage(ls.text(lang, "cmd.quest.history_separator"));
+    }
+
+    // =========================================================================
+    // /quest extraslot
+    // =========================================================================
+
+    private static int extraSlotAdd(CommandContext<CommandSourceStack> ctx) {
+        int amount = com.mojang.brigadier.arguments.IntegerArgumentType.getInteger(ctx, "amount");
+        CommandSender sender = ctx.getSource().getSender();
+        LangService ls = GameManager.getInstance().getLangService();
+
+        GameManager.getInstance().getQuestManager().addExtraSlots(amount);
+        int bonus = GameManager.getInstance().getQuestManager().getExtraGlobalSlots();
+        sender.sendMessage(ls.text(ls.resolveOrDefault(sender), "cmd.quest.extraslot_added", amount, bonus));
+        return Command.SINGLE_SUCCESS;
+    }
+
+    private static int extraSlotRemove(CommandContext<CommandSourceStack> ctx) {
+        int amount = com.mojang.brigadier.arguments.IntegerArgumentType.getInteger(ctx, "amount");
+        CommandSender sender = ctx.getSource().getSender();
+        LangService ls = GameManager.getInstance().getLangService();
+
+        GameManager.getInstance().getQuestManager().removeExtraSlots(amount);
+        int bonus = GameManager.getInstance().getQuestManager().getExtraGlobalSlots();
+        sender.sendMessage(ls.text(ls.resolveOrDefault(sender), "cmd.quest.extraslot_removed", amount, bonus));
+        return Command.SINGLE_SUCCESS;
+    }
+
+    private static int extraSlotStatus(CommandContext<CommandSourceStack> ctx) {
+        CommandSender sender = ctx.getSource().getSender();
+        LangService ls = GameManager.getInstance().getLangService();
+
+        int bonus = GameManager.getInstance().getQuestManager().getExtraGlobalSlots();
+        int base = GameManager.getInstance().getQuestManager().getTotalCapacity() - bonus;
+        sender.sendMessage(ls.text(ls.resolveOrDefault(sender), "cmd.quest.extraslot_status", bonus, base, base + bonus));
+        return Command.SINGLE_SUCCESS;
     }
 }
