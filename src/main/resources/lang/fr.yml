@@ -8,6 +8,8 @@
 
 # ─── Limite de zone ──────────────────────────────────────────────────────────
 boundary.warning: "<red>Tu ne peux pas aller plus loin !"
+boundary.approaching: "<gold>⚠ Limite du village : {0} m"
+boundary.close: "<red>⛔ Limite du village : {0} m"
 
 # ─── Tombe ───────────────────────────────────────────────────────────────────
 grave.indestructible: "<red>Cette tombe est indestructible !"

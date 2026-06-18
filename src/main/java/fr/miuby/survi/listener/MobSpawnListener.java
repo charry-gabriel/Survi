@@ -52,17 +52,20 @@ public class MobSpawnListener implements Listener {
      */
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onCreatureSpawn(CreatureSpawnEvent event) {
+        MobLevelManager mlm = GameManager.getInstance().getMobLevelManager();
+        if (mlm == null) return;
+
         // On ne scale que les mobs qui ont une config active
         LivingEntity entity = event.getEntity();
-        if (!GameManager.getInstance().getMobLevelManager().isManaged(entity.getType())) return;
+        if (!mlm.isManaged(entity.getType())) return;
 
         // Seuls les spawns "naturels" sont scalés ; exclure les spawns de
         // commande /summon sauf si tu veux les inclure aussi.
         CreatureSpawnEvent.SpawnReason reason = event.getSpawnReason();
         if (reason == CreatureSpawnEvent.SpawnReason.COMMAND) return;
 
-        int level = GameManager.getInstance().getMobLevelManager().rollMobLevel();
-        GameManager.getInstance().getMobLevelManager().applyLevel(entity, level);
+        int level = mlm.rollMobLevel();
+        mlm.applyLevel(entity, level);
     }
 
     // ─── Attaque + effets de potion ────────────────────────────────────────────

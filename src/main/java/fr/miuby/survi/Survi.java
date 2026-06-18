@@ -9,6 +9,7 @@ import fr.miuby.survi.system.database.SqlCommand;
 import fr.miuby.survi.item.CustomItemCommand;
 import fr.miuby.survi.item.growth_item.GrowthItemCommand;
 import fr.miuby.survi.job.task.FishermanEffectsTask;
+import fr.miuby.survi.world.task.VillageZoneBorderTask;
 import fr.miuby.survi.listener.*;
 import fr.miuby.survi.quest.globalquest.GlobalQuestCommand;
 import fr.miuby.survi.quest.quest.QuestCommand;
@@ -21,6 +22,7 @@ import fr.miuby.survi.villager.VillagerCommand;
 import fr.miuby.survi.blessing.BlessingCommand;
 import fr.miuby.survi.world.RainManager;
 import fr.miuby.survi.world.WorldCommand;
+import fr.miuby.survi.world.PortalLocatorManager;
 import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -59,7 +61,8 @@ public class Survi extends JavaPlugin {
 
         pluginManager.registerEvents(placedBlockTracker, this);
 
-        new FishermanEffectsTask().runTaskTimer(this, 0L, FishermanEffectsTask.PERIOD_TICKS);
+        new FishermanEffectsTask().runTaskTimer(this, 20L, FishermanEffectsTask.PERIOD_TICKS);
+        new VillageZoneBorderTask().runTaskTimer(this, 20L, VillageZoneBorderTask.PERIOD_TICKS);
 
         getConfig().options().copyDefaults(true);
         saveConfig();
@@ -92,6 +95,9 @@ public class Survi extends JavaPlugin {
         if (tm != null) tm.stop();
 
         GameManager.getInstance().getVillageZoneManager().stop();
+
+        PortalLocatorManager plm = GameManager.getInstance().getPortalLocatorManager();
+        if (plm != null) plm.stop();
 
         RainManager rm = GameManager.getInstance().getRainManager();
         if (rm != null) rm.stop();

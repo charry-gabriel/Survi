@@ -30,6 +30,7 @@ import fr.miuby.survi.world.WorldLevelManager;
 import fr.miuby.survi.world.WorldPortalManager;
 import fr.miuby.survi.world.WorldResetManager;
 import fr.miuby.survi.world.VillageZoneManager;
+import fr.miuby.survi.world.PortalLocatorManager;
 import fr.miuby.survi.system.SurviConfig;
 import fr.miuby.survi.system.lang.LangService;
 import fr.miuby.survi.job.config.JobsLoader;
@@ -68,6 +69,7 @@ public class GameManager {
     @Getter private WorldPortalManager worldPortalManager;
     @Getter private WorldResetManager worldResetManager;
     @Getter private VillageZoneManager villageZoneManager;
+    @Getter private PortalLocatorManager portalLocatorManager;
     @Getter private RainManager rainManager;
     @Getter private LangService langService;
 
@@ -149,6 +151,9 @@ public class GameManager {
 
         this.worldPortalManager = new WorldPortalManager();
         this.worldPortalManager.init();
+
+        this.portalLocatorManager = new PortalLocatorManager();
+        this.portalLocatorManager.init();
 
         this.villageZoneManager = new VillageZoneManager();
         this.villageZoneManager.init();

@@ -160,6 +160,24 @@ public class VillageZoneManager {
     }
 
     /**
+     * Centre de la zone sur l'axe X pour le palier actif.
+     * Retourne {@code 0} si le timer n'est pas démarré.
+     */
+    public int getCurrentCenterX() {
+        if (!started || config.stages().isEmpty()) return 0;
+        return config.stages().get(computeStageIndex()).centerX();
+    }
+
+    /**
+     * Centre de la zone sur l'axe Z pour le palier actif.
+     * Retourne {@code 0} si le timer n'est pas démarré.
+     */
+    public int getCurrentCenterZ() {
+        if (!started || config.stages().isEmpty()) return 0;
+        return config.stages().get(computeStageIndex()).centerZ();
+    }
+
+    /**
      * Indique si une {@link Location} dépasse la zone autorisée (contrôle XZ uniquement).
      * La zone est rectangulaire : {@code half-width} sur X, {@code half-depth} sur Z,
      * centrée sur le {@code center-x/z} du palier actif.
@@ -257,13 +275,18 @@ public class VillageZoneManager {
         Location max = new Location(world, portalCfg.maxX(), portalCfg.maxY(), portalCfg.maxZ());
         GameManager.getInstance().getWorldPortalManager().updateVillagePortal(villageName, min, max);
 
+        // ── Mise à jour du waypoint portail sur la Locator Bar ────────────────────
+        PortalLocatorManager plm = GameManager.getInstance().getPortalLocatorManager();
+        if (plm != null) plm.updatePortal(world, portalCfg);
+
         MLLogManager.getInstance().log(Level.INFO, ELogTag.WORLD,
                 "[VillageZoneManager] Palier " + currentStageIndex
                         + " — zone=" + stage.halfWidth() + "×" + stage.halfDepth() + " blocs"
                         + " | centre=(" + stage.centerX() + "," + stage.centerZ() + ")"
                         + " | spawn=(" + sp.x() + "," + sp.y() + "," + sp.z() + ")"
                         + " | portail=(" + portalCfg.minX() + "," + portalCfg.minY() + "," + portalCfg.minZ()
-                        + ")→(" + portalCfg.maxX() + "," + portalCfg.maxY() + "," + portalCfg.maxZ() + ")");
+                        + ")→(" + portalCfg.maxX() + "," + portalCfg.maxY() + "," + portalCfg.maxZ() + ")"
+                        + " | locator mis à jour");
     }
 
     // ─── Persistance ─────────────────────────────────────────────────────────────
