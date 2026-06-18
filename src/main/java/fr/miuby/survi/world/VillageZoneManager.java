@@ -270,7 +270,7 @@ public class VillageZoneManager {
 
         // ── Mise à jour du spawn monde ─────────────────────────────────────────────
         VillageZoneConfig.VillageZoneSpawn sp = stage.spawn();
-        world.setSpawnLocation(sp.x(), sp.y(), sp.z());
+        world.setSpawnLocation(sp.x(), sp.y(), sp.z(), sp.yaw());
 
         // ── Mise à jour du portail (fakeblocks) ────────────────────────────────────
         VillageZoneConfig.VillageZonePortal portalCfg = stage.portal();

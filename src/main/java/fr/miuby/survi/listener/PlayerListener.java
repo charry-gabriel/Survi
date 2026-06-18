@@ -191,7 +191,7 @@ public class PlayerListener implements Listener {
         AlphaPlayer alphaPlayer = AlphaPlayer.get(player.getUniqueId());
         alphaPlayer.getAlphaLife().actualizeDeath();
 
-        event.setRespawnLocation(WorldRegistry.get(EWorld.VILLAGE).getWorld().getSpawnLocation());
+        event.setRespawnLocation(GameManager.getInstance().getVillageZoneManager().getCurrentSpawnLocation());
 
         for (RoleAttribute roleAttribute : alphaPlayer.getRole().attributes()) {
             if (roleAttribute.getAttributeType() == Attribute.MAX_ABSORPTION) {
