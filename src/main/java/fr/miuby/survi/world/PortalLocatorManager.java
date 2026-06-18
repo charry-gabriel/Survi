@@ -61,6 +61,9 @@ public class PortalLocatorManager {
 
     private UUID markerUUID = null;
 
+    /** Emplacement du marker actif, pour forcer le chargement de son chunk avant suppression. */
+    private Location markerLocation = null;
+
     // ── Init / Stop ──────────────────────────────────────────────────────────
 
     public void init() {
@@ -83,21 +86,30 @@ public class PortalLocatorManager {
 
     /**
      * Appelé par {@link VillageZoneManager} à chaque changement de palier.
-     * Force le chargement du chunk du portail avant la suppression de l'ancien
-     * marker, puis place le nouveau au centre du portail du palier actif.
+     * Force le chargement du chunk de l'ancien marker et de celui du nouveau
+     * portail, supprime l'ancien marker puis place le nouveau au centre du
+     * portail du palier actif.
      */
     public void updatePortal(World world, VillageZoneConfig.VillageZonePortal portalCfg) {
         Location center = computeCenter(world, portalCfg);
 
-        int chunkX = center.getBlockX() >> 4;
-        int chunkZ = center.getBlockZ() >> 4;
-        if (!world.isChunkLoaded(chunkX, chunkZ)) {
-            world.loadChunk(chunkX, chunkZ);
-            MLLogManager.getInstance().log(Level.INFO, ELogTag.WORLD, "[PortalLocatorManager] Chunk (" + chunkX + "," + chunkZ + ") forcé avant cleanup.");
-        }
+        if (markerLocation != null) loadChunkOf(markerLocation);
+        loadChunkOf(center);
 
         removeMarker();
         spawnMarker(center);
+    }
+
+    /** Force le chargement du chunk d'une location si nécessaire (entité non trackée sinon). */
+    private void loadChunkOf(Location location) {
+        World w = location.getWorld();
+        int chunkX = location.getBlockX() >> 4;
+        int chunkZ = location.getBlockZ() >> 4;
+        if (!w.isChunkLoaded(chunkX, chunkZ)) {
+            w.loadChunk(chunkX, chunkZ);
+            MLLogManager.getInstance().log(Level.INFO, ELogTag.WORLD,
+                    "[PortalLocatorManager] Chunk (" + chunkX + "," + chunkZ + ") forcé.");
+        }
     }
 
     // ── Interne ──────────────────────────────────────────────────────────────
@@ -120,6 +132,7 @@ public class PortalLocatorManager {
         });
 
         markerUUID = stand.getUniqueId();
+        markerLocation = location;
         saveMarkerUUIDToDB(); // ← persiste l'UUID pour les redémarrages/crashs
 
         final UUID uuid = markerUUID;
@@ -179,6 +192,7 @@ public class PortalLocatorManager {
         }
 
         markerUUID = null;
+        markerLocation = null;
         clearMarkerUUIDInDB(); // ← efface l'UUID en DB (arrêt propre)
     }
 
