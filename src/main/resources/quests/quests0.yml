@@ -10,10 +10,10 @@ quests:
     difficulty: 0
     jobs:
       - MINER
-    targets: [COBBLESTONE]
+    targets: [STONE]
     goal: 1
     rewards:
-      - {type: REPUTATION, job: MINER, value: 5 }
+      - {type: REPUTATION, job: MINER, value: -5}
 
   - id: "lumberjack0"
     name: "Premier arbre"
@@ -25,7 +25,7 @@ quests:
     targets: [OAK_LOG]
     goal: 1
     rewards:
-      - {type: REPUTATION, job: LUMBERJACK, value: 5 }
+      - {type: REPUTATION, job: LUMBERJACK, value: -5}
 
   - id: "farmer0"
     name: "Premières graines"
@@ -37,7 +37,7 @@ quests:
     targets: [SHORT_GRASS]
     goal: 1
     rewards:
-      - {type: REPUTATION, job: FARMER, value: 5 }
+      - {type: REPUTATION, job: FARMER, value: -5 }
 
   - id: "fisherman0"
     name: "Première prise"
@@ -49,7 +49,7 @@ quests:
     targets: [COD]
     goal: 1
     rewards:
-      - {type: REPUTATION, job: FISHERMAN, value: 5 }
+      - {type: REPUTATION, job: FISHERMAN, value: -5 }
 
   - id: "enchanter0"
     name: "Premiers papiers"
@@ -61,7 +61,7 @@ quests:
     targets: [SUGAR_CANE]
     goal: 1
     rewards:
-      - {type: REPUTATION, job: ENCHANTER, value: 5 }
+      - {type: REPUTATION, job: ENCHANTER, value: -5 }
 
   - id: "explorer0"
     name: "Premier combat"
@@ -73,4 +73,4 @@ quests:
     targets: [ZOMBIE]
     goal: 1
     rewards:
-      - {type: REPUTATION, job: EXPLORER, value: 5 }
+      - {type: REPUTATION, job: EXPLORER, value: -5 }

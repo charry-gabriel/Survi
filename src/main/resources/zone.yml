@@ -10,59 +10,135 @@
 # portal       : coordonnées intérieures (fakeblocks) du portail Village
 
 stages:
-  - after-hours: 0
-    center-x: 0
-    center-z: 0
-    half-width: 10
-    half-depth: 10
+  - after-hours: 0      # zone 1
+    center-x: 64
+    center-z: 960
+    half-width: 64
+    half-depth: 64
     spawn:
-      x: 0
+      x: 43.5
       y: 64
-      z: 0
-      yaw: 0.0
-      pitch: 0.0
+      z: 984.5
+      yaw: -135
+      pitch: -20
     portal:
-      min-x: -5
-      min-y: 62
-      min-z: -5
-      max-x: -5
-      max-y: 64
-      max-z: -7
+      min-x: 55
+      min-y: 63
+      min-z: 978
+      max-x: 55
+      max-y: 65
+      max-z: 979
 
-  - after-hours: 0.5       # après 30 min de jeu réel
-    center-x: 0
-    center-z: 0
-    half-width: 50
-    half-depth: 50
+  - after-hours: 0.05       # zone 2
+    center-x: 64
+    center-z: 896
+    half-width: 128
+    half-depth: 64
     spawn:
-      x: 10
-      y: 64
-      z: 10
-      yaw: 0.0
-      pitch: 0.0
+      x: 100.5
+      y: 89
+      z: 903.5
+      yaw: -123
+      pitch: 1.2
     portal:
-      min-x: -20
-      min-y: 62
-      min-z: -20
-      max-x: -20
-      max-y: 64
-      max-z: -22
+      min-x: 98
+      min-y: 89
+      min-z: 895
+      max-x: 99
+      max-y: 91
+      max-z: 895
 
-  - after-hours: 24         # après 24 h de jeu réel
-    center-x: -76
-    center-z: -83
-    half-width: 200
-    half-depth: 200
+  - after-hours: 0.1          # zone 3
+    center-x: 128
+    center-z: 869
+    half-width: 128
+    half-depth: 128
     spawn:
-      x: -76
-      y: 73
-      z: -83
-      yaw: 0.0
+      x: 167.5
+      y: 83
+      z: 867.5
+      yaw: -120
       pitch: 0.0
     portal:
-      min-x: -80
-      min-y: 62
-      min-z: -80
-      max-x: -80
-      max-y: 64
-      max-z: -82
+      min-x: 179
+      min-y: 83
+      min-z: 868
+      max-x: 179
+      max-y: 85
+      max-z: 869
+
+  - after-hours: 0.15         # zone 4
+    center-x: 128
+    center-z: 768
+    half-width: 256
+    half-depth: 128
+    spawn:
+      x: 165.5
+      y: 87
+      z: 788.5
+      yaw: -136
+      pitch: 2
+    portal:
+      min-x: 145
+      min-y: 88
+      min-z: 788
+      max-x: 145
+      max-y: 90
+      max-z: 787
+
+  - after-hours: 0.2         # zone 5
+    center-x: 128
+    center-z: 768
+    half-width: 256
+    half-depth: 256
+    spawn:
+      x: 408.5
+      y: 77
+      z: 585.5
+      yaw: 180
+      pitch: -2
+    portal:
+      min-x: 414
+      min-y: 77
+      min-z: 584
+      max-x: 414
+      max-y: 79
+      max-z: 585
+
+  - after-hours: 0.25         # zone 6
+    center-x: 256
+    center-z: 512
+    half-width: 512
+    half-depth: 256
+    spawn:
+      x: 282.5
+      y: 68
+      z: 530.5
+      yaw: -90
+      pitch: 0
+    portal:
+      min-x: 269
+      min-y: 68
+      min-z: 531
+      max-x: 269
+      max-y: 73
+      max-z: 529
+
+  - after-hours: 0.3         # zone 7
+    center-x: 512
+    center-z: 512
+    half-width: 512
+    half-depth: 512
+    spawn:
+      x: 282.5
+      y: 68
+      z: 530.5
+      yaw: -90
+      pitch: 0
+    portal:
+      min-x: 269
+      min-y: 68
+      min-z: 531
+      max-x: 269
+      max-y: 73
+      max-z: 529
