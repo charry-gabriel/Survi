@@ -57,7 +57,7 @@ class TabInfoColumn {
      */
     private static final Map<Attribute, Double> VANILLA_DEFAULTS = Map.of(
             Attribute.MAX_HEALTH,     20.0,
-            Attribute.ATTACK_DAMAGE,   2.0,
+            Attribute.ATTACK_DAMAGE,   1.0,
             Attribute.ARMOR,           0.0,
             Attribute.MOVEMENT_SPEED,  0.1
     );
