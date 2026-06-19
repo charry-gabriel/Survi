@@ -3,7 +3,6 @@ package fr.miuby.survi.quest.globalquest;
 import fr.miuby.lib.log.MLLogManager;
 import fr.miuby.survi.GameManager;
 import fr.miuby.survi.blessing.BlessingEffect;
-import fr.miuby.survi.blessing.ReputationEffect;
 import fr.miuby.survi.player.AlphaPlayer;
 import fr.miuby.survi.player.AlphaPlayerFactory;
 import fr.miuby.survi.player.service.OfflineNotificationService;
@@ -192,10 +191,10 @@ public class GlobalQuestManager extends AbstractQuestManager<GlobalQuest> {
             }
 
             if (online) {
-                p.sendMessage(buildRewardMessage(quest));
+                p.sendMessage(buildRewardMessage());
             } else {
                 // Le joueur hors ligne reçoit à la reconnexion l'annonce du classement + ses récompenses
-                Component offlineMsg = announcement.append(buildRewardMessage(quest));
+                Component offlineMsg = announcement.append(buildRewardMessage());
                 offlineNotif.queueQuestReward(entry.getKey(), deferred, offlineMsg);
             }
 
@@ -238,23 +237,11 @@ public class GlobalQuestManager extends AbstractQuestManager<GlobalQuest> {
         for (Player p : Bukkit.getOnlinePlayers()) {
             ELang lang = ls.resolveLanguage(p);
 
-            // Construit la liste des récompenses (composant pré-assemblé)
-            Component rewards = Component.empty();
-            for (BlessingEffect effect : quest.getRewards().blessingEffects()) {
-                if (effect instanceof ReputationEffect re) {
-                    rewards = rewards.append(Component.newline())
-                            .append(ls.text(lang, "globalquest.reward_entry",
-                                    Placeholder.unparsed("amount", String.valueOf(re.getReputation())),
-                                    Placeholder.component("job", re.getJob().toComponent())));
-                }
-            }
-
             p.sendMessage(ls.text(lang, "globalquest.start",
                     Placeholder.unparsed("name",        quest.getName()),
                     Placeholder.unparsed("description", quest.getFormattedDescription()),
                     Placeholder.unparsed("goal",        String.valueOf(quest.getGoal())),
-                    Placeholder.unparsed("time",        timeStr),
-                    Placeholder.component("rewards",    rewards)));
+                    Placeholder.unparsed("time",        timeStr)));
 
             SoundService.play(p, ESound.GLOBAL_QUEST_START);
         }
@@ -300,20 +287,10 @@ public class GlobalQuestManager extends AbstractQuestManager<GlobalQuest> {
                 Placeholder.component("top",          top));
     }
 
-    private Component buildRewardMessage(GlobalQuest quest) {
-        LangService ls      = GameManager.getInstance().getLangService();
-        ELang       lang    = ls.getServerDefault();
-        Component   rewards = Component.empty();
-        for (BlessingEffect effect : quest.getRewards().blessingEffects()) {
-            if (effect instanceof ReputationEffect re) {
-                rewards = rewards
-                        .append(Component.text(" "))
-                        .append(ls.text(lang, "globalquest.reward_entry",
-                                Placeholder.unparsed("amount", String.valueOf(re.getReputation())),
-                                Placeholder.component("job", re.getJob().toComponent())));
-            }
-        }
-        return ls.text(lang, "globalquest.rewards.message", Placeholder.component("rewards", rewards));
+    private Component buildRewardMessage() {
+        LangService ls   = GameManager.getInstance().getLangService();
+        ELang       lang = ls.getServerDefault();
+        return ls.text(lang, "globalquest.rewards.message");
     }
 
     private void broadcastLocalized(String key, Object... args) {

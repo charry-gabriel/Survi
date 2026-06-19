@@ -12,7 +12,7 @@ public class WorldLevelEffect extends BlessingEffect {
         if (player.getPlayer() != null) {
             var ls = GameManager.getInstance().getLangService();
             player.getPlayer().sendMessage(
-                    ls.text(player.getPlayer(), "world.level_up",
+                    ls.text(player.getPlayer(), "world.level_up.event",
                             GameManager.getInstance().getWorldLevelManager().getLevel()));
         }
     }

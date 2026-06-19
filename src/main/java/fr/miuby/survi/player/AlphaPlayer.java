@@ -290,8 +290,7 @@ public class AlphaPlayer extends MLPlayer implements Serializable {
         if (newRank != previousRank && getPlayer() != null) {
             LangService langService = GameManager.getInstance().getLangService();
             getPlayer().sendMessage(langService.text(getPlayer(), "player.rank_up",
-                    Placeholder.component("rank", newRank.displayComponent()),
-                    Placeholder.unparsed("total", String.valueOf(getTotalReputation()))));
+                    Placeholder.component("rank", newRank.displayComponent())));
         }
     }
 

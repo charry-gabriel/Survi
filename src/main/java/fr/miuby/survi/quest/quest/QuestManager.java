@@ -21,6 +21,7 @@ import fr.miuby.survi.world.zone.VillageZoneManager;
 import lombok.Getter;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
@@ -435,9 +436,10 @@ public class QuestManager extends AbstractQuestManager<Quest> {
                 "[AssignQuest] " + player.getPseudo() + " → " + quest.getId() + " (diff=" + difficulty + ") slot=" + nextSlot + " [" + (usedSlots + 1) + "/" + capacity + "]");
 
         player.getPlayer().sendMessage(langService.text(player.getPlayer(), "quest.accepted",
-                trader.getNameId(), quest.getName()));
+                Placeholder.component("trader", trader.getDisplayName()),
+                Placeholder.unparsed("quest", quest.getName())));
         player.getPlayer().sendMessage(Component.text(quest.getFormattedDescription(), NamedTextColor.GRAY));
-        player.getPlayer().sendMessage(langService.text(player.getPlayer(), "quest.accepted.slots", usedSlots + 1, capacity));
+        player.getPlayer().sendMessage(langService.text(player.getPlayer(), "quest.accepted_slots", usedSlots + 1, capacity));
     }
 
     /**
@@ -487,7 +489,10 @@ public class QuestManager extends AbstractQuestManager<Quest> {
             return false;
 
         if (data.getTraderId() != null && !data.getTraderId().equals(trader.getNameId())) {
-            player.getPlayer().sendMessage(GameManager.getInstance().getLangService().text(player.getPlayer(), "quest.validate_trader", data.getTraderId()));
+            MLVillager target = VillagerRegistry.get(data.getTraderId());
+            Component traderName = (target != null) ? target.getDisplayName() : Component.text(data.getTraderId(), NamedTextColor.AQUA);
+            player.getPlayer().sendMessage(GameManager.getInstance().getLangService().text(player.getPlayer(), "quest.validate_trader",
+                    Placeholder.component("trader", traderName)));
             return false;
         }
 
@@ -600,7 +605,7 @@ public class QuestManager extends AbstractQuestManager<Quest> {
         SoundService.play(player.getPlayer(), ESound.QUEST_COMPLETE);
         LangService langService = GameManager.getInstance().getLangService();
         player.getPlayer().sendMessage(langService.text(player.getPlayer(), "quest.completed", quest.getName()));
-        player.getPlayer().sendMessage(langService.text(player.getPlayer(), "quest.completed.go_trader"));
+        player.getPlayer().sendMessage(langService.text(player.getPlayer(), "quest.completed_go_trader"));
         GameManager.getInstance().getQuestActionBarService().showFinished(player, quest);
 
         // Active le glow du Trader cible pour guider le joueur

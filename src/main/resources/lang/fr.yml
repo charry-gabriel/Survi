@@ -34,29 +34,29 @@ job.note: "<green>⚒ <job>"
 # ─── Joueur ───────────────────────────────────────────────────────────────────
 player.subrole.added: "<yellow>Le sous-role <role><yellow> a ete ajouté !"
 player.subrole.removed: "<yellow>Le sous-role <role><yellow> a ete retiré !"
-player.rank_up: "<gold>✦ Nouveau rang atteint : <rank><gray> (réputation totale : <total>)"
+player.rank_up: "<gold>✦ Nouveau rang atteint : <rank>"
 
 # ─── Quête ───────────────────────────────────────────────────────────────────
 quest.already_claimed: "<red>Vous avez déjà une quête terminée à réclamer !"
 quest.already_active: "<red>Vous avez déjà une quête en cours. Terminez-la d'abord !"
 quest.not_available: "<red>Aucune quête n'est encore disponible. Attendez le début de la partie !"
 quest.capacity_full: "<red>Vous avez complété {0}/{1} quêtes disponibles. Revenez demain !"
-quest.validate_trader: "<red>Cette quête doit être validée auprès de <aqua>{0}"
-quest.accepted: "<green>Nouvelle quête acceptée auprès de <aqua>{0}<green> : <gold>{1}"
-quest.accepted.slots: "<dark_gray>Quête {0}/{1} disponibles."
+quest.validate_trader: "<red>Cette quête doit être validée auprès de <aqua><trader>"
+quest.accepted: "<green>Nouvelle quête acceptée auprès de <trader><green> : <gold><quest>"
+quest.accepted_slots: "<dark_gray>Quête {0}/{1} disponibles."
 quest.completed: "<green>Quête terminée : <gold>{0}"
-quest.completed.go_trader: "<gray>Allez voir le Trader pour obtenir votre récompense !"
+quest.completed_go_trader: "<gray>Allez voir le Marchand pour obtenir votre récompense !"
 quest.rewards_received: "<green>Vous avez reçu les récompenses de la quête ! <gold>{0}/{1}<green> quêtes complétées."
 quest.reset_by_admin: "<yellow>Votre quête a été réinitialisée par un administrateur. Vous pouvez en accepter une nouvelle !"
-quest.dropped_on_reload: "<yellow>Votre quête en cours a été supprimée suite à une mise à jour. Vous pouvez en accepter une nouvelle auprès d'un Trader."
+quest.dropped_on_reload: "<yellow>Votre quête en cours a été supprimée suite à une mise à jour. Vous pouvez en accepter une nouvelle auprès d'un Marchand."
 quest.orphan_rewarded: "<green>Votre quête « {0} » a été récompensée automatiquement suite à une mise à jour."
 quest.test.assigned: "<yellow>[TEST] Quête de test assignée : <gold>{0}"
 quest.test.details: "<dark_gray>Objectif : {0} | Difficulté : {1} | Métiers : {2}"
-quest.new_slots: "<gold>[Quêtes] <green>{0} nouveau(x) créneau(x) disponible(s) ! <dark_gray>({1}/{2} utilisés)"
+quest.new_slots: "<gold>[Quêtes] <green>{0} nouveau slot de quête journalière disponible ! <dark_gray>({1}/{2} utilisés)"
 
 # ─── ActionBar quête journalière ─────────────────────────────────────────────
 quest.actionbar.progress: "<aqua>⚔ <yellow>{0}<dark_gray> — <white>{1}<dark_gray>  [<gray>{2}<dark_gray> quêtes]"
-quest.actionbar.finished: "<bold><green>✔ Quête terminée : <gold>{0}<gray> — Allez voir le Trader !"
+quest.actionbar.finished: "<bold><green>✔ Quête terminée : <gold>{0}<gray> — Allez voir le Marchand !"
 
 # ─── BossBar quête globale ───────────────────────────────────────────────────
 quest.global.bossbar.content: "<gold>⚔ <white>{0}  <dark_gray>▶  <aqua>{1}/{2}  <gray>({3}%)"
@@ -81,26 +81,26 @@ enchanter.xp_too_high: "<red>✗ Ce slot coûte trop de niveaux XP pour votre ra
 enchanter.level_too_high: "<red>✗ Cet enchantement dépasse votre niveau de métier <job><red> (max niv.<max> d'enchantement)."
 
 # ─── Trader — icône info métier ───────────────────────────────────────────────
-trader.info.title.generic: "<aqua>Ce commerçant"
+trader.info.title.generic: "<aqua>Ce Marchand"
 trader.info.desc.generic: "<gray>Marchand généraliste."
-trader.info.desc.MINER.1: "<gray>Les minerais droppent peu au bas niveau."
-trader.info.desc.MINER.2: "<gray>Monter ce métier améliore progressivement"
-trader.info.desc.MINER.3: "<gray>le multiplicateur de drops sur les minerais."
-trader.info.desc.LUMBERJACK.1: "<gray>Le feu fait plus mal au bas niveau."
-trader.info.desc.LUMBERJACK.2: "<gray>Monter réduit ces dégâts, améliore les drops de bûches,"
-trader.info.desc.LUMBERJACK.3: "<gray>débloque l'abattage automatique et la résistance au feu."
-trader.info.desc.FARMER.1: "<gray>Les cultures poussent très lentement au bas niveau."
-trader.info.desc.FARMER.2: "<gray>Monter accélère leur pousse et améliore"
-trader.info.desc.FARMER.3: "<gray>les drops de récoltes et de mobs passifs."
-trader.info.desc.ENCHANTER.1: "<gray>L'usure des items est plus rapide au bas niveau."
-trader.info.desc.ENCHANTER.2: "<gray>Monter réduit l'usure, hausse le plafond XP"
-trader.info.desc.ENCHANTER.3: "<gray>sur l'enclume et répare via l'XP aux hauts niveaux."
-trader.info.desc.FISHERMAN.1: "<gray>L'eau cause des dégâts de pression au bas niveau."
-trader.info.desc.FISHERMAN.2: "<gray>Monter élimine ces dégâts, améliore la pêche,"
-trader.info.desc.FISHERMAN.3: "<gray>la nage et accorde l'immunité à la pluie acide."
-trader.info.desc.EXPLORER.1: "<gray>Les chutes font mal très tôt au bas niveau."
-trader.info.desc.EXPLORER.2: "<gray>Monter augmente progressivement"
-trader.info.desc.EXPLORER.3: "<gray>la distance de chute sûre."
+trader.info.desc.MINER.1: "<gray>Les minerais se font rares."
+trader.info.desc.MINER.2: "<gray>Il est difficile de voir dans les grottes."
+trader.info.desc.MINER.3: "<gray>Améliore ton métier."
+trader.info.desc.LUMBERJACK.1: "<gray>Les bûches se font rares."
+trader.info.desc.LUMBERJACK.2: "<gray>Le feu inflige davantage de dégâts."
+trader.info.desc.LUMBERJACK.3: "<gray>Améliore ton métier."
+trader.info.desc.FARMER.1: "<gray>Les cultures poussent très lentement."
+trader.info.desc.FARMER.2: "<gray>Les récoltes et les drops des animaux sont réduits."
+trader.info.desc.FARMER.3: "<gray>Améliore ton métier."
+trader.info.desc.ENCHANTER.1: "<gray>Les objets s'usent plus rapidement."
+trader.info.desc.ENCHANTER.2: "<gray>Peu d'enchantements sont disponibles et beaucoup d'XP est nécessaire."
+trader.info.desc.ENCHANTER.3: "<gray>Améliore ton métier."
+trader.info.desc.FISHERMAN.1: "<gray>L'eau fait des dégâts."
+trader.info.desc.FISHERMAN.2: "<gray>Les poissons se font rares."
+trader.info.desc.FISHERMAN.3: "<gray>Améliore ton métier."
+trader.info.desc.EXPLORER.1: "<gray>Les chutes infligent davantage de dégâts."
+trader.info.desc.EXPLORER.2: "<gray>Tu ne peux pas t'éloigner très loin."
+trader.info.desc.EXPLORER.3: "<gray>Améliore ton métier."
 
 # ─── Trader — menu principal ───────────────────────────────────────────────────
 trader.menu.claim.title: "<gold>Réclamer la récompense"
@@ -108,21 +108,21 @@ trader.menu.claim.done: "<green>Votre quête est terminée !"
 trader.menu.claim.click: "<gray>Cliquez pour récupérer votre récompense."
 trader.menu.pending.title: "<dark_gray>Récompense en attente"
 trader.menu.pending.1: "<gray>Votre quête est terminée, mais elle doit"
-trader.menu.pending.2: "<gray>être validée auprès d'un autre commerçant."
+trader.menu.pending.2: "<gray>être validée auprès d'un autre Marchand."
 trader.menu.ongoing.title: "<dark_gray>Quête en cours"
 trader.menu.ongoing.1: "<gray>Vous avez déjà une quête en cours."
 trader.menu.ongoing.2: "<gray>Terminez-la avant d'en accepter une nouvelle."
-trader.menu.no_slot.title: "<dark_gray>Aucun créneau disponible"
+trader.menu.no_slot.title: "<dark_gray>Aucun slot de quête journalière disponible"
 trader.menu.no_slot.not_started: "<gray>La partie n'a pas encore démarré."
 trader.menu.no_slot.full: "<gray>Vous avez complété {0}/{1} quêtes disponibles."
-trader.menu.no_slot.tomorrow: "<gray>Revenez demain pour de nouveaux créneaux !"
+trader.menu.no_slot.tomorrow: "<gray>Revenez demain pour de nouveaux slot de quête journalière !"
 trader.menu.no_quest.title: "<dark_gray>Aucune quête disponible"
 trader.menu.no_quest.1: "<gray>Aucune quête disponible pour votre profil."
 trader.menu.accept.title: "<yellow>Accepter une quête"
 trader.menu.accept.1: "<gray>Cliquez pour accepter une nouvelle"
-trader.menu.accept.2: "<gray>quête auprès de ce commerçant."
-trader.menu.trade.title: "<green>Ouvrir le commerce"
-trader.menu.trade.1: "<gray>Ouvre l'inventaire de trade."
+trader.menu.accept.2: "<gray>quête auprès de ce Marchand."
+trader.menu.trade.title: "<green>Ouvrir le Marchand"
+trader.menu.trade.1: "<gray>Ouvre l'inventaire d'échange."
 trader.menu.close.title: "<red>Fermer"
 trader.menu.close.1: "<gray>Ferme ce menu."
 
@@ -150,7 +150,7 @@ tab.info.section.jobs: "Métiers"
 tab.info.section.quests: "Quêtes"
 tab.info.section.stats: "Stats"
 tab.info.no_quest: "<gray>Aucune quête en cours"
-tab.info.completed_marker: "<green> ✔ Trader !"
+tab.info.completed_marker: "<green> ✔ Marchand !"
 tab.info.quests_label: "<gray>Quêtes : "
 tab.info.level: ": niv.{0}"
 tab.info.level_max: ": MAX"
@@ -172,14 +172,14 @@ cmd.job.added: "<green>Ajouté <amount> rep à <player> en métier <job> (<befor
 cmd.job.removed: "<gold>Retiré <amount> rep à <player> en métier <job> (<before> → <after>)"
 cmd.job.set: "<green>Réputation de <player> en métier <job> fixée à <value> (était <before>)"
 cmd.job.displayed: "<gray>Métiers de {0} affichés."
-cmd.job.notify.added: "<green>✦ Un administrateur vous a accordé de la réputation dans le métier <job>."
-cmd.job.notify.removed: "<gold>✦ Un administrateur vous a retiré de la réputation dans le métier <job>."
-cmd.job.notify.set: "<green>✦ Un administrateur a modifié votre réputation en métier <job>."
+cmd.job.notify.added: "<green>✦ Un administrateur vous a accordé de l'xp dans le métier <job>."
+cmd.job.notify.removed: "<gold>✦ Un administrateur vous a retiré de l'xp' dans le métier <job>."
+cmd.job.notify.set: "<green>✦ Un administrateur a modifié votre xp en métier <job>."
 cmd.job.info.separator: "<dark_gray>────────────────────────"
 cmd.job.info.title_self: "<gold><bold>  ✦ Vos Métiers"
 cmd.job.info.title_other: "<gold><bold>  ✦ Métiers de {0}"
 cmd.job.info.level: "<dark_gray> — <white>niv.{0}"
-cmd.job.info.hint_1: "<gray>  Complétez des quêtes auprès des marchands"
+cmd.job.info.hint_1: "<gray>  Complétez des quêtes auprès des Marchands"
 cmd.job.info.hint_2: "<gray>  pour progresser dans chaque métier."
 cmd.job.console.header: "=== Métiers de {0} ==="
 
@@ -199,10 +199,8 @@ cmd.player.info.jobs_header: "<dark_gray>  ─ Métiers ─"
 cmd.player.info.job_entry: "<white> niv.{0}"
 cmd.player.info.job_entry_max: "<white> MAX"
 cmd.player.top.quests_title: "<gold><bold>  Classement — Quêtes complétées"
-cmd.player.top.reputation_title: "<gold><bold>  Classement — Réputation totale"
 cmd.player.top.job_title: "<gold><bold>  Classement — {0}"
 cmd.player.top.unit_quests: "quêtes"
-cmd.player.top.unit_rep: "rep"
 cmd.player.top.entry_level: "<dark_gray>  niv.{0}"
 
 # ─── Commandes — système (admin) ─────────────────────────────────────────────
@@ -263,7 +261,7 @@ cmd.reload.jobs.done: "<green>✔ jobs/*.yml rechargés. Drops, multiplicateurs 
 player.role.applied: "<yellow>Le role <role> a ete appliqué !"
 
 # ─── Monde ────────────────────────────────────────────────────────────────────
-world.level_up: "<gold>[Monde] <yellow>Le niveau du monde est passé à <aqua>{0}<yellow>. Les monstres et récompenses s'adaptent !"
+world.level_up.event: "<gold>[Monde] <yellow>Le niveau du monde est passé à <aqua>{0}<yellow>. Les monstres s'adaptent !"
 world.reset_warning: "<gold>[Monde] <yellow>Le monde est en cours de réinitialisation. Retour au Village."
 
 # ─── Quête globale — broadcasts ───────────────────────────────────────────────
@@ -287,8 +285,8 @@ cmd.quest.history_console_only: "<red>Utilisez /quest history <joueur> depuis la
 cmd.quest.history_diff_daily: "diff.{0}"
 cmd.quest.history_diff_global: "mondiale"
 cmd.quest.history_contrib: "<dark_gray> — contrib:{0}"
-cmd.quest.extraslot_added: "<green>+{0} slot(s) de quête journalière accordé(s) à tout le monde. Bonus total : <white>{1}</white>."
-cmd.quest.extraslot_removed: "<yellow>-{0} slot(s) de quête journalière retirés. Bonus restant : <white>{1}</white>."
+cmd.quest.extraslot_added: "<green>+{0} slot de quête journalière accordé(s) à tout le monde. Bonus total : <white>{1}</white>."
+cmd.quest.extraslot_removed: "<yellow>-{0} slot de quête journalière retirés. Bonus restant : <white>{1}</white>."
 cmd.quest.extraslot_status: "<gold>Slots bonus journaliers : <white>{0}</white> | Base : <white>{1}</white> | Capacité totale : <white>{2}</white>."
 
 # ─── Commandes — globalquest (admin) ──────────────────────────────────────────
@@ -338,26 +336,24 @@ cmd.villager.already_max: "<red>Villager already at max level !"
 globalquest.start: |-
 
   <gold>━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  <gold><bold>  ⚔  QUÊTE GLOBALE LANCÉE  ⚔
+  <gold><bold>  ⚔  QUÊTE GLOBALE LANCÉE  ⚔</bold>
   <yellow>  <name>
   <white>  <description>
   <gray>  Objectif : <aqua><goal><gray> | Temps : <aqua><time>
-  <gray>  Récompenses :<rewards>
   <gold>━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 # ─── Quête globale — broadcast fin (message unique multi-ligne) ───────────────
 globalquest.complete: |-
 
   <green>━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  <green><bold>  ✔  QUÊTE GLOBALE COMPLÉTÉE  ✔
+  <green><bold>  ✔  QUÊTE GLOBALE COMPLÉTÉE  ✔</bold>
   <yellow>  <name>
   <white>  <participants> participant(s) récompensé(s) !
   <dark_gray>  ─ Top contributeurs ─<top>
   <green>━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 # ─── Quête globale — entrée récompense & message personnel ────────────────────
-globalquest.reward_entry: "<green>    +<amount> <gray>rép. <job>"
-globalquest.rewards.message: "<gold><bold>[Quête Globale] <green>Récompenses reçues :<rewards>"
+globalquest.rewards.message: "<gold><bold>[Quête Globale] <green>Récompenses reçues !"
 
 # ─── Reload all — résultat complet (message unique multi-ligne) ───────────────
 cmd.reload.all.done: |-
