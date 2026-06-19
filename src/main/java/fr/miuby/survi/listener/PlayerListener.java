@@ -78,6 +78,7 @@ public class PlayerListener implements Listener {
                 Rect limit = mlWorld.getLimit();
                 if (limit != null && event.getTo().getY() < limit.yMin()) {
                     player.teleport(mlWorld.getWorld().getSpawnLocation());
+                    warn(player);
                     return;
                 }
                 outOfBounds = gm.getVillageZoneManager().isLocationOutOfBounds(event.getTo());

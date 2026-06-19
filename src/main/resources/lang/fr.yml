@@ -7,7 +7,7 @@
 # ═══════════════════════════════════════════════════════════════════════════════
 
 # ─── Limite de zone ──────────────────────────────────────────────────────────
-boundary.warning: "<red>Tu ne peux pas aller plus loin !"
+boundary.warning: "<red>Tu ne peux pas aller plus loin ! (limite du village)"
 boundary.village.approaching: "<gold>⚠ Limite du village : {0} m"
 boundary.village.close: "<red>⛔ Limite du village : {0} m"
 boundary.wild.approaching: "<gold>⚠ Limite d'exploration : {0} m"

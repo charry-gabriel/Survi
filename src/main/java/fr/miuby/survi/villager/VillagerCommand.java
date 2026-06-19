@@ -120,9 +120,14 @@ public class VillagerCommand {
 
     private static int villagerExecuteTeleport(CommandContext<CommandSourceStack> ctx, Location location) {
         AVillager villager = VillagerArgument.getVillager(ctx, villagerArgument);
+        var entity = villager.getVillager();
 
-        GameManager.getInstance().getDatabase().villagers().updateLocation(villager.getVillager().getUniqueId(), location);
-        villager.getVillager().teleport(location);
+        if (!entity.isValid()) {
+            entity.getLocation().getChunk().load();
+        }
+
+        GameManager.getInstance().getDatabase().villagers().updateLocation(entity.getUniqueId(), location);
+        entity.teleport(location);
         var ls = GameManager.getInstance().getLangService();
         var sender = ctx.getSource().getSender();
         sender.sendMessage(ls.text(ls.resolveOrDefault(sender), "cmd.villager.teleported"));
