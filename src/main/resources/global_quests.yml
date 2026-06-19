@@ -82,6 +82,18 @@ global_quests:
       - {type: REPUTATION, job: FARMER, value: 50}
       - {type: POTION, potion: haste, duration: 1728000, amplifier: 1}
 
+  - id: "global_cut_wood"
+    name: "Coupons du bois !"
+    description: "Coupez {value} bûche d'oak ou de jungle !"
+    type: "MINE"
+    targets: [OAK_LOG, JUNGLE_LOG]
+    goal: 1000
+    time_limit: 7200
+    rewards:
+      - {type: REPUTATION, job: LUMBERJACK, value: 5}
+      - {type: REPUTATION, job: EXPLORER, value: 1}
+      - {type: POTION, potion: haste, duration: 1728000, amplifier: 1}
+
   - id: "global_fish_marathon"
     name: "Marathon de Pêche"
     description: "Pêchez collectivement {value} poissons !"

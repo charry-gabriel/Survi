@@ -3,53 +3,132 @@ name: "Maddox"
 skin: "e858efb6-1bf2-40df-acc1-6cb6890d8173"
 
 levels:
-  - name: "Maddox I"
+  - name: "Maddox"
     tribute:
-      - material: ARROW
-        amount: 256
+      - material: ROTTEN_FLESH
+        amount: 20
     blessings:
-      - { type: DAMAGE, value: 0.4 }
-    message: "Vous avez tué 3 poulets et vous voulez une récompense ? D'accord.. vous êtes un peu plus fort maintenant mais pas autant que moi quand même."
+      - { type: DAMAGE, value: 0.3}
+    message: "Vous avez tué 3 zombies et vous voulez une récompense ? D'accord.. vous êtes un peu plus fort maintenant mais pas autant que moi quand même."
     recap: ""
 
-  - name: "Maddox II"
+  - name: "Maddox"
     tribute:
-      - material: TNT
+      - material: STRING
         amount: 64
     blessings:
-      - { type: DAMAGE, value: 0.6 }
-    message: "Vous voulez une récompense pour 4 creepers en moins sur la map ? N'importe quoi.. vous êtes un peu plus fort maintenant mais pas autant que moi quand même."
-    recap: "Force I débloqué !"
+      - { type: DAMAGE, value: 0.4}
+    message: "Beh alors ? C'est la petite bête qui mange la grosse ?"
+    recap: "Augmentation des dégats : 20% --> 30%"
 
-  - name: "Maddox III"
+  - name: "Maddox"
+    tribute:
+      - material: BONE_BLOCK
+        amount: 20
+    blessings:
+      - { type: DAMAGE, value: 0.5}
+    message: "Bravo, vous avez tuez 3 squelletes, je vous augmente un peu vos dégats.."
+    recap: "Augmentation des dégats : 30% --> 40%"
+
+  - name: "Maddox"
+    tribute:
+      - material: TNT
+        amount: 20
+    blessings:
+      - { type: DAMAGE, value: 0.6}
+    message: "Vous voulez une récompense pour 4 creepers en moins sur la map ? N'importe quoi.. vous êtes un peu plus fort maintenant..."
+    recap: "Augmentation des dégats : 40% --> 50%"
+
+  - name: "Maddox"
     tribute:
       - material: FERMENTED_SPIDER_EYE
-        amount: 300
+        amount: 32
     blessings:
-      - { type: DAMAGE, value: 0.8 }
+      - { type: DAMAGE, value: 0.7}
     message: "Comment on fait un oeil fermenté ? Avec un oeil... et tu le fermentes."
-    recap: "Force II débloqué !"
+    recap: "Augmentation des dégats : 50% --> 60%"
 
-  - name: "Maddox IV"
+  - name: "Maddox"
+    tribute:
+      - material: ENDER_PEARL
+        amount: 40
+    blessings:
+      - { type: DAMAGE, value: 0.8}
+    message: "Vous n'êtes plus aussi nul qu'au début, je suis heureux de vous voir progresser. Augmentation de vos dégats !"
+    recap: "Augmentation des dégats : 60% --> 70%"
+
+  - name: "Maddox"
     tribute:
       - material: GHAST_TEAR
         amount: 64
     blessings:
-      - { type: DAMAGE, value: 1.0 }
+      - { type: DAMAGE, value: 0.9}
     message: "Pour les 6 ghasts en moins dans ce monde, je vous offre un peu plus de force."
-    recap: "Force III débloqué !"
+    recap: "Augmentation des dégats : 70% --> 80%"
 
-  - name: "Maddox V"
+  - name: "Maddox"
+    tribute:
+      - material: ROTTEN_FLESH
+        amount: 64
+      - material: STRING
+        amount: 64
+      - material: BONE
+        amount: 64
+      - material: GUNPOWDER
+        amount: 64
+      - material: ENDER_PEARL
+        amount: 16
+      - material: PHANTOM_MEMBRANE
+        amount: 64
+      - material: SLIME_BALL
+        amount: 64
+      - material: NETHER_STAR
+        amount: 1
+      - material: BREEZE_ROD
+        amount: 64
+      - material: MUSIC_DISC_LAVA_CHICKEN
+        amount: 1
+      - material: BLAZE_ROD
+        amount: 64
+      - material: MAGMA_CREAM
+        amount: 64
+      - material: ENDER_EYE
+        amount: 64
+      - material: TOTEM_OF_UNDYING
+        amount: 1
+      - material: POISONOUS_POTATO
+        amount: 64
+      - material: PUFFERFISH
+        amount: 64
+      - material: ECHO_SHARD
+        amount: 64
+      - material: DRAGON_BREATH
+        amount: 1
+    blessings:
+      - { type: DAMAGE, value: 1}
+    message: "Bravo pour les 2/3 mobs en moins sur la map. Vous avez votre force vanilla à présent."
+    recap: "Augmentation des dégats : 80% --> 90%"
+
+  - name: "Maddox"
+    tribute:
+      - material: SHULKER_SHELL
+        amount: 64
+    blessings:
+      - { type: DAMAGE, value: 1.2}
+    message: "Vous êtes maintenant plus fort que prévu, félicitations."
+    recap: "Augmentation des dégats : 90% --> 100%"
+
+  - name: "Maddox"
     tribute:
       - material: DRAGON_HEAD
         amount: 10
     blessings:
       - { type: DAMAGE, value: 1.5 }
     message: "C'est bon ? Vous avez fini de voyager ? Enfin... j'aurais été plus vite tout seul. Vous êtes maintenant assez fort. Mais toujours pas autant que moi."
-    recap: "Force IV débloqué !"
+    recap: "Augmentation des dégats : 100% --> 120%"
 
   - name: "Maddox MAX"
     tribute: []
     message: "C'est fini, tu tapes beaucoup trop fort maintenant !"
-    recap: "Force V débloqué !"
+    recap: "Toutes les quêtes de Maddox sont terminées. Vous avez 150% de dégats."
 

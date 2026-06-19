@@ -25,6 +25,74 @@ new_recipes:
       - NETHERITE_INGOT
       - STRIPPED_PALE_OAK_WOOD
 
+  copper_helmet:
+    category: EQUIPMENT
+    result: COPPER_HELMET
+    roles: [ ]
+    tiers: [ "COPPER" ]
+    categories: [ "ARMOR" ]
+    ingredients:
+      - COPPER_BLOCK
+      - COPPER_BLOCK
+      - COPPER_BLOCK
+      - COPPER_BLOCK
+      - LEATHER_HELMET
+      - COPPER_BLOCK
+      - AIR
+      - AIR
+      - AIR
+
+  copper_chestplate:
+    category: EQUIPMENT
+    result: COPPER_CHESTPLATE
+    roles: [ ]
+    tiers: [ "COPPER" ]
+    categories: [ "ARMOR" ]
+    ingredients:
+      - COPPER_BLOCK
+      - AIR
+      - COPPER_BLOCK
+      - COPPER_BLOCK
+      - LEATHER_CHESTPLATE
+      - COPPER_BLOCK
+      - COPPER_BLOCK
+      - COPPER_BLOCK
+      - COPPER_BLOCK
+
+  copper_leggings:
+    category: EQUIPMENT
+    result: COPPER_LEGGINGS
+    roles: [ ]
+    tiers: [ "COPPER" ]
+    categories: [ "ARMOR" ]
+    ingredients:
+      - COPPER_BLOCK
+      - COPPER_BLOCK
+      - COPPER_BLOCK
+      - COPPER_BLOCK
+      - LEATHER_LEGGINGS
+      - COPPER_BLOCK
+      - COPPER_BLOCK
+      - AIR
+      - COPPER_BLOCK
+
+  copper_boots:
+    category: EQUIPMENT
+    result: COPPER_BOOTS
+    roles: [ ]
+    tiers: [ "COPPER" ]
+    categories: [ "ARMOR" ]
+    ingredients:
+      - AIR
+      - AIR
+      - AIR
+      - COPPER_BLOCK
+      - LEATHER_BOOTS
+      - COPPER_BLOCK
+      - COPPER_BLOCK
+      - AIR
+      - COPPER_BLOCK
+
   chainmail_helmet:
     category: EQUIPMENT
     result: CHAINMAIL_HELMET
@@ -36,7 +104,7 @@ new_recipes:
       - LAVA_BUCKET
       - LAVA_BUCKET
       - LAVA_BUCKET
-      - LEATHER_HELMET
+      - COPPER_HELMET
       - LAVA_BUCKET
       - AIR
       - AIR
@@ -53,7 +121,7 @@ new_recipes:
       - AIR
       - LAVA_BUCKET
       - LAVA_BUCKET
-      - LEATHER_CHESTPLATE
+      - COPPER_CHESTPLATE
       - LAVA_BUCKET
       - LAVA_BUCKET
       - LAVA_BUCKET
@@ -70,7 +138,7 @@ new_recipes:
       - LAVA_BUCKET
       - LAVA_BUCKET
       - LAVA_BUCKET
-      - LEATHER_LEGGINGS
+      - COPPER_LEGGINGS
       - LAVA_BUCKET
       - LAVA_BUCKET
       - AIR
@@ -87,7 +155,7 @@ new_recipes:
       - AIR
       - AIR
       - LAVA_BUCKET
-      - LEATHER_BOOTS
+      - COPPER_BOOTS
       - LAVA_BUCKET
       - LAVA_BUCKET
       - AIR
@@ -309,6 +377,10 @@ new_recipes:
       X: DIAMOND_BLOCK
 
 old_recipes:
+  - minecraft:copper_helmet
+  - minecraft:copper_chestplate
+  - minecraft:copper_leggings
+  - minecraft:copper_boots
   - minecraft:iron_helmet
   - minecraft:iron_chestplate
   - minecraft:iron_leggings

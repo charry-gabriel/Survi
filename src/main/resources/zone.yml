@@ -10,7 +10,7 @@
 # portal       : coordonnées intérieures (fakeblocks) du portail Village
 
 stages:
-  - after-hours: 0      # zone 1
+  - after-hours: 0      # zone 0
     center-x: 64
     center-z: 960
     half-width: 64
@@ -29,7 +29,7 @@ stages:
       max-y: 65
       max-z: 979
 
-  - after-hours: 0.05       # zone 2
+  - after-hours: 0.05       # zone 1
     center-x: 64
     center-z: 896
     half-width: 64
@@ -48,9 +48,9 @@ stages:
       max-y: 91
       max-z: 895
 
-  - after-hours: 0.1          # zone 3
+  - after-hours: 0.1          # zone 2
     center-x: 128
-    center-z: 869
+    center-z: 896
     half-width: 128
     half-depth: 128
     spawn:
@@ -67,7 +67,7 @@ stages:
       max-y: 85
       max-z: 869
 
-  - after-hours: 0.15         # zone 4
+  - after-hours: 0.15         # zone 3
     center-x: 128
     center-z: 768
     half-width: 128
@@ -86,7 +86,7 @@ stages:
       max-y: 90
       max-z: 787
 
-  - after-hours: 0.2         # zone 5
+  - after-hours: 0.2         # zone 4
     center-x: 128
     center-z: 768
     half-width: 256
@@ -105,7 +105,7 @@ stages:
       max-y: 79
       max-z: 585
 
-  - after-hours: 0.25         # zone 6
+  - after-hours: 0.25         # zone 5
     center-x: 256
     center-z: 512
     half-width: 256
@@ -124,7 +124,7 @@ stages:
       max-y: 73
       max-z: 529
 
-  - after-hours: 0.3         # zone 7
+  - after-hours: 0.3         # zone 6
     center-x: 512
     center-z: 512
     half-width: 512

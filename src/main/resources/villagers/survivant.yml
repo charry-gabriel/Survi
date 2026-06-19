@@ -3,50 +3,87 @@ name: "Survivant"
 skin: "11284e26-024e-4b1b-a6d7-fa8ae08faa10"
 
 levels:
-  - name: "Survivant I"
-    message: "Désolé, c'est fait exprès. **MOUAHAHAHAAHHA** (imaginez le rire d'ariscis)"
+  - name: "Survivant"
+    message: "Désolé, c'est fait exprès. **MOUAHAHAHAAHHA** (imaginez le rire d'ariscis). Bon courage pour votre aventure."
     recap: ""
     tribute:
       - material: DIRT
         amount: 1
     blessings:
-      - { type: MAX_HEALTH, value: -20 }
+      - { type: MAX_HEALTH, value: -18 }
 
-  - name: "Survivant II"
-    message: "Vous pouvez maintenant avoir des outils en bois !"
-    recap: "Outils en bois débloqué !"
+  - name: "Survivant"
+    message: "Voici un peu de vie contre ces graines. Vous pouvez également crafter des outils en bois !"
+    recap: ""
     tribute:
       - material: WHEAT_SEEDS
-        amount: 32
+        amount: 20
     blessings:
-      - { type: MAX_HEALTH, value: -18 }
+      - { type: MAX_HEALTH, value: -16}
       - { type: UNLOCK_TOOL, tool: WOOD }
 
-  - name: "Survivant III"
-    message: "Vous pouvez maintenant avoir des outils en pierre et une armure en cuir !"
-    recap: "Outils en bois et armure en cuir débloqué !"
+  - name: "Survivant"
+    message: "Voici un peu de vie et surtout vous pouvez maintenant avoir une armure en cuir !"
+    recap: "Outils en bois disponibles."
     tribute:
-      - material: OAK_LOG
-        amount: 640
-      - material: APPLE
-        amount: 32
-      - material: SUGAR_CANE
+      - material: LEATHER
+        amount: 1
+    blessings:
+      - { type: MAX_HEALTH, value: -14}
+      - { type: UNLOCK_ARMOR, armor: LEATHER }
+
+  - name: "Survivant"
+    message: "Voici un peu de vie, merci pour ces vieilles planches..."
+    recap: "Craft de l'armure en cuir débloqué."
+    tribute:
+      - material: OAK_PLANKS
+        amount: 64
+      - material: JUNGLE_PLANKS
         amount: 64
     blessings:
-      - { type: MAX_HEALTH, value: -16 }
-      - { type: UNLOCK_ARMOR, armor: LEATHER }
+      - { type: MAX_HEALTH, value: -12}
+
+  - name: "Survivant"
+    message: "Merci pour ces cailloux, vous avez débloqué les outils en pierre."
+    recap: "+1 coeur"
+    tribute:
+      - material: COBBLESTONE
+        amount: 32
+      - material: STONE
+        amount: 32
+    blessings:
+      - { type: MAX_HEALTH, value: -10}
       - { type: UNLOCK_TOOL, tool: STONE }
 
-  - name: "Survivant IV"
-    message: "Vous pouvez maintenant avoir des outils en fer et une armure en maille !"
-    recap: "Outils en fer et armure en maille débloqué !"
+  - name: "Survivant"
+    message: "Vous pouvez maintenant avoir des outils en copper !"
+    recap: "Outils en pierre disponibles"
     tribute:
-      - material: IRON_BLOCK
-        amount: 160
-      - material: COAL_BLOCK
-        amount: 64
-      - material: LAPIS_BLOCK
-        amount: 64
+      - material: JUNGLE_WOOD
+        amount: 320
+      - material: APPLE
+        amount: 16
+    blessings:
+      - { type: MAX_HEALTH, value: -8 }
+      - { type: UNLOCK_TOOL, tool: COPPER }
+
+
+  - name: "Survivant"
+    message: "Vous pouvez maintenant avoir des armures en copper ! (regardez le craft dans notre livre des recettes)"
+    recap: "Outils en copper débloqués !"
+    tribute:
+      - material: WHITE_BED
+        amount: 3
+      - material: RED_BED
+        amount: 3
+    blessings:
+      - { type: MAX_HEALTH, value: -6}
+      - { type: UNLOCK_ARMOR, armor: COPPER }
+
+  - name: "Survivant IV"
+    message: "Vous pouvez maintenant avoir des outils en fer !"
+    recap: "Armure en copper disponibles (regardez le craft dans notre livre des recettes)."
+    tribute:
       - material: WAXED_COPPER_BLOCK
         amount: 16
       - material: WAXED_EXPOSED_COPPER
@@ -56,52 +93,103 @@ levels:
       - material: WAXED_OXIDIZED_COPPER
         amount: 16
     blessings:
-      - { type: MAX_HEALTH, value: -14 }
-      - { type: UNLOCK_ARMOR, armor: CHAINMAIL }
+      - { type: MAX_HEALTH, value: -4}
       - { type: UNLOCK_TOOL, tool: IRON }
 
+  - name: "Survivant IV"
+    message: "Vous pouvez maintenant avoir une armure en maille ! (regardez le craft dans notre livre des recettes)"
+    recap: "Outils en fer débloqués."
+    tribute:
+      - material: LAVA_BUCKET
+        amount: 1
+      - material: BEEHIVE
+        amount: 1
+      - material: CAMPFIRE
+        amount: 1
+    blessings:
+      - { type: MAX_HEALTH, value: -2}
+      - { type: UNLOCK_ARMOR, armor: CHAINMAIL }
+
+  - name: "Survivant IV"
+    message: "Vous pouvez maintenant avoir des outils en or (j'espère que vous avez pas le seum)."
+    recap: "Armure en maille débloqués ! (regardez le craft dans notre livre des recettes)"
+    tribute:
+      - material: COAL_BLOCK
+        amount: 20
+      - material: COPPER_BLOCK
+        amount: 20
+      - material: IRON_BLOCK
+        amount: 20
+      - material: LAPIS_BLOCK
+        amount: 20
+      - material: REDSTONE_BLOCK
+        amount: 20
+      - material: GOLD_BLOCK
+        amount: 20
+      - material: DIAMOND_BLOCK
+        amount: 1
+    blessings:
+      - { type: MAX_HEALTH, value: 0}
+      - { type: UNLOCK_TOOL, tool: GOLD}
+
+
+  - name: "Survivant VI"
+    message: "Vous pouvez maintenant avoir une armure en fer"
+    recap: "Outils en or débloqués ! (l'arnaque)"
+    tribute:
+      - material: GUNPOWDER
+        amount: 128
+      - material: ENDER_PEARL
+        amount: 16
+      - material: FERMENTED_SPIDER_EYE
+        amount: 20
+      - material: PHANTOM_MEMBRANE
+        amount: 20
+      - material: BONE
+        amount: 20
+      - material: ROTTEN_FLESH
+        amount: 20
+    blessings:
+      - { type: MAX_HEALTH, value: 2}
+      - { type: UNLOCK_ARMOR, armor: IRON }
+
+
   - name: "Survivant V"
-    message: "Vous pouvez maintenant avoir une armure en fer !"
-    recap: "Outils en fer et armure en fer débloqué !"
+    message: "Vous pouvez maintenant avoir une armure en or, et elle en vaut le coup !"
+    recap: "Armure en fer débloqués !"
     tribute:
       - material: HAY_BLOCK
         amount: 32
       - material: BAKED_POTATO
         amount: 32
-      - material: GOLDEN_CARROT
-        amount: 128
-      - material: PUFFERFISH
-        amount: 32
       - material: PUMPKIN_PIE
+        amount: 32
+      - material: GOLDEN_CARROT
+        amount: 64
+      - material: GLISTERING_MELON_SLICE
         amount: 64
     blessings:
-      - { type: MAX_HEALTH, value: -12 }
-      - { type: UNLOCK_ARMOR, armor: IRON }
+      - { type: MAX_HEALTH, value: 4}
+      - { type: UNLOCK_ARMOR, armor: GOLD }
 
   - name: "Survivant VI"
-    message: "Vous pouvez maintenant avoir des outils en or et une armure en or !"
-    recap: "Outils en or et armure en or débloqué !"
+    message: "Vous pouvez maintenant avoir des outils en diamant et netherite!"
+    recap: "Armure en or débloqués (et elle en vaut le coup promis)."
     tribute:
-      - material: ENDER_PEARL
-        amount: 16
-      - material: FERMENTED_SPIDER_EYE
-        amount: 64
-      - material: PHANTOM_MEMBRANE
-        amount: 32
-      - material: GUNPOWDER
-        amount: 64
-      - material: BONE
-        amount: 64
-      - material: ROTTEN_FLESH
-        amount: 64
+      - material: SULFUR_SPIKE
+        amount: 128
+      - material: SULFUR_CUBE_BUCKET
+        amount: 1
+      - material: MUSIC_DISC_BOUNCE
+        amount: 1
     blessings:
-      - { type: MAX_HEALTH, value: -10 }
-      - { type: UNLOCK_ARMOR, armor: GOLD }
-      - { type: UNLOCK_TOOL, tool: GOLD }
+      - { type: MAX_HEALTH, value: 6}
+      - { type: UNLOCK_TOOL, armor: DIAMOND }
+      - { type: UNLOCK_TOOL, armor: NETHERITE }
 
   - name: "Survivant VII"
-    message: "Vous pouvez maintenant avoir des outils en diamant et une armure en diamant !"
-    recap: "Outils en diamant et armure en diamant débloqué !"
+    message: "Vous pouvez maintenant avoir une armure en diamant ou en netherite !"
+    recap: "Outils en diamant et netherite débloqués !"
     tribute:
       - material: ARMADILLO_SCUTE
         amount: 10
@@ -112,14 +200,14 @@ levels:
       - material: RESIN_BLOCK
         amount: 64
     blessings:
-      - { type: MAX_HEALTH, value: -8 }
-      - { type: UNLOCK_ARMOR, armor: DIAMOND }
-      - { type: UNLOCK_TOOL, tool: DIAMOND }
+      - { type: MAX_HEALTH, value: 8}
+      - { type: UNLOCK_ARMOR, armor: DIAMOND}
       - { type: UNLOCK_ARMOR, armor: NETHERITE }
+
 
   - name: "Survivant VIII"
     message: "Un peu de vie pour vous !"
-    recap: "Outils en diamant, armure en diamant et vie en plus débloqué !"
+    recap: "Outils et armure en diamant/netherite et vie en plus débloqué !"
     tribute:
       - material: OAK_SAPLING
         amount: 64
@@ -140,11 +228,11 @@ levels:
       - material: STRIPPED_BIRCH_LOG
         amount: 64
     blessings:
-      - { type: MAX_HEALTH, value: -6 }
+      - { type: MAX_HEALTH, value: 10}
 
   - name: "Survivant IX"
     message: "Un peu de vie pour vous !"
-    recap: "Outils en diamant, armure en diamant et vie en plus débloqué !"
+    recap: "Outils et armure en diamant/netherite et vie en plus débloqué !"
     tribute:
       - material: JUNGLE_SAPLING
         amount: 64
@@ -165,11 +253,11 @@ levels:
       - material: STRIPPED_DARK_OAK_LOG
         amount: 64
     blessings:
-      - { type: MAX_HEALTH, value: -4 }
+      - { type: MAX_HEALTH, value: 12}
 
   - name: "Survivant X"
     message: "Un peu de vie pour vous !"
-    recap: "Outils en diamant, armure en diamant et vie en plus débloqué !"
+    recap: "Outils et armure en diamant/netherite et vie en plus débloqué !"
     tribute:
       - material: MANGROVE_PROPAGULE
         amount: 64
@@ -190,11 +278,11 @@ levels:
       - material: STRIPPED_PALE_OAK_LOG
         amount: 64
     blessings:
-      - { type: MAX_HEALTH, value: -2 }
+      - { type: MAX_HEALTH, value: 14}
 
   - name: "Survivant XI"
     message: "Un peu de vie pour vous !"
-    recap: "Outils en diamant, armure en diamant et vie en plus débloqué !"
+    recap: "Outils et armure en diamant/netherite et vie en plus débloqué !"
     tribute:
       - material: CHORUS_FRUIT
         amount: 64
@@ -207,11 +295,11 @@ levels:
       - material: CAKE
         amount: 1
     blessings:
-      - { type: MAX_HEALTH, value: 0 }
+      - { type: MAX_HEALTH, value: 16}
 
   - name: "Survivant XII"
-    message: "La quête était si simple en vrai.. fin bref, voici un coeur pour vous."
-    recap: "Outils en diamant, armure en diamant et vie en plus débloqué !"
+    message: "La quête était si simple en vrai.. fin bref, voici deux coeurs pour vous."
+    recap: "Outils et armure en diamant/netherite et vie en plus débloqué !"
     tribute:
       - material: IRON_BLOCK
         amount: 256
@@ -232,7 +320,7 @@ levels:
       - material: NETHERITE_BLOCK
         amount: 8
     blessings:
-      - { type: MAX_HEALTH, value: 2 }
+      - { type: MAX_HEALTH, value: 20}
 
   - name: "Survivant MAX"
     message: "C'est fini y a plus rien !"
