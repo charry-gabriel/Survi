@@ -7,8 +7,6 @@ import fr.miuby.survi.job.config.JobsConfig;
 import fr.miuby.survi.world.crops.PlantedCropUtils;
 import fr.miuby.survi.world.crops.PlantedCropsManager;
 import fr.miuby.survi.player.AlphaPlayer;
-import fr.miuby.survi.role.ERole;
-import fr.miuby.survi.role.Role;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.Ageable;
@@ -54,11 +52,7 @@ public class CropGrowthListener implements Listener {
 
     private static boolean isValidPlantingAttempt(PlayerInteractEvent event, AlphaPlayer alpha) {
         if (event.getAction() != Action.RIGHT_CLICK_BLOCK || event.getItem() == null) return false;
-        if (!PlantedCropUtils.isPlantable(event.getItem().getType())) return false;
-        for (Role role : alpha.getSubRoles()) {
-            if (role.type() == ERole.FERMIER) return true;
-        }
-        return false;
+        return PlantedCropUtils.isPlantable(event.getItem().getType());
     }
 
     // ════════════════════════════════════════════════════════════════════════════
