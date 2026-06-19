@@ -80,7 +80,7 @@ levels:
       - { type: MAX_HEALTH, value: -6}
       - { type: UNLOCK_ARMOR, armor: COPPER }
 
-  - name: "Survivant IV"
+  - name: "Survivant"
     message: "Vous pouvez maintenant avoir des outils en fer !"
     recap: "Armure en copper disponibles (regardez le craft dans notre livre des recettes)."
     tribute:
@@ -96,7 +96,7 @@ levels:
       - { type: MAX_HEALTH, value: -4}
       - { type: UNLOCK_TOOL, tool: IRON }
 
-  - name: "Survivant IV"
+  - name: "Survivant"
     message: "Vous pouvez maintenant avoir une armure en maille ! (regardez le craft dans notre livre des recettes)"
     recap: "Outils en fer débloqués."
     tribute:
@@ -110,7 +110,7 @@ levels:
       - { type: MAX_HEALTH, value: -2}
       - { type: UNLOCK_ARMOR, armor: CHAINMAIL }
 
-  - name: "Survivant IV"
+  - name: "Survivant"
     message: "Vous pouvez maintenant avoir des outils en or (j'espère que vous avez pas le seum)."
     recap: "Armure en maille débloqués ! (regardez le craft dans notre livre des recettes)"
     tribute:
@@ -133,7 +133,7 @@ levels:
       - { type: UNLOCK_TOOL, tool: GOLD}
 
 
-  - name: "Survivant VI"
+  - name: "Survivant"
     message: "Vous pouvez maintenant avoir une armure en fer"
     recap: "Outils en or débloqués ! (l'arnaque)"
     tribute:
@@ -154,7 +154,7 @@ levels:
       - { type: UNLOCK_ARMOR, armor: IRON }
 
 
-  - name: "Survivant V"
+  - name: "Survivant"
     message: "Vous pouvez maintenant avoir une armure en or, et elle en vaut le coup !"
     recap: "Armure en fer débloqués !"
     tribute:
@@ -172,7 +172,7 @@ levels:
       - { type: MAX_HEALTH, value: 4}
       - { type: UNLOCK_ARMOR, armor: GOLD }
 
-  - name: "Survivant VI"
+  - name: "Survivant"
     message: "Vous pouvez maintenant avoir des outils en diamant et netherite!"
     recap: "Armure en or débloqués (et elle en vaut le coup promis)."
     tribute:
@@ -187,7 +187,7 @@ levels:
       - { type: UNLOCK_TOOL, tool: DIAMOND }
       - { type: UNLOCK_TOOL, tool: NETHERITE }
 
-  - name: "Survivant VII"
+  - name: "Survivant"
     message: "Vous pouvez maintenant avoir une armure en diamant ou en netherite !"
     recap: "Outils en diamant et netherite débloqués !"
     tribute:
@@ -205,7 +205,7 @@ levels:
       - { type: UNLOCK_ARMOR, armor: NETHERITE }
 
 
-  - name: "Survivant VIII"
+  - name: "Survivant"
     message: "Un peu de vie pour vous !"
     recap: "Outils et armure en diamant/netherite et vie en plus débloqué !"
     tribute:
@@ -230,7 +230,7 @@ levels:
     blessings:
       - { type: MAX_HEALTH, value: 10}
 
-  - name: "Survivant IX"
+  - name: "Survivant"
     message: "Un peu de vie pour vous !"
     recap: "Outils et armure en diamant/netherite et vie en plus débloqué !"
     tribute:
@@ -255,7 +255,7 @@ levels:
     blessings:
       - { type: MAX_HEALTH, value: 12}
 
-  - name: "Survivant X"
+  - name: "Survivant"
     message: "Un peu de vie pour vous !"
     recap: "Outils et armure en diamant/netherite et vie en plus débloqué !"
     tribute:
@@ -280,7 +280,7 @@ levels:
     blessings:
       - { type: MAX_HEALTH, value: 14}
 
-  - name: "Survivant XI"
+  - name: "Survivant"
     message: "Un peu de vie pour vous !"
     recap: "Outils et armure en diamant/netherite et vie en plus débloqué !"
     tribute:
@@ -297,8 +297,8 @@ levels:
     blessings:
       - { type: MAX_HEALTH, value: 16}
 
-  - name: "Survivant XII"
-    message: "La quête était si simple en vrai.. fin bref, voici deux coeurs pour vous."
+  - name: "Survivant"
+    message: "La quête était si simple en vrai.. fin bref, voici un coeurs pour vous."
     recap: "Outils et armure en diamant/netherite et vie en plus débloqué !"
     tribute:
       - material: IRON_BLOCK
@@ -319,6 +319,17 @@ levels:
         amount: 16
       - material: NETHERITE_BLOCK
         amount: 8
+    blessings:
+      - { type: MAX_HEALTH, value: 18}
+
+  - name: "Survivant"
+    message: "Voici tous vos HP, j'ai été gentil pour la dernière."
+    recap: "Outils et armure en diamant/netherite et vie en plus débloqué !"
+    tribute:
+      - material: SAND
+        amount: 320
+      - material: RED_SAND
+        amount: 320
     blessings:
       - { type: MAX_HEALTH, value: 20}
 
