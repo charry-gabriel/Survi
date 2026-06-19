@@ -13,7 +13,7 @@ new_recipes:
     result: CHICKEN_SPAWN_EGG
     roles: []
     tiers: []
-    categories: ["MISC"]
+    categories: [MISC]
     ingredients:
       - END_CRYSTAL
       - TORCHFLOWER
@@ -28,9 +28,9 @@ new_recipes:
   copper_helmet:
     category: EQUIPMENT
     result: COPPER_HELMET
-    roles: [ ]
-    tiers: [ "COPPER" ]
-    categories: [ "ARMOR" ]
+    roles: []
+    tiers: [COPPER]
+    categories: [ARMOR]
     ingredients:
       - COPPER_BLOCK
       - COPPER_BLOCK
@@ -45,9 +45,9 @@ new_recipes:
   copper_chestplate:
     category: EQUIPMENT
     result: COPPER_CHESTPLATE
-    roles: [ ]
-    tiers: [ "COPPER" ]
-    categories: [ "ARMOR" ]
+    roles: []
+    tiers: [COPPER]
+    categories: [ARMOR]
     ingredients:
       - COPPER_BLOCK
       - AIR
@@ -62,9 +62,9 @@ new_recipes:
   copper_leggings:
     category: EQUIPMENT
     result: COPPER_LEGGINGS
-    roles: [ ]
-    tiers: [ "COPPER" ]
-    categories: [ "ARMOR" ]
+    roles: []
+    tiers: [COPPER]
+    categories: [ARMOR]
     ingredients:
       - COPPER_BLOCK
       - COPPER_BLOCK
@@ -79,9 +79,9 @@ new_recipes:
   copper_boots:
     category: EQUIPMENT
     result: COPPER_BOOTS
-    roles: [ ]
-    tiers: [ "COPPER" ]
-    categories: [ "ARMOR" ]
+    roles: []
+    tiers: [COPPER]
+    categories: [ARMOR]
     ingredients:
       - AIR
       - AIR
@@ -97,8 +97,8 @@ new_recipes:
     category: EQUIPMENT
     result: CHAINMAIL_HELMET
     roles: []
-    tiers: ["CHAINMAIL"]
-    categories: ["ARMOR"]
+    tiers: [CHAINMAIL]
+    categories: [ARMOR]
     ingredients:
       - LAVA_BUCKET
       - LAVA_BUCKET
@@ -114,8 +114,8 @@ new_recipes:
     category: EQUIPMENT
     result: CHAINMAIL_CHESTPLATE
     roles: []
-    tiers: ["CHAINMAIL"]
-    categories: ["ARMOR"]
+    tiers: [CHAINMAIL]
+    categories: [ARMOR]
     ingredients:
       - LAVA_BUCKET
       - AIR
@@ -131,8 +131,8 @@ new_recipes:
     category: EQUIPMENT
     result: CHAINMAIL_LEGGINGS
     roles: []
-    tiers: ["CHAINMAIL"]
-    categories: ["ARMOR"]
+    tiers: [CHAINMAIL]
+    categories: [ARMOR]
     ingredients:
       - LAVA_BUCKET
       - LAVA_BUCKET
@@ -148,8 +148,8 @@ new_recipes:
     category: EQUIPMENT
     result: CHAINMAIL_BOOTS
     roles: []
-    tiers: ["CHAINMAIL"]
-    categories: ["ARMOR"]
+    tiers: [CHAINMAIL]
+    categories: [ARMOR]
     ingredients:
       - AIR
       - AIR
@@ -165,8 +165,8 @@ new_recipes:
     category: EQUIPMENT
     result: IRON_HELMET
     roles: []
-    tiers: ["IRON"]
-    categories: ["ARMOR"]
+    tiers: [IRON]
+    categories: [ARMOR]
     ingredients:
       - IRON_BLOCK
       - IRON_BLOCK
@@ -182,8 +182,8 @@ new_recipes:
     category: EQUIPMENT
     result: IRON_CHESTPLATE
     roles: []
-    tiers: ["IRON"]
-    categories: ["ARMOR"]
+    tiers: [IRON]
+    categories: [ARMOR]
     ingredients:
       - IRON_BLOCK
       - AIR
@@ -199,8 +199,8 @@ new_recipes:
     category: EQUIPMENT
     result: IRON_LEGGINGS
     roles: []
-    tiers: ["IRON"]
-    categories: ["ARMOR"]
+    tiers: [IRON]
+    categories: [ARMOR]
     ingredients:
       - IRON_BLOCK
       - IRON_BLOCK
@@ -216,8 +216,8 @@ new_recipes:
     category: EQUIPMENT
     result: IRON_BOOTS
     roles: []
-    tiers: ["IRON"]
-    categories: ["ARMOR"]
+    tiers: [IRON]
+    categories: [ARMOR]
     ingredients:
       - AIR
       - AIR
@@ -233,8 +233,8 @@ new_recipes:
     category: EQUIPMENT
     result: GOLDEN_HELMET
     roles: []
-    tiers: ["GOLD"]
-    categories: ["ARMOR"]
+    tiers: [GOLD]
+    categories: [ARMOR]
     ingredients:
       - GOLD_BLOCK
       - GOLD_BLOCK
@@ -250,8 +250,8 @@ new_recipes:
     category: EQUIPMENT
     result: GOLDEN_CHESTPLATE
     roles: []
-    tiers: ["GOLD"]
-    categories: ["ARMOR"]
+    tiers: [GOLD]
+    categories: [ARMOR]
     ingredients:
       - GOLD_BLOCK
       - AIR
@@ -267,8 +267,8 @@ new_recipes:
     category: EQUIPMENT
     result: GOLDEN_LEGGINGS
     roles: []
-    tiers: ["GOLD"]
-    categories: ["ARMOR"]
+    tiers: [GOLD]
+    categories: [ARMOR]
     ingredients:
       - GOLD_BLOCK
       - GOLD_BLOCK
@@ -284,8 +284,8 @@ new_recipes:
     category: EQUIPMENT
     result: GOLDEN_BOOTS
     roles: []
-    tiers: ["GOLD"]
-    categories: ["ARMOR"]
+    tiers: [GOLD]
+    categories: [ARMOR]
     ingredients:
       - AIR
       - AIR
@@ -301,8 +301,8 @@ new_recipes:
     category: EQUIPMENT
     result: DIAMOND_HELMET
     roles: []
-    tiers: ["DIAMOND"]
-    categories: ["ARMOR"]
+    tiers: [DIAMOND]
+    categories: [ARMOR]
     ingredients:
       - DIAMOND_BLOCK
       - DIAMOND_BLOCK
@@ -318,8 +318,8 @@ new_recipes:
     category: EQUIPMENT
     result: DIAMOND_CHESTPLATE
     roles: []
-    tiers: ["DIAMOND"]
-    categories: ["ARMOR"]
+    tiers: [DIAMOND]
+    categories: [ARMOR]
     ingredients:
       - DIAMOND_BLOCK
       - AIR
@@ -335,8 +335,8 @@ new_recipes:
     category: EQUIPMENT
     result: DIAMOND_LEGGINGS
     roles: []
-    tiers: ["DIAMOND"]
-    categories: ["ARMOR"]
+    tiers: [DIAMOND]
+    categories: [ARMOR]
     ingredients:
       - DIAMOND_BLOCK
       - DIAMOND_BLOCK
@@ -352,8 +352,8 @@ new_recipes:
     category: EQUIPMENT
     result: DIAMOND_BOOTS
     roles: []
-    tiers: ["DIAMOND"]
-    categories: ["ARMOR"]
+    tiers: [DIAMOND]
+    categories: [ARMOR]
     ingredients:
       - AIR
       - AIR
@@ -364,17 +364,6 @@ new_recipes:
       - DIAMOND_BLOCK
       - AIR
       - DIAMOND_BLOCK
-
-  growth_pickaxe:
-    category: EQUIPMENT
-    result: GROWTH_PICKAXE
-    roles: ["MINEUR"]
-    tiers: []
-    categories: ["TOOL", "GROWTH"]
-    shape:
-      - "XXX"
-    keys:
-      X: DIAMOND_BLOCK
 
 old_recipes:
   - minecraft:copper_helmet
