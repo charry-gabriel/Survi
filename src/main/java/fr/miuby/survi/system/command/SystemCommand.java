@@ -4,9 +4,12 @@ import com.mojang.brigadier.Command;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import fr.miuby.lib.command.MLLogCommand;
 import fr.miuby.lib.utils.Rect;
+import fr.miuby.lib.villager.MLVillager;
+import fr.miuby.lib.villager.VillagerRegistry;
 import fr.miuby.lib.world.MLWorld;
 import fr.miuby.lib.world.WorldRegistry;
 import fr.miuby.survi.GameManager;
+import fr.miuby.survi.display.TutorialBookService;
 import fr.miuby.survi.listener.PlacedBlockTracker;
 import fr.miuby.survi.system.lang.ELang;
 import fr.miuby.survi.system.lang.LangService;
@@ -18,16 +21,20 @@ import fr.miuby.survi.world.config.VillageZoneConfig;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
 import io.papermc.paper.command.brigadier.Commands;
 import org.bukkit.Chunk;
+import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.Container;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.Mannequin;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 public class SystemCommand {
     private SystemCommand() {}
@@ -175,6 +182,25 @@ public class SystemCommand {
                             clearVillageContainers(ctx.getSource().getSender());
                             return Command.SINGLE_SUCCESS;
                         }))
+                )
+
+                // === TUTORIALBOOK ===
+                .then(Commands.literal("tutorialbook").executes(ctx -> {
+                    CommandSender sender = ctx.getSource().getSender();
+                    if (!(sender instanceof Player player)) {
+                        sender.sendMessage(ls(ctx).text(lang(ctx), "cmd.system.tutorialbook.console_only"));
+                        return Command.SINGLE_SUCCESS;
+                    }
+                    TutorialBookService.giveTutorialBook(player);
+                    return Command.SINGLE_SUCCESS;
+                }))
+
+                // === VILLAGER MAINTENANCE ===
+                .then(Commands.literal("villager")
+                        .then(Commands.literal("cleanup").executes(ctx -> {
+                            cleanupGhostVillagers(ctx.getSource().getSender());
+                            return Command.SINGLE_SUCCESS;
+                        }))
                 );
     }
 
@@ -238,6 +264,39 @@ public class SystemCommand {
                 }
             }
         }.runTaskTimer(GameManager.getInstance().getPlugin(), 0L, 1L);
+    }
+
+    // ── Villageois fantômes ─────────────────────────────────────────────────
+
+    /** Rayon de recherche autour de chaque villageois tracké pour repérer un doublon (Mannequin). */
+    private static final double GHOST_VILLAGER_RADIUS = 5.0;
+
+    /**
+     * Supprime les entités {@link Mannequin} en trop autour de chaque villageois custom
+     * connu du {@code VillagerRegistry}. Ne touche jamais l'entité réellement trackée
+     * (UUID comparé), donc sûr à lancer en prod — contrairement à {@code /kill @e}.
+     */
+    private static void cleanupGhostVillagers(CommandSender sender) {
+        LangService ls   = GameManager.getInstance().getLangService();
+        ELang       lang = sender instanceof Player p ? ls.resolveLanguage(p) : ls.getServerDefault();
+
+        int removed = 0;
+        for (MLVillager mv : VillagerRegistry.getAll()) {
+            Entity tracked = mv.getVillager();
+            if (tracked == null) continue;
+
+            Location loc = tracked.getLocation();
+            UUID trackedUuid = tracked.getUniqueId();
+
+            for (Entity nearby : loc.getWorld().getNearbyEntities(loc, GHOST_VILLAGER_RADIUS, GHOST_VILLAGER_RADIUS, GHOST_VILLAGER_RADIUS)) {
+                if (nearby instanceof Mannequin && !nearby.getUniqueId().equals(trackedUuid)) {
+                    nearby.remove();
+                    removed++;
+                }
+            }
+        }
+
+        sender.sendMessage(ls.text(lang, "cmd.system.villager.cleanup_done", removed));
     }
 
     // ── Helpers ──────────────────────────────────────────────────────────────

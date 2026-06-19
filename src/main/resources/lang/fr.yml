@@ -15,7 +15,7 @@ boundary.wild.close: "<red>⛔ Limite d'exploration : {0} m"
 
 # ─── Tombe ───────────────────────────────────────────────────────────────────
 grave.indestructible: "<red>Cette tombe est indestructible !"
-grave.created: "<green>☠ Votre tombe a été créée en {0}, {1}, {2} [{3}]"
+grave.created: "<green>☠ Votre tombe a été créée en <x>, <y>, <z> [<world>]"
 grave.not_yours: "<red>Ce n'est pas votre tombe !"
 grave.recovered: "<green>Vous avez récupéré votre tombe."
 
@@ -240,6 +240,8 @@ cmd.system.zone.status_next: "<yellow>║ Prochain palier dans : <white>{0}h →
 cmd.system.zone.status_final: "<aqua>║ Palier final atteint."
 cmd.system.containers.clear_start: "<gray>Vidage des conteneurs du village en cours... ({0} chunks à parcourir)"
 cmd.system.containers.clear_done: "<green>✓ {0} conteneur(s) vidé(s) dans le village."
+cmd.system.tutorialbook.console_only: "<red>Cette commande est réservée aux joueurs en jeu."
+cmd.system.villager.cleanup_done: "<green>✓ {0} entité(s) fantôme(s) supprimée(s)."
 
 # ─── Commandes — reload (admin) ───────────────────────────────────────────────
 cmd.reload.all.start: "<gray>Rechargement global en cours..."

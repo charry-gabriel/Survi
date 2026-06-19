@@ -1,9 +1,13 @@
 package fr.miuby.survi.grave;
 
+import fr.miuby.lib.world.MLWorld;
+import fr.miuby.lib.world.WorldRegistry;
 import fr.miuby.survi.GameManager;
 import fr.miuby.lib.log.MLLogManager;
 import fr.miuby.survi.system.database.repository.GraveRepository;
 import fr.miuby.survi.system.log.ELogTag;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -99,9 +103,13 @@ public class GraveManager {
 
         // Vide uniquement les 36 slots de l'inventaire, pas l'armure
         player.getInventory().setStorageContents(new ItemStack[36]);
+        MLWorld w = WorldRegistry.get(loc.getWorld().getUID());
 
         player.sendMessage(GameManager.getInstance().getLangService().text(player, "grave.created",
-                loc.getBlockX(), loc.getBlockY(), loc.getBlockZ(), loc.getWorld().getName()));
+                Placeholder.unparsed("x", Integer.toString(loc.getBlockX())),
+                Placeholder.unparsed("y", Integer.toString(loc.getBlockY())),
+                Placeholder.unparsed("z", Integer.toString(loc.getBlockZ())),
+                Placeholder.component("world", Component.text(w.getName(), w.getColor()))));
         return true;
     }
 
