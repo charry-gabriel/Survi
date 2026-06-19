@@ -19,6 +19,9 @@ import java.util.logging.Level;
 
 public class WorldResetManager {
 
+    private int cachedResetFrequency = -1;
+    private LocalDate cachedLastResetDate = null;
+
     public WorldResetManager() {}
 
     // -------------------------------------------------------------------------
@@ -163,11 +166,15 @@ public class WorldResetManager {
     // -------------------------------------------------------------------------
 
     public int getResetFrequency() {
-        String val = GameManager.getInstance().getDatabase().system().getServerData("reset_freq");
-        return val != null ? Integer.parseInt(val) : 0;
+        if (cachedResetFrequency == -1) {
+            String val = GameManager.getInstance().getDatabase().system().getServerData("reset_freq");
+            cachedResetFrequency = val != null ? Integer.parseInt(val) : 0;
+        }
+        return cachedResetFrequency;
     }
 
     public void setResetFrequency(int days) {
+        cachedResetFrequency = days;
         GameManager.getInstance().getDatabase().system().saveServerData("reset_freq", String.valueOf(days));
     }
 
@@ -195,11 +202,15 @@ public class WorldResetManager {
     }
 
     public LocalDate getLastResetDate() {
-        String val = GameManager.getInstance().getDatabase().system().getServerData("last_reset_date");
-        return val != null ? LocalDate.parse(val) : LocalDate.MIN;
+        if (cachedLastResetDate == null) {
+            String val = GameManager.getInstance().getDatabase().system().getServerData("last_reset_date");
+            cachedLastResetDate = val != null ? LocalDate.parse(val) : LocalDate.MIN;
+        }
+        return cachedLastResetDate;
     }
 
     private void setLastResetDate(LocalDate date) {
+        cachedLastResetDate = date;
         GameManager.getInstance().getDatabase().system().saveServerData("last_reset_date", date.toString());
     }
 }

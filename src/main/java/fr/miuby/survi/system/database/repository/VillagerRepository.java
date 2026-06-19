@@ -52,7 +52,8 @@ public class VillagerRepository extends MLRepository {
                         rs.getFloat("locationPitch")
                 );
 
-                Long unlockToEpochMilli = rs.getLong("unlockedDate");
+                long rawUnlockedDate = rs.getLong("unlockedDate");
+                Long unlockToEpochMilli = rawUnlockedDate == 0L ? null : rawUnlockedDate;
 
                 return new AlphaVillagerData(uuid, nameId, location, givenItems, level, unlockToEpochMilli);
             }
@@ -120,7 +121,7 @@ public class VillagerRepository extends MLRepository {
                 if (unlockedDate != null) {
                     ps.setLong(1, unlockedDate);
                 } else {
-                    ps.setNull(1, java.sql.Types.BIGINT);
+                    ps.setLong(1, 0L);
                 }
                 ps.setString(2, uuid.toString());
                 ps.executeUpdate();
