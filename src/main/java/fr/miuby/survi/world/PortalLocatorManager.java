@@ -65,6 +65,15 @@ public class PortalLocatorManager {
     /** Emplacement du marker actif, pour forcer le chargement de son chunk avant suppression. */
     private Location markerLocation = null;
 
+    /**
+     * Chunk gardé en mémoire en continu pour le marker actif (ticket de chunk).
+     * Indispensable : un ArmorStand dans un chunk déchargé n'existe plus côté
+     * serveur et ne peut transmettre aucun waypoint, même avec un range élevé.
+     */
+    private World tickedWorld = null;
+    private int tickedChunkX;
+    private int tickedChunkZ;
+
     // ── Init / Stop ──────────────────────────────────────────────────────────
 
     public void init() {
@@ -113,9 +122,29 @@ public class PortalLocatorManager {
         }
     }
 
+    /** Pose un ticket de chunk plugin pour garder le chunk du marker chargé en permanence. */
+    private void addChunkTicket(Location location) {
+        World world = location.getWorld();
+        int chunkX = location.getBlockX() >> 4;
+        int chunkZ = location.getBlockZ() >> 4;
+        world.addPluginChunkTicket(chunkX, chunkZ, GameManager.getInstance().getPlugin());
+        tickedWorld = world;
+        tickedChunkX = chunkX;
+        tickedChunkZ = chunkZ;
+    }
+
+    /** Libère le ticket de chunk posé par {@link #addChunkTicket(Location)}, le cas échéant. */
+    private void removeChunkTicket() {
+        if (tickedWorld == null) return;
+        tickedWorld.removePluginChunkTicket(tickedChunkX, tickedChunkZ, GameManager.getInstance().getPlugin());
+        tickedWorld = null;
+    }
+
     // ── Interne ──────────────────────────────────────────────────────────────
 
     private void spawnMarker(Location location) {
+        addChunkTicket(location);
+
         ArmorStand stand = location.getWorld().spawn(location, ArmorStand.class, as -> {
             as.setVisible(false);
             as.setGravity(false);
@@ -126,10 +155,6 @@ public class PortalLocatorManager {
             as.setMarker(true);
             as.addScoreboardTag(ENTITY_TAG);
             as.getPersistentDataContainer().set(MARKER_KEY, PersistentDataType.BYTE, (byte) 1);
-
-            // L'attribut WAYPOINT_TRANSMIT_RANGE > 0 fait apparaître l'entité sur la Locator Bar.
-            AttributeInstance attr = as.getAttribute(Attribute.WAYPOINT_TRANSMIT_RANGE);
-            if (attr != null) attr.setBaseValue(WAYPOINT_RANGE);
         });
 
         markerUUID = stand.getUniqueId();
@@ -137,22 +162,33 @@ public class PortalLocatorManager {
         saveMarkerUUIDToDB(); // ← persiste l'UUID pour les redémarrages/crashs
 
         final UUID uuid = markerUUID;
+        // L'attribut WAYPOINT_TRANSMIT_RANGE doit être posé après le spawn, pas dedans :
+        // Mojang MC-296583 — posé au moment du summon, l'entité ne se transmet pas
+        // correctement sur la Locator Bar (visible seulement à courte portée).
         Bukkit.getScheduler().runTaskLater(GameManager.getInstance().getPlugin(), () ->
-                applyWaypointStyle(uuid), 1L);
+                applyWaypointTransmitRange(uuid), 1L);
 
         MLLogManager.getInstance().log(Level.INFO, ELogTag.WORLD,
                 "[PortalLocatorManager] Marker portail spawné en " + fmt(location) + " (uuid=" + uuid + ")");
     }
 
     /**
-     * Applique le style et la couleur du waypoint portail via les commandes vanilla.
+     * Pose l'attribut {@code WAYPOINT_TRANSMIT_RANGE} puis applique le style et la couleur
+     * du waypoint portail via les commandes vanilla. Exécuté 1 tick après le spawn.
      *
      * <ul>
+     *   <li>{@code WAYPOINT_TRANSMIT_RANGE} — portée de transmission du waypoint ;</li>
      *   <li>{@code style survi:portal} — icône définie dans le resource pack ;</li>
      *   <li>{@code color hex FFFFFF} — aucune teinte, la texture s'affiche dans ses propres couleurs.</li>
      * </ul>
      */
-    private void applyWaypointStyle(UUID uuid) {
+    private void applyWaypointTransmitRange(UUID uuid) {
+        Entity entity = Bukkit.getEntity(uuid);
+        if (entity instanceof ArmorStand stand) {
+            AttributeInstance attr = stand.getAttribute(Attribute.WAYPOINT_TRANSMIT_RANGE);
+            if (attr != null) attr.setBaseValue(WAYPOINT_RANGE);
+        }
+
         String selector = "@e[type=armor_stand,tag=" + ENTITY_TAG + ",limit=1]";
 
         boolean styleOk = Bukkit.dispatchCommand(Bukkit.getConsoleSender(),
@@ -194,6 +230,7 @@ public class PortalLocatorManager {
 
         markerUUID = null;
         markerLocation = null;
+        removeChunkTicket();
         clearMarkerUUIDInDB(); // ← efface l'UUID en DB (arrêt propre)
     }
 
