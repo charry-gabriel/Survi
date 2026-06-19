@@ -50,10 +50,10 @@ mobs:
   ZOMBIE:
     stats:
       max-health:
-        base: 20.0          # vanilla = 20
-        per-level: 4.0      # level 100 → 416 PV
+        base: 15.0          # vanilla = 20
+        per-level: 5.0      # level 100 → 416 PV
       attack-damage:
-        base: 3.0           # vanilla = 3
+        base: 2.75           # vanilla = 3
         per-level: 0.25     # level 100 → 27.75
       movement-speed:
         base: 0.23          # vanilla = 0.23
@@ -74,10 +74,10 @@ mobs:
   ZOMBIE_VILLAGER:
     stats:
       max-health:
-        base: 20.0
+        base: 16.0
         per-level: 4.0
       attack-damage:
-        base: 3.0
+        base: 2.75
         per-level: 0.25
       movement-speed:
         base: 0.23
@@ -95,10 +95,10 @@ mobs:
   HUSK:
     stats:
       max-health:
-        base: 20.0
+        base: 16.0
         per-level: 4.0
       attack-damage:
-        base: 3.0
+        base: 2.7
         per-level: 0.30
       movement-speed:
         base: 0.23
@@ -116,10 +116,10 @@ mobs:
   DROWNED:
     stats:
       max-health:
-        base: 20.0
+        base: 16.0
         per-level: 4.0
       attack-damage:
-        base: 3.0
+        base: 2.75
         per-level: 0.25
       movement-speed:
         base: 0.25
@@ -135,11 +135,11 @@ mobs:
   SKELETON:
     stats:
       max-health:
-        base: 20.0          # vanilla = 20
+        base: 17.0          # vanilla = 20
         per-level: 3.0      # level 100 → 317 PV
       attack-damage:
-        base: 2.0           # dégâts de la flèche (via attribut)
-        per-level: 0.15
+        base: 1.6           # dégâts de la flèche (via attribut)
+        per-level: 0.2
       movement-speed:
         base: 0.25
         per-level: 0.003
@@ -153,10 +153,10 @@ mobs:
   STRAY:
     stats:
       max-health:
-        base: 20.0
+        base: 17.0
         per-level: 3.0
       attack-damage:
-        base: 2.0
+        base: 1.8
         per-level: 0.15
       movement-speed:
         base: 0.25
@@ -189,14 +189,17 @@ mobs:
   CREEPER:
     stats:
       max-health:
-        base: 20.0          # vanilla = 20
+        base: 10.0          # vanilla = 20
         per-level: 3.0
       movement-speed:
-        base: 0.25          # vanilla = 0.25
-        per-level: 0.005    # level 100 → 0.745 (très rapide)
+        base: 0.3          # vanilla = 0.25
+        per-level: 0.01    # level 100 → 0.745 (très rapide)
       follow-range:
         base: 16.0
         per-level: 0.3
+      scale:
+        base: 1.0
+        per-level: -0.05
 
     # Rayon de l'explosion (vanilla = 3)
     explosion-radius:
@@ -207,7 +210,7 @@ mobs:
     # Géré par MobLevelManager via Creeper#setFuseTicks()
     fuse-ticks:
       base: 30.0            # vanilla = 30 ticks
-      per-level: -0.2       # level 100 → 10.2 ticks (explosion quasi-instantanée)
+      per-level: -1         # level 100 → 10.2 ticks (explosion quasi-instantanée)
       min: 5                # jamais moins de 5 ticks (0.25 s) pour rester jouable
 
   # ════════════════════════════════════════════════
@@ -216,20 +219,20 @@ mobs:
   SPIDER:
     stats:
       max-health:
-        base: 16.0          # vanilla = 16
+        base: 14.0          # vanilla = 16
         per-level: 2.5
       attack-damage:
-        base: 2.0           # vanilla = 2
+        base: 1.80           # vanilla = 2
         per-level: 0.15
       movement-speed:
         base: 0.30          # vanilla = 0.30
-        per-level: 0.004
+        per-level: 0.005
       scale:
         base: 1.0
-        per-level: 0.015    # level 100 → 2.5× (araignée géante)
+        per-level: -0.015    # level 100 → 2.5× (araignée géante)
       follow-range:
-        base: 16.0
-        per-level: 0.3
+        base: 15.0
+        per-level: 0.4
 
     # Effets de potion appliqués à chaque attaque
     potion-effects:
@@ -239,16 +242,16 @@ mobs:
         duration-per-level: 4.0   # +4 ticks/niveau → level 100 = 436 ticks (≈21 s)
         amplifier-upgrade-every: 20  # niveau I → II à lvl 21, II → III à lvl 41…
         chance-base: 0.10         # 10% au niveau 1
-        chance-per-level: 0.005   # +0.5%/niveau → level 100 = 60%
+        chance-per-level: 0.01   # +0.5%/niveau → level 100 = 60%
         max-chance: 0.75
 
       - type: WITHER               # seulement à partir du niveau 30
-        min-mob-level: 30
+        min-mob-level: 10
         duration-base: 20          # 1 seconde
         duration-per-level: 3.0
         amplifier-upgrade-every: 30
         chance-base: 0.05
-        chance-per-level: 0.004
+        chance-per-level: 0.01
         max-chance: 0.50
 
   # ════════════════════════════════════════════════
@@ -257,17 +260,17 @@ mobs:
   CAVE_SPIDER:
     stats:
       max-health:
-        base: 12.0          # vanilla = 12
+        base: 10.0          # vanilla = 12
         per-level: 2.0
       attack-damage:
-        base: 2.0
+        base: 1.9
         per-level: 0.12
       movement-speed:
-        base: 0.30
-        per-level: 0.005
+        base: 0.28
+        per-level: 0.01
       scale:
-        base: 1.0
-        per-level: 0.012
+        base: 1.012
+        per-level: -0.012
 
     potion-effects:
       - type: POISON
@@ -280,7 +283,7 @@ mobs:
         max-chance: 0.90
 
       - type: BLINDNESS
-        min-mob-level: 20
+        min-mob-level: 10
         duration-base: 40
         duration-per-level: 2.0
         amplifier-upgrade-every: 50
@@ -294,16 +297,16 @@ mobs:
   PHANTOM:
     stats:
       max-health:
-        base: 20.0          # vanilla = 20
+        base: 15.0          # vanilla = 20
         per-level: 2.5
       attack-damage:
-        base: 6.0           # vanilla = 6
+        base: 5.0           # vanilla = 6
         per-level: 0.30
       movement-speed:
-        base: 0.95          # vitesse de vol vanilla ≈ 0.9–1.0
+        base: 0.9          # vitesse de vol vanilla ≈ 0.9–1.0
         per-level: 0.015    # level 100 → 2.435 (très rapide, difficile à esquiver)
       follow-range:
-        base: 16.0
+        base: 15.0
         per-level: 0.4
 
   # ════════════════════════════════════════════════
@@ -316,7 +319,7 @@ mobs:
   ENDERMAN:
     stats:
       max-health:
-        base: 40.0          # vanilla = 40
+        base: 35.0          # vanilla = 40
         per-level: 5.0      # level 100 → 535 PV
       attack-damage:
         base: 7.0           # vanilla = 7
@@ -325,8 +328,8 @@ mobs:
         base: 0.30          # vanilla ≈ 0.30
         per-level: 0.004
       scale:
-        base: 1.0
-        per-level: 0.02     # level 100 → 3.0× (enderman immense)
+        base: 0.6
+        per-level: 0.1     # level 100 → 3.0× (enderman immense)
       follow-range:
         base: 64.0
         per-level: 0.5
@@ -358,13 +361,13 @@ mobs:
   WITCH:
     stats:
       max-health:
-        base: 26.0          # vanilla = 26
+        base: 23.0          # vanilla = 26
         per-level: 3.0
       movement-speed:
         base: 0.25
         per-level: 0.003
       follow-range:
-        base: 16.0
+        base: 15.5
         per-level: 0.5
 
   # ════════════════════════════════════════════════
@@ -373,16 +376,16 @@ mobs:
   PILLAGER:
     stats:
       max-health:
-        base: 24.0          # vanilla = 24
+        base: 21.0          # vanilla = 24
         per-level: 3.0
       attack-damage:
-        base: 4.0
+        base: 3.8
         per-level: 0.2
       movement-speed:
         base: 0.35
         per-level: 0.003
       follow-range:
-        base: 64.0
+        base: 63.0
         per-level: 0.5
 
   # ════════════════════════════════════════════════
@@ -517,7 +520,7 @@ mobs:
   VINDICATOR:
     stats:
       max-health:
-        base: 24.0
+        base: 21.0
         per-level: 3.0
       attack-damage:
         base: 8.0           # vanilla hache = 8
@@ -527,30 +530,12 @@ mobs:
         per-level: 0.004
 
   # ════════════════════════════════════════════════
-  #  SILVERFISH
-  # ════════════════════════════════════════════════
-  SILVERFISH:
-    stats:
-      max-health:
-        base: 8.0
-        per-level: 1.0
-      attack-damage:
-        base: 1.0
-        per-level: 0.08
-      movement-speed:
-        base: 0.25
-        per-level: 0.005
-      scale:
-        base: 1.0
-        per-level: 0.010
-
-  # ════════════════════════════════════════════════
   #  SLIME  /  MAGMA_CUBE
   # ════════════════════════════════════════════════
   SLIME:
     stats:
       max-health:
-        base: 4.0           # grand slime vanilla = 16 (taille × 4 PV)
+        base: 3.0           # grand slime vanilla = 16 (taille × 4 PV)
         per-level: 1.0
       attack-damage:
         base: 3.0
@@ -574,7 +559,7 @@ mobs:
   GUARDIAN:
     stats:
       max-health:
-        base: 30.0          # vanilla = 30
+        base: 27.0          # vanilla = 30
         per-level: 3.0
       attack-damage:
         base: 6.0
@@ -628,7 +613,7 @@ mobs:
   ZOMBIFIED_PIGLIN:
     stats:
       max-health:
-        base: 20.0
+        base: 17.0
         per-level: 3.0
       attack-damage:
         base: 5.0
