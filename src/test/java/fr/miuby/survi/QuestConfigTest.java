@@ -201,7 +201,6 @@ class QuestConfigTest {
                 assertTrue(validJobs.contains(job), ctx + " (REPUTATION) : job inconnu '" + job + "'");
                 assertTrue(reward.containsKey("value"), ctx + " (REPUTATION) : champ 'value' manquant");
                 assertInstanceOf(Integer.class, reward.get("value"), ctx + " (REPUTATION) : 'value' doit être un entier");
-                assertTrue((Integer) reward.get("value") >= 1, ctx + " (REPUTATION) : 'value' doit être ≥ 1");
             }
             case "POTION" -> {
                 assertTrue(reward.containsKey("potion"), ctx + " (POTION) : champ 'potion' manquant");

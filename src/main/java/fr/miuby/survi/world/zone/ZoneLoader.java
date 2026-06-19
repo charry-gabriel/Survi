@@ -30,9 +30,9 @@ public class ZoneLoader {
 
                     java.util.Map<String, Object> spawnMap = (java.util.Map<String, Object>) stageMap.get("spawn");
                     VillageZoneConfig.VillageZoneSpawn spawn = new VillageZoneConfig.VillageZoneSpawn(
-                            ((Number) spawnMap.get("x")).intValue(),
-                            ((Number) spawnMap.get("y")).intValue(),
-                            ((Number) spawnMap.get("z")).intValue(),
+                            ((Number) spawnMap.get("x")).floatValue(),
+                            ((Number) spawnMap.get("y")).floatValue(),
+                            ((Number) spawnMap.get("z")).floatValue(),
                             spawnMap.containsKey("yaw")   ? ((Number) spawnMap.get("yaw")).floatValue()   : 0f,
                             spawnMap.containsKey("pitch") ? ((Number) spawnMap.get("pitch")).floatValue() : 0f
                     );

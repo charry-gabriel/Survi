@@ -9,7 +9,7 @@ public record VillageZoneConfig(List<VillageZoneStage> stages) {
     public record VillageZoneStage(float afterHours, int centerX, int centerZ, int halfWidth, int halfDepth, VillageZoneSpawn spawn, VillageZonePortal portal) {}
 
     /** Point de spawn du village pour un palier donné. */
-    public record VillageZoneSpawn(int x, int y, int z, float yaw, float pitch) {}
+    public record VillageZoneSpawn(float x, float y, float z, float yaw, float pitch) {}
 
     /** Coordonnées du portail village pour un palier donné. */
     public record VillageZonePortal(int minX, int minY, int minZ, int maxX, int maxY, int maxZ) {}

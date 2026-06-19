@@ -95,8 +95,8 @@ public class TutorialBookService {
                 .append(Component.text("IV. Crafts custom\n\n", NamedTextColor.GOLD, TextDecoration.BOLD))
                 .append(Component.text("Armures vanilla : "))
                 .append(Component.text("DÉSACTIVÉES", NamedTextColor.RED, TextDecoration.BOLD))
-                .append(Component.text(".\n\nChaque pièce se craft en entourant l'armure précédente du matériau suivant.\n\n"))
-                .append(Component.text("Tu peux voir les recettes dans la table de craft."))
+                .append(Component.text(".\n\nLes armures et outils seront débloqué par les villageois.\n\n"))
+                .append(Component.text("Tu peux voir les nouvelles recettes dans la table de craft."))
                 .build());
 
         pages.add(Component.text()

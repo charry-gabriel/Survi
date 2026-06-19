@@ -184,8 +184,8 @@ levels:
         amount: 1
     blessings:
       - { type: MAX_HEALTH, value: 6}
-      - { type: UNLOCK_TOOL, armor: DIAMOND }
-      - { type: UNLOCK_TOOL, armor: NETHERITE }
+      - { type: UNLOCK_TOOL, tool: DIAMOND }
+      - { type: UNLOCK_TOOL, tool: NETHERITE }
 
   - name: "Survivant VII"
     message: "Vous pouvez maintenant avoir une armure en diamant ou en netherite !"

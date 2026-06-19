@@ -92,9 +92,9 @@ class ZoneConfigTest {
     private void assertSpawnBlock(String stageCtx, Map<String, Object> spawn) {
         String ctx = stageCtx + ".spawn";
         assertNotNull(spawn, ctx + " doit être présent");
-        assertIntField(spawn, "x", ctx);
-        assertIntField(spawn, "y", ctx);
-        assertIntField(spawn, "z", ctx);
+        assertInstanceOf(Number.class, spawn.get("x"), ctx);
+        assertInstanceOf(Number.class, spawn.get("y"), ctx);
+        assertInstanceOf(Number.class, spawn.get("z"), ctx);
         if (spawn.containsKey("yaw"))   assertInstanceOf(Number.class, spawn.get("yaw"),   ctx + ".yaw doit être un nombre");
         if (spawn.containsKey("pitch")) assertInstanceOf(Number.class, spawn.get("pitch"), ctx + ".pitch doit être un nombre");
     }

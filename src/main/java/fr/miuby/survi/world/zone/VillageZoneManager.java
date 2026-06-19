@@ -161,7 +161,7 @@ public class VillageZoneManager {
         if (config.stages().isEmpty()) return world.getSpawnLocation();
 
         VillageZoneConfig.VillageZoneSpawn s = config.stages().get(computeStageIndex()).spawn();
-        return new Location(world, s.x() + 0.5, s.y(), s.z() + 0.5, s.yaw(), s.pitch());
+        return new Location(world, s.x(), s.y(), s.z(), s.yaw(), s.pitch());
     }
 
     /**
@@ -306,7 +306,7 @@ public class VillageZoneManager {
 
         // ── Mise à jour du spawn monde ─────────────────────────────────────────────
         VillageZoneConfig.VillageZoneSpawn sp = stage.spawn();
-        world.setSpawnLocation(sp.x(), sp.y(), sp.z(), sp.yaw());
+        world.setSpawnLocation(new Location(world, sp.x(), sp.y(), sp.z(), sp.yaw(), sp.pitch()));
 
         // ── Mise à jour du portail (fakeblocks) ────────────────────────────────────
         VillageZoneConfig.VillageZonePortal portalCfg = stage.portal();
