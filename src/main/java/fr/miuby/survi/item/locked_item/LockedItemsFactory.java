@@ -166,18 +166,34 @@ public class LockedItemsFactory {
         player.getPlayer().discoverRecipes(GameManager.getInstance().getCustomRecipeFactory().getNewRecipes().keySet());
     }
 
-    public void lockArmorItem(ELockedArmorType itemType) {
+    public void applyLockState(AlphaPlayer player) {
+        if (player.getPlayer() == null || !player.getPlayer().isOnline()) return;
+        for (LockedArmorItem lockedItem : armorItems) {
+            if (lockedItem.isLocked())
+                player.getPlayer().undiscoverRecipes(lockedItem.getItems());
+        }
+        for (LockedToolItem lockedItem : toolItems) {
+            if (lockedItem.isLocked())
+                player.getPlayer().undiscoverRecipes(lockedItem.getItems());
+        }
+    }
+
+    public void lockArmorItem(AlphaPlayer player, ELockedArmorType itemType) {
         for (LockedArmorItem lockedItem : armorItems) {
             if (lockedItem.getType() == itemType) {
                 lockedItem.lock();
+                if (player.getPlayer() != null && player.getPlayer().isOnline())
+                    player.getPlayer().undiscoverRecipes(lockedItem.getItems());
             }
         }
     }
 
-    public void lockToolItem(ELockedToolType itemType) {
+    public void lockToolItem(AlphaPlayer player, ELockedToolType itemType) {
         for (LockedToolItem lockedItem : toolItems) {
             if (lockedItem.getType() == itemType) {
                 lockedItem.lock();
+                if (player.getPlayer() != null && player.getPlayer().isOnline())
+                    player.getPlayer().undiscoverRecipes(lockedItem.getItems());
             }
         }
     }

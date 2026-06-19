@@ -144,6 +144,7 @@ public class AlphaPlayer extends MLPlayer implements Serializable {
         this.getAlphaLife().actualizeSuccess();
 
         this.player.discoverRecipes(GameManager.getInstance().getCustomRecipeFactory().getNewRecipes().keySet());
+        GameManager.getInstance().getLockedItemsFactory().applyLockState(this);
 
         Map<String, Integer> rawRep = GameManager.getInstance().getDatabase().quests().getReputation(this.getUuid());
         rawRep.forEach((key, value) -> {

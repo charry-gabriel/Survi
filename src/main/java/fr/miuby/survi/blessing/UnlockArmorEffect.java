@@ -16,6 +16,6 @@ public class UnlockArmorEffect extends BlessingEffect{
 
     @Override
     public void resetEffect(AlphaPlayer player) {
-        GameManager.getInstance().getLockedItemsFactory().lockArmorItem(itemType);
+        GameManager.getInstance().getLockedItemsFactory().lockArmorItem(player, itemType);
     }
 }
