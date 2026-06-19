@@ -8,7 +8,7 @@ import lombok.Getter;
  */
 @Getter
 public enum EPlayerColumn {
-    MORT("mort"),
+    DEATH("mort"),
     SUCCESS("success"),
     ROLE("role"),
     PSEUDO("pseudo"),

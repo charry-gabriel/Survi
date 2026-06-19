@@ -202,6 +202,11 @@ cmd.player.top.quests_title: "<gold><bold>  Classement — Quêtes complétées"
 cmd.player.top.job_title: "<gold><bold>  Classement — {0}"
 cmd.player.top.unit_quests: "quêtes"
 cmd.player.top.entry_level: "<dark_gray>  niv.{0}"
+cmd.player.death.added: "<gold>Ajouté <amount> mort(s) à <player> (<before> → <after>)"
+cmd.player.death.removed: "<green>Retiré <amount> mort(s) à <player> (<before> → <after>)"
+cmd.player.death.already_zero: "<yellow><player> est déjà à 0 mort."
+cmd.player.death.notify.added: "<gold>✦ Un administrateur vous a ajouté des morts."
+cmd.player.death.notify.removed: "<green>✦ Un administrateur vous a retiré des morts."
 
 # ─── Commandes — système (admin) ─────────────────────────────────────────────
 cmd.system.blocktracker.on: "<yellow>🧱 Block Tracker <green>activé <gray>— les blocs posés ne comptent plus pour les quêtes."

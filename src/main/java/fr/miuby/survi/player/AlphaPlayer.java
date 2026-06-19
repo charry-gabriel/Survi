@@ -11,7 +11,6 @@ import fr.miuby.survi.system.SurviConfig;
 import fr.miuby.survi.role.*;
 import fr.miuby.lib.log.MLLogManager;
 import fr.miuby.survi.system.log.ELogTag;
-import fr.miuby.survi.world.EWorld;
 import fr.miuby.lib.world.MLWorld;
 import fr.miuby.survi.world.WorldInitializer;
 import lombok.Getter;
@@ -56,7 +55,7 @@ public class AlphaPlayer extends MLPlayer implements Serializable {
     @Setter
     private MLWorld world;
     @Getter
-    private int mort = 0;
+    private int death = 0;
     @Getter
     private int success = 0;
 
@@ -184,10 +183,10 @@ public class AlphaPlayer extends MLPlayer implements Serializable {
         }
     }
 
-    public void addMort(int mort) {
-        this.mort += mort;
-        this.alphaLife.setDeath(this.mort);
-        GameManager.getInstance().getAlphaPlayerFactory().getPersistenceService().updateMort(this);
+    public void addDeath(int death) {
+        this.death = Math.max(0, this.death + death);
+        this.alphaLife.setDeath(this.death);
+        GameManager.getInstance().getAlphaPlayerFactory().getPersistenceService().updateDeath(this);
     }
 
     public void addSuccess(int success) {
@@ -201,9 +200,9 @@ public class AlphaPlayer extends MLPlayer implements Serializable {
         this.player = null;
     }
 
-    public void setMort(int mort) {
-        this.mort = mort;
-        this.alphaLife.setDeath(mort);
+    public void setDeath(int death) {
+        this.death = death;
+        this.alphaLife.setDeath(death);
     }
 
     public void setSuccess(int success) {

@@ -18,6 +18,7 @@ import io.papermc.paper.command.brigadier.CommandSourceStack;
 import io.papermc.paper.command.brigadier.Commands;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -30,6 +31,7 @@ public class PlayerCommand {
     private static final String PLAYER_ARG = "player";
     private static final String JOB_ARG    = "job";
     private static final String LIMIT_ARG  = "limit";
+    private static final String AMOUNT_ARG = "amount";
 
     private PlayerCommand() {}
 
@@ -58,6 +60,33 @@ public class PlayerCommand {
                                         .executes(ctx -> topJob(ctx, 10))
                                         .then(Commands.argument(LIMIT_ARG, IntegerArgumentType.integer(1, 50))
                                                 .executes(ctx -> topJob(ctx, IntegerArgumentType.getInteger(ctx, LIMIT_ARG)))
+                                        )
+                                )
+                        )
+                )
+
+                .then(Commands.literal("death")
+                        .requires(src -> src.getSender().isOp())
+                        .then(Commands.argument(PLAYER_ARG, AlphaPlayerArgument.alphaPlayer())
+
+                                .then(Commands.literal("add")
+                                        .then(Commands.argument(AMOUNT_ARG, IntegerArgumentType.integer(1, 10000))
+                                                .executes(ctx -> executeDeath(ctx, true))
+                                        )
+                                )
+                                .then(Commands.literal("get")
+                                        .then(Commands.argument(AMOUNT_ARG, IntegerArgumentType.integer(1, 10000))
+                                                .executes(ctx -> {
+                                                    AlphaPlayer target = AlphaPlayerArgument.getAlphaPlayer(ctx, PLAYER_ARG);
+                                                    CommandSender sender = ctx.getSource().getSender();
+                                                    sender.sendMessage(target.getPseudo() + " a " + target.getDeath() + " mort");
+                                                    return Command.SINGLE_SUCCESS;
+                                                })
+                                        )
+                                )
+                                .then(Commands.literal("remove")
+                                        .then(Commands.argument(AMOUNT_ARG, IntegerArgumentType.integer(1, 10000))
+                                                .executes(ctx -> executeDeath(ctx, false))
                                         )
                                 )
                         )
@@ -104,7 +133,7 @@ public class PlayerCommand {
                 ls.text(lang, "cmd.player.info.rank_label")
                         .append(ap.getGlobalRank().displayComponent())
                         .append(ls.text(lang, "cmd.player.info.deaths_label"))
-                        .append(Component.text(String.valueOf(ap.getMort()), NamedTextColor.RED))
+                        .append(Component.text(String.valueOf(ap.getDeath()), NamedTextColor.RED))
                         .append(ls.text(lang, "cmd.player.info.success_label"))
                         .append(Component.text(String.valueOf(ap.getSuccess()), NamedTextColor.GREEN))
         );
@@ -135,6 +164,44 @@ public class PlayerCommand {
         }
 
         sender.sendMessage(sep);
+    }
+
+    // =========================================================================
+    // /player death
+    // =========================================================================
+
+    private static int executeDeath(CommandContext<CommandSourceStack> ctx, boolean isAdd) {
+        AlphaPlayer target = AlphaPlayerArgument.getAlphaPlayer(ctx, PLAYER_ARG);
+        int         amount = IntegerArgumentType.getInteger(ctx, AMOUNT_ARG);
+
+        int before = target.getDeath();
+        target.addDeath(isAdd ? amount : -amount);
+        int after       = target.getDeath();
+        int actualDelta = after - before;
+
+        CommandSender sender = ctx.getSource().getSender();
+        LangService   ls     = GameManager.getInstance().getLangService();
+        ELang         lang   = sender instanceof Player p ? ls.resolveLanguage(p) : ls.getServerDefault();
+
+        if (actualDelta == 0 && !isAdd) {
+            sender.sendMessage(ls.text(lang, "cmd.player.death.already_zero",
+                    Placeholder.unparsed("player", target.getPseudo())));
+            return Command.SINGLE_SUCCESS;
+        }
+
+        String cmdKey = isAdd ? "cmd.player.death.added" : "cmd.player.death.removed";
+        sender.sendMessage(ls.text(lang, cmdKey,
+                Placeholder.unparsed("amount", String.valueOf(Math.abs(actualDelta))),
+                Placeholder.unparsed("player", target.getPseudo()),
+                Placeholder.unparsed("before", String.valueOf(before)),
+                Placeholder.unparsed("after", String.valueOf(after))));
+
+        if (target.getPlayer() != null && target.getPlayer().isOnline()) {
+            String notifyKey = isAdd ? "cmd.player.death.notify.added" : "cmd.player.death.notify.removed";
+            target.getPlayer().sendMessage(ls.text(target.getPlayer(), notifyKey));
+        }
+
+        return Command.SINGLE_SUCCESS;
     }
 
     // =========================================================================

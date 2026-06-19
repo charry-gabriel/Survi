@@ -304,7 +304,7 @@ public class TabDisplayManager {
         header = header
                 .append(rank.displayComponent())
                 .append(SEP)
-                .append(ls.text(lang, "tab.header.deaths", ap.getMort()))
+                .append(ls.text(lang, "tab.header.deaths", ap.getDeath()))
                 .append(SEP)
                 .append(ls.text(lang, "tab.header.successes", ap.getSuccess()));
 

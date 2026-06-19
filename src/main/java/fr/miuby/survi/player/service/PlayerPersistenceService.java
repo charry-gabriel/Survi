@@ -11,8 +11,8 @@ public final class PlayerPersistenceService {
         this.playerRepository = playerRepository;
     }
 
-    public void updateMort(AlphaPlayer alphaPlayer) {
-        playerRepository.update(alphaPlayer.getUuid(), EPlayerColumn.MORT, String.valueOf(alphaPlayer.getMort()));
+    public void updateDeath(AlphaPlayer alphaPlayer) {
+        playerRepository.update(alphaPlayer.getUuid(), EPlayerColumn.DEATH, String.valueOf(alphaPlayer.getDeath()));
     }
 
     public void updateSuccess(AlphaPlayer alphaPlayer) {

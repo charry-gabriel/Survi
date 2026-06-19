@@ -34,7 +34,7 @@ public class PlayerRepository extends MLRepository {
                 Role role = GameManager.getInstance().getRoleLoader().getRole(ERole.valueOf(rs.getString("role")));
 
                 AlphaPlayer alphaPlayer = GameManager.getInstance().getAlphaPlayerFactory().registerAlphaPlayer(uuid, pseudo, role);
-                alphaPlayer.setMort(rs.getInt("mort"));
+                alphaPlayer.setDeath(rs.getInt("mort"));
                 alphaPlayer.setSuccess(rs.getInt("success"));
 
                 String subRoles = rs.getString("subroles");

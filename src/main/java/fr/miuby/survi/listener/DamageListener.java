@@ -11,7 +11,6 @@ import fr.miuby.survi.sound.SoundService;
 import fr.miuby.survi.system.perf.PerfTimer;
 import fr.miuby.survi.world.EWorld;
 import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Villager;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -135,7 +134,7 @@ public class DamageListener implements Listener {
     @EventHandler
     public void onPlayerDeath(PlayerDeathEvent event) {
         AlphaPlayer alpha = AlphaPlayer.get(event.getPlayer().getUniqueId());
-        alpha.addMort(1);
+        alpha.addDeath(1);
         event.deathMessage(DeathMessageService.build(event, alpha));
         alpha.setLastJobDamageCause(null);
     }
