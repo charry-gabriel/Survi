@@ -8,12 +8,12 @@
 safe-fall-distance:
   - 0.7    # niveau  0
   - 1.7    # niveau  1
-  - 2.7    # niveau  2
-  - 3.7    # niveau  3
-  - 4.7    # niveau  4
-  - 5.7    # niveau  5
-  - 6.7    # niveau  6
-  - 7.7    # niveau  7
-  - 8.7    # niveau  8
-  - 9.7    # niveau  9
-  - 10.7   # niveau 10
+  - 2.2    # niveau  2
+  - 2.7    # niveau  3
+  - 3.2    # niveau  4
+  - 3.7    # niveau  5
+  - 4.2    # niveau  6
+  - 4.7    # niveau  7
+  - 5.2    # niveau  8
+  - 5.7    # niveau  9
+  - 6.2    # niveau 10
