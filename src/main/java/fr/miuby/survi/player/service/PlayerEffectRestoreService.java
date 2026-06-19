@@ -28,6 +28,8 @@ public class PlayerEffectRestoreService {
             }
         }
 
+        GameManager.getInstance().getLockedItemsFactory().applyLockState(player);
+
         Component globalText = recap.build();
         if (PlainTextComponentSerializer.plainText().serialize(globalText).isBlank()) return;
 
