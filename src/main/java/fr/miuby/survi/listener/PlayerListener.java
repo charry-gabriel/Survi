@@ -2,6 +2,7 @@ package fr.miuby.survi.listener;
 
 import com.destroystokyo.paper.event.player.PlayerArmorChangeEvent;
 import fr.miuby.lib.utils.Cooldown;
+import fr.miuby.lib.utils.Rect;
 import fr.miuby.lib.world.MLWorld;
 import fr.miuby.lib.world.WorldRegistry;
 import fr.miuby.lib.world.WorldType;
@@ -74,6 +75,11 @@ public class PlayerListener implements Listener {
             WorldType worldType = mlWorld.getType();
             boolean outOfBounds;
             if (worldType == EWorld.VILLAGE) {
+                Rect limit = mlWorld.getLimit();
+                if (limit != null && event.getTo().getY() < limit.yMin()) {
+                    player.teleport(mlWorld.getWorld().getSpawnLocation());
+                    return;
+                }
                 outOfBounds = gm.getVillageZoneManager().isLocationOutOfBounds(event.getTo());
             } else if (worldType == EWorld.WILDERNESS) {
                 outOfBounds = isOutOfExploreLimit(player, event.getTo(), false);
