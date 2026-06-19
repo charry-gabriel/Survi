@@ -9,6 +9,7 @@ import fr.miuby.survi.system.database.SqlCommand;
 import fr.miuby.survi.item.CustomItemCommand;
 import fr.miuby.survi.item.growth_item.GrowthItemCommand;
 import fr.miuby.survi.job.task.FishermanEffectsTask;
+import fr.miuby.survi.job.task.MinerEffectsTask;
 import fr.miuby.survi.world.zone.ZoneBorderTask;
 import fr.miuby.survi.listener.*;
 import fr.miuby.survi.quest.globalquest.GlobalQuestCommand;
@@ -63,6 +64,7 @@ public class Survi extends JavaPlugin {
 
         new FishermanEffectsTask().runTaskTimer(this, 20L, FishermanEffectsTask.PERIOD_TICKS);
         new ZoneBorderTask().runTaskTimer(this, 20L, ZoneBorderTask.PERIOD_TICKS);
+        new MinerEffectsTask().runTaskTimer(this, 20L, MinerEffectsTask.PERIOD_TICKS);
 
         getConfig().options().copyDefaults(true);
         saveConfig();

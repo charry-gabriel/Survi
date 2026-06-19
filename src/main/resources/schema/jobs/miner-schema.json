@@ -3,7 +3,7 @@
   "title": "jobs/miner.yml",
   "description": "Configuration du Mineur (MINER). Tableau de 11 valeurs (index = niveau 0 à 10).",
   "type": "object",
-  "required": ["drop-multiplier"],
+  "required": ["drop-multiplier", "cave-view-distance-threshold-y", "cave-view-distance-hysteresis", "cave-darkness-threshold-y"],
   "additionalProperties": false,
   "properties": {
     "drop-multiplier": {
@@ -11,6 +11,23 @@
       "description": "Multiplicateur de drops appliqué aux minerais cassés. Index = niveau 0 à 10.",
       "minItems": 11, "maxItems": 11,
       "items": { "type": "number", "minimum": 0 }
+    },
+    "cave-view-distance-threshold-y": {
+      "type": "array",
+      "description": "Coordonnée Y sous laquelle la view-distance est réduite à 2 chunks. -1 = immunisé. Index = niveau 0 à 10.",
+      "minItems": 11, "maxItems": 11,
+      "items": { "type": "integer", "minimum": -64 }
+    },
+    "cave-view-distance-hysteresis": {
+      "type": "integer",
+      "description": "Nombre de blocs au-dessus du seuil Y avant que la view-distance soit restaurée. Évite les changements répétés.",
+      "minimum": 1
+    },
+    "cave-darkness-threshold-y": {
+      "type": "array",
+      "description": "Coordonnée Y sous laquelle l'effet DARKNESS est appliqué (sans icône ni minuteur). -1 = immunisé. Index = niveau 0 à 10.",
+      "minItems": 11, "maxItems": 11,
+      "items": { "type": "integer", "minimum": -64 }
     }
   }
 }

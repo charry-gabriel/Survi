@@ -17,3 +17,40 @@ drop-multiplier:
   - 1.50   # niveau  8
   - 1.75   # niveau  9
   - 2.00   # niveau 10
+
+# ─── Seuil Y de réduction de view-distance ────────────────────────────────────
+# En dessous de ce Y, la view-distance est réduite à 2 chunks.
+# -1 = immunisé (aucun effet, quel que soit le Y).
+cave-view-distance-threshold-y:
+  - 60     # niveau  0  — dès l'entrée d'une grotte standard
+  - 50     # niveau  1
+  - 40     # niveau  2
+  - 25     # niveau  3
+  - 10     # niveau  4
+  - 0      # niveau  5
+  - -15    # niveau  6
+  - -30    # niveau  7
+  - -45    # niveau  8
+  - -55    # niveau  9
+  - -1     # niveau 10  — immunisé
+
+# ─── Marge d'hystérésis de la view-distance (blocs) ──────────────────────────
+# La view-distance ne se restaure que lorsque le joueur remonte de N blocs
+# au-dessus du seuil. Évite les changements répétés en bord de seuil.
+cave-view-distance-hysteresis: 6
+
+# ─── Seuil Y de l'effet DARKNESS ─────────────────────────────────────────────
+# En dessous de ce Y, l'effet DARKNESS est appliqué (sans icône ni minuteur).
+# -1 = immunisé (aucun effet, quel que soit le Y).
+cave-darkness-threshold-y:
+  - 30     # niveau  0
+  - 15     # niveau  1
+  - 5      # niveau  2
+  - -10    # niveau  3
+  - -25    # niveau  4
+  - -40    # niveau  5
+  - -50    # niveau  6
+  - -60    # niveau  7
+  - -64    # niveau  8
+  - -64    # niveau  9
+  - -1     # niveau 10  — immunisé
