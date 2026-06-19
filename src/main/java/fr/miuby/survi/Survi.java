@@ -9,7 +9,7 @@ import fr.miuby.survi.system.database.SqlCommand;
 import fr.miuby.survi.item.CustomItemCommand;
 import fr.miuby.survi.item.growth_item.GrowthItemCommand;
 import fr.miuby.survi.job.task.FishermanEffectsTask;
-import fr.miuby.survi.world.task.VillageZoneBorderTask;
+import fr.miuby.survi.world.zone.ZoneBorderTask;
 import fr.miuby.survi.listener.*;
 import fr.miuby.survi.quest.globalquest.GlobalQuestCommand;
 import fr.miuby.survi.quest.quest.QuestCommand;
@@ -62,7 +62,7 @@ public class Survi extends JavaPlugin {
         pluginManager.registerEvents(placedBlockTracker, this);
 
         new FishermanEffectsTask().runTaskTimer(this, 20L, FishermanEffectsTask.PERIOD_TICKS);
-        new VillageZoneBorderTask().runTaskTimer(this, 20L, VillageZoneBorderTask.PERIOD_TICKS);
+        new ZoneBorderTask().runTaskTimer(this, 20L, ZoneBorderTask.PERIOD_TICKS);
 
         getConfig().options().copyDefaults(true);
         saveConfig();
@@ -93,8 +93,6 @@ public class Survi extends JavaPlugin {
     public void onDisable() {
         TimeManager tm = GameManager.getInstance().getTimeManager();
         if (tm != null) tm.stop();
-
-        GameManager.getInstance().getVillageZoneManager().stop();
 
         PortalLocatorManager plm = GameManager.getInstance().getPortalLocatorManager();
         if (plm != null) plm.stop();

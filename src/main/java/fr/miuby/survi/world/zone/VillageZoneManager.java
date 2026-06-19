@@ -1,9 +1,15 @@
-package fr.miuby.survi.world;
+package fr.miuby.survi.world.zone;
 
 import fr.miuby.survi.GameManager;
 import fr.miuby.survi.system.log.ELogTag;
+import fr.miuby.survi.world.EWorld;
+import fr.miuby.survi.world.PortalLocatorManager;
+import fr.miuby.survi.world.WorldInitializer;
 import fr.miuby.survi.world.config.VillageZoneConfig;
 import fr.miuby.lib.log.MLLogManager;
+import fr.miuby.lib.utils.Rect;
+import fr.miuby.lib.world.MLWorld;
+import fr.miuby.lib.world.WorldRegistry;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -22,8 +28,10 @@ import java.util.logging.Level;
  *   <li>La zone est rectangulaire : {@code half-width} sur l'axe X, {@code half-depth} sur l'axe Z.</li>
  *   <li>Le centre peut changer à chaque palier via {@code center-x} / {@code center-z}.</li>
  *   <li>Le timestamp de démarrage est persisté en DB (survit aux redémarrages).</li>
- *   <li>À chaque changement de palier : spawn monde mis à jour + portail village
- *       rafraîchi pour tous les joueurs présents.</li>
+ *   <li>À chaque changement de palier : limite du monde ({@link fr.miuby.lib.world.MLWorld#setLimit}),
+ *       spawn et portail village mis à jour pour tous les joueurs présents.</li>
+ *   <li>{@link #stop()} restaure la limite "carte entière" posée au boot par {@code WorldInitializer}
+ *       (utile pour {@code /survi containers clear} qui doit pouvoir scanner tout le monde).</li>
  * </ul>
  *
  * @see #start()  Lance le timer (déclenché par {@code StartVillageZoneEffect} au levelup d'un villageois)
@@ -52,6 +60,12 @@ public class VillageZoneManager {
 
     @Getter private VillageZoneConfig config;
 
+    /**
+     * Limite "carte entière" du monde Village, capturée au boot (posée par {@code WorldInitializer}).
+     * Sert de bornes Y pour la limite par palier, et de valeur de restauration sur {@link #stop()}.
+     */
+    private Rect defaultWorldLimit;
+
     private BukkitTask stageCheckTask;
 
     // ─── Initialisation (appelée par GameManager) ─────────────────────────────────
@@ -62,6 +76,9 @@ public class VillageZoneManager {
      */
     public void init() {
         this.config = ZoneLoader.load(GameManager.getInstance().getPlugin());
+
+        MLWorld mlWorld = WorldRegistry.get(EWorld.VILLAGE);
+        if (mlWorld != null) this.defaultWorldLimit = mlWorld.getLimit();
 
         loadStartTimestampFromDB();
 
@@ -114,7 +131,10 @@ public class VillageZoneManager {
 
         deleteStartTimestampFromDB();
 
-        MLLogManager.getInstance().log(Level.INFO, ELogTag.WORLD, "[VillageZoneManager] Arrêté — état et DB effacés");
+        MLWorld mlWorld = WorldRegistry.get(EWorld.VILLAGE);
+        if (mlWorld != null && defaultWorldLimit != null) mlWorld.setLimit(defaultWorldLimit);
+
+        MLLogManager.getInstance().log(Level.INFO, ELogTag.WORLD, "[VillageZoneManager] Arrêté — état et DB effacés, limite monde restaurée");
     }
 
     /**
@@ -181,19 +201,25 @@ public class VillageZoneManager {
     }
 
     /**
+     * Bornes de la zone active sous forme de {@link ZoneBounds}.
+     * Retourne {@code null} si le timer n'est pas démarré ou si aucun stage n'est configuré.
+     * Utilisé par {@link ZoneBorderTask} et {@link #isLocationOutOfBounds}.
+     */
+    public ZoneBounds getCurrentBounds() {
+        if (!started || config.stages().isEmpty()) return null;
+        VillageZoneConfig.VillageZoneStage stage = config.stages().get(computeStageIndex());
+        return new ZoneBounds(stage.centerX(), stage.centerZ(), stage.halfWidth(), stage.halfDepth());
+    }
+
+    /**
      * Indique si une {@link Location} dépasse la zone autorisée (contrôle XZ uniquement).
      * La zone est rectangulaire : {@code half-width} sur X, {@code half-depth} sur Z,
      * centrée sur le {@code center-x/z} du palier actif.
      * Retourne toujours {@code false} si le timer n'est pas démarré.
      */
     public boolean isLocationOutOfBounds(Location loc) {
-        if (!started || config.stages().isEmpty()) return false;
-
-        VillageZoneConfig.VillageZoneStage stage = config.stages().get(computeStageIndex());
-        double dx = Math.abs(loc.getX() - stage.centerX());
-        double dz = Math.abs(loc.getZ() - stage.centerZ());
-
-        return dx > stage.halfWidth() || dz > stage.halfDepth();
+        ZoneBounds bounds = getCurrentBounds();
+        return bounds != null && bounds.isOutside(loc);
     }
 
     /** Nombre de minutes écoulées depuis le début de la partie. */
@@ -268,6 +294,16 @@ public class VillageZoneManager {
         World world = Bukkit.getWorld(villageName);
         if (world == null) return;
 
+        // ── Mise à jour de la limite du monde (XZ suit la zone, Y reprend la carte entière) ──
+        MLWorld mlWorld = WorldRegistry.get(EWorld.VILLAGE);
+        if (mlWorld != null && defaultWorldLimit != null) {
+            mlWorld.setLimit(new Rect(
+                    stage.centerX() + stage.halfWidth(),  stage.centerX() - stage.halfWidth(),
+                    defaultWorldLimit.yMax(),              defaultWorldLimit.yMin(),
+                    stage.centerZ() + stage.halfDepth(),  stage.centerZ() - stage.halfDepth()
+            ));
+        }
+
         // ── Mise à jour du spawn monde ─────────────────────────────────────────────
         VillageZoneConfig.VillageZoneSpawn sp = stage.spawn();
         world.setSpawnLocation(sp.x(), sp.y(), sp.z(), sp.yaw());
@@ -286,6 +322,8 @@ public class VillageZoneManager {
                 "[VillageZoneManager] Palier " + currentStageIndex
                         + " — zone=" + stage.halfWidth() + "×" + stage.halfDepth() + " blocs"
                         + " | centre=(" + stage.centerX() + "," + stage.centerZ() + ")"
+                        + " | limit=[" + (stage.centerX() - stage.halfWidth()) + "→" + (stage.centerX() + stage.halfWidth()) + "]"
+                        + " x [" + (stage.centerZ() - stage.halfDepth()) + "→" + (stage.centerZ() + stage.halfDepth()) + "]"
                         + " | spawn=(" + sp.x() + "," + sp.y() + "," + sp.z() + ")"
                         + " | portail=(" + portalCfg.minX() + "," + portalCfg.minY() + "," + portalCfg.minZ()
                         + ")→(" + portalCfg.maxX() + "," + portalCfg.maxY() + "," + portalCfg.maxZ() + ")"

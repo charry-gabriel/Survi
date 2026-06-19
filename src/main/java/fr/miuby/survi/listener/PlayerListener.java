@@ -13,6 +13,7 @@ import fr.miuby.survi.system.SurviConfig;
 import fr.miuby.survi.system.log.ELogTag;
 import fr.miuby.survi.system.perf.PerfTimer;
 import fr.miuby.survi.world.EWorld;
+import fr.miuby.survi.world.zone.ZoneBounds;
 import io.papermc.paper.advancement.AdvancementDisplay;
 import fr.miuby.survi.blessing.BlessingEffect;
 import fr.miuby.survi.blessing.PotionsEffect;
@@ -103,16 +104,12 @@ public class PlayerListener implements Listener {
         AlphaPlayer alphaPlayer = AlphaPlayer.get(player.getUniqueId());
         if (alphaPlayer == null) return false;
 
-        int explorerLevel = alphaPlayer.getJobLevel(EJob.EXPLORER);
         List<Integer> radii = surviConfig.getExploreWildernessRadius();
-
-        int idx = Math.min(explorerLevel, radii.size() - 1);
+        int idx    = Math.min(alphaPlayer.getJobLevel(EJob.EXPLORER), radii.size() - 1);
         int radius = radii.get(idx);
         if (isNether) radius = radius / 8;
 
-        double absX = Math.abs(to.getX());
-        double absZ = Math.abs(to.getZ());
-        return absX > radius || absZ > radius;
+        return new ZoneBounds(0, 0, radius, radius).isOutside(to);
     }
 
     private void blockMovement(PlayerMoveEvent event) {

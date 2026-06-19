@@ -4,6 +4,7 @@ import fr.miuby.lib.world.WorldRegistry;
 import fr.miuby.survi.GameManager;
 import fr.miuby.lib.log.MLLogManager;
 import fr.miuby.survi.system.log.ELogTag;
+import fr.miuby.survi.world.zone.VillageZoneManager;
 import org.bukkit.*;
 import org.bukkit.block.data.Orientable;
 import org.bukkit.entity.Player;

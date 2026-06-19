@@ -17,6 +17,7 @@ import fr.miuby.survi.system.SurviConfig;
 import fr.miuby.survi.system.log.ELogTag;
 import fr.miuby.survi.villager.trader.Trader;
 import fr.miuby.survi.system.lang.LangService;
+import fr.miuby.survi.world.zone.VillageZoneManager;
 import lombok.Getter;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -33,7 +34,7 @@ public class QuestManager extends AbstractQuestManager<Quest> {
 
     /**
      * Quêtes journalières supplémentaires débloquées chaque jour de jeu depuis {@code StartVillageZoneEffect}.
-     * La capacité totale d'un joueur = {@link #DAILY_QUEST_BONUS} × {@link fr.miuby.survi.world.VillageZoneManager#getGameDayCount()}.
+     * La capacité totale d'un joueur = {@link #DAILY_QUEST_BONUS} × {@link VillageZoneManager#getGameDayCount()}.
      */
     public static final int DAILY_QUEST_BONUS = 2;
 

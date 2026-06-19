@@ -1,4 +1,4 @@
-package fr.miuby.survi.world;
+package fr.miuby.survi.world.zone;
 
 import fr.miuby.survi.world.config.VillageZoneConfig;
 import org.bukkit.configuration.file.FileConfiguration;
