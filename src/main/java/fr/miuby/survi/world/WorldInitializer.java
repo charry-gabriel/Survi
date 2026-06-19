@@ -83,6 +83,7 @@ public class WorldInitializer {
         village.setGameRule(GameRules.KEEP_INVENTORY, true);
         village.setGameRule(GameRules.NATURAL_HEALTH_REGENERATION, true);
         village.setClearWeatherDuration(Integer.MAX_VALUE);
+        village.setDifficulty(Difficulty.EASY);
         village.setViewDistance(32);
 
         // --- Wilderness (NORMAL, réinitialisable) ---
@@ -92,6 +93,7 @@ public class WorldInitializer {
         WorldRegistry.register(mvWild);
         wilderness.setGameRule(GameRules.NATURAL_HEALTH_REGENERATION, false);
         wilderness.setViewDistance(10);
+        wilderness.setDifficulty(Difficulty.HARD);
 
         // --- Nether (NETHER, réinitialisable, verrouillé par défaut) ---
         String netherName = worlds.get(EWorld.NETHER);
@@ -100,6 +102,7 @@ public class WorldInitializer {
         mvNether.setLocked(true);
         WorldRegistry.register(mvNether);
         nether.setGameRule(GameRules.NATURAL_HEALTH_REGENERATION, false);
+        nether.setDifficulty(Difficulty.HARD);
 
         // --- End (THE_END, réinitialisable, verrouillé par défaut) ---
         String endName = worlds.get(EWorld.END);
@@ -108,6 +111,7 @@ public class WorldInitializer {
         mvEnd.setLocked(true);
         WorldRegistry.register(mvEnd);
         end.setGameRule(GameRules.NATURAL_HEALTH_REGENERATION, false);
+        end.setDifficulty(Difficulty.HARD);
     }
 
     // -------------------------------------------------------------------------
@@ -190,6 +194,7 @@ public class WorldInitializer {
             throw new IllegalStateException("Échec de la création du monde : " + name + " (" + env + ")");
         }
         created.setGameRule(GameRules.NATURAL_HEALTH_REGENERATION, false);
+        created.setDifficulty(Difficulty.HARD);
         created.setViewDistance(10);
         return created;
     }
