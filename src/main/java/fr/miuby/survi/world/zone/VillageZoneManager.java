@@ -91,6 +91,7 @@ public class VillageZoneManager {
                             + " zone=" + (stage != null ? stage.halfWidth() + "×" + stage.halfDepth() : "N/A") + " blocs"
                             + " écoulé=" + String.format("%.2f", getElapsedMinutes() / 60f) + "h");
         } else {
+            applyLastStageAsDefault();
             MLLogManager.getInstance().log(Level.INFO, ELogTag.WORLD,
                     "[VillageZoneManager] Initialisé — en attente du premier levelup de villageois");
         }
@@ -121,6 +122,7 @@ public class VillageZoneManager {
     /**
      * Arrête complètement le timer et efface tout l'état (DB incluse).
      * Après un stop, {@link #start()} repart de zéro comme au premier démarrage.
+     * Le dernier palier est appliqué comme état par défaut (spawn + portail + limite monde).
      */
     public void stop() {
         cancelStageCheckTimer();
@@ -130,11 +132,9 @@ public class VillageZoneManager {
         currentStageIndex = -1;
 
         deleteStartTimestampFromDB();
+        applyLastStageAsDefault();
 
-        MLWorld mlWorld = WorldRegistry.get(EWorld.VILLAGE);
-        if (mlWorld != null && defaultWorldLimit != null) mlWorld.setLimit(defaultWorldLimit);
-
-        MLLogManager.getInstance().log(Level.INFO, ELogTag.WORLD, "[VillageZoneManager] Arrêté — état et DB effacés, limite monde restaurée");
+        MLLogManager.getInstance().log(Level.INFO, ELogTag.WORLD, "[VillageZoneManager] Arrêté — état et DB effacés, dernier palier appliqué");
     }
 
     /**
@@ -150,72 +150,72 @@ public class VillageZoneManager {
     // ─── API publique ─────────────────────────────────────────────────────────────
 
     /**
-     * Retourne le spawn du village pour le palier actif, ou le spawn par défaut du monde
-     * si le timer n'est pas démarré / aucun stage configuré.
+     * Retourne le spawn du village pour le palier actif, ou le spawn du dernier palier
+     * si le timer n'est pas démarré. Retourne le spawn monde par défaut si aucun stage n'est configuré.
      */
     public Location getCurrentSpawnLocation() {
         String villageName = WorldInitializer.getWorlds().get(EWorld.VILLAGE);
         World world = villageName != null ? Bukkit.getWorld(villageName) : null;
-
-        if (!started || world == null) return world != null ? world.getSpawnLocation() : null;
+        if (world == null) return null;
         if (config.stages().isEmpty()) return world.getSpawnLocation();
 
-        VillageZoneConfig.VillageZoneSpawn s = config.stages().get(computeStageIndex()).spawn();
+        int idx = started ? computeStageIndex() : config.stages().size() - 1;
+        VillageZoneConfig.VillageZoneSpawn s = config.stages().get(idx).spawn();
         return new Location(world, s.x(), s.y(), s.z(), s.yaw(), s.pitch());
     }
 
     /**
      * Demi-largeur (axe X) de la zone rectangulaire pour le palier actif.
-     * Retourne {@link Integer#MAX_VALUE} si le timer n'est pas démarré.
+     * Retourne la valeur du dernier palier si le timer n'est pas démarré.
      */
     public int getCurrentHalfWidth() {
-        if (!started || config.stages().isEmpty()) return Integer.MAX_VALUE;
-        return config.stages().get(computeStageIndex()).halfWidth();
+        if (config.stages().isEmpty()) return Integer.MAX_VALUE;
+        return config.stages().get(started ? computeStageIndex() : config.stages().size() - 1).halfWidth();
     }
 
     /**
      * Demi-profondeur (axe Z) de la zone rectangulaire pour le palier actif.
-     * Retourne {@link Integer#MAX_VALUE} si le timer n'est pas démarré.
+     * Retourne la valeur du dernier palier si le timer n'est pas démarré.
      */
     public int getCurrentHalfDepth() {
-        if (!started || config.stages().isEmpty()) return Integer.MAX_VALUE;
-        return config.stages().get(computeStageIndex()).halfDepth();
+        if (config.stages().isEmpty()) return Integer.MAX_VALUE;
+        return config.stages().get(started ? computeStageIndex() : config.stages().size() - 1).halfDepth();
     }
 
     /**
      * Centre de la zone sur l'axe X pour le palier actif.
-     * Retourne {@code 0} si le timer n'est pas démarré.
+     * Retourne la valeur du dernier palier si le timer n'est pas démarré.
      */
     public int getCurrentCenterX() {
-        if (!started || config.stages().isEmpty()) return 0;
-        return config.stages().get(computeStageIndex()).centerX();
+        if (config.stages().isEmpty()) return 0;
+        return config.stages().get(started ? computeStageIndex() : config.stages().size() - 1).centerX();
     }
 
     /**
      * Centre de la zone sur l'axe Z pour le palier actif.
-     * Retourne {@code 0} si le timer n'est pas démarré.
+     * Retourne la valeur du dernier palier si le timer n'est pas démarré.
      */
     public int getCurrentCenterZ() {
-        if (!started || config.stages().isEmpty()) return 0;
-        return config.stages().get(computeStageIndex()).centerZ();
+        if (config.stages().isEmpty()) return 0;
+        return config.stages().get(started ? computeStageIndex() : config.stages().size() - 1).centerZ();
     }
 
     /**
      * Bornes de la zone active sous forme de {@link ZoneBounds}.
-     * Retourne {@code null} si le timer n'est pas démarré ou si aucun stage n'est configuré.
-     * Utilisé par {@link ZoneBorderTask} et {@link #isLocationOutOfBounds}.
+     * Retourne les bornes du dernier palier si le timer n'est pas démarré.
+     * Retourne {@code null} uniquement si aucun stage n'est configuré.
      */
     public ZoneBounds getCurrentBounds() {
-        if (!started || config.stages().isEmpty()) return null;
-        VillageZoneConfig.VillageZoneStage stage = config.stages().get(computeStageIndex());
+        if (config.stages().isEmpty()) return null;
+        VillageZoneConfig.VillageZoneStage stage = config.stages().get(started ? computeStageIndex() : config.stages().size() - 1);
         return new ZoneBounds(stage.centerX(), stage.centerZ(), stage.halfWidth(), stage.halfDepth());
     }
 
     /**
      * Indique si une {@link Location} dépasse la zone autorisée (contrôle XZ uniquement).
      * La zone est rectangulaire : {@code half-width} sur X, {@code half-depth} sur Z,
-     * centrée sur le {@code center-x/z} du palier actif.
-     * Retourne toujours {@code false} si le timer n'est pas démarré.
+     * centrée sur le {@code center-x/z} du palier actif (ou du dernier palier si non démarré).
+     * Retourne toujours {@code false} si aucun stage n'est configuré.
      */
     public boolean isLocationOutOfBounds(Location loc) {
         ZoneBounds bounds = getCurrentBounds();
@@ -245,7 +245,14 @@ public class VillageZoneManager {
     private void startStageCheckTimer() {
         stageCheckTask = GameManager.getInstance().getScheduler().runTaskTimer(
                 GameManager.getInstance().getPlugin(),
-                () -> applyCurrentStage(false),
+                () -> {
+                    try {
+                        applyCurrentStage(false);
+                    } catch (Exception e) {
+                        MLLogManager.getInstance().log(Level.WARNING, ELogTag.WORLD,
+                                "[VillageZoneManager] Erreur dans le vérificateur de palier — tâche maintenue", e);
+                    }
+                },
                 CHECK_INTERVAL_TICKS,
                 CHECK_INTERVAL_TICKS
         );
@@ -328,6 +335,51 @@ public class VillageZoneManager {
                         + " | portail=(" + portalCfg.minX() + "," + portalCfg.minY() + "," + portalCfg.minZ()
                         + ")→(" + portalCfg.maxX() + "," + portalCfg.maxY() + "," + portalCfg.maxZ() + ")"
                         + " | locator mis à jour");
+    }
+
+
+    /**
+     * Applique le dernier palier configuré comme état par défaut (sans démarrer le timer).
+     * Utilisé au boot quand la zone n est pas encore démarrée, et lors d un {@link #stop()}.
+     * Sans effet si {@code config.stages()} est vide.
+     */
+    private void applyLastStageAsDefault() {
+        if (config.stages().isEmpty()) return;
+
+        int lastIdx = config.stages().size() - 1;
+        VillageZoneConfig.VillageZoneStage stage = config.stages().get(lastIdx);
+
+        String villageName = WorldInitializer.getWorlds().get(EWorld.VILLAGE);
+        if (villageName == null) return;
+        World world = Bukkit.getWorld(villageName);
+        if (world == null) return;
+
+        MLWorld mlWorld = WorldRegistry.get(EWorld.VILLAGE);
+        if (mlWorld != null && defaultWorldLimit != null) {
+            mlWorld.setLimit(new Rect(
+                    stage.centerX() + stage.halfWidth(),  stage.centerX() - stage.halfWidth(),
+                    defaultWorldLimit.yMax(),              defaultWorldLimit.yMin(),
+                    stage.centerZ() + stage.halfDepth(),  stage.centerZ() - stage.halfDepth()
+            ));
+        }
+
+        VillageZoneConfig.VillageZoneSpawn sp = stage.spawn();
+        world.setSpawnLocation(new Location(world, sp.x(), sp.y(), sp.z(), sp.yaw(), sp.pitch()));
+
+        VillageZoneConfig.VillageZonePortal portalCfg = stage.portal();
+        Location min = new Location(world, portalCfg.minX(), portalCfg.minY(), portalCfg.minZ());
+        Location max = new Location(world, portalCfg.maxX(), portalCfg.maxY(), portalCfg.maxZ());
+        GameManager.getInstance().getWorldPortalManager().updateVillagePortal(villageName, min, max);
+
+        PortalLocatorManager plm = GameManager.getInstance().getPortalLocatorManager();
+        if (plm != null) plm.updatePortal(world, portalCfg);
+
+        MLLogManager.getInstance().log(Level.INFO, ELogTag.WORLD,
+                "[VillageZoneManager] Palier par défaut (dernier palier " + lastIdx + ")"
+                        + " — zone=" + stage.halfWidth() + "x" + stage.halfDepth() + " blocs"
+                        + " | spawn=(" + sp.x() + "," + sp.y() + "," + sp.z() + ")"
+                        + " | portail=(" + portalCfg.minX() + "," + portalCfg.minY() + "," + portalCfg.minZ()
+                        + ")->(" + portalCfg.maxX() + "," + portalCfg.maxY() + "," + portalCfg.maxZ() + ")");
     }
 
     // ─── Persistance ─────────────────────────────────────────────────────────────

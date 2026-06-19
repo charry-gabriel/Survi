@@ -70,8 +70,8 @@ public class ZoneBorderTask extends BukkitRunnable {
 
         if (type == EWorld.VILLAGE) {
             VillageZoneManager vzm = GameManager.getInstance().getVillageZoneManager();
-            if (!vzm.isStarted()) return;
             bounds = vzm.getCurrentBounds();
+            if (bounds == null) return;
             langPrefix = "boundary.village";
         } else if (type == EWorld.WILDERNESS) {
             bounds = getExploreBounds(player, false);
