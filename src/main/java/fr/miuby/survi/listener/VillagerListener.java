@@ -62,6 +62,11 @@ public class VillagerListener implements Listener {
         Player player = event.getPlayer();
         Entity clicked = event.getRightClicked();
 
+        if (clicked.getType() == EntityType.VILLAGER || clicked.getType() == EntityType.WANDERING_TRADER) {
+            event.setCancelled(true);
+            return;
+        }
+
         if (clicked.getType() != EntityType.MANNEQUIN) return;
 
         AVillager aVillager = (AVillager) VillagerRegistry.get(clicked.getUniqueId());
@@ -94,9 +99,6 @@ public class VillagerListener implements Listener {
                 MLLogManager.getInstance().log(Level.SEVERE, ELogTag.VILLAGER,
                         "Mannequin cliqué sans correspondance dans le registry : " + clicked.getUniqueId());
             }
-        }
-        if (event.getRightClicked().getType() == EntityType.VILLAGER || event.getRightClicked().getType() == EntityType.WANDERING_TRADER) {
-            event.setCancelled(true);
         }
     }
 
