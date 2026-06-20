@@ -1,6 +1,6 @@
 name: Survi
 version: '${version}'
 main: fr.miuby.survi.Survi
-api-version: '26.1'
+api-version: '26.2'
 authors: [Miuby]
 description: Petite survi TeamAlpha
