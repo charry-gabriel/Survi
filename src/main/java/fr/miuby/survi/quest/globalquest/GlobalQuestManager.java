@@ -148,6 +148,45 @@ public class GlobalQuestManager extends AbstractQuestManager<GlobalQuest> {
         }
     }
 
+    /**
+     * Ajuste manuellement la progression de la quête active (admin/debug).
+     * Ne modifie aucune contribution individuelle — uniquement le total. Clampée à 0 minimum.
+     * Termine la quête (récompenses incluses) si l'objectif est atteint.
+     *
+     * @return false si aucune quête n'est active
+     */
+    public boolean adjustProgress(int delta) {
+        if (activeQuest == null) return false;
+
+        progress = Math.max(0, progress + delta);
+
+        if (progress >= activeQuest.getGoal()) {
+            onFinished();
+        } else {
+            GameManager.getInstance().getGlobalQuestBossBarService().onProgressUpdate(activeQuest, progress);
+        }
+        return true;
+    }
+
+    /**
+     * Force la progression de la quête active à une valeur précise (admin/debug).
+     * Termine la quête (récompenses incluses) si la valeur atteint l'objectif.
+     *
+     * @return false si aucune quête n'est active
+     */
+    public boolean setProgress(int value) {
+        if (activeQuest == null) return false;
+
+        progress = Math.max(0, value);
+
+        if (progress >= activeQuest.getGoal()) {
+            onFinished();
+        } else {
+            GameManager.getInstance().getGlobalQuestBossBarService().onProgressUpdate(activeQuest, progress);
+        }
+        return true;
+    }
+
     public long getRemainingSeconds() {
         if (activeQuest == null) return 0L;
         return Math.max(0L, (endTime - System.currentTimeMillis()) / 1000L);

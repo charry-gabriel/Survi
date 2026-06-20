@@ -28,7 +28,10 @@ public class ReloadCommand {
                 .then(Commands.literal("roles").executes(ReloadCommand::reloadRoles))
                 .then(Commands.literal("growth_items").executes(ReloadCommand::reloadGrowthItems))
                 .then(Commands.literal("villagers").executes(ReloadCommand::reloadVillagers))
-                .then(Commands.literal("jobs").executes(ReloadCommand::reloadJobs));
+                .then(Commands.literal("jobs").executes(ReloadCommand::reloadJobs))
+                .then(Commands.literal("recipes").executes(ReloadCommand::reloadRecipes))
+                .then(Commands.literal("zone").executes(ReloadCommand::reloadZone))
+                .then(Commands.literal("lang").executes(ReloadCommand::reloadLang));
     }
 
     private static int reloadAll(CommandContext<CommandSourceStack> ctx) {
@@ -45,6 +48,9 @@ public class ReloadCommand {
         GrowthItemLoader.reload();
         GameManager.getInstance().getVillagerFactory().reloadAll();
         JobsLoader.reload();
+        GameManager.getInstance().getCustomRecipeFactory().reload();
+        GameManager.getInstance().getVillageZoneManager().reloadConfig();
+        GameManager.getInstance().getLangService().reload();
 
         sender.sendMessage(ls.text(lang, "cmd.reload.all.done", quests, globalQuests));
         return Command.SINGLE_SUCCESS;
@@ -117,6 +123,36 @@ public class ReloadCommand {
         sender.sendMessage(ls.text(lang, "cmd.reload.jobs.start"));
         JobsLoader.reload();
         sender.sendMessage(ls.text(lang, "cmd.reload.jobs.done"));
+        return Command.SINGLE_SUCCESS;
+    }
+
+    private static int reloadRecipes(CommandContext<CommandSourceStack> ctx) {
+        CommandSender sender = ctx.getSource().getSender();
+        LangService   ls     = ls();
+        ELang         lang   = lang(sender);
+        sender.sendMessage(ls.text(lang, "cmd.reload.recipes.start"));
+        GameManager.getInstance().getCustomRecipeFactory().reload();
+        sender.sendMessage(ls.text(lang, "cmd.reload.recipes.done"));
+        return Command.SINGLE_SUCCESS;
+    }
+
+    private static int reloadZone(CommandContext<CommandSourceStack> ctx) {
+        CommandSender sender = ctx.getSource().getSender();
+        LangService   ls     = ls();
+        ELang         lang   = lang(sender);
+        sender.sendMessage(ls.text(lang, "cmd.reload.zone.start"));
+        GameManager.getInstance().getVillageZoneManager().reloadConfig();
+        sender.sendMessage(ls.text(lang, "cmd.reload.zone.done"));
+        return Command.SINGLE_SUCCESS;
+    }
+
+    private static int reloadLang(CommandContext<CommandSourceStack> ctx) {
+        CommandSender sender = ctx.getSource().getSender();
+        LangService   ls     = ls();
+        ELang         lang   = lang(sender);
+        sender.sendMessage(ls.text(lang, "cmd.reload.lang.start"));
+        GameManager.getInstance().getLangService().reload();
+        sender.sendMessage(ls.text(lang, "cmd.reload.lang.done"));
         return Command.SINGLE_SUCCESS;
     }
 

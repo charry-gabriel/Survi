@@ -83,6 +83,15 @@ public class GrowthItemCommand {
                         .then(Commands.argument("growthId", GrowthItemArgument.growthItem())
                                 .executes(GrowthItemCommand::trackItem)
                         )
+                )
+
+                // /growthitem remove <player> <growthId>
+                .then(Commands.literal("remove")
+                        .then(Commands.argument("player", AlphaPlayerArgument.alphaPlayer())
+                                .then(Commands.argument("growthId", GrowthItemArgument.growthItem())
+                                        .executes(GrowthItemCommand::removeItem)
+                                )
+                        )
                 );
     }
 
@@ -281,6 +290,66 @@ public class GrowthItemCommand {
                 : ls.text(ls.resolveOrDefault(sender), "cmd.growth.track_found", found));
 
         return Command.SINGLE_SUCCESS;
+    }
+
+    // ─── remove ───────────────────────────────────────────────────────────────
+
+    private static int removeItem(CommandContext<CommandSourceStack> ctx) {
+        AlphaPlayer alpha = AlphaPlayerArgument.getAlphaPlayer(ctx, "player");
+        String growthId = GrowthItemArgument.getId(ctx, "growthId");
+        Player target = alpha.getPlayer();
+        var sender = ctx.getSource().getSender();
+        LangService ls = GameManager.getInstance().getLangService();
+
+        int removed = removeAllGrowthItems(target, growthId);
+
+        if (removed == 0) {
+            sender.sendMessage(ls.text(ls.resolveOrDefault(sender), "cmd.growth.not_in_inventory",
+                    alpha.getPseudo(), growthId));
+            return Command.SINGLE_SUCCESS;
+        }
+
+        sender.sendMessage(ls.text(ls.resolveOrDefault(sender), "cmd.growth.removed_admin",
+                growthId, removed, alpha.getPseudo()));
+
+        boolean senderIsTarget = sender instanceof Player sp && sp.getUniqueId().equals(target.getUniqueId());
+        if (!senderIsTarget)
+            target.sendMessage(ls.text(target, "cmd.growth.removed_player", growthId, removed));
+
+        return Command.SINGLE_SUCCESS;
+    }
+
+    /** Retire tous les exemplaires de {@code growthId} de tout l'inventaire (principal, offhand, armure). */
+    private static int removeAllGrowthItems(Player player, String growthId) {
+        PlayerInventory inv = player.getInventory();
+        int removed = 0;
+
+        for (int slot = 0; slot < 36; slot++) {
+            ItemStack item = inv.getItem(slot);
+            if (item != null && !item.getType().isAir() && growthId.equals(GrowthItems.getGrowthId(item))) {
+                inv.setItem(slot, null);
+                removed++;
+            }
+        }
+
+        ItemStack offHand = inv.getItemInOffHand();
+        if (!offHand.getType().isAir() && growthId.equals(GrowthItems.getGrowthId(offHand))) {
+            inv.setItemInOffHand(null);
+            removed++;
+        }
+
+        ItemStack[] armor = inv.getArmorContents();
+        boolean armorChanged = false;
+        for (int i = 0; i < armor.length; i++) {
+            if (armor[i] != null && !armor[i].getType().isAir() && growthId.equals(GrowthItems.getGrowthId(armor[i]))) {
+                armor[i] = null;
+                armorChanged = true;
+                removed++;
+            }
+        }
+        if (armorChanged) inv.setArmorContents(armor);
+
+        return removed;
     }
 
     // ─── Utilitaires internes ──────────────────────────────────────────────────

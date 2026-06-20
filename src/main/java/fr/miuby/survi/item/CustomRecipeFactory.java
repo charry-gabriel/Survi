@@ -4,6 +4,7 @@ import fr.miuby.survi.GameManager;
 import fr.miuby.lib.log.MLLogManager;
 import fr.miuby.survi.system.log.ELogTag;
 import lombok.Getter;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.attribute.Attribute;
@@ -52,6 +53,23 @@ public class CustomRecipeFactory {
 
     public CustomRecipeFactory() {
         loadRecipes();
+    }
+
+    /**
+     * Recharge {@code recipes.yml} à chaud : désenregistre les recettes Bukkit actuelles,
+     * vide le cache local, relit le YAML, reconstruit les {@link CustomRecipe} puis les
+     * réenregistre auprès de Bukkit.
+     */
+    public void reload() {
+        for (CustomRecipe cr : CustomRecipe.recipes) {
+            Bukkit.removeRecipe(cr.getRecipe().getKey());
+        }
+        CustomRecipe.recipes.clear();
+        newRecipes.clear();
+        oldRecipes.clear();
+
+        loadRecipes();
+        CustomRecipe.registerRecipes();
     }
 
     public List<NamespacedKey> getRecipeKeysForMaterials(List<NamespacedKey> materialKeys) {

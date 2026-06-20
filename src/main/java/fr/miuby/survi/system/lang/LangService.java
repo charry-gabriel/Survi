@@ -52,9 +52,16 @@ public class LangService {
     private static final String MISSING_KEY_TEMPLATE =
             "<red><bold>⚠ Traduction manquante (<white>{0}<red>) — merci de le signaler à un admin !";
 
-    private final MLMessageService delegate;
+    private final JavaPlugin plugin;
+    private MLMessageService delegate;
 
     public LangService(JavaPlugin plugin) {
+        this.plugin = plugin;
+        this.delegate = new MLMessageService(plugin, "lang", List.of("fr"), true, MISSING_KEY_TEMPLATE);
+    }
+
+    /** Recharge {@code lang/fr.yml} à chaud — reconstruit le délégué MiubyLib depuis le disque. */
+    public void reload() {
         this.delegate = new MLMessageService(plugin, "lang", List.of("fr"), true, MISSING_KEY_TEMPLATE);
     }
 

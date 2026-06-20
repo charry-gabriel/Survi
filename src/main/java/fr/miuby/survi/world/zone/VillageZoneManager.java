@@ -147,6 +147,23 @@ public class VillageZoneManager {
         MLLogManager.getInstance().log(Level.INFO, ELogTag.WORLD, "[VillageZoneManager] Timer réinitialisé — palier 0 restauré");
     }
 
+    /**
+     * Recharge {@code zone.yml} à chaud, sans toucher au timer ni à l'état {@link #started}.
+     * Réapplique immédiatement le palier courant avec les nouvelles valeurs (timer démarré),
+     * sinon réapplique le dernier palier comme état par défaut.
+     */
+    public void reloadConfig() {
+        this.config = ZoneLoader.load(GameManager.getInstance().getPlugin());
+
+        if (started) {
+            applyCurrentStage(true);
+        } else {
+            applyLastStageAsDefault();
+        }
+
+        MLLogManager.getInstance().log(Level.INFO, ELogTag.WORLD, "[VillageZoneManager] Configuration zone.yml rechargée à chaud");
+    }
+
     // ─── API publique ─────────────────────────────────────────────────────────────
 
     /**

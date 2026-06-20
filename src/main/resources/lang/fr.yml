@@ -269,6 +269,12 @@ cmd.reload.villagers.start: "<gray>Rechargement de villagers/*.yml + traders/*.y
 cmd.reload.villagers.done: "<green>✔ Villageois et traders mis à jour en jeu. Inventaires tribute recalculés (items déjà donnés pris en compte)."
 cmd.reload.jobs.start: "<gray>Rechargement de jobs/*.yml..."
 cmd.reload.jobs.done: "<green>✔ jobs/*.yml rechargés. Drops, multiplicateurs et matériaux de remplacement actifs immédiatement."
+cmd.reload.recipes.start: "<gray>Rechargement de recipes.yml..."
+cmd.reload.recipes.done: "<green>✔ recipes.yml rechargé. Recettes désenregistrées puis réenregistrées auprès du serveur."
+cmd.reload.zone.start: "<gray>Rechargement de zone.yml..."
+cmd.reload.zone.done: "<green>✔ zone.yml rechargé. Palier courant ré-appliqué (limite, spawn, portail)."
+cmd.reload.lang.start: "<gray>Rechargement de lang/fr.yml..."
+cmd.reload.lang.done: "<green>✔ lang/fr.yml rechargé."
 # ─── Rôle — notification joueur ───────────────────────────────────────────────
 player.role.applied: "<yellow>Le role <role> a ete appliqué !"
 
@@ -315,6 +321,9 @@ cmd.globalquest.status_name: "<gray>  Nom : <yellow>{0}"
 cmd.globalquest.status_progress: "<gray>  Progression : <aqua>{0}/{1}"
 cmd.globalquest.status_time: "<gray>  Temps restant : <aqua>{0}"
 cmd.globalquest.status_participants: "<gray>  Participants : <aqua>{0}"
+cmd.globalquest.progress_changed: "<green>Progression : <white>{0}<green> → <white>{1}<gray>/{2}"
+cmd.globalquest.progress_set: "<green>Progression forcée à <white>{0}<gray>/{1}"
+cmd.globalquest.progress_finished: "<gold>Objectif atteint — quête « {0} » terminée et récompenses distribuées."
 
 # ─── Commandes — blessing (admin) ─────────────────────────────────────────────
 cmd.blessing.invalid_type: "<red>Type invalide : {0}"
@@ -337,6 +346,8 @@ cmd.growth.track_header: "<aqua>══ Joueurs avec <gold>{0}<aqua> (en ligne un
 cmd.growth.track_entry: "<gray>  » <yellow>{0}<white> — palier {1}/{2}<gray> — {3} uses"
 cmd.growth.track_none: "<gray>  Aucun joueur en ligne ne possède cet item."
 cmd.growth.track_found: "<gray>  {0} joueur(s) trouvé(s)."
+cmd.growth.removed_admin: "<green>✓ <gold>{0}<green> retiré (<white>{1}<green> exemplaire(s)) de <yellow>{2}"
+cmd.growth.removed_player: "<red>On vous a retiré <gold>{0}<red> (<white>{1}<red> exemplaire(s))."
 
 # ─── VillagerCommand (admin debug) ────────────────────────────────────────────
 cmd.villager.reset_done: "<green><villager> reset au niveau 0 !"
