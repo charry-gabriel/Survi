@@ -54,6 +54,13 @@ public class CustomRecipeFactory {
         loadRecipes();
     }
 
+    public List<NamespacedKey> getRecipeKeysForMaterials(List<NamespacedKey> materialKeys) {
+        return newRecipes.entrySet().stream()
+                .filter(e -> materialKeys.contains(e.getValue().getResult().getType().getKey()))
+                .map(Map.Entry::getKey)
+                .toList();
+    }
+
     public NamespacedKey getOldNamespaceKeyOrDefault(NamespacedKey newNsKey) {
         for (Map.Entry<NamespacedKey, CustomRecipe> custom : newRecipes.entrySet()) {
             if (custom.getKey().toString().equals(newNsKey.toString()))

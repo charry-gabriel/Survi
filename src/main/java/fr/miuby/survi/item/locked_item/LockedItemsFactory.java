@@ -168,32 +168,43 @@ public class LockedItemsFactory {
 
     public void applyLockState(AlphaPlayer player) {
         if (player.getPlayer() == null || !player.getPlayer().isOnline()) return;
+        var crf = GameManager.getInstance().getCustomRecipeFactory();
         for (LockedArmorItem lockedItem : armorItems) {
-            if (lockedItem.isLocked())
+            if (lockedItem.isLocked()) {
                 player.getPlayer().undiscoverRecipes(lockedItem.getItems());
+                player.getPlayer().undiscoverRecipes(crf.getRecipeKeysForMaterials(lockedItem.getItems()));
+            }
         }
         for (LockedToolItem lockedItem : toolItems) {
-            if (lockedItem.isLocked())
+            if (lockedItem.isLocked()) {
                 player.getPlayer().undiscoverRecipes(lockedItem.getItems());
+                player.getPlayer().undiscoverRecipes(crf.getRecipeKeysForMaterials(lockedItem.getItems()));
+            }
         }
     }
 
     public void lockArmorItem(AlphaPlayer player, ELockedArmorType itemType) {
+        var crf = GameManager.getInstance().getCustomRecipeFactory();
         for (LockedArmorItem lockedItem : armorItems) {
             if (lockedItem.getType() == itemType) {
                 lockedItem.lock();
-                if (player.getPlayer() != null && player.getPlayer().isOnline())
+                if (player.getPlayer() != null && player.getPlayer().isOnline()) {
                     player.getPlayer().undiscoverRecipes(lockedItem.getItems());
+                    player.getPlayer().undiscoverRecipes(crf.getRecipeKeysForMaterials(lockedItem.getItems()));
+                }
             }
         }
     }
 
     public void lockToolItem(AlphaPlayer player, ELockedToolType itemType) {
+        var crf = GameManager.getInstance().getCustomRecipeFactory();
         for (LockedToolItem lockedItem : toolItems) {
             if (lockedItem.getType() == itemType) {
                 lockedItem.lock();
-                if (player.getPlayer() != null && player.getPlayer().isOnline())
+                if (player.getPlayer() != null && player.getPlayer().isOnline()) {
                     player.getPlayer().undiscoverRecipes(lockedItem.getItems());
+                    player.getPlayer().undiscoverRecipes(crf.getRecipeKeysForMaterials(lockedItem.getItems()));
+                }
             }
         }
     }
