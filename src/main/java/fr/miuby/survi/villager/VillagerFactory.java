@@ -79,6 +79,7 @@ public class VillagerFactory {
                     config.nameId,
                     Component.text(config.displayName),
                     UUID.fromString(config.skin),
+                    config.alexSkin,
                     recipes,
                     messages,
                     Component.text(config.openMessage)
@@ -128,7 +129,7 @@ public class VillagerFactory {
                 .map(l -> l.lock != null ? Duration.ofDays(l.lock) : null)
                 .toArray(Duration[]::new);
 
-        MLVillager.spawn(() -> new VillagerLevel(config.name, UUID.fromString(config.skin), blessings, locks, messages, tributes, names, recap));
+        MLVillager.spawn(() -> new VillagerLevel(config.name, UUID.fromString(config.skin), config.alexSkin, blessings, locks, messages, tributes, names, recap));
     }
 
     // =========================================================================

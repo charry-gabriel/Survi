@@ -29,6 +29,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.profile.PlayerTextures;
 import org.jetbrains.annotations.Nullable;
 
 import java.time.Duration;
@@ -47,17 +48,19 @@ public class VillagerLevel extends AVillager {
     /** locks[N] est appliqué quand le niveau N est complété. Null = pas de lock. */
     private Duration[]      locks;
     @Getter private @Nullable UUID skinUuid;
+    @Getter @Setter private boolean alexSkin;
 
     @Getter @Setter
     private int level = 0;
     private final List<ItemStack> givenItems = new ArrayList<>();
     private Instant unlockedInstant = Instant.EPOCH;
 
-    public VillagerLevel(String nameId, @Nullable UUID skinUuid,
+    public VillagerLevel(String nameId, @Nullable UUID skinUuid, boolean alexSkin,
                          Blessing[] blessings, Duration[] locks, TextComponent[] messages,
                          Tribute[] tributes, TextComponent[] names, TextComponent[] recap) {
         super(nameId, messages);
         this.skinUuid = skinUuid;
+        this.alexSkin = alexSkin;
         this.blessings = blessings;
         this.locks = locks;
         this.tributes = tributes;
@@ -83,17 +86,26 @@ public class VillagerLevel extends AVillager {
         if (getVillager() instanceof Mannequin mannequin) {
             mannequin.setImmovable(true);
             mannequin.setDescription(null); // cache le label "NPC" affiché par défaut
-            if (skinUuid != null) {
-                try {
-                    ResolvableProfile profile = ResolvableProfile.resolvableProfile().uuid(skinUuid).build();
-                    mannequin.setProfile(profile);
-                } catch (IllegalArgumentException e) {
-                    MLLogManager.getInstance().log(Level.WARNING, ELogTag.VILLAGER,
-                            nameId + " : skin invalide — UUID attendu, valeur : \"" + skinUuid + "\"");
-                }
-            }
+            applySkin(mannequin);
         }
         super.onInitialized();
+    }
+
+    private void applySkin(Mannequin mannequin) {
+        if (skinUuid == null) return;
+        try {
+            ResolvableProfile profile = ResolvableProfile.resolvableProfile()
+                    .uuid(skinUuid)
+                    .skinPatch(patch -> patch
+                            .model(alexSkin ? PlayerTextures.SkinModel.SLIM : PlayerTextures.SkinModel.CLASSIC)
+                            .cape(null)
+                            .elytra(null))
+                    .build();
+            mannequin.setProfile(profile);
+        } catch (IllegalArgumentException e) {
+            MLLogManager.getInstance().log(Level.WARNING, ELogTag.VILLAGER,
+                    nameId + " : skin invalide — UUID attendu, valeur : \"" + skinUuid + "\"");
+        }
     }
 
     // =========================================================================
@@ -120,18 +132,11 @@ public class VillagerLevel extends AVillager {
                 .toArray(Duration[]::new);
 
         this.skinUuid = UUID.fromString(config.skin);
+        this.alexSkin = config.alexSkin;
 
         if (getVillager() != null) {
             getVillager().customName(getDisplayName());
-            if (getVillager() instanceof Mannequin mannequin && skinUuid != null) {
-                try {
-                    ResolvableProfile profile = ResolvableProfile.resolvableProfile().uuid(skinUuid).build();
-                    mannequin.setProfile(profile);
-                } catch (IllegalArgumentException e) {
-                    MLLogManager.getInstance().log(Level.WARNING, ELogTag.VILLAGER,
-                            nameId + " : skin invalide — UUID attendu, valeur : \"" + skinUuid + "\"");
-                }
-            }
+            if (getVillager() instanceof Mannequin mannequin) applySkin(mannequin);
             refreshInventoryContent();
         }
 

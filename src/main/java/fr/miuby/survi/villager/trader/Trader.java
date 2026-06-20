@@ -13,6 +13,7 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Mannequin;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.MerchantRecipe;
+import org.bukkit.profile.PlayerTextures;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -24,13 +25,15 @@ public class Trader extends AVillager {
     private final List<ReputationRecipe> reputationRecipes = new ArrayList<>();
 
     @Getter private @Nullable UUID skinUuid;
+    @Getter @Setter private boolean alexSkin;
     @Getter protected TextComponent openMessage;
     @Getter @Setter private fr.miuby.survi.job.EJob job = null;
 
-    public Trader(String nameId, TextComponent displayName, @Nullable UUID skinUuid,
+    public Trader(String nameId, TextComponent displayName, @Nullable UUID skinUuid, boolean alexSkin,
                   MerchantRecipe[] initialRecipes, TextComponent[] messages, TextComponent openMessage) {
         super(nameId, messages);
         this.skinUuid = skinUuid;
+        this.alexSkin = alexSkin;
         this.displayName = displayName.color(NamedTextColor.AQUA);
         this.openMessage = openMessage.color(NamedTextColor.WHITE);
 
@@ -67,6 +70,10 @@ public class Trader extends AVillager {
         try {
             ResolvableProfile profile = ResolvableProfile.resolvableProfile()
                     .uuid(skinUuid)
+                    .skinPatch(patch -> patch
+                            .model(alexSkin ? PlayerTextures.SkinModel.SLIM : PlayerTextures.SkinModel.CLASSIC)
+                            .cape(null)
+                            .elytra(null))
                     .build();
             mannequin.setProfile(profile);
         } catch (IllegalArgumentException e) {
@@ -83,6 +90,7 @@ public class Trader extends AVillager {
         this.displayName = Component.text(config.displayName).color(NamedTextColor.AQUA);
         this.openMessage = Component.text(config.openMessage).color(NamedTextColor.WHITE);
         this.skinUuid = UUID.fromString(config.skin);
+        this.alexSkin = config.alexSkin;
         this.job         = (config.job != null && !config.job.isEmpty())
                 ? fr.miuby.survi.job.EJob.valueOf(config.job.toUpperCase()) : null;
 

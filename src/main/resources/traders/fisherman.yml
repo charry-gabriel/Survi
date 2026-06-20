@@ -1,33 +1,18 @@
 # yaml-language-server: $schema=../schema/traders-schema.json
 nameId: "fisherman"
-displayName: "Maui le pêcheur"
-skin: "0d4c7b6b-3072-40f2-a88e-b456e4f98e46"
+displayName: "Moana la pêcheuse"
+skin: "3fe3043a-77c6-4a68-bae1-8efc6ae966b7"
+alexSkin: true
 job: FISHERMAN
-openMessage: "Veux-tu une belle canne à pêche ?"
+openMessage: "Reviens me voir plus tard, quand tu seras plus haut niveau. J'aurai de meilleurs objets à te vendre."
 mainHandItem: FISHING_ROD
 
 recipes:
   - result:
-      customItem: FISHING_D_ROD
-    ingredient:
-      material: EMERALD_BLOCK
-      amount: 9
-    message: "Voici une canne à pêche !"
-
-  - result:
-      material: NAUTILUS_SHELL
+      material: DIRT
       amount: 1
     ingredient:
       material: DIAMOND
       amount: 2
-    message: "Un souvenir des profondeurs pour un marin d'exception."
-    requiredReputation: 20
-
-  - result:
-      material: HEART_OF_THE_SEA
-      amount: 1
-    ingredient:
-      material: DIAMOND
-      amount: 10
-    message: "Le trésor ultime de l'océan, entre tes mains !"
-    requiredReputation: 50
+    message: "Un super achat."
+    requiredReputation: 0

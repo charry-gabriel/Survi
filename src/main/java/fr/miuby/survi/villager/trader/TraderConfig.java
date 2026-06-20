@@ -6,6 +6,7 @@ public class TraderConfig {
     public String nameId;
     public String displayName;
     public String skin;
+    public boolean alexSkin;
     public String job;
     public String openMessage;
     public String mainHandItem;

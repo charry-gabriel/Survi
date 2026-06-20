@@ -1,6 +1,7 @@
 # yaml-language-server: $schema=../schema/villagers-schema.json
 name: "Nain"
 skin: "36a1175b-0115-47d3-aaa7-d1335428c3ea"
+alexSkin: false
 
 levels:
   - name: "Nain Roux"
@@ -173,4 +174,3 @@ levels:
     tribute: []
     message: "Félicitation, très beau travail, je pense que vous êtes assez résistant, je peux maintenant prendre ma retraite. Merci à vous."
     recap: "Toutes les quêtes du Nain Roux sont terminées. Vous avez 150% de résistance."
-

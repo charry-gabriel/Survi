@@ -1,6 +1,7 @@
 # yaml-language-server: $schema=../schema/villagers-schema.json
 name: "Maddox"
 skin: "e858efb6-1bf2-40df-acc1-6cb6890d8173"
+alexSkin: false
 
 levels:
   - name: "Maddox"
@@ -131,4 +132,3 @@ levels:
     tribute: []
     message: "C'est fini, tu tapes beaucoup trop fort maintenant !"
     recap: "Toutes les quêtes de Maddox sont terminées. Vous avez 150% de dégats."
-

@@ -1,6 +1,7 @@
 # yaml-language-server: $schema=../schema/villagers-schema.json
 name: "Survivant"
 skin: "11284e26-024e-4b1b-a6d7-fa8ae08faa10"
+alexSkin: false
 
 levels:
   - name: "Survivant"
@@ -337,4 +338,3 @@ levels:
     message: "C'est fini y a plus rien !"
     recap: ""
     tribute: []
-

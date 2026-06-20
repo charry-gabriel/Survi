@@ -2,18 +2,17 @@
 nameId: "explorer"
 displayName: "Marco Polo l'explorateur"
 skin: "74459484-5213-45f5-b592-76dcb4e76a19"
+alexSkin: false
 job: EXPLORER
-openMessage: >
-  Bonjour, bienvenue au bar du Merveilleux Royal Bling-Bling Sexy-Baka Palace-Hôtel.
-  A la carte, nous proposons différents cocktails élaborés avec amour, tendresse et voluptuosité:
-  le Sex On the Beach, le Porn Star Martini, et notre fameux Shooter Orgasm.
-  D'autre part, je peux aussi proposer un Spicy Sweet Dreams Ticket si vous le désirez !
+openMessage: "Reviens me voir plus tard, quand tu seras plus haut niveau. J'aurai de meilleurs objets à te vendre."
 mainHandItem: COMPASS
 
 recipes:
   - result:
-      customItem: SEX_ON_THE_BEACH
+      material: DIRT
+      amount: 1
     ingredient:
-      material: GOLD_INGOT
-      amount: 10
-    message: "Très bon choix! Rendez-vous à minuit au casino au premier étage pour y admirer ces délicieuses peintures. Les dés sont lancés, puisse le sort et votre rencontre vous être favorables: votre regard sur votre voisin de la chambre 32, ou votre impression sur votre voisine du 2ième risque d'être chamboulés …"
+      material: DIAMOND
+      amount: 2
+    message: "Un super achat."
+    requiredReputation: 0

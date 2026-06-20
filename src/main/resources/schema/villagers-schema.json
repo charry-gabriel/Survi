@@ -58,6 +58,11 @@
       "type": "string",
       "description": "UUID Minecraft du joueur dont le skin sera utilisé (format : '069a79f4-44e9-4726-a5be-fca90e38aaf5'). Optionnel.",
       "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+    },
+    "alexSkin": {
+      "type": "boolean",
+      "description": "Modèle de skin du mannequin : true = Alex (bras fins), false = Steve (bras classiques). Défaut : false.",
+      "default": false
     }
   },
   "definitions": {

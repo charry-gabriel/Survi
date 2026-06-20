@@ -1,6 +1,7 @@
 # yaml-language-server: $schema=../schema/villagers-schema.json
 name: "Francois"
 skin: "43cda05c-21c5-4f97-89d8-43e6c6c394e2"
+alexSkin: false
 
 levels:
   - name: "François"
@@ -123,4 +124,3 @@ levels:
     tribute: []
     message: "Toutes vos morts sont annulées"
     recap: "Toutes les morts sont annulées !"
-

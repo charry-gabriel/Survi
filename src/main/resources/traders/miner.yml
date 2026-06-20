@@ -1,33 +1,18 @@
 # yaml-language-server: $schema=../schema/traders-schema.json
 nameId: "miner"
 displayName: "Steve le mineur"
-skin: "e8e16852-4bbc-4d78-afab-68dfd7ece8fc"
+skin: "b3a27a2e-ef19-4a17-9d2c-28d4d1f881b2"
+alexSkin: false
 job: MINER
-openMessage: "Veux-tu une belle canne à pêche ?"
-mainHandItem: DIAMOND_PICKAXE
+openMessage: "Reviens me voir plus tard, quand tu seras plus haut niveau. J'aurai de meilleurs objets à te vendre."
+mainHandItem: NETHERITE_PICKAXE
 
 recipes:
   - result:
-      customItem: FISHING_D_ROD
-    ingredient:
-      material: EMERALD_BLOCK
-      amount: 9
-    message: "Voici une canne à pêche !"
-
-  - result:
-      material: NAUTILUS_SHELL
+      material: DIRT
       amount: 1
     ingredient:
       material: DIAMOND
       amount: 2
-    message: "Un souvenir des profondeurs pour un marin d'exception."
-    requiredReputation: 20
-
-  - result:
-      material: HEART_OF_THE_SEA
-      amount: 1
-    ingredient:
-      material: DIAMOND
-      amount: 10
-    message: "Le trésor ultime de l'océan, entre tes mains !"
-    requiredReputation: 50
+    message: "Un super achat."
+    requiredReputation: 0
