@@ -16,11 +16,11 @@ stages:
     half-width: 64
     half-depth: 64
     spawn:
-      x: 43.5
-      y: 64
-      z: 984.5
-      yaw: -135.0
-      pitch: -20.0
+      x: 49.5
+      y: 63
+      z: 976.5
+      yaw: -133.0
+      pitch: -10.0
     portal:
       min-x: 55
       min-y: 63

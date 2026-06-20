@@ -32,6 +32,53 @@ import static org.bukkit.attribute.AttributeModifier.Operation.ADD_SCALAR;
 
 @Getter
 public enum ECustomItem {
+    MINER_HELMET(Material.LEATHER_HELMET, item -> new CustomItemBuilder(item, "Casque du Mineur")
+            .name("Casque du Mineur 1", NamedTextColor.GRAY)
+            .leatherArmor(TrimMaterial.GOLD, TrimPattern.TIDE, Color.fromRGB(11184810))
+            .addAttribute(Attribute.MINING_EFFICIENCY, 0, ADD_NUMBER, EquipmentSlotGroup.HEAD)
+            .addAttribute(Attribute.ARMOR, -10, ADD_NUMBER, EquipmentSlotGroup.HEAD)
+            .addAttribute(Attribute.MAX_HEALTH, -10, ADD_NUMBER, EquipmentSlotGroup.HEAD)
+            .addAttribute(Attribute.BLOCK_INTERACTION_RANGE, 2, ADD_NUMBER, EquipmentSlotGroup.HEAD)
+            .addAttribute(Attribute.MOVEMENT_SPEED, -0.03, ADD_NUMBER, EquipmentSlotGroup.HEAD)
+            .addAttribute(Attribute.SCALE, -0.34, ADD_NUMBER, EquipmentSlotGroup.HEAD)
+            .unbreakable()
+            .addItemFlag(ItemFlag.HIDE_DYE)
+            .addItemFlag(ItemFlag.HIDE_ARMOR_TRIM)),
+
+    LUMBERJACK_CHESPLATE(Material.LEATHER_CHESTPLATE, item -> new CustomItemBuilder(item, "Plastron du Bûcheron")
+            .name("Plastron du Bûcheron 1", NamedTextColor.DARK_GREEN)
+            .leatherArmor(TrimMaterial.EMERALD, TrimPattern.TIDE, Color.fromRGB(43520))
+            .addAttribute(Attribute.MINING_EFFICIENCY, 0, ADD_NUMBER, EquipmentSlotGroup.HEAD)
+            .addAttribute(Attribute.ARMOR, -20, ADD_NUMBER, EquipmentSlotGroup.HEAD)
+            .addAttribute(Attribute.MAX_HEALTH, 10, ADD_NUMBER, EquipmentSlotGroup.HEAD)
+            .addAttribute(Attribute.BLOCK_INTERACTION_RANGE, 2, ADD_NUMBER, EquipmentSlotGroup.HEAD)
+            .addAttribute(Attribute.MOVEMENT_SPEED, -0.03, ADD_NUMBER, EquipmentSlotGroup.HEAD)
+            .addAttribute(Attribute.SCALE, 0.3, ADD_NUMBER, EquipmentSlotGroup.HEAD)
+            .unbreakable()
+            .addItemFlag(ItemFlag.HIDE_DYE)
+            .addItemFlag(ItemFlag.HIDE_ARMOR_TRIM)),
+
+    FARMER_LEGGINGS(Material.LEATHER_LEGGINGS, item -> new CustomItemBuilder(item, "Jambière du Fermier")
+            .name("Jambière du Fermier 1", NamedTextColor.YELLOW)
+            .leatherArmor(TrimMaterial.GOLD, TrimPattern.TIDE, Color.fromRGB(16777045))
+            .addAttribute(Attribute.ARMOR, -20, ADD_NUMBER, EquipmentSlotGroup.HEAD)
+            .addAttribute(Attribute.MAX_HEALTH, 10, ADD_NUMBER, EquipmentSlotGroup.HEAD)
+            .addAttribute(Attribute.MOVEMENT_SPEED, 0.03, ADD_NUMBER, EquipmentSlotGroup.HEAD)
+            .unbreakable()
+            .addItemFlag(ItemFlag.HIDE_DYE)
+            .addItemFlag(ItemFlag.HIDE_ARMOR_TRIM)),
+
+    ENCHANTER_HELMET(Material.LEATHER_HELMET, item -> new CustomItemBuilder(item, "Chapeau de l'enchanteur")
+            .name("Chapeau de l'enchanteur 1", NamedTextColor.DARK_PURPLE)
+            .leatherArmor(TrimMaterial.GOLD, TrimPattern.TIDE, Color.fromRGB(11141290))
+            .addAttribute(Attribute.ARMOR, -20, ADD_NUMBER, EquipmentSlotGroup.HEAD)
+            .addAttribute(Attribute.MAX_HEALTH, 10, ADD_NUMBER, EquipmentSlotGroup.HEAD)
+            .addAttribute(Attribute.MOVEMENT_SPEED, 0.03, ADD_NUMBER, EquipmentSlotGroup.HEAD)
+            .unbreakable()
+            .addItemFlag(ItemFlag.HIDE_DYE)
+            .addItemFlag(ItemFlag.HIDE_ARMOR_TRIM)),
+
+
     FISHING_D_ROD(Material.FISHING_ROD, item -> {
         ItemMeta meta = item.getItemMeta();
         meta.addEnchant(Enchantment.UNBREAKING, 5, true);
@@ -105,21 +152,6 @@ public enum ECustomItem {
         meta.customName(Component.text("Shooter Orgasm", NamedTextColor.LIGHT_PURPLE));
         item.setItemMeta(meta);
     }),
-
-    HEALING_ARROW(Material.TIPPED_ARROW, item -> {
-        PotionMeta meta = (PotionMeta) item.getItemMeta();
-        meta.addCustomEffect(new PotionEffect(PotionEffectType.INSTANT_HEALTH, 1, 1), false);
-        meta.customName(Component.text("JE TE HEAL", NamedTextColor.DARK_RED));
-        item.setItemMeta(meta);
-    }),
-
-    SPICY_SWEET_DREAMS_TICKET(Material.NAME_TAG, item -> {
-        ItemMeta meta = item.getItemMeta();
-        meta.customName(Component.text("Spicy Sweet Dreams Ticket", NamedTextColor.LIGHT_PURPLE));
-        item.setItemMeta(meta);
-    }),
-
-    CLE00(Material.NAME_TAG, createKey("00"), "cle00"),
 
     GROWTH_PICKAXE(Material.WOODEN_PICKAXE, item -> {
         ItemMeta meta = item.getItemMeta();

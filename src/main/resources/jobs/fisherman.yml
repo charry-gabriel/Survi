@@ -85,8 +85,8 @@ pressure-safe-depth:
   - 20     # niveau  5
   - 50     # niveau  6
   - 80     # niveau  7
-  - 110    # niveau  8
-  - 150    # niveau  9
+  - -1    # niveau  8
+  - -1    # niveau  9
   - -1     # niveau 10  — aucun dégât de pression
 
 pressure-damage: 1.0
@@ -145,4 +145,4 @@ submerged-mining-speed-modifier:
 acid-rain-damage: 1
 
 # Niveau Pêcheur minimum pour être immunisé à la pluie acide.
-acid-rain-fisherman-level-threshold: 5
+acid-rain-fisherman-level-threshold: 6
