@@ -21,7 +21,7 @@ repositories {
 }
 
 dependencies {
-    paperweight.paperDevBundle("26.2-rc-2.build.9-alpha")
+    paperweight.paperDevBundle("26.2.build.24-alpha")
 
     compileOnly("org.projectlombok:lombok:1.18.38")
     annotationProcessor("org.projectlombok:lombok:1.18.38")
@@ -34,7 +34,7 @@ dependencies {
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 
     // Les tests n'ont pas accès au dev bundle → on re-déclare paper-api pour eux
-    testImplementation("io.papermc.paper:paper-api:26.2-rc-2.build.9-alpha")
+    testImplementation("io.papermc.paper:paper-api:26.2.build.24-alpha")
     testImplementation("org.yaml:snakeyaml:2.3")
     compileOnly("org.apache.logging.log4j:log4j-core:2.19.0")
 }

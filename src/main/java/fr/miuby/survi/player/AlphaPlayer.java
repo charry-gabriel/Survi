@@ -133,9 +133,7 @@ public class AlphaPlayer extends MLPlayer implements Serializable {
 
     @Override
     public void onJoinServer() {
-        checkOrTeleportToValidWorld();
-
-        this.world = WorldRegistry.get(getPlayer().getWorld().getUID());
+        this.world = checkOrTeleportToValidWorld();
 
         GameManager.getInstance().getAlphaPlayerFactory().getEffectRestoreService().restoreOnJoin(this);
 
@@ -164,16 +162,22 @@ public class AlphaPlayer extends MLPlayer implements Serializable {
         initJobLevels();
     }
 
-    private void checkOrTeleportToValidWorld() {
+    private MLWorld checkOrTeleportToValidWorld() {
         boolean validWorld = WorldInitializer.getWorlds().values().stream()
                 .anyMatch(name -> getPlayer().getWorld().getName().equals(name));
 
-        if (!validWorld) {
-            Location safeSpawn = GameManager.getInstance().getVillageZoneManager().getCurrentSpawnLocation();
-            MiubyLib.runLater(() -> {
-                if (getPlayer() != null && getPlayer().isOnline()) getPlayer().teleport(safeSpawn);
-            }, 1L);
-        }
+        if (validWorld)
+            return WorldRegistry.get(getPlayer().getWorld().getUID());
+
+        Location safeSpawn = GameManager.getInstance().getVillageZoneManager().getCurrentSpawnLocation();
+        if (safeSpawn == null)
+            throw new IllegalStateException("Spawn du Village introuvable — checkOrTeleportToValidWorld");
+
+        MiubyLib.runLater(() -> {
+            if (getPlayer() != null && getPlayer().isOnline()) getPlayer().teleport(safeSpawn);
+        }, 1L);
+
+        return WorldRegistry.get(safeSpawn.getWorld().getUID());
     }
 
     public void gainOneSuccess(boolean challenge) {
