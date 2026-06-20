@@ -63,6 +63,13 @@ public class PlayerCommand {
                                         )
                                 )
                         )
+
+                        .then(Commands.literal("trades")
+                                .executes(ctx -> topTrades(ctx, 10))
+                                .then(Commands.argument(LIMIT_ARG, IntegerArgumentType.integer(1, 50))
+                                        .executes(ctx -> topTrades(ctx, IntegerArgumentType.getInteger(ctx, LIMIT_ARG)))
+                                )
+                        )
                 )
 
                 .then(Commands.literal("death")
@@ -163,6 +170,23 @@ public class PlayerCommand {
                     .append(ls.text(lang, key, level)));
         }
 
+        // Achats marchands
+        int totalTrades = GameManager.getInstance().getDatabase().tradeHistory().countTotal(ap.getUuid());
+        if (totalTrades > 0) {
+            sender.sendMessage(ls.text(lang, "cmd.player.info.trades", totalTrades));
+            Map<String, Integer> byTrader = GameManager.getInstance().getDatabase().tradeHistory().countByTrader(ap.getUuid());
+            if (!byTrader.isEmpty()) {
+                Component tradeLine = ls.text(lang, "cmd.player.info.trades_by_trader_label");
+                boolean first = true;
+                for (Map.Entry<String, Integer> entry : byTrader.entrySet()) {
+                    if (!first) tradeLine = tradeLine.append(Component.text("  ", NamedTextColor.DARK_GRAY));
+                    tradeLine = tradeLine.append(ls.text(lang, "cmd.player.info.trades_by_trader_entry", entry.getKey(), entry.getValue()));
+                    first = false;
+                }
+                sender.sendMessage(tradeLine);
+            }
+        }
+
         sender.sendMessage(sep);
     }
 
@@ -207,6 +231,20 @@ public class PlayerCommand {
     // =========================================================================
     // /player top
     // =========================================================================
+
+    private static int topTrades(CommandContext<CommandSourceStack> ctx, int limit) {
+        CommandSender sender = ctx.getSource().getSender();
+        LangService   ls     = GameManager.getInstance().getLangService();
+        ELang         lang   = sender instanceof Player p ? ls.resolveLanguage(p) : ls.getServerDefault();
+        List<fr.miuby.survi.system.database.repository.TradeHistoryRepository.PlayerRankEntry> top =
+                GameManager.getInstance().getDatabase().tradeHistory().getTopByPurchases(limit);
+        sendLeaderboard(sender, ls, lang,
+                ls.text(lang, "cmd.player.top.trades_title"),
+                top.stream().map(e -> Map.entry(e.pseudo(), e.count())).toList(),
+                ls.getString(lang, "cmd.player.top.unit_trades"),
+                null);
+        return Command.SINGLE_SUCCESS;
+    }
 
     private static int topQuests(CommandContext<CommandSourceStack> ctx, int limit) {
         CommandSender sender = ctx.getSource().getSender();

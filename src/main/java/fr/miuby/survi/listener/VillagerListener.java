@@ -178,6 +178,12 @@ public class VillagerListener implements Listener {
         var result = event.getCurrentItem();
         if (result == null || result.getType() == Material.AIR) return;
 
+        try {
+            AlphaPlayer alphaPlayer = AlphaPlayer.get(player.getUniqueId());
+            GameManager.getInstance().getDatabase().tradeHistory().insert(
+                    alphaPlayer.getUuid(), alphaPlayer.getPseudo(), trader.getNameId(), result.getType().name(), result.getAmount());
+        } catch (fr.miuby.survi.system.exception.AlphaPlayerNotFoundException ignored) {}
+
         player.sendMessage(Component.text("<", NamedTextColor.AQUA)
                 .append(trader.getDisplayName())
                 .append(Component.text("> ", NamedTextColor.AQUA))
