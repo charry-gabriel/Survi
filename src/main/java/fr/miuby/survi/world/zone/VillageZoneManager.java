@@ -1,5 +1,6 @@
 package fr.miuby.survi.world.zone;
 
+import fr.miuby.lib.MiubyLib;
 import fr.miuby.survi.GameManager;
 import fr.miuby.survi.system.log.ELogTag;
 import fr.miuby.survi.world.EWorld;
@@ -145,6 +146,35 @@ public class VillageZoneManager {
         stop();
         start();
         MLLogManager.getInstance().log(Level.INFO, ELogTag.WORLD, "[VillageZoneManager] Timer réinitialisé — palier 0 restauré");
+    }
+
+    /**
+     * Force le palier actif à {@code index}, en falsifiant {@link #startTimestamp} pour que
+     * {@link #computeStageIndex()} retombe sur ce même index — sinon le vérificateur périodique
+     * (toutes les {@link #CHECK_INTERVAL_TICKS} ticks) recalculerait le vrai palier au tick suivant
+     * et écraserait l'effet de cette commande. Démarre le timer si besoin. Persiste en DB.
+     *
+     * <p>Effet de bord assumé : {@link #getElapsedMinutes()} (et donc le temps affiché par
+     * {@code /survi zone status}) reflète désormais ce {@code startTimestamp} falsifié, plus le
+     * vrai temps écoulé depuis cet appel.
+     *
+     * @return {@code false} si {@code index} est hors bornes ou si aucun palier n'est configuré.
+     */
+    public boolean goToStage(int index) {
+        List<VillageZoneConfig.VillageZoneStage> stages = config.stages();
+        if (index < 0 || index >= stages.size()) return false;
+
+        float afterHours = stages.get(index).afterHours();
+        startTimestamp = System.currentTimeMillis() - (long) (afterHours * 3_600_000L) - 1_000L;
+        started        = true;
+
+        saveStartTimestampToDB();
+        if (stageCheckTask == null) startStageCheckTimer();
+        applyCurrentStage(true);
+
+        MLLogManager.getInstance().log(Level.INFO, ELogTag.WORLD,
+                "[VillageZoneManager] Palier forcé manuellement à " + index + " — startTimestamp recalculé=" + startTimestamp);
+        return true;
     }
 
     /**
@@ -306,6 +336,7 @@ public class VillageZoneManager {
 
         int newIndex = computeStageIndex();
         if (!force && newIndex == currentStageIndex) return;
+        int oldIndex = currentStageIndex;
         currentStageIndex = newIndex;
 
         List<VillageZoneConfig.VillageZoneStage> stages = config.stages();
@@ -352,6 +383,8 @@ public class VillageZoneManager {
                         + " | portail=(" + portalCfg.minX() + "," + portalCfg.minY() + "," + portalCfg.minZ()
                         + ")→(" + portalCfg.maxX() + "," + portalCfg.maxY() + "," + portalCfg.maxZ() + ")"
                         + " | locator mis à jour");
+
+        if (!force) MiubyLib.callEvent(new VillageZoneStageUpEvent(oldIndex, currentStageIndex, stage));
     }
 
 

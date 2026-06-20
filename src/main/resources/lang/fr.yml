@@ -13,6 +13,9 @@ boundary.village.close: "<red>⛔ Limite du village : {0} m"
 boundary.wild.approaching: "<gold>⚠ Limite d'exploration : {0} m"
 boundary.wild.close: "<red>⛔ Limite d'exploration : {0} m"
 
+# ─── Zone village ─────────────────────────────────────────────────────────────
+world.zone.expanded.broadcast: "<gold>✦ La zone du village s'est agrandie !"
+
 # ─── Tombe ───────────────────────────────────────────────────────────────────
 grave.indestructible: "<red>Cette tombe est indestructible !"
 grave.created: "<green>☠ Votre tombe a été créée en <x>, <y>, <z> [<world>]"
@@ -241,6 +244,8 @@ cmd.system.zone.started: "<green>✓ Partie démarrée ! Zone village active (pa
 cmd.system.zone.stopped: "<gray>Zone arrêtée — timer et DB effacés."
 cmd.system.zone.already_started: "<yellow>⚠ Le timer est déjà en cours. Utilisez /survi zone reset pour le relancer."
 cmd.system.zone.reset: "<green>✓ Timer réinitialisé — palier 0 restauré (zone {0}×{1} blocs)."
+cmd.system.zone.goto_done: "<green>✓ Palier {0} forcé — zone {1}×{2} blocs (temps écoulé recalculé en conséquence)."
+cmd.system.zone.goto_invalid: "<red>✖ Palier {0} invalide — paliers disponibles : 0 à {1}."
 cmd.system.zone.status_header: "<gold>╔═══════════════════════════════╗"
 cmd.system.zone.status_title: "<gold>║    VILLAGE ZONE STATUS        ║"
 cmd.system.zone.status_sep: "<gold>╠═══════════════════════════════╣"

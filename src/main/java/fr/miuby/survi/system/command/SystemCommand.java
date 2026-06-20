@@ -1,6 +1,7 @@
 package fr.miuby.survi.system.command;
 
 import com.mojang.brigadier.Command;
+import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import fr.miuby.lib.command.MLLogCommand;
 import fr.miuby.lib.utils.Rect;
@@ -131,6 +132,27 @@ public class SystemCommand {
                             ctx.getSource().getSender().sendMessage(ls(ctx).text(lang(ctx), "cmd.system.zone.reset", vzm.getCurrentHalfWidth(), vzm.getCurrentHalfDepth()));
                             return Command.SINGLE_SUCCESS;
                         }))
+                        .then(Commands.literal("goto")
+                                .then(Commands.argument("palier", IntegerArgumentType.integer(0))
+                                        .executes(ctx -> {
+                                            CommandSender sender = ctx.getSource().getSender();
+                                            LangService ls = ls(ctx);
+                                            ELang lang = lang(ctx);
+                                            int index = IntegerArgumentType.getInteger(ctx, "palier");
+
+                                            VillageZoneManager vzm = GameManager.getInstance().getVillageZoneManager();
+                                            boolean ok = vzm.goToStage(index);
+
+                                            if (ok) {
+                                                sender.sendMessage(ls.text(lang, "cmd.system.zone.goto_done", index, vzm.getCurrentHalfWidth(), vzm.getCurrentHalfDepth()));
+                                            } else {
+                                                int maxIndex = Math.max(0, vzm.getConfig().stages().size() - 1);
+                                                sender.sendMessage(ls.text(lang, "cmd.system.zone.goto_invalid", index, maxIndex));
+                                            }
+                                            return Command.SINGLE_SUCCESS;
+                                        })
+                                )
+                        )
                         .then(Commands.literal("stop").executes(ctx -> {
                             CommandSender sender = ctx.getSource().getSender();
                             LangService ls = ls(ctx);
