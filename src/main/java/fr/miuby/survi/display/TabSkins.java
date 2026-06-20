@@ -7,7 +7,7 @@ import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
 import com.mojang.authlib.properties.PropertyMap;
 import fr.miuby.lib.log.MLLogManager;
-import fr.miuby.lib.villager.VillagerRegistry;
+import fr.miuby.lib.villager.MLVillager;
 import fr.miuby.survi.job.EJob;
 import fr.miuby.survi.system.log.ELogTag;
 import fr.miuby.survi.villager.trader.Trader;
@@ -65,7 +65,7 @@ public final class TabSkins {
     private static volatile Property BLUE_PROP = null;
 
     /**
-     * Textures des métiers. Peuplé dynamiquement par {@link #loadEntitySkins} à partir
+     * Textures des métiers. Peuplé dynamiquement par {@link #loadEntitySkin} à partir
      * du {@link fr.miuby.survi.villager.trader.Trader} associé à chaque {@link fr.miuby.survi.job.EJob}.
      * Les métiers sans trader configuré affichent {@link #gray()} en fallback (voir TabInfoColumn).
      */
@@ -98,20 +98,20 @@ public final class TabSkins {
     }
 
     /**
-     * Charge les textures signées pour tous les villageois et traders depuis le session server Mojang (async).
-     * Peuple {@link #VILLAGER_PROPS} (par nameId) et {@link #JOB_PROPS} (par EJob via le trader associé).
-     * <b>À appeler après {@code GameManager.init()}, une seule fois dans {@code JavaPlugin#onEnable()}.</b>
+     * Charge la texture signée d'un villageois ou trader depuis le session server Mojang (async).
+     * Peuple {@link #VILLAGER_PROPS} (par nameId) ou {@link #JOB_PROPS} (par EJob via le trader associé).
+     * <b>À appeler depuis {@code VillagerListener.onVillagerLoaded}</b>, pour chaque entité, dès qu'elle
+     * est prête — l'enregistrement dans {@code VillagerRegistry} se fait au même moment, donc un scan
+     * différé de {@code VillagerRegistry.getAll()} manquerait toute entité encore en retry {@code findVillager()}.
      */
-    public static void loadEntitySkins(JavaPlugin plugin) {
+    public static void loadEntitySkin(JavaPlugin plugin, MLVillager villager) {
         Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
-            for (var v : VillagerRegistry.getAll()) {
-                if (v instanceof VillagerLevel vl && vl.getSkinUuid() != null) {
-                    Property prop = fetchSigned(vl.getSkinUuid().toString(), vl.getNameId());
-                    if (prop != null) VILLAGER_PROPS.put(vl.getNameId(), prop);
-                } else if (v instanceof Trader t && t.getJob() != null && t.getSkinUuid() != null) {
-                    Property prop = fetchSigned(t.getSkinUuid().toString(), t.getNameId());
-                    if (prop != null) JOB_PROPS.put(t.getJob(), prop);
-                }
+            if (villager instanceof VillagerLevel vl && vl.getSkinUuid() != null) {
+                Property prop = fetchSigned(vl.getSkinUuid().toString(), vl.getNameId());
+                if (prop != null) VILLAGER_PROPS.put(vl.getNameId(), prop);
+            } else if (villager instanceof Trader t && t.getJob() != null && t.getSkinUuid() != null) {
+                Property prop = fetchSigned(t.getSkinUuid().toString(), t.getNameId());
+                if (prop != null) JOB_PROPS.put(t.getJob(), prop);
             }
         });
     }

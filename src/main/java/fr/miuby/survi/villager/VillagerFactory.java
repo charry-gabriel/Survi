@@ -74,6 +74,14 @@ public class VillagerFactory {
                 .map(r -> Component.text(r.message))
                 .toArray(TextComponent[]::new);
 
+        if (config.mainHandItem != null && !config.mainHandItem.isEmpty()) {
+            VillagerPostLoadActions.add(config.nameId, v ->
+                    v.getVillager().getEquipment().setItemInMainHand(
+                            new ItemStack(Material.valueOf(config.mainHandItem.toUpperCase()))
+                    )
+            );
+        }
+
         MLVillager.spawn(() -> {
             Trader trader = new Trader(
                     config.nameId,
@@ -98,14 +106,6 @@ public class VillagerFactory {
 
             return trader;
         });
-
-        if (config.mainHandItem != null && !config.mainHandItem.isEmpty()) {
-            VillagerPostLoadActions.add(config.nameId, v ->
-                    v.getVillager().getEquipment().setItemInMainHand(
-                            new ItemStack(Material.valueOf(config.mainHandItem.toUpperCase()))
-                    )
-            );
-        }
     }
 
     // =========================================================================

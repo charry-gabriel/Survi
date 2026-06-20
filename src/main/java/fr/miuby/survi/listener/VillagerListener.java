@@ -4,6 +4,7 @@ import fr.miuby.lib.villager.MLVillager;
 import fr.miuby.lib.villager.VillagerLoadedEvent;
 import fr.miuby.lib.villager.VillagerRegistry;
 import fr.miuby.survi.GameManager;
+import fr.miuby.survi.display.TabSkins;
 import fr.miuby.survi.player.AlphaPlayer;
 import fr.miuby.survi.quest.quest.PlayerQuestData;
 import fr.miuby.survi.quest.quest.QuestGlowService;
@@ -207,6 +208,7 @@ public class VillagerListener implements Listener {
         MLLogManager.getInstance().log(Level.FINE, ELogTag.VILLAGER, "[VillagerLoaded] " + villager.getNameId());
         VillagerRegistry.register(villager);
         VillagerPostLoadActions.executeAndClear(villager);
+        TabSkins.loadEntitySkin(GameManager.getInstance().getPlugin(), villager);
 
         if (villager instanceof Trader trader) {
             QuestGlowService glowService = GameManager.getInstance().getQuestGlowService();
