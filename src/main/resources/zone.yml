@@ -29,7 +29,7 @@ stages:
       max-y: 65
       max-z: 979
 
-  - after-hours: 0.01       # zone 1
+  - after-hours: 0.03       # zone 1
     center-x: 64
     center-z: 896
     half-width: 64
@@ -48,7 +48,7 @@ stages:
       max-y: 91
       max-z: 895
 
-  - after-hours: 0.02         # zone 2
+  - after-hours: 0.06         # zone 2
     center-x: 128
     center-z: 896
     half-width: 128
@@ -67,7 +67,7 @@ stages:
       max-y: 85
       max-z: 869
 
-  - after-hours: 0.03         # zone 3
+  - after-hours: 0.09         # zone 3
     center-x: 128
     center-z: 768
     half-width: 128
@@ -86,7 +86,7 @@ stages:
       max-y: 90
       max-z: 787
 
-  - after-hours: 0.04         # zone 4
+  - after-hours: 0.12         # zone 4
     center-x: 128
     center-z: 768
     half-width: 256
@@ -105,7 +105,7 @@ stages:
       max-y: 65
       max-z: 632
 
-  - after-hours: 0.05         # zone 5
+  - after-hours: 0.15         # zone 5
     center-x: 256
     center-z: 512
     half-width: 256
@@ -124,7 +124,7 @@ stages:
       max-y: 73
       max-z: 529
 
-  - after-hours: 0.06         # zone 6
+  - after-hours: 0.18         # zone 6
     center-x: 512
     center-z: 512
     half-width: 512
