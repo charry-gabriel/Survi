@@ -1,9 +1,12 @@
 package fr.miuby.survi.job.task;
 
+import fr.miuby.lib.log.MLLogManager;
 import fr.miuby.survi.GameManager;
 import fr.miuby.survi.job.EJob;
 import fr.miuby.survi.job.config.JobsConfig;
 import fr.miuby.survi.player.AlphaPlayer;
+import fr.miuby.survi.system.log.ELogTag;
+import fr.miuby.survi.system.perf.PerfTimer;
 import net.minecraft.network.protocol.game.ClientboundRemoveMobEffectPacket;
 import net.minecraft.network.protocol.game.ClientboundUpdateMobEffectPacket;
 import net.minecraft.server.level.ServerPlayer;
@@ -22,6 +25,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
+import java.util.logging.Level;
 
 /**
  * Tâche répétée (toutes les 60 ticks / 3 secondes) gérant les effets passifs de grotte du métier MINER.
@@ -51,6 +55,12 @@ import java.util.UUID;
  *
  * <h3>Comportement — autres mondes (The End…)</h3>
  * <p>Tous les effets sont retirés immédiatement et tout état d'hystérésis est réinitialisé.</p>
+ *
+ * <h3>Observabilité</h3>
+ * <p>Chaque entrée/sortie d'effet (DARKNESS ou NIGHT_VISION) est journalisée en {@code FINE/JOB}
+ * (edge-triggered, pas à chaque tick, pour éviter le bruit). {@link PerfTimer} mesure le coût du tick complet
+ * ({@code "MinerEffectsTask.run"}) et celui, plus suspect, de la détection de grotte par lumière du ciel
+ * ({@code "MinerEffectsTask.isInCave"}, qui peut déclencher un accès chunk/lighting).</p>
  *
  * <p>Enregistrement dans Survi.java :</p>
  * <pre>{@code new MinerEffectsTask().runTaskTimer(this, 20L, MinerEffectsTask.PERIOD_TICKS);}</pre>
@@ -88,41 +98,43 @@ public class MinerEffectsTask extends BukkitRunnable {
 
     @Override
     public void run() {
-        JobsConfig.MinerCfg miner = JobsConfig.getInstance().getMiner();
+        try (var t = PerfTimer.start("MinerEffectsTask.run")) {
+            JobsConfig.MinerCfg miner = JobsConfig.getInstance().getMiner();
 
-        for (Player player : Bukkit.getOnlinePlayers()) {
-            UUID uuid = player.getUniqueId();
-            World.Environment env = player.getWorld().getEnvironment();
+            for (Player player : Bukkit.getOnlinePlayers()) {
+                UUID uuid = player.getUniqueId();
+                World.Environment env = player.getWorld().getEnvironment();
 
-            AlphaPlayer alpha = AlphaPlayer.get(uuid);
-            if (alpha == null) {
-                clearAllEffects(player, uuid);
-                continue;
+                AlphaPlayer alpha = AlphaPlayer.get(uuid);
+                if (alpha == null) {
+                    clearAllEffects(player, uuid);
+                    continue;
+                }
+
+                int level   = alpha.getJobLevel(EJob.MINER);
+                int playerY = player.getLocation().getBlockY();
+
+                if (env == World.Environment.NETHER) {
+                    clearNightVision(player, uuid); // jamais de night vision au Nether
+                    playersAboveNightVisionY.remove(uuid);
+                    playersInCaveLight.remove(uuid);
+                    updateDarkness(player, uuid, playerY,
+                            miner.getNetherDarknessThresholdY()[level], miner.getCaveDarknessHysteresis(), "nether");
+                    continue;
+                }
+
+                if (env != World.Environment.NORMAL) { // The End, etc. : restaurer immédiatement
+                    clearAllEffects(player, uuid);
+                    continue;
+                }
+
+                int darknessThreshold    = miner.getCaveDarknessThresholdY()[level];
+                int nightVisionThreshold = miner.getCaveNightVisionThresholdY()[level];
+
+                updateDarkness(player, uuid, playerY, darknessThreshold, miner.getCaveDarknessHysteresis(), "grotte");
+                updateNightVision(player, uuid, playerY, nightVisionThreshold,
+                        miner.getCaveNightVisionHysteresis(), miner.getCaveLightHysteresis());
             }
-
-            int level   = alpha.getJobLevel(EJob.MINER);
-            int playerY = player.getLocation().getBlockY();
-
-            if (env == World.Environment.NETHER) {
-                clearNightVision(player, uuid); // jamais de night vision au Nether
-                playersAboveNightVisionY.remove(uuid);
-                playersInCaveLight.remove(uuid);
-                updateDarkness(player, uuid, playerY,
-                        miner.getNetherDarknessThresholdY()[level], miner.getCaveDarknessHysteresis());
-                continue;
-            }
-
-            if (env != World.Environment.NORMAL) { // The End, etc. : restaurer immédiatement
-                clearAllEffects(player, uuid);
-                continue;
-            }
-
-            int darknessThreshold    = miner.getCaveDarknessThresholdY()[level];
-            int nightVisionThreshold = miner.getCaveNightVisionThresholdY()[level];
-
-            updateDarkness(player, uuid, playerY, darknessThreshold, miner.getCaveDarknessHysteresis());
-            updateNightVision(player, uuid, playerY, nightVisionThreshold,
-                    miner.getCaveNightVisionHysteresis(), miner.getCaveLightHysteresis());
         }
     }
 
@@ -145,7 +157,11 @@ public class MinerEffectsTask extends BukkitRunnable {
             clearNightVision(player, uuid);
             return;
         }
-        playersWithNightVision.add(uuid);
+        if (playersWithNightVision.add(uuid)) {
+            MLLogManager.getInstance().log(Level.FINE, ELogTag.JOB,
+                    "[MinerNightVision] " + player.getName() + " entre en NIGHT_VISION — y=" + playerY
+                            + " seuil=" + nightVisionThreshold);
+        }
         player.addPotionEffect(new PotionEffect(PotionEffectType.NIGHT_VISION, NIGHT_VISION_DURATION_TICKS, 0, true, false, false));
     }
 
@@ -167,18 +183,27 @@ public class MinerEffectsTask extends BukkitRunnable {
      * qui échouerait sous un plafond haut) et pas sous l'eau (pas de night vision en nageant/plongeant).
      * Hystérésis : l'entrée exige une lumière strictement nulle, la sortie tolère jusqu'à {@code hysteresis}
      * (évite le clignotement pile à l'entrée d'une grotte, où la valeur peut osciller entre 0 et 1).
+     *
+     * <p>Instrumenté via {@link PerfTimer} : {@code getLightFromSky()} peut déclencher un accès
+     * chunk/lighting si la colonne n'est pas déjà en cache.</p>
      */
     private boolean isInCave(Player player, UUID uuid, int hysteresis) {
-        Block eyeBlock = player.getEyeLocation().getBlock();
-        int sky = eyeBlock.getLightFromSky();
-        boolean wasInCave = playersInCaveLight.contains(uuid);
-        boolean nowInCave = wasInCave ? sky <= hysteresis : sky == 0;
-        if (nowInCave) playersInCaveLight.add(uuid); else playersInCaveLight.remove(uuid);
-        return nowInCave;
+        try (var t = PerfTimer.start("MinerEffectsTask.isInCave")) {
+            Block eyeBlock = player.getEyeLocation().getBlock();
+            int sky = eyeBlock.getLightFromSky();
+            boolean wasInCave = playersInCaveLight.contains(uuid);
+            boolean nowInCave = wasInCave ? sky <= hysteresis : sky == 0;
+            if (nowInCave) playersInCaveLight.add(uuid); else playersInCaveLight.remove(uuid);
+            return nowInCave;
+        }
     }
 
     private void clearNightVision(Player player, UUID uuid) {
-        if (playersWithNightVision.remove(uuid)) player.removePotionEffect(PotionEffectType.NIGHT_VISION);
+        if (playersWithNightVision.remove(uuid)) {
+            player.removePotionEffect(PotionEffectType.NIGHT_VISION);
+            MLLogManager.getInstance().log(Level.FINE, ELogTag.JOB,
+                    "[MinerNightVision] " + player.getName() + " sort de NIGHT_VISION — y=" + player.getLocation().getBlockY());
+        }
     }
 
     // ─── Darkness (NMS) ────────────────────────────────────────────────────────────
@@ -186,8 +211,10 @@ public class MinerEffectsTask extends BukkitRunnable {
     /**
      * Hystérésis sur le seuil Y de DARKNESS : l'entrée se fait pile sur {@code thresholdDarkness},
      * mais il faut remonter de {@code hysteresis} blocs de plus pour en sortir.
+     *
+     * @param context "grotte" ou "nether", uniquement pour le log d'entrée en zone.
      */
-    private void updateDarkness(Player player, UUID uuid, int playerY, int thresholdDarkness, int hysteresis) {
+    private void updateDarkness(Player player, UUID uuid, int playerY, int thresholdDarkness, int hysteresis, String context) {
         if (thresholdDarkness == -1) { // immunisé
             clearDarkness(player, uuid);
             return;
@@ -201,12 +228,19 @@ public class MinerEffectsTask extends BukkitRunnable {
         }
         if (playersWithDarkness.add(uuid)) {
             player.sendMessage(GameManager.getInstance().getLangService().text(player, "job.miner.depth_too_deep"));
+            MLLogManager.getInstance().log(Level.FINE, ELogTag.JOB,
+                    "[MinerDarkness] " + player.getName() + " entre en DARKNESS — contexte=" + context
+                            + " y=" + playerY + " seuil=" + thresholdDarkness);
         }
         sendDarkness(player); // renouveler à chaque tick (durée > période)
     }
 
     private void clearDarkness(Player player, UUID uuid) {
-        if (playersWithDarkness.remove(uuid)) removeDarkness(player);
+        if (playersWithDarkness.remove(uuid)) {
+            removeDarkness(player);
+            MLLogManager.getInstance().log(Level.FINE, ELogTag.JOB,
+                    "[MinerDarkness] " + player.getName() + " sort de DARKNESS — y=" + player.getLocation().getBlockY());
+        }
     }
 
     // ─── NMS ───────────────────────────────────────────────────────────────────────
