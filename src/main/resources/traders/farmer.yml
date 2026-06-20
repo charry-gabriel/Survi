@@ -16,3 +16,12 @@ recipes:
       amount: 2
     message: "Un super achat."
     requiredReputation: 0
+
+  - result:
+      material: HAY_BLOCK
+      amount: 1
+    ingredient:
+      material: IRON_INGOT
+      amount: 16
+    message: "Un super achat."
+    requiredReputation: 15

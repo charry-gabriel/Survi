@@ -16,3 +16,12 @@ recipes:
       amount: 2
     message: "Un super achat."
     requiredReputation: 0
+
+  - result:
+      material: WOODEN_PICKAXE
+      amount: 1
+    ingredient:
+      material: IRON_INGOT
+      amount: 4
+    message: "Un super achat."
+    requiredReputation: 15
