@@ -2,7 +2,7 @@
 nameId: "farmer"
 displayName: "Lou la fermière"
 skin: "fb670e4f-a06b-4ddb-ae24-c2453c9f0aab"
-alexSkin: false
+alexSkin: true
 job: FARMER
 openMessage: "Reviens me voir plus tard, quand tu seras plus haut niveau. J'aurai de meilleurs objets à te vendre."
 mainHandItem: NETHERITE_HOE

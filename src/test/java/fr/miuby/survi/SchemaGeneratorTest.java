@@ -146,6 +146,11 @@ class SchemaGeneratorTest {
                 .toList();
         content = replaceEnum(content, "potion", potionEffects);
 
+        // Update item enum in rewards > ITEM effect (Material vanilla + ECustomItem, meme pattern que mainHandItem)
+        List<String> rewardItems = Stream.concat(getMaterialNames().stream(), getCustomItemNames().stream())
+                .distinct().sorted().toList();
+        content = replaceEnum(content, "item", rewardItems);
+
         // Update tool enum in rewards > UNLOCK_TOOL effect
         content = replaceEnum(content, "tool", getEnumNamesFromSource("src/main/java/fr/miuby/survi/item/locked_item/ELockedToolType.java"));
 
@@ -183,6 +188,11 @@ class SchemaGeneratorTest {
                 .sorted()
                 .toList();
         content = replaceEnum(content, "potion", potionEffects);
+
+        // Update item enum in rewards > ITEM effect (Material vanilla + ECustomItem, meme pattern que mainHandItem)
+        List<String> rewardItems = Stream.concat(getMaterialNames().stream(), getCustomItemNames().stream())
+                .distinct().sorted().toList();
+        content = replaceEnum(content, "item", rewardItems);
 
         // Update tool enum in rewards > UNLOCK_TOOL effect
         content = replaceEnum(content, "tool", getEnumNamesFromSource("src/main/java/fr/miuby/survi/item/locked_item/ELockedToolType.java"));

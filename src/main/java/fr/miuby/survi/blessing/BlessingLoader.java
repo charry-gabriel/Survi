@@ -2,6 +2,7 @@ package fr.miuby.survi.blessing;
 
 import fr.miuby.lib.log.MLLogManager;
 import fr.miuby.lib.utils.Rect;
+import fr.miuby.survi.item.ECustomItem;
 import fr.miuby.survi.item.locked_item.ELockedArmorType;
 import fr.miuby.survi.item.locked_item.ELockedToolType;
 import fr.miuby.survi.job.EJob;
@@ -9,7 +10,9 @@ import fr.miuby.survi.system.log.ELogTag;
 import fr.miuby.survi.world.EWorld;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Registry;
+import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
@@ -24,7 +27,7 @@ import java.util.logging.Level;
  *
  * <p>Types d'effets supportés : ACID_RAIN, MAX_HEALTH, RESISTANCE, DAMAGE, DISPEL,
  * UNLOCK_TOOL, UNLOCK_ARMOR, LOCK_WORLD, MESSAGE, WORLD_LEVEL,
- * WORLD_RESET, LIMIT_WORLD, REPUTATION, POTION.
+ * WORLD_RESET, LIMIT_WORLD, REPUTATION, POTION, ITEM.
  */
 public class BlessingLoader {
 
@@ -109,6 +112,7 @@ public class BlessingLoader {
                 case "LIMIT_WORLD"  -> parseLimitWorld(map);
                 case "REPUTATION"   -> parseReputation(map);
                 case "POTION"       -> parsePotion(contextId, map);
+                case "ITEM"         -> parseItem(contextId, map);
                 default -> {
                     MLLogManager.getInstance().log(Level.WARNING, ELogTag.VILLAGER,
                             "[BlessingLoader] Type d'effet inconnu '" + type + "' pour " + contextId);
@@ -140,6 +144,28 @@ public class BlessingLoader {
         int duration  = toInt(map.get("duration"), 600);
         int amplifier = toInt(map.get("amplifier"), 0);
         return new PotionsEffect(new PotionEffect(effectType, duration, amplifier));
+    }
+
+    private static ItemEffect parseItem(String contextId, Map<String, Object> map) {
+        String itemId = String.valueOf(map.get("item"));
+        ItemStack template = resolveItem(itemId);
+        if (template == null) {
+            MLLogManager.getInstance().log(Level.WARNING, ELogTag.VILLAGER,
+                    "[BlessingLoader] Item inconnu '" + itemId + "' pour " + contextId);
+            return null;
+        }
+        return new ItemEffect(template, toInt(map.get("amount"), 1));
+    }
+
+    /** Résout un identifiant d'item : ECustomItem en priorité (pour récompenser la variante personnalisée plutôt que le vanilla équivalent), fallback sur Material vanilla. */
+    private static ItemStack resolveItem(String itemId) {
+        ECustomItem custom = ECustomItem.fromString(itemId);
+        if (custom != null) return custom.getItemStack();
+        try {
+            return new ItemStack(Material.valueOf(itemId.toUpperCase()));
+        } catch (IllegalArgumentException ex) {
+            return null;
+        }
     }
 
     private static LimitWorldEffect parseLimitWorld(Map<String, Object> map) {

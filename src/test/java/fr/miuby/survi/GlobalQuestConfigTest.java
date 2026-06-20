@@ -22,9 +22,10 @@ import java.util.regex.Pattern;
  *  - targets : null ou liste de strings non vides
  *  - goal ≥ 1
  *  - time_limit ≥ 60
- *  - rewards non vide : chaque entrée a un type ∈ {REPUTATION, POTION}
+ *  - rewards non vide : chaque entrée a un type ∈ {REPUTATION, POTION, ITEM, ...}
  *  - entrée REPUTATION : job ∈ EJob valides, value ≥ 1
  *  - entrée POTION : potion présent, duration ≥ 1, amplifier ≥ 0
+ *  - entrée ITEM : item non vide, amount ≥ 1 si présent
  */
 class GlobalQuestConfigTest {
 
@@ -38,7 +39,7 @@ class GlobalQuestConfigTest {
 
     /** Tous les types d'effets supportés par BlessingLoader. */
     private static final Set<String> VALID_EFFECT_TYPES = Set.of(
-            "DAMAGE", "DISPEL", "LIMIT_WORLD", "LOCK_WORLD", "MAX_HEALTH",
+            "DAMAGE", "DISPEL", "ITEM", "LIMIT_WORLD", "LOCK_WORLD", "MAX_HEALTH",
             "MESSAGE", "POTION", "REPUTATION", "RESISTANCE",
             "UNLOCK_ARMOR", "UNLOCK_TOOL", "WORLD_LEVEL", "WORLD_RESET"
     );
@@ -167,6 +168,22 @@ class GlobalQuestConfigTest {
                 Assertions.assertTrue(freq >= 0, "frequency (WORLD_RESET) doit être ≥ 0, trouvé : " + freq);
             } catch (NumberFormatException e) {
                 Assertions.fail("frequency doit être un entier, trouvé : " + freqStr);
+            }
+        }
+
+        // ── ITEM : item non vide, amount ≥ 1 ────────────────────────────────
+        List<String> items = extractValues(content, "item");
+        for (String item : items) {
+            Assertions.assertFalse(item.isBlank(), "item (ITEM) ne doit pas être vide");
+        }
+
+        List<String> amounts = extractValues(content, "amount");
+        for (String amountStr : amounts) {
+            try {
+                int amount = Integer.parseInt(amountStr);
+                Assertions.assertTrue(amount >= 1, "amount (ITEM) doit être ≥ 1, trouvé : " + amount);
+            } catch (NumberFormatException e) {
+                Assertions.fail("amount doit être un entier, trouvé : " + amountStr);
             }
         }
     }
