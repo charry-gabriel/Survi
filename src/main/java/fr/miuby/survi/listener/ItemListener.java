@@ -59,12 +59,16 @@ public class ItemListener implements Listener {
     @EventHandler(ignoreCancelled = true)
     public void onCrafterCraft(CrafterCraftEvent event) {
         if (GameManager.getInstance().getLockedItemsFactory().isLocked(event.getResult().getType().getKey())
+                || event.getResult().getType() == Material.COPPER_BOOTS
+                || event.getResult().getType() == Material.COPPER_CHESTPLATE
+                || event.getResult().getType() == Material.COPPER_LEGGINGS
+                || event.getResult().getType() == Material.COPPER_HELMET
                 || event.getResult().getType() == Material.IRON_BOOTS
                 || event.getResult().getType() == Material.IRON_CHESTPLATE
                 || event.getResult().getType() == Material.IRON_LEGGINGS
+                || event.getResult().getType() == Material.IRON_HELMET
                 || event.getResult().getType() == Material.GOLDEN_BOOTS
                 || event.getResult().getType() == Material.GOLDEN_HELMET
-                || event.getResult().getType() == Material.IRON_HELMET
                 || event.getResult().getType() == Material.GOLDEN_CHESTPLATE
                 || event.getResult().getType() == Material.GOLDEN_LEGGINGS
                 || event.getResult().getType() == Material.DIAMOND_BOOTS
