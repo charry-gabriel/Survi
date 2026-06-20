@@ -216,17 +216,35 @@ public class QuestManager extends AbstractQuestManager<Quest> {
     // =========================================================================
 
     /**
-     * Calcule la difficulté applicable pour un joueur auprès d'un trader donné.
+     * Calcule la difficulté applicable pour un joueur auprès d'un trader donné, à partir
+     * du niveau de métier du joueur pour le métier de ce trader :
      * <ul>
-     *   <li>Difficulté 0 si le trader a un métier ET que le joueur y a 0 réputation
-     *       (premier contact) — on lui donne une quête introductive.</li>
-     *   <li>Niveau du monde sinon.</li>
+     *   <li>Difficulté 0 — niveau de métier 0 (aucune réputation).</li>
+     *   <li>Difficulté 1 — niveau de métier 1 à 5.</li>
+     *   <li>Difficulté 2 — niveau de métier 6 à 8.</li>
+     *   <li>Difficulté 3 — niveau de métier 9 ou 10.</li>
      * </ul>
+     * Si le trader n'a pas de métier, le niveau du monde sert de difficulté.
      */
     public int computeDifficulty(AlphaPlayer player, Trader trader) {
-        return (trader.getJob() != null && player.getJobReputation(trader.getJob()) == 0)
-                ? 0
-                : GameManager.getInstance().getWorldLevelManager().getLevel();
+        if (trader.getJob() == null) return GameManager.getInstance().getWorldLevelManager().getLevel();
+
+        int jobLevel = player.getJobLevel(trader.getJob());
+        if (jobLevel <= 0) return 0;
+        if (jobLevel <= 5) return 1;
+        if (jobLevel <= 8) return 2;
+        return 3;
+    }
+
+    /**
+     * Indique si ce trader refuse de donner une quête car la difficulté débloquée par le
+     * niveau de métier du joueur n'est pas encore accessible au niveau du monde actuel :
+     * la difficulté 2 requiert un monde niveau 2 minimum, la difficulté 3 un niveau 3 minimum.
+     */
+    public boolean isLockedByWorldLevel(AlphaPlayer player, Trader trader) {
+        int difficulty = computeDifficulty(player, trader);
+        int worldLevel = GameManager.getInstance().getWorldLevelManager().getLevel();
+        return (difficulty == 2 && worldLevel < 2) || (difficulty == 3 && worldLevel < 3);
     }
 
     /**
@@ -419,6 +437,14 @@ public class QuestManager extends AbstractQuestManager<Quest> {
 
         if (!force && usedSlots >= capacity) {
             player.getPlayer().sendMessage(langService.text(player.getPlayer(), "quest.capacity_full", usedSlots, capacity));
+            return;
+        }
+
+        if (isLockedByWorldLevel(player, trader)) {
+            player.getPlayer().sendMessage(Component.text("<", NamedTextColor.AQUA)
+                    .append(trader.getDisplayName())
+                    .append(Component.text("> ", NamedTextColor.AQUA))
+                    .append(langService.text(player.getPlayer(), "quest.locked_world_level")));
             return;
         }
 

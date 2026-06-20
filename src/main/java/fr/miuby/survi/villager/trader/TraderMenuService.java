@@ -111,6 +111,12 @@ public class TraderMenuService {
         }
 
         QuestManager qm = GameManager.getInstance().getQuestManager();
+        if (qm.isLockedByWorldLevel(alphaPlayer, trader)) {
+            return buildItem(Material.GRAY_DYE,
+                    ls.text(player, "trader.menu.locked_world.title"),
+                    List.of(ls.text(player, "trader.menu.locked_world.1"), ls.text(player, "trader.menu.locked_world.2")));
+        }
+
         if (!qm.hasAvailableQuestFor(trader.getJob(), qm.computeDifficulty(alphaPlayer, trader))) {
             return buildItem(Material.GRAY_DYE,
                     ls.text(player, "trader.menu.no_quest.title"),

@@ -53,6 +53,7 @@ quest.orphan_rewarded: "<green>Votre quête « {0} » a été récompensée auto
 quest.test.assigned: "<yellow>[TEST] Quête de test assignée : <gold>{0}"
 quest.test.details: "<dark_gray>Objectif : {0} | Difficulté : {1} | Métiers : {2}"
 quest.new_slots: "<gold>[Quêtes] <green>{0} nouveau slot de quête journalière disponible ! <dark_gray>({1}/{2} utilisés)"
+quest.locked_world_level: "<gray>Va voir quelqu'un d'autre, je n'ai pas de quête pour toi pour l'instant."
 
 # ─── ActionBar quête journalière ─────────────────────────────────────────────
 quest.actionbar.progress: "<aqua>⚔ <yellow>{0}<dark_gray> — <white>{1}<dark_gray>  [<gray>{2}<dark_gray> quêtes]"
@@ -118,6 +119,9 @@ trader.menu.no_slot.full: "<gray>Vous avez complété {0}/{1} quêtes disponible
 trader.menu.no_slot.tomorrow: "<gray>Revenez demain pour de nouveaux slot de quête journalière !"
 trader.menu.no_quest.title: "<dark_gray>Aucune quête disponible"
 trader.menu.no_quest.1: "<gray>Aucune quête disponible pour votre profil."
+trader.menu.locked_world.title: "<dark_gray>Aucune quête disponible"
+trader.menu.locked_world.1: "<gray>Cette quête n'est pas encore débloquée."
+trader.menu.locked_world.2: "<gray>Va voir quelqu'un d'autre pour l'instant."
 trader.menu.accept.title: "<yellow>Accepter une quête"
 trader.menu.accept.1: "<gray>Cliquez pour accepter une nouvelle"
 trader.menu.accept.2: "<gray>quête auprès de ce Marchand."
