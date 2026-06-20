@@ -12,7 +12,10 @@ global_quests:
     time_limit: 7200
     rewards:
       - {type: REPUTATION, job: LUMBERJACK, value: 1}
-      - {type: POTION, potion: saturation, duration: 3600, amplifier: 1}
+      - {type: POTION, potion: saturation, duration: 300, amplifier: 1}
+      - { type: ITEM, item: BREAD, amount: 16}
+      - { type: ITEM, item: JUNGLE_WOOD, amount: 16 }
+      - { type: ITEM, item: OAK_WOOD, amount: 16 }
 
   - id: "global_kill_enderman"
     name: "Grande Chasse aux Endermen"

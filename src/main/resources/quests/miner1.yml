@@ -14,7 +14,6 @@ quests:
     goal: 128
     rewards:
       - {type: REPUTATION, job: MINER, value: 1}
-      - {type: POTION, potion: haste, duration: 1728000, amplifier: 0}
 
   - id: "mine_copper"
     name: "Collecteur de Cuivre"
@@ -27,7 +26,6 @@ quests:
     goal: 16
     rewards:
       - {type: REPUTATION, job: MINER, value: 1}
-      - {type: POTION, potion: haste, duration: 1728000, amplifier: 0}
 
   - id: "mine_coal"
     name: "Chercheur de Charbon"
@@ -41,7 +39,6 @@ quests:
     rewards:
       - {type: REPUTATION, job: MINER, value: 1}
       - { type: REPUTATION, job: LUMBERJACK, value: 1 }
-      - {type: POTION, potion: haste, duration: 1728000, amplifier: 0}
 
   - id: "mine_iron"
     name: "Prospecteur de Fer"
@@ -54,7 +51,6 @@ quests:
     goal: 10
     rewards:
       - {type: REPUTATION, job: MINER, value: 3}
-      - {type: POTION, potion: haste, duration: 1728000, amplifier: 0}
 
   - id: "mine_redstone"
     name: "Ingénieur Débutant"
@@ -68,7 +64,6 @@ quests:
     rewards:
       - {type: REPUTATION, job: MINER, value: 3}
       - { type: REPUTATION, job: EXPLORER, value: 1}
-      - {type: POTION, potion: haste, duration: 1728000, amplifier: 0}
 
   - id: "mine_deepslate"
     name: "Sous la Surface"
@@ -81,7 +76,6 @@ quests:
     goal: 96
     rewards:
       - {type: REPUTATION, job: MINER, value: 5}
-      - {type: POTION, potion: haste, duration: 1728000, amplifier: 0}
 
   - id: "mine_mixed_ores"
     name: "Veine Prometteuse"
@@ -94,4 +88,3 @@ quests:
     goal: 64
     rewards:
       - {type: REPUTATION, job: MINER, value: 5}
-      - {type: POTION, potion: haste, duration: 1728000, amplifier: 0}

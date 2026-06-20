@@ -3,14 +3,86 @@ quests:
 
 # ─────────────────── DIFFICULTÉ 1 (0/7) ───────────────────
 
-  - id: "paper_production1"
-    name: "Fabricant de Papier"
-    description: "Fabriquez {value} papiers."
-    type: CRAFT
+  - id: "kill_zombies"
+    name: "Chasseur de Zombies"
+    description: "Tuez {value} zombies."
+    type: KILL
+    difficulty: 1
+    jobs:
+      - EXPLORER
+    targets: [ZOMBIE]
+    goal: 25
+    rewards:
+      - {type: REPUTATION, job: EXPLORER, value: 1}
+
+  - id: "kill_skeletons"
+    name: "Briseur d'Os"
+    description: "Tuez {value} squelettes."
+    type: KILL
+    difficulty: 1
+    jobs:
+      - EXPLORER
+    targets: [SKELETON]
+    goal: 20
+    rewards:
+      - {type: REPUTATION, job: EXPLORER, value: 1}
+
+  - id: "kill_spiders"
+    name: "Aranéophobe"
+    description: "Tuez {value} araignées."
+    type: KILL
+    difficulty: 1
+    jobs:
+      - EXPLORER
+    targets: [SPIDER]
+    goal: 25
+    rewards:
+      - {type: REPUTATION, job: EXPLORER, value: 2}
+
+  - id: "kill_creepers"
+    name: "Démineur"
+    description: "Tuez {value} creepers."
+    type: KILL
+    difficulty: 1
+    jobs:
+      - EXPLORER
+    targets: [CREEPER]
+    goal: 25
+    rewards:
+      - {type: REPUTATION, job: EXPLORER, value: 3}
+
+  - id: "kill_witch"
+    name: "Chasseur de Sorcière"
+    description: "Tuez {value} sorcières."
+    type: KILL
     difficulty: 1
     jobs:
       - ENCHANTER
-    targets: [PAPER]
-    goal: 1
+    targets: [WITCH]
+    goal: 10
     rewards:
-      - { type: REPUTATION, job: ENCHANTER, value: 1 }
+      - {type: REPUTATION, job: ENCHANTER, value: 4}
+
+  - id: "kill_endermen"
+    name: "Regard Interdit"
+    description: "Tuez {value} endermen."
+    type: KILL
+    difficulty: 1
+    jobs:
+      - EXPLORER
+    targets: [ ENDERMAN ]
+    goal: 10
+    rewards:
+      - { type: REPUTATION, job: EXPLORER, value: 5 }
+
+  - id: "kill_drowned"
+    name: "Terreur des Mers"
+    description: "Tuez {value} noyés."
+    type: KILL
+    difficulty: 1
+    jobs:
+      - EXPLORER
+    targets: [ DROWNED ]
+    goal: 15
+    rewards:
+      - { type: REPUTATION, job: EXPLORER, value: 5}

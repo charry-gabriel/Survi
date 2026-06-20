@@ -1,7 +1,7 @@
 # yaml-language-server: $schema=../schema/quests-schema.json
 quests:
 
-# ─────────────────── DIFFICULTÉ 0 (0/6) ───────────────────
+# ─────────────────── DIFFICULTÉ 0 (6/6) ───────────────────
 
   - id: "miner0"
     name: "Premier coup de pioche"

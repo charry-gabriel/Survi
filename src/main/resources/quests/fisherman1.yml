@@ -13,4 +13,5 @@ quests:
     goal: 10
     rewards:
       - {type: REPUTATION, job: FISHERMAN, value: 12}
-      - {type: POTION, potion: luck, duration: 1728000, amplifier: 0}
+
+
