@@ -41,7 +41,7 @@ quests:
 
   - id: "fisherman0"
     name: "Première prise"
-    description: "Pêchez {value} poisson."
+    description: "Pêchez {value} fois."
     type: FISH
     difficulty: 0
     jobs:

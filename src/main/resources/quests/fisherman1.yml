@@ -1,17 +1,91 @@
 # yaml-language-server: $schema=../schema/quests-schema.json
 quests:
 
-# ─────────────────── DIFFICULTÉ 1 (1/7) ───────────────────
+# ─────────────────── DIFFICULTÉ 1 (7/7) ───────────────────
   - id: "fish_common"
     name: "Pêcheur du Dimanche"
-    description: "Pêchez {value} poissons."
+    description: "Pêchez {value} fois."
     type: FISH
     difficulty: 1
     jobs:
       - FISHERMAN
-    targets: [TROPICAL_FISH]
+    targets: [COD]
+    goal: 6
+    rewards:
+      - { type: REPUTATION, job: FISHERMAN, value: 1}
+
+  - id: "fish_common2"
+    name: "Pêcheur de Morue"
+    description: "Faire cuire {value} morues."
+    type: SMELT
+    difficulty: 1
+    jobs:
+      - FISHERMAN
+    targets: [COOKED_COD]
+    goal: 8
+    rewards:
+      - { type: REPUTATION, job: FISHERMAN, value: 1 }
+
+  - id: "fish_common3"
+    name: "Pêcheur de Saumon"
+    description: "Faire cuire {value} saumons."
+    type: SMELT
+    difficulty: 1
+    jobs:
+      - FISHERMAN
+    targets: [COOKED_SALMON]
+    goal: 8
+    rewards:
+      - { type: REPUTATION, job: FISHERMAN, value: 2}
+
+  - id: "fish_common4"
+    name: "Pêcheur de Morue expert"
+    description: "Faire cuire {value} morues."
+    type: SMELT
+    difficulty: 1
+    jobs:
+      - FISHERMAN
+    targets: [COOKED_COD]
+    goal: 24
+    rewards:
+      - { type: REPUTATION, job: FISHERMAN, value: 2}
+      - { type: REPUTATION, job: FARMER, value: 1 }
+
+  - id: "fish_common5"
+    name: "Pêcheur de Saumon expert"
+    description: "Faire cuire {value} saumons."
+    type: SMELT
+    difficulty: 1
+    jobs:
+      - FISHERMAN
+    targets: [COOKED_SALMON]
+    goal: 24
+    rewards:
+      - { type: REPUTATION, job: FISHERMAN, value: 3}
+      - { type: REPUTATION, job: FARMER, value: 1 }
+
+  - id: "fish_common6"
+    name: "Pêcheur en carton"
+    description: "Craft {value} canne à pêche et partage à tes copains."
+    type: CRAFT
+    difficulty: 1
+    jobs:
+      - FISHERMAN
+    targets: [FISHING_ROD]
     goal: 10
     rewards:
-      - {type: REPUTATION, job: FISHERMAN, value: 12}
+      - { type: REPUTATION, job: FISHERMAN, value: 5}
+
+  - id: "fish_common7"
+    name: "Usine de la pêche"
+    description: "Pêchez {value} fois."
+    type: FISH
+    difficulty: 1
+    jobs:
+      - FISHERMAN
+    targets: [COD]
+    goal: 64
+    rewards:
+      - {type: REPUTATION, job: FISHERMAN, value: 5}
 
 

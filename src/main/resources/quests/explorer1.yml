@@ -1,7 +1,7 @@
 # yaml-language-server: $schema=../schema/quests-schema.json
 quests:
 
-# ─────────────────── DIFFICULTÉ 1 (0/7) ───────────────────
+# ─────────────────── DIFFICULTÉ 1 (7/7) ───────────────────
 
   - id: "kill_zombies"
     name: "Chasseur de Zombies"
