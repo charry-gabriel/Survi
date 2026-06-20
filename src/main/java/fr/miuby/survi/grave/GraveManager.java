@@ -67,7 +67,7 @@ public class GraveManager {
     // -------------------------------------------------------------------------
 
     /**
-     * Crée une tombe contenant uniquement le contenu de l'inventaire (36 slots).
+     * Crée une tombe contenant le contenu de l'inventaire (36 slots) et l'item en main secondaire.
      * L'armure reste sur le joueur, gérée séparément par PlayerListener.
      *
      * @return true si la tombe a été créée (les drops doivent alors être effacés).
@@ -101,8 +101,9 @@ public class GraveManager {
         MLLogManager.getInstance().log(Level.FINE, ELogTag.GRAVE,
                 "[CreateGrave] " + player.getName() + " → " + graveId + " en " + loc.getWorld().getName() + " " + loc.getBlockX() + "," + loc.getBlockY() + "," + loc.getBlockZ());
 
-        // Vide uniquement les 36 slots de l'inventaire, pas l'armure
+        // Vide les 36 slots de l'inventaire et la main secondaire, pas l'armure
         player.getInventory().setStorageContents(new ItemStack[36]);
+        player.getInventory().setItemInOffHand(null);
         MLWorld w = WorldRegistry.get(loc.getWorld().getUID());
 
         player.sendMessage(GameManager.getInstance().getLangService().text(player, "grave.created",
@@ -129,6 +130,10 @@ public class GraveManager {
         for (ItemStack item : player.getInventory().getStorageContents()) {
             if (isValidItem(item)) items.add(item);
         }
+
+        ItemStack offHand = player.getInventory().getItemInOffHand();
+        if (isValidItem(offHand)) items.add(offHand);
+
         return items;
     }
 
