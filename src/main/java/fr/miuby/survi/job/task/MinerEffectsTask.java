@@ -1,5 +1,6 @@
 package fr.miuby.survi.job.task;
 
+import fr.miuby.survi.GameManager;
 import fr.miuby.survi.job.EJob;
 import fr.miuby.survi.job.config.JobsConfig;
 import fr.miuby.survi.player.AlphaPlayer;
@@ -9,31 +10,47 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.World;
+import org.bukkit.block.Block;
 import org.bukkit.craftbukkit.entity.CraftPlayer;
 import org.bukkit.entity.Player;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
 /**
  * Tâche répétée (toutes les 60 ticks / 3 secondes) gérant les effets passifs de grotte du métier MINER.
  *
- * <h3>Comportement</h3>
- * <p>Deux blocs indépendants, chacun sur son propre seuil Y :</p>
+ * <h3>Comportement — monde NORMAL</h3>
+ * <p>Deux blocs indépendants, chacun sur son propre seuil Y, tous deux avec hystérésis (l'entrée en zone
+ * se fait pile sur le seuil, la sortie exige une marge supplémentaire — voir {@code cave-*-hysteresis} dans
+ * {@code jobs/miner.yml} — pour éviter le clignotement quand le joueur oscille pile sur une limite) :</p>
  * <ul>
- *   <li><b>VD (view-distance)</b> — activation dès {@code playerY < cave-view-distance-threshold-y[level]},
- *       restauration uniquement quand {@code playerY >= seuil + cave-view-distance-hysteresis}.
- *       La marge d'hystérésis évite les changements répétés quand le joueur oscille autour du seuil.</li>
- *   <li><b>DARKNESS</b> — binaire sur {@code cave-darkness-threshold-y[level]}, sans marge :
- *       appliqué dès que {@code playerY < seuil}, retiré dès que {@code playerY >= seuil}.
- *       Envoyé via paquet NMS pour masquer l'icône et le minuteur côté client.</li>
+ *   <li><b>NIGHT_VISION</b> — toujours retiré au-dessus de Y=63 (extérieur, seuil fixe, sans hystérésis).
+ *       En dessous, appliqué tant que {@code playerY >= cave-night-vision-threshold-y[level]} (avec
+ *       hystérésis {@code cave-night-vision-hysteresis}, ou toujours si seuil = -1), que le joueur n'est
+ *       pas en zone DARKNESS (priorité à DARKNESS), et qu'il est en situation de "grotte" —
+ *       voir {@link #isInCave(Player, UUID, int)} (hystérésis {@code cave-light-hysteresis}).
+ *       Durée appliquée volontairement {@code > 200 ticks} (voir {@link #NIGHT_VISION_DURATION_TICKS}) :
+ *       en dessous de ce seuil le client déclenche l'animation de clignotement de fin d'effet vanilla.</li>
+ *   <li><b>DARKNESS</b> — sur {@code cave-darkness-threshold-y[level]} (hystérésis {@code cave-darkness-hysteresis}) :
+ *       appliqué dès que {@code playerY < seuil}, retiré seulement quand {@code playerY >= seuil + hystérésis}.
+ *       Envoyé via paquet NMS pour masquer l'icône et le minuteur côté client.
+ *       À l'entrée en zone DARKNESS, un message explique que le niveau de Mineur est trop bas pour cette profondeur.</li>
  * </ul>
  * <p>Sur chaque bloc, {@code threshold = -1} immunise indépendamment (niv. 10 par défaut).</p>
+ *
+ * <h3>Comportement — Nether</h3>
+ * <p>Jamais de NIGHT_VISION. DARKNESS sur {@code nether-darkness-threshold-y[level]}, même mécanisme
+ * (paquet NMS, hystérésis {@code cave-darkness-hysteresis}, message à l'entrée en zone) que la variante NORMAL.</p>
+ *
+ * <h3>Comportement — autres mondes (The End…)</h3>
+ * <p>Tous les effets sont retirés immédiatement et tout état d'hystérésis est réinitialisé.</p>
  *
  * <p>Enregistrement dans Survi.java :</p>
  * <pre>{@code new MinerEffectsTask().runTaskTimer(this, 20L, MinerEffectsTask.PERIOD_TICKS);}</pre>
@@ -43,8 +60,8 @@ public class MinerEffectsTask extends BukkitRunnable {
     /** Fréquence d'exécution (60 ticks = 3 secondes). */
     public static final long PERIOD_TICKS = 60L;
 
-    /** View-distance (en chunks) imposée sous le seuil VD. */
-    private static final int REDUCED_VIEW_DISTANCE = 2;
+    /** Coordonnée Y de la surface (limite haute fixe de la night vision — au-dessus, on est à l'extérieur). */
+    private static final int SEA_LEVEL_Y = 63;
 
     /**
      * Durée de l'effet DARKNESS envoyé à chaque tick.
@@ -52,10 +69,22 @@ public class MinerEffectsTask extends BukkitRunnable {
      */
     private static final int DARKNESS_DURATION_TICKS = (int) PERIOD_TICKS + 40;
 
-    /** Joueurs dont la view-distance est actuellement réduite — valeur = view-distance d'origine à restaurer. */
-    private final Map<UUID, Integer> reducedViewDistance = new HashMap<>();
-    /** Joueurs ayant actuellement le paquet DARKNESS envoyé. */
+    /**
+     * Durée de l'effet NIGHT_VISION appliqué à chaque tick.
+     * Le client Minecraft déclenche une animation de clignotement (fade vanilla) lorsque la durée
+     * restante de NIGHT_VISION descend à 200 ticks ou moins — il faut donc rester strictement
+     * au-dessus de 200 ticks même après soustraction d'une période complète sans rafraîchissement.
+     */
+    private static final int NIGHT_VISION_DURATION_TICKS = (int) PERIOD_TICKS + 240;
+
+    /** Joueurs ayant actuellement le paquet DARKNESS envoyé (grotte ou Nether). */
     private final Set<UUID> playersWithDarkness = new HashSet<>();
+    /** Joueurs ayant actuellement l'effet NIGHT_VISION appliqué. */
+    private final Set<UUID> playersWithNightVision = new HashSet<>();
+    /** État d'hystérésis du seuil Y de NIGHT_VISION (indépendant de l'effet final, voir {@link #isAboveNightVisionThreshold}). */
+    private final Set<UUID> playersAboveNightVisionY = new HashSet<>();
+    /** État d'hystérésis de la détection "grotte" par lumière du ciel (voir {@link #isInCave}). */
+    private final Set<UUID> playersInCaveLight = new HashSet<>();
 
     @Override
     public void run() {
@@ -63,12 +92,7 @@ public class MinerEffectsTask extends BukkitRunnable {
 
         for (Player player : Bukkit.getOnlinePlayers()) {
             UUID uuid = player.getUniqueId();
-
-            // Hors monde normal (Nether, End) : restaurer immédiatement
-            if (player.getWorld().getEnvironment() != World.Environment.NORMAL) {
-                clearAllEffects(player, uuid);
-                continue;
-            }
+            World.Environment env = player.getWorld().getEnvironment();
 
             AlphaPlayer alpha = AlphaPlayer.get(uuid);
             if (alpha == null) {
@@ -76,51 +100,108 @@ public class MinerEffectsTask extends BukkitRunnable {
                 continue;
             }
 
-            int level    = alpha.getJobLevel(EJob.MINER);
-            int playerY  = player.getLocation().getBlockY();
+            int level   = alpha.getJobLevel(EJob.MINER);
+            int playerY = player.getLocation().getBlockY();
 
-            updateViewDistance(player, uuid, playerY,
-                    miner.getCaveViewDistanceThresholdY()[level], miner.getCaveViewDistanceHysteresis());
-            updateDarkness(player, uuid, playerY, miner.getCaveDarknessThresholdY()[level]);
+            if (env == World.Environment.NETHER) {
+                clearNightVision(player, uuid); // jamais de night vision au Nether
+                playersAboveNightVisionY.remove(uuid);
+                playersInCaveLight.remove(uuid);
+                updateDarkness(player, uuid, playerY,
+                        miner.getNetherDarknessThresholdY()[level], miner.getCaveDarknessHysteresis());
+                continue;
+            }
+
+            if (env != World.Environment.NORMAL) { // The End, etc. : restaurer immédiatement
+                clearAllEffects(player, uuid);
+                continue;
+            }
+
+            int darknessThreshold    = miner.getCaveDarknessThresholdY()[level];
+            int nightVisionThreshold = miner.getCaveNightVisionThresholdY()[level];
+
+            updateDarkness(player, uuid, playerY, darknessThreshold, miner.getCaveDarknessHysteresis());
+            updateNightVision(player, uuid, playerY, nightVisionThreshold,
+                    miner.getCaveNightVisionHysteresis(), miner.getCaveLightHysteresis());
         }
     }
 
     private void clearAllEffects(Player player, UUID uuid) {
-        restoreViewDistance(player, uuid);
         clearDarkness(player, uuid);
+        clearNightVision(player, uuid);
+        playersAboveNightVisionY.remove(uuid);
+        playersInCaveLight.remove(uuid);
     }
 
-    // ─── VD (view-distance) ────────────────────────────────────────────────────────
+    // ─── Night vision ────────────────────────────────────────────────────────────
 
-    private void updateViewDistance(Player player, UUID uuid, int playerY, int thresholdVD, int hysteresis) {
-        if (thresholdVD == -1) { // immunisé
-            restoreViewDistance(player, uuid);
+    private void updateNightVision(Player player, UUID uuid, int playerY, int nightVisionThreshold,
+                                   int nightVisionHysteresis, int lightHysteresis) {
+        boolean aboveThreshold = isAboveNightVisionThreshold(uuid, playerY, nightVisionThreshold, nightVisionHysteresis);
+        boolean inCave         = isInCave(player, uuid, lightHysteresis);
+        boolean inDarknessZone = playersWithDarkness.contains(uuid); // déjà mis à jour ce tick par updateDarkness
+
+        if (playerY > SEA_LEVEL_Y || inDarknessZone || !aboveThreshold || !inCave) {
+            clearNightVision(player, uuid);
             return;
         }
-
-        if (!reducedViewDistance.containsKey(uuid)) {
-            if (playerY < thresholdVD) {
-                reducedViewDistance.put(uuid, player.getViewDistance());
-                player.setViewDistance(REDUCED_VIEW_DISTANCE);
-            }
-        } else if (playerY >= thresholdVD + hysteresis) {
-            restoreViewDistance(player, uuid);
-        }
+        playersWithNightVision.add(uuid);
+        player.addPotionEffect(new PotionEffect(PotionEffectType.NIGHT_VISION, NIGHT_VISION_DURATION_TICKS, 0, true, false, false));
     }
 
-    private void restoreViewDistance(Player player, UUID uuid) {
-        Integer original = reducedViewDistance.remove(uuid);
-        if (original != null) player.setViewDistance(original);
+    /**
+     * Hystérésis sur le seuil Y de NIGHT_VISION : l'entrée (passage à "au-dessus du seuil") se fait pile
+     * sur {@code threshold}, mais il faut redescendre de {@code hysteresis} blocs de plus pour en sortir.
+     */
+    private boolean isAboveNightVisionThreshold(UUID uuid, int playerY, int threshold, int hysteresis) {
+        if (threshold == -1) return true; // illimité
+        boolean wasAbove = playersAboveNightVisionY.contains(uuid);
+        boolean nowAbove = wasAbove ? playerY >= threshold - hysteresis : playerY >= threshold;
+        if (nowAbove) playersAboveNightVisionY.add(uuid); else playersAboveNightVisionY.remove(uuid);
+        return nowAbove;
+    }
+
+    /**
+     * Détecte une situation de "grotte" : pas de lumière du ciel à hauteur des yeux (donc un plafond,
+     * quel que soit le nombre de blocs au-dessus — plus fiable qu'un simple bloc juste au-dessus de la tête,
+     * qui échouerait sous un plafond haut) et pas sous l'eau (pas de night vision en nageant/plongeant).
+     * Hystérésis : l'entrée exige une lumière strictement nulle, la sortie tolère jusqu'à {@code hysteresis}
+     * (évite le clignotement pile à l'entrée d'une grotte, où la valeur peut osciller entre 0 et 1).
+     */
+    private boolean isInCave(Player player, UUID uuid, int hysteresis) {
+        Block eyeBlock = player.getEyeLocation().getBlock();
+        int sky = eyeBlock.getLightFromSky();
+        boolean wasInCave = playersInCaveLight.contains(uuid);
+        boolean nowInCave = wasInCave ? sky <= hysteresis : sky == 0;
+        if (nowInCave) playersInCaveLight.add(uuid); else playersInCaveLight.remove(uuid);
+        return nowInCave;
+    }
+
+    private void clearNightVision(Player player, UUID uuid) {
+        if (playersWithNightVision.remove(uuid)) player.removePotionEffect(PotionEffectType.NIGHT_VISION);
     }
 
     // ─── Darkness (NMS) ────────────────────────────────────────────────────────────
 
-    private void updateDarkness(Player player, UUID uuid, int playerY, int thresholdDarkness) {
-        if (thresholdDarkness == -1 || playerY >= thresholdDarkness) { // immunisé ou au-dessus du seuil
+    /**
+     * Hystérésis sur le seuil Y de DARKNESS : l'entrée se fait pile sur {@code thresholdDarkness},
+     * mais il faut remonter de {@code hysteresis} blocs de plus pour en sortir.
+     */
+    private void updateDarkness(Player player, UUID uuid, int playerY, int thresholdDarkness, int hysteresis) {
+        if (thresholdDarkness == -1) { // immunisé
             clearDarkness(player, uuid);
             return;
         }
-        playersWithDarkness.add(uuid);
+        boolean wasDark = playersWithDarkness.contains(uuid);
+        boolean nowDark = wasDark ? playerY < thresholdDarkness + hysteresis : playerY < thresholdDarkness;
+
+        if (!nowDark) {
+            clearDarkness(player, uuid);
+            return;
+        }
+        if (playersWithDarkness.add(uuid)) {
+            player.sendMessage(GameManager.getInstance().getLangService().text(player, "job.miner.depth_too_deep"));
+        }
         sendDarkness(player); // renouveler à chaque tick (durée > période)
     }
 

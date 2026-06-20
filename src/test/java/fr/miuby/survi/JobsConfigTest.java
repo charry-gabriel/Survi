@@ -77,29 +77,21 @@ class JobsConfigTest {
     }
 
     @Test
-    void minerCaveViewDistanceThresholdYValid() {
-        List<Number> list = getNumberList(minerRoot, "cave-view-distance-threshold-y");
-        assertSize(list, "miner.cave-view-distance-threshold-y");
+    void minerCaveNightVisionThresholdYValid() {
+        List<Number> list = getNumberList(minerRoot, "cave-night-vision-threshold-y");
+        assertSize(list, "miner.cave-night-vision-threshold-y");
         for (int i = 0; i < LEVEL_COUNT; i++) {
             int v = list.get(i).intValue();
             assertTrue(v == -1 || v >= -64,
-                    "miner.cave-view-distance-threshold-y[" + i + "] invalide : " + v);
+                    "miner.cave-night-vision-threshold-y[" + i + "] invalide : " + v);
         }
         for (int i = 1; i < LEVEL_COUNT; i++) {
             int prev = list.get(i - 1).intValue();
             int curr = list.get(i).intValue();
             assertTrue(curr == -1 || curr <= prev,
-                    "miner.cave-view-distance-threshold-y[" + i + "] (" + curr
+                    "miner.cave-night-vision-threshold-y[" + i + "] (" + curr
                             + ") ne devrait pas dépasser l'index précédent (" + prev + ")");
         }
-    }
-
-    @Test
-    void minerCaveViewDistanceHysteresisValid() {
-        assertTrue(minerRoot.containsKey("cave-view-distance-hysteresis"),
-                "miner: cave-view-distance-hysteresis manquant");
-        int v = ((Number) minerRoot.get("cave-view-distance-hysteresis")).intValue();
-        assertTrue(v >= 1, "miner.cave-view-distance-hysteresis doit être >= 1, valeur : " + v);
     }
 
     @Test
@@ -118,6 +110,48 @@ class JobsConfigTest {
                     "miner.cave-darkness-threshold-y[" + i + "] (" + curr
                             + ") ne devrait pas dépasser l'index précédent (" + prev + ")");
         }
+    }
+
+    @Test
+    void minerNetherDarknessThresholdYValid() {
+        List<Number> list = getNumberList(minerRoot, "nether-darkness-threshold-y");
+        assertSize(list, "miner.nether-darkness-threshold-y");
+        for (int i = 0; i < LEVEL_COUNT; i++) {
+            int v = list.get(i).intValue();
+            assertTrue(v == -1 || v >= -64,
+                    "miner.nether-darkness-threshold-y[" + i + "] invalide : " + v);
+        }
+        for (int i = 1; i < LEVEL_COUNT; i++) {
+            int prev = list.get(i - 1).intValue();
+            int curr = list.get(i).intValue();
+            assertTrue(curr == -1 || curr <= prev,
+                    "miner.nether-darkness-threshold-y[" + i + "] (" + curr
+                            + ") ne devrait pas dépasser l'index précédent (" + prev + ")");
+        }
+    }
+
+    @Test
+    void minerCaveDarknessHysteresisValid() {
+        assertTrue(minerRoot.containsKey("cave-darkness-hysteresis"),
+                "miner: cave-darkness-hysteresis manquant");
+        int v = ((Number) minerRoot.get("cave-darkness-hysteresis")).intValue();
+        assertTrue(v >= 0, "miner.cave-darkness-hysteresis doit être >= 0, valeur : " + v);
+    }
+
+    @Test
+    void minerCaveNightVisionHysteresisValid() {
+        assertTrue(minerRoot.containsKey("cave-night-vision-hysteresis"),
+                "miner: cave-night-vision-hysteresis manquant");
+        int v = ((Number) minerRoot.get("cave-night-vision-hysteresis")).intValue();
+        assertTrue(v >= 0, "miner.cave-night-vision-hysteresis doit être >= 0, valeur : " + v);
+    }
+
+    @Test
+    void minerCaveLightHysteresisValid() {
+        assertTrue(minerRoot.containsKey("cave-light-hysteresis"),
+                "miner: cave-light-hysteresis manquant");
+        int v = ((Number) minerRoot.get("cave-light-hysteresis")).intValue();
+        assertTrue(v >= 0 && v <= 15, "miner.cave-light-hysteresis doit être entre 0 et 15, valeur : " + v);
     }
 
     // ─── lumberjack ──────────────────────────────────────────────────────────────

@@ -18,39 +18,60 @@ drop-multiplier:
   - 1.75   # niveau  9
   - 2.00   # niveau 10
 
-# ─── Seuil Y de réduction de view-distance ────────────────────────────────────
-# En dessous de ce Y, la view-distance est réduite à 2 chunks.
-# -1 = immunisé (aucun effet, quel que soit le Y).
-cave-view-distance-threshold-y:
+# ─── Seuil Y de l'effet NIGHT_VISION ──────────────────────────────────────────
+# Au-dessus de Y=63 (extérieur), jamais de night vision : règle fixe, non configurable.
+# En dessous de Y=63 et jusqu'à ce seuil (inclus), l'effet NIGHT_VISION est appliqué.
+# -1 = illimité (night vision jusqu'au bedrock, tant qu'on n'est pas en zone DARKNESS).
+cave-night-vision-threshold-y:
   - 60     # niveau  0  — dès l'entrée d'une grotte standard
   - 50     # niveau  1
   - 40     # niveau  2
-  - 25     # niveau  3
-  - 10     # niveau  4
+  - 28     # niveau  3
+  - 16     # niveau  4
   - 0      # niveau  5
-  - -15    # niveau  6
-  - -30    # niveau  7
-  - -45    # niveau  8
+  - -16    # niveau  6
+  - -28    # niveau  7
+  - -40    # niveau  8
   - -55    # niveau  9
-  - -1     # niveau 10  — immunisé
-
-# ─── Marge d'hystérésis de la view-distance (blocs) ──────────────────────────
-# La view-distance ne se restaure que lorsque le joueur remonte de N blocs
-# au-dessus du seuil. Évite les changements répétés en bord de seuil.
-cave-view-distance-hysteresis: 6
+  - -1     # niveau 10  — illimité
 
 # ─── Seuil Y de l'effet DARKNESS ─────────────────────────────────────────────
 # En dessous de ce Y, l'effet DARKNESS est appliqué (sans icône ni minuteur).
 # -1 = immunisé (aucun effet, quel que soit le Y).
 cave-darkness-threshold-y:
-  - 30     # niveau  0
-  - 15     # niveau  1
-  - 5      # niveau  2
-  - -10    # niveau  3
-  - -25    # niveau  4
-  - -40    # niveau  5
-  - -50    # niveau  6
-  - -60    # niveau  7
-  - -64    # niveau  8
-  - -64    # niveau  9
+  - 40     # niveau  0
+  - 20     # niveau  1
+  - 10     # niveau  2
+  - 0      # niveau  3
+  - -16    # niveau  4
+  - -30    # niveau  5
+  - -40    # niveau  6
+  - -50    # niveau  7
+  - -1     # niveau  8
+  - -1     # niveau  9
+  - -1     # niveau 10
+
+# ─── Seuil Y de l'effet DARKNESS au Nether ───────────────────────────────────
+# Spécifique au Nether (le monde NORMAL utilise cave-darkness-threshold-y ci-dessus).
+# Aucune night vision n'est jamais appliquée au Nether, quel que soit le niveau ou le Y.
+# En dessous de ce Y, l'effet DARKNESS est appliqué. -1 = immunisé (aucun effet).
+# Valeur 25 ⇒ déclenche à Y=24 et en dessous.
+nether-darkness-threshold-y:
+  - 25     # niveau  0
+  - 25     # niveau  1
+  - 25     # niveau  2
+  - 25     # niveau  3
+  - 25     # niveau  4
+  - 25     # niveau  5
+  - 25     # niveau  6
+  - 25     # niveau  7
+  - 25     # niveau  8
+  - -1     # niveau  9  — immunisé
   - -1     # niveau 10  — immunisé
+
+# ─── Hystérésis (anti-clignotement) ──────────────────────────────────────────
+# Marges appliquées uniquement à la SORTIE de zone (l'entrée reste sur le seuil exact),
+# pour éviter les changements répétés quand le joueur oscille pile sur une limite.
+cave-darkness-hysteresis: 3        # blocs Y — DARKNESS (grotte ET Nether)
+cave-night-vision-hysteresis: 3    # blocs Y — NIGHT_VISION
+cave-light-hysteresis: 2           # niveau de lumière du ciel (0-15) — détection "grotte" (skylight)

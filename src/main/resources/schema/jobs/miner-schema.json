@@ -3,7 +3,8 @@
   "title": "jobs/miner.yml",
   "description": "Configuration du Mineur (MINER). Tableau de 11 valeurs (index = niveau 0 à 10).",
   "type": "object",
-  "required": ["drop-multiplier", "cave-view-distance-threshold-y", "cave-view-distance-hysteresis", "cave-darkness-threshold-y"],
+  "required": ["drop-multiplier", "cave-night-vision-threshold-y", "cave-darkness-threshold-y", "nether-darkness-threshold-y",
+    "cave-darkness-hysteresis", "cave-night-vision-hysteresis", "cave-light-hysteresis"],
   "additionalProperties": false,
   "properties": {
     "drop-multiplier": {
@@ -12,22 +13,38 @@
       "minItems": 11, "maxItems": 11,
       "items": { "type": "number", "minimum": 0 }
     },
-    "cave-view-distance-threshold-y": {
+    "cave-night-vision-threshold-y": {
       "type": "array",
-      "description": "Coordonnée Y sous laquelle la view-distance est réduite à 2 chunks. -1 = immunisé. Index = niveau 0 à 10.",
+      "description": "Coordonnée Y sous laquelle l'effet NIGHT_VISION est retiré (toujours retiré au-dessus de Y=63). -1 = illimité. Index = niveau 0 à 10.",
       "minItems": 11, "maxItems": 11,
       "items": { "type": "integer", "minimum": -64 }
-    },
-    "cave-view-distance-hysteresis": {
-      "type": "integer",
-      "description": "Nombre de blocs au-dessus du seuil Y avant que la view-distance soit restaurée. Évite les changements répétés.",
-      "minimum": 1
     },
     "cave-darkness-threshold-y": {
       "type": "array",
       "description": "Coordonnée Y sous laquelle l'effet DARKNESS est appliqué (sans icône ni minuteur). -1 = immunisé. Index = niveau 0 à 10.",
       "minItems": 11, "maxItems": 11,
       "items": { "type": "integer", "minimum": -64 }
+    },
+    "nether-darkness-threshold-y": {
+      "type": "array",
+      "description": "Coordonnée Y, spécifique au Nether, sous laquelle l'effet DARKNESS est appliqué (aucune night vision n'est jamais appliquée au Nether). -1 = immunisé. Index = niveau 0 à 10.",
+      "minItems": 11, "maxItems": 11,
+      "items": { "type": "integer", "minimum": -64 }
+    },
+    "cave-darkness-hysteresis": {
+      "type": "integer",
+      "description": "Marge (en blocs Y) avant la sortie de l'effet DARKNESS (grotte ET Nether), pour éviter le clignotement en bord de seuil.",
+      "minimum": 0
+    },
+    "cave-night-vision-hysteresis": {
+      "type": "integer",
+      "description": "Marge (en blocs Y) avant la sortie de l'effet NIGHT_VISION, pour éviter le clignotement en bord de seuil.",
+      "minimum": 0
+    },
+    "cave-light-hysteresis": {
+      "type": "integer",
+      "description": "Marge (niveau de lumière du ciel, 0-15) avant de considérer qu'on n'est plus en situation de \"grotte\".",
+      "minimum": 0, "maximum": 15
     }
   }
 }

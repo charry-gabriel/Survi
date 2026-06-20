@@ -58,11 +58,15 @@ public final class JobsLoader {
         JobsConfig.MinerCfg miner = new JobsConfig.MinerCfg(
                 readDouble(minerCfg, "drop-multiplier",
                         new double[]{0.20, 0.50, 0.80, 1.00, 1.10, 1.20, 1.30, 1.40, 1.50, 1.75, 2.00}),
-                readInt(minerCfg, "cave-view-distance-threshold-y",
-                        new int[]{63, 50, 40, 25, 10, 0, -15, -30, -45, -55, -1}),
-                minerCfg.getInt("cave-view-distance-hysteresis", 5),
+                readInt(minerCfg, "cave-night-vision-threshold-y",
+                        new int[]{60, 50, 40, 25, 10, 0, -15, -30, -45, -55, -1}),
                 readInt(minerCfg, "cave-darkness-threshold-y",
-                        new int[]{30, 15, 5, -10, -25, -40, -50, -60, -64, -64, -1})
+                        new int[]{30, 15, 5, -10, -25, -40, -50, -60, -64, -64, -1}),
+                readInt(minerCfg, "nether-darkness-threshold-y",
+                        new int[]{25, 25, 25, 25, 25, 25, 25, 25, 25, -1, -1}),
+                minerCfg.getInt("cave-darkness-hysteresis", 3),
+                minerCfg.getInt("cave-night-vision-hysteresis", 3),
+                minerCfg.getInt("cave-light-hysteresis", 2)
         );
 
         JobsConfig.LumberjackCfg lumberjack = new JobsConfig.LumberjackCfg(

@@ -30,6 +30,7 @@ job.level_up.title: "<gold>⚒ Niveau supérieur !"
 job.level_up.subtitle: "<job><yellow> · niv.<level>"
 job.level_up.broadcast: "<gold>⚒ <white><player> <gold>a atteint le niveau <yellow><level> <gold>en <job><gold> !"
 job.note: "<green>⚒ <job>"
+job.miner.depth_too_deep: "<dark_gray>☠ <gray>Ton niveau de Mineur est trop bas pour cette profondeur — tu ne vois pas très bien."
 
 # ─── Joueur ───────────────────────────────────────────────────────────────────
 player.subrole.added: "<yellow>Le sous-role <role><yellow> a ete ajouté !"

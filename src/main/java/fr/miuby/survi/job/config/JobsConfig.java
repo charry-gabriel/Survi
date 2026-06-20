@@ -58,27 +58,41 @@ public final class JobsConfig {
         private final double[] dropMultiplier;
 
         /**
-         * Coordonnée Y sous laquelle la view-distance est réduite à 2 chunks. {@code -1} = immunisé. Index = niveau.
+         * Coordonnée Y sous laquelle l'effet NIGHT_VISION est retiré (toujours retiré au-dessus de Y=63,
+         * seuil fixe non configurable). {@code -1} = illimité (night vision jusqu'au bedrock). Index = niveau.
          */
-        private final int[] caveViewDistanceThresholdY;
-
-        /**
-         * Nombre de blocs au-dessus du seuil Y avant que la view-distance soit restaurée.
-         * Évite les changements répétés quand le joueur oscille autour du seuil.
-         */
-        private final int caveViewDistanceHysteresis;
+        private final int[] caveNightVisionThresholdY;
 
         /**
          * Coordonnée Y sous laquelle l'effet DARKNESS est appliqué (sans icône ni minuteur). {@code -1} = immunisé. Index = niveau.
          */
         private final int[] caveDarknessThresholdY;
 
-        MinerCfg(double[] dropMultiplier, int[] caveViewDistanceThresholdY,
-                 int caveViewDistanceHysteresis, int[] caveDarknessThresholdY) {
-            this.dropMultiplier             = dropMultiplier;
-            this.caveViewDistanceThresholdY = caveViewDistanceThresholdY;
-            this.caveViewDistanceHysteresis = caveViewDistanceHysteresis;
-            this.caveDarknessThresholdY     = caveDarknessThresholdY;
+        /**
+         * Coordonnée Y, spécifique au Nether, sous laquelle l'effet DARKNESS est appliqué.
+         * Aucune night vision n'est jamais appliquée au Nether. {@code -1} = immunisé. Index = niveau.
+         */
+        private final int[] netherDarknessThresholdY;
+
+        /** Marge (blocs Y) avant la sortie de l'effet DARKNESS (grotte ET Nether). */
+        private final int caveDarknessHysteresis;
+
+        /** Marge (blocs Y) avant la sortie de l'effet NIGHT_VISION. */
+        private final int caveNightVisionHysteresis;
+
+        /** Marge (niveau de lumière du ciel, 0-15) avant de considérer qu'on n'est plus en situation de "grotte". */
+        private final int caveLightHysteresis;
+
+        MinerCfg(double[] dropMultiplier, int[] caveNightVisionThresholdY, int[] caveDarknessThresholdY,
+                 int[] netherDarknessThresholdY, int caveDarknessHysteresis, int caveNightVisionHysteresis,
+                 int caveLightHysteresis) {
+            this.dropMultiplier            = dropMultiplier;
+            this.caveNightVisionThresholdY = caveNightVisionThresholdY;
+            this.caveDarknessThresholdY    = caveDarknessThresholdY;
+            this.netherDarknessThresholdY  = netherDarknessThresholdY;
+            this.caveDarknessHysteresis    = caveDarknessHysteresis;
+            this.caveNightVisionHysteresis = caveNightVisionHysteresis;
+            this.caveLightHysteresis       = caveLightHysteresis;
         }
     }
 
