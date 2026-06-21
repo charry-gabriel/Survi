@@ -331,10 +331,18 @@ public class VillagerLevel extends AVillager {
 
         for (ItemStack tributeItem : inventory.getContents()) {
             if (tributeItem != null && tributeItem.isSimilar(item)) {
+                int givenAmount = Math.min(item.getAmount(), tributeItem.getAmount());
+
                 MLLogManager.getInstance().log(Level.INFO, ELogTag.VILLAGER,
                         this.nameId + " recupere " + item.getAmount() + " de " + item.getType().name());
                 this.givenItems.add(new ItemStack(item));
                 GameManager.getInstance().getDatabase().villagers().updateGivenItems(getVillager().getUniqueId(), this.givenItems);
+
+                try {
+                    AlphaPlayer alphaPlayer = AlphaPlayer.get(player.getUniqueId());
+                    GameManager.getInstance().getDatabase().tributeHistory().insert(
+                            alphaPlayer.getUuid(), alphaPlayer.getPseudo(), this.nameId, item.getType().name(), givenAmount);
+                } catch (fr.miuby.survi.system.exception.AlphaPlayerNotFoundException ignored) {}
 
                 if (item.getAmount() < tributeItem.getAmount()) {
                     tributeItem.setAmount(tributeItem.getAmount() - item.getAmount());

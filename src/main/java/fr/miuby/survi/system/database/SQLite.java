@@ -8,7 +8,7 @@ import java.sql.*;
 import java.util.logging.Level;
 
 public class SQLite extends Database {
-    private static final int CURRENT_DB_VERSION = 14;
+    private static final int CURRENT_DB_VERSION = 15;
 
     public SQLite() {
         super(GameManager.getInstance().getPlugin().getConfig().getString("SQLite.Filename", "minecraft"));
@@ -57,6 +57,8 @@ public class SQLite extends Database {
             s.executeUpdate("CREATE INDEX IF NOT EXISTS idx_qh_type   ON quest_history (quest_type)");
             s.executeUpdate(createTradeHistoryTable());
             s.executeUpdate("CREATE INDEX IF NOT EXISTS idx_th_player ON player_trade_history (player_uuid)");
+            s.executeUpdate(createTributeHistoryTable());
+            s.executeUpdate("CREATE INDEX IF NOT EXISTS idx_tth_player ON player_tribute_history (player_uuid)");
         }
     }
 
@@ -186,6 +188,18 @@ public class SQLite extends Database {
                 ");";
     }
 
+    private String createTributeHistoryTable() {
+        return "CREATE TABLE IF NOT EXISTS player_tribute_history (" +
+                "`id` INTEGER PRIMARY KEY AUTOINCREMENT," +
+                "`player_uuid` VARCHAR(36) NOT NULL," +
+                "`player_pseudo` VARCHAR(255) NOT NULL," +
+                "`villager_id` VARCHAR(255) NOT NULL," +
+                "`item_material` VARCHAR(255) NOT NULL," +
+                "`quantity` INT NOT NULL DEFAULT 1," +
+                "`given_at` TEXT NOT NULL" +
+                ");";
+    }
+
     // =========================================================================
     // Migrations
     // =========================================================================
@@ -252,6 +266,10 @@ public class SQLite extends Database {
             if (currentVersion < 14) {
                 s.executeUpdate(createTradeHistoryTable());
                 s.executeUpdate("CREATE INDEX IF NOT EXISTS idx_th_player ON player_trade_history (player_uuid)");
+            }
+            if (currentVersion < 15) {
+                s.executeUpdate(createTributeHistoryTable());
+                s.executeUpdate("CREATE INDEX IF NOT EXISTS idx_tth_player ON player_tribute_history (player_uuid)");
             }
         }
     }

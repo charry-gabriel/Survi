@@ -24,6 +24,8 @@ import org.bukkit.entity.Player;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
 
 @SuppressWarnings({"java:S3516", "SameReturnValue"})
 public class PlayerCommand {
@@ -70,6 +72,13 @@ public class PlayerCommand {
                                         .executes(ctx -> topTrades(ctx, IntegerArgumentType.getInteger(ctx, LIMIT_ARG)))
                                 )
                         )
+
+                        .then(Commands.literal("tributes")
+                                .executes(ctx -> topTributes(ctx, 10))
+                                .then(Commands.argument(LIMIT_ARG, IntegerArgumentType.integer(1, 50))
+                                        .executes(ctx -> topTributes(ctx, IntegerArgumentType.getInteger(ctx, LIMIT_ARG)))
+                                )
+                        )
                 )
 
                 .then(Commands.literal("death")
@@ -96,6 +105,13 @@ public class PlayerCommand {
                                                 .executes(ctx -> executeDeath(ctx, false))
                                         )
                                 )
+                        )
+                )
+
+                .then(Commands.literal("tributes")
+                        .requires(src -> src.getSender().isOp())
+                        .then(Commands.literal("missing")
+                                .executes(PlayerCommand::tributesMissing)
                         )
                 );
     }
@@ -246,6 +262,20 @@ public class PlayerCommand {
         return Command.SINGLE_SUCCESS;
     }
 
+    private static int topTributes(CommandContext<CommandSourceStack> ctx, int limit) {
+        CommandSender sender = ctx.getSource().getSender();
+        LangService   ls     = GameManager.getInstance().getLangService();
+        ELang         lang   = sender instanceof Player p ? ls.resolveLanguage(p) : ls.getServerDefault();
+        List<fr.miuby.survi.system.database.repository.TributeHistoryRepository.PlayerRankEntry> top =
+                GameManager.getInstance().getDatabase().tributeHistory().getTopByQuantity(limit);
+        sendLeaderboard(sender, ls, lang,
+                ls.text(lang, "cmd.player.top.tributes_title"),
+                top.stream().map(e -> Map.entry(e.pseudo(), e.quantity())).toList(),
+                ls.getString(lang, "cmd.player.top.unit_tributes"),
+                null);
+        return Command.SINGLE_SUCCESS;
+    }
+
     private static int topQuests(CommandContext<CommandSourceStack> ctx, int limit) {
         CommandSender sender = ctx.getSource().getSender();
         LangService   ls     = GameManager.getInstance().getLangService();
@@ -323,5 +353,36 @@ public class PlayerCommand {
         }
 
         sender.sendMessage(sep);
+    }
+
+    // =========================================================================
+    // /player tributes
+    // =========================================================================
+
+    private static int tributesMissing(CommandContext<CommandSourceStack> ctx) {
+        CommandSender sender = ctx.getSource().getSender();
+        LangService   ls     = GameManager.getInstance().getLangService();
+        ELang         lang   = sender instanceof Player p ? ls.resolveLanguage(p) : ls.getServerDefault();
+
+        Set<UUID> donors = GameManager.getInstance().getDatabase().tributeHistory().getDonorUuids();
+        List<String> missing = GameManager.getInstance().getAlphaPlayerFactory().getAlphaPlayers().stream()
+                .filter(ap -> !donors.contains(ap.getUuid()))
+                .map(AlphaPlayer::getPseudo)
+                .sorted()
+                .toList();
+
+        Component sep = ls.text(lang, "cmd.player.separator");
+        sender.sendMessage(sep);
+        sender.sendMessage(ls.text(lang, "cmd.player.tributes.missing_title", missing.size()));
+        sender.sendMessage(sep);
+
+        if (missing.isEmpty()) {
+            sender.sendMessage(ls.text(lang, "cmd.player.tributes.missing_empty"));
+        } else {
+            sender.sendMessage(Component.text("  " + String.join(", ", missing), NamedTextColor.GRAY));
+        }
+
+        sender.sendMessage(sep);
+        return Command.SINGLE_SUCCESS;
     }
 }

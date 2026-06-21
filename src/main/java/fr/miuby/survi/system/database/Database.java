@@ -24,6 +24,7 @@ public abstract class Database extends MLSQLite {
     protected GraveRepository graveRepository;
     protected QuestHistoryRepository questHistoryRepository;
     protected TradeHistoryRepository tradeHistoryRepository;
+    protected TributeHistoryRepository tributeHistoryRepository;
 
     protected Database(String dbName) {
         super(dbName);
@@ -45,6 +46,7 @@ public abstract class Database extends MLSQLite {
         graveRepository         = new GraveRepository(conn, this);
         questHistoryRepository  = new QuestHistoryRepository(conn, this);
         tradeHistoryRepository  = new TradeHistoryRepository(conn, this);
+        tributeHistoryRepository = new TributeHistoryRepository(conn, this);
     }
 
     // =========================================================================
@@ -59,4 +61,5 @@ public abstract class Database extends MLSQLite {
     public GraveRepository graves()                    { return graveRepository; }
     public QuestHistoryRepository questHistory()       { return questHistoryRepository; }
     public TradeHistoryRepository tradeHistory()       { return tradeHistoryRepository; }
+    public TributeHistoryRepository tributeHistory()   { return tributeHistoryRepository; }
 }
