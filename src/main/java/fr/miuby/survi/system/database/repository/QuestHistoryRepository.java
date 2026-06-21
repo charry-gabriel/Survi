@@ -177,6 +177,52 @@ public class QuestHistoryRepository extends MLRepository {
         return result;
     }
 
+    /**
+     * Nombre de quêtes journalières complétées par identifiant de quête, pour tous les joueurs.
+     * Clé externe : UUID joueur ; clé interne : {@code quest_id}.
+     * Utilisé pour reconstruire les récompenses de réputation propres à chaque quête
+     * (champ {@code rewards}) depuis l'historique (réparation après corruption).
+     */
+    public Map<UUID, Map<String, Integer>> countDailyByPlayerAndQuestId() {
+        Map<UUID, Map<String, Integer>> result = new HashMap<>();
+        try (PreparedStatement ps = connection.prepareStatement(
+                "SELECT player_uuid, quest_id, COUNT(*) as cnt FROM quest_history " +
+                        "WHERE quest_type = 'daily' GROUP BY player_uuid, quest_id")) {
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    UUID uuid = UUID.fromString(rs.getString("player_uuid"));
+                    result.computeIfAbsent(uuid, k -> new HashMap<>()).put(rs.getString("quest_id"), rs.getInt("cnt"));
+                }
+            }
+        } catch (SQLException ex) {
+            MLLogManager.getInstance().log(Level.SEVERE, ELogTag.QUEST, "Failed to count daily quests by player and quest id", ex);
+        }
+        return result;
+    }
+
+    /**
+     * Nombre de quêtes globales complétées par identifiant de quête, pour tous les joueurs.
+     * Clé externe : UUID joueur ; clé interne : {@code quest_id}.
+     * Utilisé pour reconstruire les récompenses de réputation des quêtes globales
+     * (champ {@code rewards}) depuis l'historique (réparation après corruption).
+     */
+    public Map<UUID, Map<String, Integer>> countGlobalByPlayerAndQuestId() {
+        Map<UUID, Map<String, Integer>> result = new HashMap<>();
+        try (PreparedStatement ps = connection.prepareStatement(
+                "SELECT player_uuid, quest_id, COUNT(*) as cnt FROM quest_history " +
+                        "WHERE quest_type = 'global' GROUP BY player_uuid, quest_id")) {
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    UUID uuid = UUID.fromString(rs.getString("player_uuid"));
+                    result.computeIfAbsent(uuid, k -> new HashMap<>()).put(rs.getString("quest_id"), rs.getInt("cnt"));
+                }
+            }
+        } catch (SQLException ex) {
+            MLLogManager.getInstance().log(Level.SEVERE, ELogTag.QUEST, "Failed to count global quests by player and quest id", ex);
+        }
+        return result;
+    }
+
     // =========================================================================
     // Lecture — classements
     // =========================================================================
