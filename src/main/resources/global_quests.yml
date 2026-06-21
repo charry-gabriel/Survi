@@ -17,6 +17,18 @@ global_quests:
       - { type: ITEM, item: JUNGLE_WOOD, amount: 16 }
       - { type: ITEM, item: OAK_WOOD, amount: 16 }
 
+  - id: "global_collect_mob_loot"
+    name: "Chasseur de mobs"
+    description: "Tuez {value} monstres hostiles basiques."
+    type: KILL
+    targets: [ZOMBIE, SKELETON, CREEPER, SPIDER]
+    goal: 1000
+    time_limit: 7200
+    rewards:
+      - {type: REPUTATION, job: EXPLORER, value: 1}
+      - { type: ITEM, item: BREAD, amount: 16 }
+      - { type: POTION, potion: strength, duration: 300, amplifier: 1 }
+
   - id: "global_kill_enderman"
     name: "Grande Chasse aux Endermen"
     description: "Ensemble, tuez {value} Endermen dans l'End !"
