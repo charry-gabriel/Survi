@@ -78,6 +78,13 @@ public class CustomRecipeFactory {
 
         loadRecipes();
         CustomRecipe.registerRecipes();
+        removeOldRecipes();
+    }
+
+    public void removeOldRecipes() {
+        for (NamespacedKey nsKey : oldRecipes) {
+            Bukkit.removeRecipe(nsKey);
+        }
     }
 
     public List<NamespacedKey> getRecipeKeysForMaterials(List<NamespacedKey> materialKeys) {

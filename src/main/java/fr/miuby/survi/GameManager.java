@@ -209,6 +209,7 @@ public class GameManager {
 
         this.customRecipeFactory = new CustomRecipeFactory();
         CustomRecipe.registerRecipes();
+        this.customRecipeFactory.removeOldRecipes();
 
         GrowthItems.init();
     }
