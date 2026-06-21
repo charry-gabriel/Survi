@@ -5,12 +5,12 @@ quests:
 
   - id: "mine_cobblestone"
     name: "MINER de Pierre"
-    description: "Minez {value} blocs de cobblestone."
+    description: "Minez {value} blocs de stone."
     type: MINE
     difficulty: 1
     jobs:
       - MINER
-    targets: [COBBLESTONE]
+    targets: [STONE]
     goal: 128
     rewards:
       - {type: REPUTATION, job: MINER, value: 1}
@@ -72,7 +72,7 @@ quests:
     difficulty: 1
     jobs:
       - MINER
-    targets: [COBBLED_DEEPSLATE]
+    targets: [DEEPSLATE]
     goal: 96
     rewards:
       - {type: REPUTATION, job: MINER, value: 5}

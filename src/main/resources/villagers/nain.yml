@@ -32,7 +32,7 @@ levels:
     blessings:
       - { type: RESISTANCE, value: 0.4}
     message: "Bravo, vous êtes maintenant plus résistant face aux ennemis de l'autre monde."
-    recap: "Augmentation de votre résistance : 20% --> 30%"
+    recap: "Augmentation de votre résistance : 30%"
 
   - name: "Nain Roux"
     tribute:
@@ -43,7 +43,7 @@ levels:
     blessings:
       - {type: RESISTANCE, value: 0.5}
     message: "Bravo, vous êtes maintenant plus résistant face aux ennemis de l'autre monde."
-    recap: "Augmentation de votre résistance : 30% --> 40%"
+    recap: "Augmentation de votre résistance : 40%"
 
   - name: "Nain Roux"
     tribute:
@@ -60,7 +60,7 @@ levels:
     blessings:
       - { type: RESISTANCE, value: 0.6}
     message: "Bravo, vous êtes maintenant plus résistant face aux ennemis de l'autre monde."
-    recap: "Augmentation de votre résistance : 40% --> 50%"
+    recap: "Augmentation de votre résistance : 50%"
 
   - name: "Nain Roux"
     tribute:
@@ -73,7 +73,7 @@ levels:
     blessings:
       - { type: RESISTANCE, value: 0.7}
     message: "Bravo, vous êtes maintenant plus résistant face aux ennemis de l'autre monde."
-    recap: "Augmentation de votre résistance : 50% --> 60%"
+    recap: "Augmentation de votre résistance : 60%"
 
   - name: "Nain Roux"
     tribute:
@@ -86,7 +86,7 @@ levels:
     blessings:
       - { type: RESISTANCE, value: 0.8}
     message: "Bravo, vous êtes maintenant plus résistant face aux ennemis de l'autre monde."
-    recap: "Augmentation de votre résistance : 60% --> 70%"
+    recap: "Augmentation de votre résistance : 70%"
 
   - name: "Nain Roux"
     tribute:
@@ -99,7 +99,7 @@ levels:
     blessings:
       - { type: RESISTANCE, value: 0.9}
     message: "Félicitation, vous êtes maintenant plus résistant face aux ennemis de l'autre monde."
-    recap: "Augmentation de votre résistance : 70% --> 80%"
+    recap: "Augmentation de votre résistance : 80%"
 
   - name: "Nain Roux"
     tribute:
@@ -110,7 +110,7 @@ levels:
     blessings:
       - { type: RESISTANCE, value: 1.0}
     message: "Beau travail, vous êtes maintenant plus résistant face aux ennemis de l'autre monde."
-    recap: "Augmentation de votre résistance : 80% --> 90%"
+    recap: "Augmentation de votre résistance : 90%"
 
   - name: "Nain Roux"
     tribute:
@@ -125,7 +125,7 @@ levels:
     blessings:
       - { type: RESISTANCE, value: 1.2}
     message: "Beau travail, vous êtes maintenant plus résistant face aux ennemis de l'autre monde."
-    recap: "Augmentation de votre résistance : 90% --> 100%"
+    recap: "Augmentation de votre résistance : 100%"
 
   - name: "Nain Roux"
     tribute:
@@ -168,7 +168,7 @@ levels:
     blessings:
       - { type: RESISTANCE, value: 1.5}
     message: "Félicitation, très beau travail, je pense que vous êtes assez résistant, je peux maintenant prendre ma retraite. Merci à vous."
-    recap: "Augmentation de votre résistance : 100% --> 120%"
+    recap: "Augmentation de votre résistance : 120%"
 
   - name: "Nain Roux MAX"
     tribute: []

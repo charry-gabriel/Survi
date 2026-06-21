@@ -20,7 +20,7 @@ levels:
     blessings:
       - { type: DAMAGE, value: 0.4}
     message: "Beh alors ? C'est la petite bête qui mange la grosse ?"
-    recap: "Augmentation des dégats : 20% --> 30%"
+    recap: "Augmentation des dégats : 30%"
 
   - name: "Maddox"
     tribute:
@@ -28,8 +28,8 @@ levels:
         amount: 20
     blessings:
       - { type: DAMAGE, value: 0.5}
-    message: "Bravo, vous avez tuez 3 squelletes, je vous augmente un peu vos dégats.."
-    recap: "Augmentation des dégats : 30% --> 40%"
+    message: "Bravo, vous avez tuez 3 squelettes, je vous augmente un peu vos dégats.."
+    recap: "Augmentation des dégats : 40%"
 
   - name: "Maddox"
     tribute:
@@ -38,7 +38,7 @@ levels:
     blessings:
       - { type: DAMAGE, value: 0.6}
     message: "Vous voulez une récompense pour 4 creepers en moins sur la map ? N'importe quoi.. vous êtes un peu plus fort maintenant..."
-    recap: "Augmentation des dégats : 40% --> 50%"
+    recap: "Augmentation des dégats : 50%"
 
   - name: "Maddox"
     tribute:
@@ -47,7 +47,7 @@ levels:
     blessings:
       - { type: DAMAGE, value: 0.7}
     message: "Comment on fait un oeil fermenté ? Avec un oeil... et tu le fermentes."
-    recap: "Augmentation des dégats : 50% --> 60%"
+    recap: "Augmentation des dégats : 60%"
 
   - name: "Maddox"
     tribute:
@@ -56,7 +56,7 @@ levels:
     blessings:
       - { type: DAMAGE, value: 0.8}
     message: "Vous n'êtes plus aussi nul qu'au début, je suis heureux de vous voir progresser. Augmentation de vos dégats !"
-    recap: "Augmentation des dégats : 60% --> 70%"
+    recap: "Augmentation des dégats : 70%"
 
   - name: "Maddox"
     tribute:
@@ -65,7 +65,7 @@ levels:
     blessings:
       - { type: DAMAGE, value: 0.9}
     message: "Pour les 6 ghasts en moins dans ce monde, je vous offre un peu plus de force."
-    recap: "Augmentation des dégats : 70% --> 80%"
+    recap: "Augmentation des dégats : 80%"
 
   - name: "Maddox"
     tribute:
@@ -108,7 +108,7 @@ levels:
     blessings:
       - { type: DAMAGE, value: 1}
     message: "Bravo pour les 2/3 mobs en moins sur la map. Vous avez votre force vanilla à présent."
-    recap: "Augmentation des dégats : 80% --> 90%"
+    recap: "90%"
 
   - name: "Maddox"
     tribute:
@@ -117,7 +117,7 @@ levels:
     blessings:
       - { type: DAMAGE, value: 1.2}
     message: "Vous êtes maintenant plus fort que prévu, félicitations."
-    recap: "Augmentation des dégats : 90% --> 100%"
+    recap: "Augmentation des dégats : 100%"
 
   - name: "Maddox"
     tribute:
@@ -126,7 +126,7 @@ levels:
     blessings:
       - { type: DAMAGE, value: 1.5 }
     message: "C'est bon ? Vous avez fini de voyager ? Enfin... j'aurais été plus vite tout seul. Vous êtes maintenant assez fort. Mais toujours pas autant que moi."
-    recap: "Augmentation des dégats : 100% --> 120%"
+    recap: "Augmentation des dégats : 120%"
 
   - name: "Maddox MAX"
     tribute: []

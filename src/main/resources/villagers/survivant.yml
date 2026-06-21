@@ -35,7 +35,7 @@ levels:
 
   - name: "Survivant"
     message: "Voici un peu de vie, merci pour ces vieilles planches..."
-    recap: "Craft de l'armure en cuir débloqué."
+    recap: "Outils en bois et armure en cuir disponibles."
     tribute:
       - material: OAK_PLANKS
         amount: 64
@@ -46,7 +46,7 @@ levels:
 
   - name: "Survivant"
     message: "Merci pour ces cailloux, vous avez débloqué les outils en pierre."
-    recap: "+1 coeur"
+    recap: "Outils en bois et armure en cuir disponibles."
     tribute:
       - material: COBBLESTONE
         amount: 32
@@ -58,7 +58,7 @@ levels:
 
   - name: "Survivant"
     message: "Vous pouvez maintenant avoir des outils en copper !"
-    recap: "Outils en pierre disponibles"
+    recap: "Outils en pierre et armure en cuir disponibles."
     tribute:
       - material: JUNGLE_WOOD
         amount: 320
@@ -71,7 +71,7 @@ levels:
 
   - name: "Survivant"
     message: "Vous pouvez maintenant avoir des armures en copper ! (regardez le craft dans notre livre des recettes)"
-    recap: "Outils en copper débloqués !"
+    recap: "Outils en copper et armure en cuir disponibles."
     tribute:
       - material: WHITE_BED
         amount: 3
@@ -83,7 +83,7 @@ levels:
 
   - name: "Survivant"
     message: "Vous pouvez maintenant avoir des outils en fer !"
-    recap: "Armure en copper disponibles (regardez le craft dans notre livre des recettes)."
+    recap: "Outils en copper et armure en copper disponibles."
     tribute:
       - material: WAXED_COPPER_BLOCK
         amount: 16
@@ -99,7 +99,7 @@ levels:
 
   - name: "Survivant"
     message: "Vous pouvez maintenant avoir une armure en maille ! (regardez le craft dans notre livre des recettes)"
-    recap: "Outils en fer débloqués."
+    recap: "Outils en fer et armure en copper disponibles."
     tribute:
       - material: LAVA_BUCKET
         amount: 1
@@ -113,7 +113,7 @@ levels:
 
   - name: "Survivant"
     message: "Vous pouvez maintenant avoir des outils en or (j'espère que vous avez pas le seum)."
-    recap: "Armure en maille débloqués ! (regardez le craft dans notre livre des recettes)"
+    recap: "Outils en fer et armure en maille disponibles."
     tribute:
       - material: COAL_BLOCK
         amount: 20
@@ -136,7 +136,7 @@ levels:
 
   - name: "Survivant"
     message: "Vous pouvez maintenant avoir une armure en fer"
-    recap: "Outils en or débloqués ! (l'arnaque)"
+    recap: "Outils en or et armure en maille disponibles."
     tribute:
       - material: GUNPOWDER
         amount: 128
@@ -157,7 +157,7 @@ levels:
 
   - name: "Survivant"
     message: "Vous pouvez maintenant avoir une armure en or, et elle en vaut le coup !"
-    recap: "Armure en fer débloqués !"
+    recap: "Outils en or et armure en fer disponibles."
     tribute:
       - material: HAY_BLOCK
         amount: 32
@@ -175,7 +175,7 @@ levels:
 
   - name: "Survivant"
     message: "Vous pouvez maintenant avoir des outils en diamant et netherite!"
-    recap: "Armure en or débloqués (et elle en vaut le coup promis)."
+    recap: "Outils en or et armure en or disponibles."
     tribute:
       - material: SULFUR_SPIKE
         amount: 128
@@ -190,7 +190,7 @@ levels:
 
   - name: "Survivant"
     message: "Vous pouvez maintenant avoir une armure en diamant ou en netherite !"
-    recap: "Outils en diamant et netherite débloqués !"
+    recap: "Outils en diamants/netherite et armure en or disponibles."
     tribute:
       - material: ARMADILLO_SCUTE
         amount: 10
@@ -208,7 +208,7 @@ levels:
 
   - name: "Survivant"
     message: "Un peu de vie pour vous !"
-    recap: "Outils et armure en diamant/netherite et vie en plus débloqué !"
+    recap: "Outils et armure en diamant et netherite disponibles."
     tribute:
       - material: OAK_SAPLING
         amount: 64
