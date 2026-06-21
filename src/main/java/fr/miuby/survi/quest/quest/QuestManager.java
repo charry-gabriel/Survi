@@ -26,7 +26,9 @@ import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
+import java.time.Instant;
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
@@ -34,8 +36,9 @@ import java.util.stream.Collectors;
 public class QuestManager extends AbstractQuestManager<Quest> {
 
     /**
-     * Quêtes journalières supplémentaires débloquées chaque jour de jeu depuis {@code StartVillageZoneEffect}.
-     * La capacité totale d'un joueur = {@link #DAILY_QUEST_BONUS} × {@link VillageZoneManager#getGameDayCount()}.
+     * Quêtes journalières supplémentaires débloquées à chaque reset journalier réel
+     * ({@code SurviConfig#getDailyResetHour()}, 6h par défaut).
+     * La capacité totale d'un joueur = {@link #DAILY_QUEST_BONUS} × {@link #getQuestDayCount()}.
      */
     public static final int DAILY_QUEST_BONUS = 2;
 
@@ -52,7 +55,45 @@ public class QuestManager extends AbstractQuestManager<Quest> {
      * Inclut les slots bonus accordés manuellement.
      */
     public int getTotalCapacity() {
-        return GameManager.getInstance().getVillageZoneManager().getGameDayCount() * DAILY_QUEST_BONUS + extraGlobalSlots;
+        return getQuestDayCount() * DAILY_QUEST_BONUS + extraGlobalSlots;
+    }
+
+    /**
+     * Numéro du "jour de quête" courant (1-based), calé sur le reset journalier réel du serveur
+     * ({@code SurviConfig#getDailyResetHour()}, 6h par défaut) plutôt que sur des tranches de 24h
+     * glissantes depuis le démarrage du village.
+     *
+     * <p>Le jour 1 démarre dès {@link VillageZoneManager#start()}. Le jour passe à 2 dès que l'horloge
+     * réelle franchit le prochain {@code dailyResetHour:00} (c'est exactement l'instant où
+     * {@code TimeManager} déclenche le {@code DailyResetEvent} → {@link #performDailyQuestReset()}),
+     * puis +1 à chaque reset réel suivant. Le calcul est purement basé sur l'horloge (pas de compteur
+     * persisté à part) : il reste correct même après un redémarrage serveur ou un reset manqué/rattrapé.</p>
+     *
+     * @return 0 si la partie n'a pas encore démarré, sinon le numéro du jour de quête courant.
+     */
+    private int getQuestDayCount() {
+        VillageZoneManager zoneManager = GameManager.getInstance().getVillageZoneManager();
+        if (!zoneManager.isStarted()) return 0;
+
+        ZoneId zone = (GameManager.getInstance().getTimeManager() != null)
+                ? GameManager.getInstance().getTimeManager().getServerTimezone()
+                : ZoneId.systemDefault();
+        int resetHour = SurviConfig.getInstance().getDailyResetHour();
+
+        long startDayIndex = resetAlignedDayIndex(zoneManager.getStartTimestamp(), zone, resetHour);
+        long nowDayIndex   = resetAlignedDayIndex(System.currentTimeMillis(), zone, resetHour);
+
+        return (int) (nowDayIndex - startDayIndex) + 1;
+    }
+
+    /**
+     * Index de jour "décalé" : l'horloge est reculée de {@code resetHour} heures avant de prendre
+     * la date locale, si bien que cet index change exactement au moment où l'horloge réelle franchit
+     * {@code resetHour:00} (au lieu de minuit). Permet de compter combien de resets de {@code resetHour}h
+     * séparent deux instants par simple soustraction.
+     */
+    private static long resetAlignedDayIndex(long epochMillis, ZoneId zone, int resetHour) {
+        return Instant.ofEpochMilli(epochMillis).atZone(zone).minusHours(resetHour).toLocalDate().toEpochDay();
     }
 
     private final Random random = new Random();
