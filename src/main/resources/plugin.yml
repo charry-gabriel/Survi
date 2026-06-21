@@ -4,3 +4,7 @@ main: fr.miuby.survi.Survi
 api-version: '26.2'
 authors: [Miuby]
 description: Petite survi TeamAlpha
+permissions:
+  survi.grave.bypass:
+    description: Permet de récupérer le contenu de la tombe d'un autre joueur
+    default: op

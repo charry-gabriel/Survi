@@ -39,11 +39,11 @@ public class PlayerCommand {
 
     public static LiteralArgumentBuilder<CommandSourceStack> createCommand() {
         return Commands.literal("player")
+                .requires(src -> src.getSender().isOp())
 
                 .then(Commands.literal("info")
                         .executes(PlayerCommand::infoSelf)
                         .then(Commands.argument(PLAYER_ARG, AlphaPlayerArgument.alphaPlayer())
-                                .requires(src -> src.getSender().isOp())
                                 .executes(PlayerCommand::infoOther)
                         )
                 )
@@ -82,7 +82,6 @@ public class PlayerCommand {
                 )
 
                 .then(Commands.literal("death")
-                        .requires(src -> src.getSender().isOp())
                         .then(Commands.argument(PLAYER_ARG, AlphaPlayerArgument.alphaPlayer())
 
                                 .then(Commands.literal("add")
@@ -109,7 +108,6 @@ public class PlayerCommand {
                 )
 
                 .then(Commands.literal("tributes")
-                        .requires(src -> src.getSender().isOp())
                         .then(Commands.literal("missing")
                                 .executes(PlayerCommand::tributesMissing)
                         )
