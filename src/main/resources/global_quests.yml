@@ -22,12 +22,28 @@ global_quests:
     description: "Tuez {value} monstres hostiles basiques."
     type: KILL
     targets: [ZOMBIE, SKELETON, CREEPER, SPIDER]
-    goal: 1000
+    goal: 500
     time_limit: 7200
     rewards:
       - {type: REPUTATION, job: EXPLORER, value: 1}
       - { type: ITEM, item: BREAD, amount: 16 }
       - { type: POTION, potion: strength, duration: 300, amplifier: 1 }
+
+  - id: "global_mine_ores"
+    name: "Ruée vers les minerais"
+    description: "Minez {value} minerais de toute sorte."
+    type: "MINE"
+    targets: [ COAL_ORE, DEEPSLATE_COAL_ORE, IRON_ORE, DEEPSLATE_IRON_ORE, COPPER_ORE, DEEPSLATE_COPPER_ORE, GOLD_ORE, DEEPSLATE_GOLD_ORE, REDSTONE_ORE, DEEPSLATE_REDSTONE_ORE, LAPIS_ORE, DEEPSLATE_LAPIS_ORE, DIAMOND_ORE, DEEPSLATE_DIAMOND_ORE, EMERALD_ORE, DEEPSLATE_EMERALD_ORE ]
+    goal: 750
+    time_limit: 7200
+    rewards:
+      - { type: REPUTATION, job: MINER, value: 1 }
+      - { type: POTION, potion: haste, duration: 300, amplifier: 1 }
+      - { type: ITEM, item: BREAD, amount: 16 }
+      - { type: ITEM, item: IRON_INGOT, amount: 16 }
+      - { type: ITEM, item: COAL, amount: 32 }
+      - { type: ITEM, item: GOLD_INGOT, amount: 16 }
+
 
   - id: "global_kill_enderman"
     name: "Grande Chasse aux Endermen"
