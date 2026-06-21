@@ -265,6 +265,7 @@ cmd.system.containers.clear_start: "<gray>Vidage des conteneurs du village en co
 cmd.system.containers.clear_done: "<green>✓ {0} conteneur(s) vidé(s) dans le village."
 cmd.system.tutorialbook.console_only: "<red>Cette commande est réservée aux joueurs en jeu."
 cmd.system.villager.cleanup_done: "<green>✓ {0} entité(s) fantôme(s) supprimée(s)."
+cmd.system.whitelist.sync_done: "<green>✓ {0} joueur(s) ajouté(s) à la whitelist sur {1} joueur(s) connu(s)."
 
 # ─── Commandes — reload (admin) ───────────────────────────────────────────────
 cmd.reload.all.start: "<gray>Rechargement global en cours..."

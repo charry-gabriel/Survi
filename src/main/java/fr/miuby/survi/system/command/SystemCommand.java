@@ -12,6 +12,7 @@ import fr.miuby.lib.world.WorldRegistry;
 import fr.miuby.survi.GameManager;
 import fr.miuby.survi.display.TutorialBookService;
 import fr.miuby.survi.listener.PlacedBlockTracker;
+import fr.miuby.survi.player.AlphaPlayer;
 import fr.miuby.survi.system.lang.ELang;
 import fr.miuby.survi.system.lang.LangService;
 import fr.miuby.survi.system.perf.PerfTimer;
@@ -21,8 +22,10 @@ import fr.miuby.survi.world.zone.VillageZoneManager;
 import fr.miuby.survi.world.config.VillageZoneConfig;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
 import io.papermc.paper.command.brigadier.Commands;
+import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.Container;
@@ -34,6 +37,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 
@@ -223,6 +227,14 @@ public class SystemCommand {
                             cleanupGhostVillagers(ctx.getSource().getSender());
                             return Command.SINGLE_SUCCESS;
                         }))
+                )
+
+                // === WHITELIST ===
+                .then(Commands.literal("whitelist")
+                        .then(Commands.literal("sync").executes(ctx -> {
+                            syncWhitelist(ctx.getSource().getSender());
+                            return Command.SINGLE_SUCCESS;
+                        }))
                 );
     }
 
@@ -319,6 +331,30 @@ public class SystemCommand {
         }
 
         sender.sendMessage(ls.text(lang, "cmd.system.villager.cleanup_done", removed));
+    }
+
+    // ── Whitelist ────────────────────────────────────────────────────────────
+
+    /**
+     * Ajoute à la whitelist du serveur tous les joueurs connus du {@code AlphaPlayerFactory},
+     * c'est-à-dire tous les joueurs s'étant déjà connectés au moins une fois (chargés en DB).
+     */
+    private static void syncWhitelist(CommandSender sender) {
+        LangService ls   = GameManager.getInstance().getLangService();
+        ELang       lang = sender instanceof Player p ? ls.resolveLanguage(p) : ls.getServerDefault();
+
+        Collection<AlphaPlayer> known = GameManager.getInstance().getAlphaPlayerFactory().getAlphaPlayers();
+
+        int added = 0;
+        for (AlphaPlayer ap : known) {
+            OfflinePlayer offline = Bukkit.getOfflinePlayer(ap.getUuid());
+            if (!offline.isWhitelisted()) {
+                offline.setWhitelisted(true);
+                added++;
+            }
+        }
+
+        sender.sendMessage(ls.text(lang, "cmd.system.whitelist.sync_done", added, known.size()));
     }
 
     // ── Helpers ──────────────────────────────────────────────────────────────
