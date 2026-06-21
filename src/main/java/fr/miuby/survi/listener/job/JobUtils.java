@@ -35,13 +35,16 @@ final class JobUtils {
     /**
      * Annule les drops vanilla d'un BlockBreakEvent et les remplace
      * en appliquant le multiplicateur (gestion fractionnaire probabiliste).
+     *
+     * @return {@code true} si au moins un item a été droppé
      */
-    static void dropWithMultiplier(BlockBreakEvent event, double multiplier) {
+    static boolean dropWithMultiplier(BlockBreakEvent event, double multiplier) {
         Block block = event.getBlock();
         ItemStack tool = event.getPlayer().getInventory().getItemInMainHand();
         Collection<ItemStack> baseDrops = block.getDrops(tool);
         event.setDropItems(false);
 
+        boolean dropped = false;
         for (ItemStack drop : baseDrops) {
             double totalAmount = drop.getAmount() * multiplier;
             int amount = (int) totalAmount;
@@ -50,8 +53,10 @@ final class JobUtils {
                 ItemStack toDrop = drop.clone();
                 toDrop.setAmount(amount);
                 block.getWorld().dropItemNaturally(block.getLocation(), toDrop);
+                dropped = true;
             }
         }
+        return dropped;
     }
 
     /**

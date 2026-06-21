@@ -89,13 +89,12 @@ public class LumberjackListener implements Listener {
         Block block = event.getBlock();
         Player player = event.getPlayer();
         AlphaPlayer alpha = AlphaPlayer.get(player.getUniqueId());
-        if (alpha == null) return;
 
         Material type = block.getType();
         JobsConfig.LumberjackCfg lj = JobsConfig.getInstance().getLumberjack();
 
         if (LOG_BLOCKS.contains(type)) {
-            int level = alpha.getJobLevel(EJob.LUMBERJACK);
+            int level = alpha != null ? alpha.getJobLevel(EJob.LUMBERJACK) : 0;
             try (var t = PerfTimer.start("LumberjackListener.dropWithMultiplier")) {
                 JobUtils.dropWithMultiplier(event, JobUtils.getMultiplier(EJob.LUMBERJACK, level));
             }
@@ -113,7 +112,7 @@ public class LumberjackListener implements Listener {
         }
 
         if (APPLE_LEAF_BLOCKS.contains(type)) {
-            handleAppleLeaves(event, alpha.getJobLevel(EJob.LUMBERJACK), lj);
+            handleAppleLeaves(event, alpha != null ? alpha.getJobLevel(EJob.LUMBERJACK) : 0, lj);
         }
     }
 

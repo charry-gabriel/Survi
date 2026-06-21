@@ -34,10 +34,8 @@ public class MinerListener implements Listener {
         if (!ORE_BLOCKS.contains(event.getBlock().getType())) return;
         if (!(event.getPlayer() instanceof Player player)) return;
         AlphaPlayer alpha = AlphaPlayer.get(player.getUniqueId());
-        if (alpha == null) return;
-
+        int level = alpha != null ? alpha.getJobLevel(EJob.MINER) : 0;
         try (var t = PerfTimer.start("MinerListener.dropWithMultiplier")) {
-            int level = alpha.getJobLevel(EJob.MINER);
             JobUtils.dropWithMultiplier(event, JobUtils.getMultiplier(EJob.MINER, level));
         }
     }
