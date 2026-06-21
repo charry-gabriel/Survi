@@ -2,6 +2,9 @@ package fr.miuby.survi.blessing;
 
 import fr.miuby.survi.player.AlphaPlayer;
 import lombok.RequiredArgsConstructor;
+import net.kyori.adventure.text.Component;
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 
 @RequiredArgsConstructor
 public class MessageEffect extends BlessingEffect {
@@ -9,6 +12,7 @@ public class MessageEffect extends BlessingEffect {
 
     @Override
     public void applyEffect(AlphaPlayer player) {
-        //Bukkit.broadcast(Component.text(message));
+        for (Player p : Bukkit.getOnlinePlayers())
+            p.sendMessage(Component.text(message));
     }
 }
