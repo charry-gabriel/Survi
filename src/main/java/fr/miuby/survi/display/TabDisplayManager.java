@@ -30,7 +30,6 @@ import fr.miuby.survi.system.time.TimeManager;
 import fr.miuby.survi.world.WorldResetManager;
 
 import java.time.Duration;
-import java.time.LocalDate;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.EnumSet;
@@ -337,7 +336,7 @@ public class TabDisplayManager {
 
         // Quête journalière active
         PlayerQuestData questData = alphaPlayer.getCurrentActiveQuest();
-        if (questData != null && !questData.isClaimed() && questData.getLastAccepted().isEqual(LocalDate.now())) {
+        if (questData != null && !questData.isClaimed()) {
             Quest quest = GameManager.getInstance().getQuestManager().getQuest(questData.getQuestId());
             if (quest != null) {
                 String description = quest.getDescription().replace("{value}", String.valueOf(quest.getGoal()));

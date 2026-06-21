@@ -481,6 +481,16 @@ public class QuestManager extends AbstractQuestManager<Quest> {
                 }
             }
         }
+
+        // Relance l'ActionBar de la quête en cours (non terminée) : stopRefresh a été appelé
+        // au quit, donc sans cela le joueur n'a plus aucune indication de sa quête active.
+        PlayerQuestData current = player.getCurrentActiveQuest();
+        if (current != null && !current.isCompleted()) {
+            Quest quest = getQuest(current.getQuestId());
+            if (quest != null) {
+                GameManager.getInstance().getQuestActionBarService().showProgress(player, quest, current);
+            }
+        }
     }
 
     // =========================================================================
