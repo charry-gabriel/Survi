@@ -5,6 +5,7 @@ import fr.miuby.survi.player.AlphaPlayer;
 import fr.miuby.survi.quest.EQuestType;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.block.data.Ageable;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -166,6 +167,10 @@ public class QuestListener implements Listener {
      * Progresse la quête HARVEST_CROP sur la casse d'un bloc culture.
      * Ne vérifie PAS le PlacedBlockTracker : les cultures plantées par les joueurs
      * doivent compter (contrairement aux quêtes MINE où les blocs posés sont exclus).
+     * Si le bloc est {@link Ageable} (wheat, carrots, beetroots, cocoa...), il doit être
+     * à maturité (age == maximumAge) : une culture juste plantée et cassée aussitôt ne compte pas.
+     * Les blocs non-Ageable (melon, pumpkin, sugar cane, cactus, champignons...) n'ont pas
+     * d'état de croissance sur le bloc posé et comptent donc sans condition.
      * La cible transmise à progressQuest est le Material du bloc (pas du drop) ;
      * CAVE_VINES_PLANT est normalisé sur CAVE_VINES.
      */
@@ -173,6 +178,7 @@ public class QuestListener implements Listener {
     public void onHarvestCrop(BlockBreakEvent event) {
         Material target = CROP_BLOCK_TO_TARGET.get(event.getBlock().getType());
         if (target == null) return;
+        if (event.getBlock().getBlockData() instanceof Ageable ageable && ageable.getAge() < ageable.getMaximumAge()) return;
         AlphaPlayer player = AlphaPlayer.get(event.getPlayer().getUniqueId());
         if (player != null) {
             GameManager.getInstance().getQuestManager().progressQuest(player, EQuestType.HARVEST_CROP, target, 1);
