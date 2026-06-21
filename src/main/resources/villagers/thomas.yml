@@ -11,8 +11,7 @@ levels:
     lock: 1
     blessings:
       - { type: WORLD_RESET, frequency: 1}
-      - { type: MESSAGE, text: "Niveau I réussi ! Maintenant les mondes se détruisent tous les matins !" }
-    message: "Merci, revenez dans 24h pour la suite."
+    message: "Niveau I réussi ! Maintenant les mondes se détruisent tous les matins ! Merci, revenez dans 24h pour la suite."
     recap: ""
 
   - name: "Thomas Pesquet"
@@ -22,9 +21,7 @@ levels:
       - material: NAME_TAG
         amount: 64
     lock: 2
-    blessings:
-      - { type: MESSAGE, text: "Niveau II réussi !" }
-    message: "Merci, revenez dans 48h pour la suite."
+    message: "Niveau II réussi ! Merci, revenez dans 48h pour la suite."
     recap: "Les mondes se détruisent tous les matins !"
 
   - name: "Thomas Pesquet"
@@ -36,8 +33,7 @@ levels:
     lock: 3
     blessings:
       - { type: WORLD_RESET, frequency: 2}
-      - { type: MESSAGE, text: "Niveau III réussi ! Maintenant les mondes se détruisent tous les deux matins !" }
-    message: "Merci, revenez dans 72h pour la suite (et l'ouverture de nether ?)"
+    message: "Niveau III réussi ! Maintenant les mondes se détruisent tous les deux matins ! Merci, revenez dans 72h pour la suite (et l'ouverture de nether ?)"
     recap: "Les mondes se détruisent tous les matins !"
 
   - name: "Thomas Pesquet"
@@ -56,11 +52,10 @@ levels:
         amount: 16
     lock: 5
     blessings:
-      - { type: MESSAGE, text: "Niveau IV réussi ! Vous avez désormais accès au Nether mais attention à la pluie acide venue de l'autre monde ! Le monde est encore plus hostile qu'avant !" }
       - { type: LOCK_WORLD, world: NETHER }
       - { type: WORLD_LEVEL}
       - { type: ACID_RAIN}
-    message: "Revenez me voir dans 5 jours pour affronter l'EnderDragon."
+    message: "Niveau IV réussi ! Vous avez désormais accès au Nether mais attention à la pluie acide venue de l'autre monde ! Le monde est encore plus hostile qu'avant ! Revenez me voir dans 5 jours pour affronter l'EnderDragon."
     recap: "Les mondes se détruisent tous les deux matins !"
 
   - name: "Thomas Pesquet"
