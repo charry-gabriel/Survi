@@ -324,6 +324,18 @@ cmd.quest.extraslot_removed: "<yellow>-{0} slot de quête journalière retirés.
 cmd.quest.extraslot_status: "<gold>Slots bonus journaliers : <white>{0}</white> | Base : <white>{1}</white> | Capacité totale : <white>{2}</white>."
 cmd.quest.recompute_done: "<green>Compteur de quêtes journalières recalculé depuis l'historique pour {0} joueur(s)."
 cmd.quest.dailyreset_done: "<green>Reset journalier des quêtes effectué. Capacité totale actuelle : <white>{0}</white>."
+cmd.quest.info_separator: "<gold>━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+cmd.quest.info_title: "<gold><bold>  ✦ Quête en cours de {0}"
+cmd.quest.info_none: "<red>Aucune quête en cours pour {0}."
+cmd.quest.info_orphan: "<red>{0} a une quête en cours dont l'id « {1} » n'existe plus dans le pool (quête orpheline)."
+cmd.quest.info_name: "<gray>  Quête : <white>{0}</white> <dark_gray>({1})"
+cmd.quest.info_progress: "<gray>  Progression : <white>{0}/{1}</white>"
+cmd.quest.info_difficulty: "<gray>  Difficulté : <white>{0}</white>"
+cmd.quest.info_trader: "<gray>  Trader assigné : <white>{0}</white>"
+cmd.quest.info_accepted: "<gray>  Acceptée le : <white>{0}</white>"
+cmd.quest.info_state_active: "<yellow>En cours"
+cmd.quest.info_state_completed: "<green>Terminée (non réclamée)"
+cmd.quest.info_state: "<gray>  État : <state>"
 
 # ─── Commandes — globalquest (admin) ──────────────────────────────────────────
 cmd.globalquest.already_active: "<red>Une quête globale est déjà en cours : <yellow>{0}"

@@ -15,6 +15,7 @@ import io.papermc.paper.command.brigadier.CommandSourceStack;
 import io.papermc.paper.command.brigadier.Commands;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -55,6 +56,11 @@ public class QuestCommand {
                 .then(Commands.literal("reset")
                         .then(Commands.argument(playerArgument, AlphaPlayerArgument.alphaPlayer())
                                 .executes(QuestCommand::resetAllQuests)
+                        )
+                )
+                .then(Commands.literal("info")
+                        .then(Commands.argument(playerArgument, AlphaPlayerArgument.alphaPlayer())
+                                .executes(QuestCommand::questInfo)
                         )
                 )
                 .then(Commands.literal("claim")
@@ -129,6 +135,45 @@ public class QuestCommand {
         String key = GameManager.getInstance().getQuestManager().resetQuest(alphaPlayer)
                 ? "cmd.quest.removed" : "cmd.quest.no_active";
         sender.sendMessage(ls.text(ls.resolveOrDefault(sender), key, alphaPlayer.getPseudo()));
+        return Command.SINGLE_SUCCESS;
+    }
+
+    /**
+     * Affiche la quête en cours d'un joueur (admin) : nom, progression, difficulté, trader, état.
+     */
+    private static int questInfo(CommandContext<CommandSourceStack> ctx) {
+        AlphaPlayer   alphaPlayer = AlphaPlayerArgument.getAlphaPlayer(ctx, playerArgument);
+        CommandSender sender      = ctx.getSource().getSender();
+        LangService   ls          = GameManager.getInstance().getLangService();
+        var           lang        = ls.resolveOrDefault(sender);
+
+        PlayerQuestData data = alphaPlayer.getCurrentActiveQuest();
+        if (data == null) {
+            sender.sendMessage(ls.text(lang, "cmd.quest.info_none", alphaPlayer.getPseudo()));
+            return Command.SINGLE_SUCCESS;
+        }
+
+        Quest quest = GameManager.getInstance().getQuestManager().getQuest(data.getQuestId());
+        if (quest == null) {
+            sender.sendMessage(ls.text(lang, "cmd.quest.info_orphan", alphaPlayer.getPseudo(), data.getQuestId()));
+            return Command.SINGLE_SUCCESS;
+        }
+
+        DateTimeFormatter fmt = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        Component state = data.isCompleted()
+                ? ls.text(lang, "cmd.quest.info_state_completed")
+                : ls.text(lang, "cmd.quest.info_state_active");
+
+        sender.sendMessage(ls.text(lang, "cmd.quest.info_separator"));
+        sender.sendMessage(ls.text(lang, "cmd.quest.info_title", alphaPlayer.getPseudo()));
+        sender.sendMessage(ls.text(lang, "cmd.quest.info_separator"));
+        sender.sendMessage(ls.text(lang, "cmd.quest.info_name", quest.getName(), quest.getId()));
+        sender.sendMessage(ls.text(lang, "cmd.quest.info_progress", data.getProgress(), quest.getGoal()));
+        sender.sendMessage(ls.text(lang, "cmd.quest.info_difficulty", quest.getDifficulty()));
+        sender.sendMessage(ls.text(lang, "cmd.quest.info_trader", data.getTraderId() != null ? data.getTraderId() : "—"));
+        sender.sendMessage(ls.text(lang, "cmd.quest.info_accepted", data.getLastAccepted().format(fmt)));
+        sender.sendMessage(ls.text(lang, "cmd.quest.info_state", Placeholder.component("state", state)));
+        sender.sendMessage(ls.text(lang, "cmd.quest.info_separator"));
         return Command.SINGLE_SUCCESS;
     }
 
