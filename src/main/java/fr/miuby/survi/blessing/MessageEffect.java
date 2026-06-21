@@ -12,7 +12,6 @@ public class MessageEffect extends BlessingEffect {
 
     @Override
     public void applyEffect(AlphaPlayer player) {
-        for (Player p : Bukkit.getOnlinePlayers())
-            p.sendMessage(Component.text(message));
+        //for (Player p : Bukkit.getOnlinePlayers())            p.sendMessage(Component.text(message));
     }
 }
