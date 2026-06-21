@@ -3,11 +3,13 @@ package fr.miuby.survi.quest.quest;
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
+import fr.miuby.lib.log.MLLogManager;
 import fr.miuby.survi.player.AlphaPlayer;
 import fr.miuby.survi.quest.globalquest.GlobalQuest;
 import fr.miuby.survi.system.command.argument.AlphaPlayerArgument;
 import fr.miuby.survi.system.command.argument.QuestArgument;
 import fr.miuby.survi.system.command.argument.TraderArgument;
+import fr.miuby.survi.system.log.ELogTag;
 import fr.miuby.survi.villager.trader.Trader;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
 import io.papermc.paper.command.brigadier.Commands;
@@ -22,6 +24,7 @@ import fr.miuby.survi.system.lang.LangService;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
 
 @SuppressWarnings({"java:S3516", "SameReturnValue"})
 public class QuestCommand {
@@ -74,6 +77,9 @@ public class QuestCommand {
                                 .requires(source -> source.getSender().isOp())
                                 .executes(QuestCommand::historyOf)
                         )
+                )
+                .then(Commands.literal("recompute")
+                        .executes(QuestCommand::recomputeDailyCounters)
                 )
                 .then(Commands.literal("extraslot")
                         .then(Commands.literal("add")
@@ -252,6 +258,34 @@ public class QuestCommand {
         }
 
         sender.sendMessage(ls.text(lang, "cmd.quest.history_separator"));
+    }
+
+    // =========================================================================
+    // /quest recompute
+    // =========================================================================
+
+    /**
+     * Recharge {@link AlphaPlayer#getTotalDailyQuestsClaimed()} depuis {@code quest_history} pour tous
+     * les joueurs (en ligne ou non). Ce compteur n'est normalement chargé qu'une fois, à la connexion
+     * (voir constructeur d'{@code AlphaPlayer}) ; cette commande le resynchronise sans attendre une reco.
+     */
+    private static int recomputeDailyCounters(CommandContext<CommandSourceStack> ctx) {
+        CommandSender sender = ctx.getSource().getSender();
+        LangService   ls     = GameManager.getInstance().getLangService();
+
+        int playersUpdated = 0;
+        for (AlphaPlayer player : GameManager.getInstance().getAlphaPlayerFactory().getAlphaPlayers()) {
+            int recomputed = GameManager.getInstance().getDatabase().questHistory().countDailyCompleted(player.getUuid());
+            if (recomputed != player.getTotalDailyQuestsClaimed()) {
+                player.setTotalDailyQuestsClaimed(recomputed);
+                playersUpdated++;
+            }
+        }
+
+        sender.sendMessage(ls.text(ls.resolveOrDefault(sender), "cmd.quest.recompute_done", playersUpdated));
+        MLLogManager.getInstance().log(Level.INFO, ELogTag.QUEST,
+                "[Recompute] Compteur de quêtes journalières rechargé depuis quest_history pour " + playersUpdated + " joueur(s).");
+        return Command.SINGLE_SUCCESS;
     }
 
     // =========================================================================

@@ -298,6 +298,22 @@ public class AlphaPlayer extends MLPlayer implements Serializable {
         }
     }
 
+    /**
+     * Définit directement la réputation d'un métier, sans déclencher {@link AlphaPlayerJobLevelUpEvent}
+     * ni les notifications/son associés. Réservé aux outils admin de réparation de données
+     * (ex : reconstruction de {@code player_reputation} depuis {@code quest_history}) — un recalcul en masse
+     * via {@link #addJobReputation} spammerait un broadcast + son par palier franchi et par joueur traité.
+     *
+     * @param job        le métier concerné
+     * @param reputation nouvelle valeur de réputation (négatif ramené à 0)
+     */
+    public void setJobReputationSilently(EJob job, int reputation) {
+        int newRep = Math.max(0, reputation);
+        reputationByJob.put(job, newRep);
+        GameManager.getInstance().getDatabase().quests().updateReputation(this.getUuid(), job.name(), newRep);
+        jobLevels.put(job, JobLevelConfig.computeLevel(newRep));
+    }
+
     // -----------------------------------------------------------------------
     // Métiers
     // -----------------------------------------------------------------------

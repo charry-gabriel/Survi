@@ -4,12 +4,15 @@ import com.mojang.brigadier.Command;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
+import fr.miuby.lib.log.MLLogManager;
 import fr.miuby.survi.GameManager;
 import fr.miuby.survi.player.AlphaPlayer;
+import fr.miuby.survi.system.SurviConfig;
 import fr.miuby.survi.system.command.argument.AlphaPlayerArgument;
 import fr.miuby.survi.system.command.argument.JobArgument;
 import fr.miuby.survi.system.lang.ELang;
 import fr.miuby.survi.system.lang.LangService;
+import fr.miuby.survi.system.log.ELogTag;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
 import io.papermc.paper.command.brigadier.Commands;
 import net.kyori.adventure.text.Component;
@@ -17,6 +20,10 @@ import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+
+import java.util.Map;
+import java.util.UUID;
+import java.util.logging.Level;
 
 @SuppressWarnings({"java:S3516", "SameReturnValue"})
 public class JobCommand {
@@ -29,6 +36,11 @@ public class JobCommand {
     public static LiteralArgumentBuilder<CommandSourceStack> createReputationCommand() {
         return Commands.literal("job")
                 .requires(source -> source.getSender().isOp())
+
+                .then(Commands.literal("recompute")
+                        .executes(JobCommand::executeRecompute)
+                )
+
                 .then(Commands.argument(JOB_ARG, JobArgument.job())
                         .then(Commands.argument(PLAYER_ARG, AlphaPlayerArgument.alphaPlayer())
 
@@ -55,6 +67,47 @@ public class JobCommand {
                                 )
                         )
                 );
+    }
+
+    /**
+     * Recalcule la réputation de métier de tous les joueurs à partir de {@code quest_history}
+     * (quêtes journalières uniquement, métier non nul), en écrasant la valeur actuelle.
+     * Réservé à la réparation après corruption de {@code player_reputation}/{@code jobs}.
+     * Utilise {@link AlphaPlayer#setJobReputationSilently} pour éviter un spam de
+     * broadcasts/sons de level-up — un par palier franchi et par joueur traité.
+     */
+    private static int executeRecompute(CommandContext<CommandSourceStack> ctx) {
+        CommandSender sender = ctx.getSource().getSender();
+        LangService   ls     = GameManager.getInstance().getLangService();
+        ELang         lang   = sender instanceof Player p ? ls.resolveLanguage(p) : ls.getServerDefault();
+
+        int repPerQuest = SurviConfig.getInstance().getQuestCompletionReputation();
+        Map<UUID, Map<String, Integer>> counts =
+                GameManager.getInstance().getDatabase().questHistory().countDailyByPlayerAndJob();
+
+        int playersUpdated = 0;
+        for (AlphaPlayer player : GameManager.getInstance().getAlphaPlayerFactory().getAlphaPlayers()) {
+            Map<String, Integer> jobCounts = counts.get(player.getUuid());
+            boolean changed = false;
+
+            for (EJob job : EJob.values()) {
+                int questCount = jobCounts != null ? jobCounts.getOrDefault(job.name(), 0) : 0;
+                int newRep = questCount * repPerQuest;
+
+                if (newRep != player.getJobReputation(job)) {
+                    player.setJobReputationSilently(job, newRep);
+                    changed = true;
+                }
+            }
+
+            if (changed) playersUpdated++;
+        }
+
+        sender.sendMessage(ls.text(lang, "cmd.job.recompute.done", playersUpdated));
+        MLLogManager.getInstance().log(Level.INFO, ELogTag.JOB,
+                "[Recompute] Réputation de métier recalculée depuis quest_history pour " + playersUpdated
+                        + " joueur(s) (rep/quête=" + repPerQuest + ").");
+        return Command.SINGLE_SUCCESS;
     }
 
     private static int executeAdd(CommandContext<CommandSourceStack> ctx, boolean isAdd) {

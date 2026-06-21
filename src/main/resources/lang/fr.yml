@@ -190,6 +190,7 @@ cmd.job.info.level: "<dark_gray> — <white>niv.{0}"
 cmd.job.info.hint_1: "<gray>  Complétez des quêtes auprès des Marchands"
 cmd.job.info.hint_2: "<gray>  pour progresser dans chaque métier."
 cmd.job.console.header: "=== Métiers de {0} ==="
+cmd.job.recompute.done: "<green>Réputation de métier recalculée depuis l'historique des quêtes pour {0} joueur(s)."
 
 # ─── Commandes — joueur ───────────────────────────────────────────────────────
 cmd.player.console_only: "<red>Cette commande est réservée aux joueurs en jeu. Utilisez /player info <joueur> depuis la console."
