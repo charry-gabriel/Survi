@@ -1,16 +1,16 @@
 # yaml-language-server: $schema=../schema/quests-schema.json
 quests:
 
-# ─────────────────── DIFFICULTÉ 3 (7/7) ───────────────────
+  # ─────────────────── DIFFICULTÉ 3 (7/7) ───────────────────
 
   - id: "cocoa"
     name: "Plantation Tropicale"
     description: "Récoltez {value} fèves de cacao."
-    type: MINE
+    type: HARVEST_CROP
     difficulty: 3
     jobs:
       - FARMER
-    targets: [ COCOA_BEANS ]
+    targets: [ COCOA ]
     goal: 128
     rewards:
       - { type: REPUTATION, job: FARMER, value: 1}
@@ -18,7 +18,7 @@ quests:
   - id: "cactus_industry"
     name: "Ferme du Désert"
     description: "Récoltez {value} cactus."
-    type: MINE
+    type: HARVEST_CROP
     difficulty: 3
     jobs:
       - FARMER
@@ -41,7 +41,7 @@ quests:
 
   - id: "end_farming"
     name: "Agriculteur Dimensionnel"
-    description: "Récoltez {value} cultures dans l’End."
+    description: "Récoltez {value} cultures dans l'End."
     type: MINE
     difficulty: 3
     jobs:
@@ -55,7 +55,7 @@ quests:
   - id: "mushroom_harvest"
     name: "Cueilleur Mycologique"
     description: "Récoltez {value} champignons (rouges et bruns)."
-    type: MINE
+    type: HARVEST_CROP
     difficulty: 3
     jobs:
       - FARMER
@@ -81,16 +81,11 @@ quests:
   - id: "ultimate_farm_variety"
     name: "Maître Agriculteur"
     description: "Récoltez {value} cultures variées."
-    type: MINE
+    type: HARVEST_CROP
     difficulty: 3
     jobs:
       - FARMER
-    targets: [ WHEAT, CARROT, POTATO, BEETROOT, PUMPKIN, MELON, SUGAR_CANE, COCOA_BEANS, NETHER_WART, CHORUS_FRUIT ]
+    targets: [ WHEAT, CARROTS, POTATOES, BEETROOTS, PUMPKIN, MELON, SUGAR_CANE, COCOA, NETHER_WART, CHORUS_PLANT ]
     goal: 5000
     rewards:
       - { type: REPUTATION, job: FARMER, value: 5 }
-
-
-
-
-

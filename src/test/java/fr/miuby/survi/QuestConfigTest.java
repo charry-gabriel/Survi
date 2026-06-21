@@ -43,7 +43,7 @@ class QuestConfigTest {
 
     private static final Set<String> VALID_QUEST_TYPES = Set.of(
             "MINE", "KILL", "BREED", "FISH", "SHEAR", "CRAFT", "SMELT",
-            "TAME", "HARVEST_BEEHIVE", "ENCHANT", "GAIN_XP_LEVELS", "ANVIL_ENCHANT"
+            "TAME", "HARVEST_BEEHIVE", "HARVEST_CROP", "ENCHANT", "GAIN_XP_LEVELS", "ANVIL_ENCHANT"
     );
 
     private static final Set<String> VALID_REWARD_TYPES = Set.of(

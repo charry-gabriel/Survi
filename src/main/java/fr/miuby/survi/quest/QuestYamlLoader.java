@@ -224,7 +224,7 @@ public final class QuestYamlLoader {
         List<Object> parsed = targetStrings.stream()
                 .filter(s -> s != null && !s.isBlank())
                 .map(s -> (Object) switch (type) {
-                    case MINE, CRAFT, SMELT, ENCHANT, HARVEST_BEEHIVE, ANVIL_ENCHANT -> Material.valueOf(s);
+                    case MINE, CRAFT, SMELT, ENCHANT, HARVEST_BEEHIVE, ANVIL_ENCHANT, HARVEST_CROP -> Material.valueOf(s);
                     case KILL, SHEAR, BREED, TAME -> EntityType.valueOf(s);
                     default -> null;
                 })

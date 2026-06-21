@@ -10,6 +10,7 @@ public enum EQuestType {
     SMELT,
     TAME,
     HARVEST_BEEHIVE,
+    HARVEST_CROP,
     ENCHANT,
     GAIN_XP_LEVELS,
     ANVIL_ENCHANT

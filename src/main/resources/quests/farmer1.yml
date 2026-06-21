@@ -1,13 +1,13 @@
 # yaml-language-server: $schema=../schema/quests-schema.json
 quests:
 
-# ─────────────────── DIFFICULTÉ 1 (7/7) ───────────────────
+  # ─────────────────── DIFFICULTÉ 1 (7/7) ───────────────────
 
 
   - id: "harvest_wheat"
     name: "Première Récolte"
     description: "Récoltez {value} blés."
-    type: MINE
+    type: HARVEST_CROP
     difficulty: 1
     jobs:
       - FARMER
@@ -19,11 +19,11 @@ quests:
   - id: "harvest_carrots_potatoes"
     name: "Potager de Carottes et champ de Pommes de Terre"
     description: "Récoltez {value} carottes ou patates."
-    type: MINE
+    type: HARVEST_CROP
     difficulty: 1
     jobs:
       - FARMER
-    targets: [CARROT, POTATO]
+    targets: [CARROTS, POTATOES]
     goal: 64
     rewards:
       - { type: REPUTATION, job: FARMER, value: 1 }
@@ -31,11 +31,11 @@ quests:
   - id: "harvest_beetroot"
     name: "Cultivateur de Betteraves"
     description: "Récoltez {value} betteraves."
-    type: MINE
+    type: HARVEST_CROP
     difficulty: 1
     jobs:
       - FARMER
-    targets: [ BEETROOT ]
+    targets: [ BEETROOTS ]
     goal: 32
     rewards:
       - { type: REPUTATION, job: FARMER, value: 2 }

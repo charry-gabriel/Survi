@@ -1,13 +1,13 @@
 # yaml-language-server: $schema=../schema/quests-schema.json
 quests:
 
-# ─────────────────── DIFFICULTÉ 2 (7/7) ───────────────────
+  # ─────────────────── DIFFICULTÉ 2 (7/7) ───────────────────
 
 
   - id: "pumpkin_melon_harvest"
     name: "Champ de Citrouilles et Melon"
     description: "Récoltez {value} citrouilles et melon."
-    type: MINE
+    type: HARVEST_CROP
     difficulty: 2
     jobs:
       - FARMER
@@ -43,7 +43,7 @@ quests:
   - id: "sugar_cane"
     name: "Production Sucrée"
     description: "Récoltez {value} cannes à sucre."
-    type: MINE
+    type: HARVEST_CROP
     difficulty: 2
     jobs:
       - FARMER
@@ -55,7 +55,7 @@ quests:
   - id: "nether_wart_d2"
     name: "Premier Pas en Alchimie"
     description: "Récoltez {value} verrues du Nether."
-    type: MINE
+    type: HARVEST_CROP
     difficulty: 2
     jobs:
       - FARMER
@@ -80,11 +80,11 @@ quests:
   - id: "ultimate_farmland"
     name: "Magnat de l'Agriculture"
     description: "Récoltez {value} cultures variées."
-    type: MINE
+    type: HARVEST_CROP
     difficulty: 2
     jobs:
       - FARMER
-    targets: [ WHEAT, CARROT, POTATO, BEETROOT, PUMPKIN, MELON, SUGAR_CANE, COCOA_BEANS, NETHER_WART ]
+    targets: [ WHEAT, CARROTS, POTATOES, BEETROOTS, PUMPKIN, MELON, SUGAR_CANE, COCOA, NETHER_WART ]
     goal: 2000
     rewards:
       - { type: REPUTATION, job: FARMER, value: 5 }

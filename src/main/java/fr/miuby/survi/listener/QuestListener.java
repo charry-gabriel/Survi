@@ -27,9 +27,37 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.EnchantmentStorageMeta;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import java.util.EnumMap;
 import java.util.Map;
 
 public class QuestListener implements Listener {
+
+    /**
+     * Mapping bloc culture → cible YAML pour les quêtes HARVEST_CROP.
+     * La cible est le {@link Material} du bloc lui-même (pas du drop) car c'est ce que
+     * l'auteur YAML renseigne dans {@code targets}. CAVE_VINES_PLANT est normalisé sur
+     * CAVE_VINES pour que la config n'ait qu'un seul identifiant à gérer.
+     */
+    private static final Map<Material, Material> CROP_BLOCK_TO_TARGET = new EnumMap<>(Material.class);
+    static {
+        CROP_BLOCK_TO_TARGET.put(Material.WHEAT,            Material.WHEAT);
+        CROP_BLOCK_TO_TARGET.put(Material.CARROTS,          Material.CARROTS);
+        CROP_BLOCK_TO_TARGET.put(Material.POTATOES,         Material.POTATOES);
+        CROP_BLOCK_TO_TARGET.put(Material.BEETROOTS,        Material.BEETROOTS);
+        CROP_BLOCK_TO_TARGET.put(Material.NETHER_WART,      Material.NETHER_WART);
+        CROP_BLOCK_TO_TARGET.put(Material.MELON,            Material.MELON);
+        CROP_BLOCK_TO_TARGET.put(Material.PUMPKIN,          Material.PUMPKIN);
+        CROP_BLOCK_TO_TARGET.put(Material.COCOA,            Material.COCOA);
+        CROP_BLOCK_TO_TARGET.put(Material.SUGAR_CANE,       Material.SUGAR_CANE);
+        CROP_BLOCK_TO_TARGET.put(Material.SWEET_BERRY_BUSH, Material.SWEET_BERRY_BUSH);
+        CROP_BLOCK_TO_TARGET.put(Material.CAVE_VINES,       Material.CAVE_VINES);
+        CROP_BLOCK_TO_TARGET.put(Material.CAVE_VINES_PLANT, Material.CAVE_VINES);
+        CROP_BLOCK_TO_TARGET.put(Material.TORCHFLOWER_CROP, Material.TORCHFLOWER_CROP);
+        CROP_BLOCK_TO_TARGET.put(Material.PITCHER_CROP,     Material.PITCHER_CROP);
+        CROP_BLOCK_TO_TARGET.put(Material.CACTUS,           Material.CACTUS);
+        CROP_BLOCK_TO_TARGET.put(Material.RED_MUSHROOM,     Material.RED_MUSHROOM);
+        CROP_BLOCK_TO_TARGET.put(Material.BROWN_MUSHROOM,   Material.BROWN_MUSHROOM);
+    }
 
     private final PlacedBlockTracker placedBlockTracker;
 
@@ -131,6 +159,43 @@ public class QuestListener implements Listener {
         if (player != null) {
             GameManager.getInstance().getQuestManager().progressQuest(player, EQuestType.TAME, event.getEntityType(), 1);
             GameManager.getInstance().getGlobalQuestManager().progressGlobalQuest(player, EQuestType.TAME, event.getEntityType(), 1);
+        }
+    }
+
+    /**
+     * Progresse la quête HARVEST_CROP sur la casse d'un bloc culture.
+     * Ne vérifie PAS le PlacedBlockTracker : les cultures plantées par les joueurs
+     * doivent compter (contrairement aux quêtes MINE où les blocs posés sont exclus).
+     * La cible transmise à progressQuest est le Material du bloc (pas du drop) ;
+     * CAVE_VINES_PLANT est normalisé sur CAVE_VINES.
+     */
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onHarvestCrop(BlockBreakEvent event) {
+        Material target = CROP_BLOCK_TO_TARGET.get(event.getBlock().getType());
+        if (target == null) return;
+        AlphaPlayer player = AlphaPlayer.get(event.getPlayer().getUniqueId());
+        if (player != null) {
+            GameManager.getInstance().getQuestManager().progressQuest(player, EQuestType.HARVEST_CROP, target, 1);
+            GameManager.getInstance().getGlobalQuestManager().progressGlobalQuest(player, EQuestType.HARVEST_CROP, target, 1);
+        }
+    }
+
+    /**
+     * Progresse la quête HARVEST_CROP sur la récolte par clic droit des baies
+     * (baies sucrées, baies brillantes/lianes de caverne) qui ne déclenchent pas de
+     * BlockBreakEvent. Ignoré si aucun drop n'est produit (buisson immature, etc.).
+     * CAVE_VINES_PLANT est normalisé sur CAVE_VINES.
+     */
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onHarvestCropRightClick(PlayerHarvestBlockEvent event) {
+        Material blockType = event.getHarvestedBlock().getType();
+        if (blockType != Material.SWEET_BERRY_BUSH && blockType != Material.CAVE_VINES && blockType != Material.CAVE_VINES_PLANT) return;
+        if (event.getItemsHarvested().isEmpty()) return;
+        Material target = (blockType == Material.CAVE_VINES_PLANT) ? Material.CAVE_VINES : blockType;
+        AlphaPlayer player = AlphaPlayer.get(event.getPlayer().getUniqueId());
+        if (player != null) {
+            GameManager.getInstance().getQuestManager().progressQuest(player, EQuestType.HARVEST_CROP, target, 1);
+            GameManager.getInstance().getGlobalQuestManager().progressGlobalQuest(player, EQuestType.HARVEST_CROP, target, 1);
         }
     }
 
