@@ -28,6 +28,14 @@ public class QuestRepository extends MLRepository {
     // RÉPUTATION
     // =========================================================================
 
+    /**
+     * Charge la réputation par métier d'un joueur.
+     *
+     * @return la map trader_id → réputation (vide si le joueur n'a simplement aucune réputation
+     *         enregistrée), ou {@code null} si la lecture a échoué. Ne JAMAIS traiter {@code null}
+     *         comme "0 partout" : un appelant qui ferait ça écraserait la vraie valeur en base au
+     *         premier gain de réputation suivant via {@code updateReputation} (INSERT OR REPLACE).
+     */
     public Map<String, Integer> getReputation(UUID playerUuid) {
         Map<String, Integer> reputations = new HashMap<>();
         try (PreparedStatement ps = connection.prepareStatement("SELECT trader_id, reputation FROM player_reputation WHERE player_uuid = ?")) {
@@ -39,6 +47,7 @@ public class QuestRepository extends MLRepository {
             }
         } catch (SQLException ex) {
             MLLogManager.getInstance().log(Level.SEVERE, ELogTag.REPUTATION, "Failed to get reputation", ex);
+            return null;
         }
         return reputations;
     }

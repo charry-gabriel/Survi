@@ -34,10 +34,15 @@ public abstract class Database extends MLSQLite {
      * Initialise les repositories après que la connexion est ouverte et les migrations appliquées.
      * Appelé automatiquement par {@link MLSQLite#load()}.
      * Les sous-classes qui surchargent cette méthode doivent appeler {@code super.onLoaded()} en premier.
+     *
+     * <p>La connexion distribuée aux repositories est {@link MLSQLite#getResilientConnection()} :
+     * un proxy auto-réparant, pas une référence figée. Si la connexion physique sous-jacente venait
+     * à se rompre (verrou bloqué, disque plein…), elle se rouvre automatiquement au prochain appel —
+     * un repository ne reste plus jamais bloqué sur une connexion morte jusqu'au redémarrage.</p>
      */
     @Override
     protected void onLoaded() {
-        Connection conn = getConnection();
+        Connection conn = getResilientConnection();
         playerRepository        = new PlayerRepository(conn, this);
         villagerRepository      = new VillagerRepository(conn, this);
         cropRepository          = new CropRepository(conn, this);

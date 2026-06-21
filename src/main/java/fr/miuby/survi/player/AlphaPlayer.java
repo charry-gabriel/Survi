@@ -40,6 +40,15 @@ public class AlphaPlayer extends MLPlayer implements Serializable {
     @Getter
     private final Map<EJob, Integer> jobLevels = new EnumMap<>(EJob.class);
 
+    /**
+     * {@code true} une fois que {@link #reputationByJob} a été chargé avec succès depuis la BDD
+     * pour la session en cours. Tant que c'est {@code false}, {@link #addJobReputation} refuse
+     * tout gain — sans ce garde-fou, un échec de lecture silencieux (BDD temporairement indisponible)
+     * laisserait {@code reputationByJob} vide, et le moindre gain de réputation derrière écraserait
+     * la vraie valeur en base via {@code INSERT OR REPLACE}, détruisant la progression réelle du joueur.
+     */
+    private volatile boolean reputationDataReady = false;
+
     @Getter
     private final List<PlayerQuestData> activeQuests = new ArrayList<>();
 
@@ -143,7 +152,42 @@ public class AlphaPlayer extends MLPlayer implements Serializable {
         this.player.discoverRecipes(GameManager.getInstance().getCustomRecipeFactory().getNewRecipes().keySet());
         GameManager.getInstance().getLockedItemsFactory().applyLockState(this);
 
+        loadReputationFromDatabase(0);
+
+        // Charge TOUTES les quêtes actives (non réclamées) — le système cumulatif ne les expire pas par date.
+        // Les quêtes réclamées sont déjà en quest_history ; on les déduit du total via countDailyCompleted.
+        this.totalDailyQuestsClaimed = GameManager.getInstance().getDatabase().questHistory().countDailyCompleted(this.getUuid());
+        List<PlayerQuestData> loaded = GameManager.getInstance().getDatabase().quests().getPlayerQuests(this.getUuid());
+        GameManager.getInstance().getQuestManager().restoreQuestsOnJoin(this, loaded);
+    }
+
+    private static final int MAX_REPUTATION_LOAD_ATTEMPTS = 3;
+    private static final long REPUTATION_LOAD_RETRY_DELAY_TICKS = 100L; // 5s
+
+    /**
+     * Charge {@link #reputationByJob} depuis la BDD et marque {@link #reputationDataReady} à
+     * {@code true} en cas de succès uniquement. En cas d'échec, retente automatiquement
+     * {@link #MAX_REPUTATION_LOAD_ATTEMPTS} fois avant d'abandonner pour la session — tant que
+     * {@code reputationDataReady} reste à {@code false}, {@link #addJobReputation} refuse tout gain.
+     */
+    private void loadReputationFromDatabase(int attempt) {
         Map<String, Integer> rawRep = GameManager.getInstance().getDatabase().quests().getReputation(this.getUuid());
+
+        if (rawRep == null) {
+            if (attempt + 1 >= MAX_REPUTATION_LOAD_ATTEMPTS) {
+                MLLogManager.getInstance().log(Level.SEVERE, ELogTag.REPUTATION,
+                        "Échec définitif du chargement de la réputation pour " + getPseudo() + " après "
+                                + MAX_REPUTATION_LOAD_ATTEMPTS + " tentatives — gains de métier bloqués pour cette session (reco nécessaire).");
+                return;
+            }
+            MLLogManager.getInstance().log(Level.WARNING, ELogTag.REPUTATION,
+                    "Échec du chargement de la réputation pour " + getPseudo() + ", nouvelle tentative dans 5s (essai "
+                            + (attempt + 1) + "/" + MAX_REPUTATION_LOAD_ATTEMPTS + ")");
+            MiubyLib.runLater(() -> loadReputationFromDatabase(attempt + 1), REPUTATION_LOAD_RETRY_DELAY_TICKS);
+            return;
+        }
+
+        reputationByJob.clear();
         rawRep.forEach((key, value) -> {
             try {
                 reputationByJob.put(EJob.valueOf(key), value);
@@ -151,15 +195,8 @@ public class AlphaPlayer extends MLPlayer implements Serializable {
                 // Ancienne donnée avec un nom de trader — ignorée après migration.
             }
         });
-
-        // Charge TOUTES les quêtes actives (non réclamées) — le système cumulatif ne les expire pas par date.
-        // Les quêtes réclamées sont déjà en quest_history ; on les déduit du total via countDailyCompleted.
-        this.totalDailyQuestsClaimed = GameManager.getInstance().getDatabase().questHistory().countDailyCompleted(this.getUuid());
-        List<PlayerQuestData> loaded = GameManager.getInstance().getDatabase().quests().getPlayerQuests(this.getUuid());
-        GameManager.getInstance().getQuestManager().restoreQuestsOnJoin(this, loaded);
-
-        // Calcul initial des niveaux de métier
         initJobLevels();
+        reputationDataReady = true;
     }
 
     private MLWorld checkOrTeleportToValidWorld() {
@@ -280,6 +317,16 @@ public class AlphaPlayer extends MLPlayer implements Serializable {
      * @param amount montant à ajouter (peut être négatif pour retirer)
      */
     public void addJobReputation(EJob job, int amount) {
+        if (!reputationDataReady) {
+            MLLogManager.getInstance().log(Level.WARNING, ELogTag.REPUTATION,
+                    "Gain de réputation ignoré pour " + getPseudo() + " (" + job.name() + ", " + amount
+                            + ") : données de réputation non chargées — évite d'écraser une valeur potentiellement incorrecte en base.");
+            if (getPlayer() != null && getPlayer().isOnline()) {
+                getPlayer().sendMessage(GameManager.getInstance().getLangService().text(getPlayer(), "job.reputation_unavailable"));
+            }
+            return;
+        }
+
         EGlobalRank previousRank = getGlobalRank();
 
         int newRep = Math.max(0, getJobReputation(job) + amount);

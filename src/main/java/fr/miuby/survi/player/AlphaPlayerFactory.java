@@ -1,6 +1,7 @@
 package fr.miuby.survi.player;
 
 import fr.miuby.lib.player.MLPlayerRegistry;
+import fr.miuby.lib.log.MLLogManager;
 import fr.miuby.survi.GameManager;
 import fr.miuby.survi.display.TutorialBookService;
 import fr.miuby.survi.job.ExplorerAttributeService;
@@ -9,12 +10,15 @@ import fr.miuby.survi.player.service.PlayerAttributeService;
 import fr.miuby.survi.player.service.PlayerPersistenceService;
 import fr.miuby.survi.player.service.PlayerEffectRestoreService;
 import fr.miuby.survi.role.Role;
+import fr.miuby.survi.system.database.EPlayerLoadResult;
 import fr.miuby.survi.system.exception.AlphaPlayerNotFoundException;
+import fr.miuby.survi.system.log.ELogTag;
 import lombok.Getter;
 import org.bukkit.entity.Player;
 
 import java.util.Collection;
 import java.util.UUID;
+import java.util.logging.Level;
 
 public class AlphaPlayerFactory {
     private final MLPlayerRegistry<AlphaPlayer> registry = new MLPlayerRegistry<>();
@@ -58,16 +62,35 @@ public class AlphaPlayerFactory {
     public void onPlayerJoin(Player bukkitPlayer) {
         AlphaPlayer alphaPlayer = get(bukkitPlayer.getUniqueId());
 
-        // if player doesn't exist in database, create it
         if (alphaPlayer == null) {
-            GameManager.getInstance().getDatabase().players().create(bukkitPlayer);
-            alphaPlayer = registerAlphaPlayer(bukkitPlayer.getUniqueId(), bukkitPlayer.getName(), GameManager.getInstance().getRoleLoader().getDefaultRole());
+            // Absent du registre mémoire : avant de supposer "nouveau joueur", on vérifie directement
+            // en BDD. Sans ce filet de sécurité, toute désync mémoire/BDD (ligne ignorée au démarrage,
+            // redémarrage entre deux connexions, etc.) ferait passer un joueur existant pour nouveau et
+            // écraserait silencieusement son profil (rôle, sous-rôles, morts, succès) par des valeurs
+            // par défaut dans le registre — la BDD elle-même n'est touchée que plus tard, au premier
+            // appel d'update, mais c'est suffisant pour perdre la progression réelle.
+            EPlayerLoadResult result = GameManager.getInstance().getDatabase().players().tryReloadPlayer(bukkitPlayer.getUniqueId());
 
-            GameManager.getInstance().getPlugin().getServer().getScheduler().runTaskLater(
-                    GameManager.getInstance().getPlugin(),
-                    () -> TutorialBookService.giveTutorialBook(bukkitPlayer),
-                    1L
-            );
+            switch (result) {
+                case FOUND -> alphaPlayer = get(bukkitPlayer.getUniqueId());
+                case ERROR -> {
+                    MLLogManager.getInstance().log(Level.SEVERE, ELogTag.PLAYER,
+                            "Connexion refusée pour " + bukkitPlayer.getName()
+                                    + " : impossible de vérifier ses données en base (état indéterminé), pour éviter d'écraser une progression existante.");
+                    bukkitPlayer.kick(GameManager.getInstance().getLangService().text(bukkitPlayer, "player.db_unavailable"));
+                    return;
+                }
+                case NOT_FOUND -> {
+                    GameManager.getInstance().getDatabase().players().create(bukkitPlayer);
+                    alphaPlayer = registerAlphaPlayer(bukkitPlayer.getUniqueId(), bukkitPlayer.getName(), GameManager.getInstance().getRoleLoader().getDefaultRole());
+
+                    GameManager.getInstance().getPlugin().getServer().getScheduler().runTaskLater(
+                            GameManager.getInstance().getPlugin(),
+                            () -> TutorialBookService.giveTutorialBook(bukkitPlayer),
+                            1L
+                    );
+                }
+            }
         }
 
         alphaPlayer.setPlayer(bukkitPlayer);

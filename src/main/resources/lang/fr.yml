@@ -34,11 +34,13 @@ job.level_up.subtitle: "<job><yellow> · niv.<level>"
 job.level_up.broadcast: "<gold>⚒ <white><player> <gold>a atteint le niveau <yellow><level> <gold>en <job><gold> !"
 job.note: "<green>⚒ <job>"
 job.miner.depth_too_deep: "<dark_gray>☠ <gray>Ton niveau de Mineur est trop bas pour cette profondeur — tu ne vois pas très bien."
+job.reputation_unavailable: "<red>⚠ Tes données de métier n'ont pas pu être chargées. Réessaie dans un instant ou reconnecte-toi."
 
 # ─── Joueur ───────────────────────────────────────────────────────────────────
 player.subrole.added: "<yellow>Le sous-role <role><yellow> a ete ajouté !"
 player.subrole.removed: "<yellow>Le sous-role <role><yellow> a ete retiré !"
 player.rank_up: "<gold>✦ Nouveau rang atteint : <rank>"
+player.db_unavailable: "<red>Erreur de connexion à la base de données. Réessaie de te reconnecter dans un instant."
 
 # ─── Quête ───────────────────────────────────────────────────────────────────
 quest.already_claimed: "<red>Vous avez déjà une quête terminée à réclamer !"
