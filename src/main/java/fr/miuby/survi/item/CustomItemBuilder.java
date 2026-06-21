@@ -11,6 +11,7 @@ import org.bukkit.inventory.EquipmentSlotGroup;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ArmorMeta;
+import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
 import org.bukkit.inventory.meta.trim.ArmorTrim;
@@ -61,6 +62,15 @@ public class CustomItemBuilder {
     public CustomItemBuilder unbreakable() {
         ItemMeta meta = itemStack.getItemMeta();
         meta.setUnbreakable(true);
+        itemStack.setItemMeta(meta);
+        return this;
+    }
+
+    public CustomItemBuilder maxDurability(int durability) {
+        ItemMeta meta = itemStack.getItemMeta();
+        if (meta instanceof Damageable damageable) {
+            damageable.setMaxDamage(durability);
+        }
         itemStack.setItemMeta(meta);
         return this;
     }

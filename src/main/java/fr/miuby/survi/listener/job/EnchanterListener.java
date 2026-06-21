@@ -154,7 +154,7 @@ public class EnchanterListener implements Listener {
                 if (entry.getKey().canEnchantItem(result)) meta.addEnchant(entry.getKey(), newLvl, true);
             }
             if (addition.getType() == base.getType() && meta instanceof Damageable d && d.getDamage() > 0)
-                d.setDamage(Math.max(0, d.getDamage() - base.getType().getMaxDurability() / 2));
+                d.setDamage(Math.max(0, d.getDamage() - d.getMaxDamage() / 2));
         }
         if (meta instanceof Repairable r) r.setRepairCost(0);
         result.setItemMeta(meta);

@@ -26,7 +26,7 @@ public class CustomRecipeFactory {
     private final Map<NamespacedKey, CustomRecipe> newRecipes = new HashMap<>();
     private final List<NamespacedKey> oldRecipes = new ArrayList<>();
 
-    // Or craftée à mi-chemin fer/diamant (armure et toughness), au lieu des valeurs vanilla (plus faibles que le fer).
+    // Or craftée à mi-chemin fer/diamant (armure, toughness et durabilité), au lieu des valeurs vanilla (plus faibles que le fer).
     private static final Map<Material, EquipmentSlotGroup> GOLD_ARMOR_SLOTS = Map.of(
             Material.GOLDEN_HELMET, EquipmentSlotGroup.HEAD,
             Material.GOLDEN_CHESTPLATE, EquipmentSlotGroup.CHEST,
@@ -41,6 +41,13 @@ public class CustomRecipeFactory {
     );
     private static final double GOLD_ARMOR_TOUGHNESS = 1.0;
 
+    private static final Map<Material, Integer> GOLD_ARMOR_DURABILITY = Map.of(
+            Material.GOLDEN_HELMET, 264,
+            Material.GOLDEN_CHESTPLATE, 384,
+            Material.GOLDEN_LEGGINGS, 360,
+            Material.GOLDEN_BOOTS, 312
+    );
+
     private static ItemStack applyGoldenArmorBonus(ItemStack item) {
         EquipmentSlotGroup slot = GOLD_ARMOR_SLOTS.get(item.getType());
         if (slot == null) return item;
@@ -48,6 +55,7 @@ public class CustomRecipeFactory {
         return new CustomItemBuilder(item, "GoldenArmorTierBuff")
                 .addAttribute(Attribute.ARMOR, GOLD_ARMOR_VALUES.get(item.getType()), ADD_NUMBER, slot)
                 .addAttribute(Attribute.ARMOR_TOUGHNESS, GOLD_ARMOR_TOUGHNESS, ADD_NUMBER, slot)
+                .maxDurability(GOLD_ARMOR_DURABILITY.get(item.getType()))
                 .build();
     }
 
