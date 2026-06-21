@@ -46,6 +46,8 @@ public class PlayerRepository extends MLRepository {
                             alphaPlayer.addSubRole(GameManager.getInstance().getRoleLoader().getRole(ERole.valueOf(subRole)));
                         }
                     }
+
+                    alphaPlayer.loadReputation();
                 } catch (IllegalArgumentException ex) {
                     // Ligne corrompue (rôle/UUID invalide) — on l'ignore et on continue plutôt que
                     // d'interrompre le chargement de tous les joueurs restants dans le ResultSet.
@@ -88,6 +90,7 @@ public class PlayerRepository extends MLRepository {
                             alphaPlayer.addSubRole(GameManager.getInstance().getRoleLoader().getRole(ERole.valueOf(subRole)));
                         }
                     }
+                    alphaPlayer.loadReputation();
                     return EPlayerLoadResult.FOUND;
                 } catch (IllegalArgumentException ex) {
                     MLLogManager.getInstance().log(Level.SEVERE, ELogTag.PLAYER,
