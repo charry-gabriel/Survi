@@ -81,6 +81,9 @@ public class QuestCommand {
                 .then(Commands.literal("recompute")
                         .executes(QuestCommand::recomputeDailyCounters)
                 )
+                .then(Commands.literal("dailyreset")
+                        .executes(QuestCommand::dailyReset)
+                )
                 .then(Commands.literal("extraslot")
                         .then(Commands.literal("add")
                                 .then(Commands.argument("amount", com.mojang.brigadier.arguments.IntegerArgumentType.integer(1))
@@ -285,6 +288,23 @@ public class QuestCommand {
         sender.sendMessage(ls.text(ls.resolveOrDefault(sender), "cmd.quest.recompute_done", playersUpdated));
         MLLogManager.getInstance().log(Level.INFO, ELogTag.QUEST,
                 "[Recompute] Compteur de quêtes journalières rechargé depuis quest_history pour " + playersUpdated + " joueur(s).");
+        return Command.SINGLE_SUCCESS;
+    }
+
+    // =========================================================================
+    // /quest dailyreset
+    // =========================================================================
+
+    /**
+     * Rejoue uniquement la partie "quêtes" du reset journalier de 6h (nettoyage des quêtes
+     * réclamées + notification des nouveaux créneaux), sans toucher au reset des mondes.
+     */
+    private static int dailyReset(CommandContext<CommandSourceStack> ctx) {
+        CommandSender sender = ctx.getSource().getSender();
+        LangService   ls     = GameManager.getInstance().getLangService();
+
+        int capacity = GameManager.getInstance().getQuestManager().performDailyQuestReset();
+        sender.sendMessage(ls.text(ls.resolveOrDefault(sender), "cmd.quest.dailyreset_done", capacity));
         return Command.SINGLE_SUCCESS;
     }
 

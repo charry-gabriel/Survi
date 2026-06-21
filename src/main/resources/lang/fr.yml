@@ -320,6 +320,7 @@ cmd.quest.extraslot_added: "<green>+{0} slot de quête journalière accordé(s) 
 cmd.quest.extraslot_removed: "<yellow>-{0} slot de quête journalière retirés. Bonus restant : <white>{1}</white>."
 cmd.quest.extraslot_status: "<gold>Slots bonus journaliers : <white>{0}</white> | Base : <white>{1}</white> | Capacité totale : <white>{2}</white>."
 cmd.quest.recompute_done: "<green>Compteur de quêtes journalières recalculé depuis l'historique pour {0} joueur(s)."
+cmd.quest.dailyreset_done: "<green>Reset journalier des quêtes effectué. Capacité totale actuelle : <white>{0}</white>."
 
 # ─── Commandes — globalquest (admin) ──────────────────────────────────────────
 cmd.globalquest.already_active: "<red>Une quête globale est déjà en cours : <yellow>{0}"

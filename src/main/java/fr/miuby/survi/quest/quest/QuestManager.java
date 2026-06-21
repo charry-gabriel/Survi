@@ -99,6 +99,74 @@ public class QuestManager extends AbstractQuestManager<Quest> {
     }
 
     // =========================================================================
+    // Reset journalier des slots (joueurs)
+    // =========================================================================
+
+    /**
+     * Nettoie les quêtes {@code claimed} de la veille (annulation des effets de potion,
+     * suppression de {@code player_quest}) et notifie chaque joueur connecté des nouveaux
+     * créneaux disponibles. Ne touche pas au reset des mondes.
+     *
+     * <p>Appelé depuis {@code ServerListener.onDailyReset} (reset normal de 6h) et depuis
+     * {@code /quest dailyreset} (rattrapage manuel si le reset de 6h n'a pas pu s'exécuter).</p>
+     *
+     * @return la capacité totale de quêtes journalières au moment de l'appel
+     */
+    public int performDailyQuestReset() {
+        int capacity = getTotalCapacity();
+        MLLogManager.getInstance().log(Level.INFO, ELogTag.QUEST,
+                "Reset journalier — annulation des effets des quêtes réclamées. Capacité cumulée : " + capacity + ".");
+
+        QuestGlowService glowService = GameManager.getInstance().getQuestGlowService();
+
+        for (AlphaPlayer player : GameManager.getInstance().getAlphaPlayerFactory().getAlphaPlayers()) {
+
+            List<PlayerQuestData> claimedQuests = player.getActiveQuests().stream()
+                    .filter(PlayerQuestData::isClaimed)
+                    .toList();
+
+            if (claimedQuests.isEmpty()) {
+                if (player.getPlayer() != null && capacity > 0) notifyNewSlots(player, capacity);
+                continue;
+            }
+
+            boolean isOnline = player.getPlayer() != null;
+
+            if (isOnline) {
+                for (PlayerQuestData data : claimedQuests) {
+                    Quest quest = getQuest(data.getQuestId());
+                    if (quest == null) continue;
+                    for (BlessingEffect effect : quest.getRewards().blessingEffects()) {
+                        if (effect instanceof PotionsEffect) effect.resetEffect(player);
+                    }
+                }
+            }
+
+            for (PlayerQuestData data : claimedQuests) {
+                player.removeQuest(data.getSlot());
+                GameManager.getInstance().getDatabase().quests().deletePlayerQuestSlot(player.getUuid(), data.getSlot());
+            }
+
+            if (player.getActiveQuests().stream().noneMatch(q -> !q.isClaimed())) {
+                GameManager.getInstance().getQuestActionBarService().stopRefresh(player.getUuid());
+                if (glowService != null && isOnline) glowService.disableGlow(player);
+            }
+
+            if (isOnline) notifyNewSlots(player, capacity);
+        }
+
+        return capacity;
+    }
+
+    private void notifyNewSlots(AlphaPlayer player, int capacity) {
+        int used      = player.getTotalDailyQuestsClaimed() + player.countActiveUnclaimedQuests();
+        int remaining = capacity - used;
+        if (remaining <= 0) return;
+        LangService ls = GameManager.getInstance().getLangService();
+        player.getPlayer().sendMessage(ls.text(player.getPlayer(), "quest.new_slots", remaining, used, capacity));
+    }
+
+    // =========================================================================
     // Reload à chaud
     // =========================================================================
 
