@@ -50,10 +50,10 @@ mobs:
   ZOMBIE:
     stats:
       max-health:
-        base: 15.0          # vanilla = 20
+        base: 14.0          # vanilla = 20
         per-level: 5.0      # level 100 → 416 PV
       attack-damage:
-        base: 2.75           # vanilla = 3
+        base: 2.5           # vanilla = 3
         per-level: 0.25     # level 100 → 27.75
       movement-speed:
         base: 0.23          # vanilla = 0.23
@@ -66,7 +66,7 @@ mobs:
         per-level: 0.5      # level 100 → 84.5 blocs
       armor:
         base: 0.0
-        per-level: 0.04     # level 100 → 4 points d'armure
+        per-level: 0.02     # level 100 → 4 points d'armure
 
   # ════════════════════════════════════════════════
   #  ZOMBIE_VILLAGER
@@ -135,10 +135,10 @@ mobs:
   SKELETON:
     stats:
       max-health:
-        base: 17.0          # vanilla = 20
+        base: 13.0          # vanilla = 20
         per-level: 3.0      # level 100 → 317 PV
       attack-damage:
-        base: 1.6           # dégâts de la flèche (via attribut)
+        base: 1.5           # dégâts de la flèche (via attribut)
         per-level: 0.2
       movement-speed:
         base: 0.25
@@ -222,7 +222,7 @@ mobs:
         base: 14.0          # vanilla = 16
         per-level: 2.5
       attack-damage:
-        base: 1.80           # vanilla = 2
+        base: 1.70           # vanilla = 2
         per-level: 0.15
       movement-speed:
         base: 0.30          # vanilla = 0.30

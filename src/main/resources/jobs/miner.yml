@@ -41,12 +41,12 @@ cave-night-vision-threshold-y:
 cave-darkness-threshold-y:
   - 40     # niveau  0
   - 20     # niveau  1
-  - 10     # niveau  2
-  - 0      # niveau  3
-  - -16    # niveau  4
-  - -30    # niveau  5
-  - -40    # niveau  6
-  - -50    # niveau  7
+  - 0     # niveau  2
+  - -10      # niveau  3
+  - -30    # niveau  4
+  - -40    # niveau  5
+  - -50    # niveau  6
+  - -1    # niveau  7
   - -1     # niveau  8
   - -1     # niveau  9
   - -1     # niveau 10

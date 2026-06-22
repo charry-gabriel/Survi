@@ -256,13 +256,4 @@ public enum ECustomItem {
         pdc.set(GrowthItems.USES_KEY, PersistentDataType.INTEGER, 0);
         pdc.set(GrowthItems.TIER_KEY, PersistentDataType.INTEGER, 0);
     }
-
-    private static ICustomItemMeta createKey(String number) {
-        return itemStack -> {
-            ItemMeta meta = itemStack.getItemMeta();
-            meta.customName(Component.text("Clé " + number, NamedTextColor.GOLD));
-            meta.setItemModel(new NamespacedKey(GameManager.getInstance().getPlugin(), "key"));
-            itemStack.setItemMeta(meta);
-        };
-    }
 }
