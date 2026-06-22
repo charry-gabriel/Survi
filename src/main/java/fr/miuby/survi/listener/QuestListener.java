@@ -3,6 +3,8 @@ package fr.miuby.survi.listener;
 import fr.miuby.survi.GameManager;
 import fr.miuby.survi.player.AlphaPlayer;
 import fr.miuby.survi.quest.EQuestType;
+import fr.miuby.survi.system.log.ELogTag;
+import fr.miuby.lib.log.MLLogManager;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.Ageable;
@@ -30,6 +32,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.EnumMap;
 import java.util.Map;
+import java.util.logging.Level;
 
 public class QuestListener implements Listener {
 
@@ -114,23 +117,46 @@ public class QuestListener implements Listener {
         }
     }
 
+    /**
+     * Progresse les quêtes CRAFT en comptant exactement les items produits au moment du craft.
+     *
+     * <p>Clic normal : {@code recipe.getResult().getAmount()} items produits (1 passe de la recette).</p>
+     * <p>Shift-clic : la matrice de craft est lue AVANT consommation des ingrédients.
+     * Le nombre de passes possibles est le minimum des stacks présents dans les slots non-vides
+     * (chaque slot perd 1 item par passe). Le total est {@code minStack × amountPerCraft}.
+     * Cas limite inventaire plein : léger surcomptage possible, acceptable.</p>
+     */
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onCraft(CraftItemEvent event) {
         if (!(event.getWhoClicked() instanceof Player p)) return;
         AlphaPlayer player = AlphaPlayer.get(p.getUniqueId());
         if (player == null) return;
 
-        Material result = event.getRecipe().getResult().getType();
-        int amount = event.getRecipe().getResult().getAmount();
+        ItemStack result = event.getRecipe().getResult();
+        Material material = result.getType();
+        int totalCrafted = getTotalCrafted(event, result);
 
-        // Global quests : comportement event-based conservé (progression partagée)
-        GameManager.getInstance().getGlobalQuestManager().progressGlobalQuest(player, EQuestType.CRAFT, result, amount);
+        MLLogManager.getInstance().log(Level.FINE, ELogTag.QUEST,
+                "[CraftEvent] " + p.getName() + " — " + material + " x" + totalCrafted + (event.isShiftClick() ? " (shift)" : ""));
 
-        // Daily quests : l'item n'est pas encore dans l'inventaire au moment de l'event — délai 1 tick
-        GameManager.getInstance().getScheduler().runTaskLater(GameManager.getInstance().getPlugin(), () -> {
-            if (player.getPlayer() == null || !player.getPlayer().isOnline()) return;
-            GameManager.getInstance().getQuestManager().syncCraftProgress(player, result);
-        }, 1L);
+        GameManager.getInstance().getQuestManager().progressQuest(player, EQuestType.CRAFT, material, totalCrafted);
+        GameManager.getInstance().getGlobalQuestManager().progressGlobalQuest(player, EQuestType.CRAFT, material, totalCrafted);
+    }
+
+    private static int getTotalCrafted(CraftItemEvent event, ItemStack result) {
+        int amountPerCraft = result.getAmount();
+
+        int totalCrafted;
+        if (event.isShiftClick()) {
+            int minStack = Integer.MAX_VALUE;
+            for (ItemStack slot : event.getInventory().getMatrix()) {
+                if (slot != null && !slot.getType().isAir()) minStack = Math.min(minStack, slot.getAmount());
+            }
+            totalCrafted = (minStack == Integer.MAX_VALUE ? 1 : minStack) * amountPerCraft;
+        } else {
+            totalCrafted = amountPerCraft;
+        }
+        return totalCrafted;
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
