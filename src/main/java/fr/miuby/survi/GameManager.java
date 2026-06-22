@@ -3,6 +3,7 @@ package fr.miuby.survi;
 import fr.miuby.lib.MiubyLib;
 import fr.miuby.lib.log.MLLogManager;
 import fr.miuby.survi.grave.GraveManager;
+import fr.miuby.survi.food.FoodOfTheDayManager;
 import fr.miuby.survi.mob.MobLevelManager;
 import fr.miuby.survi.player.service.OfflineNotificationService;
 import fr.miuby.survi.quest.quest.QuestGlowService;
@@ -64,6 +65,7 @@ public class GameManager {
     @Getter private OfflineNotificationService offlineNotificationService;
     @Getter private QuestGlowService questGlowService;
     @Getter private GraveManager graveManager;
+    @Getter private FoodOfTheDayManager foodOfTheDayManager;
     @Getter private WorldLevelManager worldLevelManager;
     @Getter private MobLevelManager mobLevelManager;
     @Getter private WorldPortalManager worldPortalManager;
@@ -212,6 +214,8 @@ public class GameManager {
         this.customRecipeFactory.removeOldRecipes();
 
         GrowthItems.init();
+
+        this.foodOfTheDayManager = new FoodOfTheDayManager();
     }
 
     public void callEvent(Event event) {

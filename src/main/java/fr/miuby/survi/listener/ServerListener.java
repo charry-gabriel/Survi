@@ -74,5 +74,6 @@ public class ServerListener implements Listener {
     public void onDailyReset(DailyResetEvent event) {
         GameManager.getInstance().getWorldResetManager().checkAndPerformResets();
         GameManager.getInstance().getQuestManager().performDailyQuestReset();
+        GameManager.getInstance().getFoodOfTheDayManager().performDailyDraw();
     }
 }

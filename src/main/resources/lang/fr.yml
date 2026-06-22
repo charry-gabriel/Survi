@@ -145,6 +145,7 @@ tab.header.difficulty_label: "<gray>Difficulté "
 tab.header.level: "Niv. {0}"
 tab.header.deaths: "<dark_red>☠ {0}"
 tab.header.successes: "<yellow>★ {0}"
+tab.header.food_label: "<gray>Nourriture du jour "
 
 # ─── Tab — pied de page ───────────────────────────────────────────────────────
 tab.footer.quest_label: "<gold>Quête : "

@@ -63,6 +63,20 @@ public class SystemRepository extends MLRepository {
         saveServerData("world_level", String.valueOf(level));
     }
 
+    public String getFoodOfTheDay() {
+        return getServerData("food_of_the_day");
+    }
+
+    public void saveFoodOfTheDay(String value) {
+        runAsync(conn -> {
+            try (PreparedStatement ps = conn.prepareStatement("INSERT OR REPLACE INTO server_data (key, value) VALUES (?, ?)")) {
+                ps.setString(1, "food_of_the_day");
+                ps.setString(2, value);
+                ps.executeUpdate();
+            }
+        }, ELogTag.ITEM, "Erreur saveFoodOfTheDay");
+    }
+
     public void saveExtraGlobalSlots(int value) {
         runAsync(conn -> {
             try (PreparedStatement ps = conn.prepareStatement("INSERT OR REPLACE INTO server_data (key, value) VALUES (?, ?)")) {

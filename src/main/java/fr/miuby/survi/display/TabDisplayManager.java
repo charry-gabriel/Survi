@@ -1,6 +1,7 @@
 package fr.miuby.survi.display;
 
 import fr.miuby.survi.GameManager;
+import fr.miuby.survi.food.EFoodCategory;
 import fr.miuby.survi.player.AlphaPlayer;
 import fr.miuby.survi.player.EGlobalRank;
 import fr.miuby.survi.quest.globalquest.GlobalQuest;
@@ -15,6 +16,7 @@ import net.minecraft.network.protocol.game.ClientboundPlayerInfoRemovePacket;
 import net.minecraft.network.protocol.game.ClientboundPlayerInfoUpdatePacket;
 import net.minecraft.world.level.GameType;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.craftbukkit.entity.CraftPlayer;
 import org.bukkit.entity.Player;
@@ -316,7 +318,28 @@ public class TabDisplayManager {
             }
         }
 
+        header = header.appendNewline().append(buildFoodOfTheDayLine(lang));
+
         return header.appendNewline().appendNewline();
+    }
+
+    // ─── Nourriture du jour ───────────────────────────────────────────────────
+
+    /** Ligne "Nourriture du jour : <viande cuite> · <plante> · <nourriture craftée>". */
+    private Component buildFoodOfTheDayLine(fr.miuby.survi.system.lang.ELang lang) {
+        var ls = GameManager.getInstance().getLangService();
+        var foodManager = GameManager.getInstance().getFoodOfTheDayManager();
+
+        Component line = ls.text(lang, "tab.header.food_label");
+        boolean first = true;
+        for (EFoodCategory category : EFoodCategory.values()) {
+            Material material = foodManager.getFoodOfTheDay(category);
+            if (material == null) continue;
+            if (!first) line = line.append(SEP);
+            first = false;
+            line = line.append(Component.text(EFoodCategory.getDisplayName(material), category.getColor()));
+        }
+        return line;
     }
 
     // ─── FOOTER : quêtes ─────────────────────────────────────────────────────────
