@@ -158,8 +158,6 @@ public class PlayerListener implements Listener {
 
     @EventHandler
     public void onPlayerArmorChange(PlayerArmorChangeEvent event) {
-        MLLogManager.getInstance().log(Level.FINE, ELogTag.PLAYER,
-                "[ArmorChange] " + event.getPlayer().getName() + " slot=" + event.getSlotType());
         boolean malus = false;
         for (ItemStack item : event.getPlayer().getInventory().getArmorContents()) {
             if (item != null && gm.getLockedItemsFactory().isLocked(item.getType().getKey())) {

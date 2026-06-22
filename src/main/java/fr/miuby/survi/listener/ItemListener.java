@@ -1,10 +1,14 @@
 package fr.miuby.survi.listener;
 
+import fr.miuby.lib.log.MLLogManager;
 import fr.miuby.survi.GameManager;
+import fr.miuby.survi.item.ArmorTierService;
 import fr.miuby.survi.item.CustomRecipe;
 import fr.miuby.survi.player.AlphaPlayer;
 import fr.miuby.survi.role.Role;
+import fr.miuby.survi.system.log.ELogTag;
 import fr.miuby.survi.villager.villagerlevel.VillagerTributeHolder;
+import fr.miuby.lib.MiubyLib;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
@@ -13,9 +17,12 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.inventory.PrepareItemCraftEvent;
+import org.bukkit.event.player.PlayerItemBreakEvent;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
+import java.util.logging.Level;
 
 public class ItemListener implements Listener {
 
@@ -77,6 +84,21 @@ public class ItemListener implements Listener {
                 || event.getResult().getType() == Material.DIAMOND_LEGGINGS) {
             event.setResult(new ItemStack(Material.AIR));
         }
+    }
+
+    @EventHandler
+    public void onPlayerItemBreak(PlayerItemBreakEvent event) {
+        Material broken = event.getBrokenItem().getType();
+        EquipmentSlot slot = ArmorTierService.slotFor(broken);
+        if (slot == null) return;
+
+        ItemStack replacement = ArmorTierService.getLowerTierReplacement(broken);
+        if (replacement == null) return;
+
+        Player player = event.getPlayer();
+        MiubyLib.runLater(() -> player.getEquipment().setItem(slot, replacement), 1L);
+        MLLogManager.getInstance().log(Level.FINE, ELogTag.PLAYER,
+                "[Item] " + player.getName() + " — Broke " + broken.name());
     }
 
     @EventHandler(ignoreCancelled = true)

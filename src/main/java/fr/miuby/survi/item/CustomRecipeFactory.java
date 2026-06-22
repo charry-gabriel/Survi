@@ -7,8 +7,6 @@ import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
-import org.bukkit.attribute.Attribute;
-import org.bukkit.inventory.EquipmentSlotGroup;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.recipe.CraftingBookCategory;
 
@@ -19,45 +17,10 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import static org.bukkit.attribute.AttributeModifier.Operation.ADD_NUMBER;
-
 @Getter
 public class CustomRecipeFactory {
     private final Map<NamespacedKey, CustomRecipe> newRecipes = new HashMap<>();
     private final List<NamespacedKey> oldRecipes = new ArrayList<>();
-
-    // Or craftée à mi-chemin fer/diamant (armure, toughness et durabilité), au lieu des valeurs vanilla (plus faibles que le fer).
-    private static final Map<Material, EquipmentSlotGroup> GOLD_ARMOR_SLOTS = Map.of(
-            Material.GOLDEN_HELMET, EquipmentSlotGroup.HEAD,
-            Material.GOLDEN_CHESTPLATE, EquipmentSlotGroup.CHEST,
-            Material.GOLDEN_LEGGINGS, EquipmentSlotGroup.LEGS,
-            Material.GOLDEN_BOOTS, EquipmentSlotGroup.FEET
-    );
-    private static final Map<Material, Double> GOLD_ARMOR_VALUES = Map.of(
-            Material.GOLDEN_HELMET, 2.5,
-            Material.GOLDEN_CHESTPLATE, 7.0,
-            Material.GOLDEN_LEGGINGS, 5.5,
-            Material.GOLDEN_BOOTS, 2.5
-    );
-    private static final double GOLD_ARMOR_TOUGHNESS = 1.0;
-
-    private static final Map<Material, Integer> GOLD_ARMOR_DURABILITY = Map.of(
-            Material.GOLDEN_HELMET, 264,
-            Material.GOLDEN_CHESTPLATE, 384,
-            Material.GOLDEN_LEGGINGS, 360,
-            Material.GOLDEN_BOOTS, 312
-    );
-
-    private static ItemStack applyGoldenArmorBonus(ItemStack item) {
-        EquipmentSlotGroup slot = GOLD_ARMOR_SLOTS.get(item.getType());
-        if (slot == null) return item;
-
-        return new CustomItemBuilder(item, "GoldenArmorTierBuff")
-                .addAttribute(Attribute.ARMOR, GOLD_ARMOR_VALUES.get(item.getType()), ADD_NUMBER, slot)
-                .addAttribute(Attribute.ARMOR_TOUGHNESS, GOLD_ARMOR_TOUGHNESS, ADD_NUMBER, slot)
-                .maxDurability(GOLD_ARMOR_DURABILITY.get(item.getType()))
-                .build();
-    }
 
     public CustomRecipeFactory() {
         loadRecipes();
@@ -125,7 +88,7 @@ public class CustomRecipeFactory {
                 try {
                     // Try vanilla Material first
                     Material mat = Material.valueOf(resultStr);
-                    resultItem = applyGoldenArmorBonus(new ItemStack(mat));
+                    resultItem = GoldenArmorBonus.apply(new ItemStack(mat));
                 } catch (IllegalArgumentException matEx) {
                     try {
                         // Fallback to custom item enum
