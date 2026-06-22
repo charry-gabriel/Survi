@@ -1,5 +1,5 @@
 # yaml-language-server: $schema=../../schema/growth-items-schema.json
-id: GROWTH_HOUE_FERMIER
+id: GROWTH_FARMER_LEGGINGS
 eventType: CropBreakEvent
 
 # Stats de base : speed+, défense- et vie- actives tant que la houe est tenue en main.

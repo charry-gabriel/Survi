@@ -32,7 +32,11 @@ import static org.bukkit.attribute.AttributeModifier.Operation.ADD_SCALAR;
 
 @Getter
 public enum ECustomItem {
-    MINER_HELMET(Material.LEATHER_HELMET, item -> new CustomItemBuilder(item, "Casque du Mineur")
+    GROWTH_MINER_HELMET(Material.LEATHER_HELMET, item -> {
+        ItemMeta preMeta = item.getItemMeta();
+        createGrowthItem(preMeta, "GROWTH_MINER_HELMET");
+        item.setItemMeta(preMeta);
+        new CustomItemBuilder(item, "Casque du Mineur")
             .name("Casque du Mineur 1", NamedTextColor.GRAY)
             .leatherArmor(TrimMaterial.GOLD, TrimPattern.TIDE, Color.fromRGB(11184810))
             .addAttribute(Attribute.MINING_EFFICIENCY, 0, ADD_NUMBER, EquipmentSlotGroup.HEAD) //évolutif
@@ -43,9 +47,14 @@ public enum ECustomItem {
             .addAttribute(Attribute.SCALE, -0.34, ADD_NUMBER, EquipmentSlotGroup.HEAD)
             .unbreakable()
             .addItemFlag(ItemFlag.HIDE_DYE)
-            .addItemFlag(ItemFlag.HIDE_ARMOR_TRIM)),
+            .addItemFlag(ItemFlag.HIDE_ARMOR_TRIM);
+    }),
 
-    LUMBERJACK_CHESPLATE(Material.LEATHER_CHESTPLATE, item -> new CustomItemBuilder(item, "Plastron du Bûcheron")
+    GROWTH_LUMBERJACK_CHESPLATE(Material.LEATHER_CHESTPLATE, item -> {
+        ItemMeta preMeta = item.getItemMeta();
+        createGrowthItem(preMeta, "GROWTH_LUMBERJACK_CHESPLATE");
+        item.setItemMeta(preMeta);
+        new CustomItemBuilder(item, "Plastron du Bûcheron")
             .name("Plastron du Bûcheron 1", NamedTextColor.DARK_GREEN)
             .leatherArmor(TrimMaterial.EMERALD, TrimPattern.DUNE, Color.fromRGB(43520))
             .addAttribute(Attribute.MINING_EFFICIENCY, 0, ADD_NUMBER, EquipmentSlotGroup.HEAD) //évolutif
@@ -56,9 +65,14 @@ public enum ECustomItem {
             .addAttribute(Attribute.SCALE, 0.3, ADD_NUMBER, EquipmentSlotGroup.HEAD)
             .unbreakable()
             .addItemFlag(ItemFlag.HIDE_DYE)
-            .addItemFlag(ItemFlag.HIDE_ARMOR_TRIM)),
+            .addItemFlag(ItemFlag.HIDE_ARMOR_TRIM);
+    }),
 
-    FARMER_LEGGINGS(Material.LEATHER_LEGGINGS, item -> new CustomItemBuilder(item, "Jambière du Fermier")
+    GROWTH_FARMER_LEGGINGS(Material.LEATHER_LEGGINGS, item -> {
+        ItemMeta preMeta = item.getItemMeta();
+        createGrowthItem(preMeta, "GROWTH_FARMER_LEGGINGS");
+        item.setItemMeta(preMeta);
+        new CustomItemBuilder(item, "Jambière du Fermier")
             .name("Jambière du Fermier 1", NamedTextColor.YELLOW)
             .leatherArmor(TrimMaterial.GOLD, TrimPattern.SILENCE, Color.fromRGB(16777045))
             .addAttribute(Attribute.ARMOR, -20, ADD_NUMBER, EquipmentSlotGroup.HEAD)
@@ -66,9 +80,14 @@ public enum ECustomItem {
             .addAttribute(Attribute.MOVEMENT_SPEED, 0.03, ADD_NUMBER, EquipmentSlotGroup.HEAD) //évolutif
             .unbreakable()
             .addItemFlag(ItemFlag.HIDE_DYE)
-            .addItemFlag(ItemFlag.HIDE_ARMOR_TRIM)),
+            .addItemFlag(ItemFlag.HIDE_ARMOR_TRIM);
+    }),
 
-    ENCHANTER_HELMET(Material.LEATHER_HELMET, item -> new CustomItemBuilder(item, "Chapeau de l'enchanteur")
+    GROWTH_ENCHANTER_HELMET(Material.LEATHER_HELMET, item -> {
+        ItemMeta preMeta = item.getItemMeta();
+        createGrowthItem(preMeta, "GROWTH_ENCHANTER_HELMET");
+        item.setItemMeta(preMeta);
+        new CustomItemBuilder(item, "Chapeau de l'enchanteur")
             .name("Chapeau de l'enchanteur 1", NamedTextColor.DARK_PURPLE)
             .leatherArmor(TrimMaterial.GOLD, TrimPattern.SILENCE, Color.fromRGB(11141290))
             .addAttribute(Attribute.ARMOR, -20, ADD_NUMBER, EquipmentSlotGroup.HEAD)
@@ -76,9 +95,14 @@ public enum ECustomItem {
             .addAttribute(Attribute.MOVEMENT_SPEED, 0.03, ADD_NUMBER, EquipmentSlotGroup.HEAD)
             .unbreakable()
             .addItemFlag(ItemFlag.HIDE_DYE)
-            .addItemFlag(ItemFlag.HIDE_ARMOR_TRIM)),
+            .addItemFlag(ItemFlag.HIDE_ARMOR_TRIM);
+    }),
 
-    FISHERMAN_LEGGINGS(Material.LEATHER_LEGGINGS, item -> new CustomItemBuilder(item, "Pantalon du pêcheur")
+    GROWTH_FISHERMAN_LEGGINGS(Material.LEATHER_LEGGINGS, item -> {
+        ItemMeta preMeta = item.getItemMeta();
+        createGrowthItem(preMeta, "GROWTH_FISHERMAN_LEGGINGS");
+        item.setItemMeta(preMeta);
+        new CustomItemBuilder(item, "Pantalon du pêcheur")
             .name("Pantalon du pêcheur 1", NamedTextColor.DARK_PURPLE)
             .leatherArmor(TrimMaterial.DIAMOND, TrimPattern.SILENCE, Color.fromRGB(5592575))
             .addAttribute(Attribute.ARMOR, -20, ADD_NUMBER, EquipmentSlotGroup.HEAD)
@@ -86,7 +110,8 @@ public enum ECustomItem {
             .addAttribute(Attribute.MOVEMENT_SPEED, -0.06, ADD_NUMBER, EquipmentSlotGroup.HEAD)
             .unbreakable()
             .addItemFlag(ItemFlag.HIDE_DYE)
-            .addItemFlag(ItemFlag.HIDE_ARMOR_TRIM)),
+            .addItemFlag(ItemFlag.HIDE_ARMOR_TRIM);
+    }),
 
     GROWTH_BOUSSOLE_EXPLORER(Material.COMPASS, item -> {
         ItemMeta preMeta = item.getItemMeta();
