@@ -168,6 +168,7 @@ class JobsConfigTest {
     @Test void farmerDropMultiplierValid()        { assertNonNegativeDoubleArray(farmerRoot, "drop-multiplier"); }
     @Test void farmerCropGrowthAllowChanceValid() { assertProbabilityArray(farmerRoot, "crop-growth-allow-chance"); }
     @Test void farmerCropExtraGrowthChanceValid() { assertProbabilityArray(farmerRoot, "crop-extra-growth-chance"); }
+    @Test void farmerBoneMealChanceValid()        { assertProbabilityArray(farmerRoot, "bone-meal-chance"); }
 
     @Test
     void farmerCropThirdTickChanceValid() {

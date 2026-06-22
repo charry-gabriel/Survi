@@ -21,6 +21,7 @@ import java.util.Set;
 /**
  * Gère les effets du métier {@link EJob#FARMER} :
  * multiplicateur de drops sur les cultures récoltées et sur les mobs passifs tués.
+ * La farine d'os est gérée par {@link CropGrowthListener#onFertilize}.
  */
 public class FarmerListener implements Listener {
 

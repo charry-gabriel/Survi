@@ -1,15 +1,19 @@
 package fr.miuby.survi.listener.job;
 
 import fr.miuby.lib.MiubyLib;
+import fr.miuby.lib.log.MLLogManager;
 import fr.miuby.survi.GameManager;
 import fr.miuby.survi.job.EJob;
 import fr.miuby.survi.job.config.JobsConfig;
 import fr.miuby.survi.world.crops.PlantedCropUtils;
 import fr.miuby.survi.world.crops.PlantedCropsManager;
 import fr.miuby.survi.player.AlphaPlayer;
+import fr.miuby.survi.system.log.ELogTag;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.Ageable;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -18,6 +22,9 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockFertilizeEvent;
 import org.bukkit.event.block.BlockGrowEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.ItemStack;
+
+import java.util.logging.Level;
 
 /**
  * Gère la vitesse de croissance des cultures plantées par des fermiers.
@@ -113,13 +120,40 @@ public class CropGrowthListener implements Listener {
     }
 
     // ════════════════════════════════════════════════════════════════════════════
-    //  Bonemeal bloqué sur les cultures
+    //  Bonemeal sur les cultures
     // ════════════════════════════════════════════════════════════════════════════
 
+    /**
+     * La farine d'os est bloquée par défaut sur toutes les cultures trackées.
+     * Pour les cultures plantées par un fermier, elle réussit selon {@code bone-meal-chance[niveau]}.
+     * En cas d'échec, l'item est rendu au joueur.
+     * Cultures non trackées (hors fermier) ou source non-joueur → toujours bloqué.
+     */
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onFertilize(BlockFertilizeEvent event) {
-        if (PlantedCropUtils.isCrop(event.getBlock().getType()))
+        if (!PlantedCropUtils.isCrop(event.getBlock().getType())) return;
+
+        Player player = event.getPlayer();
+        PlantedCropsManager mgr = GameManager.getInstance().getPlantedCropsManager();
+        Integer farmLevel = mgr.getFarmLevel(event.getBlock().getLocation());
+
+        // Culture non plantée par un fermier ou source non-joueur → bone meal bloqué sans remboursement
+        if (farmLevel == null || player == null) {
             event.setCancelled(true);
+            return;
+        }
+
+        // Culture fermier : chance selon le niveau
+        JobsConfig.FarmerCfg farmer = JobsConfig.getInstance().getFarmer();
+        double chance = farmer.getBoneMealChance()[farmLevel];
+
+        if (Math.random() >= chance) {
+            event.setCancelled(true);
+            player.getInventory().addItem(new ItemStack(Material.BONE_MEAL));
+            MLLogManager.getInstance().log(Level.FINE, ELogTag.JOB,
+                    "[CropGrowthListener.onFertilize] Échec farine d'os pour " + player.getName()
+                            + " (niveau=" + farmLevel + ", chance=" + chance + ") — item rendu");
+        }
     }
 
     // ════════════════════════════════════════════════════════════════════════════

@@ -48,3 +48,17 @@ crop-extra-growth-chance:
 
 # Probabilité d'un 3e tick bonus au niveau maximum (s'applique uniquement si crop-extra-growth-chance déclenche)
 crop-third-tick-chance-at-max: 0.50
+
+# Probabilité que la farine d'os fonctionne (sinon l'item est rendu au joueur)
+bone-meal-chance:
+  - 0.05   # niveau  0
+  - 0.10   # niveau  1
+  - 0.30   # niveau  2
+  - 0.40   # niveau  3
+  - 0.50   # niveau  4
+  - 0.50   # niveau  5
+  - 0.50   # niveau  6
+  - 0.60   # niveau  7
+  - 0.70   # niveau  8
+  - 0.80   # niveau  9
+  - 1.00   # niveau 10

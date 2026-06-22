@@ -124,13 +124,17 @@ public final class JobsConfig {
         private final double[] cropGrowthAllowChance;
         private final double[] cropExtraGrowthChance;
         private final double   cropThirdTickChanceAtMax;
+        /** Probabilité que la farine d'os fonctionne. Index = niveau. */
+        private final double[] boneMealChance;
 
         FarmerCfg(double[] dropMultiplier, double[] cropGrowthAllowChance,
-                  double[] cropExtraGrowthChance, double cropThirdTickChanceAtMax) {
+                  double[] cropExtraGrowthChance, double cropThirdTickChanceAtMax,
+                  double[] boneMealChance) {
             this.dropMultiplier          = dropMultiplier;
             this.cropGrowthAllowChance   = cropGrowthAllowChance;
             this.cropExtraGrowthChance   = cropExtraGrowthChance;
             this.cropThirdTickChanceAtMax = cropThirdTickChanceAtMax;
+            this.boneMealChance          = boneMealChance;
         }
     }
 

@@ -91,7 +91,9 @@ public final class JobsLoader {
                         new double[]{0.05, 0.15, 0.30, 0.50, 0.70, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00}),
                 readDouble(farmerCfg, "crop-extra-growth-chance",
                         new double[]{0, 0, 0, 0, 0, 0, 0.20, 0.40, 0.65, 1.00, 1.00}),
-                farmerCfg.getDouble("crop-third-tick-chance-at-max", 0.50)
+                farmerCfg.getDouble("crop-third-tick-chance-at-max", 0.50),
+                readDouble(farmerCfg, "bone-meal-chance",
+                        new double[]{0.05, 0.10, 0.20, 0.35, 0.50, 0.65, 0.75, 0.85, 0.90, 0.95, 1.00})
         );
 
         JobsConfig.EnchanterCfg enchanter = new JobsConfig.EnchanterCfg(
