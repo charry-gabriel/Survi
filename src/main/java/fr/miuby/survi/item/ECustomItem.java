@@ -35,7 +35,7 @@ public enum ECustomItem {
     MINER_HELMET(Material.LEATHER_HELMET, item -> new CustomItemBuilder(item, "Casque du Mineur")
             .name("Casque du Mineur 1", NamedTextColor.GRAY)
             .leatherArmor(TrimMaterial.GOLD, TrimPattern.TIDE, Color.fromRGB(11184810))
-            .addAttribute(Attribute.MINING_EFFICIENCY, 0, ADD_NUMBER, EquipmentSlotGroup.HEAD)
+            .addAttribute(Attribute.MINING_EFFICIENCY, 0, ADD_NUMBER, EquipmentSlotGroup.HEAD) //évolutif
             .addAttribute(Attribute.ARMOR, -10, ADD_NUMBER, EquipmentSlotGroup.HEAD)
             .addAttribute(Attribute.MAX_HEALTH, -10, ADD_NUMBER, EquipmentSlotGroup.HEAD)
             .addAttribute(Attribute.BLOCK_INTERACTION_RANGE, 2, ADD_NUMBER, EquipmentSlotGroup.HEAD)
@@ -47,8 +47,8 @@ public enum ECustomItem {
 
     LUMBERJACK_CHESPLATE(Material.LEATHER_CHESTPLATE, item -> new CustomItemBuilder(item, "Plastron du Bûcheron")
             .name("Plastron du Bûcheron 1", NamedTextColor.DARK_GREEN)
-            .leatherArmor(TrimMaterial.EMERALD, TrimPattern.TIDE, Color.fromRGB(43520))
-            .addAttribute(Attribute.MINING_EFFICIENCY, 0, ADD_NUMBER, EquipmentSlotGroup.HEAD)
+            .leatherArmor(TrimMaterial.EMERALD, TrimPattern.DUNE, Color.fromRGB(43520))
+            .addAttribute(Attribute.MINING_EFFICIENCY, 0, ADD_NUMBER, EquipmentSlotGroup.HEAD) //évolutif
             .addAttribute(Attribute.ARMOR, -20, ADD_NUMBER, EquipmentSlotGroup.HEAD)
             .addAttribute(Attribute.MAX_HEALTH, 10, ADD_NUMBER, EquipmentSlotGroup.HEAD)
             .addAttribute(Attribute.BLOCK_INTERACTION_RANGE, 2, ADD_NUMBER, EquipmentSlotGroup.HEAD)
@@ -60,7 +60,17 @@ public enum ECustomItem {
 
     FARMER_LEGGINGS(Material.LEATHER_LEGGINGS, item -> new CustomItemBuilder(item, "Jambière du Fermier")
             .name("Jambière du Fermier 1", NamedTextColor.YELLOW)
-            .leatherArmor(TrimMaterial.GOLD, TrimPattern.TIDE, Color.fromRGB(16777045))
+            .leatherArmor(TrimMaterial.GOLD, TrimPattern.SILENCE, Color.fromRGB(16777045))
+            .addAttribute(Attribute.ARMOR, -20, ADD_NUMBER, EquipmentSlotGroup.HEAD)
+            .addAttribute(Attribute.MAX_HEALTH, 10, ADD_NUMBER, EquipmentSlotGroup.HEAD)
+            .addAttribute(Attribute.MOVEMENT_SPEED, 0.03, ADD_NUMBER, EquipmentSlotGroup.HEAD) //évolutif
+            .unbreakable()
+            .addItemFlag(ItemFlag.HIDE_DYE)
+            .addItemFlag(ItemFlag.HIDE_ARMOR_TRIM)),
+
+    ENCHANTER_HELMET(Material.LEATHER_HELMET, item -> new CustomItemBuilder(item, "Chapeau de l'enchanteur")
+            .name("Chapeau de l'enchanteur 1", NamedTextColor.DARK_PURPLE)
+            .leatherArmor(TrimMaterial.GOLD, TrimPattern.SILENCE, Color.fromRGB(11141290))
             .addAttribute(Attribute.ARMOR, -20, ADD_NUMBER, EquipmentSlotGroup.HEAD)
             .addAttribute(Attribute.MAX_HEALTH, 10, ADD_NUMBER, EquipmentSlotGroup.HEAD)
             .addAttribute(Attribute.MOVEMENT_SPEED, 0.03, ADD_NUMBER, EquipmentSlotGroup.HEAD)
@@ -68,15 +78,25 @@ public enum ECustomItem {
             .addItemFlag(ItemFlag.HIDE_DYE)
             .addItemFlag(ItemFlag.HIDE_ARMOR_TRIM)),
 
-    ENCHANTER_HELMET(Material.LEATHER_HELMET, item -> new CustomItemBuilder(item, "Chapeau de l'enchanteur")
-            .name("Chapeau de l'enchanteur 1", NamedTextColor.DARK_PURPLE)
-            .leatherArmor(TrimMaterial.GOLD, TrimPattern.TIDE, Color.fromRGB(11141290))
+    FISHERMAN_LEGGINGS(Material.LEATHER_LEGGINGS, item -> new CustomItemBuilder(item, "Pantalon du pêcheur")
+            .name("Pantalon du pêcheur 1", NamedTextColor.DARK_PURPLE)
+            .leatherArmor(TrimMaterial.DIAMOND, TrimPattern.SILENCE, Color.fromRGB(5592575))
             .addAttribute(Attribute.ARMOR, -20, ADD_NUMBER, EquipmentSlotGroup.HEAD)
-            .addAttribute(Attribute.MAX_HEALTH, 10, ADD_NUMBER, EquipmentSlotGroup.HEAD)
-            .addAttribute(Attribute.MOVEMENT_SPEED, 0.03, ADD_NUMBER, EquipmentSlotGroup.HEAD)
+            .addAttribute(Attribute.MAX_HEALTH, -15, ADD_NUMBER, EquipmentSlotGroup.HEAD)
+            .addAttribute(Attribute.MOVEMENT_SPEED, -0.06, ADD_NUMBER, EquipmentSlotGroup.HEAD)
             .unbreakable()
             .addItemFlag(ItemFlag.HIDE_DYE)
             .addItemFlag(ItemFlag.HIDE_ARMOR_TRIM)),
+
+    GROWTH_BOUSSOLE_EXPLORER(Material.COMPASS, item -> {
+        ItemMeta preMeta = item.getItemMeta();
+        createGrowthItem(preMeta, "GROWTH_BOUSSOLE_EXPLORER");
+        item.setItemMeta(preMeta);
+        new CustomItemBuilder(item, "GrowthBoussole")
+                .name("Boussole de l'Explorateur I", NamedTextColor.AQUA)
+                .addAttribute(Attribute.MOVEMENT_SPEED, 0.01, ADD_NUMBER, EquipmentSlotGroup.HAND)
+                .unbreakable();
+    }),
 
 
     FISHING_D_ROD(Material.FISHING_ROD, item -> {
@@ -98,15 +118,6 @@ public enum ECustomItem {
             .addItemFlag(ItemFlag.HIDE_DYE)
             .addItemFlag(ItemFlag.HIDE_ARMOR_TRIM)),
 
-    MINEUR(Material.LEATHER_HELMET, item -> new CustomItemBuilder(item, "AirForce")
-            .name("Casque de Mineur", NamedTextColor.YELLOW)
-            .leatherArmor(TrimMaterial.GOLD, TrimPattern.FLOW, Color.fromRGB(13061821))
-            .addAttribute(Attribute.MINING_EFFICIENCY, 10, ADD_NUMBER, EquipmentSlotGroup.HEAD)
-            .addAttribute(Attribute.MOVEMENT_SPEED, -0.02, ADD_NUMBER, EquipmentSlotGroup.HEAD)
-            .addAttribute(Attribute.ARMOR, -0.8, ADD_SCALAR, EquipmentSlotGroup.HEAD)
-            .unbreakable()
-            .addItemFlag(ItemFlag.HIDE_DYE)
-            .addItemFlag(ItemFlag.HIDE_ARMOR_TRIM)),
 
     ENDIALE(Material.LEATHER_CHESTPLATE, item -> new CustomItemBuilder(item, "AirForce")
             .name("Combinaison Endiale", NamedTextColor.YELLOW)
@@ -169,67 +180,7 @@ public enum ECustomItem {
         item.setItemMeta(meta);
     }),
 
-    GROWTH_CASQUE_MINEUR(Material.LEATHER_HELMET, item -> {
-        ItemMeta preMeta = item.getItemMeta();
-        createGrowthItem(preMeta, "GROWTH_CASQUE_MINEUR");
-        item.setItemMeta(preMeta);
-        new CustomItemBuilder(item, "GrowthCasque")
-                .name("Casque de Mineur I", NamedTextColor.GOLD)
-                .leatherArmor(TrimMaterial.GOLD, TrimPattern.FLOW, Color.fromRGB(0xC8960A))
-                .addAttribute(Attribute.MINING_EFFICIENCY, 3.0, ADD_NUMBER, EquipmentSlotGroup.HEAD)
-                .addAttribute(Attribute.MOVEMENT_SPEED, -0.01, ADD_NUMBER, EquipmentSlotGroup.HEAD)
-                .unbreakable()
-                .addItemFlag(ItemFlag.HIDE_DYE)
-                .addItemFlag(ItemFlag.HIDE_ARMOR_TRIM);
-    }),
 
-    GROWTH_JAMBIERES_MINEUR(Material.LEATHER_LEGGINGS, item -> {
-        ItemMeta preMeta = item.getItemMeta();
-        createGrowthItem(preMeta, "GROWTH_JAMBIERES_MINEUR");
-        item.setItemMeta(preMeta);
-        new CustomItemBuilder(item, "GrowthJambieresMineur")
-                .name("Jambières du Mineur I", NamedTextColor.GOLD)
-                .leatherArmor(TrimMaterial.GOLD, TrimPattern.FLOW, Color.fromRGB(0xC8960A))
-                .addAttribute(Attribute.ARMOR, 2.0, ADD_NUMBER, EquipmentSlotGroup.LEGS)
-                .unbreakable()
-                .addItemFlag(ItemFlag.HIDE_DYE)
-                .addItemFlag(ItemFlag.HIDE_ARMOR_TRIM);
-    }),
-
-    GROWTH_BATON_FERMIER(Material.BLAZE_ROD, item -> {
-        ItemMeta meta = item.getItemMeta();
-        createGrowthItem(meta, "GROWTH_BATON_FERMIER");
-        meta.setUnbreakable(true);
-        meta.customName(Component.text("Bâton du Fermier I", NamedTextColor.GREEN).decoration(TextDecoration.ITALIC, false));
-        item.setItemMeta(meta);
-    }),
-
-    GROWTH_HOUE_FERMIER(Material.GOLDEN_HOE, item -> {
-        ItemMeta meta = item.getItemMeta();
-        createGrowthItem(meta, "GROWTH_HOUE_FERMIER");
-        meta.setUnbreakable(true);
-        meta.customName(Component.text("Houe du Fermier I", NamedTextColor.GREEN).decoration(TextDecoration.ITALIC, false));
-        item.setItemMeta(meta);
-    }),
-
-    GROWTH_BOUSSOLE_EXPLORER(Material.COMPASS, item -> {
-        ItemMeta preMeta = item.getItemMeta();
-        createGrowthItem(preMeta, "GROWTH_BOUSSOLE_EXPLORER");
-        item.setItemMeta(preMeta);
-        new CustomItemBuilder(item, "GrowthBoussole")
-                .name("Boussole de l'Explorateur I", NamedTextColor.AQUA)
-                .addAttribute(Attribute.MOVEMENT_SPEED, 0.01, ADD_NUMBER, EquipmentSlotGroup.HAND)
-                .unbreakable();
-    }),
-
-    GROWTH_EPEE_SHINY(Material.NETHERITE_SWORD, item -> {
-        ItemMeta preMeta = item.getItemMeta();
-        createGrowthItem(preMeta, "GROWTH_EPEE_SHINY");
-        item.setItemMeta(preMeta);
-        new CustomItemBuilder(item, "GrowthEpeeShiny")
-                .name("Épée Shiny I", NamedTextColor.LIGHT_PURPLE)
-                .unbreakable();
-    }),
 
     MUFFIN(Material.PLAYER_HEAD, item -> {
         SkullMeta skullMeta = (SkullMeta) item.getItemMeta();

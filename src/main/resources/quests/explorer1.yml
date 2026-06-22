@@ -57,7 +57,7 @@ quests:
     type: KILL
     difficulty: 1
     jobs:
-      - ENCHANTER
+      - EXPLORER
     targets: [WITCH]
     goal: 10
     rewards:

@@ -5,15 +5,15 @@
 
 # Multiplicateur de dégâts de durabilité (0.0 = aucun dommage, 1.0 = vanilla, >1.0 = plus de dommages)
 durability-loss-multiplier:
-  - 3.00   # niveau  0
-  - 2.00   # niveau  1
-  - 1.50   # niveau  2
-  - 1.25   # niveau  3
-  - 1.00   # niveau  4  — vanilla
-  - 0.75   # niveau  5
-  - 0.50   # niveau  6
-  - 0.25   # niveau  7
-  - 0.10   # niveau  8
+  - 2.00   # niveau  0
+  - 1.50   # niveau  1
+  - 1.25   # niveau  2
+  - 1.00   # niveau  3  — vanilla
+  - 0.75   # niveau  4
+  - 0.50   # niveau  5
+  - 0.25   # niveau  6
+  - 0.10   # niveau  7
+  - 0.00   # niveau  8
   - 0.00   # niveau  9
   - 0.00   # niveau 10
 

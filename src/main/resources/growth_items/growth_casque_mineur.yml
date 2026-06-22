@@ -1,12 +1,9 @@
 # yaml-language-server: $schema=../../schema/growth-items-schema.json
-id: GROWTH_CASQUE_MINEUR
+id: MINER_HELMET
 eventType: OreBreakEvent
 
 # Stats de base appliquées à la création ET réappliquées à chaque reload (avant les paliers).
 # Modifier ces valeurs ici suffit — plus besoin de recompiler ECustomItem.
-baseEffects:
-  - { type: set_attribute, attribute: mining_efficiency, attributeValue: 3.0, operation: ADD_NUMBER, slot: HEAD }
-  - { type: set_attribute, attribute: movement_speed,    attributeValue: -0.01, operation: ADD_NUMBER, slot: HEAD }
 
 tiers:
   - requiredUses: 15
@@ -19,6 +16,7 @@ tiers:
     effects:
       - { type: name,          value: "Casque de Mineur III" }
       - { type: set_attribute, attribute: mining_efficiency, attributeValue: 14.0, operation: ADD_NUMBER, slot: HEAD }
+      - { type: potion,        effect: night_vision, seconds: 30, amplifier: 0 }
       - { type: message,       value: "Impressionnant ! Tu tailles dans la roche comme dans du beurre." }
 
   - requiredUses: 65
