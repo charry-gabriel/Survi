@@ -9,8 +9,8 @@ levels:
       - material: BELL
         amount: 1
     blessings:
-      - { type: DISPEL, value: 1 }
-    message: "Vos 10 dernières morts sont annulées."
+      - { type: DISPEL, value: 2 }
+    message: "Vos 20 dernières morts sont annulées."
     recap: ""
 
   - name: "François"
@@ -18,9 +18,9 @@ levels:
       - material: CANDLE
         amount: 10
     blessings:
-      - { type: DISPEL, value: 2 }
-    message: "Vos 20 dernières morts sont annulées."
-    recap: "Les 10 dernières morts sont annulées !"
+      - { type: DISPEL, value: 4 }
+    message: "Vos 40 dernières morts sont annulées."
+    recap: "Les 20 dernières morts sont annulées !"
 
   - name: "François"
     tribute:
@@ -31,9 +31,9 @@ levels:
       - material: TOTEM_OF_UNDYING
         amount: 1
     blessings:
-      - { type: DISPEL, value: 3 }
-    message: "Vos 30 dernières morts sont annulées."
-    recap: "Les 20 dernières morts sont annulées !"
+      - { type: DISPEL, value: 6 }
+    message: "Vos 60 dernières morts sont annulées."
+    recap: "Les 40 dernières morts sont annulées !"
 
   - name: "François"
     tribute:
@@ -44,9 +44,9 @@ levels:
       - material: TOTEM_OF_UNDYING
         amount: 1
     blessings:
-      - { type: DISPEL, value: 4 }
-    message: "Vos 40 dernières morts sont annulées."
-    recap: "Les 30 dernières morts sont annulées !"
+      - { type: DISPEL, value: 8 }
+    message: "Vos 80 dernières morts sont annulées."
+    recap: "Les 60 dernières morts sont annulées !"
 
   - name: "François"
     tribute:
@@ -57,9 +57,9 @@ levels:
       - material: TOTEM_OF_UNDYING
         amount: 1
     blessings:
-      - { type: DISPEL, value: 5 }
-    message: "Vos 50 dernières morts sont annulées."
-    recap: "Les 40 dernières morts sont annulées !"
+      - { type: DISPEL, value: 10 }
+    message: "Vos 100 dernières morts sont annulées."
+    recap: "Les 80 dernières morts sont annulées !"
 
   - name: "François"
     tribute:
@@ -70,9 +70,9 @@ levels:
       - material: TOTEM_OF_UNDYING
         amount: 1
     blessings:
-      - { type: DISPEL, value: 6 }
-    message: "Vos 60 dernières morts sont annulées."
-    recap: "Les 50 dernières morts sont annulées !"
+      - { type: DISPEL, value: 12 }
+    message: "Vos 120 dernières morts sont annulées."
+    recap: "Les 100 dernières morts sont annulées !"
 
   - name: "François"
     tribute:
@@ -83,9 +83,9 @@ levels:
       - material: TOTEM_OF_UNDYING
         amount: 1
     blessings:
-      - { type: DISPEL, value: 7 }
-    message: "Vos 70 dernières morts sont annulées."
-    recap: "Les 60 dernières morts sont annulées !"
+      - { type: DISPEL, value: 14 }
+    message: "Vos 140 dernières morts sont annulées."
+    recap: "Les 120 dernières morts sont annulées !"
 
   - name: "François"
     tribute:
@@ -94,9 +94,9 @@ levels:
       - material: TOTEM_OF_UNDYING
         amount: 1
     blessings:
-      - { type: DISPEL, value: 8 }
-    message: "Vos 80 dernières morts sont annulées."
-    recap: "Les 70 dernières morts sont annulées !"
+      - { type: DISPEL, value: 16 }
+    message: "Vos 160 dernières morts sont annulées."
+    recap: "Les 140 dernières morts sont annulées !"
 
   - name: "François"
     tribute:
@@ -107,9 +107,9 @@ levels:
       - material: TOTEM_OF_UNDYING
         amount: 1
     blessings:
-      - { type: DISPEL, value: 9 }
-    message: "Vos 90 dernières morts sont annulées."
-    recap: "Les 80 dernières morts sont annulées !"
+      - { type: DISPEL, value: 18 }
+    message: "Vos 180 dernières morts sont annulées."
+    recap: "Les 160 dernières morts sont annulées !"
 
   - name: "François"
     tribute:
@@ -118,7 +118,7 @@ levels:
     blessings:
       - { type: DISPEL, value: 100 }
     message: "Toutes vos morts sont annulées"
-    recap: "Les 90 dernières morts sont annulées !"
+    recap: "Les 180 dernières morts sont annulées !"
 
   - name: "François"
     tribute: []
