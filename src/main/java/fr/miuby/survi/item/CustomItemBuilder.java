@@ -22,11 +22,11 @@ import java.text.Normalizer;
 
 public class CustomItemBuilder {
     private final ItemStack itemStack;
-    private final String itemBaseName;
+    private final String itemKeyId;
 
-    public CustomItemBuilder(ItemStack itemStack, String itemBaseName) {
+    public CustomItemBuilder(ItemStack itemStack, String itemKeyId) {
         this.itemStack = itemStack;
-        this.itemBaseName = itemBaseName;
+        this.itemKeyId = itemKeyId;
     }
 
     public CustomItemBuilder name(String name, NamedTextColor color) {
@@ -37,7 +37,7 @@ public class CustomItemBuilder {
     }
 
     public CustomItemBuilder addAttribute(Attribute attr, double value, AttributeModifier.Operation op, EquipmentSlotGroup slot) {
-        String modifierName = sanitizeKey(itemBaseName)
+        String modifierName = sanitizeKey(itemKeyId)
                 + attr.getKey().getKey().replace("_", "").substring(0, 1).toUpperCase()
                 + attr.getKey().getKey().replace("_", "").substring(1);
 

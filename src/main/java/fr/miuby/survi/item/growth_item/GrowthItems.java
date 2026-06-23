@@ -54,6 +54,7 @@ public final class GrowthItems {
     private GrowthItems() {}
 
     public static void init() {
+        GrowthItemLoader.initConfigVersion();
         GrowthItemLoader.loadAll();
     }
 

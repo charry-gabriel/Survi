@@ -25,16 +25,42 @@ public final class GrowthItemLoader {
     private GrowthItemLoader() {}
 
     /**
-     * Compteur monotone incrémenté à chaque {@link #reload()}.
-     * Comparé à la clé PDC {@code growth_reload_version} portée par chaque item pour détecter
+     * Compteur monotone incrémenté à chaque {@link #reload()}, persisté dans {@code server_data}
+     * (clé {@link #SERVER_DATA_VERSION_KEY}) pour survivre à un redémarrage du serveur.
+     *
+     * <p>Comparé à la clé PDC {@code growth_reload_version} portée par chaque item pour détecter
      * les items qui n'ont pas encore intégré la nouvelle config (voir {@link GrowthItems#checkAndReapplyIfStale}).
+     * Cette persistance est nécessaire : la clé PDC, elle, survit aux redémarrages (sauvegardée avec
+     * l'item). Si {@code configVersion} repartait de 0 en mémoire à chaque démarrage alors qu'un item
+     * porte déjà une version supérieure issue d'une session précédente, l'item serait considéré comme
+     * à jour à tort et ne profiterait plus jamais de {@code reapplyAll}.</p>
      */
     @Getter
     private static int configVersion = 0;
 
+    private static final String SERVER_DATA_VERSION_KEY = "growth_items_config_version";
+
     // =========================================================================
     // Chargement
     // =========================================================================
+
+    /**
+     * Restaure {@link #configVersion} depuis {@code server_data} au démarrage du plugin.
+     * À appeler une seule fois, avant le premier {@link #loadAll()} (voir {@link GrowthItems#init()}).
+     */
+    public static void initConfigVersion() {
+        String raw = GameManager.getInstance().getDatabase().system().getServerData(SERVER_DATA_VERSION_KEY);
+        try {
+            configVersion = raw != null ? Integer.parseInt(raw) : 0;
+        } catch (NumberFormatException e) {
+            MLLogManager.getInstance().log(Level.WARNING, ELogTag.ITEM,
+                    "[GrowthItemLoader] Valeur de '" + SERVER_DATA_VERSION_KEY + "' invalide en base ('"
+                            + raw + "'), configVersion réinitialisé à 0");
+            configVersion = 0;
+        }
+        MLLogManager.getInstance().log(Level.INFO, ELogTag.ITEM,
+                "[GrowthItemLoader] configVersion restauré depuis server_data : " + configVersion);
+    }
 
     public static void loadAll() {
         List<GrowthItemFileConfig> files = MLResourceManager.loadPojoAll(
@@ -75,6 +101,10 @@ public final class GrowthItemLoader {
         MLResourceManager.clearCache();
         loadAll();
         configVersion++;
+        GameManager.getInstance().getDatabase().system().saveServerData(
+                SERVER_DATA_VERSION_KEY, String.valueOf(configVersion));
+        MLLogManager.getInstance().log(Level.INFO, ELogTag.ITEM,
+                "[GrowthItemLoader] Reload effectué — configVersion=" + configVersion + " (persisté)");
     }
 
     // ─── Conversion ───────────────────────────────────────────────────────────
