@@ -3,10 +3,7 @@ package fr.miuby.survi.item;
 import fr.miuby.survi.GameManager;
 import fr.miuby.survi.item.growth_item.GrowthItems;
 import lombok.Getter;
-import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
-import net.kyori.adventure.text.format.TextDecoration;
-import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -20,15 +17,12 @@ import org.bukkit.inventory.meta.trim.TrimMaterial;
 import org.bukkit.inventory.meta.trim.TrimPattern;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
-import org.bukkit.potion.PotionEffect;
-import org.bukkit.potion.PotionEffectType;
 
 import java.util.Arrays;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 import static org.bukkit.attribute.AttributeModifier.Operation.ADD_NUMBER;
-import static org.bukkit.attribute.AttributeModifier.Operation.ADD_SCALAR;
 
 @Getter
 public enum ECustomItem {
@@ -113,7 +107,7 @@ public enum ECustomItem {
             .addItemFlag(ItemFlag.HIDE_ARMOR_TRIM);
     }),
 
-    GROWTH_BOUSSOLE_EXPLORER(Material.COMPASS, item -> {
+    GROWTH_EXPLORER_COMPASS(Material.COMPASS, item -> {
         ItemMeta preMeta = item.getItemMeta();
         createGrowthItem(preMeta, "GROWTH_BOUSSOLE_EXPLORER");
         item.setItemMeta(preMeta);

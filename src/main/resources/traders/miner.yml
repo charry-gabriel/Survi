@@ -25,3 +25,12 @@ recipes:
       amount: 1
     message: "Un super achat."
     requiredReputation: 15
+
+  - result:
+      customItem: GROWTH_MINER_HELMET
+      amount: 1
+    ingredient:
+      material: IRON_INGOT
+      amount: 64
+    message: "Un super achat."
+    requiredReputation: 55

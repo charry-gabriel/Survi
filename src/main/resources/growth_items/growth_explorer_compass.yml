@@ -1,5 +1,5 @@
 # yaml-language-server: $schema=../../schema/growth-items-schema.json
-id: GROWTH_BOUSSOLE_EXPLORER
+id: GROWTH_EXPLORER_COMPASS
 eventType: NewBiomeEvent
 
 # Stats de base — le +0.01 de movement_speed initialement hardcodé dans ECustomItem.
