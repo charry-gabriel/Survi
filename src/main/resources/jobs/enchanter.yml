@@ -13,9 +13,9 @@ durability-loss-multiplier:
   - 0.50   # niveau  5
   - 0.25   # niveau  6
   - 0.10   # niveau  7
-  - 0.00   # niveau  8
-  - 0.00   # niveau  9
-  - 0.00   # niveau 10
+  - 0.10   # niveau  8
+  - 0.10   # niveau  9
+  - 0.10   # niveau 10
 
 # Coût XP maximum autorisé pour une opération d'enclume (-1 = illimité)
 anvil-max-xp-cost:
