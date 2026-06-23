@@ -51,12 +51,12 @@ crop-third-tick-chance-at-max: 0.50
 
 # Probabilité que la farine d'os fonctionne (sinon l'item est rendu au joueur)
 bone-meal-chance:
-  - 0.05   # niveau  0
-  - 0.10   # niveau  1
-  - 0.30   # niveau  2
-  - 0.40   # niveau  3
-  - 0.50   # niveau  4
-  - 0.50   # niveau  5
+  - 0.00   # niveau  0
+  - 0.00   # niveau  1
+  - 0.10   # niveau  2
+  - 0.20   # niveau  3
+  - 0.30   # niveau  4
+  - 0.40   # niveau  5
   - 0.50   # niveau  6
   - 0.60   # niveau  7
   - 0.70   # niveau  8
