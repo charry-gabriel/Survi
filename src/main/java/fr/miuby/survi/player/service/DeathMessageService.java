@@ -221,9 +221,9 @@ public final class DeathMessageService {
             return format(pick(GENERIC_MESSAGES), playerName);
 
         MobTemplate t = MOB_TEMPLATES[RANDOM.nextInt(MOB_TEMPLATES.length)];
-        return Component.text(String.format(t.before(), playerName), NamedTextColor.WHITE)
+        return Component.text(String.format(t.before(), playerName), NamedTextColor.GRAY)
                 .append(GameManager.getInstance().getMobLevelManager().buildDeathName(living))
-                .append(Component.text(t.after(), NamedTextColor.WHITE));
+                .append(Component.text(t.after(), NamedTextColor.GRAY));
     }
 
     // ─── Utilitaires ─────────────────────────────────────────────────────────────
@@ -233,6 +233,6 @@ public final class DeathMessageService {
     }
 
     private static Component format(String template, Object... args) {
-        return Component.text(String.format(template, args), NamedTextColor.WHITE);
+        return Component.text(String.format(template, args), NamedTextColor.GRAY);
     }
 }
