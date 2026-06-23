@@ -1,5 +1,5 @@
 # yaml-language-server: $schema=../../schema/growth-items-schema.json
-id: GROWTH_JAMBIERES_MINEUR
+id: GROWTH_LUMBERJACK_CHESPLATE
 eventType: OreBreakEvent
 
 # Défense intentionnellement réduite (2.0 au lieu des 3 vanilla cuir).
@@ -8,28 +8,28 @@ baseEffects:
   - { type: set_attribute, attribute: armor, attributeValue: 2.0, operation: ADD_NUMBER, slot: LEGS }
 
 tiers:
-  - requiredUses: 15
+  - requiredUses: 1000
     effects:
       - { type: name,    value: "Jambières du Mineur II" }
       - { type: message, value: "Tes jambières s'adaptent aux galeries obscures !" }
 
-  - requiredUses: 35
+  - requiredUses: 2000
     effects:
       - { type: name,          value: "Jambières du Mineur III" }
       - { type: set_attribute, attribute: armor, attributeValue: 3.0, operation: ADD_NUMBER, slot: LEGS }
       - { type: message,       value: "Ta défense revient à la normale — les profondeurs ne te font plus peur." }
 
-  - requiredUses: 65
+  - requiredUses: 3000
     effects:
       - { type: name,          value: "Jambières du Grand Mineur" }
       - { type: set_attribute, attribute: armor, attributeValue: 4.0, operation: ADD_NUMBER, slot: LEGS }
       - { type: message,       value: "Jambières de légende. Tu es blindé comme la roche elle-même." }
 
 periodicEffects:
-  - everyUses: 5
+  - everyUses: 1000
     effects:
       - { type: potion,  effect: night_vision, seconds: 45, amplifier: 0 }
-  - everyUses: 8
+  - everyUses: 2000
     effects:
       - { type: haste,   seconds: 10 }
       - { type: message, value: "Un élan de haste jaillit de tes jambières !" }

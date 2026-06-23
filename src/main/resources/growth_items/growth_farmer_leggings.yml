@@ -9,20 +9,20 @@ baseEffects:
   - { type: set_attribute, attribute: max_health,     attributeValue: -2.0,  operation: ADD_NUMBER, slot: HAND }
 
 tiers:
-  - requiredUses: 20
+  - requiredUses: 1000
     effects:
       - { type: name,          value: "Houe du Fermier II" }
       - { type: fire_enemies,  seconds: 3 }
       - { type: message,       value: "Ta houe s'embrase — tes ennemis vont brûler !" }
 
-  - requiredUses: 50
+  - requiredUses: 2000
     effects:
       - { type: name,          value: "Houe du Fermier III" }
       - { type: fire_enemies,  seconds: 6 }
       - { type: set_attribute, attribute: movement_speed, attributeValue: 0.05, operation: ADD_NUMBER, slot: HAND }
       - { type: message,       value: "Tu cours plus vite et tes ennemis brûlent plus longtemps !" }
 
-  - requiredUses: 90
+  - requiredUses: 3000
     effects:
       - { type: name,          value: "Houe du Grand Fermier" }
       - { type: fire_enemies,  seconds: 10 }

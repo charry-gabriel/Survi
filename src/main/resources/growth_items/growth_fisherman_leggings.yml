@@ -1,28 +1,28 @@
 # yaml-language-server: $schema=../../schema/growth-items-schema.json
-id: GROWTH_PICKAXE
+id: GROWTH_FISHERMAN_LEGGINGS
 eventType: BlockBreakEvent
 
 tiers:
-  - requiredUses: 8
+  - requiredUses: 1000
     effects:
       - { type: name,            value: "the pioche 2 !" }
       - { type: add_enchantment, enchantment: fortune, amount: 1 }
       - { type: message,         value: "Lvlup de ta pioche ! une petite fortune de plus." }
 
-  - requiredUses: 16
+  - requiredUses: 2000
     effects:
       - { type: name,            value: "the pioche 3 !" }
       - { type: add_enchantment, enchantment: fortune, amount: 1 }
       - { type: message,         value: "Lvlup de ta pioche ! une petite fortune de plus." }
 
-  - requiredUses: 22
+  - requiredUses: 3000
     effects:
       - { type: name,            value: "the pioche des pioches !" }
       - { type: add_enchantment, enchantment: fortune, amount: 2 }
       - { type: message,         value: "Lvlup de ta pioche ! deux fortune de plus, bim !" }
 
 periodicEffects:
-  - everyUses: 10
+  - everyUses: 1000
     effects:
       - { type: haste,   seconds: 10 }
       - { type: message, value: "Un peu de haste pour toi !" }
