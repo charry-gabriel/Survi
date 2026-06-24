@@ -1,7 +1,9 @@
 package fr.miuby.survi.player;
 
+import fr.miuby.lib.log.MLLogManager;
 import fr.miuby.survi.GameManager;
 import fr.miuby.survi.system.SurviConfig;
+import fr.miuby.survi.system.log.ELogTag;
 import org.bukkit.NamespacedKey;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
@@ -9,6 +11,8 @@ import org.bukkit.attribute.AttributeModifier;
 
 import static java.lang.Math.min;
 import static org.bukkit.util.NumberConversions.floor;
+
+import java.util.logging.Level;
 
 public class AlphaLife {
     private final AlphaPlayer alphaPlayer;
@@ -45,9 +49,17 @@ public class AlphaLife {
 
     public void actualizeDeath() {
         this.regenHealth(() -> {
-            int deathWithDispel = min(0, GameManager.getInstance().getDispel() - this.deathLife);
+            double deathWithDispel = min(0, GameManager.getInstance().getDispel() - this.deathLife);
             if (attributeInstance.getModifier(deathKey) != null)
                 attributeInstance.removeModifier(deathKey);
+            // Après retrait de l'ancien modifier, getValue() = santé sans malus de mort (base + blessing + success + rôle).
+            double healthWithoutDeath = attributeInstance.getValue();
+            double minFloor = -Math.floor(healthWithoutDeath / 2.0);
+            if (deathWithDispel < minFloor) {
+                MLLogManager.getInstance().log(Level.FINE, ELogTag.PLAYER,
+                        "[actualizeDeath] " + alphaPlayer.getPseudo() + " : plancher appliqué (malus=" + (int)deathWithDispel + " → " + (int)minFloor + ", healthSansMalus=" + healthWithoutDeath + ")");
+                deathWithDispel = minFloor;
+            }
             AttributeModifier deathModifier = new AttributeModifier(deathKey, deathWithDispel, AttributeModifier.Operation.ADD_NUMBER);
             attributeInstance.addTransientModifier(deathModifier);
         });
