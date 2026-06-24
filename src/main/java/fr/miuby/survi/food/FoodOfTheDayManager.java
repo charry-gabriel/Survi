@@ -118,10 +118,10 @@ public class FoodOfTheDayManager {
 
         FoodProperties foodProps = food.asItemType().getDefaultData(DataComponentTypes.FOOD);
         int nominalNutrition = foodProps.nutrition();
-        float nominalSatGain = nominalNutrition * foodProps.saturation() * 2.0f;
+        float nominalSatGain = foodProps.saturation(); // Paper 26.x : saturation() retourne déjà le gain absolu (nutrition × modifier × 2)
 
         int newFoodLevel = Math.clamp(foodLevelBeforeEating + Math.round(nominalNutrition * multiplier), 0, MAX_FOOD_LEVEL);
-        float newSaturation = Math.clamp(saturationBeforeEating + nominalSatGain * multiplier, 0.0f, MAX_SATURATION);
+        float newSaturation = Math.clamp(saturationBeforeEating + nominalSatGain * multiplier, 0.0f, newFoodLevel);
 
         player.setSaturation(newSaturation);
         player.setFoodLevel(newFoodLevel);
