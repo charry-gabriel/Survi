@@ -176,6 +176,8 @@ public class PlayerListener implements Listener {
                         + " y=" + player.getLocation().getBlockY()
                         + " z=" + player.getLocation().getBlockZ());
 
+        AlphaPlayer.get(player.getUniqueId()).getAlphaLife().saveFood();
+
         final ItemStack[] armor = player.getInventory().getArmorContents();
 
         gm.getScheduler().scheduleSyncDelayedTask(gm.getPlugin(), () -> player.getInventory().setArmorContents(armor));
@@ -192,6 +194,7 @@ public class PlayerListener implements Listener {
                 "[PlayerRespawn] " + player.getName());
         AlphaPlayer alphaPlayer = AlphaPlayer.get(player.getUniqueId());
         alphaPlayer.getAlphaLife().actualizeDeath();
+        gm.getScheduler().scheduleSyncDelayedTask(gm.getPlugin(), () -> { if (player.isOnline()) alphaPlayer.getAlphaLife().restoreFood(); });
 
         event.setRespawnLocation(GameManager.getInstance().getVillageZoneManager().getCurrentSpawnLocation());
 

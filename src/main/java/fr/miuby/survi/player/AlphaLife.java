@@ -8,6 +8,7 @@ import org.bukkit.NamespacedKey;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.attribute.AttributeModifier;
+import org.bukkit.entity.Player;
 
 import static java.lang.Math.min;
 import static org.bukkit.util.NumberConversions.floor;
@@ -15,6 +16,8 @@ import static org.bukkit.util.NumberConversions.floor;
 import java.util.logging.Level;
 
 public class AlphaLife {
+    private static final int MIN_FOOD_ON_RESPAWN = 6;
+
     private final AlphaPlayer alphaPlayer;
 
     private int successLife = 0;
@@ -22,6 +25,9 @@ public class AlphaLife {
     private double blessingLife = 2;
     private boolean hasArmorMalus;
     private AttributeInstance attributeInstance;
+
+    private int savedFoodLevel = 20;
+    private float savedSaturation = 5f;
 
     private final NamespacedKey deathKey = new NamespacedKey(GameManager.getInstance().getPlugin(), "death_life");
     private final NamespacedKey successKey = new NamespacedKey(GameManager.getInstance().getPlugin(), "success_life");
@@ -114,5 +120,27 @@ public class AlphaLife {
     public void setArmorMalus(boolean hasArmorMalus) {
         this.hasArmorMalus = hasArmorMalus;
         this.actualizeDeath();
+    }
+
+    /** Sauvegarde la nourriture et la saturation du joueur au moment de la mort. */
+    public void saveFood() {
+        Player player = this.alphaPlayer.getPlayer();
+        if (player == null) return;
+        this.savedFoodLevel = player.getFoodLevel();
+        this.savedSaturation = player.getSaturation();
+        MLLogManager.getInstance().log(Level.FINE, ELogTag.PLAYER,
+                "[saveFood] " + alphaPlayer.getPseudo() + " food=" + savedFoodLevel + " saturation=" + savedSaturation);
+    }
+
+    /** Restaure la nourriture et la saturation sauvegardées, avec un minimum de {@value MIN_FOOD_ON_RESPAWN} de nourriture. */
+    public void restoreFood() {
+        Player player = this.alphaPlayer.getPlayer();
+        if (player == null) return;
+        int food = Math.max(savedFoodLevel, MIN_FOOD_ON_RESPAWN);
+        float saturation = Math.min(savedSaturation, food);
+        player.setFoodLevel(food);
+        player.setSaturation(saturation);
+        MLLogManager.getInstance().log(Level.FINE, ELogTag.PLAYER,
+                "[restoreFood] " + alphaPlayer.getPseudo() + " food=" + food + " (saved=" + savedFoodLevel + ") saturation=" + saturation);
     }
 }
