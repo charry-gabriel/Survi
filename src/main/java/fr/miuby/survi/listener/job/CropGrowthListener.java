@@ -126,7 +126,9 @@ public class CropGrowthListener implements Listener {
     /**
      * La farine d'os est bloquée par défaut sur toutes les cultures trackées.
      * Pour les cultures plantées par un fermier, elle réussit selon {@code bone-meal-chance[niveau]}.
-     * En cas d'échec, l'item est rendu au joueur.
+     * En cas d'échec ou de culture non-fermier, l'event est annulé (pas de croissance)
+     * et la farine d'os est consommée manuellement — {@code setCancelled(true)} seul
+     * ne consomme pas l'item côté Paper.
      * Cultures non trackées (hors fermier) ou source non-joueur → toujours bloqué.
      */
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
@@ -137,22 +139,43 @@ public class CropGrowthListener implements Listener {
         PlantedCropsManager mgr = GameManager.getInstance().getPlantedCropsManager();
         Integer farmLevel = mgr.getFarmLevel(event.getBlock().getLocation());
 
-        // Culture non plantée par un fermier ou source non-joueur → bone meal bloqué sans remboursement
+        // Culture non plantée par un fermier ou source non-joueur → bloqué, item consommé
         if (farmLevel == null || player == null) {
             event.setCancelled(true);
+            if (player != null) consumeBoneMeal(player);
             return;
         }
 
-        // Culture fermier : chance selon le niveau
+        // Culture fermier : chance selon le niveau du joueur qui utilise la bone meal
+        AlphaPlayer alpha = AlphaPlayer.get(player.getUniqueId());
+        int playerFarmLevel = alpha != null ? alpha.getJobLevel(EJob.FARMER) : 0;
         JobsConfig.FarmerCfg farmer = JobsConfig.getInstance().getFarmer();
-        double chance = farmer.getBoneMealChance()[farmLevel];
+        double chance = farmer.getBoneMealChance()[playerFarmLevel];
 
         if (Math.random() >= chance) {
+            // Échec : annuler la croissance ET consommer l'item — pénalité de niveau bas
             event.setCancelled(true);
-            player.getInventory().addItem(new ItemStack(Material.BONE_MEAL));
+            consumeBoneMeal(player);
             MLLogManager.getInstance().log(Level.FINE, ELogTag.JOB,
                     "[CropGrowthListener.onFertilize] Échec farine d'os pour " + player.getName()
-                            + " (niveau=" + farmLevel + ", chance=" + chance + ") — item rendu");
+                            + " (niveau joueur=" + playerFarmLevel + ", chance=" + chance + ") — item consommé");
+        }
+    }
+
+    /**
+     * Retire une farine d'os de l'inventaire du joueur (main principale puis off-hand).
+     * Appelé manuellement après {@code event.setCancelled(true)} sur un {@link BlockFertilizeEvent},
+     * car Paper ne consomme pas l'item quand l'event est annulé.
+     */
+    private static void consumeBoneMeal(Player player) {
+        ItemStack main = player.getInventory().getItemInMainHand();
+        if (main.getType() == Material.BONE_MEAL) {
+            main.setAmount(main.getAmount() - 1);
+            return;
+        }
+        ItemStack off = player.getInventory().getItemInOffHand();
+        if (off.getType() == Material.BONE_MEAL) {
+            off.setAmount(off.getAmount() - 1);
         }
     }
 
