@@ -15,7 +15,7 @@
     "pressure-safe-depth",
     "pressure-damage",
     "underwater-speed-modifier",
-    "oxygen-bonus-ticks",
+    "oxygen-bonus",
     "submerged-mining-speed-modifier",
     "acid-rain-damage",
     "acid-rain-fisherman-level-threshold"
@@ -75,15 +75,9 @@
       "$ref": "#/definitions/non-negative-number-array",
       "description": "Modificateur ADD_NUMBER sur PLAYER_UNDERWATER_MOVEMENT par niveau. 0.0 = vitesse vanilla."
     },
-    "oxygen-bonus-ticks": {
-      "type": "array",
-      "description": "Bonus de ticks de respiration (ADD_NUMBER sur PLAYER_OXYGEN_BONUS). Base vanilla = 300 ticks (15 s). Valeurs négatives possibles.",
-      "minItems": 11,
-      "maxItems": 11,
-      "items": {
-        "type": "integer",
-        "minimum": -300
-      }
+    "oxygen-bonus": {
+      "$ref": "#/definitions/non-negative-number-array",
+      "description": "Valeur ADD_NUMBER sur OXYGEN_BONUS par niveau. L'attribut est probabiliste : 1/(1+bonus) chance de perdre 1 air par tick. Durée totale = 300 × (1 + bonus) ticks. Formule inverse : bonus = durée_cible / 300 − 1."
     },
     "submerged-mining-speed-modifier": {
       "$ref": "#/definitions/non-negative-number-array",

@@ -108,20 +108,22 @@ underwater-speed-modifier:
   - 1.000   # niveau  9
   - 1.500   # niveau 10
 
-# Bonus de ticks de respiration (ADD_NUMBER sur OXYGEN_BONUS).
-# Réserve d'air de base : 300 ticks (15 s). Valeur 0 = durée vanilla.
-oxygen-bonus-ticks:
-  - 0      # niveau  0  — 300 ticks = 15 s (vanilla, court)
-  - 60     # niveau  1  — 360 ticks = 18 s
-  - 120    # niveau  2  — 420 ticks = 21 s
-  - 200    # niveau  3  — 500 ticks = 25 s
-  - 300    # niveau  4  — 600 ticks = 30 s
-  - 480    # niveau  5  — 780 ticks = 39 s
-  - 720    # niveau  6  — 1020 ticks = 51 s
-  - 1200   # niveau  7  — 1500 ticks = 1 m 15 s
-  - 2400   # niveau  8  — 2700 ticks = 2 m 15 s
-  - 4200   # niveau  9  — 4500 ticks = 3 m 45 s
-  - 7200   # niveau 10  — 7500 ticks ≈ 6 m 15 s
+# Modificateur ADD_NUMBER sur OXYGEN_BONUS (valeur sans unité).
+# L'attribut fonctionne en probabilité : chaque tick sous l'eau, le joueur a 1/(1+bonus) chance
+# de perdre 1 air. La durée totale est donc 300 × (1 + bonus) ticks.
+# Formule inverse : bonus = durée_cible_ticks / 300 − 1.
+oxygen-bonus:
+  - 0.000  # niveau  0  — 300 ticks = 15 s (vanilla)
+  - 0.200  # niveau  1  — 360 ticks = 18 s
+  - 0.400  # niveau  2  — 420 ticks = 21 s
+  - 0.667  # niveau  3  — 500 ticks = 25 s
+  - 1.000  # niveau  4  — 600 ticks = 30 s
+  - 1.600  # niveau  5  — 780 ticks = 39 s
+  - 2.400  # niveau  6  — 1020 ticks = 51 s
+  - 4.000  # niveau  7  — 1500 ticks = 1 m 15 s
+  - 8.000  # niveau  8  — 2700 ticks = 2 m 15 s
+  - 14.000 # niveau  9  — 4500 ticks = 3 m 45 s
+  - 24.000 # niveau 10  — 7500 ticks ≈ 6 m 15 s
 
 # Modificateur ADD_NUMBER sur SUBMERGED_MINING_SPEED (vitesse de minage sous l'eau).
 # Remplace l'ancien effet de potion HASTE. Valeur 0.0 = vitesse vanilla (pénalité normale).

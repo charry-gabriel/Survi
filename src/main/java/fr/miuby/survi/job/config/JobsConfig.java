@@ -172,8 +172,12 @@ public final class JobsConfig {
         private final double   pressureDamage;
         /** Modificateur ADD_NUMBER sur {@code WATER_MOVEMENT_EFFICIENCY} par niveau. Valeur 0.0 = vitesse vanilla. */
         private final double[] underwaterSpeedModifier;
-        /** Bonus de ticks de respiration (ADD_NUMBER sur {@code OXYGEN_BONUS}) par niveau. Base vanilla = 300 ticks. */
-        private final int[]    oxygenBonusTicks;
+        /**
+         * Valeur ADD_NUMBER appliquée sur {@code OXYGEN_BONUS} par niveau.
+         * L'attribut est probabiliste : chaque tick sous l'eau, 1/(1+bonus) chance de perdre 1 air.
+         * Durée totale = 300 × (1 + bonus) ticks. Formule inverse : bonus = durée_cible / 300 − 1.
+         */
+        private final double[] oxygenBonus;
         /** Modificateur ADD_NUMBER sur {@code SUBMERGED_MINING_SPEED} par niveau. Valeur 0.0 = vitesse vanilla. */
         private final double[] submergedMiningSpeedModifier;
         /** Dégâts infligés par tick de pluie acide aux joueurs sous le seuil (demi-cœurs). */
@@ -186,7 +190,7 @@ public final class JobsConfig {
                      double[] dirtChance, Material[] dirtReplacementMaterials,
                      double[] treasurePenalty, Material[] treasureReplacementMaterials,
                      int[] pressureSafeDepth, double pressureDamage,
-                     double[] underwaterSpeedModifier, int[] oxygenBonusTicks,
+                     double[] underwaterSpeedModifier, double[] oxygenBonus,
                      double[] submergedMiningSpeedModifier,
                      double acidRainDamage, int acidRainFishermanLevelThreshold) {
             this.vanillaMinWaitTicks              = vanillaMinWaitTicks;
@@ -200,7 +204,7 @@ public final class JobsConfig {
             this.pressureSafeDepth                = pressureSafeDepth;
             this.pressureDamage                   = pressureDamage;
             this.underwaterSpeedModifier          = underwaterSpeedModifier;
-            this.oxygenBonusTicks                 = oxygenBonusTicks;
+            this.oxygenBonus                      = oxygenBonus;
             this.submergedMiningSpeedModifier     = submergedMiningSpeedModifier;
             this.acidRainDamage                   = acidRainDamage;
             this.acidRainFishermanLevelThreshold  = acidRainFishermanLevelThreshold;

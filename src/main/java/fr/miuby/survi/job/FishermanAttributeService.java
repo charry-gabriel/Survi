@@ -40,7 +40,7 @@ public final class FishermanAttributeService {
         JobsConfig.FishermanCfg cfg = JobsConfig.getInstance().getFisherman();
 
         applyModifier(ap, Attribute.WATER_MOVEMENT_EFFICIENCY, KEY_SPEED, cfg.getUnderwaterSpeedModifier()[level]);
-        applyModifier(ap, Attribute.OXYGEN_BONUS, KEY_OXYGEN, cfg.getOxygenBonusTicks()[level]);
+        applyModifier(ap, Attribute.OXYGEN_BONUS, KEY_OXYGEN, cfg.getOxygenBonus()[level]);
         applyModifier(ap, Attribute.SUBMERGED_MINING_SPEED, KEY_MINING, cfg.getSubmergedMiningSpeedModifier()[level]);
     }
 

@@ -242,19 +242,17 @@ class JobsConfigTest {
     }
 
     @Test
-    void fishermanOxygenBonusTicksValid() {
-        List<Number> list = getNumberList(fishermanRoot, "oxygen-bonus-ticks");
-        assertSize(list, "fisherman.oxygen-bonus-ticks");
+    void fishermanOxygenBonusValid() {
+        List<Number> list = getNumberList(fishermanRoot, "oxygen-bonus");
+        assertSize(list, "fisherman.oxygen-bonus");
         for (int i = 0; i < LEVEL_COUNT; i++) {
-            int v = list.get(i).intValue();
-            assertTrue(v >= -300, "fisherman.oxygen-bonus-ticks[" + i + "] doit être ≥ -300, valeur : " + v);
+            double v = list.get(i).doubleValue();
+            assertTrue(v >= 0.0, "fisherman.oxygen-bonus[" + i + "] doit être ≥ 0.0, valeur : " + v);
         }
-        // Vérification de la progression croissante
         for (int i = 1; i < LEVEL_COUNT; i++) {
-            int prev = list.get(i - 1).intValue();
-            int curr = list.get(i).intValue();
-            assertTrue(curr >= prev,
-                    "fisherman.oxygen-bonus-ticks[" + i + "] (" + curr + ") ne doit pas être inférieur à l'index précédent (" + prev + ")");
+            double prev = list.get(i - 1).doubleValue();
+            double curr = list.get(i).doubleValue();
+            assertTrue(curr >= prev, "fisherman.oxygen-bonus[" + i + "] (" + curr + ") ne doit pas être inférieur à l'index précédent (" + prev + ")");
         }
     }
 
