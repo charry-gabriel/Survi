@@ -3,6 +3,7 @@ package fr.miuby.survi.listener;
 import fr.miuby.survi.GameManager;
 import fr.miuby.survi.item.growth_item.GrowthItems;
 import fr.miuby.survi.system.exception.AlphaPlayerNotFoundException;
+import io.papermc.paper.event.entity.EntityEquipmentChangedEvent;
 import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
 import org.bukkit.entity.LivingEntity;
@@ -14,19 +15,17 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerExpChangeEvent;
 import org.bukkit.event.player.PlayerFishEvent;
 import org.bukkit.event.player.PlayerItemHeldEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
-import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerSwapHandItemsEvent;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
-import org.bukkit.plugin.Plugin;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -40,8 +39,6 @@ public class GrowthItemListener implements Listener {
     private static final Random RANDOM = new Random();
 
     private final PlacedBlockTracker placedBlockTracker;
-    /** Référence stable — utilisée pour planifier les tâches différées dans les events d'inventaire. */
-    private final Plugin plugin = GameManager.getInstance().getPlugin();
 
     public GrowthItemListener(PlacedBlockTracker placedBlockTracker) {
         this.placedBlockTracker = placedBlockTracker;
@@ -96,52 +93,33 @@ public class GrowthItemListener implements Listener {
     // ═════════════════════════════════════════════════════════════════════════
 
     /**
-     * Quand le joueur change de slot actif, vérifie si le nouvel ou l'ancien item en main est
-     * un growth item dont la config a changé depuis la dernière application.
-     *
-     * <p>Déclenche aussi un refresh des effets permanents pour couvrir le changement d'item
-     * en main (ancien item peut avoir des permanent_potion à supprimer, nouveau à ajouter).</p>
+     * Quand le joueur change de slot actif, vérifie si le nouvel item en main est un
+     * growth item dont la config a changé depuis la dernière application.
      */
     @EventHandler(ignoreCancelled = true)
     public void onItemHeld(PlayerItemHeldEvent event) {
         Player player = event.getPlayer();
         ItemStack newItem = player.getInventory().getItem(event.getNewSlot());
-        ItemStack oldItem = player.getInventory().getItem(event.getPreviousSlot());
+        if (GrowthItems.getGrowthId(newItem) == null) return;
 
-        boolean newIsGrowth = GrowthItems.getGrowthId(newItem) != null;
-        boolean oldIsGrowth = GrowthItems.getGrowthId(oldItem) != null;
-
-        // Réapplication staleness uniquement sur le nouvel item tenu
-        if (newIsGrowth) {
-            try {
-                if (GrowthItems.checkAndReapplyIfStale(newItem, player))
-                    player.getInventory().setItem(event.getNewSlot(), newItem);
-            } catch (AlphaPlayerNotFoundException ignored) {}
-        }
-
-        // Refresh permanent effects si l'un des deux items est un growth item
-        if (newIsGrowth || oldIsGrowth)
-            GrowthPermanentEffects.refresh(player);
+        try {
+            if (GrowthItems.checkAndReapplyIfStale(newItem, player))
+                player.getInventory().setItem(event.getNewSlot(), newItem);
+        } catch (AlphaPlayerNotFoundException ignored) {}
     }
 
     /**
      * À la connexion, vérifie tous les emplacements tenus ou équipés (main, offhand, armure).
      * Couvre le cas d'un joueur qui se reconnecte après un reload effectué pendant sa déconnexion.
-     * Réapplique aussi les effets permanents depuis l'équipement actuel.
      */
     @EventHandler(priority = EventPriority.HIGH)
     public void onPlayerJoin(PlayerJoinEvent event) {
-        Player player = event.getPlayer();
-        GrowthItems.checkAndReapplyHeldAndEquipped(player);
-        GrowthPermanentEffects.refresh(player);
+        GrowthItems.checkAndReapplyHeldAndEquipped(event.getPlayer());
     }
 
     /**
      * Quand le joueur swap main/offhand (touche F), vérifie le staleness des deux items
      * concernés avant que le serveur n'applique réellement le swap.
-     *
-     * <p>Refresh des effets permanents planifié au tick suivant : à ce stade de l'event,
-     * le swap n'a pas encore été appliqué côté serveur.</p>
      */
     @EventHandler(ignoreCancelled = true)
     public void onSwapHandItems(PlayerSwapHandItemsEvent event) {
@@ -156,31 +134,34 @@ public class GrowthItemListener implements Listener {
         if (GrowthItems.getGrowthId(offHandResult) != null
                 && GrowthItems.checkAndReapplyIfStale(offHandResult, player))
             event.setOffHandItem(offHandResult);
-
-        if (GrowthItems.getGrowthId(mainHandResult) != null || GrowthItems.getGrowthId(offHandResult) != null)
-            plugin.getServer().getScheduler().runTask(plugin,
-                    () -> GrowthPermanentEffects.refresh(player));
     }
 
     /**
-     * À la déconnexion, supprime les effets permanents growth pour éviter qu'une durée infinie
-     * soit persistée dans la sauvegarde NBT du joueur.
+     * Détecte tout changement d'équipement détecté par Paper, quelle qu'en soit la cause —
+     * notamment l'équipement par <b>clic droit direct</b> (sans ouvrir l'inventaire), qui ne
+     * déclenche aucun {@code InventoryClickEvent} et n'était donc pas couvert jusqu'ici.
+     * Complète {@code onInventoryClick} (clics en interface) et {@code onItemHeld}/
+     * {@code onSwapHandItems} (main). L'event est notifié après coup, le changement est
+     * déjà appliqué — pas besoin de planifier au tick suivant.
      */
-    @EventHandler(priority = EventPriority.HIGH)
-    public void onPlayerQuit(PlayerQuitEvent event) {
-        GrowthPermanentEffects.clearOnQuit(event.getPlayer());
-    }
+    @EventHandler
+    public void onEquipmentChanged(EntityEquipmentChangedEvent event) {
+        if (!(event.getEntity() instanceof Player player)) return;
 
-    // ═════════════════════════════════════════════════════════════════════════
-    //  Gestion des effets permanents via les events d'inventaire
-    // ═════════════════════════════════════════════════════════════════════════
+        boolean involvesGrowth = event.getEquipmentChanges().values().stream().anyMatch(change ->
+                GrowthItems.getGrowthId(change.newItem()) != null
+                        || GrowthItems.getGrowthId(change.oldItem()) != null);
+        if (!involvesGrowth) return;
+
+        GrowthItems.checkAndReapplyHeldAndEquipped(player);
+    }
 
     /**
      * Détecte tout clic dans l'inventaire du joueur impliquant un growth item ou un slot armure
      * (slots 36–40 : bottes, jambières, plastron, casque, main secondaire).
-     * Planifie au tick suivant, après que Bukkit ait effectivement déplacé l'item : une vérification
-     * de staleness sur tout ce que le joueur tient/porte (couvre l'équipement direct, le shift-click
-     * depuis l'inventaire ou un coffre ouvert) puis un refresh des effets permanents.
+     * Planifie au tick suivant, après que Bukkit ait effectivement déplacé l'item, une
+     * vérification de staleness sur tout ce que le joueur tient/porte (couvre l'équipement
+     * direct, le shift-click depuis l'inventaire ou un coffre ouvert).
      */
     @EventHandler
     public void onInventoryClick(InventoryClickEvent event) {
@@ -199,22 +180,9 @@ public class GrowthItemListener implements Listener {
         if (!isArmorOrOffhand && !involvesGrowth) return;
 
         // Tick suivant : l'item est réellement dans son nouveau slot
-        plugin.getServer().getScheduler().runTask(plugin, () -> {
-            GrowthItems.checkAndReapplyHeldAndEquipped(player);
-            GrowthPermanentEffects.refresh(player);
-        });
-    }
-
-    /**
-     * Quand un joueur jette un growth item, rafraîchit les effets permanents sur le tick
-     * suivant (l'item a déjà quitté l'inventaire au moment où le handler tourne).
-     */
-    @EventHandler
-    public void onPlayerDrop(PlayerDropItemEvent event) {
-        if (GrowthItems.getGrowthId(event.getItemDrop().getItemStack()) == null) return;
-        Player player = event.getPlayer();
+        org.bukkit.plugin.Plugin plugin = GameManager.getInstance().getPlugin();
         plugin.getServer().getScheduler().runTask(plugin,
-                () -> GrowthPermanentEffects.refresh(player));
+                () -> GrowthItems.checkAndReapplyHeldAndEquipped(player));
     }
 
     // ═════════════════════════════════════════════════════════════════════════
@@ -224,9 +192,7 @@ public class GrowthItemListener implements Listener {
     @EventHandler(ignoreCancelled = true)
     public void onBlockBreak(BlockBreakEvent event) {
         if (placedBlockTracker.isPlaced(event.getBlock())) return;
-        Player player = event.getPlayer();
-        GrowthItems.IncrementUses(player, "BlockBreakEvent");
-        GrowthPermanentEffects.refresh(player);
+        GrowthItems.IncrementUses(event.getPlayer(), "BlockBreakEvent", EquipmentSlot.HAND, EquipmentSlot.OFF_HAND);
     }
 
     // ═════════════════════════════════════════════════════════════════════════
@@ -238,9 +204,8 @@ public class GrowthItemListener implements Listener {
         if (!ORE_BLOCKS.contains(event.getBlock().getType())) return;
         if (placedBlockTracker.isPlaced(event.getBlock())) return;
         Player player = event.getPlayer();
-        GrowthItems.IncrementUsesFromHelmet(player, "OreBreakEvent");
-        GrowthItems.IncrementUsesFromLeggings(player, "OreBreakEvent");
-        GrowthPermanentEffects.refresh(player);
+        GrowthItems.IncrementUses(player, "OreBreakEvent", EquipmentSlot.HEAD);
+        GrowthItems.IncrementUses(player, "OreBreakEvent", EquipmentSlot.LEGS);
     }
 
     // ═════════════════════════════════════════════════════════════════════════
@@ -257,10 +222,9 @@ public class GrowthItemListener implements Listener {
         if (!LOG_BLOCKS.contains(event.getBlock().getType())) return;
         if (placedBlockTracker.isPlaced(event.getBlock())) return;
         Player player = event.getPlayer();
-        GrowthItems.IncrementUses(player, "LogBreakEvent");
-        GrowthItems.IncrementUsesFromHelmet(player, "LogBreakEvent");
-        GrowthItems.IncrementUsesFromLeggings(player, "LogBreakEvent");
-        GrowthPermanentEffects.refresh(player);
+        GrowthItems.IncrementUses(player, "LogBreakEvent", EquipmentSlot.HAND, EquipmentSlot.OFF_HAND);
+        GrowthItems.IncrementUses(player, "LogBreakEvent", EquipmentSlot.HEAD);
+        GrowthItems.IncrementUses(player, "LogBreakEvent", EquipmentSlot.LEGS);
     }
 
     // ═════════════════════════════════════════════════════════════════════════
@@ -275,10 +239,9 @@ public class GrowthItemListener implements Listener {
     public void onFishCatch(PlayerFishEvent event) {
         if (event.getState() != PlayerFishEvent.State.CAUGHT_FISH) return;
         Player player = event.getPlayer();
-        GrowthItems.IncrementUses(player, "FishCatchEvent");
-        GrowthItems.IncrementUsesFromHelmet(player, "FishCatchEvent");
-        GrowthItems.IncrementUsesFromLeggings(player, "FishCatchEvent");
-        GrowthPermanentEffects.refresh(player);
+        GrowthItems.IncrementUses(player, "FishCatchEvent", EquipmentSlot.HAND, EquipmentSlot.OFF_HAND);
+        GrowthItems.IncrementUses(player, "FishCatchEvent", EquipmentSlot.HEAD);
+        GrowthItems.IncrementUses(player, "FishCatchEvent", EquipmentSlot.LEGS);
     }
 
     // ═════════════════════════════════════════════════════════════════════════
@@ -294,10 +257,9 @@ public class GrowthItemListener implements Listener {
     public void onXpGain(PlayerExpChangeEvent event) {
         if (event.getAmount() <= 0) return;
         Player player = event.getPlayer();
-        GrowthItems.IncrementUses(player, "XpGainEvent");
-        GrowthItems.IncrementUsesFromHelmet(player, "XpGainEvent");
-        GrowthItems.IncrementUsesFromLeggings(player, "XpGainEvent");
-        GrowthPermanentEffects.refresh(player);
+        GrowthItems.IncrementUses(player, "XpGainEvent", EquipmentSlot.HAND, EquipmentSlot.OFF_HAND);
+        GrowthItems.IncrementUses(player, "XpGainEvent", EquipmentSlot.HEAD);
+        GrowthItems.IncrementUses(player, "XpGainEvent", EquipmentSlot.LEGS);
     }
 
     // ═════════════════════════════════════════════════════════════════════════
@@ -318,8 +280,7 @@ public class GrowthItemListener implements Listener {
             if (tier > 0) applyBatonCropBonus(event, tier);
         }
 
-        GrowthItems.IncrementUses(player, "CropBreakEvent");
-        GrowthPermanentEffects.refresh(player);
+        GrowthItems.IncrementUses(player, "CropBreakEvent", EquipmentSlot.HAND, EquipmentSlot.OFF_HAND);
     }
 
     private void applyBatonCropBonus(BlockBreakEvent event, int tier) {

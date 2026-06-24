@@ -107,7 +107,7 @@ Tool and armor tiers above a certain level are **locked** and unusable until a V
 
 ### Growth Items
 
-Special items that evolve as the player uses them. Each growth item is defined in `growth_items/<item>.yml` with a set of **tiers**, each requiring a number of accumulated uses to unlock. On reaching a new tier, the item gains effects: enchantments, stat attributes, new names, potion applications on hit, fire damage, or haste bursts. Items track custom stats in their PersistentDataContainer (visited biomes, killed mob types, etc.).
+Special items that evolve as the player uses them. Each growth item is defined in `growth_items/<item>.yml` with a set of **tiers**, each requiring a number of accumulated uses to unlock. On reaching a new tier, the item gains effects: enchantments, stat attributes, new names, potion applications on hit or fire damage. Items track custom stats in their PersistentDataContainer (visited biomes, killed mob types, etc.).
 
 ### Custom Items & Recipes
 

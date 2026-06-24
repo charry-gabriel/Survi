@@ -3510,7 +3510,6 @@
       "description": "L'identifiant de l'item personnalisé défini dans ECustomItem.java",
       "enum": [
         "CHANGER_ROLE",
-        "GROWTH_BOUSSOLE_EXPLORER",
         "GROWTH_ENCHANTER_HELMET",
         "GROWTH_EXPLORER_COMPASS",
         "GROWTH_FARMER_LEGGINGS",

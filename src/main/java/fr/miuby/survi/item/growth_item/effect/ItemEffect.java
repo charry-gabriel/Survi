@@ -8,7 +8,7 @@ public interface ItemEffect {
     void apply(ItemStack item, AlphaPlayer player);
 
     /**
-     * Retourne {@code true} si l'effet est transitoire (message, haste, potion) et ne doit pas
+     * Retourne {@code true} si l'effet est transitoire (message, potion) et ne doit pas
      * être rejoué lors d'un {@link fr.miuby.survi.item.growth_item.GrowthItems#reapplyAll}.
      *
      * <p>Les effets persistants ({@code name}, {@code set_attribute}, {@code add_enchantment})

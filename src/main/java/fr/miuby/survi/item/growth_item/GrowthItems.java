@@ -11,6 +11,7 @@ import fr.miuby.survi.system.log.ELogTag;
 import org.bukkit.NamespacedKey;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -62,14 +63,36 @@ public final class GrowthItems {
         GrowthItemLoader.loadAll();
     }
 
-    // ─── IncrementUses — item en main ─────────────────────────────────────────
+    // ─── IncrementUses — progression par utilisation, un ou plusieurs slots ──
 
-    public static void IncrementUses(Player player, String event) {
-        ItemStack hand = player.getInventory().getItemInMainHand();
-        if (hand.getType().isAir()) hand = player.getInventory().getItemInOffHand();
-        if (hand.getType().isAir()) return;
+    /**
+     * Incrémente les uses du growth item équipé dans un des {@code slots} donnés, si sa
+     * config est déclenchée par {@code event}.
+     *
+     * <p>Les slots sont essayés dans l'ordre fourni ; le premier non-vide est utilisé — les
+     * autres sont ignorés. Exemples :</p>
+     * <pre>
+     *   IncrementUses(player, "BlockBreakEvent", HAND, OFF_HAND);  // outil tenu en main
+     *   IncrementUses(player, "OreBreakEvent",   HEAD);            // casque
+     *   IncrementUses(player, "OreBreakEvent",   LEGS);            // jambières
+     * </pre>
+     */
+    public static void IncrementUses(Player player, String event, EquipmentSlot... slots) {
+        PlayerInventory inv = player.getInventory();
 
-        ItemMeta meta = hand.getItemMeta();
+        ItemStack item = null;
+        EquipmentSlot foundSlot = null;
+        for (EquipmentSlot slot : slots) {
+            ItemStack candidate = getEquipped(inv, slot);
+            if (candidate != null && !candidate.getType().isAir()) {
+                item = candidate;
+                foundSlot = slot;
+                break;
+            }
+        }
+        if (item == null) return;
+
+        ItemMeta meta = item.getItemMeta();
         PersistentDataContainer pdc = meta.getPersistentDataContainer();
         if (!pdc.has(USES_KEY, PersistentDataType.INTEGER)) return;
 
@@ -80,63 +103,40 @@ public final class GrowthItems {
         if (config == null || !config.eventType().equals(event)) return;
 
         // Correction silencieuse si le YAML a été rechargé depuis la dernière utilisation
-        if (checkAndReapplyIfStale(hand, player)) {
-            meta = hand.getItemMeta();
+        if (checkAndReapplyIfStale(item, player)) {
+            meta = item.getItemMeta();
             pdc  = meta.getPersistentDataContainer();
         }
 
-        doIncrement(hand, meta, pdc, player, config);
+        doIncrement(item, meta, pdc, player, config);
+        setEquipped(inv, foundSlot, item); // certains getters (armure) retournent une copie
     }
 
-    // ─── IncrementUsesFromHelmet — item en slot HEAD ──────────────────────────
-
-    public static void IncrementUsesFromHelmet(Player player, String event) {
-        ItemStack helmet = player.getInventory().getHelmet();
-        if (helmet == null || helmet.getType().isAir()) return;
-
-        ItemMeta meta = helmet.getItemMeta();
-        PersistentDataContainer pdc = meta.getPersistentDataContainer();
-        if (!pdc.has(USES_KEY, PersistentDataType.INTEGER)) return;
-
-        String growthId = pdc.get(ID_KEY, PersistentDataType.STRING);
-        if (growthId == null) return;
-
-        GrowthConfig config = GrowthItemRegistry.get(growthId);
-        if (config == null || !config.eventType().equals(event)) return;
-
-        // Correction silencieuse si le YAML a été rechargé depuis la dernière utilisation
-        if (checkAndReapplyIfStale(helmet, player)) {
-            meta = helmet.getItemMeta();
-            pdc  = meta.getPersistentDataContainer();
-        }
-
-        doIncrement(helmet, meta, pdc, player, config);
-        player.getInventory().setHelmet(helmet); // getHelmet() retourne une copie
+    /** Récupère l'item actuellement dans {@code slot}. Retourne {@code null} pour un slot non géré. */
+    @Nullable
+    private static ItemStack getEquipped(PlayerInventory inv, EquipmentSlot slot) {
+        return switch (slot) {
+            case HAND     -> inv.getItemInMainHand();
+            case OFF_HAND -> inv.getItemInOffHand();
+            case HEAD     -> inv.getHelmet();
+            case CHEST    -> inv.getChestplate();
+            case LEGS     -> inv.getLeggings();
+            case FEET     -> inv.getBoots();
+            default       -> null;
+        };
     }
 
-    // ─── IncrementUsesFromLeggings — item en slot LEGS ───────────────────────
-
-    public static void IncrementUsesFromLeggings(Player player, String event) {
-        ItemStack leggings = player.getInventory().getLeggings();
-        if (leggings == null || leggings.getType().isAir()) return;
-
-        ItemMeta meta = leggings.getItemMeta();
-        PersistentDataContainer pdc = meta.getPersistentDataContainer();
-        if (!pdc.has(USES_KEY, PersistentDataType.INTEGER)) return;
-
-        String growthId = pdc.get(ID_KEY, PersistentDataType.STRING);
-        if (growthId == null) return;
-
-        GrowthConfig config = GrowthItemRegistry.get(growthId);
-        if (config == null || !config.eventType().equals(event)) return;
-
-        if (checkAndReapplyIfStale(leggings, player)) {
-            meta = leggings.getItemMeta();
-            pdc  = meta.getPersistentDataContainer();
+    /** Réécrit {@code item} dans {@code slot} (no-op pour un slot non géré). */
+    private static void setEquipped(PlayerInventory inv, EquipmentSlot slot, ItemStack item) {
+        switch (slot) {
+            case HAND     -> inv.setItemInMainHand(item);
+            case OFF_HAND -> inv.setItemInOffHand(item);
+            case HEAD     -> inv.setHelmet(item);
+            case CHEST    -> inv.setChestplate(item);
+            case LEGS     -> inv.setLeggings(item);
+            case FEET     -> inv.setBoots(item);
+            default       -> {}
         }
-
-        doIncrement(leggings, meta, pdc, player, config);
-        player.getInventory().setLeggings(leggings); // getLeggings() retourne une copie
     }
 
     // ─── IncrementUsesOnNewBiome — boussole ───────────────────────────────────

@@ -1,4 +1,4 @@
-# yaml-language-server: $schema=../../schema/growth-items-schema.json
+# yaml-language-server: $schema=../schema/growth-items-schema.json
 id: GROWTH_LUMBERJACK_CHESPLATE
 eventType: OreBreakEvent
 
@@ -31,5 +31,5 @@ periodicEffects:
       - { type: potion,  effect: night_vision, seconds: 45, amplifier: 0 }
   - everyUses: 2000
     effects:
-      - { type: haste,   seconds: 10 }
+      - { type: potion, effect: haste, seconds: 10 }
       - { type: message, value: "Un élan de haste jaillit de tes jambières !" }

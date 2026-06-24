@@ -1,4 +1,4 @@
-# yaml-language-server: $schema=../../schema/growth-items-schema.json
+# yaml-language-server: $schema=../schema/growth-items-schema.json
 id: GROWTH_MINER_HELMET
 eventType: OreBreakEvent
 
@@ -27,4 +27,4 @@ tiers:
 periodicEffects:
   - everyUses: 10
     effects:
-      - { type: potion,   seconds: 30 }
+      - { type: potion, effect: night_vision, seconds: 30 }

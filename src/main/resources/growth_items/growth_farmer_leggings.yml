@@ -1,4 +1,4 @@
-# yaml-language-server: $schema=../../schema/growth-items-schema.json
+# yaml-language-server: $schema=../schema/growth-items-schema.json
 id: GROWTH_FARMER_LEGGINGS
 eventType: CropBreakEvent
 

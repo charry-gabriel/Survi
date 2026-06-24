@@ -128,9 +128,7 @@ public final class GrowthItemLoader {
         return switch (e.type) {
             case "name"             -> new NameItemEffect(Component.text(e.value));
             case "message"          -> new MessageItemEffect(Component.text(e.value));
-            case "haste"            -> new HasteItemEffect(e.seconds);
             case "potion"           -> new PotionItemEffect(parsePotionEffect(e.effect), e.seconds, e.amplifier);
-            case "permanent_potion" -> new PermanentPotionItemEffect(parsePotionEffect(e.effect), e.amplifier);
             case "fire_enemies"     -> new FireEnemiesItemEffect(e.seconds);
             case "add_enchantment"  -> new AddEnchantmentItemEffect(parseEnchantment(e.enchantment), e.amount);
             case "set_attribute"    -> new SetAttributeItemEffect(
