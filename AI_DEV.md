@@ -446,7 +446,6 @@ growth_items/<id>.yml → GrowthItemFileConfig → GrowthItemLoader → GrowthIt
 |---|---|---|
 | `name` | `value` | Renomme l'item |
 | `message` | `value` | Envoie un message |
-| `haste` | `seconds` | Haste II pendant N secondes |
 | `add_enchantment` | `enchantment`, `amount` | Ajoute N niveaux |
 | `set_attribute` | `attribute`, `attributeValue`, `operation`, `slot` | Remplace l'attribut |
 

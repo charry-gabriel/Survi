@@ -503,9 +503,14 @@ class SchemaGeneratorTest {
     // ─── Growth Items Schema ───────────────────────────────────────────────────
 
     /**
-     * Met à jour le schéma {@code growth-items-schema.json} en synchronisant l'enum
-     * {@code attribute} de {@code set_attribute} avec les cases de
-     * {@code GrowthItemLoader.parseAttribute()}.
+     * Met à jour le schéma {@code growth-items-schema.json} en synchronisant :
+     * <ul>
+     *   <li>L'enum {@code attribute} de {@code set_attribute} avec les cases de
+     *       {@code GrowthItemLoader.parseAttribute()}.</li>
+     *   <li>L'enum {@code effect} de {@code potion} avec le registre Bukkit
+     *       {@code PotionEffectType} (même pattern que quests-schema.json /
+     *       global-quests-schema.json) — alimente l'autocomplete IDE.</li>
+     * </ul>
      *
      * <p>Les autres enums du schéma (eventType, type, operation, slot) sont statiques
      * et ne nécessitent pas de sync automatique.</p>
@@ -522,6 +527,14 @@ class SchemaGeneratorTest {
             // met à jour tous les blocs trouvés, ce qui est le comportement souhaité.
             content = replaceEnum(content, "attribute", attributes);
         }
+
+        // "effect" (clé PotionEffectType pour type=potion) — n'apparaît qu'une fois
+        // (baseEffect n'a plus de champ "effect" depuis le retrait de permanent_potion).
+        List<String> potionEffects = getPotionEffectTypeNames().stream()
+                .map(String::toLowerCase)
+                .sorted()
+                .toList();
+        content = replaceEnum(content, "effect", potionEffects);
 
         Files.writeString(path, content);
     }

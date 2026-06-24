@@ -5,11 +5,13 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import fr.miuby.survi.GameManager;
 import fr.miuby.survi.item.growth_item.GrowthItemLoader;
+import fr.miuby.survi.item.growth_item.GrowthItems;
 import fr.miuby.survi.job.config.JobsLoader;
 import fr.miuby.survi.system.lang.ELang;
 import fr.miuby.survi.system.lang.LangService;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
 import io.papermc.paper.command.brigadier.Commands;
+import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -46,6 +48,7 @@ public class ReloadCommand {
         GameManager.getInstance().getMobLevelManager().reload();
         GameManager.getInstance().getRoleLoader().reload();
         GrowthItemLoader.reload();
+        reapplyGrowthItemsForOnlinePlayers();
         GameManager.getInstance().getVillagerFactory().reloadAll();
         JobsLoader.reload();
         GameManager.getInstance().getCustomRecipeFactory().reload();
@@ -102,6 +105,7 @@ public class ReloadCommand {
         ELang         lang   = lang(sender);
         sender.sendMessage(ls.text(lang, "cmd.reload.growth_items.start"));
         GrowthItemLoader.reload();
+        reapplyGrowthItemsForOnlinePlayers();
         sender.sendMessage(ls.text(lang, "cmd.reload.growth_items.done"));
         return Command.SINGLE_SUCCESS;
     }
@@ -157,6 +161,20 @@ public class ReloadCommand {
     }
 
     // ── Helpers ──────────────────────────────────────────────────────────────
+
+    /**
+     * Force la réapplication immédiate des growth items (nom, attributs, enchantements)
+     * sur tout ce que les joueurs actuellement connectés tiennent ou portent.
+     *
+     * <p>Sans cela, un joueur en ligne au moment du reload ne voit le changement que s'il
+     * touche son équipement (équiper/déséquiper, swap main/offhand) ou déclenche l'event
+     * métier de l'item (miner, pêcher…) — cf. {@code GrowthItemListener}. Les joueurs
+     * déconnectés au moment du reload sont eux couverts à la reconnexion ({@code onPlayerJoin}).</p>
+     */
+    private static void reapplyGrowthItemsForOnlinePlayers() {
+        for (Player player : Bukkit.getOnlinePlayers())
+            GrowthItems.checkAndReapplyHeldAndEquipped(player);
+    }
 
     private static LangService ls() {
         return GameManager.getInstance().getLangService();

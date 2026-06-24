@@ -82,6 +82,7 @@ public class WorldInitializer {
         village.setGameRule(GameRules.MOB_GRIEFING, false);
         village.setGameRule(GameRules.KEEP_INVENTORY, true);
         village.setGameRule(GameRules.NATURAL_HEALTH_REGENERATION, true);
+        village.setGameRule(GameRules.FIRE_SPREAD_RADIUS_AROUND_PLAYER, 0);
         village.setClearWeatherDuration(Integer.MAX_VALUE);
         village.setDifficulty(Difficulty.EASY);
         village.setViewDistance(32);

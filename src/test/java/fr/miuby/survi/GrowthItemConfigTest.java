@@ -21,18 +21,24 @@ class GrowthItemConfigTest {
             "BlockBreakEvent",
             "OreBreakEvent",
             "CropBreakEvent",
+            "LogBreakEvent",
+            "FishCatchEvent",
+            "XpGainEvent",
             "NewBiomeEvent",
             "NewMobTypeKillEvent"
     );
 
     private static final Set<String> VALID_EFFECT_TYPES = Set.of(
-            "name", "message", "haste", "potion", "fire_enemies", "add_enchantment", "set_attribute"
+            "name", "message", "potion",
+            "fire_enemies", "add_enchantment", "set_attribute"
     );
 
     /**
-     * Types autorisés dans {@code baseEffects} — les effets transitoires (message, haste, potion)
-     * sont ignorés lors du reload (cf. {@code ItemEffect.isTransient()}) et n'ont donc pas leur place
-     * dans baseEffects.
+     * Types autorisés dans {@code baseEffects}.
+     *
+     * <p>Les effets transitoires ({@code message}, {@code potion}) sont ignorés
+     * lors du reload (cf. {@code ItemEffect.isTransient()}) et n'ont pas leur place dans
+     * {@code baseEffects}.</p>
      */
     private static final Set<String> VALID_BASE_EFFECT_TYPES = Set.of(
             "name", "add_enchantment", "set_attribute"
@@ -43,6 +49,17 @@ class GrowthItemConfigTest {
             "mining_efficiency", "movement_speed", "attack_damage", "attack_speed",
             "armor", "armor_toughness", "max_health", "block_break_speed",
             "luck", "knockback_resistance"
+    );
+
+    /** Doit rester en sync avec le registre Bukkit PotionEffectType (cf. SchemaGeneratorTest.getPotionEffectTypeNames()). */
+    private static final Set<String> VALID_POTION_EFFECTS = Set.of(
+            "absorption", "bad_omen", "blindness", "breath_of_the_nautilus", "conduit_power",
+            "darkness", "dolphins_grace", "fire_resistance", "glowing", "health_boost",
+            "hero_of_the_village", "hunger", "infested", "instant_damage", "instant_health",
+            "invisibility", "jump_boost", "levitation", "luck", "mining_fatigue", "nausea",
+            "night_vision", "oozing", "poison", "raid_omen", "regeneration", "resistance",
+            "saturation", "slow_falling", "slowness", "speed", "strength", "trial_omen",
+            "unluck", "water_breathing", "weakness", "weaving", "wind_charged", "wither"
     );
 
     private static final Set<String> VALID_OPERATIONS = Set.of(
@@ -98,9 +115,10 @@ class GrowthItemConfigTest {
      * Valide {@code baseEffects} :
      * <ul>
      *   <li>Chaque effet est structurellement valide (mêmes règles que les tiers).</li>
-     *   <li>Seuls les types persistants sont autorisés — un effet transitoire (message, haste,
-     *       potion) dans {@code baseEffects} serait ignoré silencieusement lors du reload,
-     *       ce qui est probablement une erreur de config.</li>
+     *   <li>Seuls les types persistants sont autorisés ({@code name}, {@code add_enchantment},
+     *       {@code set_attribute}) — un effet transitoire ({@code message},
+     *       {@code potion}) serait ignoré silencieusement lors du reload, ce qui est
+     *       probablement une erreur de config.</li>
      * </ul>
      */
     private void validateBaseEffects(GrowthItemFileConfig config, String filename) {
@@ -120,7 +138,6 @@ class GrowthItemConfigTest {
                             + "du reload (reapplyAll ne rejoue que name, add_enchantment et set_attribute). "
                             + "Supprimer l'effet ou le déplacer dans un palier / periodicEffects.");
 
-            // Validation structurelle identique aux effets de tiers
             validateEffect(effect, ctx);
         }
     }
@@ -174,15 +191,14 @@ class GrowthItemConfigTest {
             case "name", "message" ->
                     assertStringNotEmpty(effect.value, ctx + " : 'value' requis pour type=" + effect.type);
 
-            case "haste" ->
-                    assertTrue(effect.seconds >= 1, ctx + " : 'seconds' doit être >= 1");
-
             case "fire_enemies" ->
                     assertTrue(effect.seconds >= 1, ctx + " : 'seconds' doit être >= 1 pour type=fire_enemies");
 
             case "potion" -> {
                 assertStringNotEmpty(effect.effect,
                         ctx + " : 'effect' requis pour type=potion (ex. speed, strength, night_vision)");
+                assertTrue(VALID_POTION_EFFECTS.contains(effect.effect.toLowerCase()),
+                        ctx + " : effet de potion inconnu '" + effect.effect + "'. Valides : " + VALID_POTION_EFFECTS);
                 assertTrue(effect.seconds >= 1, ctx + " : 'seconds' doit être >= 1");
                 assertTrue(effect.amplifier >= 0,
                         ctx + " : 'amplifier' doit être >= 0 (0 = niveau I, 1 = niveau II…)");
