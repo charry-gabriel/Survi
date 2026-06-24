@@ -1,6 +1,6 @@
 # yaml-language-server: $schema=../schema/villagers-schema.json
 name: "Survivant"
-skin: "11284e26-024e-4b1b-a6d7-fa8ae08faa10"
+skin: "8c8da4d2-4131-4f5f-95b8-56bd2a959934"
 alexSkin: false
 
 levels:
