@@ -2,6 +2,7 @@ package fr.miuby.survi.listener;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.event.EventHandler;
@@ -13,6 +14,8 @@ import org.bukkit.event.block.BlockPistonExtendEvent;
 import org.bukkit.event.block.BlockPistonRetractEvent;
 import org.bukkit.event.world.WorldUnloadEvent;
 
+import java.util.Collections;
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -48,6 +51,37 @@ public class PlacedBlockTracker implements Listener {
     private final Map<UUID, Set<Long>> placedBlocks = new HashMap<>();
 
     /**
+     * Mapping log naturel → log strippé correspondant.
+     * Quand Paper fire un {@link BlockPlaceEvent} suite à un stripping (clic droit hache),
+     * le bloc "remplacé" est un log naturel et le bloc "posé" est son équivalent strippé.
+     * Ces événements sont exclus du tracking : le stripped log résulte d'un log naturel,
+     * pas d'un item posé depuis l'inventaire du joueur.
+     */
+    private static final Map<Material, Material> STRIP_RESULTS;
+    static {
+        Map<Material, Material> m = new EnumMap<>(Material.class);
+        m.put(Material.OAK_LOG,      Material.STRIPPED_OAK_LOG);
+        m.put(Material.OAK_WOOD,     Material.STRIPPED_OAK_WOOD);
+        m.put(Material.SPRUCE_LOG,   Material.STRIPPED_SPRUCE_LOG);
+        m.put(Material.SPRUCE_WOOD,  Material.STRIPPED_SPRUCE_WOOD);
+        m.put(Material.BIRCH_LOG,    Material.STRIPPED_BIRCH_LOG);
+        m.put(Material.BIRCH_WOOD,   Material.STRIPPED_BIRCH_WOOD);
+        m.put(Material.JUNGLE_LOG,   Material.STRIPPED_JUNGLE_LOG);
+        m.put(Material.JUNGLE_WOOD,  Material.STRIPPED_JUNGLE_WOOD);
+        m.put(Material.ACACIA_LOG,   Material.STRIPPED_ACACIA_LOG);
+        m.put(Material.ACACIA_WOOD,  Material.STRIPPED_ACACIA_WOOD);
+        m.put(Material.DARK_OAK_LOG, Material.STRIPPED_DARK_OAK_LOG);
+        m.put(Material.DARK_OAK_WOOD,Material.STRIPPED_DARK_OAK_WOOD);
+        m.put(Material.CHERRY_LOG,   Material.STRIPPED_CHERRY_LOG);
+        m.put(Material.CHERRY_WOOD,  Material.STRIPPED_CHERRY_WOOD);
+        m.put(Material.MANGROVE_LOG, Material.STRIPPED_MANGROVE_LOG);
+        m.put(Material.MANGROVE_WOOD,Material.STRIPPED_MANGROVE_WOOD);
+        m.put(Material.PALE_OAK_LOG, Material.STRIPPED_PALE_OAK_LOG);
+        m.put(Material.PALE_OAK_WOOD,Material.STRIPPED_PALE_OAK_WOOD);
+        STRIP_RESULTS = Collections.unmodifiableMap(m);
+    }
+
+    /**
      * Quand {@code false}, {@link #isPlaced} retourne toujours {@code false} —
      * les blocs posés sont traités comme naturels (mode test quête).
      * Activé par défaut.
@@ -75,10 +109,16 @@ public class PlacedBlockTracker implements Listener {
     //  Listeners
     // ─────────────────────────────────────────────────────────────────────────────
 
-    /** Enregistre la position du bloc une fois le placement confirmé (non annulé). */
+    /** Enregistre la position du bloc une fois le placement confirmé (non annulé).
+     * Les actions de stripping (log → stripped log par clic droit hache) sont exclues :
+     * Paper fire un {@link BlockPlaceEvent} pour ces transformations, mais le bloc résultant
+     * provient d'un log naturel et ne doit pas être considéré comme "posé par le joueur". */
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onBlockPlace(BlockPlaceEvent event) {
         Block block = event.getBlockPlaced();
+        Material placedType = block.getType();
+        Material replacedType = event.getBlockReplacedState().getType();
+        if (STRIP_RESULTS.get(replacedType) == placedType) return;
         placedBlocks
                 .computeIfAbsent(block.getWorld().getUID(), k -> new HashSet<>())
                 .add(pack(block.getX(), block.getY(), block.getZ()));

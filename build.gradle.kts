@@ -72,3 +72,13 @@ tasks.register<Exec>("deployMain") {
         "admin@timeuhalefa.fr:/opt/minecraft/main/plugins/"
     )
 }
+tasks.register<Exec>("deployTest") {
+    dependsOn(tasks.shadowJar)
+
+    commandLine(
+        "scp",
+        "-P", "2222",
+        tasks.shadowJar.get().archiveFile.get().asFile.absolutePath,
+        "admin@timeuhalefa.fr:/opt/minecraft/test/plugins/"
+    )
+}
