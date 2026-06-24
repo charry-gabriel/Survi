@@ -3,6 +3,8 @@ package fr.miuby.survi.food;
 import fr.miuby.lib.log.MLLogManager;
 import fr.miuby.survi.GameManager;
 import fr.miuby.survi.system.log.ELogTag;
+import io.papermc.paper.datacomponent.DataComponentTypes;
+import io.papermc.paper.datacomponent.item.FoodProperties;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
@@ -95,15 +97,18 @@ public class FoodOfTheDayManager {
     // ─── Saturation ───────────────────────────────────────────────────────────
 
     /**
-     * Ajuste la saturation ET la faim restaurées par un aliment, à partir du gain réel déjà
-     * appliqué par vanilla entre {@code avant} et l'état actuel du joueur (mesuré par le listener) :
-     * doublé si {@code food} fait partie de la nourriture du jour, sinon divisé par deux.
+     * Ajuste la saturation ET la faim restaurées par un aliment en partant des valeurs
+     * <em>nominales</em> de l'item (lues via {@link DataComponentTypes#FOOD}), pas du gain
+     * déjà appliqué par vanilla.
      *
-     * Pour la saturation, le résultat est plafonné à {@link #MAX_SATURATION} et non à la faim
-     * courante : vanilla plafonne lui-même son propre gain à la faim courante, ce qui écraserait
-     * presque toujours le doublement (la faim grimpe en même temps que la saturation). Pour la
-     * faim, son plafond naturel est déjà {@link #MAX_FOOD_LEVEL} : multiplier le gain déjà observé
-     * donne mathématiquement le même résultat que partir d'une valeur nominale fixe.
+     * Vanilla plafonne son propre gain à la faim courante avant que ce code s'exécute.
+     * Utiliser le gain vanilla observé entraînerait un double-plafonnement : quand le joueur
+     * est à faim=16, vanilla n'accorde que 4 de faim au lieu de 8, et le x0.5 s'appliquerait
+     * sur ce 4 réduit, donnant 2 au lieu de 4.
+     *
+     * En partant de la valeur nominale ({@code nutrition}) et de l'état avant manger, le
+     * multiplicateur s'applique toujours sur la pleine valeur de l'item, puis le résultat est
+     * plafonné une seule fois à {@link #MAX_FOOD_LEVEL} / {@link #MAX_SATURATION}.
      */
     public void applyFoodBonus(Player player, Material food, float saturationBeforeEating, int foodLevelBeforeEating) {
         if (!player.isOnline()) return;
@@ -111,11 +116,12 @@ public class FoodOfTheDayManager {
         boolean isFoodOfDay = isFoodOfTheDay(food);
         float multiplier = isFoodOfDay ? 2.0f : 0.5f;
 
-        float saturationGained = player.getSaturation() - saturationBeforeEating;
-        float newSaturation = Math.clamp(saturationBeforeEating + saturationGained * multiplier, 0.0f, MAX_SATURATION);
+        FoodProperties foodProps = food.asItemType().getDefaultData(DataComponentTypes.FOOD);
+        int nominalNutrition = foodProps.nutrition();
+        float nominalSatGain = nominalNutrition * foodProps.saturation() * 2.0f;
 
-        int foodLevelGained = player.getFoodLevel() - foodLevelBeforeEating;
-        int newFoodLevel = Math.clamp(foodLevelBeforeEating + Math.round(foodLevelGained * multiplier), 0, MAX_FOOD_LEVEL);
+        int newFoodLevel = Math.clamp(foodLevelBeforeEating + Math.round(nominalNutrition * multiplier), 0, MAX_FOOD_LEVEL);
+        float newSaturation = Math.clamp(saturationBeforeEating + nominalSatGain * multiplier, 0.0f, MAX_SATURATION);
 
         player.setSaturation(newSaturation);
         player.setFoodLevel(newFoodLevel);
@@ -123,6 +129,7 @@ public class FoodOfTheDayManager {
         MLLogManager.getInstance().log(Level.FINE, ELogTag.ITEM,
                 "[FoodOfTheDay] " + player.getName() + " mange " + food
                         + " (nourritureDuJour=" + isFoodOfDay + ") x" + multiplier
+                        + " nutrition=" + nominalNutrition
                         + " -> saturation=" + newSaturation + " faim=" + newFoodLevel);
     }
 }
