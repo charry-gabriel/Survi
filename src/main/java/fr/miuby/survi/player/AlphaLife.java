@@ -7,7 +7,6 @@ import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.attribute.AttributeModifier;
 
-import static java.lang.Math.max;
 import static java.lang.Math.min;
 import static org.bukkit.util.NumberConversions.floor;
 
@@ -86,11 +85,18 @@ public class AlphaLife {
 
     public void setBlessing(int blessing) {
         this.blessingLife = blessing;
-
+        if (this.alphaPlayer.getPlayer() == null) return;
+        // Rafraîchit l'instance en cas de référence périmée (reconnexion avant le 1er regenHealth).
+        this.attributeInstance = this.alphaPlayer.getPlayer().getAttribute(Attribute.MAX_HEALTH);
+        if (this.attributeInstance == null) return;
         if (attributeInstance.getModifier(blessingKey) != null)
             attributeInstance.removeModifier(blessingKey);
         AttributeModifier blessingModifier = new AttributeModifier(blessingKey, this.blessingLife, AttributeModifier.Operation.ADD_NUMBER);
         attributeInstance.addTransientModifier(blessingModifier);
+    }
+
+    public boolean isArmorMalus() {
+        return this.hasArmorMalus;
     }
 
     public void setArmorMalus(boolean hasArmorMalus) {

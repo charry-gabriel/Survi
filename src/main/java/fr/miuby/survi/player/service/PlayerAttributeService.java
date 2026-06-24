@@ -1,16 +1,20 @@
 package fr.miuby.survi.player.service;
 
+import fr.miuby.lib.log.MLLogManager;
 import fr.miuby.survi.GameManager;
 import fr.miuby.survi.player.AlphaPlayer;
 import fr.miuby.survi.role.RoleAttribute;
 import fr.miuby.survi.world.EWorld;
 import fr.miuby.survi.role.Role;
+import fr.miuby.survi.system.log.ELogTag;
 import org.bukkit.NamespacedKey;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
+
+import java.util.logging.Level;
 
 /**
  * Single place responsible for applying and removing role-based attributes on a player.
@@ -76,8 +80,12 @@ public final class PlayerAttributeService {
             playerAttribute.removeModifier(attributeModifier);
 
         if (roleAttribute.getOperation() == RoleAttribute.EOperation.REMOVE) {
-            playerAttribute.setBaseValue(roleAttribute.getValue());
-            alphaPlayer.getBaseAttributes().put(roleAttribute.getAttributeType(), (double) roleAttribute.getValue());
+            // Convertit la valeur absolue cible en delta sur la base par defaut -> modifier transitoire
+            // uniquement. setBaseValue() persistait en playerdata et causait des desync au reconnect.
+            double delta = roleAttribute.getValue() - playerAttribute.getDefaultValue();
+            playerAttribute.addTransientModifier(new AttributeModifier(
+                    new NamespacedKey(GameManager.getInstance().getPlugin(), roleAttribute.getName()),
+                    delta, AttributeModifier.Operation.ADD_NUMBER));
         } else {
             playerAttribute.addTransientModifier(roleAttribute.createAttributeModifier());
         }
@@ -85,6 +93,37 @@ public final class PlayerAttributeService {
         if (roleAttribute.getAttributeType() == Attribute.MAX_ABSORPTION) {
             alphaPlayer.getPlayer().removePotionEffect(PotionEffectType.ABSORPTION);
             alphaPlayer.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.ABSORPTION, 0, (int) roleAttribute.getValue()));
+        }
+    }
+
+    /**
+     * Variante de {@link #applyAllRoleAttributes} destinee exclusivement a la reconnexion.
+     *
+     * <p>N'utilise PAS {@code regenHealth} pour MAX_HEALTH : evite le rescaling proportionnel
+     * intermediaire. Tous les modifiers sont poses a plat ; le clamp final est fait dans
+     * {@code AlphaPlayerFactory.onPlayerJoin()} avec la vie sauvegardee par Minecraft.</p>
+     */
+    public void applyAllRoleAttributesOnJoin(AlphaPlayer alphaPlayer) {
+        applyAttributesForRoleOnJoin(alphaPlayer, alphaPlayer.getRole());
+        for (Role subRole : alphaPlayer.getSubRoles()) {
+            applyAttributesForRoleOnJoin(alphaPlayer, subRole);
+        }
+        if (alphaPlayer.getPlayer() != null) {
+            AttributeInstance maxHealth = alphaPlayer.getPlayer().getAttribute(Attribute.MAX_HEALTH);
+            MLLogManager.getInstance().log(Level.FINE, ELogTag.PLAYER,
+                    "[applyAllRoleAttributesOnJoin] " + alphaPlayer.getPseudo()
+                            + " maxHealth=" + (maxHealth != null ? maxHealth.getValue() : "null"));
+        }
+    }
+
+    private void applyAttributesForRoleOnJoin(AlphaPlayer alphaPlayer, Role role) {
+        if (alphaPlayer.getPlayer() == null || role == null) return;
+        for (RoleAttribute attribute : role.attributes()) {
+            if (alphaPlayer.getWorld().getType() != attribute.getWorld() && attribute.getWorld() != EWorld.ALL)
+                continue;
+            attribute.setRole(role.roleId());
+            // Direct : pas de regenHealth, le clamp se fait apres tous les attributs dans Factory.
+            applyAttribute(alphaPlayer, attribute);
         }
     }
 

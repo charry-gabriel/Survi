@@ -14,6 +14,8 @@ import fr.miuby.survi.system.database.EPlayerLoadResult;
 import fr.miuby.survi.system.exception.AlphaPlayerNotFoundException;
 import fr.miuby.survi.system.log.ELogTag;
 import lombok.Getter;
+import org.bukkit.attribute.Attribute;
+import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.entity.Player;
 
 import java.util.Collection;
@@ -94,10 +96,32 @@ public class AlphaPlayerFactory {
         }
 
         alphaPlayer.setPlayer(bukkitPlayer);
+
+        // Vie restaurée par Minecraft depuis le playerdata = vie exacte avant la déco.
+        // On la capture avant tout appel à notre code qui pourrait la modifier.
+        double savedHealth = !bukkitPlayer.isDead() ? bukkitPlayer.getHealth() : 0;
+
+        // restoreAttributesOnJoin() pose mort/succès/blessing SANS clamp (voir AlphaLife).
+        // applyAllRoleAttributesOnJoin() pose les modifiers de rôle SANS regenHealth.
         alphaPlayer.onJoinServer();
-        attributeService.applyAllRoleAttributes(alphaPlayer);
+        attributeService.applyAllRoleAttributesOnJoin(alphaPlayer);
         fishermanAttributeService.applyAttributes(alphaPlayer);
         explorerAttributeService.applyAttributes(alphaPlayer);
+
+        // Clamp final unique : tous les modifiers sont posés, on ramène la vie sauvegardée
+        // dans [1, maxEffectif]. Ignoré si armorMalus actif (vie déjà forcée à 0.01f).
+        if (!bukkitPlayer.isDead() && !alphaPlayer.getAlphaLife().isArmorMalus()) {
+            AttributeInstance maxHealthAttr = bukkitPlayer.getAttribute(Attribute.MAX_HEALTH);
+            if (maxHealthAttr != null) {
+                double finalHealth = Math.clamp(savedHealth, 1.0, maxHealthAttr.getValue());
+                bukkitPlayer.setHealth(finalHealth);
+                MLLogManager.getInstance().log(Level.FINE, ELogTag.PLAYER,
+                        "[onPlayerJoin] " + alphaPlayer.getPseudo()
+                                + " saved=" + savedHealth
+                                + " final=" + finalHealth
+                                + " max=" + maxHealthAttr.getValue());
+            }
+        }
     }
 
     public AlphaPlayer registerAlphaPlayer(UUID uuid, String pseudo, Role role) {
