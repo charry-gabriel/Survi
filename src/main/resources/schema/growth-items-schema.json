@@ -15,13 +15,16 @@
         "BlockBreakEvent",
         "OreBreakEvent",
         "CropBreakEvent",
+        "LogBreakEvent",
+        "FishCatchEvent",
+        "XpGainEvent",
         "NewBiomeEvent",
         "NewMobTypeKillEvent"
       ]
     },
     "baseEffects": {
       "type": "array",
-      "description": "Effets persistants appliqués à la création de l'item ET réappliqués en premier à chaque reload (avant les paliers). Permet de rendre les stats initiales configurables via YAML. Seuls name, add_enchantment et set_attribute sont acceptés — message, haste et potion seraient silencieusement ignorés au reload.",
+      "description": "Effets persistants appliqués à la création de l'item ET réappliqués à chaque reload (avant les paliers). Seuls name, add_enchantment, set_attribute et permanent_potion sont acceptés — message, haste et potion seraient silencieusement ignorés au reload.",
       "items": { "$ref": "#/definitions/baseEffect" }
     },
     "tiers": {
@@ -64,27 +67,29 @@
       "properties": {
         "type": {
           "type": "string",
-          "enum": ["name", "add_enchantment", "set_attribute"],
-          "description": "message / haste / potion ne sont pas autorisés dans baseEffects (ils seraient ignorés lors du reload)"
+          "enum": ["name", "add_enchantment", "set_attribute", "permanent_potion"],
+          "description": "message / haste / potion sont transitoires et ne sont pas autorisés dans baseEffects (ignorés au reload). permanent_potion est accepté : actif tant que l'item est porté, réappliqué après reload."
         },
         "value":          { "type": "string",  "description": "[name]" },
+        "effect":         { "type": "string",  "description": "[permanent_potion] clé PotionEffectType (ex. night_vision, haste, speed)" },
+        "amplifier":      { "type": "integer", "minimum": 0, "description": "[permanent_potion] 0 = niveau I, 1 = niveau II" },
         "enchantment":    { "type": "string",  "description": "[add_enchantment] clé minecraft (ex. fortune, efficiency)" },
         "amount":         { "type": "integer", "minimum": 1,  "description": "[add_enchantment] niveaux à ajouter" },
         "attribute": {
           "type": "string",
           "description": "[set_attribute]",
           "enum": [
-        "armor",
-        "armor_toughness",
-        "attack_damage",
-        "attack_speed",
-        "block_break_speed",
-        "knockback_resistance",
-        "luck",
-        "max_health",
-        "mining_efficiency",
-        "movement_speed"
-      ]
+            "armor",
+            "armor_toughness",
+            "attack_damage",
+            "attack_speed",
+            "block_break_speed",
+            "knockback_resistance",
+            "luck",
+            "max_health",
+            "mining_efficiency",
+            "movement_speed"
+          ]
         },
         "attributeValue": { "type": "number",  "description": "[set_attribute] valeur de base (remplacée par les paliers)" },
         "operation": {
@@ -101,11 +106,15 @@
       "if":   { "properties": { "type": { "const": "name" } } },
       "then": { "required": ["value"] },
       "else": {
-        "if":   { "properties": { "type": { "const": "add_enchantment" } } },
-        "then": { "required": ["enchantment", "amount"] },
+        "if":   { "properties": { "type": { "const": "permanent_potion" } } },
+        "then": { "required": ["effect"] },
         "else": {
-          "if":   { "properties": { "type": { "const": "set_attribute" } } },
-          "then": { "required": ["attribute", "attributeValue", "operation", "slot"] }
+          "if":   { "properties": { "type": { "const": "add_enchantment" } } },
+          "then": { "required": ["enchantment", "amount"] },
+          "else": {
+            "if":   { "properties": { "type": { "const": "set_attribute" } } },
+            "then": { "required": ["attribute", "attributeValue", "operation", "slot"] }
+          }
         }
       }
     },
@@ -116,29 +125,32 @@
       "properties": {
         "type": {
           "type": "string",
-          "enum": ["name", "message", "haste", "potion", "fire_enemies", "add_enchantment", "set_attribute"]
+          "enum": [
+            "name", "message", "haste", "potion", "permanent_potion",
+            "fire_enemies", "add_enchantment", "set_attribute"
+          ]
         },
         "value":          { "type": "string",  "description": "[name / message]" },
-        "seconds":        { "type": "integer", "minimum": 1,  "description": "[haste / potion]" },
-        "effect":         { "type": "string",  "description": "[potion] clé PotionEffectType (ex. speed, strength, night_vision)" },
-        "amplifier":      { "type": "integer", "minimum": 0,  "description": "[potion] 0 = niveau I, 1 = niveau II" },
+        "seconds":        { "type": "integer", "minimum": 1,  "description": "[haste / potion / fire_enemies]" },
+        "effect":         { "type": "string",  "description": "[potion / permanent_potion] clé PotionEffectType (ex. speed, strength, night_vision)" },
+        "amplifier":      { "type": "integer", "minimum": 0,  "description": "[potion / permanent_potion] 0 = niveau I, 1 = niveau II" },
         "enchantment":    { "type": "string",  "description": "[add_enchantment] clé minecraft (ex. fortune, sharpness)" },
         "amount":         { "type": "integer", "minimum": 1,  "description": "[add_enchantment] niveaux à ajouter" },
         "attribute": {
           "type": "string",
           "description": "[set_attribute]",
           "enum": [
-        "armor",
-        "armor_toughness",
-        "attack_damage",
-        "attack_speed",
-        "block_break_speed",
-        "knockback_resistance",
-        "luck",
-        "max_health",
-        "mining_efficiency",
-        "movement_speed"
-      ]
+            "armor",
+            "armor_toughness",
+            "attack_damage",
+            "attack_speed",
+            "block_break_speed",
+            "knockback_resistance",
+            "luck",
+            "max_health",
+            "mining_efficiency",
+            "movement_speed"
+          ]
         },
         "attributeValue": { "type": "number",  "description": "[set_attribute] valeur totale (remplace l'existant)" },
         "operation": {
@@ -164,14 +176,18 @@
             "if":   { "properties": { "type": { "const": "potion" } } },
             "then": { "required": ["effect", "seconds"] },
             "else": {
-              "if":   { "properties": { "type": { "const": "fire_enemies" } } },
-              "then": { "required": ["seconds"] },
+              "if":   { "properties": { "type": { "const": "permanent_potion" } } },
+              "then": { "required": ["effect"] },
               "else": {
-                "if":   { "properties": { "type": { "const": "add_enchantment" } } },
-                "then": { "required": ["enchantment", "amount"] },
+                "if":   { "properties": { "type": { "const": "fire_enemies" } } },
+                "then": { "required": ["seconds"] },
                 "else": {
-                  "if":   { "properties": { "type": { "const": "set_attribute" } } },
-                  "then": { "required": ["attribute", "attributeValue", "operation", "slot"] }
+                  "if":   { "properties": { "type": { "const": "add_enchantment" } } },
+                  "then": { "required": ["enchantment", "amount"] },
+                  "else": {
+                    "if":   { "properties": { "type": { "const": "set_attribute" } } },
+                    "then": { "required": ["attribute", "attributeValue", "operation", "slot"] }
+                  }
                 }
               }
             }

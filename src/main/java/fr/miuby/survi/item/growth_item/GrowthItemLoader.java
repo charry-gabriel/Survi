@@ -91,9 +91,9 @@ public final class GrowthItemLoader {
      *   <li>Vide {@link GrowthItemRegistry}.</li>
      *   <li>Invalide le cache {@link MLResourceManager}.</li>
      *   <li>Relit tous les fichiers et repeuple le registre.</li>
-     *   <li>Incrémente {@link #configVersion} — les items growth qui ne l'ont pas encore
-     *       intégré seront mis à jour paresseusement dès qu'ils seront tenus en main
-     *       ou équipés (voir {@link GrowthItems#checkAndReapplyIfStale}).</li>
+     *   <li>Incrémente {@link #configVersion} et le persiste en base — les items growth qui ne
+     *       l'ont pas encore intégré seront mis à jour paresseusement dès qu'ils seront tenus
+     *       en main ou équipés (voir {@link GrowthItems#checkAndReapplyIfStale}).</li>
      * </ol>
      */
     public static void reload() {
@@ -126,13 +126,14 @@ public final class GrowthItemLoader {
 
     private static ItemEffect convertEffect(EffectConfig e) {
         return switch (e.type) {
-            case "name"            -> new NameItemEffect(Component.text(e.value));
-            case "message"         -> new MessageItemEffect(Component.text(e.value));
-            case "haste"           -> new HasteItemEffect(e.seconds);
-            case "potion"          -> new PotionItemEffect(parsePotionEffect(e.effect), e.seconds, e.amplifier);
-            case "fire_enemies"    -> new FireEnemiesItemEffect(e.seconds);
-            case "add_enchantment" -> new AddEnchantmentItemEffect(parseEnchantment(e.enchantment), e.amount);
-            case "set_attribute"   -> new SetAttributeItemEffect(
+            case "name"             -> new NameItemEffect(Component.text(e.value));
+            case "message"          -> new MessageItemEffect(Component.text(e.value));
+            case "haste"            -> new HasteItemEffect(e.seconds);
+            case "potion"           -> new PotionItemEffect(parsePotionEffect(e.effect), e.seconds, e.amplifier);
+            case "permanent_potion" -> new PermanentPotionItemEffect(parsePotionEffect(e.effect), e.amplifier);
+            case "fire_enemies"     -> new FireEnemiesItemEffect(e.seconds);
+            case "add_enchantment"  -> new AddEnchantmentItemEffect(parseEnchantment(e.enchantment), e.amount);
+            case "set_attribute"    -> new SetAttributeItemEffect(
                     parseAttribute(e.attribute), e.attributeValue,
                     parseOperation(e.operation), parseSlotGroup(e.slot));
             default -> throw new IllegalArgumentException("Type d'effet inconnu : '" + e.type + "'");

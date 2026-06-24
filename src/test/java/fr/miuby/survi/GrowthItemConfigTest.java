@@ -21,21 +21,31 @@ class GrowthItemConfigTest {
             "BlockBreakEvent",
             "OreBreakEvent",
             "CropBreakEvent",
+            "LogBreakEvent",
+            "FishCatchEvent",
+            "XpGainEvent",
             "NewBiomeEvent",
             "NewMobTypeKillEvent"
     );
 
     private static final Set<String> VALID_EFFECT_TYPES = Set.of(
-            "name", "message", "haste", "potion", "fire_enemies", "add_enchantment", "set_attribute"
+            "name", "message", "haste", "potion", "permanent_potion",
+            "fire_enemies", "add_enchantment", "set_attribute"
     );
 
     /**
-     * Types autorisés dans {@code baseEffects} — les effets transitoires (message, haste, potion)
-     * sont ignorés lors du reload (cf. {@code ItemEffect.isTransient()}) et n'ont donc pas leur place
-     * dans baseEffects.
+     * Types autorisés dans {@code baseEffects}.
+     *
+     * <p>Les effets transitoires ({@code message}, {@code haste}, {@code potion}) sont ignorés
+     * lors du reload (cf. {@code ItemEffect.isTransient()}) et n'ont pas leur place dans
+     * {@code baseEffects}.</p>
+     *
+     * <p>{@code permanent_potion} est accepté ici car {@code isTransient() = false} :
+     * il est reconnu par {@code reapplyAll} et le joueur récupère l'effet si l'item est
+     * encore équipé après un reload.</p>
      */
     private static final Set<String> VALID_BASE_EFFECT_TYPES = Set.of(
-            "name", "add_enchantment", "set_attribute"
+            "name", "add_enchantment", "set_attribute", "permanent_potion"
     );
 
     /** Doit rester en sync avec GrowthItemLoader.parseAttribute(). */
@@ -98,9 +108,10 @@ class GrowthItemConfigTest {
      * Valide {@code baseEffects} :
      * <ul>
      *   <li>Chaque effet est structurellement valide (mêmes règles que les tiers).</li>
-     *   <li>Seuls les types persistants sont autorisés — un effet transitoire (message, haste,
-     *       potion) dans {@code baseEffects} serait ignoré silencieusement lors du reload,
-     *       ce qui est probablement une erreur de config.</li>
+     *   <li>Seuls les types persistants sont autorisés ({@code name}, {@code add_enchantment},
+     *       {@code set_attribute}, {@code permanent_potion}) — un effet transitoire
+     *       ({@code message}, {@code haste}, {@code potion}) serait ignoré silencieusement
+     *       lors du reload, ce qui est probablement une erreur de config.</li>
      * </ul>
      */
     private void validateBaseEffects(GrowthItemFileConfig config, String filename) {
@@ -117,10 +128,9 @@ class GrowthItemConfigTest {
 
             assertTrue(VALID_BASE_EFFECT_TYPES.contains(effect.type),
                     ctx + " : le type '" + effect.type + "' est transitoire — il sera ignoré lors "
-                            + "du reload (reapplyAll ne rejoue que name, add_enchantment et set_attribute). "
-                            + "Supprimer l'effet ou le déplacer dans un palier / periodicEffects.");
+                            + "du reload (reapplyAll ne rejoue que name, add_enchantment, set_attribute "
+                            + "et permanent_potion). Supprimer l'effet ou le déplacer dans un palier / periodicEffects.");
 
-            // Validation structurelle identique aux effets de tiers
             validateEffect(effect, ctx);
         }
     }
@@ -186,6 +196,14 @@ class GrowthItemConfigTest {
                 assertTrue(effect.seconds >= 1, ctx + " : 'seconds' doit être >= 1");
                 assertTrue(effect.amplifier >= 0,
                         ctx + " : 'amplifier' doit être >= 0 (0 = niveau I, 1 = niveau II…)");
+            }
+
+            case "permanent_potion" -> {
+                assertStringNotEmpty(effect.effect,
+                        ctx + " : 'effect' requis pour type=permanent_potion (ex. night_vision, haste, speed)");
+                assertTrue(effect.amplifier >= 0,
+                        ctx + " : 'amplifier' doit être >= 0 (0 = niveau I, 1 = niveau II…)");
+                // Pas de champ 'seconds' — l'effet dure tant que l'item est porté
             }
 
             case "add_enchantment" -> {

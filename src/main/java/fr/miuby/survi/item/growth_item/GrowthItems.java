@@ -1,15 +1,18 @@
 package fr.miuby.survi.item.growth_item;
 
+import fr.miuby.lib.log.MLLogManager;
 import fr.miuby.survi.GameManager;
 import fr.miuby.survi.item.growth_item.config.GrowthConfig;
 import fr.miuby.survi.item.growth_item.effect.AddEnchantmentItemEffect;
 import fr.miuby.survi.item.growth_item.effect.ItemEffect;
 import fr.miuby.survi.player.AlphaPlayer;
 import fr.miuby.survi.system.exception.AlphaPlayerNotFoundException;
+import fr.miuby.survi.system.log.ELogTag;
 import org.bukkit.NamespacedKey;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
@@ -22,6 +25,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Level;
 
 public final class GrowthItems {
 
@@ -286,6 +290,43 @@ public final class GrowthItems {
             return false;
         }
         return true;
+    }
+
+    /**
+     * Vérifie et réapplique si nécessaire les effets growth de tout ce que {@code player}
+     * tient ou porte actuellement (main, offhand, armure complète).
+     *
+     * <p>Point d'entrée générique de détection de staleness, indépendant de l'event métier
+     * ({@code eventType}) associé à l'item — couvre la connexion, le swap main/offhand et
+     * tout équipement via clic d'inventaire (armure, offhand, shift-click).</p>
+     */
+    public static void checkAndReapplyHeldAndEquipped(Player player) {
+        PlayerInventory inv = player.getInventory();
+
+        ItemStack mainHand = inv.getItemInMainHand();
+        if (getGrowthId(mainHand) != null && checkAndReapplyIfStale(mainHand, player)) {
+            inv.setItemInMainHand(mainHand);
+            MLLogManager.getInstance().log(Level.FINE, ELogTag.ITEM,
+                    "[GrowthItems] Reapply (main) " + player.getName() + " : " + getGrowthId(mainHand));
+        }
+
+        ItemStack offHand = inv.getItemInOffHand();
+        if (getGrowthId(offHand) != null && checkAndReapplyIfStale(offHand, player)) {
+            inv.setItemInOffHand(offHand);
+            MLLogManager.getInstance().log(Level.FINE, ELogTag.ITEM,
+                    "[GrowthItems] Reapply (offhand) " + player.getName() + " : " + getGrowthId(offHand));
+        }
+
+        ItemStack[] armor = inv.getArmorContents();
+        boolean anyUpdated = false;
+        for (ItemStack piece : armor) {
+            if (getGrowthId(piece) != null && checkAndReapplyIfStale(piece, player)) {
+                anyUpdated = true;
+                MLLogManager.getInstance().log(Level.FINE, ELogTag.ITEM,
+                        "[GrowthItems] Reapply (armure) " + player.getName() + " : " + getGrowthId(piece));
+            }
+        }
+        if (anyUpdated) inv.setArmorContents(armor);
     }
 
     // ─── Réapplication complète depuis la config courante ────────────────────

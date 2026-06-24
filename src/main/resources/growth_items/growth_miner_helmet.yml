@@ -6,17 +6,16 @@ eventType: OreBreakEvent
 # Modifier ces valeurs ici suffit — plus besoin de recompiler ECustomItem.
 
 tiers:
-  - requiredUses: 1000
+  - requiredUses: 10
     effects:
       - { type: name,          value: "Casque de Mineur II" }
       - { type: set_attribute, attribute: mining_efficiency, attributeValue: 8.0, operation: ADD_NUMBER, slot: HEAD }
       - { type: message,       value: "Ton casque grandit — tu mines un peu plus vite !" }
 
-  - requiredUses: 2000
+  - requiredUses: 20
     effects:
       - { type: name,          value: "Casque de Mineur III" }
       - { type: set_attribute, attribute: mining_efficiency, attributeValue: 14.0, operation: ADD_NUMBER, slot: HEAD }
-      - { type: potion,        effect: night_vision, seconds: 30, amplifier: 0 }
       - { type: message,       value: "Impressionnant ! Tu tailles dans la roche comme dans du beurre." }
 
   - requiredUses: 3000
@@ -26,7 +25,6 @@ tiers:
       - { type: message,       value: "Casque de légende. Tu es le roi des profondeurs." }
 
 periodicEffects:
-  - everyUses: 1000
+  - everyUses: 10
     effects:
-      - { type: haste,   seconds: 8 }
-      - { type: message, value: "Un souffle de haste surgit de ton casque !" }
+      - { type: potion,   seconds: 30 }
