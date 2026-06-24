@@ -30,7 +30,7 @@ recipes:
       customItem: GROWTH_MINER_HELMET
       amount: 1
     ingredient:
-      material: IRON_INGOT
-      amount: 64
+      material: DIAMOND_BLOCK
+      amount: 1
     message: "Un super achat."
     requiredReputation: 55
