@@ -7,66 +7,87 @@
 #  ─────────────────
 #  • Chaque palier du monde (world level N) donne des monstres niveau
 #    [N*levelsPerTier+1 … (N+1)*levelsPerTier].
-#  • Les stats évoluent LINÉAIREMENT :  valeur = base + (level - 1) * per-level
-#    → level 1  ≈ vanilla (base seul)
-#    → level 10 = base + 9  * per-level   (fin du palier 0)
-#    → level 100= base + 99 * per-level   (très puissant)
+#  • Les stats évoluent de manière EXPONENTIELLE PAR PALIER :
+#
+#      tier     = (level - 1) / levelsPerTier
+#      offset   = (level - 1) mod levelsPerTier
+#      t        = offset / (levelsPerTier - 1)        [0.0 → 1.0 dans le palier]
+#      tierBase = base × tier-multiplier^tier
+#      valeur   = tierBase × (1 + (peak-ratio - 1) × t^exponent)
+#
+#  EXEMPLE AVEC base=10, peak-ratio=5, tier-multiplier=2, exponent=3
+#    (défauts) ET levelsPerTier=10 :
+#      Niveau  1 →  10 HP  (très faible)
+#      Niveau  5 →  14 HP  (courbe plus tranquille en début de palier)
+#      Niveau 10 →  50 HP  (fort)
+#      Niveau 11 →  20 HP  (reset doux ≈ niveau 5–6)
+#      Niveau 20 → 100 HP  (très fort)
+#      Niveau 21 →  40 HP  (reset doux ≈ niveau 15)
+#      Niveau 30 → 200 HP  (BOSS)
+#
+#  PARAMÈTRES DES STATS
+#  ─────────────────────
+#    base            — valeur au niveau 1 (requis)
+#    peak-ratio      — multiple atteint au pic de chaque palier, requis
+#                      (< 1.0 = la stat DIMINUE au fil du palier, ex. taille Creeper)
+#    tier-multiplier — multiplicateur appliqué à la base à chaque nouveau palier
+#                      (optionnel, défaut : 2.0)
+#    exponent        — courbure dans le palier : 1.0 = linéaire, 3.0 = cubique
+#                      (optionnel, défaut : 3.0)
+#
+#  VALEURS CLÉS AVEC LES DÉFAUTS (tm=2.0, exp=3.0, T=10) :
+#    peak-ratio  L1=base  L10=base×peak  L11=base×2  L20=base×2×peak  L30=base×4×peak
+#      5.0       ×1       ×5             ×2          ×10              ×20
+#      3.0       ×1       ×3             ×2          ×6               ×12
+#
+#  STATS SPÉCIALES (hors section "stats")
+#    explosion-radius — rayon d'explosion du Creeper  (formule linéaire : base + (L-1)×per-level)
+#    fuse-ticks       — durée de mèche du Creeper en ticks
+#    potion-effects   — effets appliqués à l'attaque
 #
 #  TIRAGE DU NIVEAU À L'APPARITION
 #  ────────────────────────────────
-#  La probabilité décroît exponentiellement avec le niveau dans le palier.
 #  Formule du poids pour l'offset i (0 = niveau le plus bas du palier) :
 #       weight(i) = (levelsPerTier - i) ^ spawn-weight-exponent
 #  Plus l'exposant est grand, plus les élites hauts niveaux sont rares.
 #  Valeur recommandée : 1.5 – 2.5
-#
 # ══════════════════════════════════════════════════════════════════════════════
 
 levels-per-world-tier: 10
 spawn-weight-exponent: 1.8
 
-# ──────────────────────────────────────────────────────────────────────────────
-#  STATS DISPONIBLES (section "stats" de chaque mob)
-# ──────────────────────────────────────────────────────────────────────────────
-#  max-health           — Points de vie maximum (cœurs × 2)
-#  attack-damage        — Dégâts de base par frappe
-#  movement-speed       — Vitesse de déplacement (vanilla zombie ≈ 0.23)
-#  scale                — Taille relative (1.0 = normal, 2.0 = deux fois plus grand)
-#  follow-range         — Distance de détection du joueur (en blocs)
-#  armor                — Valeur d'armure naturelle
-#  knockback-resistance — Résistance au recul (0.0–1.0)
-#
-#  STATS SPÉCIALES (hors section "stats")
-#  explosion-radius     — Rayon d'explosion du Creeper  (entier, via setExplosionRadius)
-#  fuse-ticks           — Durée de mèche du Creeper en ticks (< 30 = explosion rapide)
-#  potion-effects       — Effets appliqués à l'attaque (Spider, CaveSpider…)
-# ──────────────────────────────────────────────────────────────────────────────
-
 mobs:
 
   # ════════════════════════════════════════════════
-  #  ZOMBIE  —  taille + vitesse
+  #  ZOMBIE
+  #  Niv 1: 6 PV / 1.5 dmg   Niv 10: 50 PV / 7.5 dmg
+  #  Niv 11: 12 PV (reset)     Niv 30: 200 PV / 24 dmg (BOSS)
   # ════════════════════════════════════════════════
   ZOMBIE:
     stats:
       max-health:
-        base: 14.0          # vanilla = 20
-        per-level: 5.0      # level 100 → 416 PV
+        base: 6.0
+        peak-ratio: 8.3333
       attack-damage:
-        base: 2.5           # vanilla = 3
-        per-level: 0.25     # level 100 → 27.75
+        base: 1.5
+        peak-ratio: 5.0
+        tier-multiplier: 1.8
       movement-speed:
-        base: 0.23          # vanilla = 0.23
-        per-level: 0.004    # level 100 → 0.627  (max ≈ sprint joueur = 0.32 + sprint)
+        base: 0.23
+        peak-ratio: 1.4
+        tier-multiplier: 1.15
       scale:
-        base: 1.0           # taille normale
-        per-level: 0.015    # level 100 → 2.5× (géant menaçant)
+        base: 1.0
+        peak-ratio: 2.0
+        tier-multiplier: 1.15
       follow-range:
-        base: 35.0          # vanilla = 35
-        per-level: 0.5      # level 100 → 84.5 blocs
+        base: 35.0
+        peak-ratio: 2.0
+        tier-multiplier: 1.3
       armor:
-        base: 0.0
-        per-level: 0.02     # level 100 → 4 points d'armure
+        base: 0.3
+        peak-ratio: 13.3333
+        tier-multiplier: 1.8
 
   # ════════════════════════════════════════════════
   #  ZOMBIE_VILLAGER
@@ -74,41 +95,49 @@ mobs:
   ZOMBIE_VILLAGER:
     stats:
       max-health:
-        base: 16.0
-        per-level: 4.0
+        base: 6.0
+        peak-ratio: 8.3333
       attack-damage:
-        base: 2.75
-        per-level: 0.25
+        base: 1.5
+        peak-ratio: 5.0
+        tier-multiplier: 1.8
       movement-speed:
         base: 0.23
-        per-level: 0.004
+        peak-ratio: 1.4
+        tier-multiplier: 1.15
       scale:
         base: 1.0
-        per-level: 0.012
+        peak-ratio: 1.8
+        tier-multiplier: 1.15
       follow-range:
         base: 35.0
-        per-level: 0.5
+        peak-ratio: 2.0
+        tier-multiplier: 1.3
 
   # ════════════════════════════════════════════════
-  #  HUSK  (zombie désert)
+  #  HUSK  (zombie désert — armure naturelle plus élevée)
   # ════════════════════════════════════════════════
   HUSK:
     stats:
       max-health:
-        base: 16.0
-        per-level: 4.0
+        base: 6.0
+        peak-ratio: 8.3333
       attack-damage:
-        base: 2.7
-        per-level: 0.30
+        base: 1.62
+        peak-ratio: 5.0
+        tier-multiplier: 1.8
       movement-speed:
         base: 0.23
-        per-level: 0.004
+        peak-ratio: 1.4
+        tier-multiplier: 1.15
       scale:
         base: 1.0
-        per-level: 0.013
+        peak-ratio: 1.8
+        tier-multiplier: 1.15
       armor:
-        base: 2.0
-        per-level: 0.04
+        base: 0.6
+        peak-ratio: 8.3333
+        tier-multiplier: 1.8
 
   # ════════════════════════════════════════════════
   #  DROWNED
@@ -116,36 +145,39 @@ mobs:
   DROWNED:
     stats:
       max-health:
-        base: 16.0
-        per-level: 4.0
+        base: 6.0
+        peak-ratio: 8.3333
       attack-damage:
-        base: 2.75
-        per-level: 0.25
+        base: 1.5
+        peak-ratio: 5.0
+        tier-multiplier: 1.8
       movement-speed:
         base: 0.25
-        per-level: 0.004
+        peak-ratio: 1.4
+        tier-multiplier: 1.15
 
   # ════════════════════════════════════════════════
-  #  SKELETON  —  portée de tir augmentée via follow-range
-  # ════════════════════════════════════════════════
-  #  Note : follow-range contrôle la distance à laquelle le squelette
-  #  "voit" le joueur et commence à tirer. Un follow-range élevé =
-  #  le squelette commence à tirer de plus loin.
+  #  SKELETON
+  #  Note : follow-range contrôle la portée de tir.
+  #  Niv 1: 7.2 PV / portée 16 blocs   Niv 30: 240 PV / portée 78 blocs (BOSS)
   # ════════════════════════════════════════════════
   SKELETON:
     stats:
       max-health:
-        base: 13.0          # vanilla = 20
-        per-level: 3.0      # level 100 → 317 PV
+        base: 7.2
+        peak-ratio: 8.3333
       attack-damage:
-        base: 1.5           # dégâts de la flèche (via attribut)
-        per-level: 0.2
+        base: 1.0
+        peak-ratio: 5.0
+        tier-multiplier: 1.8
       movement-speed:
         base: 0.25
-        per-level: 0.003
+        peak-ratio: 1.4
+        tier-multiplier: 1.15
       follow-range:
-        base: 16.0          # vanilla = 16
-        per-level: 0.6      # level 100 → 75.4 blocs de portée de tir !
+        base: 16.0
+        peak-ratio: 2.5
+        tier-multiplier: 1.4
 
   # ════════════════════════════════════════════════
   #  STRAY  (squelette de glace)
@@ -153,101 +185,125 @@ mobs:
   STRAY:
     stats:
       max-health:
-        base: 17.0
-        per-level: 3.0
+        base: 7.2
+        peak-ratio: 8.3333
       attack-damage:
-        base: 1.8
-        per-level: 0.15
+        base: 1.08
+        peak-ratio: 5.0
+        tier-multiplier: 1.8
       movement-speed:
         base: 0.25
-        per-level: 0.003
+        peak-ratio: 1.4
+        tier-multiplier: 1.15
       follow-range:
         base: 16.0
-        per-level: 0.6
+        peak-ratio: 2.5
+        tier-multiplier: 1.4
 
   # ════════════════════════════════════════════════
-  #  WITHER_SKELETON
+  #  WITHER_SKELETON  (mini-boss du Nether)
+  #  Niv 1: 9 PV / 4.2 dmg   Niv 30: 300 PV / 45 dmg (BOSS)
   # ════════════════════════════════════════════════
   WITHER_SKELETON:
     stats:
       max-health:
-        base: 20.0
-        per-level: 5.0
+        base: 9.0
+        peak-ratio: 8.3333
       attack-damage:
-        base: 7.0           # vanilla = 7
-        per-level: 0.4
+        base: 4.2
+        peak-ratio: 4.1667
+        tier-multiplier: 1.6
       movement-speed:
         base: 0.25
-        per-level: 0.004
+        peak-ratio: 1.4
+        tier-multiplier: 1.15
       armor:
-        base: 0.0
-        per-level: 0.06
+        base: 0.6
+        peak-ratio: 10.0
+        tier-multiplier: 1.8
 
   # ════════════════════════════════════════════════
-  #  CREEPER  —  vitesse + rayon d'explosion + mèche
+  #  CREEPER
+  #  Stats : PV + vitesse + portée + taille (rétrécit = plus dur à viser)
+  #  Spécial linéaire : explosion-radius / fuse-ticks
+  #
+  #  Niv 1: 6 PV, taille ×1.0, explosion rayon 3, mèche 30 ticks
+  #  Niv 30: 160 PV, taille ×0.49, explosion rayon 6, mèche 9 ticks
   # ════════════════════════════════════════════════
   CREEPER:
     stats:
       max-health:
-        base: 10.0          # vanilla = 20
-        per-level: 3.0
+        base: 6.0
+        peak-ratio: 6.6667
       movement-speed:
-        base: 0.3          # vanilla = 0.25
-        per-level: 0.01    # level 100 → 0.745 (très rapide)
+        base: 0.25
+        peak-ratio: 1.4
+        tier-multiplier: 1.15
       follow-range:
         base: 16.0
-        per-level: 0.3
+        peak-ratio: 2.0
+        tier-multiplier: 1.3
       scale:
+        # Rétrécit progressivement → plus difficile à cibler
+        # Niv 1: ×1.0   Niv 10: ×0.60   Niv 11: ×0.90 (reset)   Niv 30: ×0.49
         base: 1.0
-        per-level: -0.05
+        peak-ratio: 0.60
+        tier-multiplier: 0.90
 
-    # Rayon de l'explosion (vanilla = 3)
+    # Rayon d'explosion (linéaire)
+    # Niv 1: 3   Niv 10: 4   Niv 30: 6   (clampé à [1, 15])
     explosion-radius:
       base: 3.0
-      per-level: 0.08       # level 100 → 10.92  (énorme mais clampé à ~10 en pratique)
+      per-level: 0.1
 
-    # Durée de mèche en ticks avant explosion (vanilla = 30 ticks)
-    # Géré par MobLevelManager via Creeper#setFuseTicks()
+    # Durée de mèche en ticks (linéaire, vanilla = 30 ticks)
+    # Niv 1: 30 ticks   Niv 10: 23 ticks   Niv 30: 9 ticks
     fuse-ticks:
-      base: 30.0            # vanilla = 30 ticks
-      per-level: -1         # level 100 → 10.2 ticks (explosion quasi-instantanée)
-      min: 5                # jamais moins de 5 ticks (0.25 s) pour rester jouable
+      base: 30.0
+      per-level: -0.7
+      min: 5
 
   # ════════════════════════════════════════════════
-  #  SPIDER  —  taille + effets de potion à l'attaque
+  #  SPIDER  (grandit = araignée géante)
+  #  Niv 1: 6 PV, taille ×1.0   Niv 30: 200 PV, taille ×3.3 (BOSS)
   # ════════════════════════════════════════════════
   SPIDER:
     stats:
       max-health:
-        base: 14.0          # vanilla = 16
-        per-level: 2.5
+        base: 6.0
+        peak-ratio: 8.3333
       attack-damage:
-        base: 1.70           # vanilla = 2
-        per-level: 0.15
+        base: 1.2
+        peak-ratio: 5.0
+        tier-multiplier: 1.8
       movement-speed:
-        base: 0.30          # vanilla = 0.30
-        per-level: 0.005
+        base: 0.30
+        peak-ratio: 1.4
+        tier-multiplier: 1.15
       scale:
+        # Grandit → araignée géante impressionnante
+        # Niv 1: ×1.0   Niv 10: ×2.5   Niv 30: ×3.3
         base: 1.0
-        per-level: -0.015    # level 100 → 2.5× (araignée géante)
+        peak-ratio: 2.5
+        tier-multiplier: 1.15
       follow-range:
         base: 15.0
-        per-level: 0.4
+        peak-ratio: 2.0
+        tier-multiplier: 1.3
 
-    # Effets de potion appliqués à chaque attaque
     potion-effects:
       - type: POISON
-        min-mob-level: 1          # actif dès le niveau 1
-        duration-base: 40         # 2 secondes au niveau 1
-        duration-per-level: 4.0   # +4 ticks/niveau → level 100 = 436 ticks (≈21 s)
-        amplifier-upgrade-every: 20  # niveau I → II à lvl 21, II → III à lvl 41…
-        chance-base: 0.10         # 10% au niveau 1
-        chance-per-level: 0.01   # +0.5%/niveau → level 100 = 60%
+        min-mob-level: 1
+        duration-base: 40
+        duration-per-level: 4.0
+        amplifier-upgrade-every: 20
+        chance-base: 0.10
+        chance-per-level: 0.01
         max-chance: 0.75
 
-      - type: WITHER               # seulement à partir du niveau 30
+      - type: WITHER
         min-mob-level: 10
-        duration-base: 20          # 1 seconde
+        duration-base: 20
         duration-per-level: 3.0
         amplifier-upgrade-every: 30
         chance-base: 0.05
@@ -255,30 +311,36 @@ mobs:
         max-chance: 0.50
 
   # ════════════════════════════════════════════════
-  #  CAVE_SPIDER  —  venin plus fort que la Spider normale
+  #  CAVE_SPIDER  (rétrécit = venin dans les ombres)
+  #  Niv 1: 4.8 PV, taille ×1.0   Niv 30: 160 PV, taille ×0.42
   # ════════════════════════════════════════════════
   CAVE_SPIDER:
     stats:
       max-health:
-        base: 10.0          # vanilla = 12
-        per-level: 2.0
+        base: 4.8
+        peak-ratio: 8.3333
       attack-damage:
-        base: 1.9
-        per-level: 0.12
+        base: 1.2
+        peak-ratio: 5.0
+        tier-multiplier: 1.8
       movement-speed:
         base: 0.28
-        per-level: 0.01
+        peak-ratio: 1.45
+        tier-multiplier: 1.2
       scale:
-        base: 1.012
-        per-level: -0.012
+        # Rétrécit → quasi-invisible dans les caves
+        # Niv 1: ×1.0   Niv 10: ×0.50   Niv 30: ×0.42
+        base: 1.0
+        peak-ratio: 0.50
+        tier-multiplier: 0.92
 
     potion-effects:
       - type: POISON
         min-mob-level: 1
-        duration-base: 60           # 3 s — cave spider empoisonne plus
+        duration-base: 60
         duration-per-level: 5.0
         amplifier-upgrade-every: 15
-        chance-base: 0.20           # 20% dès le départ
+        chance-base: 0.20
         chance-per-level: 0.006
         max-chance: 0.90
 
@@ -297,63 +359,66 @@ mobs:
   PHANTOM:
     stats:
       max-health:
-        base: 15.0          # vanilla = 20
-        per-level: 2.5
+        base: 7.2
+        peak-ratio: 8.3333
       attack-damage:
-        base: 5.0           # vanilla = 6
-        per-level: 0.30
+        base: 3.0
+        peak-ratio: 5.0
+        tier-multiplier: 1.8
       movement-speed:
-        base: 0.9          # vitesse de vol vanilla ≈ 0.9–1.0
-        per-level: 0.015    # level 100 → 2.435 (très rapide, difficile à esquiver)
+        base: 0.90
+        peak-ratio: 1.4
+        tier-multiplier: 1.15
       follow-range:
         base: 15.0
-        per-level: 0.4
+        peak-ratio: 2.0
+        tier-multiplier: 1.3
 
   # ════════════════════════════════════════════════
-  #  ENDERMAN  —  taille (+ téléportation gérée en code)
-  # ════════════════════════════════════════════════
-  #  Note : la téléportation aléatoire défensive et la prise de blocs
-  #  sont gérées dans MobLevelManager#applyLevel() via des mécaniques
-  #  spéciales (voir code Java), pas ici.
+  #  ENDERMAN  —  taille + téléportation (gérée en code)
+  #  Niv 1: 15 PV, taille ×0.6   Niv 30: 400 PV, taille ×2.5 (BOSS)
   # ════════════════════════════════════════════════
   ENDERMAN:
     stats:
       max-health:
-        base: 35.0          # vanilla = 40
-        per-level: 5.0      # level 100 → 535 PV
+        base: 15.0
+        peak-ratio: 6.6667
       attack-damage:
-        base: 7.0           # vanilla = 7
-        per-level: 0.35     # level 100 → 41.65
+        base: 4.2
+        peak-ratio: 4.1667
+        tier-multiplier: 1.6
       movement-speed:
-        base: 0.30          # vanilla ≈ 0.30
-        per-level: 0.004
+        base: 0.30
+        peak-ratio: 1.4
+        tier-multiplier: 1.15
       scale:
         base: 0.6
-        per-level: 0.1     # level 100 → 3.0× (enderman immense)
+        peak-ratio: 2.5
+        tier-multiplier: 1.3
       follow-range:
         base: 64.0
-        per-level: 0.5
+        peak-ratio: 2.0
+        tier-multiplier: 1.3
       knockback-resistance:
-        base: 0.0
-        per-level: 0.005    # level 100 → 0.495 (quasi-résistant au recul)
+        base: 0.03
+        peak-ratio: 13.3333
+        tier-multiplier: 1.5
 
   # ════════════════════════════════════════════════
-  #  ENDER_DRAGON  —  boss, palier max uniquement
-  # ════════════════════════════════════════════════
-  #  Note : l'EnderDragon est appliqué au NIVEAU MAX du palier courant
-  #  (getMaxLevelForCurrentTier()). Les stats ci-dessous sont calibrées
-  #  pour refléter un boss qui évolue avec le monde.
+  #  ENDER_DRAGON  —  boss, reçoit toujours le niveau MAX du palier
+  #  Palier 1 (niv 10): 400 PV   Palier 2 (niv 20): 600 PV
+  #  Palier 3 (niv 30): 900 PV (BOSS FINAL)
   # ════════════════════════════════════════════════
   ENDER_DRAGON:
     stats:
       max-health:
-        base: 200.0         # vanilla = 200 (= 100 cœurs)
-        per-level: 15.0     # level 10  → 335  (palier 0)
-        # level 20  → 485  (palier 1)
-        # level 100 → 1685 PV (boss de fin de partie)
+        base: 120.0
+        peak-ratio: 3.3333
+        tier-multiplier: 1.5
       attack-damage:
-        base: 6.0           # vanilla ≈ 6 (contact) — la balle acide n'est pas scalée ici
-        per-level: 0.8      # level 100 → 85.2
+        base: 3.6
+        peak-ratio: 3.3333
+        tier-multiplier: 1.4
 
   # ════════════════════════════════════════════════
   #  WITCH
@@ -361,53 +426,64 @@ mobs:
   WITCH:
     stats:
       max-health:
-        base: 23.0          # vanilla = 26
-        per-level: 3.0
+        base: 10.8
+        peak-ratio: 6.6667
       movement-speed:
         base: 0.25
-        per-level: 0.003
+        peak-ratio: 1.35
+        tier-multiplier: 1.15
       follow-range:
         base: 15.5
-        per-level: 0.5
+        peak-ratio: 2.0
+        tier-multiplier: 1.3
 
   # ════════════════════════════════════════════════
   #  PILLAGER
+  #  Niv 1: 10.8 PV / portée 63 blocs   Niv 30: 360 PV / portée 213 blocs
   # ════════════════════════════════════════════════
   PILLAGER:
     stats:
       max-health:
-        base: 21.0          # vanilla = 24
-        per-level: 3.0
+        base: 10.8
+        peak-ratio: 8.3333
       attack-damage:
-        base: 3.8
-        per-level: 0.2
+        base: 2.28
+        peak-ratio: 5.0
+        tier-multiplier: 1.8
       movement-speed:
         base: 0.35
-        per-level: 0.003
+        peak-ratio: 1.35
+        tier-multiplier: 1.1
       follow-range:
         base: 63.0
-        per-level: 0.5
+        peak-ratio: 2.0
+        tier-multiplier: 1.3
 
   # ════════════════════════════════════════════════
-  #  RAVAGER
+  #  RAVAGER  (mini-boss d'assaut)
+  #  Niv 1: 36 PV / 6 dmg   Niv 30: 840 PV / 64 dmg (BOSS)
   # ════════════════════════════════════════════════
   RAVAGER:
     stats:
       max-health:
-        base: 100.0         # vanilla = 100
-        per-level: 8.0
+        base: 36.0
+        peak-ratio: 5.8333
       attack-damage:
-        base: 12.0          # vanilla = 12
-        per-level: 0.6
+        base: 6.0
+        peak-ratio: 4.1667
+        tier-multiplier: 1.6
       movement-speed:
         base: 0.30
-        per-level: 0.003
+        peak-ratio: 1.3
+        tier-multiplier: 1.1
       armor:
-        base: 0.0
-        per-level: 0.08
+        base: 0.6
+        peak-ratio: 8.3333
+        tier-multiplier: 1.8
       knockback-resistance:
-        base: 0.5           # vanilla = 0.5
-        per-level: 0.004    # level 100 → 0.896
+        base: 0.3
+        peak-ratio: 3.0
+        tier-multiplier: 1.2
 
   # ════════════════════════════════════════════════
   #  BLAZE
@@ -415,17 +491,20 @@ mobs:
   BLAZE:
     stats:
       max-health:
-        base: 20.0          # vanilla = 20
-        per-level: 3.0
+        base: 9.0
+        peak-ratio: 8.3333
       attack-damage:
-        base: 6.0           # boule de feu vanilla = 5 dégâts feu
-        per-level: 0.25
+        base: 3.0
+        peak-ratio: 5.0
+        tier-multiplier: 1.8
       movement-speed:
         base: 0.23
-        per-level: 0.003
+        peak-ratio: 1.35
+        tier-multiplier: 1.15
       follow-range:
         base: 48.0
-        per-level: 0.5
+        peak-ratio: 2.0
+        tier-multiplier: 1.3
 
   # ════════════════════════════════════════════════
   #  GHAST
@@ -433,17 +512,20 @@ mobs:
   GHAST:
     stats:
       max-health:
-        base: 10.0          # vanilla = 10
-        per-level: 2.0
+        base: 4.8
+        peak-ratio: 8.3333
       attack-damage:
-        base: 6.0
-        per-level: 0.3
+        base: 3.6
+        peak-ratio: 5.0
+        tier-multiplier: 1.8
       movement-speed:
         base: 0.40
-        per-level: 0.005
+        peak-ratio: 1.4
+        tier-multiplier: 1.15
       follow-range:
         base: 100.0
-        per-level: 1.0
+        peak-ratio: 2.0
+        tier-multiplier: 1.3
 
   # ════════════════════════════════════════════════
   #  PIGLIN / PIGLIN_BRUTE
@@ -451,32 +533,38 @@ mobs:
   PIGLIN:
     stats:
       max-health:
-        base: 16.0
-        per-level: 2.5
+        base: 7.2
+        peak-ratio: 8.3333
       attack-damage:
-        base: 5.0
-        per-level: 0.2
+        base: 3.0
+        peak-ratio: 5.0
+        tier-multiplier: 1.8
       movement-speed:
         base: 0.35
-        per-level: 0.003
+        peak-ratio: 1.35
+        tier-multiplier: 1.1
 
   PIGLIN_BRUTE:
     stats:
       max-health:
-        base: 50.0          # vanilla = 50
-        per-level: 5.0
+        base: 24.0
+        peak-ratio: 7.5
       attack-damage:
-        base: 7.5           # vanilla = 7.5
-        per-level: 0.45
+        base: 4.5
+        peak-ratio: 4.1667
+        tier-multiplier: 1.6
       movement-speed:
         base: 0.35
-        per-level: 0.004
+        peak-ratio: 1.35
+        tier-multiplier: 1.1
       armor:
-        base: 0.0
-        per-level: 0.06
+        base: 0.3
+        peak-ratio: 13.3333
+        tier-multiplier: 1.8
       knockback-resistance:
-        base: 0.0
-        per-level: 0.005
+        base: 0.03
+        peak-ratio: 8.3333
+        tier-multiplier: 1.5
 
   # ════════════════════════════════════════════════
   #  HOGLIN
@@ -484,35 +572,43 @@ mobs:
   HOGLIN:
     stats:
       max-health:
-        base: 40.0
-        per-level: 4.0
+        base: 21.0
+        peak-ratio: 7.5
       attack-damage:
-        base: 8.0
-        per-level: 0.5
+        base: 4.8
+        peak-ratio: 4.1667
+        tier-multiplier: 1.6
       movement-speed:
         base: 0.30
-        per-level: 0.003
+        peak-ratio: 1.35
+        tier-multiplier: 1.1
       knockback-resistance:
-        base: 0.6
-        per-level: 0.003
+        base: 0.3
+        peak-ratio: 3.0
+        tier-multiplier: 1.2
 
   # ════════════════════════════════════════════════
-  #  WITHER (boss)
+  #  WITHER  (boss — niv 30 : 1125 PV)
+  #  Palier 1 (niv 10): 500 PV   Palier 2 (niv 20): 750 PV
   # ════════════════════════════════════════════════
   WITHER:
     stats:
       max-health:
-        base: 300.0         # vanilla = 300
-        per-level: 20.0     # level 10 → 480, level 50 → 1280, level 100 → 2280
+        base: 120.0
+        peak-ratio: 4.1667
+        tier-multiplier: 1.5
       attack-damage:
-        base: 8.0
-        per-level: 0.8
+        base: 4.2
+        peak-ratio: 3.3333
+        tier-multiplier: 1.4
       movement-speed:
         base: 0.60
-        per-level: 0.005
+        peak-ratio: 1.3
+        tier-multiplier: 1.1
       armor:
-        base: 4.0           # vanilla = 4
-        per-level: 0.04
+        base: 2.4
+        peak-ratio: 4.1667
+        tier-multiplier: 1.4
 
   # ════════════════════════════════════════════════
   #  VINDICATOR
@@ -520,14 +616,16 @@ mobs:
   VINDICATOR:
     stats:
       max-health:
-        base: 21.0
-        per-level: 3.0
+        base: 10.8
+        peak-ratio: 8.3333
       attack-damage:
-        base: 8.0           # vanilla hache = 8
-        per-level: 0.35
+        base: 4.8
+        peak-ratio: 4.1667
+        tier-multiplier: 1.6
       movement-speed:
         base: 0.35
-        per-level: 0.004
+        peak-ratio: 1.35
+        tier-multiplier: 1.1
 
   # ════════════════════════════════════════════════
   #  SLIME  /  MAGMA_CUBE
@@ -535,23 +633,26 @@ mobs:
   SLIME:
     stats:
       max-health:
-        base: 3.0           # grand slime vanilla = 16 (taille × 4 PV)
-        per-level: 1.0
+        base: 1.2
+        peak-ratio: 11.6667
       attack-damage:
-        base: 3.0
-        per-level: 0.1
+        base: 1.8
+        peak-ratio: 5.0
+        tier-multiplier: 1.8
 
   MAGMA_CUBE:
     stats:
       max-health:
-        base: 4.0
-        per-level: 1.2
+        base: 1.2
+        peak-ratio: 11.6667
       attack-damage:
-        base: 3.0
-        per-level: 0.15
+        base: 1.8
+        peak-ratio: 5.0
+        tier-multiplier: 1.8
       armor:
-        base: 0.0
-        per-level: 0.05
+        base: 0.3
+        peak-ratio: 13.3333
+        tier-multiplier: 1.8
 
   # ════════════════════════════════════════════════
   #  GUARDIAN  /  ELDER_GUARDIAN
@@ -559,38 +660,45 @@ mobs:
   GUARDIAN:
     stats:
       max-health:
-        base: 27.0          # vanilla = 30
-        per-level: 3.0
+        base: 13.2
+        peak-ratio: 8.3333
       attack-damage:
-        base: 6.0
-        per-level: 0.25
+        base: 3.0
+        peak-ratio: 5.0
+        tier-multiplier: 1.8
       armor:
-        base: 0.0
-        per-level: 0.05
+        base: 0.3
+        peak-ratio: 11.6667
+        tier-multiplier: 1.8
 
   ELDER_GUARDIAN:
     stats:
       max-health:
-        base: 80.0          # vanilla = 80
-        per-level: 8.0
+        base: 30.0
+        peak-ratio: 5.0
+        tier-multiplier: 1.8
       attack-damage:
-        base: 8.0
-        per-level: 0.6
+        base: 4.8
+        peak-ratio: 4.1667
+        tier-multiplier: 1.6
       armor:
-        base: 0.0
-        per-level: 0.08
+        base: 0.6
+        peak-ratio: 10.0
+        tier-multiplier: 1.8
 
   # ════════════════════════════════════════════════
-  #  SHULKER
+  #  SHULKER  (armure constante = 20 quelle que soit le niveau)
   # ════════════════════════════════════════════════
   SHULKER:
     stats:
       max-health:
-        base: 30.0          # vanilla = 30
-        per-level: 3.0
+        base: 15.0
+        peak-ratio: 8.3333
       armor:
-        base: 20.0          # vanilla = 20 (fermé)
-        per-level: 0.0
+        # Armure fixe : peak-ratio=1 + tier-multiplier=1 → toujours 20
+        base: 20.0
+        peak-ratio: 1.0
+        tier-multiplier: 1.0
 
   # ════════════════════════════════════════════════
   #  ZOGLIN
@@ -598,14 +706,16 @@ mobs:
   ZOGLIN:
     stats:
       max-health:
-        base: 40.0
-        per-level: 4.0
+        base: 21.0
+        peak-ratio: 7.5
       attack-damage:
-        base: 6.0
-        per-level: 0.4
+        base: 3.6
+        peak-ratio: 4.1667
+        tier-multiplier: 1.6
       movement-speed:
         base: 0.30
-        per-level: 0.003
+        peak-ratio: 1.35
+        tier-multiplier: 1.1
 
   # ════════════════════════════════════════════════
   #  ZOMBIFIED_PIGLIN
@@ -613,11 +723,13 @@ mobs:
   ZOMBIFIED_PIGLIN:
     stats:
       max-health:
-        base: 17.0
-        per-level: 3.0
+        base: 7.2
+        peak-ratio: 8.3333
       attack-damage:
-        base: 5.0
-        per-level: 0.25
+        base: 3.0
+        peak-ratio: 5.0
+        tier-multiplier: 1.8
       movement-speed:
         base: 0.23
-        per-level: 0.003
+        peak-ratio: 1.4
+        tier-multiplier: 1.15

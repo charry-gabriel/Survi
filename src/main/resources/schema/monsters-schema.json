@@ -295,7 +295,7 @@
       "properties": {
         "stats": {
           "type": "object",
-          "description": "Stats scalables via des attributs Bukkit. Formule : valeur = base + (level - 1) * per-level.",
+          "description": "Stats scalables via des attributs Bukkit. Formule exponentielle par palier (voir statConfig).",
           "additionalProperties": false,
           "properties": {
             "max-health": {
@@ -331,10 +331,10 @@
         "explosion-radius": {
           "allOf": [
             {
-              "$ref": "#/definitions/statConfig"
+              "$ref": "#/definitions/linearStatConfig"
             }
           ],
-          "description": "Rayon d'explosion scalé (Creeper uniquement). Vanilla = 3."
+          "description": "Rayon d'explosion scalé (Creeper uniquement). Formule linéaire : base + (level-1) × per-level. Vanilla = 3."
         },
         "fuse-ticks": {
           "$ref": "#/definitions/fuseConfig"
@@ -350,7 +350,40 @@
     },
     "statConfig": {
       "type": "object",
-      "description": "Stat linéaire : valeur = base + (level - 1) * per-level.",
+      "description": "Stat exponentielle par palier. Formule : tierBase × (1 + (peak-ratio − 1) × t^exponent) où tierBase = base × tier-multiplier^tier et t ∈ [0, 1] dans le palier.",
+      "required": [
+        "base",
+        "peak-ratio"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "base": {
+          "type": "number",
+          "description": "Valeur au niveau 1 (début du palier 0).",
+          "minimum": 0
+        },
+        "peak-ratio": {
+          "type": "number",
+          "description": "Multiplicateur atteint au pic de chaque palier (base × peak-ratio = valeur max du palier). Valeur < 1.0 = la stat diminue au fil du palier (ex. taille Creeper).",
+          "minimum": 0.01
+        },
+        "tier-multiplier": {
+          "type": "number",
+          "description": "Multiplicateur appliqué à la base à chaque nouveau palier. Défaut : 2.0. > 1 = monte chaque palier, < 1 = descend.",
+          "minimum": 0.01,
+          "default": 2.0
+        },
+        "exponent": {
+          "type": "number",
+          "description": "Courbure de la croissance dans le palier. 1.0 = linéaire, 3.0 = cubique (défaut). Plus la valeur est haute, plus la montée est lente au début et rapide à la fin du palier.",
+          "minimum": 0.1,
+          "default": 3.0
+        }
+      }
+    },
+    "linearStatConfig": {
+      "type": "object",
+      "description": "Stat linéaire (pour explosion-radius) : valeur = base + (level − 1) × per-level.",
       "required": [
         "base",
         "per-level"
@@ -359,7 +392,7 @@
       "properties": {
         "base": {
           "type": "number",
-          "description": "Valeur au niveau 1 (≈ vanilla)."
+          "description": "Valeur au niveau 1."
         },
         "per-level": {
           "type": "number",

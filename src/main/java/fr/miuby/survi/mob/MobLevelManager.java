@@ -34,7 +34,8 @@ import java.util.logging.Level;
  *   <li>Chaque palier du monde (world level N) correspond à une tranche de niveaux mob :
  *       {@code [N * levelsPerTier + 1 … (N+1) * levelsPerTier]}.</li>
  *   <li>Un tirage pondéré favorise les bas niveaux du palier (les élites sont rares).</li>
- *   <li>Les stats évoluent linéairement : {@code valeur = base + (level - 1) * perLevel}.</li>
+ *   <li>Les stats évoluent exponentiellement par palier :
+ *       {@code tierBase * (1 + (peakRatio - 1) * t^exp)} avec {@code t ∈ [0, 1]} dans le palier.</li>
  * </ul>
  *
  * <h3>Mécaniques spéciales</h3>
@@ -140,9 +141,12 @@ public class MobLevelManager {
                 for (EMobStat stat : EMobStat.values()) {
                     ConfigurationSection ss = statsSec.getConfigurationSection(stat.getConfigKey());
                     if (ss == null) continue;
-                    typeConfig.addStat(stat, new MobTypeConfig.LinearStat(
-                            ss.getDouble("base", 0),
-                            ss.getDouble("per-level", 0)
+                    typeConfig.addStat(stat, new MobTypeConfig.TieredExpStat(
+                            ss.getDouble("base",             0.0),
+                            ss.getDouble("peak-ratio",       1.0),
+                            ss.getDouble("tier-multiplier",  2.0),
+                            ss.getDouble("exponent",         3.0),
+                            levelsPerTier
                     ));
                 }
             }
@@ -252,8 +256,10 @@ public class MobLevelManager {
                 AttributeInstance inst = entity.getAttribute(stat.getAttribute());
                 if (inst == null) continue;
 
-                // Clamp pour éviter de dépasser les limites internes de Bukkit
-                double maxAllowed = inst.getDefaultValue() * 25;
+                // Clamp pour éviter de dépasser les limites internes de Bukkit.
+                // Math.max(1.0, ...) : si la valeur par défaut vaut 0 (ex. armor, knockback-
+                // resistance pour certains mobs), on autorise quand même la montée jusqu'à 25.
+                double maxAllowed = Math.max(1.0, inst.getDefaultValue()) * 25;
                 double clamped    = Math.min(value, maxAllowed);
                 inst.setBaseValue(clamped);
 

@@ -23,8 +23,10 @@ import static org.junit.jupiter.api.Assertions.*;
  * <ul>
  *   <li>Paramètres globaux : {@code levels-per-world-tier} et {@code spawn-weight-exponent}.</li>
  *   <li>Section {@code mobs} non vide, clés = noms d'EntityType valides.</li>
- *   <li>Pour chaque mob : section {@code stats} avec formule linéaire (présence = activé).</li>
- *   <li>Champs spéciaux {@code explosion-radius} et {@code fuse-ticks} (Creeper).</li>
+ *   <li>Pour chaque mob : section {@code stats} avec formule exponentielle par palier
+ *       ({@code base} + {@code peak-ratio} + optionnel {@code tier-multiplier} et {@code exponent}).</li>
+ *   <li>Champ spécial {@code explosion-radius} (formule linéaire : {@code base} + {@code per-level}).</li>
+ *   <li>Champ spécial {@code fuse-ticks} (Creeper).</li>
  *   <li>Chaque entrée {@code potion-effects} : champs requis, plages de valeurs cohérentes.</li>
  * </ul>
  */
@@ -130,8 +132,9 @@ class MonstersConfigTest {
         String ctx = "Mob 'CREEPER'";
 
         // Le Creeper est le seul mob à avoir explosion-radius et fuse-ticks
+        // explosion-radius utilise la formule LINÉAIRE (base + per-level)
         if (creeper.containsKey("explosion-radius")) {
-            assertStatBlock(ctx + " explosion-radius", creeper.get("explosion-radius"));
+            assertLinearStatBlock(ctx + " explosion-radius", creeper.get("explosion-radius"));
         }
         if (creeper.containsKey("fuse-ticks")) {
             assertFuseTicksBlock(ctx + " fuse-ticks", creeper.get("fuse-ticks"));
@@ -183,9 +186,9 @@ class MonstersConfigTest {
             }
         }
 
-        // explosion-radius : si présente, doit être un statConfig valide
+        // explosion-radius : formule LINÉAIRE (base + per-level), pas exponentielle
         if (mob.containsKey("explosion-radius")) {
-            assertStatBlock(ctx + " explosion-radius", mob.get("explosion-radius"));
+            assertLinearStatBlock(ctx + " explosion-radius", mob.get("explosion-radius"));
         }
 
         // fuse-ticks : si présent, doit être un fuseConfig valide
@@ -196,17 +199,59 @@ class MonstersConfigTest {
         // potion-effects : validé séparément dans testPotionEffectsWhereDeclared
     }
 
+    /**
+     * Valide un bloc de stat exponentielle par palier (section {@code stats}).
+     * Champs requis : {@code base} + {@code peak-ratio}.
+     * Champs optionnels : {@code tier-multiplier} + {@code exponent} (doivent être des nombres > 0).
+     */
     @SuppressWarnings("unchecked")
     private void assertStatBlock(String ctx, Object raw) {
         assertNotNull(raw, ctx + " : valeur nulle");
         assertInstanceOf(Map.class, raw, ctx + " : doit être un objet YAML");
         Map<String, Object> stat = (Map<String, Object>) raw;
 
-        assertTrue(stat.containsKey("base"),       ctx + " : champ 'base' manquant");
-        assertTrue(stat.containsKey("per-level"),  ctx + " : champ 'per-level' manquant");
+        assertTrue(stat.containsKey("base"),        ctx + " : champ 'base' manquant");
+        assertTrue(stat.containsKey("peak-ratio"),  ctx + " : champ 'peak-ratio' manquant");
 
-        assertInstanceOf(Number.class,  stat.get("base"),     ctx + " : 'base' doit être un nombre");
-        assertInstanceOf(Number.class,  stat.get("per-level"),ctx + " : 'per-level' doit être un nombre");
+        assertInstanceOf(Number.class, stat.get("base"),        ctx + " : 'base' doit être un nombre");
+        assertInstanceOf(Number.class, stat.get("peak-ratio"),  ctx + " : 'peak-ratio' doit être un nombre");
+
+        double base = ((Number) stat.get("base")).doubleValue();
+        assertTrue(base >= 0, ctx + " : 'base' doit être ≥ 0 (valeur : " + base + ")");
+
+        double peakRatio = ((Number) stat.get("peak-ratio")).doubleValue();
+        assertTrue(peakRatio > 0, ctx + " : 'peak-ratio' doit être > 0 (valeur : " + peakRatio + ")");
+
+        // Champs optionnels — vérifiés si présents
+        if (stat.containsKey("tier-multiplier")) {
+            Object tm = stat.get("tier-multiplier");
+            assertInstanceOf(Number.class, tm, ctx + " : 'tier-multiplier' doit être un nombre");
+            assertTrue(((Number) tm).doubleValue() > 0,
+                    ctx + " : 'tier-multiplier' doit être > 0 (valeur : " + tm + ")");
+        }
+        if (stat.containsKey("exponent")) {
+            Object exp = stat.get("exponent");
+            assertInstanceOf(Number.class, exp, ctx + " : 'exponent' doit être un nombre");
+            assertTrue(((Number) exp).doubleValue() > 0,
+                    ctx + " : 'exponent' doit être > 0 (valeur : " + exp + ")");
+        }
+    }
+
+    /**
+     * Valide un bloc de stat LINÉAIRE (explosion-radius).
+     * Champs requis : {@code base} + {@code per-level}.
+     */
+    @SuppressWarnings("unchecked")
+    private void assertLinearStatBlock(String ctx, Object raw) {
+        assertNotNull(raw, ctx + " : valeur nulle");
+        assertInstanceOf(Map.class, raw, ctx + " : doit être un objet YAML");
+        Map<String, Object> stat = (Map<String, Object>) raw;
+
+        assertTrue(stat.containsKey("base"),      ctx + " : champ 'base' manquant");
+        assertTrue(stat.containsKey("per-level"), ctx + " : champ 'per-level' manquant");
+
+        assertInstanceOf(Number.class, stat.get("base"),      ctx + " : 'base' doit être un nombre");
+        assertInstanceOf(Number.class, stat.get("per-level"), ctx + " : 'per-level' doit être un nombre");
 
         double base = ((Number) stat.get("base")).doubleValue();
         assertTrue(base >= 0, ctx + " : 'base' doit être ≥ 0 (valeur : " + base + ")");
