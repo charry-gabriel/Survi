@@ -54,7 +54,7 @@ class GrowthItemConfigTest {
     /** Doit rester en sync avec le registre Bukkit PotionEffectType (cf. SchemaGeneratorTest.getPotionEffectTypeNames()). */
     private static final Set<String> VALID_POTION_EFFECTS = Set.of(
             "absorption", "bad_omen", "blindness", "breath_of_the_nautilus", "conduit_power",
-            "darkness", "dolphins_grace", "fire_resistance", "glowing", "health_boost",
+            "darkness", "dolphins_grace", "fire_resistance", "glowing", "health_boost", "haste",
             "hero_of_the_village", "hunger", "infested", "instant_damage", "instant_health",
             "invisibility", "jump_boost", "levitation", "luck", "mining_fatigue", "nausea",
             "night_vision", "oozing", "poison", "raid_omen", "regeneration", "resistance",
