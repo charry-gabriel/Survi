@@ -25,8 +25,6 @@ import static org.junit.jupiter.api.Assertions.*;
  *   <li>{@code reputation.ranks} — liste triée par threshold croissant depuis 0, IDs uniques.</li>
  *   <li>{@code jobs.levels} — exactement 11 entrées, triées, threshold croissant depuis 0.</li>
  *   <li>{@code world-level} — mob-rarity, mob-difficulty cohérents.</li>
- *   <li>{@code explore-limits.wilderness-radius-per-level} — même compte que {@code jobs.levels},
- *       valeurs positives croissantes, {@code radius[0] / 8 ≥ 1} (cohérence Nether).</li>
  * </ul>
  */
 class ConfigTest {
@@ -188,42 +186,6 @@ class ConfigTest {
         assertNotNull(mobDifficulty, "world-level.mob-difficulty doit être présent");
         assertNonNegativeNumber(mobDifficulty, "base", "world-level.mob-difficulty");
         assertNonNegativeNumber(mobDifficulty, "per-level", "world-level.mob-difficulty");
-    }
-
-    // ─── explore-limits ─────────────────────────────────────────────────────────
-
-    @Test
-    @SuppressWarnings("unchecked")
-    void exploreLimitsSectionIsValid() throws IOException {
-        Map<String, Object> config = loadConfig();
-
-        Map<String, Object> exploreLimits = (Map<String, Object>) config.get("explore-limits");
-        assertNotNull(exploreLimits, "La section 'explore-limits' doit être présente");
-
-        List<?> radii = (List<?>) exploreLimits.get("wilderness-radius-per-level");
-        assertNotNull(radii, "explore-limits.wilderness-radius-per-level doit être présent");
-
-        // Cohérence avec jobs.levels (même nombre d'entrées)
-        List<?> jobLevels = (List<?>) ((Map<?, ?>) config.get("jobs")).get("levels");
-        assertEquals(jobLevels.size(), radii.size(),
-                "wilderness-radius-per-level doit avoir autant d'entrées que jobs.levels (" + jobLevels.size() + " niveaux)");
-
-        int previous = 0;
-        for (int i = 0; i < radii.size(); i++) {
-            Object obj = radii.get(i);
-            String ctx = "wilderness-radius-per-level[" + i + "]";
-            assertInstanceOf(Number.class, obj, ctx + " doit être un nombre, trouvé : " + obj);
-            int radius = ((Number) obj).intValue();
-            assertTrue(radius > 0, ctx + " doit être > 0, trouvé : " + radius);
-            assertTrue(radius >= previous, ctx + " doit être ≥ au niveau précédent (" + previous + "), trouvé : " + radius);
-            previous = radius;
-        }
-
-        // Cohérence Nether : radius[0] / 8 doit rester ≥ 1
-        int minRadius = ((Number) radii.get(0)).intValue();
-        assertTrue(minRadius / 8 >= 1,
-                "Le rayon Nether au niveau 0 (wilderness-radius[0] / 8 = " + (minRadius / 8)
-                        + ") serait nul. Augmentez wilderness-radius[0] (actuellement " + minRadius + ") à au moins 8.");
     }
 
     // ─── Helpers ──────────────────────────────────────────────────────────────────

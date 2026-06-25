@@ -229,8 +229,25 @@ public final class JobsConfig {
          */
         private final double[] safeFallDistance;
 
-        ExplorerCfg(double[] safeFallDistance) {
+        /**
+         * Rayon Wilderness (en blocs XZ) autorisé par niveau. Le Nether utilise ce rayon ÷ 8.
+         * L'End n'a aucune limite.
+         */
+        private final int[] wildernessRadiusPerLevel;
+
+        ExplorerCfg(double[] safeFallDistance, int[] wildernessRadiusPerLevel) {
             this.safeFallDistance = safeFallDistance;
+            this.wildernessRadiusPerLevel = wildernessRadiusPerLevel;
+        }
+
+        /**
+         * Rayon d'exploration autorisé pour {@code level} (clampé à l'index maximum du tableau),
+         * divisé par 8 si {@code isNether}.
+         */
+        public int wildernessRadiusForLevel(int level, boolean isNether) {
+            int idx = Math.min(level, wildernessRadiusPerLevel.length - 1);
+            int radius = wildernessRadiusPerLevel[idx];
+            return isNether ? radius / 8 : radius;
         }
     }
 }

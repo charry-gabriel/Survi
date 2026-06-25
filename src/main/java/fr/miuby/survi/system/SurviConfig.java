@@ -56,9 +56,6 @@ public class SurviConfig {
     @Getter private double mobDifficultyBase;
     @Getter private double mobDifficultyPerLevel;
 
-    /** Rayon Wilderness (en blocs XZ) autorisé par niveau Explorateur (index 0–10). */
-    @Getter private List<Integer> exploreWildernessRadius;
-
     // ─── Pluie ───────────────────────────────────────────────────────────────────
 
     /** Mondes dans lesquels le cycle pluie est géré par {@link fr.miuby.survi.world.RainManager}. */
@@ -119,20 +116,6 @@ public class SurviConfig {
         mobDifficultyPerLevel = cfg.getDouble("world-level.mob-difficulty.per-level", 0.05);
 
         EGlobalRank.initFromConfig(this);
-
-        // ─── Limites Explorateur ──────────────────────────────────────────────────────
-        exploreWildernessRadius = new ArrayList<>();
-        List<?> rawRadii = cfg.getList("explore-limits.wilderness-radius-per-level");
-        if (rawRadii != null) {
-            for (Object obj : rawRadii) {
-                if (obj instanceof Number n) {
-                    exploreWildernessRadius.add(n.intValue());
-                }
-            }
-        }
-        if (exploreWildernessRadius.isEmpty()) {
-            exploreWildernessRadius = List.of(500, 750, 1000, 1500, 2000, 3000, 4000, 6000, 8000, 12000, 200000);
-        }
 
         // ─── Pluie ─────────────────────────────────────────────────────────────────── ───────────────────────────────────────────────────────────────────
         rainDurationSeconds       = cfg.getInt("rain.duration-seconds",        60);

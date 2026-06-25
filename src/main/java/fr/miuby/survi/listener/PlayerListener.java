@@ -8,9 +8,9 @@ import fr.miuby.lib.world.WorldRegistry;
 import fr.miuby.lib.world.WorldType;
 import fr.miuby.survi.GameManager;
 import fr.miuby.survi.job.EJob;
+import fr.miuby.survi.job.config.JobsConfig;
 import fr.miuby.survi.player.AlphaPlayer;
 import fr.miuby.survi.role.RoleAttribute;
-import fr.miuby.survi.system.SurviConfig;
 import fr.miuby.survi.system.log.ELogTag;
 import fr.miuby.survi.system.perf.PerfTimer;
 import fr.miuby.survi.world.EWorld;
@@ -51,14 +51,12 @@ public class PlayerListener implements Listener {
     // ─── Références stables pré-cachées ──────────────────────────────────────────
 
     private final GameManager gm;
-    private final SurviConfig surviConfig;
 
     /** Cooldown d'avertissement par joueur — remplace l'ancien Map<UUID, Long>. */
     private final Cooldown<UUID> warnCooldown = new Cooldown<>(WARN_COOLDOWN_MS);
 
     public PlayerListener() {
-        this.gm          = GameManager.getInstance();
-        this.surviConfig = SurviConfig.getInstance();
+        this.gm = GameManager.getInstance();
     }
 
     // ─── Hot path : mouvement joueur ─────────────────────────────────────────────
@@ -112,10 +110,8 @@ public class PlayerListener implements Listener {
         AlphaPlayer alphaPlayer = AlphaPlayer.get(player.getUniqueId());
         if (alphaPlayer == null) return false;
 
-        List<Integer> radii = surviConfig.getExploreWildernessRadius();
-        int idx    = Math.min(alphaPlayer.getJobLevel(EJob.EXPLORER), radii.size() - 1);
-        int radius = radii.get(idx);
-        if (isNether) radius = radius / 8;
+        int radius = JobsConfig.getInstance().getExplorer()
+                .wildernessRadiusForLevel(alphaPlayer.getJobLevel(EJob.EXPLORER), isNether);
 
         return new ZoneBounds(0, 0, radius, radius).isOutside(to);
     }

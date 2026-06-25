@@ -80,28 +80,6 @@ world-level:
     base: 1.0
     per-level: 0.05
 
-# ─── Limites Explorateur ──────────────────────────────────────────────────────────
-# Rayon autorisé dans la Wilderness (et dans le Nether = rayon ÷ 8) par niveau
-# du métier Explorateur (niveaux 0 à 10, doit correspondre à jobs.levels).
-# Le Nether utilise le même palier divisé par 8 pour rester cohérent avec le
-# ratio de coordonnées Overworld/Nether (1 bloc Nether = 8 blocs Overworld).
-# L'End n'a aucune limite.
-explore-limits:
-  # Rayon Wilderness en blocs (XZ) pour chaque niveau Explorateur.
-  # 11 entrées = niveaux 0 → 10.
-  wilderness-radius-per-level:
-    - 100      # niveau  0
-    - 500      # niveau  1
-    - 1000     # niveau  2
-    - 2000     # niveau  3
-    - 4000     # niveau  4
-    - 8000     # niveau  5
-    - 15000     # niveau  6
-    - 25000     # niveau  7
-    - 50000     # niveau  8
-    - 100000    # niveau  9
-    - 2000000    # niveau 10
-
 # ─── Pluie ──────────────────────────────────────────────────────────────────────
 # Mondes dans lesquels Survi prend le contrôle de la météo.
 # Les transitions vanilla sont bloquées (setWeatherDuration = MAX_VALUE).

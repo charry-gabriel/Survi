@@ -140,7 +140,9 @@ public final class JobsLoader {
 
         JobsConfig.ExplorerCfg explorer = new JobsConfig.ExplorerCfg(
                 readDouble(explorerCfg, "safe-fall-distance",
-                        new double[]{0.7, 1.7, 2.7, 3.7, 4.7, 5.7, 6.7, 7.7, 8.7, 9.7, 10.7})
+                        new double[]{0.7, 1.7, 2.7, 3.7, 4.7, 5.7, 6.7, 7.7, 8.7, 9.7, 10.7}),
+                readInt(explorerCfg, "wilderness-radius-per-level",
+                        new int[]{100, 500, 1000, 2000, 4000, 8000, 15000, 25000, 50000, 100000, 2000000})
         );
 
         JobsConfig.setInstance(new JobsConfig(miner, lumberjack, farmer, enchanter, fisherman, explorer));

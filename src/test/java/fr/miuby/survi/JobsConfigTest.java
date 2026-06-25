@@ -292,6 +292,26 @@ class JobsConfigTest {
         }
     }
 
+    @Test
+    void explorerWildernessRadiusPerLevelValid() {
+        List<Number> list = getNumberList(explorerRoot, "wilderness-radius-per-level");
+        assertSize(list, "explorer.wilderness-radius-per-level");
+        int previous = 0;
+        for (int i = 0; i < LEVEL_COUNT; i++) {
+            int radius = list.get(i).intValue();
+            assertTrue(radius > 0, "explorer.wilderness-radius-per-level[" + i + "] doit être > 0, valeur : " + radius);
+            assertTrue(radius >= previous,
+                    "explorer.wilderness-radius-per-level[" + i + "] (" + radius + ") ne doit pas être inférieur à l'index précédent (" + previous + ")");
+            previous = radius;
+        }
+
+        // Cohérence Nether : radius[0] / 8 doit rester ≥ 1
+        int minRadius = list.get(0).intValue();
+        assertTrue(minRadius / 8 >= 1,
+                "Le rayon Nether au niveau 0 (wilderness-radius-per-level[0] / 8 = " + (minRadius / 8)
+                        + ") serait nul. Augmentez wilderness-radius-per-level[0] (actuellement " + minRadius + ") à au moins 8.");
+    }
+
     // ─── Helpers ─────────────────────────────────────────────────────────────────
 
     private List<Number> getNumberList(Map<String, Object> section, String key) {

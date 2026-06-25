@@ -6,8 +6,8 @@ import fr.miuby.lib.world.WorldRegistry;
 import fr.miuby.lib.world.WorldType;
 import fr.miuby.survi.GameManager;
 import fr.miuby.survi.job.EJob;
+import fr.miuby.survi.job.config.JobsConfig;
 import fr.miuby.survi.player.AlphaPlayer;
-import fr.miuby.survi.system.SurviConfig;
 import fr.miuby.survi.system.log.ELogTag;
 import fr.miuby.survi.world.EWorld;
 import org.bukkit.Bukkit;
@@ -18,7 +18,6 @@ import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import java.util.List;
 import java.util.logging.Level;
 
 /**
@@ -100,10 +99,8 @@ public class ZoneBorderTask extends BukkitRunnable {
         AlphaPlayer ap = AlphaPlayer.get(player.getUniqueId());
         if (ap == null) return null;
 
-        List<Integer> radii = SurviConfig.getInstance().getExploreWildernessRadius();
-        int idx    = Math.min(ap.getJobLevel(EJob.EXPLORER), radii.size() - 1);
-        int radius = radii.get(idx);
-        if (isNether) radius = radius / 8;
+        int radius = JobsConfig.getInstance().getExplorer()
+                .wildernessRadiusForLevel(ap.getJobLevel(EJob.EXPLORER), isNether);
 
         return new ZoneBounds(0, 0, radius, radius);
     }

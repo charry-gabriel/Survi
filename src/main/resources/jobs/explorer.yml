@@ -17,3 +17,20 @@ safe-fall-distance:
   - 5.2    # niveau  8
   - 5.7    # niveau  9
   - 6.2    # niveau 10
+
+# Rayon autorisé dans la Wilderness (et dans le Nether = rayon ÷ 8) par niveau Explorateur.
+# Le Nether utilise le même palier divisé par 8 pour rester cohérent avec le
+# ratio de coordonnées Overworld/Nether (1 bloc Nether = 8 blocs Overworld).
+# L'End n'a aucune limite.
+wilderness-radius-per-level:
+  - 100      # niveau  0
+  - 500      # niveau  1
+  - 1000     # niveau  2
+  - 2000     # niveau  3
+  - 4000     # niveau  4
+  - 8000     # niveau  5
+  - 15000    # niveau  6
+  - 25000    # niveau  7
+  - 50000    # niveau  8
+  - 100000   # niveau  9
+  - 2000000  # niveau 10
