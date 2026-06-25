@@ -3,28 +3,74 @@ id: GROWTH_FARMER_LEGGINGS
 eventType: CropBreakEvent
 
 # Stats de base : speed+, défense- et vie- actives tant que la houe est tenue en main.
-baseEffects:
-  - { type: set_attribute, attribute: movement_speed, attributeValue: 0.03,  operation: ADD_NUMBER, slot: HAND }
-  - { type: set_attribute, attribute: armor,          attributeValue: -1.0,  operation: ADD_NUMBER, slot: HAND }
-  - { type: set_attribute, attribute: max_health,     attributeValue: -2.0,  operation: ADD_NUMBER, slot: HAND }
+
 
 tiers:
-  - requiredUses: 1000
-    effects:
-      - { type: name,          value: "Houe du Fermier II" }
-      - { type: fire_enemies,  seconds: 3 }
-      - { type: message,       value: "Ta houe s'embrase — tes ennemis vont brûler !" }
-
   - requiredUses: 2000
     effects:
+      - { type: name,          value: "Houe du Fermier II" }
+      - { type: fire_enemies,  seconds: 1 }
+      - { type: message,       value: "Ton pentalon s'embrase, tes ennemis vont brûler !" }
+
+  - requiredUses: 5000
+    effects:
       - { type: name,          value: "Houe du Fermier III" }
-      - { type: fire_enemies,  seconds: 6 }
+      - { type: fire_enemies,  seconds: 2 }
+      - { type: set_attribute, attribute: movement_speed, attributeValue: 0.01, operation: ADD_NUMBER, slot: HAND }
+      - { type: message,       value: "Tu cours plus vite et tes ennemis brûlent plus longtemps !" }
+
+  - requiredUses: 10000
+    effects:
+      - { type: name,          value: "Houe du Fermier IV" }
+      - { type: fire_enemies,  seconds: 3 }
+      - { type: set_attribute, attribute: movement_speed, attributeValue: 0.02, operation: ADD_NUMBER, slot: HAND }
+      - { type: message,       value: "Tu cours plus vite et tes ennemis brûlent plus longtemps !" }
+
+  - requiredUses: 20000
+    effects:
+      - { type: name,          value: "Houe du Fermier V" }
+      - { type: fire_enemies,  seconds: 4 }
+      - { type: set_attribute, attribute: movement_speed, attributeValue: 0.03, operation: ADD_NUMBER, slot: HAND }
+      - { type: message,       value: "Tu cours plus vite et tes ennemis brûlent plus longtemps !" }
+
+  - requiredUses: 35000
+    effects:
+      - { type: name,          value: "Houe du Fermier VI" }
+      - { type: fire_enemies,  seconds: 5 }
+      - { type: set_attribute, attribute: movement_speed, attributeValue: 0.04, operation: ADD_NUMBER, slot: HAND }
+      - { type: message,       value: "Tu cours plus vite et tes ennemis brûlent plus longtemps !" }
+
+  - requiredUses: 60000
+    effects:
+      - { type: name,          value: "Houe du Fermier VII" }
+      - { type: fire_enemies,  seconds: 10 }
       - { type: set_attribute, attribute: movement_speed, attributeValue: 0.05, operation: ADD_NUMBER, slot: HAND }
       - { type: message,       value: "Tu cours plus vite et tes ennemis brûlent plus longtemps !" }
 
-  - requiredUses: 3000
+  - requiredUses: 95000
+    effects:
+      - { type: name,          value: "Houe du Fermier VIII" }
+      - { type: fire_enemies,  seconds: 15 }
+      - { type: set_attribute, attribute: movement_speed, attributeValue: 0.06, operation: ADD_NUMBER, slot: HAND }
+      - { type: message,       value: "Tu cours plus vite et tes ennemis brûlent plus longtemps !" }
+
+  - requiredUses: 140000
+    effects:
+      - { type: name,          value: "Houe du Fermier IX" }
+      - { type: fire_enemies,  seconds: 30 }
+      - { type: set_attribute, attribute: movement_speed, attributeValue: 0.08, operation: ADD_NUMBER, slot: HAND }
+      - { type: message,       value: "Tu cours plus vite et tes ennemis brûlent plus longtemps !" }
+
+  - requiredUses: 200000
     effects:
       - { type: name,          value: "Houe du Grand Fermier" }
-      - { type: fire_enemies,  seconds: 10 }
-      - { type: set_attribute, attribute: movement_speed, attributeValue: 0.07, operation: ADD_NUMBER, slot: HAND }
+      - { type: fire_enemies,  seconds: 60 }
+      - { type: set_attribute, attribute: movement_speed, attributeValue: 0.1, operation: ADD_NUMBER, slot: HAND }
       - { type: message,       value: "Houe de légende. Tes ennemis fuient les flammes de tes champs." }
+
+
+periodicEffects:
+  - everyUses: 400
+    effects:
+      - { type: potion, effect: saturation, seconds: 300 }
+      - { type: message,value: "Tu n'as plus besoin de te nourrir pendant 5 minutes !" }
