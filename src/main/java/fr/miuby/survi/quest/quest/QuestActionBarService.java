@@ -33,10 +33,7 @@ public class QuestActionBarService {
         if (player.getPlayer() == null) return;
         UUID uuid = player.getUuid();
 
-        int done     = player.getTotalDailyQuestsClaimed() + player.countActiveUnclaimedQuests();
-        int capacity = GameManager.getInstance().getQuestManager().getTotalCapacity();
-
-        Component message = buildProgressMessage(player, quest, data, done, capacity);
+        Component message = buildProgressMessage(player, quest, data);
         activeMessages.put(uuid, message);
         lastProgressAt.put(uuid, System.currentTimeMillis());
         player.getPlayer().sendActionBar(message);
@@ -88,13 +85,11 @@ public class QuestActionBarService {
     // Construction des messages (traductions)
     // =========================================================================
 
-    private Component buildProgressMessage(AlphaPlayer player, Quest quest,
-                                           PlayerQuestData data, int doneCount, int capacity) {
+    private Component buildProgressMessage(AlphaPlayer player, Quest quest, PlayerQuestData data) {
         LangService ls = GameManager.getInstance().getLangService();
         return ls.text(player.getPlayer(), "quest.actionbar.progress",
                 quest.getFormattedDescription(),
-                data.getProgress() + "/" + quest.getGoal(),
-                doneCount + "/" + capacity);
+                data.getProgress() + "/" + quest.getGoal());
     }
 
     private Component buildFinishedMessage(AlphaPlayer player, Quest quest) {

@@ -63,7 +63,7 @@ quest.new_slots: "<gold>[Quêtes] <green>{0} nouveau slot de quête journalière
 quest.locked_world_level: "<gray>Va voir quelqu'un d'autre, je n'ai pas de quête pour toi pour l'instant."
 
 # ─── ActionBar quête journalière ─────────────────────────────────────────────
-quest.actionbar.progress: "<aqua>⚔ <yellow>{0}<dark_gray> — <white>{1}<dark_gray>  [<gray>{2}<dark_gray> quêtes]"
+quest.actionbar.progress: "<aqua>⚔ <yellow>{0}<dark_gray> — <white>{1}<dark_gray>"
 quest.actionbar.finished: "<bold><green>✔ Quête terminée : <gold>{0}<gray> — Allez voir le Marchand !"
 
 # ─── BossBar quête globale ───────────────────────────────────────────────────
