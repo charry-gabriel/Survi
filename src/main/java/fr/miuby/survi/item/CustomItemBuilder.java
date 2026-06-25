@@ -19,6 +19,7 @@ import org.bukkit.inventory.meta.trim.TrimMaterial;
 import org.bukkit.inventory.meta.trim.TrimPattern;
 
 import java.text.Normalizer;
+import java.util.List;
 
 public class CustomItemBuilder {
     private final ItemStack itemStack;
@@ -35,6 +36,14 @@ public class CustomItemBuilder {
         itemStack.setItemMeta(meta);
         return this;
     }
+
+    public CustomItemBuilder lore(List<Component> list) {
+        ItemMeta meta = itemStack.getItemMeta();
+        meta.lore(list);
+        itemStack.setItemMeta(meta);
+        return this;
+    }
+
 
     public CustomItemBuilder addAttribute(Attribute attr, double value, AttributeModifier.Operation op, EquipmentSlotGroup slot) {
         String modifierName = sanitizeKey(itemKeyId)

@@ -3,6 +3,7 @@ package fr.miuby.survi.item;
 import fr.miuby.survi.GameManager;
 import fr.miuby.survi.item.growth_item.GrowthItems;
 import lombok.Getter;
+import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Color;
 import org.bukkit.Material;
@@ -18,7 +19,9 @@ import org.bukkit.inventory.meta.trim.TrimPattern;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -30,8 +33,12 @@ public enum ECustomItem {
         ItemMeta preMeta = item.getItemMeta();
         createGrowthItem(preMeta, "GROWTH_MINER_HELMET");
         item.setItemMeta(preMeta);
+        List<Component> list = new ArrayList<>();
+        list.add(Component.text("Artéfacts des Maîtres", NamedTextColor.GOLD));
+        list.add(Component.text("Night_vison : x minerais", NamedTextColor.GRAY));
         new CustomItemBuilder(item, "growthMiner")
             .name("Casque du Mineur 1", NamedTextColor.GRAY)
+            .lore(list)
             .leatherArmor(TrimMaterial.GOLD, TrimPattern.TIDE, Color.fromRGB(11184810))
             .addAttribute(Attribute.MINING_EFFICIENCY, 0, ADD_NUMBER, EquipmentSlotGroup.HEAD) //évolutif
             .addAttribute(Attribute.ARMOR, -10, ADD_NUMBER, EquipmentSlotGroup.HEAD)
