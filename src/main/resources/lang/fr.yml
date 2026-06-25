@@ -363,6 +363,9 @@ cmd.globalquest.progress_finished: "<gold>Objectif atteint — quête « {0} » 
 cmd.blessing.invalid_type: "<red>Type invalide : {0}"
 cmd.blessing.feedback: "<yellow>[Blessing] <yellow>{0} → appliqué à {1}"
 
+growth_item.level_up.title: "<gold>✦ Artéfact des Maîtres"
+growth_item.level_up.subtitle: "<yellow>Ton item a évolué !"
+
 # ─── Commandes — growthitem (admin + notification joueur) ─────────────────────
 cmd.growth.level_too_high: "<red>Niveau trop élevé. Max pour {0} : {1}."
 cmd.growth.no_item: "<red>Aucune entrée ECustomItem pour l'ID : {0}."

@@ -6,8 +6,12 @@ import fr.miuby.survi.item.growth_item.config.GrowthConfig;
 import fr.miuby.survi.item.growth_item.effect.AddEnchantmentItemEffect;
 import fr.miuby.survi.item.growth_item.effect.ItemEffect;
 import fr.miuby.survi.player.AlphaPlayer;
+import fr.miuby.survi.sound.ESound;
+import fr.miuby.survi.sound.SoundService;
 import fr.miuby.survi.system.exception.AlphaPlayerNotFoundException;
+import fr.miuby.survi.system.lang.LangService;
 import fr.miuby.survi.system.log.ELogTag;
+import net.kyori.adventure.title.Title;
 import org.bukkit.NamespacedKey;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
@@ -19,6 +23,7 @@ import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.Nullable;
 
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -29,6 +34,14 @@ import java.util.Set;
 import java.util.logging.Level;
 
 public final class GrowthItems {
+
+    // ─── Constantes UI ────────────────────────────────────────────────────────
+
+    private static final Title.Times TITLE_TIMES = Title.Times.times(
+            Duration.ofMillis(300),
+            Duration.ofMillis(2500),
+            Duration.ofMillis(500)
+    );
 
     // ─── Clés PDC communes ────────────────────────────────────────────────────
 
@@ -213,10 +226,15 @@ public final class GrowthItems {
         item.setItemMeta(meta);
 
         if (tier < config.tiers().size() && uses >= config.tiers().get(tier).requiredUses()) {
-            pdc.set(TIER_KEY, PersistentDataType.INTEGER, tier + 1);
+            int newTier = tier + 1;
+            pdc.set(TIER_KEY, PersistentDataType.INTEGER, newTier);
             item.setItemMeta(meta);
             for (ItemEffect effect : config.tiers().get(tier).effects())
                 effect.apply(item, AlphaPlayer.get(player.getUniqueId()));
+            showTierUpFeedback(player, newTier, config.tiers().size());
+            MLLogManager.getInstance().log(Level.INFO, ELogTag.ITEM,
+                    "[GrowthItems] TierUp " + player.getName() + " : " + pdc.get(ID_KEY, PersistentDataType.STRING)
+                            + " → palier " + newTier + "/" + config.tiers().size() + " (uses=" + uses + ")");
         }
 
         final AlphaPlayer alpha = AlphaPlayer.get(player.getUniqueId());
@@ -224,6 +242,18 @@ public final class GrowthItems {
             if (uses % pe.everyUses() == 0)
                 pe.effects().forEach(e -> e.apply(item, alpha));
         });
+    }
+
+    // ─── Feedback tier-up ─────────────────────────────────────────────────────
+
+    private static void showTierUpFeedback(Player player, int newTier, int maxTier) {
+        SoundService.play(player, ESound.GROWTH_ITEM_LEVEL_UP);
+        LangService ls = GameManager.getInstance().getLangService();
+        player.showTitle(Title.title(
+                ls.text(player, "growth_item.level_up.title", newTier, maxTier),
+                ls.text(player, "growth_item.level_up.subtitle"),
+                TITLE_TIMES
+        ));
     }
 
     // ─── API publique pour les commandes admin ────────────────────────────────
@@ -257,6 +287,14 @@ public final class GrowthItems {
 
         for (ItemEffect effect : tier.effects())
             effect.apply(item, alpha);
+
+        Player player = alpha.getPlayer();
+        if (player != null && player.isOnline()) {
+            showTierUpFeedback(player, currentTier + 1, config.tiers().size());
+            MLLogManager.getInstance().log(Level.INFO, ELogTag.ITEM,
+                    "[GrowthItems] ForceTierUp " + alpha.getPseudo() + " : " + growthId
+                            + " → palier " + (currentTier + 1) + "/" + config.tiers().size());
+        }
 
         return true;
     }

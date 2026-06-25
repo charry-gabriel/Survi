@@ -19,14 +19,15 @@ import net.kyori.adventure.sound.Sound;
 public enum ESound {
 
     // ─── Quêtes ──────────────────────────────────────────────────────────────
-    QUEST_COMPLETE(Key.key("ui.toast.challenge_complete"), Sound.Source.MASTER, 1f, 1.1f),
-    GLOBAL_QUEST_START(Key.key("ui.toast.challenge_complete"), Sound.Source.MASTER, 1f, 0.8f),
-    GLOBAL_QUEST_COMPLETE(Key.key("ui.toast.challenge_complete"), Sound.Source.MASTER, 1f, 1.2f),
+    QUEST_COMPLETE(Key.key("ui.toast.challenge_complete"), Sound.Source.MASTER, 0.7f, 1.1f),
+    GLOBAL_QUEST_START(Key.key("ui.toast.challenge_complete"), Sound.Source.MASTER, 0.6f, 0.8f),
+    GLOBAL_QUEST_COMPLETE(Key.key("ui.toast.challenge_complete"), Sound.Source.MASTER, 0.6f, 1.2f),
 
     // ─── Niveaux ─────────────────────────────────────────────────────────────
     JOB_LEVEL_UP(Key.key("ui.toast.challenge_complete"), Sound.Source.MASTER, 1f, 1.1f),
     WORLD_LEVEL_UP(Key.key("ui.toast.challenge_complete"), Sound.Source.MASTER, 1f, 0.8f),
     VILLAGER_LEVEL_UP(Key.key("ui.toast.challenge_complete"), Sound.Source.MASTER, 1f, 1.1f),
+    GROWTH_ITEM_LEVEL_UP(Key.key("ui.toast.challenge_complete"), Sound.Source.MASTER, 1f, 1.4f),
 
     // ─── Combat ──────────────────────────────────────────────────────────────
     FEE_DAMAGE(Key.key("entity.slime.attack"), Sound.Source.MASTER, 1f, 1.1f),
