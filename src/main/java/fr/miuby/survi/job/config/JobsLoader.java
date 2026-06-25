@@ -81,7 +81,14 @@ public final class JobsLoader {
                 readInt(lumberjackCfg, "tree-feller-extra-logs",
                         new int[]{0, 0, 0, 0, 0, 1, 2, 3, 4, 5, 6}),
                 readInt(lumberjackCfg, "fire-resistance-ticks",
-                        new int[]{0, 0, 0, 0, 0, 0, 0, 60, 100, 160, 240})
+                        new int[]{0, 0, 0, 0, 0, 0, 0, 60, 100, 160, 240}),
+                readDouble(lumberjackCfg, "sapling-growth-allow-chance",
+                        new double[]{0.05, 0.15, 0.30, 0.50, 0.70, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00}),
+                readDouble(lumberjackCfg, "sapling-extra-growth-chance",
+                        new double[]{0, 0, 0, 0, 0, 0, 0.20, 0.40, 0.65, 1.00, 1.00}),
+                lumberjackCfg.getDouble("sapling-third-tick-chance-at-max", 0.50),
+                readDouble(lumberjackCfg, "sapling-bone-meal-chance",
+                        new double[]{0.01, 0.02, 0.10, 0.20, 0.30, 0.40, 0.50, 0.60, 0.70, 0.80, 1.00})
         );
 
         JobsConfig.FarmerCfg farmer = new JobsConfig.FarmerCfg(

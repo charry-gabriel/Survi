@@ -105,15 +105,29 @@ public final class JobsConfig {
         private final double[] fireDamageMultiplier;
         private final int[]    treeFellerExtraLogs;
         private final int[]    fireResistanceTicks;
+        /** Probabilité d'autoriser un tick de croissance sur un sapling planté (niv.0–4 = ralentissement). Index = niveau. */
+        private final double[] saplingGrowthAllowChance;
+        /** Probabilité d'un tick de croissance bonus après un tick normal (niv.6–10). Index = niveau. */
+        private final double[] saplingExtraGrowthChance;
+        /** Probabilité d'un 3e tick bonus au niveau maximum. */
+        private final double   saplingThirdTickChanceAtMax;
+        /** Probabilité que la farine d'os fonctionne sur un sapling planté par un bûcheron. Index = niveau. */
+        private final double[] saplingBoneMealChance;
 
         LumberjackCfg(double[] dropMultiplier, double[] charcoalChance, double[] appleLeafChance,
-                      double[] fireDamageMultiplier, int[] treeFellerExtraLogs, int[] fireResistanceTicks) {
-            this.dropMultiplier       = dropMultiplier;
-            this.charcoalChance       = charcoalChance;
-            this.appleLeafChance      = appleLeafChance;
-            this.fireDamageMultiplier = fireDamageMultiplier;
-            this.treeFellerExtraLogs  = treeFellerExtraLogs;
-            this.fireResistanceTicks  = fireResistanceTicks;
+                      double[] fireDamageMultiplier, int[] treeFellerExtraLogs, int[] fireResistanceTicks,
+                      double[] saplingGrowthAllowChance, double[] saplingExtraGrowthChance,
+                      double saplingThirdTickChanceAtMax, double[] saplingBoneMealChance) {
+            this.dropMultiplier             = dropMultiplier;
+            this.charcoalChance             = charcoalChance;
+            this.appleLeafChance            = appleLeafChance;
+            this.fireDamageMultiplier       = fireDamageMultiplier;
+            this.treeFellerExtraLogs        = treeFellerExtraLogs;
+            this.fireResistanceTicks        = fireResistanceTicks;
+            this.saplingGrowthAllowChance   = saplingGrowthAllowChance;
+            this.saplingExtraGrowthChance   = saplingExtraGrowthChance;
+            this.saplingThirdTickChanceAtMax = saplingThirdTickChanceAtMax;
+            this.saplingBoneMealChance      = saplingBoneMealChance;
         }
     }
 

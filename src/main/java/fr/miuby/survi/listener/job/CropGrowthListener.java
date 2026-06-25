@@ -27,13 +27,16 @@ import org.bukkit.inventory.ItemStack;
 import java.util.logging.Level;
 
 /**
- * Gère la vitesse de croissance des cultures plantées par des fermiers.
+ * Gère la vitesse de croissance des cultures (fermier) et des pousses d'arbres (bûcheron).
  *
  * <ul>
- *   <li>Cultures <em>non plantées</em> par un fermier → croissance vanilla (aucune restriction).</li>
  *   <li>Cultures plantées par un fermier (niv. 0-4) → croissance ralentie.</li>
  *   <li>Cultures plantées par un fermier (niv. 5) → croissance vanilla.</li>
  *   <li>Cultures plantées par un fermier (niv. 6-10) → croissance accélérée (tick(s) bonus).</li>
+ *   <li>Pousses plantées par un bûcheron (niv. 0-4) → croissance ralentie.</li>
+ *   <li>Pousses plantées par un bûcheron (niv. 5) → croissance vanilla.</li>
+ *   <li>Pousses plantées par un bûcheron (niv. 6-10) → croissance accélérée (tick(s) bonus).</li>
+ *   <li>Tout le reste → croissance vanilla (aucune modification).</li>
  * </ul>
  *
  * <p>Tous les paramètres numériques sont lus depuis {@link JobsConfig}.</p>
@@ -52,8 +55,9 @@ public class CropGrowthListener implements Listener {
 
         Block targetBlock = GameManager.getInstance().getPlantedCropsManager().getTargetBlockForPlanting(event);
         if (targetBlock != null) {
-            int farmLevel = alpha.getJobLevel(EJob.FARMER);
-            GameManager.getInstance().getPlantedCropsManager().addPlantedCrop(targetBlock.getLocation(), farmLevel);
+            boolean isSapling = PlantedCropUtils.isSapling(event.getItem().getType());
+            int level = isSapling ? alpha.getJobLevel(EJob.LUMBERJACK) : alpha.getJobLevel(EJob.FARMER);
+            GameManager.getInstance().getPlantedCropsManager().addPlantedCrop(targetBlock.getLocation(), level);
         }
     }
 
@@ -63,30 +67,53 @@ public class CropGrowthListener implements Listener {
     }
 
     // ════════════════════════════════════════════════════════════════════════════
-    //  Croissance des cultures
+    //  Croissance des cultures et des pousses
     // ════════════════════════════════════════════════════════════════════════════
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onCropGrow(BlockGrowEvent event) {
-        if (!PlantedCropUtils.isCrop(event.getBlock().getType())) return;
+        Material type = event.getBlock().getType();
+        if (!PlantedCropUtils.isCrop(type)) return;
 
         PlantedCropsManager mgr = GameManager.getInstance().getPlantedCropsManager();
-        Integer farmLevel = mgr.getFarmLevel(event.getBlock().getLocation());
+        Integer storedLevel = mgr.getFarmLevel(event.getBlock().getLocation());
 
-        // Culture non plantée par un fermier → vanilla, aucune modification
-        if (farmLevel == null) return;
+        // Non planté par un joueur → croissance vanilla
+        if (storedLevel == null) return;
 
+        if (PlantedCropUtils.isSapling(type)) {
+            handleSaplingGrow(event, storedLevel);
+        } else {
+            handleCropGrow(event, storedLevel);
+        }
+    }
+
+    private static void handleSaplingGrow(BlockGrowEvent event, int lumberjackLevel) {
+        JobsConfig.LumberjackCfg lj = JobsConfig.getInstance().getLumberjack();
+
+        if (lumberjackLevel < 5 && Math.random() > lj.getSaplingGrowthAllowChance()[lumberjackLevel]) {
+            event.setCancelled(true);
+            MLLogManager.getInstance().log(Level.FINE, ELogTag.JOB,
+                    "[CropGrowthListener.onCropGrow] Tick sapling annulé pour bûcheron niv." + lumberjackLevel
+                            + " (chance=" + lj.getSaplingGrowthAllowChance()[lumberjackLevel] + ") @ " + event.getBlock().getLocation());
+            return;
+        }
+
+        if (lumberjackLevel >= 6) {
+            scheduleExtraGrowth(event.getBlock(), lumberjackLevel, lj.getSaplingExtraGrowthChance(), lj.getSaplingThirdTickChanceAtMax());
+        }
+    }
+
+    private static void handleCropGrow(BlockGrowEvent event, int farmLevel) {
         JobsConfig.FarmerCfg farmer = JobsConfig.getInstance().getFarmer();
 
-        // Niv. 0-4 : ralentissement → annule le tick avec probabilité (1 - chance)
         if (farmLevel < 5 && Math.random() > farmer.getCropGrowthAllowChance()[farmLevel]) {
             event.setCancelled(true);
             return;
         }
 
-        // Niv. 6-10 : tick(s) bonus après le tick normal
         if (farmLevel >= 6) {
-            scheduleExtraGrowth(event.getBlock(), farmLevel, farmer);
+            scheduleExtraGrowth(event.getBlock(), farmLevel, farmer.getCropExtraGrowthChance(), farmer.getCropThirdTickChanceAtMax());
         }
     }
 
@@ -94,8 +121,8 @@ public class CropGrowthListener implements Listener {
      * Planifie un (ou deux pour niv.10) tick(s) de croissance supplémentaires.
      * N'avance le bloc que s'il est toujours un {@link Ageable} non au max.
      */
-    private static void scheduleExtraGrowth(Block block, int farmLevel, JobsConfig.FarmerCfg farmer) {
-        if (Math.random() >= farmer.getCropExtraGrowthChance()[farmLevel]) return;
+    private static void scheduleExtraGrowth(Block block, int level, double[] extraGrowthChance, double thirdTickChanceAtMax) {
+        if (Math.random() >= extraGrowthChance[level]) return;
 
         Location loc = block.getLocation().clone();
         MiubyLib.runLater(() -> {
@@ -106,7 +133,7 @@ public class CropGrowthListener implements Listener {
             target.setBlockData(ageable);
 
             // Niv. 10 seulement : chance d'un 3e tick de croissance
-            if (farmLevel == 10 && Math.random() < farmer.getCropThirdTickChanceAtMax()) {
+            if (level == 10 && Math.random() < thirdTickChanceAtMax) {
                 MiubyLib.runLater(() -> {
                     Block t2 = loc.getBlock();
                     if (!(t2.getBlockData() instanceof Ageable a2)) return;
@@ -120,16 +147,14 @@ public class CropGrowthListener implements Listener {
     }
 
     // ════════════════════════════════════════════════════════════════════════════
-    //  Bonemeal sur les cultures
+    //  Bonemeal sur les cultures et les pousses
     // ════════════════════════════════════════════════════════════════════════════
 
     /**
-     * La farine d'os est bloquée par défaut sur toutes les cultures trackées.
-     * Pour les cultures plantées par un fermier, elle réussit selon {@code bone-meal-chance[niveau]}.
-     * En cas d'échec ou de culture non-fermier, l'event est annulé (pas de croissance)
-     * et la farine d'os est consommée manuellement — {@code setCancelled(true)} seul
-     * ne consomme pas l'item côté Paper.
-     * Cultures non trackées (hors fermier) ou source non-joueur → toujours bloqué.
+     * La farine d'os est bloquée par défaut sur toutes les cultures/pousses trackées.
+     * Pour les cultures fermier, elle réussit selon {@code bone-meal-chance[niveauFermier]}.
+     * Pour les pousses bûcheron, elle réussit selon {@code sapling-bone-meal-chance[niveauBûcheron]}.
+     * En cas d'échec ou si le bloc n'est pas tracké, l'event est annulé et la farine est consommée.
      */
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onFertilize(BlockFertilizeEvent event) {
@@ -137,28 +162,35 @@ public class CropGrowthListener implements Listener {
 
         Player player = event.getPlayer();
         PlantedCropsManager mgr = GameManager.getInstance().getPlantedCropsManager();
-        Integer farmLevel = mgr.getFarmLevel(event.getBlock().getLocation());
+        Integer storedLevel = mgr.getFarmLevel(event.getBlock().getLocation());
 
-        // Culture non plantée par un fermier ou source non-joueur → bloqué, item consommé
-        if (farmLevel == null || player == null) {
+        // Non tracké (pas planté par un joueur) ou source non-joueur → bloqué
+        if (storedLevel == null || player == null) {
             event.setCancelled(true);
             if (player != null) consumeBoneMeal(player);
             return;
         }
 
-        // Culture fermier : chance selon le niveau du joueur qui utilise la bone meal
+        boolean isSapling = PlantedCropUtils.isSapling(event.getBlock().getType());
         AlphaPlayer alpha = AlphaPlayer.get(player.getUniqueId());
-        int playerFarmLevel = alpha != null ? alpha.getJobLevel(EJob.FARMER) : 0;
-        JobsConfig.FarmerCfg farmer = JobsConfig.getInstance().getFarmer();
-        double chance = farmer.getBoneMealChance()[playerFarmLevel];
+
+        double chance;
+        int playerLevel;
+        if (isSapling) {
+            playerLevel = alpha != null ? alpha.getJobLevel(EJob.LUMBERJACK) : 0;
+            chance = JobsConfig.getInstance().getLumberjack().getSaplingBoneMealChance()[playerLevel];
+        } else {
+            playerLevel = alpha != null ? alpha.getJobLevel(EJob.FARMER) : 0;
+            chance = JobsConfig.getInstance().getFarmer().getBoneMealChance()[playerLevel];
+        }
 
         if (Math.random() >= chance) {
-            // Échec : annuler la croissance ET consommer l'item — pénalité de niveau bas
             event.setCancelled(true);
             consumeBoneMeal(player);
             MLLogManager.getInstance().log(Level.FINE, ELogTag.JOB,
                     "[CropGrowthListener.onFertilize] Échec farine d'os pour " + player.getName()
-                            + " (niveau joueur=" + playerFarmLevel + ", chance=" + chance + ") — item consommé");
+                            + (isSapling ? " (bûcheron" : " (fermier")
+                            + " niveau=" + playerLevel + ", chance=" + chance + ") — item consommé");
         }
     }
 
@@ -180,7 +212,7 @@ public class CropGrowthListener implements Listener {
     }
 
     // ════════════════════════════════════════════════════════════════════════════
-    //  Nettoyage du registre à la récolte
+    //  Nettoyage du registre à la récolte / destruction
     // ════════════════════════════════════════════════════════════════════════════
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)

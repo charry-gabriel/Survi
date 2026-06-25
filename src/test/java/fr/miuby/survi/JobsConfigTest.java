@@ -162,6 +162,18 @@ class JobsConfigTest {
     @Test void lumberjackFireDamageMultiplierValid() { assertNonNegativeDoubleArray(lumberjackRoot, "fire-damage-multiplier"); }
     @Test void lumberjackTreeFellerExtraLogsValid()  { assertNonNegativeIntArray(lumberjackRoot, "tree-feller-extra-logs"); }
     @Test void lumberjackFireResistanceTicksValid()  { assertNonNegativeIntArray(lumberjackRoot, "fire-resistance-ticks"); }
+    @Test void lumberjackSaplingGrowthAllowChanceValid() { assertProbabilityArray(lumberjackRoot, "sapling-growth-allow-chance"); }
+    @Test void lumberjackSaplingExtraGrowthChanceValid() { assertProbabilityArray(lumberjackRoot, "sapling-extra-growth-chance"); }
+    @Test void lumberjackSaplingBoneMealChanceValid()    { assertProbabilityArray(lumberjackRoot, "sapling-bone-meal-chance"); }
+
+    @Test
+    void lumberjackSaplingThirdTickChanceAtMaxValid() {
+        assertTrue(lumberjackRoot.containsKey("sapling-third-tick-chance-at-max"),
+                "lumberjack: sapling-third-tick-chance-at-max manquant");
+        double v = ((Number) lumberjackRoot.get("sapling-third-tick-chance-at-max")).doubleValue();
+        assertTrue(v >= 0 && v <= 1,
+                "lumberjack.sapling-third-tick-chance-at-max doit être dans [0,1], valeur : " + v);
+    }
 
     // ─── farmer ──────────────────────────────────────────────────────────────────
 

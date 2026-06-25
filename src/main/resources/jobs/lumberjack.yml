@@ -87,3 +87,50 @@ fire-resistance-ticks:
   - 100  # niveau  8
   - 160  # niveau  9
   - 240  # niveau 10
+
+# ─── Croissance des pousses d'arbres ──────────────────────────────────────────
+
+# Probabilité d'autoriser un tick de croissance des saplings (niveaux 0–4 = ralentissement)
+sapling-growth-allow-chance:
+  - 0.05   # niveau  0  — 20× plus lent que vanilla
+  - 0.15   # niveau  1
+  - 0.30   # niveau  2
+  - 0.50   # niveau  3
+  - 0.70   # niveau  4
+  - 1.00   # niveau  5  — vanilla
+  - 1.00   # niveau  6
+  - 1.00   # niveau  7
+  - 1.00   # niveau  8
+  - 1.00   # niveau  9
+  - 1.00   # niveau 10
+
+# Probabilité d'un tick de croissance BONUS immédiatement après un tick normal (niveaux 6–10)
+sapling-extra-growth-chance:
+  - 0.00   # niveau  0
+  - 0.00   # niveau  1
+  - 0.00   # niveau  2
+  - 0.00   # niveau  3
+  - 0.00   # niveau  4
+  - 0.00   # niveau  5
+  - 0.20   # niveau  6
+  - 0.40   # niveau  7
+  - 0.65   # niveau  8
+  - 1.00   # niveau  9
+  - 1.00   # niveau 10
+
+# Probabilité d'un 3e tick bonus au niveau maximum
+sapling-third-tick-chance-at-max: 0.50
+
+# Probabilité que la farine d'os fonctionne sur un sapling planté par un bûcheron
+sapling-bone-meal-chance:
+  - 0.01   # niveau  0
+  - 0.02   # niveau  1
+  - 0.10   # niveau  2
+  - 0.20   # niveau  3
+  - 0.30   # niveau  4
+  - 0.40   # niveau  5
+  - 0.50   # niveau  6
+  - 0.60   # niveau  7
+  - 0.70   # niveau  8
+  - 0.80   # niveau  9
+  - 1.00   # niveau 10
