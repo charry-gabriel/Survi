@@ -23,7 +23,7 @@ quests:
     jobs:
       - ENCHANTER
     targets: [PAPER]
-    goal: 1
+    goal: 32
     rewards:
       - { type: REPUTATION, job: ENCHANTER, value: 1 }
 

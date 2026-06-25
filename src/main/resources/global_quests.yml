@@ -8,7 +8,7 @@ global_quests:
     description: "Coupez {value} bûche d'oak ou de jungle !"
     type: "MINE"
     targets: [OAK_LOG, JUNGLE_LOG]
-    goal: 1000
+    goal: 2500
     time_limit: 7200
     rewards:
       - {type: REPUTATION, job: LUMBERJACK, value: 1}
@@ -22,7 +22,7 @@ global_quests:
     description: "Tuez {value} monstres hostiles basiques."
     type: KILL
     targets: [ZOMBIE, SKELETON, CREEPER, SPIDER]
-    goal: 190
+    goal: 700
     time_limit: 5400
     rewards:
       - {type: REPUTATION, job: EXPLORER, value: 3}
@@ -34,7 +34,7 @@ global_quests:
     description: "Minez {value} minerais de toute sorte."
     type: MINE
     targets: [ COAL_ORE, DEEPSLATE_COAL_ORE, IRON_ORE, DEEPSLATE_IRON_ORE, COPPER_ORE, DEEPSLATE_COPPER_ORE, GOLD_ORE, DEEPSLATE_GOLD_ORE, REDSTONE_ORE, DEEPSLATE_REDSTONE_ORE, LAPIS_ORE, DEEPSLATE_LAPIS_ORE, DIAMOND_ORE, DEEPSLATE_DIAMOND_ORE, EMERALD_ORE, DEEPSLATE_EMERALD_ORE ]
-    goal: 450
+    goal: 1200
     time_limit: 5400
     rewards:
       - { type: REPUTATION, job: MINER, value: 1 }
@@ -49,12 +49,37 @@ global_quests:
     description: "Récoltez {value} cultures parmi le blé, les carottes et les pommes de terre."
     type: HARVEST_CROP
     targets: [ WHEAT, CARROTS, POTATOES ]
-    goal: 450
+    goal: 1500
     time_limit: 5400
     rewards:
       - { type: REPUTATION, job: FARMER, value: 1 }
       - { type: POTION, potion: saturation, duration: 600, amplifier: 1 }
       - { type: ITEM, item: BREAD, amount: 32 }
       - { type: ITEM, item: COOKED_RABBIT, amount: 32 }
+
+  - id: "global_fishing_trip"
+    name: "Grande Partie de Pêche"
+    description: "Pêchez {value} poissons."
+    type: FISH
+    targets: [ COD, SALMON, TROPICAL_FISH, PUFFERFISH ]
+    goal: 225
+    time_limit: 5400
+    rewards:
+      - { type: REPUTATION, job: FISHERMAN, value: 1 }
+      - { type: POTION, potion: water_breathing, duration: 600, amplifier: 0 }
+      - { type: ITEM, item: COOKED_COD, amount: 32 }
+      - { type: ITEM, item: COOKED_SALMON, amount: 32 }
+
+  - id: "global_enchant_items"
+    name: "Collectionneur de Savoir"
+    description: "Gagnez {value} niveau d'XP"
+    type: GAIN_XP_LEVELS
+    goal: 150
+    time_limit: 5400
+    rewards:
+      - { type: REPUTATION, job: ENCHANTER, value: 1 }
+      - { type: ITEM, item: LAPIS_LAZULI, amount: 64 }
+      - { type: ITEM, item: EXPERIENCE_BOTTLE, amount: 32 }
+      - { type: POTION, potion: luck, duration: 600, amplifier: 0 }
 
 

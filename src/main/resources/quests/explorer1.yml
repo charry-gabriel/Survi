@@ -59,7 +59,7 @@ quests:
     jobs:
       - EXPLORER
     targets: [WITCH]
-    goal: 10
+    goal: 2
     rewards:
       - {type: REPUTATION, job: ENCHANTER, value: 4}
 
