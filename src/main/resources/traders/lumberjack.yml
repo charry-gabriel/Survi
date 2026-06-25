@@ -36,10 +36,10 @@ recipes:
     requiredReputation: 55
 
   - result:
-      material: IRON_SWORD
+      material: GOLDEN_APPLE
       amount: 1
     ingredient:
-      material: COBBLESTONE
+      material: OAK_LOG
       amount: 32
     message: "Un super achat."
     requiredReputation: 110

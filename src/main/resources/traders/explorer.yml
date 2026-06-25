@@ -36,10 +36,10 @@ recipes:
     requiredReputation: 55
 
   - result:
-      material: IRON_SWORD
+      material: GOLDEN_SWORD
       amount: 1
     ingredient:
-      material: COBBLESTONE
-      amount: 32
+      material: ROTTEN_FLESH
+      amount: 2
     message: "Un super achat."
     requiredReputation: 110
