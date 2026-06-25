@@ -25,6 +25,7 @@ public enum ESound {
 
     // ─── Niveaux ─────────────────────────────────────────────────────────────
     JOB_LEVEL_UP(Key.key("ui.toast.challenge_complete"), Sound.Source.MASTER, 1f, 1.1f),
+    JOB_LEVEL_UP_OTHER(Key.key("ui.toast.challenge_complete"), Sound.Source.MASTER, 0.3f, 1.1f),
     WORLD_LEVEL_UP(Key.key("ui.toast.challenge_complete"), Sound.Source.MASTER, 1f, 0.8f),
     VILLAGER_LEVEL_UP(Key.key("ui.toast.challenge_complete"), Sound.Source.MASTER, 1f, 1.1f),
     GROWTH_ITEM_LEVEL_UP(Key.key("ui.toast.challenge_complete"), Sound.Source.MASTER, 1f, 1.4f),

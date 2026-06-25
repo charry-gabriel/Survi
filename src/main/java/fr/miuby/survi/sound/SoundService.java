@@ -65,6 +65,14 @@ public final class SoundService {
         for (Player p : Bukkit.getOnlinePlayers()) p.playSound(custom);
     }
 
+    /** Joue {@code sound} à tous les joueurs en ligne sauf {@code excluded}. */
+    public static void broadcastExcept(Player excluded, ESound sound) {
+        Sound s = sound.getSound();
+        for (Player p : Bukkit.getOnlinePlayers()) {
+            if (!p.getUniqueId().equals(excluded.getUniqueId())) p.playSound(s);
+        }
+    }
+
     // ─── Stop ────────────────────────────────────────────────────────────────
 
     /** Stoppe un son spécifique pour le joueur. */

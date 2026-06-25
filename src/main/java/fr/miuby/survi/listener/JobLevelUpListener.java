@@ -61,7 +61,12 @@ public class JobLevelUpListener implements Listener {
         }
 
         // ── Annonce + son — tous les joueurs en ligne (chacun dans sa langue) ────
-        SoundService.broadcast(ESound.JOB_LEVEL_UP);
+        if (player != null && player.isOnline()) {
+            SoundService.play(player, ESound.JOB_LEVEL_UP);
+            SoundService.broadcastExcept(player, ESound.JOB_LEVEL_UP_OTHER);
+        } else {
+            SoundService.broadcast(ESound.JOB_LEVEL_UP_OTHER);
+        }
         ls.broadcast("job.level_up.broadcast",
                 Placeholder.unparsed("player", alphaPlayer.getPseudo()),
                 Placeholder.unparsed("level", String.valueOf(newLevel)),
