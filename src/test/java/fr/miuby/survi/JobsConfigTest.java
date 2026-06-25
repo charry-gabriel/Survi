@@ -193,6 +193,26 @@ class JobsConfigTest {
         }
     }
 
+    @Test
+    void enchanterEnchantMaxXpCostValid() {
+        List<Number> list = getNumberList(enchanterRoot, "enchant-max-xp-cost");
+        assertSize(list, "enchanter.enchant-max-xp-cost");
+        for (int i = 0; i < LEVEL_COUNT; i++) {
+            int v = list.get(i).intValue();
+            assertTrue(v >= -1, "enchanter.enchant-max-xp-cost[" + i + "] doit être ≥ -1, valeur : " + v);
+        }
+    }
+
+    @Test
+    void enchanterEnchantMaxLevelValid() {
+        List<Number> list = getNumberList(enchanterRoot, "enchant-max-level");
+        assertSize(list, "enchanter.enchant-max-level");
+        for (int i = 0; i < LEVEL_COUNT; i++) {
+            int v = list.get(i).intValue();
+            assertTrue(v >= -1, "enchanter.enchant-max-level[" + i + "] doit être ≥ -1, valeur : " + v);
+        }
+    }
+
     @Test void enchanterRepairPerXpValid() { assertNonNegativeIntArray(enchanterRoot, "repair-per-xp"); }
 
     // ─── fisherman ───────────────────────────────────────────────────────────────

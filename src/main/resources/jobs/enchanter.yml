@@ -31,6 +31,49 @@ anvil-max-xp-cost:
   - 40   # niveau  9
   - -1   # niveau 10  — illimité
 
+# Coût XP maximum autorisé pour la table d'enchantement (-1 = illimité)
+enchant-max-xp-cost:
+  - 0    # niveau  0  — bloqué (jobLevel == 0)
+  - 3    # niveau  1
+  - 6    # niveau  2
+  - 10    # niveau  3
+  - 14   # niveau  4
+  - 18   # niveau  5
+  - 12   # niveau  6
+  - 26   # niveau  7
+  - -1   # niveau  8
+  - -1   # niveau  9
+  - -1   # niveau 10  — illimité
+
+# Niveau d'enchantement maximum autorisé (table d'enchantement et enclume). -1 = illimité.
+enchant-max-level:
+  - 0    # niveau  0  — bloqué (jobLevel == 0)
+  - 1    # niveau  1
+  - 2    # niveau  2
+  - 3    # niveau  3
+  - 4    # niveau  4
+  - 5    # niveau  5
+  - 6    # niveau  6
+  - 7    # niveau  7
+  - 8    # niveau  8
+  - 9    # niveau  9
+  - -1   # niveau 10  — illimité
+
+# Somme maximale des niveaux de tous les enchantements présents sur l'item résultant d'une opération d'enclume.
+# Exemple : Sharp5 + Unbreaking3 + Fire Aspect2 = 5+3+2 = 10. -1 = illimité.
+anvil-max-enchant-sum:
+  - 0    # niveau  0
+  - 1    # niveau  1
+  - 3    # niveau  2
+  - 5    # niveau  3
+  - 6    # niveau  4
+  - 7    # niveau  5
+  - 9    # niveau  6
+  - 12   # niveau  7
+  - 15   # niveau  8
+  - 20   # niveau  9
+  - -1   # niveau 10  — illimité
+
 # Durabilité réparée par point d'XP gagné (0 = réparation désactivée à ce niveau)
 repair-per-xp:
   - 0   # niveau  0

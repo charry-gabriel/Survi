@@ -1,6 +1,11 @@
 package fr.miuby.survi.listener.job;
 
+import fr.miuby.lib.log.MLLogManager;
 import fr.miuby.survi.job.EJob;
+import fr.miuby.survi.system.log.ELogTag;
+
+import java.util.Arrays;
+import java.util.logging.Level;
 import fr.miuby.survi.job.config.JobsConfig;
 import fr.miuby.survi.player.AlphaPlayer;
 import fr.miuby.survi.GameManager;
@@ -46,6 +51,21 @@ public class EnchanterListener implements Listener {
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onPrepareEnchant(PrepareItemEnchantEvent event) {
         EnchantmentOffer[] offers = event.getOffers();
+        AlphaPlayer alpha = AlphaPlayer.get(event.getEnchanter().getUniqueId());
+        if (alpha == null) {
+            Arrays.fill(offers, null);
+            return;
+        }
+        int jobLevel = alpha.getJobLevel(EJob.ENCHANTER);
+        if (jobLevel == 0) {
+            Arrays.fill(offers, null);
+            return;
+        }
+        int maxXpCost = JobsConfig.getInstance().getEnchanter().getEnchantMaxXpCost()[jobLevel];
+        for (int i = 0; i < offers.length; i++) {
+            if (offers[i] == null) continue;
+            if (maxXpCost >= 0 && offers[i].getCost() > maxXpCost) offers[i] = null;
+        }
         int write = 0;
         for (int read = 0; read < offers.length; read++) {
             if (offers[read] != null) offers[write++] = offers[read];
@@ -66,23 +86,14 @@ public class EnchanterListener implements Listener {
                     Placeholder.component("job", EJob.ENCHANTER.toComponent())));
             return;
         }
-        int maxXpCost = jobLevel * 3;
-        if (event.getExpLevelCost() > maxXpCost) {
+        JobsConfig.EnchanterCfg enc = JobsConfig.getInstance().getEnchanter();
+        int maxXpCost = enc.getEnchantMaxXpCost()[jobLevel];
+        if (maxXpCost >= 0 && event.getExpLevelCost() > maxXpCost) {
             event.setCancelled(true);
             event.getEnchanter().sendMessage(langService.text(
                     event.getEnchanter(), "enchanter.xp_too_high",
                     Placeholder.component("job", EJob.ENCHANTER.toComponent()),
                     Placeholder.unparsed("max", String.valueOf(maxXpCost))));
-            return;
-        }
-        boolean tooHigh = event.getEnchantsToAdd().entrySet().stream()
-                .anyMatch(e -> e.getValue() > jobLevel);
-        if (tooHigh) {
-            event.setCancelled(true);
-            event.getEnchanter().sendMessage(langService.text(
-                    event.getEnchanter(), "enchanter.level_too_high",
-                    Placeholder.component("job", EJob.ENCHANTER.toComponent()),
-                    Placeholder.unparsed("max", String.valueOf(jobLevel))));
         }
     }
 
@@ -97,6 +108,7 @@ public class EnchanterListener implements Listener {
         if (alpha == null) return;
         int jobLevel = alpha.getJobLevel(EJob.ENCHANTER);
         JobsConfig.EnchanterCfg enc = JobsConfig.getInstance().getEnchanter();
+        int maxEnchLevel = enc.getEnchantMaxLevel()[jobLevel];
         AnvilInventory anvil = event.getInventory();
         AnvilView anvilView  = (AnvilView) event.getView();
         ItemStack first  = anvil.getItem(0);
@@ -105,7 +117,7 @@ public class EnchanterListener implements Listener {
         // Résultat nul → niv.10 : reconstruction pour bypasser "Too Expensive"
         if (event.getResult() == null || event.getResult().getType() == Material.AIR) {
             if (enc.getAnvilMaxXpCost()[jobLevel] < 0 && first != null && !first.getType().isAir()) {
-                ItemStack rebuilt = constructAnvilResult(first, second, anvilView.getRenameText(), jobLevel);
+                ItemStack rebuilt = constructAnvilResult(first, second, anvilView.getRenameText(), maxEnchLevel);
                 if (rebuilt != null) { event.setResult(rebuilt); anvilView.setRepairCost(39); }
             }
             return;
@@ -120,10 +132,23 @@ public class EnchanterListener implements Listener {
         for (var entry : resultEnchants.entrySet()) {
             if (entry.getValue() > firstEnchants.getOrDefault(entry.getKey(), 0)) {
                 changed = true;
-                if (jobLevel == 0 || entry.getValue() > jobLevel) { tooHigh = true; break; }
+                if (maxEnchLevel >= 0 && entry.getValue() > maxEnchLevel) { tooHigh = true; break; }
             }
         }
         if (changed && tooHigh) { event.setResult(null); return; }
+
+        // Vérification de la somme totale des niveaux d'enchantement (-1 = illimité)
+        int maxEnchantSum = enc.getAnvilMaxEnchantSum()[jobLevel];
+        if (maxEnchantSum >= 0) {
+            int enchantSum = getEnchants(event.getResult()).values().stream().mapToInt(Integer::intValue).sum();
+            if (enchantSum > maxEnchantSum) {
+                MLLogManager.getInstance().log(Level.FINE, ELogTag.JOB,
+                        "[EnchanterListener] Anvil bloqué pour " + player.getName()
+                                + " : enchantSum=" + enchantSum + " > max=" + maxEnchantSum + " (jobLevel=" + jobLevel + ")");
+                event.setResult(null);
+                return;
+            }
+        }
 
         // Vérification du cap XP (-1 = illimité)
         int maxCost = enc.getAnvilMaxXpCost()[jobLevel];
@@ -138,8 +163,7 @@ public class EnchanterListener implements Listener {
         }
     }
 
-    private static ItemStack constructAnvilResult(ItemStack base, ItemStack addition,
-                                                  String rename, int jobLevel) {
+    private static ItemStack constructAnvilResult(ItemStack base, ItemStack addition, String rename, int maxEnchLevel) {
         ItemStack result = base.clone();
         ItemMeta meta = result.getItemMeta();
         if (meta == null) return null;
@@ -148,7 +172,7 @@ public class EnchanterListener implements Listener {
         if (addition != null && !addition.getType().isAir()) {
             for (var entry : getEnchants(addition).entrySet()) {
                 int addLvl = entry.getValue();
-                if (addLvl > jobLevel) continue;
+                if (maxEnchLevel >= 0 && addLvl > maxEnchLevel) continue;
                 int existLvl = meta.getEnchantLevel(entry.getKey());
                 int newLvl = (existLvl == addLvl) ? existLvl + 1 : Math.max(existLvl, addLvl);
                 if (entry.getKey().canEnchantItem(result)) meta.addEnchant(entry.getKey(), newLvl, true);

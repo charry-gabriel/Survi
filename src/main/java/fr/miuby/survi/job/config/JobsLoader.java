@@ -101,6 +101,12 @@ public final class JobsLoader {
                         new double[]{3.00, 2.00, 1.50, 1.25, 1.00, 0.75, 0.50, 0.25, 0.10, 0.00, 0.00}),
                 readInt(enchanterCfg, "anvil-max-xp-cost",
                         new int[]{2, 4, 7, 11, 16, 20, 25, 30, 35, 40, -1}),
+                readInt(enchanterCfg, "anvil-max-enchant-sum",
+                        new int[]{0, 1, 3, 5, 6, 7, 9, 12, 15, 20, -1}),
+                readInt(enchanterCfg, "enchant-max-xp-cost",
+                        new int[]{0, 3, 6, 9, 12, 15, 18, 21, 24, 27, -1}),
+                readInt(enchanterCfg, "enchant-max-level",
+                        new int[]{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, -1}),
                 readInt(enchanterCfg, "repair-per-xp",
                         new int[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 4})
         );

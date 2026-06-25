@@ -3,7 +3,7 @@
   "title": "jobs/enchanter.yml",
   "description": "Configuration de l'Enchanteur (ENCHANTER). Tableaux de 11 valeurs (index = niveau 0 à 10). -1 = illimité.",
   "type": "object",
-  "required": ["durability-loss-multiplier", "anvil-max-xp-cost", "repair-per-xp"],
+  "required": ["durability-loss-multiplier", "anvil-max-xp-cost", "anvil-max-enchant-sum", "enchant-max-xp-cost", "enchant-max-level", "repair-per-xp"],
   "additionalProperties": false,
   "properties": {
     "durability-loss-multiplier": {
@@ -13,6 +13,24 @@
     "anvil-max-xp-cost": {
       "type": "array",
       "description": "Coût XP maximum pour une opération d'enclume. -1 = illimité.",
+      "minItems": 11, "maxItems": 11,
+      "items": { "type": "integer", "minimum": -1 }
+    },
+    "anvil-max-enchant-sum": {
+      "type": "array",
+      "description": "Somme maximale des niveaux de tous les enchantements sur l'item résultant d'une opération d'enclume. -1 = illimité.",
+      "minItems": 11, "maxItems": 11,
+      "items": { "type": "integer", "minimum": -1 }
+    },
+    "enchant-max-xp-cost": {
+      "type": "array",
+      "description": "Coût XP maximum pour la table d'enchantement. -1 = illimité.",
+      "minItems": 11, "maxItems": 11,
+      "items": { "type": "integer", "minimum": -1 }
+    },
+    "enchant-max-level": {
+      "type": "array",
+      "description": "Niveau d'enchantement maximum autorisé (table d'enchantement et enclume). -1 = illimité.",
       "minItems": 11, "maxItems": 11,
       "items": { "type": "integer", "minimum": -1 }
     },

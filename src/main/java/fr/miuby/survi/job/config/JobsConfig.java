@@ -143,12 +143,22 @@ public final class JobsConfig {
         private final double[] durabilityLossMultiplier;
         /** -1 = illimité. */
         private final int[]    anvilMaxXpCost;
+        /** Somme maximale des niveaux de tous les enchantements sur l'item résultant d'une opération d'enclume. -1 = illimité. */
+        private final int[]    anvilMaxEnchantSum;
+        /** Coût XP maximum pour la table d'enchantement. -1 = illimité. */
+        private final int[]    enchantMaxXpCost;
+        /** Niveau d'enchantement maximum autorisé (table et enclume). -1 = illimité. */
+        private final int[]    enchantMaxLevel;
         /** Durabilité réparée par XP gagné (0 = pas de réparation à ce niveau). */
         private final int[]    repairPerXp;
 
-        EnchanterCfg(double[] durabilityLossMultiplier, int[] anvilMaxXpCost, int[] repairPerXp) {
+        EnchanterCfg(double[] durabilityLossMultiplier, int[] anvilMaxXpCost, int[] anvilMaxEnchantSum,
+                     int[] enchantMaxXpCost, int[] enchantMaxLevel, int[] repairPerXp) {
             this.durabilityLossMultiplier = durabilityLossMultiplier;
             this.anvilMaxXpCost           = anvilMaxXpCost;
+            this.anvilMaxEnchantSum       = anvilMaxEnchantSum;
+            this.enchantMaxXpCost         = enchantMaxXpCost;
+            this.enchantMaxLevel          = enchantMaxLevel;
             this.repairPerXp              = repairPerXp;
         }
     }
