@@ -2,18 +2,17 @@ package fr.miuby.survi.item.growth_item.effect;
 
 import fr.miuby.survi.player.AlphaPlayer;
 import net.kyori.adventure.text.TextComponent;
-import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-public record NameItemEffect(TextComponent name) implements ItemEffect {
+public record NameItemEffect(String name) implements ItemEffect {
 
     @Override
     public void apply(ItemStack item, AlphaPlayer player) {
         ItemMeta meta = item.getItemMeta();
-
-        meta.customName(name.colorIfAbsent(NamedTextColor.GOLD));
-
+        if (meta.customName() instanceof TextComponent current) {
+            meta.customName(current.content(name));
+        }
         item.setItemMeta(meta);
     }
 }

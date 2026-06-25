@@ -126,7 +126,7 @@ public final class GrowthItemLoader {
 
     private static ItemEffect convertEffect(EffectConfig e) {
         return switch (e.type) {
-            case "name"             -> new NameItemEffect(Component.text(e.value));
+            case "name"             -> new NameItemEffect(e.value);
             case "message"          -> new MessageItemEffect(Component.text(e.value));
             case "potion"           -> new PotionItemEffect(parsePotionEffect(e.effect), e.seconds, e.amplifier);
             case "fire_enemies"     -> new FireEnemiesItemEffect(e.seconds);
