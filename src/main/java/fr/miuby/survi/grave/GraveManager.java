@@ -73,9 +73,17 @@ public class GraveManager {
      * @return true si la tombe a été créée (les drops doivent alors être effacés).
      */
     public boolean createGrave(Player player) {
-        Location loc = findAvailableLocation(player.getLocation().getBlock().getLocation());
+        Location deathLoc = player.getLocation().getBlock().getLocation();
+        Location loc = findAvailableLocation(deathLoc);
         if (loc == null) {
             MLLogManager.getInstance().log(Level.WARNING, ELogTag.GRAVE, "Impossible de placer la tombe de " + player.getName() + " : emplacement obstrué.");
+
+            MLWorld deathWorld = WorldRegistry.get(deathLoc.getWorld().getUID());
+            player.sendMessage(GameManager.getInstance().getLangService().text(player, "grave.not_created",
+                    Placeholder.unparsed("x", Integer.toString(deathLoc.getBlockX())),
+                    Placeholder.unparsed("y", Integer.toString(deathLoc.getBlockY())),
+                    Placeholder.unparsed("z", Integer.toString(deathLoc.getBlockZ())),
+                    Placeholder.component("world", Component.text(deathWorld.getName(), deathWorld.getColor()))));
             return false;
         }
 

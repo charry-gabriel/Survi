@@ -19,6 +19,7 @@ world.zone.expanded.broadcast: "<gold>✦ La zone du village s'est agrandie !"
 # ─── Tombe ───────────────────────────────────────────────────────────────────
 grave.indestructible: "<red>Cette tombe est indestructible !"
 grave.created: "<green>☠ Votre tombe a été créée en <x>, <y>, <z> [<world>]"
+grave.not_created: "<red>☠ Votre tombe n'a pas était créée. Vos objets sont restés au sol en <x>, <y>, <z> [<world>]"
 grave.not_yours: "<red>Ce n'est pas votre tombe !"
 grave.recovered: "<green>Vous avez récupéré votre tombe."
 
