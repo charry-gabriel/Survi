@@ -19,12 +19,12 @@ public enum EFoodCategory {
             Material.COOKED_MUTTON, Material.COOKED_RABBIT, Material.COOKED_COD, Material.COOKED_SALMON
     )),
     PLANT(NamedTextColor.GREEN, List.of(
-            Material.APPLE, Material.CARROT, Material.POTATO, Material.BEETROOT,
+            Material.APPLE, Material.CARROT, Material.POTATO, Material.BEETROOT, Material.DRIED_KELP,
             Material.MELON_SLICE, Material.SWEET_BERRIES, Material.GLOW_BERRIES, Material.CHORUS_FRUIT
     )),
     CRAFTED(NamedTextColor.GOLD, List.of(
             Material.BREAD, Material.COOKIE, Material.PUMPKIN_PIE, Material.BAKED_POTATO,
-            Material.MUSHROOM_STEW, Material.RABBIT_STEW, Material.BEETROOT_SOUP, Material.DRIED_KELP
+            Material.MUSHROOM_STEW, Material.RABBIT_STEW, Material.BEETROOT_SOUP, Material.GOLDEN_CARROT
     ));
 
     /** Noms français affichés dans le tab — fallback sur {@code Material.name()} si absent. */
@@ -51,7 +51,8 @@ public enum EFoodCategory {
             Map.entry(Material.PUMPKIN_PIE, "Tarte à la citrouille"),
             Map.entry(Material.MUSHROOM_STEW, "Soupe aux champignons"),
             Map.entry(Material.RABBIT_STEW, "Ragoût de lapin"),
-            Map.entry(Material.BEETROOT_SOUP, "Soupe de betterave")
+            Map.entry(Material.BEETROOT_SOUP, "Soupe de betterave"),
+            Map.entry(Material.GOLDEN_CARROT, "Carotte dorée")
     );
 
     private final NamedTextColor color;
