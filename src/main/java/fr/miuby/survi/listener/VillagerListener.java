@@ -243,9 +243,18 @@ public class VillagerListener implements Listener {
 
         SoundService.broadcast(ESound.VILLAGER_LEVEL_UP);
 
-        for (var p : Bukkit.getOnlinePlayers()) {
-            for (BlessingEffect effect : villager.getBlessing().blessingEffects()) {
-                effect.applyEffect(AlphaPlayer.get(p.getUniqueId()));
+        for (BlessingEffect effect : villager.getBlessing().blessingEffects()) {
+            if (effect.isOneShot()) {
+                Bukkit.getOnlinePlayers().stream()
+                        .findFirst()
+                        .map(p -> AlphaPlayer.get(p.getUniqueId()))
+                        .ifPresent(effect::applyEffect);
+                MLLogManager.getInstance().log(Level.FINE, ELogTag.VILLAGER,
+                        "[VillagerLevelUp] one-shot appliqué une fois : " + effect.getClass().getSimpleName());
+            } else {
+                for (var p : Bukkit.getOnlinePlayers()) {
+                    effect.applyEffect(AlphaPlayer.get(p.getUniqueId()));
+                }
             }
         }
     }
