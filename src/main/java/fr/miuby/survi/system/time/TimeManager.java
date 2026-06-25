@@ -271,9 +271,9 @@ public class TimeManager {
         long hours = duration.toHoursPart();
         long minutes = duration.toMinutesPart();
 
-        if (days > 0) return days + " jours et " + hours + "h" + minutes;
-        if (hours > 0) return hours + "h" + minutes;
-        if (minutes > 0) return minutes + "m";
+        if (days > 0) return days + " jours et " + "%02d".formatted(hours) + "h" + "%02d".formatted(minutes);
+        if (hours > 0) return "%02d".formatted(hours) + "h" + "%02d".formatted(minutes);
+        if (minutes > 0) return "%02d".formatted(minutes) + "m";
         return "moins d'1 minute";
     }
 
