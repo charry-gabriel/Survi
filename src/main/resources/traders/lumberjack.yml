@@ -27,7 +27,7 @@ recipes:
     requiredReputation: 15
 
   - result:
-      customItem: GROWTH_LUMBERJACK_CHESPLATE
+      customItem: GROWTH_LUMBERJACK_CHESTPLATE
       amount: 1
     ingredient:
       material: BEDROCK

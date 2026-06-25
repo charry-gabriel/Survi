@@ -1,5 +1,5 @@
 # yaml-language-server: $schema=../schema/growth-items-schema.json
-id: GROWTH_LUMBERJACK_CHESPLATE
+id: GROWTH_LUMBERJACK_CHESTPLATE
 eventType: OreBreakEvent
 
 # Défense intentionnellement réduite (2.0 au lieu des 3 vanilla cuir).

@@ -55,9 +55,9 @@ public enum ECustomItem {
                 .addItemFlag(ItemFlag.HIDE_ARMOR_TRIM);
     }),
 
-    GROWTH_LUMBERJACK_CHESPLATE(Material.LEATHER_CHESTPLATE, item -> {
+    GROWTH_LUMBERJACK_CHESTPLATE(Material.LEATHER_CHESTPLATE, item -> {
         ItemMeta preMeta = item.getItemMeta();
-        createGrowthItem(preMeta, "GROWTH_LUMBERJACK_CHESPLATE");
+        createGrowthItem(preMeta, "GROWTH_LUMBERJACK_CHESTPLATE");
         item.setItemMeta(preMeta);
         List<Component> list = new ArrayList<>();
         list.add(C.ARTIFACT_NAME);
