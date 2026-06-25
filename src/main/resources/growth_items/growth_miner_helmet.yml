@@ -12,49 +12,49 @@ tiers:
       - { type: set_attribute, attribute: mining_efficiency, attributeValue: 0.1, operation: ADD_NUMBER, slot: HEAD }
       - { type: message,       value: "Ton casque grandit — tu mines un peu plus vite !" }
 
-  - requiredUses: 300
+  - requiredUses: 400
     effects:
       - { type: name,          value: "Casque de Mineur III" }
       - { type: set_attribute, attribute: mining_efficiency, attributeValue: 0.2, operation: ADD_NUMBER, slot: HEAD }
       - { type: message,       value: "Impressionnant ! Tu tailles dans la roche comme dans du beurre." }
 
-  - requiredUses: 750
+  - requiredUses: 1000
     effects:
       - { type: name,          value: "Casque de Mineur IV" }
       - { type: set_attribute, attribute: mining_efficiency, attributeValue: 0.3, operation: ADD_NUMBER, slot: HEAD }
       - { type: message,       value: "Ton casque grandit — tu mines un peu plus vite !" }
 
-  - requiredUses: 1100
+  - requiredUses: 110000
     effects:
       - { type: name,          value: "Casque de Mineur V" }
       - { type: set_attribute, attribute: mining_efficiency, attributeValue: 0.4, operation: ADD_NUMBER, slot: HEAD }
       - { type: message,       value: "Impressionnant ! Tu tailles dans la roche comme dans du beurre." }
 
-  - requiredUses: 2200
+  - requiredUses: 220000
     effects:
       - { type: name,          value: "Casque de Mineur VI" }
       - { type: set_attribute, attribute: mining_efficiency, attributeValue: 0.5, operation: ADD_NUMBER, slot: HEAD }
       - { type: message,       value: "Ton casque grandit — tu mines un peu plus vite !" }
 
-  - requiredUses: 4400
+  - requiredUses: 440000
     effects:
       - { type: name,          value: "Casque de Mineur VII" }
       - { type: set_attribute, attribute: mining_efficiency, attributeValue: 0.6, operation: ADD_NUMBER, slot: HEAD }
       - { type: message,       value: "Impressionnant ! Tu tailles dans la roche comme dans du beurre." }
 
-  - requiredUses: 6800
+  - requiredUses: 680000
     effects:
       - { type: name,          value: "Casque de Mineur VIII" }
       - { type: set_attribute, attribute: mining_efficiency, attributeValue: 0.7, operation: ADD_NUMBER, slot: HEAD }
       - { type: message,       value: "Ton casque grandit — tu mines un peu plus vite !" }
 
-  - requiredUses: 7500
+  - requiredUses: 750000
     effects:
       - { type: name,          value: "Casque de Mineur IX" }
       - { type: set_attribute, attribute: mining_efficiency, attributeValue: 0.8, operation: ADD_NUMBER, slot: HEAD }
       - { type: message,       value: "Impressionnant ! Tu tailles dans la roche comme dans du beurre." }
 
-  - requiredUses: 10000
+  - requiredUses: 1000000
     effects:
       - { type: name,          value: "Casque du Maître Mineur" }
       - { type: set_attribute, attribute: mining_efficiency, attributeValue: 1.0, operation: ADD_NUMBER, slot: HEAD }
