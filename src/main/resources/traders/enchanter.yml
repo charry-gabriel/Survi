@@ -30,7 +30,16 @@ recipes:
       customItem: GROWTH_ENCHANTER_HELMET
       amount: 1
     ingredient:
-      material: IRON_INGOT
+      material: BEDROCK
       amount: 64
     message: "Un super achat."
     requiredReputation: 55
+
+  - result:
+      material: EXPERIENCE_BOTTLE
+      amount: 16
+    ingredient:
+      material: LAPIS_BLOCK
+      amount: 1
+    message: "Un super achat."
+    requiredReputation: 110

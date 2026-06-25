@@ -30,7 +30,16 @@ recipes:
       customItem: GROWTH_LUMBERJACK_CHESPLATE
       amount: 1
     ingredient:
-      material: IRON_INGOT
+      material: BEDROCK
       amount: 64
     message: "Un super achat."
     requiredReputation: 55
+
+  - result:
+      material: IRON_SWORD
+      amount: 1
+    ingredient:
+      material: COBBLESTONE
+      amount: 32
+    message: "Un super achat."
+    requiredReputation: 110

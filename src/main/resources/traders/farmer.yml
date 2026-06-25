@@ -34,3 +34,12 @@ recipes:
       amount: 64
     message: "Un super achat."
     requiredReputation: 55
+
+  - result:
+      material: GOLDEN_HOE
+      amount: 1
+    ingredient:
+      material: WHEAT_SEEDS
+      amount: 16
+    message: "Un super achat."
+    requiredReputation: 110

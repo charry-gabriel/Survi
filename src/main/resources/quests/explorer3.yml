@@ -7,7 +7,7 @@ quests:
     name: "Fabricant de Papier"
     description: "Fabriquez {value} papiers."
     type: CRAFT
-    difficulty: 1
+    difficulty: 3
     jobs:
       - ENCHANTER
     targets: [PAPER]
