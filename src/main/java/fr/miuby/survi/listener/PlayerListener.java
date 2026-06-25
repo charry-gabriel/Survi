@@ -17,6 +17,7 @@ import fr.miuby.survi.world.EWorld;
 import fr.miuby.survi.world.zone.ZoneBounds;
 import io.papermc.paper.advancement.AdvancementDisplay;
 import fr.miuby.survi.blessing.BlessingEffect;
+import fr.miuby.survi.blessing.FlyEffect;
 import fr.miuby.survi.blessing.PotionsEffect;
 import fr.miuby.survi.quest.quest.PlayerQuestData;
 import fr.miuby.survi.quest.quest.Quest;
@@ -222,6 +223,23 @@ public class PlayerListener implements Listener {
                     gm.getPlugin(),
                     () -> { if (player.isOnline()) effectsToReapply.forEach(e -> e.applyEffect(alphaPlayer)); },
                     5L);
+        }
+    }
+
+    // ─── Changement de monde : gestion du fly Village ────────────────────────────
+
+    @EventHandler
+    public void onPlayerChangedWorld(PlayerChangedWorldEvent event) {
+        Player player = event.getPlayer();
+        var mlWorld = WorldRegistry.get(player.getWorld().getUID());
+        if (mlWorld == null) return;
+
+        if (mlWorld.getType() == EWorld.VILLAGE) {
+            if (FlyEffect.isActive()) {
+                FlyEffect.enableFly(player);
+            }
+        } else if (player.getAllowFlight()) {
+            FlyEffect.disableFly(player);
         }
     }
 

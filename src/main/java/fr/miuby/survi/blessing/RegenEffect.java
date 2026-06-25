@@ -16,4 +16,7 @@ public class RegenEffect extends BlessingEffect {
     public void resetEffect(AlphaPlayer player) {
         WorldRegistry.get(EWorld.WILDERNESS).getWorld().setGameRule(GameRules.NATURAL_HEALTH_REGENERATION, false);
     }
+
+    @Override
+    public boolean isOneShot() { return true; }
 }

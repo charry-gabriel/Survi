@@ -298,6 +298,12 @@ public class VillagerLevel extends AVillager {
         player.getAlphaLife().regenHealth(() -> {
             for (Blessing blessing : getCurrentBlessings()) {
                 for (BlessingEffect effect : blessing.blessingEffects()) {
+                    if (effect.isOneShot()) {
+                        MLLogManager.getInstance().log(Level.FINE, ELogTag.VILLAGER,
+                                "[RestoreBlessing] " + nameId + " : effet one-shot ignoré ("
+                                        + effect.getClass().getSimpleName() + ") pour " + player.getPseudo());
+                        continue;
+                    }
                     effect.applyEffect(player);
                 }
             }

@@ -10,4 +10,11 @@ public abstract class BlessingEffect {
     }
 
     public boolean requiresOnlinePlayer() { return false; }
+
+    /**
+     * Retourne {@code true} si l'effet est one-shot (ex : incrément global du monde).
+     * Ces effets ne sont PAS rejoués dans {@code applyAllCurrentBlessing} à la reconnexion —
+     * leur résultat est déjà persisté en base et ne doit pas être réappliqué.
+     */
+    public boolean isOneShot() { return false; }
 }

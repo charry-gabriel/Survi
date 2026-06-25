@@ -27,7 +27,7 @@ import java.util.logging.Level;
  *
  * <p>Types d'effets supportés : ACID_RAIN, MAX_HEALTH, RESISTANCE, DAMAGE, DISPEL,
  * UNLOCK_TOOL, UNLOCK_ARMOR, LOCK_WORLD, MESSAGE, WORLD_LEVEL,
- * WORLD_RESET, LIMIT_WORLD, REPUTATION, POTION, ITEM.
+ * WORLD_RESET, LIMIT_WORLD, REPUTATION, POTION, ITEM, FLY.
  */
 public class BlessingLoader {
 
@@ -109,10 +109,10 @@ public class BlessingLoader {
                 case "MESSAGE"      -> new MessageEffect(String.valueOf(map.get("text")));
                 case "WORLD_LEVEL"  -> new WorldLevelEffect();
                 case "WORLD_RESET"  -> new WorldResetEffect(toInt(map.get("frequency"), 7));
+                case "FLY"          -> new FlyEffect();
                 case "LIMIT_WORLD"  -> parseLimitWorld(map);
                 case "REPUTATION"   -> parseReputation(map);
                 case "POTION"       -> parsePotion(contextId, map);
-                case "ITEM"         -> parseItem(contextId, map);
                 default -> {
                     MLLogManager.getInstance().log(Level.WARNING, ELogTag.VILLAGER,
                             "[BlessingLoader] Type d'effet inconnu '" + type + "' pour " + contextId);
@@ -144,17 +144,6 @@ public class BlessingLoader {
         int duration  = toInt(map.get("duration"), 600);
         int amplifier = toInt(map.get("amplifier"), 0);
         return new PotionsEffect(new PotionEffect(effectType, duration, amplifier));
-    }
-
-    private static ItemEffect parseItem(String contextId, Map<String, Object> map) {
-        String itemId = String.valueOf(map.get("item"));
-        ItemStack template = resolveItem(itemId);
-        if (template == null) {
-            MLLogManager.getInstance().log(Level.WARNING, ELogTag.VILLAGER,
-                    "[BlessingLoader] Item inconnu '" + itemId + "' pour " + contextId);
-            return null;
-        }
-        return new ItemEffect(template, toInt(map.get("amount"), 1));
     }
 
     /** Résout un identifiant d'item : ECustomItem en priorité (pour récompenser la variante personnalisée plutôt que le vanilla équivalent), fallback sur Material vanilla. */
