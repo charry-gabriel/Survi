@@ -3,6 +3,8 @@ package fr.miuby.survi.item;
 import fr.miuby.survi.GameManager;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.Style;
+import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Color;
 import org.bukkit.NamespacedKey;
 import org.bukkit.attribute.Attribute;
@@ -32,7 +34,7 @@ public class CustomItemBuilder {
 
     public CustomItemBuilder name(String name, NamedTextColor color) {
         ItemMeta meta = itemStack.getItemMeta();
-        meta.customName(Component.text(name, color));
+        meta.customName(Component.text(name, Style.style(color).decoration(TextDecoration.ITALIC, false)));
         itemStack.setItemMeta(meta);
         return this;
     }
