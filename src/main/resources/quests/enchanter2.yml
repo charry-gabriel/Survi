@@ -73,20 +73,20 @@ quests:
     jobs:
       - ENCHANTER
     targets: [ NETHER_QUARTZ_ORE ]
-    goal: 400
+    goal: 200
     rewards:
       - { type: REPUTATION, job: ENCHANTER, value: 3}
       - { type: REPUTATION, job: MINER, value: 2 }
 
-  - id: "full_enchanted_armor"
-    name: "Armure du Mage"
-    description: "Enchantez une armure en fer complète."
-    type: ENCHANT
+  - id: "forge_anvil"
+    name: "Un forgeron qui forge"
+    description: "Forgez {value} fois."
+    type: ANVIL_ENCHANT
     difficulty: 2
     jobs:
       - ENCHANTER
-    targets: [ IRON_HELMET, IRON_CHESTPLATE, IRON_LEGGINGS, IRON_BOOTS ]
-    goal: 4
+    targets: null
+    goal: 16
     rewards:
       - { type: REPUTATION, job: ENCHANTER, value: 4 }
       - { type: REPUTATION, job: EXPLORER, value: 1 }

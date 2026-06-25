@@ -1,16 +1,89 @@
 # yaml-language-server: $schema=../schema/quests-schema.json
 quests:
 
-# ─────────────────── DIFFICULTÉ 2 (0/7) ───────────────────
 
-  - id: "paper_production2"
-    name: "Fabricant de Papier"
-    description: "Fabriquez {value} papiers."
-    type: CRAFT
+# ─────────────────── DIFFICULTÉ 2 (7/7) ───────────────────
+
+  - id: "kill_pillagers"
+    name: "Défenseur du Royaume"
+    description: "Tuez {value} pillards."
+    type: KILL
     difficulty: 2
     jobs:
-      - ENCHANTER
-    targets: [PAPER]
-    goal: 1
+      - EXPLORER
+    targets: [PILLAGER]
+    goal: 30
     rewards:
-      - { type: REPUTATION, job: ENCHANTER, value: 1 }
+      - {type: REPUTATION, job: EXPLORER, value: 1}
+
+  - id: "kill_phantom"
+    name: "Le fantôme perdu"
+    description: "Tuez {value} phantom."
+    type: KILL
+    difficulty: 2
+    jobs:
+      - EXPLORER
+    targets: [PHANTOM]
+    goal: 5
+    rewards:
+      - {type: REPUTATION, job: EXPLORER, value: 1}
+
+  - id: "kill_husks"
+    name: "Fléau du Désert"
+    description: "Tuez {value} husks."
+    type: KILL
+    difficulty: 2
+    jobs:
+      - EXPLORER
+    targets: [HUSK]
+    goal: 25
+    rewards:
+      - {type: REPUTATION, job: EXPLORER, value: 2}
+
+  - id: "kill_guardians"
+    name: "Conquérant des Océans"
+    description: "Tuez {value} gardiens."
+    type: KILL
+    difficulty: 2
+    jobs:
+      - EXPLORER
+    targets: [GUARDIAN]
+    goal: 20
+    rewards:
+      - {type: REPUTATION, job: EXPLORER, value: 3}
+
+  - id: "kill_blazes"
+    name: "Marcheur des Flammes"
+    description: "Tuez {value} blazes."
+    type: KILL
+    difficulty: 2
+    jobs:
+      - EXPLORER
+    targets: [BLAZE]
+    goal: 25
+    rewards:
+      - {type: REPUTATION, job: EXPLORER, value: 4}
+
+  - id: "kill_piglins"
+    name: "Raider du Nether"
+    description: "Tuez {value} piglins."
+    type: KILL
+    difficulty: 2
+    jobs:
+      - EXPLORER
+    targets: [PIGLIN]
+    goal: 50
+    rewards:
+      - {type: REPUTATION, job: EXPLORER, value: 5}
+
+  - id: "kill_slim_cubes"
+    name: "Écraseur de Slim"
+    description: "Tuez {value} slim ou cubes de magma."
+    type: KILL
+    difficulty: 2
+    jobs:
+      - EXPLORER
+    targets: [MAGMA_CUBE, SLIME]
+    goal: 30
+    rewards:
+      - {type: REPUTATION, job: EXPLORER, value: 5}

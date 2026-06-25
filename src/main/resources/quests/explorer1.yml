@@ -35,7 +35,7 @@ quests:
     jobs:
       - EXPLORER
     targets: [SPIDER]
-    goal: 25
+    goal: 20
     rewards:
       - {type: REPUTATION, job: EXPLORER, value: 2}
 
@@ -47,7 +47,7 @@ quests:
     jobs:
       - EXPLORER
     targets: [CREEPER]
-    goal: 25
+    goal: 20
     rewards:
       - {type: REPUTATION, job: EXPLORER, value: 3}
 

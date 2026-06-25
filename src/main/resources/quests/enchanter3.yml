@@ -14,7 +14,32 @@ quests:
               NETHERITE_PICKAXE, NETHERITE_AXE, NETHERITE_SHOVEL, NETHERITE_HOE]
     goal: 10
     rewards:
-      - {type: REPUTATION, job: ENCHANTER, value: 8}
+      - {type: REPUTATION, job: ENCHANTER, value: 1}
+
+  - id: "lapis_intro3"
+    name: "Pierre Bleue"
+    description: "Minez {value} lapis-lazuli."
+    type: MINE
+    difficulty: 1
+    jobs:
+      - ENCHANTER
+    targets: [ LAPIS_ORE, DEEPSLATE_LAPIS_ORE ]
+    goal: 64
+    rewards:
+      - { type: REPUTATION, job: ENCHANTER, value: 1}
+      - { type: REPUTATION, job: MINER, value: 4 }
+
+  - id: "enchant_books"
+    name: "Bibliothèque Mystique"
+    description: "Enchantez {value} livres."
+    type: ENCHANT
+    difficulty: 3
+    jobs:
+      - ENCHANTER
+    targets: [ BOOK ]
+    goal: 32
+    rewards:
+      - { type: REPUTATION, job: ENCHANTER, value: 9 }
 
   - id: "enchant_diamond_weapons"
     name: "Arsenal Enchanté"
@@ -24,15 +49,15 @@ quests:
     jobs:
       - ENCHANTER
     targets: [DIAMOND_SWORD, NETHERITE_SWORD]
-    goal: 5
+    goal: 10
     rewards:
-      - { type: REPUTATION, job: ENCHANTER, value: 8 }
+      - { type: REPUTATION, job: ENCHANTER, value: 1 }
       - { type: REPUTATION, job: EXPLORER, value: 2 }
 
 
   - id: "gain_xp_levels"
     name: "Sagesse Accumulée"
-    description: "Atteignez le niveau {value} d'expérience."
+    description: "Gagnez {value} niveau d'expérience."
     type: GAIN_XP_LEVELS
     difficulty: 3
     jobs:

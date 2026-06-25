@@ -74,7 +74,7 @@ quests:
     jobs:
       - ENCHANTER
     targets: [ LAPIS_ORE, DEEPSLATE_LAPIS_ORE ]
-    goal: 640
+    goal: 64
     rewards:
       - { type: REPUTATION, job: ENCHANTER, value: 1}
       - { type: REPUTATION, job: MINER, value: 4 }
