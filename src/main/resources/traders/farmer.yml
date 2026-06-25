@@ -30,7 +30,7 @@ recipes:
       customItem: GROWTH_FARMER_LEGGINGS
       amount: 1
     ingredient:
-      material: IRON_INGOT
+      material: HAY_BLOCK
       amount: 64
     message: "Un super achat."
     requiredReputation: 55

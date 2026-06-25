@@ -22,7 +22,7 @@ global_quests:
     description: "Tuez {value} monstres hostiles basiques."
     type: KILL
     targets: [ZOMBIE, SKELETON, CREEPER, SPIDER]
-    goal: 225
+    goal: 190
     time_limit: 5400
     rewards:
       - {type: REPUTATION, job: EXPLORER, value: 3}
@@ -49,13 +49,12 @@ global_quests:
     description: "Récoltez {value} cultures parmi le blé, les carottes et les pommes de terre."
     type: HARVEST_CROP
     targets: [ WHEAT, CARROTS, POTATOES ]
-    goal: 900
+    goal: 450
     time_limit: 5400
     rewards:
       - { type: REPUTATION, job: FARMER, value: 1 }
       - { type: POTION, potion: saturation, duration: 600, amplifier: 1 }
       - { type: ITEM, item: BREAD, amount: 32 }
-      - { type: ITEM, item: IRON_INGOT, amount: 16 }
-      - { type: ITEM, item: HAY_BLOCK, amount: 16 }
+      - { type: ITEM, item: COOKED_RABBIT, amount: 32 }
 
 
