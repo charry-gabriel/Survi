@@ -4,6 +4,7 @@ import com.mojang.brigadier.Command;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
+import fr.miuby.lib.log.MLLogManager;
 import fr.miuby.survi.GameManager;
 import fr.miuby.survi.job.EJob;
 import fr.miuby.survi.job.JobLevelConfig;
@@ -14,6 +15,7 @@ import fr.miuby.survi.system.database.repository.QuestHistoryRepository.PlayerRa
 import fr.miuby.survi.system.database.repository.QuestRepository.ReputationRankEntry;
 import fr.miuby.survi.system.lang.ELang;
 import fr.miuby.survi.system.lang.LangService;
+import fr.miuby.survi.system.log.ELogTag;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
 import io.papermc.paper.command.brigadier.Commands;
 import net.kyori.adventure.text.Component;
@@ -26,6 +28,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import java.util.logging.Level;
 
 @SuppressWarnings({"java:S3516", "SameReturnValue"})
 public class PlayerCommand {
@@ -77,6 +80,13 @@ public class PlayerCommand {
                                 .executes(ctx -> topTributes(ctx, 10))
                                 .then(Commands.argument(LIMIT_ARG, IntegerArgumentType.integer(1, 50))
                                         .executes(ctx -> topTributes(ctx, IntegerArgumentType.getInteger(ctx, LIMIT_ARG)))
+                                )
+                        )
+
+                        .then(Commands.literal("deaths")
+                                .executes(ctx -> topDeaths(ctx, 10))
+                                .then(Commands.argument(LIMIT_ARG, IntegerArgumentType.integer(1, 50))
+                                        .executes(ctx -> topDeaths(ctx, IntegerArgumentType.getInteger(ctx, LIMIT_ARG)))
                                 )
                         )
                 )
@@ -320,6 +330,30 @@ public class PlayerCommand {
         }
 
         sender.sendMessage(sep);
+        return Command.SINGLE_SUCCESS;
+    }
+
+    private static int topDeaths(CommandContext<CommandSourceStack> ctx, int limit) {
+        CommandSender sender = ctx.getSource().getSender();
+        LangService   ls     = GameManager.getInstance().getLangService();
+        ELang         lang   = sender instanceof Player p ? ls.resolveLanguage(p) : ls.getServerDefault();
+
+        List<Map.Entry<String, Long>> top = GameManager.getInstance().getAlphaPlayerFactory().getAlphaPlayers()
+                .stream()
+                .filter(ap -> ap.getDeath() > 0)
+                .sorted((a, b) -> Integer.compare(b.getDeath(), a.getDeath()))
+                .limit(limit)
+                .map(ap -> Map.entry(ap.getPseudo(), (long) ap.getDeath()))
+                .toList();
+
+        MLLogManager.getInstance().log(Level.FINE, ELogTag.PLAYER,
+                "[TopDeaths] demandé par " + sender.getName() + " limit=" + limit + " résultats=" + top.size());
+
+        sendLeaderboard(sender, ls, lang,
+                ls.text(lang, "cmd.player.top.deaths_title"),
+                top,
+                ls.getString(lang, "cmd.player.top.unit_deaths"),
+                null);
         return Command.SINGLE_SUCCESS;
     }
 
