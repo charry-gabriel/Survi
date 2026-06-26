@@ -81,7 +81,8 @@ public class OfflineNotificationService {
     public void deliverPending(UUID uuid, Player player) {
         boolean hasAny = pendingJobLevelUps.containsKey(uuid)
                 || pendingWorldLevelFrom.containsKey(uuid)
-                || pendingVillagerLevelUps.containsKey(uuid);
+                || pendingVillagerLevelUps.containsKey(uuid)
+                || pendingQuestRewards.containsKey(uuid);
 
         if (hasAny) {
             player.sendMessage(GameManager.getInstance().getLangService().text(player, "offline.header"));

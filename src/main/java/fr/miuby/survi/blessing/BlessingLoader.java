@@ -113,6 +113,7 @@ public class BlessingLoader {
                 case "LIMIT_WORLD"  -> parseLimitWorld(map);
                 case "REPUTATION"   -> parseReputation(map);
                 case "POTION"       -> parsePotion(contextId, map);
+                case "ITEM"         -> parseItem(contextId, map);
                 default -> {
                     MLLogManager.getInstance().log(Level.WARNING, ELogTag.VILLAGER,
                             "[BlessingLoader] Type d'effet inconnu '" + type + "' pour " + contextId);
@@ -144,6 +145,18 @@ public class BlessingLoader {
         int duration  = toInt(map.get("duration"), 600);
         int amplifier = toInt(map.get("amplifier"), 0);
         return new PotionsEffect(new PotionEffect(effectType, duration, amplifier));
+    }
+
+    private static ItemEffect parseItem(String contextId, Map<String, Object> map) {
+        String itemId = String.valueOf(map.get("item"));
+        ItemStack stack = resolveItem(itemId);
+        if (stack == null) {
+            MLLogManager.getInstance().log(Level.WARNING, ELogTag.ITEM,
+                    "[BlessingLoader] Item inconnu '" + itemId + "' pour " + contextId);
+            return null;
+        }
+        stack.setAmount(toInt(map.get("amount"), 1));
+        return new ItemEffect(stack);
     }
 
     /** Résout un identifiant d'item : ECustomItem en priorité (pour récompenser la variante personnalisée plutôt que le vanilla équivalent), fallback sur Material vanilla. */
