@@ -47,7 +47,9 @@ public class ServerListener implements Listener {
         // Arrête le rafraîchissement de l'actionbar si une quête journalière était en cours
         GameManager.getInstance().getQuestActionBarService().stopRefresh(event.getPlayer().getUniqueId());
 
-        AlphaPlayer.get(event.getPlayer().getUniqueId()).resetPlayer();
+        AlphaPlayer alphaPlayer = AlphaPlayer.get(event.getPlayer().getUniqueId());
+        alphaPlayer.getAlphaLife().saveHealthOnQuit();
+        alphaPlayer.resetPlayer();
     }
 
     @EventHandler(ignoreCancelled = true)

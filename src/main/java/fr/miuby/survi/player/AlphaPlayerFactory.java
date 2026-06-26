@@ -110,14 +110,21 @@ public class AlphaPlayerFactory {
 
         // Clamp final unique : tous les modifiers sont posés, on ramène la vie sauvegardée
         // dans [1, maxEffectif]. Ignoré si armorMalus actif (vie déjà forcée à 0.01f).
+        // On utilise le ratio vie/maxVie sauvegardé à la déco (si disponible) plutôt que
+        // savedHealth : ce dernier est clampé par Minecraft à la base vanilla (20) avant que
+        // nos modifiers transitoires soient restaurés. Le ratio garantit aussi qu'un changement
+        // de blessing pendant l'absence du joueur est appliqué proportionnellement (cohérent avec regenHealth).
         if (!bukkitPlayer.isDead() && !alphaPlayer.getAlphaLife().isArmorMalus()) {
             AttributeInstance maxHealthAttr = bukkitPlayer.getAttribute(Attribute.MAX_HEALTH);
             if (maxHealthAttr != null) {
-                double finalHealth = Math.clamp(savedHealth, 1.0, maxHealthAttr.getValue());
+                double quitRatio = alphaPlayer.getAlphaLife().consumeSavedHealthRatioOnQuit();
+                double healthToRestore = quitRatio >= 0 ? quitRatio * maxHealthAttr.getValue() : savedHealth;
+                double finalHealth = Math.clamp(healthToRestore, 1.0, maxHealthAttr.getValue());
                 bukkitPlayer.setHealth(finalHealth);
                 MLLogManager.getInstance().log(Level.FINE, ELogTag.PLAYER,
                         "[onPlayerJoin] " + alphaPlayer.getPseudo()
-                                + " saved=" + savedHealth
+                                + " quitRatio=" + quitRatio
+                                + " savedHealth=" + savedHealth
                                 + " final=" + finalHealth
                                 + " max=" + maxHealthAttr.getValue());
             }

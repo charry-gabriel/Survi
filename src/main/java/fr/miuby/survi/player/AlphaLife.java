@@ -29,6 +29,10 @@ public class AlphaLife {
     private int savedFoodLevel = 20;
     private float savedSaturation = 5f;
 
+    /** Ratio vie/maxVie sauvegardé à la déconnexion (pendant que nos modifiers transitoires sont actifs).
+     *  -1 = non défini (premier login ou redémarrage serveur). */
+    private double savedHealthRatioOnQuit = -1.0;
+
     private final NamespacedKey deathKey = new NamespacedKey(GameManager.getInstance().getPlugin(), "death_life");
     private final NamespacedKey successKey = new NamespacedKey(GameManager.getInstance().getPlugin(), "success_life");
     private final NamespacedKey blessingKey = new NamespacedKey(GameManager.getInstance().getPlugin(), "blessing_life");
@@ -120,6 +124,36 @@ public class AlphaLife {
     public void setArmorMalus(boolean hasArmorMalus) {
         this.hasArmorMalus = hasArmorMalus;
         this.actualizeDeath();
+    }
+
+    /**
+     * Sauvegarde le ratio vie/maxVie à la déconnexion, pendant que nos modifiers transitoires
+     * sont encore actifs sur le joueur. Appelé dans ServerListener.onPlayerQuit(), avant resetPlayer().
+     * Stocker le ratio (et non la valeur absolue) garantit que si le blessing change pendant
+     * l'absence du joueur, la vie est restaurée proportionnellement au nouveau max — identique
+     * au comportement de regenHealth() pour un joueur en ligne.
+     */
+    public void saveHealthOnQuit() {
+        Player player = this.alphaPlayer.getPlayer();
+        if (player == null) return;
+        AttributeInstance maxAttr = player.getAttribute(Attribute.MAX_HEALTH);
+        if (maxAttr == null || maxAttr.getValue() <= 0) return;
+        this.savedHealthRatioOnQuit = player.getHealth() / maxAttr.getValue();
+        MLLogManager.getInstance().log(Level.FINE, ELogTag.PLAYER,
+                "[saveHealthOnQuit] " + alphaPlayer.getPseudo()
+                        + " health=" + player.getHealth()
+                        + " max=" + maxAttr.getValue()
+                        + " ratio=" + savedHealthRatioOnQuit);
+    }
+
+    /**
+     * Retourne le ratio vie/maxVie sauvegardé à la dernière déconnexion et le réinitialise à -1.
+     * Retourne -1.0 si aucune déco n'a été enregistrée (premier login ou redémarrage serveur).
+     */
+    public double consumeSavedHealthRatioOnQuit() {
+        double r = this.savedHealthRatioOnQuit;
+        this.savedHealthRatioOnQuit = -1.0;
+        return r;
     }
 
     /** Sauvegarde la nourriture et la saturation du joueur au moment de la mort. */
