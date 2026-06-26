@@ -22,6 +22,11 @@ grave.created: "<green>☠ Votre tombe a été créée en <x>, <y>, <z> [<world>
 grave.not_created: "<red>☠ Votre tombe n'a pas était créée. Vos objets sont restés au sol en <x>, <y>, <z> [<world>]"
 grave.not_yours: "<red>Ce n'est pas votre tombe !"
 grave.recovered: "<green>Vous avez récupéré votre tombe."
+cmd.grave.player_only: "<red>Cette commande est réservée aux joueurs en jeu."
+cmd.grave.no_grave: "<red>Vous n'avez aucune tombe active."
+cmd.grave.player_offline: "<red>{0} n'est pas connecté(e)."
+cmd.grave.recovered_admin: "<green>✓ Tombe de <white>{0}</white> récupérée et items livrés."
+cmd.grave.no_grave_admin: "<yellow>{0} n'a aucune tombe active."
 
 # ─── Monde ───────────────────────────────────────────────────────────────────
 world.locked: "<red>✖ Ce monde n'est pas encore accessible !"

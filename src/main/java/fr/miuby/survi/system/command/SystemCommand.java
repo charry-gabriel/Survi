@@ -11,6 +11,7 @@ import fr.miuby.lib.world.MLWorld;
 import fr.miuby.lib.world.WorldRegistry;
 import fr.miuby.survi.GameManager;
 import fr.miuby.survi.display.TutorialBookService;
+import fr.miuby.survi.grave.GraveCommand;
 import fr.miuby.survi.listener.PlacedBlockTracker;
 import fr.miuby.survi.player.AlphaPlayer;
 import fr.miuby.survi.system.lang.ELang;
@@ -50,6 +51,7 @@ public class SystemCommand {
 
                 .then(MLLogCommand.create())
                 .then(ReloadCommand.create())
+                .then(GraveCommand.createAdminSubTree())
 
                 // === BLOCK TRACKER ===
                 .then(Commands.literal("blocktracker")
