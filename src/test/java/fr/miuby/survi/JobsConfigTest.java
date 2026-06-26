@@ -154,6 +154,8 @@ class JobsConfigTest {
         assertTrue(v >= 0 && v <= 15, "miner.cave-light-hysteresis doit être entre 0 et 15, valeur : " + v);
     }
 
+    @Test void minerVeinMinerExtraOresValid() { assertNonNegativeIntArray(minerRoot, "vein-miner-extra-ores"); }
+
     // ─── lumberjack ──────────────────────────────────────────────────────────────
 
     @Test void lumberjackDropMultiplierValid()       { assertNonNegativeDoubleArray(lumberjackRoot, "drop-multiplier"); }

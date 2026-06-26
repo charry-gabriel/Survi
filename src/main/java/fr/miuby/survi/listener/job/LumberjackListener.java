@@ -2,6 +2,7 @@ package fr.miuby.survi.listener.job;
 
 import fr.miuby.lib.MiubyLib;
 import fr.miuby.lib.log.MLLogManager;
+import fr.miuby.survi.item.growth_item.GrowthItems;
 import fr.miuby.survi.job.EJob;
 import fr.miuby.survi.job.config.JobsConfig;
 import fr.miuby.survi.listener.PlacedBlockTracker;
@@ -33,7 +34,14 @@ import java.util.logging.Level;
 /**
  * Gère tous les effets du métier {@link EJob#LUMBERJACK} :
  * multiplicateur de bûches, charbon bonus, pommes (courbe complète),
- * auto-replant (niv.5+), tree feller, dégâts de feu amplifiés et résistance au feu.
+ * auto-replant, tree feller, dégâts de feu amplifiés et résistance au feu.
+ *
+ * <p><b>Auto-replant</b> et <b>tree feller</b> ne dépendent plus du niveau de job seul : ils
+ * nécessitent que le joueur porte un plastron ({@code GROWTH_LUMBERJACK_CHESPLATE}) ayant débloqué
+ * l'ability correspondante ({@link GrowthItems#ABILITY_AUTO_REPLANT} / {@link GrowthItems#ABILITY_TREE_FELLER}
+ * — paliers de croissance, voir {@code growth_items/growth_lumberjack_chestplate.yml}). Le <b>nombre</b>
+ * de bûches supplémentaires cassées par tree feller reste piloté par {@code tree-feller-extra-logs}
+ * dans {@link JobsConfig} (niveau du job) — l'item débloque la capacité, le job en augmente la portée.</p>
  *
  * <p>Les blocs posés par les joueurs (détectés via {@link PlacedBlockTracker}) sont exclus
  * du multiplicateur et des bonus : le drop vanilla exact est conservé (100 %).</p>
@@ -180,13 +188,14 @@ public class LumberjackListener implements Listener {
                 JobUtils.dropWithMultiplier(event, JobUtils.getMultiplier(EJob.LUMBERJACK, level));
             }
             if (lj.getCharcoalChance()[level] > 0) dropBonusCharcoal(block, level, lj);
-            if (level >= 5) {
+            if (GrowthItems.hasAbilityEquipped(player, GrowthItems.ABILITY_AUTO_REPLANT, EquipmentSlot.CHEST)) {
                 autoReplant(block);
-                if (lj.getTreeFellerExtraLogs()[level] > 0
-                        && AXE_MATERIALS.contains(player.getInventory().getItemInMainHand().getType())) {
-                    try (var t = PerfTimer.start("LumberjackListener.treeFeller")) {
-                        treeFeller(block, player, level, lj);
-                    }
+            }
+            if (lj.getTreeFellerExtraLogs()[level] > 0
+                    && GrowthItems.hasAbilityEquipped(player, GrowthItems.ABILITY_TREE_FELLER, EquipmentSlot.CHEST)
+                    && AXE_MATERIALS.contains(player.getInventory().getItemInMainHand().getType())) {
+                try (var t = PerfTimer.start("LumberjackListener.treeFeller")) {
+                    treeFeller(block, player, level, lj);
                 }
             }
             return;

@@ -1,8 +1,10 @@
 package fr.miuby.survi.listener.job;
 
+import fr.miuby.survi.GameManager;
 import fr.miuby.survi.job.EJob;
 import fr.miuby.survi.job.config.JobsConfig;
 import fr.miuby.survi.player.AlphaPlayer;
+import io.papermc.paper.event.entity.EntityEquipmentChangedEvent;
 import org.bukkit.Material;
 import org.bukkit.entity.FishHook;
 import org.bukkit.entity.Item;
@@ -11,6 +13,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerFishEvent;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.EnchantmentStorageMeta;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -32,7 +35,9 @@ import java.util.Set;
  * </ul>
  *
  * <p>Les effets aquatiques passifs (pression, vitesse, respiration) sont gérés par
- * {@link fr.miuby.survi.job.task.FishermanEffectsTask}.</p>
+ * {@link fr.miuby.survi.job.task.FishermanEffectsTask} et {@link fr.miuby.survi.job.FishermanAttributeService} ;
+ * cette classe se contente de réagir instantanément à un changement de jambières
+ * ({@code onLeggingsChanged}) pour ne pas attendre le cycle de 3s de la tâche périodique.</p>
  *
  * <p>Tous les paramètres numériques et les listes de matériaux sont lus depuis
  * {@link JobsConfig} ({@code jobs/fisherman.yml}).</p>
@@ -48,6 +53,22 @@ public class FishermanListener implements Listener {
             Material.NAUTILUS_SHELL,
             Material.HEART_OF_THE_SEA
     );
+
+    // ─── Équipement — retour instantané quand le pantalon est mis/retiré ──────────
+
+    /**
+     * Réagit immédiatement à un changement de jambières pour appliquer/retirer le kit aquatique
+     * (vitesse, respiration, minage sous l'eau) sans attendre le prochain cycle de
+     * {@link fr.miuby.survi.job.task.FishermanEffectsTask} (jusqu'à 3s de latence sinon).
+     */
+    @EventHandler(ignoreCancelled = true)
+    public void onLeggingsChanged(EntityEquipmentChangedEvent event) {
+        if (!event.getEquipmentChanges().containsKey(EquipmentSlot.LEGS)) return;
+        if (!(event.getEntity() instanceof Player player)) return;
+        AlphaPlayer alpha = AlphaPlayer.get(player.getUniqueId());
+        if (alpha == null) return;
+        GameManager.getInstance().getAlphaPlayerFactory().getFishermanAttributeService().applyAttributes(alpha);
+    }
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onFish(PlayerFishEvent event) {

@@ -130,6 +130,7 @@ public final class GrowthItemLoader {
             case "message"          -> new MessageItemEffect(Component.text(e.value));
             case "potion"           -> new PotionItemEffect(parsePotionEffect(e.effect), e.seconds, e.amplifier);
             case "fire_enemies"     -> new FireEnemiesItemEffect(e.seconds);
+            case "unlock_ability"   -> new UnlockAbilityItemEffect(e.value);
             case "add_enchantment"  -> new AddEnchantmentItemEffect(parseEnchantment(e.enchantment), e.amount);
             case "set_attribute"    -> new SetAttributeItemEffect(
                     parseAttribute(e.attribute), e.attributeValue,

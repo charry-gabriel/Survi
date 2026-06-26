@@ -121,10 +121,10 @@
           "type": "string",
           "enum": [
             "name", "message", "potion",
-            "fire_enemies", "add_enchantment", "set_attribute"
+            "fire_enemies", "add_enchantment", "set_attribute", "unlock_ability"
           ]
         },
-        "value":          { "type": "string",  "description": "[name / message]" },
+        "value":          { "type": "string",  "description": "[name / message / unlock_ability] pour unlock_ability : identifiant d'ability (ex. tree_feller, vein_miner, underwater_kit — voir GrowthItems.ABILITY_*)" },
         "seconds":        { "type": "integer", "minimum": 1,  "description": "[potion / fire_enemies]" },
         "effect": {
           "type": "string",
@@ -219,7 +219,11 @@
               "then": { "required": ["enchantment", "amount"] },
               "else": {
                 "if":   { "properties": { "type": { "const": "set_attribute" } } },
-                "then": { "required": ["attribute", "attributeValue", "operation", "slot"] }
+                "then": { "required": ["attribute", "attributeValue", "operation", "slot"] },
+                "else": {
+                  "if":   { "properties": { "type": { "const": "unlock_ability" } } },
+                  "then": { "required": ["value"] }
+                }
               }
             }
           }

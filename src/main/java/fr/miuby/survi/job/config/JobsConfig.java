@@ -83,9 +83,16 @@ public final class JobsConfig {
         /** Marge (niveau de lumière du ciel, 0-15) avant de considérer qu'on n'est plus en situation de "grotte". */
         private final int caveLightHysteresis;
 
+        /**
+         * Nombre de minerais supplémentaires cassés par le vein miner (BFS sur le filon connecté),
+         * débloqué par l'ability {@code vein_miner} du casque ({@code GROWTH_MINER_HELMET}). Index = niveau.
+         * 0 = vein miner inactif à ce niveau même si l'ability est débloquée sur l'item.
+         */
+        private final int[] veinMinerExtraOres;
+
         MinerCfg(double[] dropMultiplier, int[] caveNightVisionThresholdY, int[] caveDarknessThresholdY,
                  int[] netherDarknessThresholdY, int caveDarknessHysteresis, int caveNightVisionHysteresis,
-                 int caveLightHysteresis) {
+                 int caveLightHysteresis, int[] veinMinerExtraOres) {
             this.dropMultiplier            = dropMultiplier;
             this.caveNightVisionThresholdY = caveNightVisionThresholdY;
             this.caveDarknessThresholdY    = caveDarknessThresholdY;
@@ -93,6 +100,7 @@ public final class JobsConfig {
             this.caveDarknessHysteresis    = caveDarknessHysteresis;
             this.caveNightVisionHysteresis = caveNightVisionHysteresis;
             this.caveLightHysteresis       = caveLightHysteresis;
+            this.veinMinerExtraOres        = veinMinerExtraOres;
         }
     }
 

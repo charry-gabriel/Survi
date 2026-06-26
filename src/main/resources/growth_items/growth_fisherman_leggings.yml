@@ -1,28 +1,46 @@
 # yaml-language-server: $schema=../schema/growth-items-schema.json
 id: GROWTH_FISHERMAN_LEGGINGS
-eventType: BlockBreakEvent
+eventType: FishCatchEvent
+
+# Le pantalon débloque le kit aquatique (vitesse de nage, respiration, minage sous l'eau) dès le
+# palier II — voir FishermanAttributeService. La MAGNITUDE de chaque bonus reste pilotée par
+# jobs/fisherman.yml (underwater-speed-modifier / oxygen-bonus / submerged-mining-speed-modifier,
+# indexés par niveau de job) : l'item débloque la capacité, le métier en augmente la portée.
 
 tiers:
-  - requiredUses: 1000
+  - requiredUses: 50
     effects:
-      - { type: name,            value: "the pioche 2 !" }
-      - { type: add_enchantment, enchantment: fortune, amount: 1 }
-      - { type: message,         value: "Lvlup de ta pioche ! une petite fortune de plus." }
+      - { type: name,           value: "Pantalon du Pêcheur II" }
+      - { type: set_attribute,  attribute: luck, attributeValue: 0.5, operation: ADD_NUMBER, slot: LEGS }
+      - { type: unlock_ability, value: underwater_kit }
+      - { type: message,        value: "Ton pantalon grandit — tu nages plus vite, respires plus longtemps et mines mieux sous l'eau !" }
 
-  - requiredUses: 2000
+  - requiredUses: 200
     effects:
-      - { type: name,            value: "the pioche 3 !" }
-      - { type: add_enchantment, enchantment: fortune, amount: 1 }
-      - { type: message,         value: "Lvlup de ta pioche ! une petite fortune de plus." }
+      - { type: name,          value: "Pantalon du Pêcheur III" }
+      - { type: set_attribute, attribute: luck, attributeValue: 1.0, operation: ADD_NUMBER, slot: LEGS }
+      - { type: message,       value: "Les poissons te sourient un peu plus." }
 
-  - requiredUses: 3000
+  - requiredUses: 450
     effects:
-      - { type: name,            value: "the pioche des pioches !" }
-      - { type: add_enchantment, enchantment: fortune, amount: 2 }
-      - { type: message,         value: "Lvlup de ta pioche ! deux fortune de plus, bim !" }
+      - { type: name,          value: "Pantalon du Pêcheur IV" }
+      - { type: set_attribute, attribute: luck, attributeValue: 1.5, operation: ADD_NUMBER, slot: LEGS }
+      - { type: message,       value: "Tu sens les bancs de poissons avant même de lancer ta ligne." }
+
+  - requiredUses: 800
+    effects:
+      - { type: name,          value: "Pantalon du Pêcheur V" }
+      - { type: set_attribute, attribute: luck, attributeValue: 2.0, operation: ADD_NUMBER, slot: LEGS }
+      - { type: message,       value: "L'océan n'a plus de secret pour toi." }
+
+  - requiredUses: 1300
+    effects:
+      - { type: name,          value: "Pantalon du Maître Pêcheur" }
+      - { type: set_attribute, attribute: luck, attributeValue: 3.0, operation: ADD_NUMBER, slot: LEGS }
+      - { type: message,       value: "Pantalon de légende. Les profondeurs t'appartiennent." }
 
 periodicEffects:
-  - everyUses: 1000
+  - everyUses: 30
     effects:
-      - { type: potion, effect: haste, seconds: 10 }
-      - { type: message, value: "Un peu de haste pour toi !" }
+      - { type: potion, effect: dolphins_grace, seconds: 60 }
+      - { type: message, value: "Une grâce de dauphin passagère !" }

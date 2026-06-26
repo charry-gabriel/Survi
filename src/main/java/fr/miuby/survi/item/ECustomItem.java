@@ -127,15 +127,16 @@ public enum ECustomItem {
         list.add(Component.empty());
         list.add(Component.text("Saturation : x cultures", NamedTextColor.GRAY));
         new CustomItemBuilder(item, "growthFisherman")
-                .name("Pantalon du pêcheur 1", NamedTextColor.DARK_PURPLE)
-                .lore(list)
-                .leatherArmor(TrimMaterial.DIAMOND, TrimPattern.SILENCE, Color.fromRGB(5592575))
-                .addAttribute(Attribute.ARMOR, -20, ADD_NUMBER, EquipmentSlotGroup.LEGS)
-                .addAttribute(Attribute.MAX_HEALTH, -15, ADD_NUMBER, EquipmentSlotGroup.LEGS)
-                .addAttribute(Attribute.MOVEMENT_SPEED, -0.06, ADD_NUMBER, EquipmentSlotGroup.LEGS)
-                .unbreakable()
-                .addItemFlag(ItemFlag.HIDE_DYE)
-                .addItemFlag(ItemFlag.HIDE_ARMOR_TRIM);
+            .name("Pantalon du pêcheur 1", NamedTextColor.DARK_PURPLE)
+            .lore(list)
+            .leatherArmor(TrimMaterial.DIAMOND, TrimPattern.SILENCE, Color.fromRGB(5592575))
+            .addAttribute(Attribute.ARMOR, -20, ADD_NUMBER, EquipmentSlotGroup.LEGS)
+            .addAttribute(Attribute.MAX_HEALTH, -15, ADD_NUMBER, EquipmentSlotGroup.LEGS)
+            .addAttribute(Attribute.MOVEMENT_SPEED, -0.06, ADD_NUMBER, EquipmentSlotGroup.LEGS)
+            .addAttribute(Attribute.LUCK, 0, ADD_NUMBER, EquipmentSlotGroup.LEGS) //évolutif
+            .unbreakable()
+            .addItemFlag(ItemFlag.HIDE_DYE)
+            .addItemFlag(ItemFlag.HIDE_ARMOR_TRIM);
     }),
 
     GROWTH_EXPLORER_COMPASS(Material.COMPASS, item -> {
