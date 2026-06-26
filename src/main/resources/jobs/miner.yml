@@ -82,14 +82,14 @@ cave-light-hysteresis: 2           # niveau de lumière du ciel (0-15) — déte
 # la capacité, le niveau de job en augmente la portée (même logique que tree-feller-extra-logs
 # pour le Bûcheron). 0 = vein miner inactif à ce niveau même ability débloquée.
 vein-miner-extra-ores:
-  - 0      # niveau  0
-  - 0      # niveau  1
-  - 0      # niveau  2
-  - 0      # niveau  3
-  - 0      # niveau  4
-  - 1      # niveau  5
-  - 2      # niveau  6
-  - 3      # niveau  7
-  - 4      # niveau  8
+  - 1      # niveau  0
+  - 1      # niveau  1
+  - 2      # niveau  2
+  - 2      # niveau  3
+  - 3      # niveau  4
+  - 3      # niveau  5
+  - 4      # niveau  6
+  - 4      # niveau  7
+  - 5      # niveau  8
   - 5      # niveau  9
   - 6      # niveau 10

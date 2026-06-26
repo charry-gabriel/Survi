@@ -96,16 +96,16 @@ pressure-damage: 1.0
 # Modificateur ADD_NUMBER sur WATER_MOVEMENT_EFFICIENCY (vitesse de nage).
 # Valeur 0.0 = vitesse vanilla. Active à partir du niveau 3.
 underwater-speed-modifier:
-  - 0.000   # niveau  0
-  - 0.000   # niveau  1
-  - 0.000   # niveau  2
-  - 0.010   # niveau  3
-  - 0.050   # niveau  4
-  - 0.100   # niveau  5
-  - 0.200   # niveau  6
-  - 0.400   # niveau  7
-  - 0.700   # niveau  8
-  - 1.000   # niveau  9
+  - 0.010   # niveau  0
+  - 0.050   # niveau  1
+  - 0.100   # niveau  2
+  - 0.200   # niveau  3
+  - 0.400   # niveau  4
+  - 0.600   # niveau  5
+  - 0.800   # niveau  6
+  - 1.000   # niveau  7
+  - 1.100   # niveau  8
+  - 1.300   # niveau  9
   - 1.500   # niveau 10
 
 # Modificateur ADD_NUMBER sur OXYGEN_BONUS (valeur sans unité).
@@ -129,16 +129,16 @@ oxygen-bonus:
 # Remplace l'ancien effet de potion HASTE. Valeur 0.0 = vitesse vanilla (pénalité normale).
 # Active à partir du niveau 5.
 submerged-mining-speed-modifier:
-  - 0.000   # niveau  0
-  - 0.000   # niveau  1
-  - 0.000   # niveau  2
-  - 0.000   # niveau  3
-  - 0.000   # niveau  4
-  - 0.100   # niveau  5
-  - 0.200   # niveau  6
-  - 0.350   # niveau  7
+  - 0.010   # niveau  0
+  - 0.100   # niveau  1
+  - 0.150   # niveau  2
+  - 0.200   # niveau  3
+  - 0.250   # niveau  4
+  - 0.300   # niveau  5
+  - 0.350   # niveau  6
+  - 0.400   # niveau  7
   - 0.500   # niveau  8
-  - 0.650   # niveau  9
+  - 0.600   # niveau  9
   - 0.800   # niveau 10
 
 # ─── Pluie acide ──────────────────────────────────────────────────────────────

@@ -15,7 +15,7 @@ tiers:
       - { type: unlock_ability, value: underwater_kit }
       - { type: message,        value: "Ton pantalon grandit — tu nages plus vite, respires plus longtemps et mines mieux sous l'eau !" }
 
-  - requiredUses: 200
+  - requiredUses: 100
     effects:
       - { type: name,          value: "Pantalon du Pêcheur III" }
       - { type: set_attribute, attribute: luck, attributeValue: 1.0, operation: ADD_NUMBER, slot: LEGS }

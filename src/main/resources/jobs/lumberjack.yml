@@ -62,17 +62,17 @@ fire-damage-multiplier:
 
 # Logs supplémentaires abattus par le tree-feller (0 = désactivé)
 tree-feller-extra-logs:
-  - 0   # niveau  0
-  - 0   # niveau  1
-  - 0   # niveau  2
-  - 0   # niveau  3
-  - 0   # niveau  4
-  - 1   # niveau  5
-  - 2   # niveau  6
-  - 3   # niveau  7
-  - 4   # niveau  8
-  - 5   # niveau  9
-  - 6   # niveau 10
+  - 1   # niveau  0
+  - 2   # niveau  1
+  - 2   # niveau  2
+  - 3   # niveau  3
+  - 3   # niveau  4
+  - 4   # niveau  5
+  - 4   # niveau  6
+  - 5   # niveau  7
+  - 6   # niveau  8
+  - 7   # niveau  9
+  - 10   # niveau 10
 
 # Durée en ticks de la résistance au feu accordée lors d'une ignition (0 = aucune résistance)
 fire-resistance-ticks:
