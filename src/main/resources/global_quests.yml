@@ -6,7 +6,7 @@ global_quests:
   - id: "global_cut_wood"
     name: "Coupons du bois !"
     description: "Coupez {value} bûche d'oak ou de jungle !"
-    type: "MINE"
+    type: MINE
     targets: [OAK_LOG, JUNGLE_LOG]
     goal: 2500
     time_limit: 7200
@@ -59,10 +59,10 @@ global_quests:
 
   - id: "global_fishing_trip"
     name: "Grande Partie de Pêche"
-    description: "Pêchez {value} poissons."
+    description: "Pêchez {value} fois."
     type: FISH
-    targets: [ COD, SALMON, TROPICAL_FISH, PUFFERFISH ]
-    goal: 225
+    targets:
+    goal: 450
     time_limit: 5400
     rewards:
       - { type: REPUTATION, job: FISHERMAN, value: 1 }
@@ -81,5 +81,32 @@ global_quests:
       - { type: ITEM, item: LAPIS_LAZULI, amount: 64 }
       - { type: ITEM, item: EXPERIENCE_BOTTLE, amount: 32 }
       - { type: POTION, potion: luck, duration: 600, amplifier: 0 }
+
+  - id: "global_global_global"
+    name: "La Grande Fonderie"
+    description: "Faire fondre {value} objets de métier (Bûches/Minerais/Cultures/Viandes/Poissons)"
+    type: SMELT
+    targets: [CHARCOAL, COPPER_INGOT, IRON_INGOT, GOLD_INGOT, COOKED_SALMON, COOKED_COD, COOKED_CHICKEN, COOKED_RABBIT, COOKED_PORKCHOP, COOKED_BEEF, COOKED_MUTTON, BAKED_POTATO]
+    goal: 67067
+    time_limit: 72000
+    rewards:
+      - { type: REPUTATION, job: ENCHANTER, value: 5}
+      - { type: REPUTATION, job: FARMER, value: 5}
+      - { type: REPUTATION, job: MINER, value: 5}
+      - { type: REPUTATION, job: FISHERMAN, value: 5}
+      - { type: REPUTATION, job: EXPLORER, value: 5}
+      - { type: REPUTATION, job: LUMBERJACK, value: 5}
+      - { type: ITEM, item: EXPERIENCE_BOTTLE, amount: 10 }
+      - { type: ITEM, item: GOLDEN_CARROT, amount: 10 }
+      - { type: ITEM, item: DIAMOND, amount: 9 }
+      - { type: ITEM, item: PUFFERFISH, amount: 6 }
+      - { type: ITEM, item: GHAST_TEAR, amount: 1 }
+      - { type: ITEM, item: CHERRY_LOG, amount: 16 }
+      - { type: POTION, potion: saturation, duration: 72000, amplifier: 0 }
+      - { type: POTION, potion: strength, duration: 72000, amplifier: 0 }
+      - { type: POTION, potion: haste, duration: 72000, amplifier: 0 }
+      - { type: POTION, potion: water_breathing, duration: 72000, amplifier: 0 }
+      - { type: POTION, potion: luck, duration: 72000, amplifier: 0 }
+      - { type: POTION, potion: speed, duration: 72000, amplifier: 0 }
 
 
