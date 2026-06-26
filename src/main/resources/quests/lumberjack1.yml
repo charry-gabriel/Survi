@@ -85,6 +85,6 @@ quests:
     jobs:
       - LUMBERJACK
     targets: [ CAMPFIRE ]
-    goal: 1
+    goal: 20
     rewards:
       - { type: REPUTATION, job: LUMBERJACK, value: 5}

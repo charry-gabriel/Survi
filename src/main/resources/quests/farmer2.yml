@@ -85,6 +85,6 @@ quests:
     jobs:
       - FARMER
     targets: [ WHEAT, CARROTS, POTATOES, BEETROOTS, PUMPKIN, MELON, SUGAR_CANE, COCOA, NETHER_WART ]
-    goal: 2000
+    goal: 1000
     rewards:
       - { type: REPUTATION, job: FARMER, value: 5 }

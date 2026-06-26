@@ -24,7 +24,7 @@ quests:
     jobs:
       - LUMBERJACK
     targets: [ JUNGLE_LOG ]
-    goal: 48
+    goal: 64
     rewards:
       - { type: REPUTATION, job: LUMBERJACK, value: 1}
 
@@ -58,7 +58,7 @@ quests:
     name: "Réserve de Bois"
     description: "Coupez {value} bûches au total."
     type: MINE
-    difficulty: 1
+    difficulty: 2
     jobs:
       - LUMBERJACK
     targets: [ OAK_LOG, BIRCH_LOG, SPRUCE_LOG, JUNGLE_LOG, ACACIA_LOG, DARK_OAK_LOG, CHERRY_LOG, PALE_OAK_LOG, MANGROVE_LOG ]
