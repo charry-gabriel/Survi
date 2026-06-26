@@ -26,9 +26,10 @@ tiers:
 
   - requiredUses: 580
     effects:
-      - { type: name,          value: "Casque de Mineur V" }
-      - { type: set_attribute, attribute: mining_efficiency, attributeValue: 0.4, operation: ADD_NUMBER, slot: HEAD }
-      - { type: message,       value: "Impressionnant ! Tu tailles dans la roche comme dans du beurre." }
+      - { type: name,           value: "Casque de Mineur V" }
+      - { type: set_attribute,  attribute: mining_efficiency, attributeValue: 0.4, operation: ADD_NUMBER, slot: HEAD }
+      - { type: unlock_ability, value: vein_miner }
+      - { type: message,        value: "Vein miner débloqué : tu sens le filon entier, ta pioche peut tout miner d'un coup !" }
 
   - requiredUses: 820
     effects:

@@ -224,6 +224,7 @@ public class GrowthItemListener implements Listener {
         Player player = event.getPlayer();
         GrowthItems.IncrementUses(player, "LogBreakEvent", EquipmentSlot.HAND, EquipmentSlot.OFF_HAND);
         GrowthItems.IncrementUses(player, "LogBreakEvent", EquipmentSlot.HEAD);
+        GrowthItems.IncrementUses(player, "LogBreakEvent", EquipmentSlot.CHEST);
         GrowthItems.IncrementUses(player, "LogBreakEvent", EquipmentSlot.LEGS);
     }
 

@@ -56,6 +56,33 @@ public final class GrowthItems {
     public static final NamespacedKey FIRE_SECONDS_KEY =
             new NamespacedKey(GameManager.getInstance().getPlugin(), "growth_fire_seconds");
 
+    /**
+     * Ensemble CSV des identifiants d'ability débloqués sur cet item — stocké par
+     * {@link fr.miuby.survi.item.growth_item.effect.UnlockAbilityItemEffect}, lu par {@link #hasAbility}
+     * / {@link #hasAbilityEquipped}.
+     */
+    public static final NamespacedKey UNLOCKED_ABILITIES_KEY =
+            new NamespacedKey(GameManager.getInstance().getPlugin(), "growth_unlocked_abilities");
+
+    // ─── Identifiants d'ability — système générique de capacités débloquées par palier ──
+    //
+    // Un palier de growth_items/*.yml peut contenir { type: unlock_ability, value: <id> }.
+    // Le listener du métier concerné vérifie ensuite GrowthItems.hasAbilityEquipped(player, <id>, slot)
+    // pour activer la mécanique ; la MAGNITUDE (nombre de blocs, intensité, etc.) reste pilotée par
+    // JobsConfig (niveau du job), indépendamment du palier de l'item.
+
+    /** Bûcheron (GROWTH_LUMBERJACK_CHESPLATE) — replante automatiquement la pousse sous la bûche cassée. */
+    public static final String ABILITY_AUTO_REPLANT = "auto_replant";
+
+    /** Bûcheron (GROWTH_LUMBERJACK_CHESPLATE) — casse les bûches connectées (BFS), nombre piloté par le niveau. */
+    public static final String ABILITY_TREE_FELLER = "tree_feller";
+
+    /** Mineur (GROWTH_MINER_HELMET) — casse le filon connecté (BFS), nombre piloté par le niveau. */
+    public static final String ABILITY_VEIN_MINER = "vein_miner";
+
+    /** Pêcheur (GROWTH_FISHERMAN_LEGGINGS) — active vitesse/respiration/minage sous l'eau, magnitude pilotée par le niveau. */
+    public static final String ABILITY_UNDERWATER_KIT = "underwater_kit";
+
     private GrowthItems() {}
 
     public static void init() {
@@ -202,6 +229,39 @@ public final class GrowthItems {
         return null;
     }
 
+    // ─── Capacités débloquées par palier (système générique) ──────────────────
+
+    /**
+     * {@code true} si {@code item} est un growth item portant l'ability {@code abilityId}
+     * dans {@link #UNLOCKED_ABILITIES_KEY} (débloquée via un effet {@code unlock_ability} d'un
+     * palier déjà atteint). Ne préjuge pas du métier ni de l'identité du growth item — seul
+     * l'ability compte, ce qui permet à n'importe quel item de la déclarer.
+     */
+    public static boolean hasAbility(@Nullable ItemStack item, String abilityId) {
+        if (item == null || item.getType().isAir()) return false;
+        ItemMeta meta = item.getItemMeta();
+        if (meta == null) return false;
+        PersistentDataContainer pdc = meta.getPersistentDataContainer();
+        Set<String> unlocked = parseSet(pdc.getOrDefault(UNLOCKED_ABILITIES_KEY, PersistentDataType.STRING, ""));
+        return unlocked.contains(abilityId);
+    }
+
+    /**
+     * {@code true} si {@code player} a, dans l'un des {@code slots} donnés (essayés dans l'ordre),
+     * un growth item ayant débloqué {@code abilityId}.
+     *
+     * <pre>{@code
+     *   if (GrowthItems.hasAbilityEquipped(player, GrowthItems.ABILITY_TREE_FELLER, EquipmentSlot.CHEST)) { ... }
+     * }</pre>
+     */
+    public static boolean hasAbilityEquipped(Player player, String abilityId, EquipmentSlot... slots) {
+        PlayerInventory inv = player.getInventory();
+        for (EquipmentSlot slot : slots) {
+            if (hasAbility(getEquipped(inv, slot), abilityId)) return true;
+        }
+        return false;
+    }
+
     // ─── Logique d'incrément partagée ────────────────────────────────────────
 
     private static void doIncrement(ItemStack item, ItemMeta meta, PersistentDataContainer pdc,
@@ -338,7 +398,9 @@ public final class GrowthItems {
      * <p>Séquence :</p>
      * <ol>
      *   <li>Défait la contribution growth sur les enchantements.</li>
-     *   <li>Réapplique les effets non-transitoires de chaque palier atteint.</li>
+     *   <li>Réinitialise les capacités débloquées ({@code unlock_ability}).</li>
+     *   <li>Réapplique les effets non-transitoires de chaque palier atteint (y compris les
+     *       capacités débloquées, recalculées depuis la config courante).</li>
      *   <li>Avance silencieusement les paliers que les uses actuels débloquent déjà
      *       (ex. nouveau palier ajouté avec un seuil déjà franchi).</li>
      *   <li>Estampille {@link #RELOAD_VERSION_KEY} avec la version de config courante.</li>
@@ -360,6 +422,15 @@ public final class GrowthItems {
 
         // 1. Défaire la contribution growth sur les enchantements
         resetGrowthEnchantments(item, currentTier, config);
+
+        // 1b. Réinitialiser les capacités débloquées — recalculées entièrement à l'étape 2/3
+        // ci-dessous depuis les paliers de la config courante (un palier modifié/retiré doit
+        // immédiatement se refléter, contrairement à un simple ajout cumulatif).
+        ItemMeta abilityResetMeta = item.getItemMeta();
+        if (abilityResetMeta != null) {
+            abilityResetMeta.getPersistentDataContainer().remove(UNLOCKED_ABILITIES_KEY);
+            item.setItemMeta(abilityResetMeta);
+        }
 
         // 2. Réappliquer les effets de base (stats initiales configurables via YAML)
         for (ItemEffect effect : config.baseEffects()) {

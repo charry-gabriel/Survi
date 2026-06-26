@@ -51,12 +51,12 @@ public enum ECustomItem {
         new CustomItemBuilder(item, "growthLumberjack")
             .name("Plastron du Bûcheron 1", NamedTextColor.DARK_GREEN)
             .leatherArmor(TrimMaterial.EMERALD, TrimPattern.DUNE, Color.fromRGB(43520))
-            .addAttribute(Attribute.MINING_EFFICIENCY, 0, ADD_NUMBER, EquipmentSlotGroup.HEAD) //évolutif
-            .addAttribute(Attribute.ARMOR, -20, ADD_NUMBER, EquipmentSlotGroup.HEAD)
-            .addAttribute(Attribute.MAX_HEALTH, 10, ADD_NUMBER, EquipmentSlotGroup.HEAD)
-            .addAttribute(Attribute.BLOCK_INTERACTION_RANGE, 2, ADD_NUMBER, EquipmentSlotGroup.HEAD)
-            .addAttribute(Attribute.MOVEMENT_SPEED, -0.03, ADD_NUMBER, EquipmentSlotGroup.HEAD)
-            .addAttribute(Attribute.SCALE, 0.3, ADD_NUMBER, EquipmentSlotGroup.HEAD)
+            .addAttribute(Attribute.MINING_EFFICIENCY, 0, ADD_NUMBER, EquipmentSlotGroup.CHEST) //évolutif
+            .addAttribute(Attribute.ARMOR, -20, ADD_NUMBER, EquipmentSlotGroup.CHEST)
+            .addAttribute(Attribute.MAX_HEALTH, 10, ADD_NUMBER, EquipmentSlotGroup.CHEST)
+            .addAttribute(Attribute.BLOCK_INTERACTION_RANGE, 2, ADD_NUMBER, EquipmentSlotGroup.CHEST)
+            .addAttribute(Attribute.MOVEMENT_SPEED, -0.03, ADD_NUMBER, EquipmentSlotGroup.CHEST)
+            .addAttribute(Attribute.SCALE, 0.3, ADD_NUMBER, EquipmentSlotGroup.CHEST)
             .unbreakable()
             .addItemFlag(ItemFlag.HIDE_DYE)
             .addItemFlag(ItemFlag.HIDE_ARMOR_TRIM);
@@ -99,9 +99,10 @@ public enum ECustomItem {
         new CustomItemBuilder(item, "growthFisherman")
             .name("Pantalon du pêcheur 1", NamedTextColor.DARK_PURPLE)
             .leatherArmor(TrimMaterial.DIAMOND, TrimPattern.SILENCE, Color.fromRGB(5592575))
-            .addAttribute(Attribute.ARMOR, -20, ADD_NUMBER, EquipmentSlotGroup.HEAD)
-            .addAttribute(Attribute.MAX_HEALTH, -15, ADD_NUMBER, EquipmentSlotGroup.HEAD)
-            .addAttribute(Attribute.MOVEMENT_SPEED, -0.06, ADD_NUMBER, EquipmentSlotGroup.HEAD)
+            .addAttribute(Attribute.ARMOR, -20, ADD_NUMBER, EquipmentSlotGroup.LEGS)
+            .addAttribute(Attribute.MAX_HEALTH, -15, ADD_NUMBER, EquipmentSlotGroup.LEGS)
+            .addAttribute(Attribute.MOVEMENT_SPEED, -0.06, ADD_NUMBER, EquipmentSlotGroup.LEGS)
+            .addAttribute(Attribute.LUCK, 0, ADD_NUMBER, EquipmentSlotGroup.LEGS) //évolutif
             .unbreakable()
             .addItemFlag(ItemFlag.HIDE_DYE)
             .addItemFlag(ItemFlag.HIDE_ARMOR_TRIM);

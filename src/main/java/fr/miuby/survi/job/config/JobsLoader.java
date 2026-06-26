@@ -66,7 +66,9 @@ public final class JobsLoader {
                         new int[]{25, 25, 25, 25, 25, 25, 25, 25, 25, -1, -1}),
                 minerCfg.getInt("cave-darkness-hysteresis", 3),
                 minerCfg.getInt("cave-night-vision-hysteresis", 3),
-                minerCfg.getInt("cave-light-hysteresis", 2)
+                minerCfg.getInt("cave-light-hysteresis", 2),
+                readInt(minerCfg, "vein-miner-extra-ores",
+                        new int[]{0, 0, 0, 0, 0, 1, 2, 3, 4, 5, 6})
         );
 
         JobsConfig.LumberjackCfg lumberjack = new JobsConfig.LumberjackCfg(

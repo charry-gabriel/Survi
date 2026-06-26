@@ -30,7 +30,7 @@ class GrowthItemConfigTest {
 
     private static final Set<String> VALID_EFFECT_TYPES = Set.of(
             "name", "message", "potion",
-            "fire_enemies", "add_enchantment", "set_attribute"
+            "fire_enemies", "add_enchantment", "set_attribute", "unlock_ability"
     );
 
     /**
@@ -208,6 +208,10 @@ class GrowthItemConfigTest {
                 assertStringNotEmpty(effect.enchantment, ctx + " : 'enchantment' requis");
                 assertTrue(effect.amount >= 1, ctx + " : 'amount' doit être >= 1");
             }
+
+            case "unlock_ability" ->
+                    assertStringNotEmpty(effect.value,
+                            ctx + " : 'value' requis pour type=unlock_ability (identifiant d'ability, ex. tree_feller, vein_miner, underwater_kit)");
 
             case "set_attribute" -> {
                 assertStringNotEmpty(effect.attribute, ctx + " : 'attribute' requis");

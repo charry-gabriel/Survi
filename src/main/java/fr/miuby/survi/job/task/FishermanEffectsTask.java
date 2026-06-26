@@ -28,8 +28,11 @@ import java.util.logging.Level;
  *
  * <p>La vitesse de nage ({@code WATER_MOVEMENT_EFFICIENCY}), la capacité respiratoire
  * ({@code OXYGEN_BONUS}) et la vitesse de minage sous l'eau ({@code SUBMERGED_MINING_SPEED})
- * sont des attributs persistants gérés par
- * {@link fr.miuby.survi.job.FishermanAttributeService} — aucun effet de potion n'est appliqué ici.</p>
+ * sont des attributs persistants gérés par {@link fr.miuby.survi.job.FishermanAttributeService},
+ * conditionnés au port de {@code GROWTH_FISHERMAN_LEGGINGS} ayant débloqué l'ability
+ * {@code underwater_kit} — aucun effet de potion n'est appliqué ici. Cette tâche resynchronise
+ * ces attributs à chaque cycle (en plus de la connexion et des montées de niveau) pour couvrir le
+ * cas où l'item débloque l'ability alors qu'il est déjà équipé.</p>
  *
  * <h3>Observabilité</h3>
  * <p>Chaque entrée/sortie en dégâts de pression ou de pluie acide est journalisée en {@code FINE/JOB}
@@ -66,6 +69,9 @@ public class FishermanEffectsTask extends BukkitRunnable {
                 }
 
                 int level = alpha.getJobLevel(EJob.FISHERMAN);
+
+                GameManager.getInstance().getAlphaPlayerFactory()
+                        .getFishermanAttributeService().applyAttributes(alpha);
 
                 updatePressureDamage(player, uuid, level, alpha, fisherman);
 
