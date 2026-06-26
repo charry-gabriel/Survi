@@ -30,8 +30,8 @@ recipes:
       customItem: GROWTH_EXPLORER_COMPASS
       amount: 1
     ingredient:
-      material: BEDROCK
-      amount: 64
+      material: ROTTEN_FLESH
+      amount: 48
     message: "Un super achat."
     requiredReputation: 55
 

@@ -16,59 +16,61 @@ tiers:
       - { type: name,           value: "Plastron de Bûcheron II" }
       - { type: set_attribute,  attribute: mining_efficiency, attributeValue: 0.1, operation: ADD_NUMBER, slot: CHEST }
       - { type: unlock_ability, value: auto_replant }
-      - { type: message,        value: "Ton plastron grandit — il replante la pousse sous chaque bûche coupée !" }
+      - { type: message,        value: "Ton plastron grandit, il replante la pousse sous chaque bûche coupée !" }
 
-  - requiredUses: 220
+  - requiredUses: 500
     effects:
       - { type: name,          value: "Plastron de Bûcheron III" }
       - { type: set_attribute, attribute: mining_efficiency, attributeValue: 0.2, operation: ADD_NUMBER, slot: CHEST }
       - { type: message,       value: "Tes coupes sont de plus en plus nettes." }
 
-  - requiredUses: 380
+  - requiredUses: 1000
     effects:
       - { type: name,          value: "Plastron de Bûcheron IV" }
       - { type: set_attribute, attribute: mining_efficiency, attributeValue: 0.3, operation: ADD_NUMBER, slot: CHEST }
       - { type: message,       value: "La forêt commence à te craindre." }
 
-  - requiredUses: 580
+  - requiredUses: 2500
     effects:
       - { type: name,           value: "Plastron de Bûcheron V" }
       - { type: set_attribute,  attribute: mining_efficiency, attributeValue: 0.4, operation: ADD_NUMBER, slot: CHEST }
       - { type: unlock_ability, value: tree_feller }
       - { type: message,        value: "Tree feller débloqué : une bûche coupée fait tomber tout l'arbre !" }
 
-  - requiredUses: 820
+  - requiredUses: 5000
     effects:
       - { type: name,          value: "Plastron de Bûcheron VI" }
       - { type: set_attribute, attribute: mining_efficiency, attributeValue: 0.5, operation: ADD_NUMBER, slot: CHEST }
       - { type: message,       value: "Le bois n'a plus aucun secret pour toi." }
 
-  - requiredUses: 1100
+  - requiredUses: 10000
     effects:
       - { type: name,          value: "Plastron de Bûcheron VII" }
       - { type: set_attribute, attribute: mining_efficiency, attributeValue: 0.6, operation: ADD_NUMBER, slot: CHEST }
       - { type: message,       value: "Chaque coup de hache abat un peu plus vite." }
 
-  - requiredUses: 1450
+  - requiredUses: 20000
     effects:
       - { type: name,          value: "Plastron de Bûcheron VIII" }
       - { type: set_attribute, attribute: mining_efficiency, attributeValue: 0.7, operation: ADD_NUMBER, slot: CHEST }
       - { type: message,       value: "Les arbres tombent presque d'eux-mêmes." }
 
-  - requiredUses: 2000
+  - requiredUses: 50000
     effects:
       - { type: name,          value: "Plastron de Bûcheron IX" }
       - { type: set_attribute, attribute: mining_efficiency, attributeValue: 0.8, operation: ADD_NUMBER, slot: CHEST }
       - { type: message,       value: "Plus aucune forêt ne te résiste." }
 
-  - requiredUses: 3000
+  - requiredUses: 100000
     effects:
       - { type: name,          value: "Plastron du Maître Bûcheron" }
       - { type: set_attribute, attribute: mining_efficiency, attributeValue: 1.0, operation: ADD_NUMBER, slot: CHEST }
       - { type: message,       value: "Plastron de légende. Les arbres tremblent à ton approche." }
 
 periodicEffects:
-  - everyUses: 20
+  - everyUses: 30
     effects:
       - { type: potion, effect: haste, seconds: 300 }
-      - { type: message, value: "Tes bras sont infatigables !" }
+      - { type: potion, effect: speed, seconds: 300 }
+      - { type: potion, effect: saturation, seconds: 30 }
+      - { type: message, value: "Tes bras et tes jambes sont infatigables !" }

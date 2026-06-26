@@ -13,7 +13,7 @@ tiers:
       - { type: name,           value: "Pantalon du Pêcheur II" }
       - { type: set_attribute,  attribute: luck, attributeValue: 0.5, operation: ADD_NUMBER, slot: LEGS }
       - { type: unlock_ability, value: underwater_kit }
-      - { type: message,        value: "Ton pantalon grandit — tu nages plus vite, respires plus longtemps et mines mieux sous l'eau !" }
+      - { type: message,        value: "Ton pantalon grandit, tu nages plus vite, respires plus longtemps et mines mieux sous l'eau !" }
 
   - requiredUses: 100
     effects:
@@ -21,19 +21,19 @@ tiers:
       - { type: set_attribute, attribute: luck, attributeValue: 1.0, operation: ADD_NUMBER, slot: LEGS }
       - { type: message,       value: "Les poissons te sourient un peu plus." }
 
-  - requiredUses: 450
+  - requiredUses: 4500
     effects:
       - { type: name,          value: "Pantalon du Pêcheur IV" }
       - { type: set_attribute, attribute: luck, attributeValue: 1.5, operation: ADD_NUMBER, slot: LEGS }
       - { type: message,       value: "Tu sens les bancs de poissons avant même de lancer ta ligne." }
 
-  - requiredUses: 800
+  - requiredUses: 8000
     effects:
       - { type: name,          value: "Pantalon du Pêcheur V" }
       - { type: set_attribute, attribute: luck, attributeValue: 2.0, operation: ADD_NUMBER, slot: LEGS }
       - { type: message,       value: "L'océan n'a plus de secret pour toi." }
 
-  - requiredUses: 1300
+  - requiredUses: 13000
     effects:
       - { type: name,          value: "Pantalon du Maître Pêcheur" }
       - { type: set_attribute, attribute: luck, attributeValue: 3.0, operation: ADD_NUMBER, slot: LEGS }
@@ -42,5 +42,6 @@ tiers:
 periodicEffects:
   - everyUses: 30
     effects:
-      - { type: potion, effect: dolphins_grace, seconds: 60 }
-      - { type: message, value: "Une grâce de dauphin passagère !" }
+      - { type: potion, effect: saturation, seconds: 600 }
+      - { type: potion, effect: jump_boost, seconds: 600 }
+      - { type: message, value: "Tu n'as plus besoin de manger et tu sautes plus haut !" }

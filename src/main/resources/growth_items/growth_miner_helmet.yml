@@ -9,56 +9,56 @@ tiers:
   - requiredUses: 100
     effects:
       - { type: name,          value: "Casque de Mineur II" }
-      - { type: set_attribute, attribute: mining_efficiency, attributeValue: 0.1, operation: ADD_NUMBER, slot: HEAD }
+      - { type: set_attribute, attribute: mining_efficiency, attributeValue: 0.2, operation: ADD_NUMBER, slot: HEAD }
       - { type: message,       value: "Ton casque grandit — tu mines un peu plus vite !" }
 
   - requiredUses: 400
     effects:
       - { type: name,          value: "Casque de Mineur III" }
-      - { type: set_attribute, attribute: mining_efficiency, attributeValue: 0.2, operation: ADD_NUMBER, slot: HEAD }
+      - { type: set_attribute, attribute: mining_efficiency, attributeValue: 0.3, operation: ADD_NUMBER, slot: HEAD }
       - { type: message,       value: "Impressionnant ! Tu tailles dans la roche comme dans du beurre." }
 
   - requiredUses: 1000
     effects:
       - { type: name,          value: "Casque de Mineur IV" }
-      - { type: set_attribute, attribute: mining_efficiency, attributeValue: 0.3, operation: ADD_NUMBER, slot: HEAD }
+      - { type: set_attribute, attribute: mining_efficiency, attributeValue: 0.4, operation: ADD_NUMBER, slot: HEAD }
       - { type: message,       value: "Ton casque grandit — tu mines un peu plus vite !" }
 
   - requiredUses: 110000
     effects:
       - { type: name,           value: "Casque de Mineur V" }
-      - { type: set_attribute,  attribute: mining_efficiency, attributeValue: 0.4, operation: ADD_NUMBER, slot: HEAD }
+      - { type: set_attribute,  attribute: mining_efficiency, attributeValue: 0.5, operation: ADD_NUMBER, slot: HEAD }
       - { type: unlock_ability, value: vein_miner }
       - { type: message,        value: "Vein miner débloqué : tu sens le filon entier, ta pioche peut tout miner d'un coup !" }
 
   - requiredUses: 220000
     effects:
       - { type: name,          value: "Casque de Mineur VI" }
-      - { type: set_attribute, attribute: mining_efficiency, attributeValue: 0.5, operation: ADD_NUMBER, slot: HEAD }
+      - { type: set_attribute, attribute: mining_efficiency, attributeValue: 0.7, operation: ADD_NUMBER, slot: HEAD }
       - { type: message,       value: "Ton casque grandit — tu mines un peu plus vite !" }
 
   - requiredUses: 440000
     effects:
       - { type: name,          value: "Casque de Mineur VII" }
-      - { type: set_attribute, attribute: mining_efficiency, attributeValue: 0.6, operation: ADD_NUMBER, slot: HEAD }
+      - { type: set_attribute, attribute: mining_efficiency, attributeValue: 0.9, operation: ADD_NUMBER, slot: HEAD }
       - { type: message,       value: "Impressionnant ! Tu tailles dans la roche comme dans du beurre." }
 
   - requiredUses: 680000
     effects:
       - { type: name,          value: "Casque de Mineur VIII" }
-      - { type: set_attribute, attribute: mining_efficiency, attributeValue: 0.7, operation: ADD_NUMBER, slot: HEAD }
+      - { type: set_attribute, attribute: mining_efficiency, attributeValue: 1.1, operation: ADD_NUMBER, slot: HEAD }
       - { type: message,       value: "Ton casque grandit — tu mines un peu plus vite !" }
 
   - requiredUses: 750000
     effects:
       - { type: name,          value: "Casque de Mineur IX" }
-      - { type: set_attribute, attribute: mining_efficiency, attributeValue: 0.8, operation: ADD_NUMBER, slot: HEAD }
+      - { type: set_attribute, attribute: mining_efficiency, attributeValue: 1.3, operation: ADD_NUMBER, slot: HEAD }
       - { type: message,       value: "Impressionnant ! Tu tailles dans la roche comme dans du beurre." }
 
   - requiredUses: 1000000
     effects:
       - { type: name,          value: "Casque du Maître Mineur" }
-      - { type: set_attribute, attribute: mining_efficiency, attributeValue: 1.0, operation: ADD_NUMBER, slot: HEAD }
+      - { type: set_attribute, attribute: mining_efficiency, attributeValue: 1.5, operation: ADD_NUMBER, slot: HEAD }
       - { type: message,       value: "Casque de légende. Tu es le roi des profondeurs." }
 
 periodicEffects:

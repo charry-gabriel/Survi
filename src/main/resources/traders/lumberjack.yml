@@ -30,7 +30,7 @@ recipes:
       customItem: GROWTH_LUMBERJACK_CHESTPLATE
       amount: 1
     ingredient:
-      material: BEDROCK
+      material: OAK_LOG
       amount: 64
     message: "Un super achat."
     requiredReputation: 55

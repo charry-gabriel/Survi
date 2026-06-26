@@ -73,4 +73,5 @@ periodicEffects:
   - everyUses: 400
     effects:
       - { type: potion, effect: saturation, seconds: 300 }
-      - { type: message,value: "Tu n'as plus besoin de te nourrir pendant 5 minutes !" }
+      - { type: potion, effect: speed, seconds: 300 }
+      - { type: message,value: "Tu n'as plus besoin de te nourrir et tu marches plus vite pendant 5 minutes !" }

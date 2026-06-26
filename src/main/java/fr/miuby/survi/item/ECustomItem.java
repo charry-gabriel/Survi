@@ -62,7 +62,7 @@ public enum ECustomItem {
         List<Component> list = new ArrayList<>();
         list.add(C.ARTIFACT_NAME);
         list.add(Component.empty());
-        list.add(Component.text("x", NamedTextColor.GRAY));
+        list.add(Component.text("Speed : x bûches.", NamedTextColor.GRAY));
         new CustomItemBuilder(item, "growthLumberjack")
                 .name("Plastron du Bûcheron 1", NamedTextColor.DARK_GREEN)
                 .lore(list)

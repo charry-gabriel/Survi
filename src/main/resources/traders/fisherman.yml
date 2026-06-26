@@ -18,11 +18,11 @@ recipes:
     requiredReputation: 0
 
   - result:
-      material: FISHING_ROD
+      material: WATER_BUCKET
       amount: 1
     ingredient:
       material: IRON_INGOT
-      amount: 32
+      amount: 5
     message: "Un super achat."
     requiredReputation: 15
 
@@ -30,16 +30,16 @@ recipes:
       customItem: GROWTH_FISHERMAN_LEGGINGS
       amount: 1
     ingredient:
-      material: BEDROCK
-      amount: 64
+      material: COD
+      amount: 48
     message: "Un super achat."
     requiredReputation: 55
 
   - result:
-      material: WATER_BUCKET
+      material: FISHING_ROD
       amount: 1
     ingredient:
-      material: COD
-      amount: 16
+      material: DIRT
+      amount: 64
     message: "Un super achat."
     requiredReputation: 110
