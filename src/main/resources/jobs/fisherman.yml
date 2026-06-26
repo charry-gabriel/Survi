@@ -148,3 +148,112 @@ acid-rain-damage: 1
 
 # Niveau Pêcheur minimum pour être immunisé à la pluie acide.
 acid-rain-fisherman-level-threshold: 6
+
+# ─── Loot alchimique ──────────────────────────────────────────────────────────
+# Probabilité qu'une pêche soit alchimique (remplace le drop normal)
+# Progression avec le niveau : 0% au niveau 0, 60% au niveau 10
+alchemic-catch-chance:
+  - 0.00   # niveau  0  — jamais
+  - 0.03   # niveau  1
+  - 0.06   # niveau  2
+  - 0.10   # niveau  3
+  - 0.15   # niveau  4
+  - 0.22   # niveau  5
+  - 0.30   # niveau  6
+  - 0.38   # niveau  7
+  - 0.45   # niveau  8
+  - 0.52   # niveau  9
+  - 0.60   # niveau 10
+
+# Table de loot alchimique
+# Les poids (weight) définissent la fréquence relative dans un tirage au sort.
+# Tier 1 ingrédient > Tier 1 vanilla > Tier 2 vanilla > Potions inédites
+#
+# type: ingredient | vanilla_potion | custom_potion
+# level-min: niveau Pêcheur minimum pour que l'entrée soit éligible
+# weight: poids dans le tirage pondéré parmi les entrées éligibles
+alchemic-loot:
+
+  # ── Ingrédient — Nether Wart (seul ingrédient pêchable) ─────────────────────
+  - type: ingredient
+    item: NETHER_WART
+    level-min: 1
+    weight: 200
+
+  # ── Potions vanilla Tier 1 ───────────────────────────────────────────────────
+  # Régénération I — durée réduite (30 s, vanilla = 45 s)
+  - type: vanilla_potion
+    effect: REGENERATION
+    duration: 600
+    amplifier: 0
+    splash: false
+    level-min: 3
+    weight: 70
+
+  # Soin instantané I
+  - type: vanilla_potion
+    effect: INSTANT_HEALTH
+    duration: 1
+    amplifier: 0
+    splash: false
+    level-min: 3
+    weight: 65
+
+  # Force I — amplifier 0 seulement (Force II bloquée)
+  - type: vanilla_potion
+    effect: STRENGTH
+    duration: 1800
+    amplifier: 0
+    splash: false
+    level-min: 4
+    weight: 50
+
+  # ── Potions vanilla Tier 2 (moins communes) ───────────────────────────────────
+  # Régénération II — durée très courte (15 s, car amplifier 1 très puissant)
+  - type: vanilla_potion
+    effect: REGENERATION
+    duration: 300
+    amplifier: 1
+    splash: false
+    level-min: 5
+    weight: 28
+
+  # Soin instantané II
+  - type: vanilla_potion
+    effect: INSTANT_HEALTH
+    duration: 1
+    amplifier: 1
+    splash: false
+    level-min: 5
+    weight: 25
+
+  # ── Potions inédites (rares, niveau haut requis) ─────────────────────────────
+  # Bouclier Éphémère — absorbe 3 coups
+  - type: custom_potion
+    id: BOUCLIER
+    level-min: 5
+    weight: 15
+
+  # Miasme — nuage Poison III au sol (splash)
+  - type: custom_potion
+    id: MIASME
+    level-min: 5
+    weight: 13
+
+  # Déflagration — gros dégâts AOE autour du point d'impact (splash)
+  - type: custom_potion
+    id: DEFLAGRATION
+    level-min: 6
+    weight: 10
+
+  # Symbiose — régénération mais 0 dégâts en attaque
+  - type: custom_potion
+    id: SYMBIOSE
+    level-min: 7
+    weight: 7
+
+  # Fissure — Haste XV / 8 s puis Fatigue IV / 2 min
+  - type: custom_potion
+    id: FISSURE
+    level-min: 8
+    weight: 4

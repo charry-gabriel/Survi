@@ -4,6 +4,7 @@ import fr.miuby.lib.MiubyLib;
 import fr.miuby.lib.log.MLLogManager;
 import fr.miuby.survi.grave.GraveManager;
 import fr.miuby.survi.food.FoodOfTheDayManager;
+import fr.miuby.survi.job.alchemic.CustomPotionManager;
 import fr.miuby.survi.mob.MobLevelManager;
 import fr.miuby.survi.player.service.OfflineNotificationService;
 import fr.miuby.survi.quest.quest.QuestGlowService;
@@ -74,6 +75,7 @@ public class GameManager {
     @Getter private PortalLocatorManager portalLocatorManager;
     @Getter private RainManager rainManager;
     @Getter private LangService langService;
+    @Getter private CustomPotionManager customPotionManager;
 
     @Setter @Getter private int dispel = 0;
     @Setter @Getter private boolean isNight;
@@ -214,6 +216,8 @@ public class GameManager {
         this.customRecipeFactory.removeOldRecipes();
 
         GrowthItems.init();
+
+        this.customPotionManager = new CustomPotionManager();
 
         this.foodOfTheDayManager = new FoodOfTheDayManager();
     }

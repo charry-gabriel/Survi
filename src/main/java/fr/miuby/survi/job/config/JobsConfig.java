@@ -1,7 +1,10 @@
 package fr.miuby.survi.job.config;
 
+import fr.miuby.survi.job.alchemic.AlchemicLootEntry;
 import lombok.Getter;
 import org.bukkit.Material;
+
+import java.util.List;
 
 /**
  * Singleton contenant tous les paramètres numériques des métiers,
@@ -216,6 +219,10 @@ public final class JobsConfig {
         private final double   acidRainDamage;
         /** Niveau Pêcheur minimum pour être immunisé à la pluie acide. */
         private final int      acidRainFishermanLevelThreshold;
+        /** Probabilité de remplacer un item pêché par un loot alchimique. Index = niveau. */
+        private final double[] alchemicCatchChance;
+        /** Table de loot alchimique (ingrédients, potions vanilla nerfées, potions inédites). */
+        private final List<AlchemicLootEntry> alchemicLoot;
 
         FishermanCfg(int vanillaMinWaitTicks, int vanillaMaxWaitTicks,
                      double[] fishingWaitMultiplier, double[] lootMultiplier,
@@ -224,7 +231,8 @@ public final class JobsConfig {
                      int[] pressureSafeDepth, double pressureDamage,
                      double[] underwaterSpeedModifier, double[] oxygenBonus,
                      double[] submergedMiningSpeedModifier,
-                     double acidRainDamage, int acidRainFishermanLevelThreshold) {
+                     double acidRainDamage, int acidRainFishermanLevelThreshold,
+                     double[] alchemicCatchChance, List<AlchemicLootEntry> alchemicLoot) {
             this.vanillaMinWaitTicks              = vanillaMinWaitTicks;
             this.vanillaMaxWaitTicks              = vanillaMaxWaitTicks;
             this.fishingWaitMultiplier            = fishingWaitMultiplier;
@@ -240,6 +248,8 @@ public final class JobsConfig {
             this.submergedMiningSpeedModifier     = submergedMiningSpeedModifier;
             this.acidRainDamage                   = acidRainDamage;
             this.acidRainFishermanLevelThreshold  = acidRainFishermanLevelThreshold;
+            this.alchemicCatchChance              = alchemicCatchChance;
+            this.alchemicLoot                     = alchemicLoot;
         }
     }
 
