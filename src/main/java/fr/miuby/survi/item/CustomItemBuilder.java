@@ -22,6 +22,7 @@ import org.bukkit.inventory.meta.trim.TrimPattern;
 
 import java.text.Normalizer;
 import java.util.List;
+import java.util.Locale;
 
 public class CustomItemBuilder {
     private final ItemStack itemStack;
@@ -49,8 +50,8 @@ public class CustomItemBuilder {
 
     public CustomItemBuilder addAttribute(Attribute attr, double value, AttributeModifier.Operation op, EquipmentSlotGroup slot) {
         String modifierName = sanitizeKey(itemKeyId)
-                + attr.getKey().getKey().replace("_", "").substring(0, 1).toUpperCase()
-                + attr.getKey().getKey().replace("_", "").substring(1);
+                + "_" + itemStack.getType().getKey().getKey()
+                + "_" + attr.getKey().getKey().replace(".", "_");
 
         ItemMeta meta = itemStack.getItemMeta();
         meta.addAttributeModifier(attr, new AttributeModifier(new NamespacedKey(GameManager.getInstance().getPlugin(), modifierName), value, op, slot));
@@ -60,7 +61,7 @@ public class CustomItemBuilder {
 
     private static String sanitizeKey(String input) {
         String withoutDiacritics = Normalizer.normalize(input, Normalizer.Form.NFD).replaceAll("\\p{M}", "");
-        return withoutDiacritics.replaceAll("[^a-zA-Z0-9_-]", "");
+        return withoutDiacritics.toLowerCase(Locale.ROOT).replaceAll("[^a-z0-9_-]", "");
     }
 
     public CustomItemBuilder addItemFlag(ItemFlag flag) {

@@ -40,7 +40,9 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 public class PlayerListener implements Listener {
@@ -54,6 +56,9 @@ public class PlayerListener implements Listener {
 
     /** Cooldown d'avertissement par joueur — remplace l'ancien Map<UUID, Long>. */
     private final Cooldown<UUID> warnCooldown = new Cooldown<>(WARN_COOLDOWN_MS);
+
+    /** Armure sauvegardée à la mort, restituée après le respawn (pas pendant l'écran de mort). */
+    private final Map<UUID, ItemStack[]> pendingArmorRestore = new HashMap<>();
 
     public PlayerListener() {
         this.gm = GameManager.getInstance();
@@ -176,8 +181,9 @@ public class PlayerListener implements Listener {
         AlphaPlayer.get(player.getUniqueId()).getAlphaLife().saveFood();
 
         final ItemStack[] armor = player.getInventory().getArmorContents();
-
-        gm.getScheduler().scheduleSyncDelayedTask(gm.getPlugin(), () -> player.getInventory().setArmorContents(armor));
+        pendingArmorRestore.put(player.getUniqueId(), armor);
+        MLLogManager.getInstance().log(Level.FINE, ELogTag.PLAYER,
+                "[PlayerDeath] " + player.getName() + " — armure sauvegardée (" + armor.length + " slots)");
 
         for (ItemStack is : armor) {
             event.getDrops().remove(is);
@@ -220,6 +226,22 @@ public class PlayerListener implements Listener {
                     () -> { if (player.isOnline()) effectsToReapply.forEach(e -> e.applyEffect(alphaPlayer)); },
                     5L);
         }
+
+        ItemStack[] pendingArmor = pendingArmorRestore.remove(player.getUniqueId());
+        if (pendingArmor != null) {
+            gm.getScheduler().runTaskLater(gm.getPlugin(), () -> {
+                if (player.isOnline()) {
+                    player.getInventory().setArmorContents(pendingArmor);
+                    MLLogManager.getInstance().log(Level.FINE, ELogTag.PLAYER,
+                            "[PlayerRespawn] " + player.getName() + " — armure restaurée");
+                }
+            }, 1L);
+        }
+    }
+
+    @EventHandler
+    public void onPlayerQuit(PlayerQuitEvent event) {
+        pendingArmorRestore.remove(event.getPlayer().getUniqueId());
     }
 
     // ─── Changement de monde : gestion du fly Village ────────────────────────────
