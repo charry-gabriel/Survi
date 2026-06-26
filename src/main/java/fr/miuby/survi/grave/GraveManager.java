@@ -130,95 +130,89 @@ public class GraveManager {
 
     /**
      * Trouve le meilleur emplacement libre pour poser la tombe.
-     * 1. Si le joueur est mort dans le vide (aucun sol sous ses pieds), remonte
-     *    jusqu'au premier bloc solide en scannant vers le haut.
-     * 2. Essaie la position ajustée puis 1 bloc au-dessus.
-     * 3. Si bloqué, scan en spirale jusqu'au rayon 4.
-     *
-     * @return un emplacement libre, ou null si aucun n'est trouvé.
+     * 1. Si le joueur est mort dans le vide, cherche latéralement (en spirale)
+     *    une colonne X,Z voisine qui possède du sol, puis se place dessus.
+     * 2. Sinon, essaie la position de mort puis 1 bloc au-dessus.
+     * 3. Si bloqué, scan en spirale (rayon 1-4) autour de la position de mort.
      */
     private Location findAvailableLocation(Location base) {
         World world = base.getWorld();
         int minY = world.getMinHeight();
         int maxY = world.getMaxHeight() - 1;
 
-        // Étape 1 : corriger une position dans le vide
-        Location adjusted = avoidVoid(base, minY, maxY);
+        // Étape 1 : mort dans le vide → chercher une surface solide à côté
+        if (isInVoid(base, minY)) {
+            MLLogManager.getInstance().log(Level.FINE, ELogTag.GRAVE,
+                    "[FindLoc] Mort dans le vide en " + base.getBlockX() + "," + base.getBlockY() + "," + base.getBlockZ() + " — recherche surface voisine");
+            Location surface = findSurfaceNearby(base, minY, maxY);
+            if (surface != null) {
+                MLLogManager.getInstance().log(Level.FINE, ELogTag.GRAVE,
+                        "[FindLoc] Surface voisine trouvée en " + surface.getBlockX() + "," + surface.getBlockY() + "," + surface.getBlockZ());
+            } else {
+                MLLogManager.getInstance().log(Level.WARNING, ELogTag.GRAVE,
+                        "[FindLoc] Aucune surface trouvée dans un rayon de 16 blocs");
+            }
+            return surface;
+        }
 
-        // Étape 2 : position ajustée et 1 bloc au-dessus
+        // Étape 2 : position directe et 1 bloc au-dessus
         for (int dy = 0; dy <= 1; dy++) {
-            int y = adjusted.getBlockY() + dy;
-            if (y > maxY) break;
-            Location candidate = new Location(world, adjusted.getBlockX(), y, adjusted.getBlockZ());
+            int y = base.getBlockY() + dy;
+            if (y < minY || y > maxY) continue;
+            Location candidate = new Location(world, base.getBlockX(), y, base.getBlockZ());
             if (canPlaceAt(candidate)) {
                 MLLogManager.getInstance().log(Level.FINE, ELogTag.GRAVE,
-                        "[FindLoc] Emplacement trouvé en " + candidate.getBlockX() + "," + y + "," + candidate.getBlockZ() + " (dy=" + dy + ")");
+                        "[FindLoc] Emplacement direct en " + candidate.getBlockX() + "," + y + "," + candidate.getBlockZ() + " (dy=" + dy + ")");
                 return candidate;
             }
         }
 
-        // Étape 3 : scan en spirale autour de la position ajustée
-        Location nearby = scanNearby(adjusted, minY, maxY);
+        // Étape 3 : scan en spirale autour de la position de mort
+        Location nearby = scanNearby(base, minY, maxY);
         if (nearby != null) {
             MLLogManager.getInstance().log(Level.FINE, ELogTag.GRAVE,
-                    "[FindLoc] Emplacement spiral trouvé en " + nearby.getBlockX() + "," + nearby.getBlockY() + "," + nearby.getBlockZ());
+                    "[FindLoc] Emplacement spiral en " + nearby.getBlockX() + "," + nearby.getBlockY() + "," + nearby.getBlockZ());
         }
         return nearby;
     }
 
     /**
-     * Si la position de mort est dans le vide (en dessous de minY ou sans aucun bloc
-     * non-air en dessous jusqu'à minY), remonte en scannant vers le haut pour trouver
-     * le dessus du premier bloc solide.
+     * Retourne true si le joueur est mort dans le vide :
+     * soit en dessous de minY, soit dans une colonne entièrement vide jusqu'à minY.
      */
-    private Location avoidVoid(Location loc, int minY, int maxY) {
-        int y = loc.getBlockY();
-
-        if (y < minY) {
-            MLLogManager.getInstance().log(Level.FINE, ELogTag.GRAVE,
-                    "[FindLoc] Mort sous minY (" + y + " < " + minY + ") — scan ascendant depuis " + minY);
-            return scanUpForSolidTop(new Location(loc.getWorld(), loc.getBlockX(), minY, loc.getBlockZ()), maxY);
-        }
-
-        if (!hasSolidGroundBelow(loc, minY)) {
-            MLLogManager.getInstance().log(Level.FINE, ELogTag.GRAVE,
-                    "[FindLoc] Aucun sol détecté sous Y=" + y + " — scan ascendant (vide)");
-            return scanUpForSolidTop(loc, maxY);
-        }
-
-        return loc;
-    }
-
-    /**
-     * Retourne true si au moins un bloc non-air existe entre la position et minY (exclu).
-     * Les blocs liquides (eau, lave) comptent comme sol.
-     */
-    private boolean hasSolidGroundBelow(Location loc, int minY) {
+    private boolean isInVoid(Location loc, int minY) {
+        if (loc.getBlockY() < minY) return true;
         World world = loc.getWorld();
         int x = loc.getBlockX(), z = loc.getBlockZ();
-        for (int y = loc.getBlockY() - 1; y >= minY; y--) {
-            if (!world.getBlockAt(x, y, z).getType().isAir()) return true;
+        for (int y = loc.getBlockY(); y >= minY; y--) {
+            if (!world.getBlockAt(x, y, z).getType().isAir()) return false;
         }
-        return false;
+        return true;
     }
 
     /**
-     * Remonte depuis start et retourne la position juste au-dessus du premier bloc
-     * non-air trouvé. Si aucun bloc solide n'est trouvé avant maxY, retourne start.
+     * Cherche en spirale (rayon 0→16) autour de la position de mort une colonne X,Z
+     * qui possède un bloc solide en surface, puis retourne la position juste au-dessus.
+     * Utilise getHighestBlockYAt pour éviter de scanner colonne par colonne.
      */
-    private Location scanUpForSolidTop(Location start, int maxY) {
-        World world = start.getWorld();
-        int x = start.getBlockX(), z = start.getBlockZ();
-        for (int y = start.getBlockY(); y <= maxY; y++) {
-            if (!world.getBlockAt(x, y, z).getType().isAir()) {
-                MLLogManager.getInstance().log(Level.FINE, ELogTag.GRAVE,
-                        "[FindLoc] Premier bloc solide trouvé en Y=" + y + " → tombe en Y=" + (y + 1));
-                return new Location(world, x, y + 1, z);
+    private Location findSurfaceNearby(Location base, int minY, int maxY) {
+        World world = base.getWorld();
+        int cx = base.getBlockX(), cz = base.getBlockZ();
+
+        for (int r = 0; r <= 16; r++) {
+            for (int dx = -r; dx <= r; dx++) {
+                for (int dz = -r; dz <= r; dz++) {
+                    if (r > 0 && Math.abs(dx) != r && Math.abs(dz) != r) continue; // périmètre uniquement
+                    int x = cx + dx, z = cz + dz;
+                    int surfaceY = world.getHighestBlockYAt(x, z);
+                    if (surfaceY < minY) continue; // colonne vide
+                    if (world.getBlockAt(x, surfaceY, z).getType().isAir()) continue; // sécurité
+                    Location top = new Location(world, x, surfaceY + 1, z);
+                    if (top.getBlockY() <= maxY && canPlaceAt(top)) return top;
+                }
             }
         }
-        MLLogManager.getInstance().log(Level.WARNING, ELogTag.GRAVE,
-                "[FindLoc] Aucun bloc solide trouvé en remontant depuis Y=" + start.getBlockY() + " — position de mort conservée");
-        return start.clone();
+        return null;
     }
 
     /**
