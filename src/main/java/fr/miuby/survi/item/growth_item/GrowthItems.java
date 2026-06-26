@@ -11,6 +11,9 @@ import fr.miuby.survi.sound.SoundService;
 import fr.miuby.survi.system.exception.AlphaPlayerNotFoundException;
 import fr.miuby.survi.system.lang.LangService;
 import fr.miuby.survi.system.log.ELogTag;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.title.Title;
 import org.bukkit.NamespacedKey;
 import org.bukkit.enchantments.Enchantment;
@@ -68,6 +71,14 @@ public final class GrowthItems {
     /** Secondes de feu infligées aux ennemis frappés — stockées dans le PDC de l'item par {@link fr.miuby.survi.item.growth_item.effect.FireEnemiesItemEffect}. */
     public static final NamespacedKey FIRE_SECONDS_KEY =
             new NamespacedKey(GameManager.getInstance().getPlugin(), "growth_fire_seconds");
+
+    /**
+     * Index (0-based) de la ligne de lore affichant la progression vers le prochain palier.
+     * Stocké lors de la première insertion pour permettre une mise à jour O(1) à chaque action.
+     * Absent → la ligne n'a pas encore été insérée.
+     */
+    public static final NamespacedKey PROGRESS_LORE_INDEX_KEY =
+            new NamespacedKey(GameManager.getInstance().getPlugin(), "growth_progress_idx");
 
     /**
      * Ensemble CSV des identifiants d'ability débloqués sur cet item — stocké par
@@ -302,6 +313,8 @@ public final class GrowthItems {
             if (uses % pe.everyUses() == 0)
                 pe.effects().forEach(e -> e.apply(item, alpha));
         });
+
+        updateProgressLore(item, uses);
     }
 
     // ─── Feedback tier-up ─────────────────────────────────────────────────────
@@ -498,6 +511,8 @@ public final class GrowthItems {
             pdc.set(TIER_KEY, PersistentDataType.INTEGER, newTier);
         pdc.set(RELOAD_VERSION_KEY, PersistentDataType.INTEGER, GrowthItemLoader.getConfigVersion());
         item.setItemMeta(meta);
+
+        updateProgressLore(item, uses);
     }
 
     // ─── Reset enchantements growth ───────────────────────────────────────────
@@ -561,6 +576,42 @@ public final class GrowthItems {
         }
 
         item.setItemMeta(meta);
+    }
+
+    // ─── Progression dans la lore ─────────────────────────────────────────────
+
+    /**
+     * Met à jour (ou insère) la ligne de lore indiquant la progression vers le prochain palier.
+     *
+     * <p>L'index de la ligne est mémorisé dans {@link #PROGRESS_LORE_INDEX_KEY} lors de la
+     * première insertion : les appels suivants sont O(1) (accès direct à l'index, pas de scan).
+     * Appelé en dernier dans {@link #doIncrement} et {@link #reapplyAll} pour ne pas être
+     * écrasé par un {@code effect.apply} intermédiaire.</p>
+     */
+    private static void updateProgressLore(ItemStack item, int uses) {
+        ItemMeta meta = item.getItemMeta();
+        if (meta == null) return;
+        PersistentDataContainer pdc = meta.getPersistentDataContainer();
+
+        Component line = buildProgressComponent(uses);
+        List<Component> lore = meta.hasLore() ? new ArrayList<>(meta.lore()) : new ArrayList<>();
+
+        Integer idx = pdc.get(PROGRESS_LORE_INDEX_KEY, PersistentDataType.INTEGER);
+        if (idx != null && idx >= 0 && idx < lore.size()) {
+            lore.set(idx, line);
+        } else {
+            int newIdx = lore.size();
+            lore.add(line);
+            pdc.set(PROGRESS_LORE_INDEX_KEY, PersistentDataType.INTEGER, newIdx);
+        }
+
+        meta.lore(lore);
+        item.setItemMeta(meta);
+    }
+
+    private static Component buildProgressComponent(int uses) {
+        return Component.text("Utilisations : " + uses, NamedTextColor.GRAY)
+                .decoration(TextDecoration.ITALIC, false);
     }
 
     // ─── Utilitaire interne ───────────────────────────────────────────────────
