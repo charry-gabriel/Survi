@@ -1,16 +1,28 @@
 # yaml-language-server: $schema=../schema/quests-schema.json
 quests:
 
-# ─────────────────── DIFFICULTÉ 3 (0/7) ───────────────────
+# ─────────────────── DIFFICULTÉ 3 (7/7) ───────────────────
 
-  - id: "paper_production3"
-    name: "Fabricant de Papier"
-    description: "Fabriquez {value} papiers."
-    type: CRAFT
+  - id: "kill_evoker"
+    name: "Inquisiteur des Illusions"
+    description: "Tuez {value} évocateurs."
+    type: KILL
     difficulty: 3
     jobs:
-      - ENCHANTER
-    targets: [PAPER]
-    goal: 1
+      - EXPLORER
+    targets: [EVOKER]
+    goal: 5
     rewards:
-      - { type: REPUTATION, job: ENCHANTER, value: 1 }
+      - {type: REPUTATION, job: EXPLORER, value: 15}
+
+  - id: "kill_piglin_brutes"
+    name: "Briseur de Bastion"
+    description: "Tuez {value} piglins brutes."
+    type: KILL
+    difficulty: 3
+    jobs:
+      - EXPLORER
+    targets: [ PIGLIN_BRUTE ]
+    goal: 20
+    rewards:
+      - { type: REPUTATION, job: EXPLORER, value: 18 }
