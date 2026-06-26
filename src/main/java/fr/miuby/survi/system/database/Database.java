@@ -22,6 +22,7 @@ public abstract class Database extends MLSQLite {
     protected QuestRepository questRepository;
     protected SystemRepository systemRepository;
     protected GraveRepository graveRepository;
+    protected GraveLostNotificationRepository graveLostNotificationRepository;
     protected QuestHistoryRepository questHistoryRepository;
     protected TradeHistoryRepository tradeHistoryRepository;
     protected TributeHistoryRepository tributeHistoryRepository;
@@ -48,8 +49,9 @@ public abstract class Database extends MLSQLite {
         cropRepository          = new CropRepository(conn, this);
         questRepository         = new QuestRepository(conn, this);
         systemRepository        = new SystemRepository(conn, this);
-        graveRepository         = new GraveRepository(conn, this);
-        questHistoryRepository  = new QuestHistoryRepository(conn, this);
+        graveRepository                  = new GraveRepository(conn, this);
+        graveLostNotificationRepository  = new GraveLostNotificationRepository(conn, this);
+        questHistoryRepository           = new QuestHistoryRepository(conn, this);
         tradeHistoryRepository  = new TradeHistoryRepository(conn, this);
         tributeHistoryRepository = new TributeHistoryRepository(conn, this);
     }
@@ -63,8 +65,9 @@ public abstract class Database extends MLSQLite {
     public CropRepository crops()                      { return cropRepository; }
     public QuestRepository quests()                    { return questRepository; }
     public SystemRepository system()                   { return systemRepository; }
-    public GraveRepository graves()                    { return graveRepository; }
-    public QuestHistoryRepository questHistory()       { return questHistoryRepository; }
+    public GraveRepository graves()                                        { return graveRepository; }
+    public GraveLostNotificationRepository graveLostNotifications()        { return graveLostNotificationRepository; }
+    public QuestHistoryRepository questHistory()                           { return questHistoryRepository; }
     public TradeHistoryRepository tradeHistory()       { return tradeHistoryRepository; }
     public TributeHistoryRepository tributeHistory()   { return tributeHistoryRepository; }
 }

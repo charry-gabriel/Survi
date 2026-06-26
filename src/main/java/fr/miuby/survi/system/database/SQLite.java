@@ -8,7 +8,7 @@ import java.sql.*;
 import java.util.logging.Level;
 
 public class SQLite extends Database {
-    private static final int CURRENT_DB_VERSION = 15;
+    private static final int CURRENT_DB_VERSION = 16;
 
     public SQLite() {
         super(GameManager.getInstance().getPlugin().getConfig().getString("SQLite.Filename", "minecraft"));
@@ -52,6 +52,7 @@ public class SQLite extends Database {
             s.executeUpdate(createServerDataTable());
             s.executeUpdate(createDelayedEffectsTable());
             s.executeUpdate(createGraveTable());
+            s.executeUpdate(createGraveLostNotificationTable());
             s.executeUpdate(createQuestHistoryTable());
             s.executeUpdate("CREATE INDEX IF NOT EXISTS idx_qh_player ON quest_history (player_uuid)");
             s.executeUpdate("CREATE INDEX IF NOT EXISTS idx_qh_type   ON quest_history (quest_type)");
@@ -159,6 +160,17 @@ public class SQLite extends Database {
                 "`z` INT NOT NULL," +
                 "`items_yaml` TEXT NOT NULL," +
                 "PRIMARY KEY (`id`)" +
+                ");";
+    }
+
+    private String createGraveLostNotificationTable() {
+        return "CREATE TABLE IF NOT EXISTS grave_lost_notification (" +
+                "`id` INTEGER PRIMARY KEY AUTOINCREMENT," +
+                "`player_uuid` VARCHAR(36) NOT NULL," +
+                "`world_name` VARCHAR(255) NOT NULL," +
+                "`x` INT NOT NULL," +
+                "`y` INT NOT NULL," +
+                "`z` INT NOT NULL" +
                 ");";
     }
 
@@ -270,6 +282,9 @@ public class SQLite extends Database {
             if (currentVersion < 15) {
                 s.executeUpdate(createTributeHistoryTable());
                 s.executeUpdate("CREATE INDEX IF NOT EXISTS idx_tth_player ON player_tribute_history (player_uuid)");
+            }
+            if (currentVersion < 16) {
+                s.executeUpdate(createGraveLostNotificationTable());
             }
         }
     }

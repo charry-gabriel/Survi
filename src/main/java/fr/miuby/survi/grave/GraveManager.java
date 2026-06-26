@@ -5,6 +5,7 @@ import fr.miuby.lib.world.WorldRegistry;
 import fr.miuby.survi.GameManager;
 import fr.miuby.lib.log.MLLogManager;
 import fr.miuby.survi.system.database.repository.GraveRepository;
+import fr.miuby.survi.system.lang.LangService;
 import fr.miuby.survi.system.log.ELogTag;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
@@ -321,6 +322,13 @@ public class GraveManager {
         return graveLocations.containsKey(loc);
     }
 
+    /** Retourne toutes les tombes appartenant au joueur donné. */
+    public List<GraveData> getGravesForPlayer(UUID playerId) {
+        return graveLocations.values().stream()
+                .filter(g -> g.ownerId().equals(playerId))
+                .toList();
+    }
+
     // -------------------------------------------------------------------------
     // Nettoyage lors d'un reset de monde
     // -------------------------------------------------------------------------
@@ -330,6 +338,38 @@ public class GraveManager {
      * Doit être appelé AVANT le déchargement du monde, sur le thread principal.
      */
     public void clearGravesInWorld(UUID worldUid) {
+        World world = Bukkit.getWorld(worldUid);
+        String worldName = world != null ? world.getName() : worldUid.toString();
+
+        // Collecter les tombes du monde avant suppression pour notifier les propriétaires
+        List<GraveData> lostGraves = graveLocations.values().stream()
+                .filter(g -> {
+                    World w = g.location().getWorld();
+                    return w != null && w.getUID().equals(worldUid);
+                })
+                .toList();
+
+        if (!lostGraves.isEmpty()) {
+            LangService ls = GameManager.getInstance().getLangService();
+            for (GraveData grave : lostGraves) {
+                Location loc = grave.location();
+                Player online = Bukkit.getPlayer(grave.ownerId());
+                if (online != null && online.isOnline()) {
+                    online.sendMessage(ls.text(online, "grave.lost_world_reset",
+                            Placeholder.unparsed("x", Integer.toString(loc.getBlockX())),
+                            Placeholder.unparsed("y", Integer.toString(loc.getBlockY())),
+                            Placeholder.unparsed("z", Integer.toString(loc.getBlockZ()))));
+                    MLLogManager.getInstance().log(Level.FINE, ELogTag.GRAVE,
+                            "[WorldReset] Tombe " + grave.id() + " perdue (monde=" + worldName + ") — " + online.getName() + " notifié en jeu");
+                } else {
+                    GameManager.getInstance().getDatabase().graveLostNotifications().save(
+                            grave.ownerId(), worldName, loc.getBlockX(), loc.getBlockY(), loc.getBlockZ());
+                    MLLogManager.getInstance().log(Level.FINE, ELogTag.GRAVE,
+                            "[WorldReset] Tombe " + grave.id() + " perdue (monde=" + worldName + ") — " + grave.ownerId() + " hors ligne, notification enregistrée");
+                }
+            }
+        }
+
         int before = graveLocations.size();
         graveLocations.entrySet().removeIf(e -> {
             World w = e.getKey().getWorld();
