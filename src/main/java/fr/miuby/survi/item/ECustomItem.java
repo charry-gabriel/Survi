@@ -105,7 +105,7 @@ public enum ECustomItem {
         List<Component> list = new ArrayList<>();
         list.add(C.ARTIFACT_NAME);
         list.add(Component.empty());
-        list.add(Component.text("Saturation : x cultures", NamedTextColor.GRAY));
+        list.add(Component.text("xp : x xp", NamedTextColor.GRAY));
         new CustomItemBuilder(item, "growthEnchanter")
                 .name("Chapeau de l'enchanteur I", NamedTextColor.DARK_PURPLE)
                 .lore(list)
@@ -125,7 +125,7 @@ public enum ECustomItem {
         List<Component> list = new ArrayList<>();
         list.add(C.ARTIFACT_NAME);
         list.add(Component.empty());
-        list.add(Component.text("Saturation : x cultures", NamedTextColor.GRAY));
+        list.add(Component.text("Speed : x pêches", NamedTextColor.GRAY));
         new CustomItemBuilder(item, "growthFisherman")
                 .name("Pantalon du pêcheur I", NamedTextColor.DARK_PURPLE)
                 .lore(list)
@@ -146,7 +146,7 @@ public enum ECustomItem {
         List<Component> list = new ArrayList<>();
         list.add(C.ARTIFACT_NAME);
         list.add(Component.empty());
-        list.add(Component.text("Saturation : x cultures", NamedTextColor.GRAY));
+        list.add(Component.text("Speed : x biomes", NamedTextColor.GRAY));
         new CustomItemBuilder(item, "growthCompass")
                 .name("Boussole de l'Explorateur I", NamedTextColor.AQUA)
                 .lore(list)

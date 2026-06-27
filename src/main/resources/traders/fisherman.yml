@@ -40,6 +40,6 @@ recipes:
       amount: 1
     ingredient:
       material: DIRT
-      amount: 64
+      amount: 32
     message: "Un super achat."
     requiredReputation: 110
