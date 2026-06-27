@@ -282,6 +282,7 @@ public class GrowthItemListener implements Listener {
         }
 
         GrowthItems.IncrementUses(player, "CropBreakEvent", EquipmentSlot.HAND, EquipmentSlot.OFF_HAND);
+        GrowthItems.IncrementUses(player, "CropBreakEvent", EquipmentSlot.LEGS);
     }
 
     private void applyBatonCropBonus(BlockBreakEvent event, int tier) {
