@@ -87,8 +87,8 @@ global_quests:
     description: "Faire fondre {value} objets de métier (Bûches/Minerais/Cultures/Viandes/Poissons)"
     type: SMELT
     targets: [CHARCOAL, COPPER_INGOT, IRON_INGOT, GOLD_INGOT, COOKED_SALMON, COOKED_COD, COOKED_CHICKEN, COOKED_RABBIT, COOKED_PORKCHOP, COOKED_BEEF, COOKED_MUTTON, BAKED_POTATO]
-    goal: 10000
-    time_limit: 21600
+    goal: 10067
+    time_limit: 28800
     rewards:
       - { type: REPUTATION, job: ENCHANTER, value: 5}
       - { type: REPUTATION, job: FARMER, value: 5}
