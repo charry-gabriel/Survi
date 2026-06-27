@@ -393,6 +393,11 @@ cmd.growth.track_none: "<gray>  Aucun joueur en ligne ne possède cet item."
 cmd.growth.track_found: "<gray>  {0} joueur(s) trouvé(s)."
 cmd.growth.removed_admin: "<green>✓ <gold>{0}<green> retiré (<white>{1}<green> exemplaire(s)) de <yellow>{2}"
 cmd.growth.removed_player: "<red>On vous a retiré <gold>{0}<red> (<white>{1}<red> exemplaire(s))."
+cmd.growth.replace_admin: "<green>✓ <gold>{0}<green> migré (<white>{1}<green> item(s)) pour <yellow>{2}"
+cmd.growth.replace_player: "<green>Votre <gold>{0}<green> a été mis à jour vers la nouvelle version ({1} item(s))."
+cmd.growth.replaceall_header: "<aqua>══ Migration de <gold>{0}<aqua> (joueurs en ligne) ══"
+cmd.growth.replaceall_entry: "<gray>  » <yellow>{0}<white> — {1} item(s) migré(s)"
+cmd.growth.replaceall_done: "<green>Migration terminée : <white>{0}<green> item(s) sur <white>{1}<green> joueur(s)."
 
 # ─── VillagerCommand (admin debug) ────────────────────────────────────────────
 cmd.villager.reset_done: "<green><villager> reset au niveau 0 !"

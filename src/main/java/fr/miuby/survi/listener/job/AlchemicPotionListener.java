@@ -162,12 +162,18 @@ public final class AlchemicPotionListener implements Listener {
 
     // ─── Bouclier — absorption d'un coup ─────────────────────────────────────
 
-    /** Absorbe le prochain coup reçu si le Bouclier est actif. Priorité LOW. */
-    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
+    /**
+     * Absorbe le prochain coup reçu si le Bouclier est actif.
+     * HIGH : tourne après les handlers de combat standards (NORMAL) pour avoir le dernier mot.
+     * setDamage(0) + setCancelled(true) : double filet en Paper 26.x où certains recalculs
+     * de dégâts peuvent ignorer l'état cancelled et appliquer quand même les HP perdus.
+     */
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onShieldAbsorb(EntityDamageByEntityEvent event) {
         if (!(event.getEntity() instanceof Player player)) return;
-        if (GameManager.getInstance().getCustomPotionManager().consumeShieldHit(player))
-            event.setCancelled(true);
+        if (!GameManager.getInstance().getCustomPotionManager().consumeShieldHit(player)) return;
+        event.setDamage(0);
+        event.setCancelled(true);
     }
 
     // ─── Symbiose — blocage des attaques sortantes ────────────────────────────

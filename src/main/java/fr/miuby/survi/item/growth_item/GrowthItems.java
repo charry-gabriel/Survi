@@ -193,13 +193,13 @@ public final class GrowthItems {
     // ─── IncrementUsesOnNewBiome — boussole ───────────────────────────────────
 
     public static void IncrementUsesOnNewBiome(Player player, String biomeKey) {
-        ItemStack compass = findGrowthItemInHands(player, "GROWTH_BOUSSOLE_EXPLORER");
+        ItemStack compass = findGrowthItemInHands(player, "GROWTH_EXPLORER_COMPASS");
         if (compass == null) return;
 
         ItemMeta meta = compass.getItemMeta();
         PersistentDataContainer pdc = meta.getPersistentDataContainer();
 
-        GrowthConfig config = GrowthItemRegistry.get("GROWTH_BOUSSOLE_EXPLORER");
+        GrowthConfig config = GrowthItemRegistry.get("GROWTH_EXPLORER_COMPASS");
         if (config == null) return;
 
         Set<String> visited = parseSet(pdc.getOrDefault(VISITED_BIOMES_KEY, PersistentDataType.STRING, ""));

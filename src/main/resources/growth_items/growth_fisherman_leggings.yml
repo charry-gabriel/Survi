@@ -43,6 +43,6 @@ periodicEffects:
   - everyUses: 10
     effects:
       - { type: potion, effect: speed, seconds: 30 }
-      - { type: potion, effect: regeneration, seconds: 30 }
-      - { type: potion, effect: dolphins_grace, seconds: 30 }
+      - { type: potion, effect: regeneration, seconds: 10 }
+      - { type: potion, effect: dolphins_grace, seconds: 300 }
       - { type: message, value: "Un coup de canne et ça repart !" }

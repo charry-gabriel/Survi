@@ -147,7 +147,7 @@ submerged-mining-speed-modifier:
 acid-rain-damage: 1
 
 # Niveau Pêcheur minimum pour être immunisé à la pluie acide.
-acid-rain-fisherman-level-threshold: 7
+acid-rain-fisherman-level-threshold: 3
 
 # ─── Loot alchimique ──────────────────────────────────────────────────────────
 # Probabilité qu'une pêche soit alchimique (remplace le drop normal)

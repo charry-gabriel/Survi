@@ -4,6 +4,7 @@ import com.mojang.brigadier.Command;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
+import fr.miuby.lib.log.MLLogManager;
 import fr.miuby.survi.item.ECustomItem;
 import fr.miuby.survi.item.growth_item.config.GrowthConfig;
 import fr.miuby.survi.item.growth_item.effect.ItemEffect;
@@ -11,7 +12,9 @@ import fr.miuby.survi.player.AlphaPlayer;
 import fr.miuby.survi.system.command.argument.AlphaPlayerArgument;
 import fr.miuby.survi.system.command.argument.GrowthItemArgument;
 import fr.miuby.survi.GameManager;
+import fr.miuby.survi.system.exception.AlphaPlayerNotFoundException;
 import fr.miuby.survi.system.lang.LangService;
+import fr.miuby.survi.system.log.ELogTag;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
 import io.papermc.paper.command.brigadier.Commands;
 import org.bukkit.Bukkit;
@@ -25,19 +28,22 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
 
 /**
  * Commandes d'administration pour les growth items.
  *
  * <pre>
- * /growthitem give   {@code <player> <growthId> [level]} — donne l'item au palier indiqué (défaut : 0, item frais)
- * /growthitem lvlup  {@code <player> [growthId]}         — force le palier suivant (item en main si sans growthId)
- * /growthitem info   {@code <player>}                    — liste tous les growth items dans l'inventaire du joueur
- * /growthitem track  {@code <growthId>}                  — joueurs en ligne possédant cet item (inventaire inclus armure)
- * /growthitem remove {@code <player> <growthId>}         — retire tous les exemplaires de l'item de l'inventaire
+ * /growthitem give       {@code <player> <growthId> [level]} — donne l'item au palier indiqué (défaut : 0, item frais)
+ * /growthitem lvlup      {@code <player> [growthId]}         — force le palier suivant (item en main si sans growthId)
+ * /growthitem info       {@code <player>}                    — liste tous les growth items dans l'inventaire du joueur
+ * /growthitem track      {@code <growthId>}                  — joueurs en ligne possédant cet item (inventaire inclus armure)
+ * /growthitem remove     {@code <player> <growthId>}         — retire tous les exemplaires de l'item de l'inventaire
+ * /growthitem replace    {@code <player> <growthId>}         — remplace l'item par la version ECustomItem courante en conservant uses/tier
+ * /growthitem replaceall {@code <growthId>}                  — idem pour tous les joueurs en ligne
  * </pre>
  *
- * <p>⚠ {@code track} et {@code remove} ne fonctionnent que sur les joueurs <b>en ligne</b> :
+ * <p>⚠ {@code track}, {@code remove}, {@code replace} et {@code replaceall} ne fonctionnent que sur les joueurs <b>en ligne</b> :
  * les PDC sont portés par l'item physique, non persistés en base.</p>
  */
 @SuppressWarnings({"java:S3516", "SameReturnValue"})
@@ -91,6 +97,22 @@ public class GrowthItemCommand {
                                 .then(Commands.argument("growthId", GrowthItemArgument.growthItem())
                                         .executes(GrowthItemCommand::removeItem)
                                 )
+                        )
+                )
+
+                // /growthitem replace <player> <growthId>
+                .then(Commands.literal("replace")
+                        .then(Commands.argument("player", AlphaPlayerArgument.alphaPlayer())
+                                .then(Commands.argument("growthId", GrowthItemArgument.growthItem())
+                                        .executes(GrowthItemCommand::replaceItem)
+                                )
+                        )
+                )
+
+                // /growthitem replaceall <growthId>
+                .then(Commands.literal("replaceall")
+                        .then(Commands.argument("growthId", GrowthItemArgument.growthItem())
+                                .executes(GrowthItemCommand::replaceAll)
                         )
                 );
     }
@@ -350,6 +372,154 @@ public class GrowthItemCommand {
         if (armorChanged) inv.setArmorContents(armor);
 
         return removed;
+    }
+
+    // ─── replace ──────────────────────────────────────────────────────────────
+
+    private static int replaceItem(CommandContext<CommandSourceStack> ctx) {
+        AlphaPlayer alpha = AlphaPlayerArgument.getAlphaPlayer(ctx, "player");
+        String growthId = GrowthItemArgument.getId(ctx, "growthId");
+        Player target = alpha.getPlayer();
+        var sender = ctx.getSource().getSender();
+        LangService ls = GameManager.getInstance().getLangService();
+
+        ECustomItem customItem = ECustomItem.fromString(growthId.toLowerCase());
+        if (customItem == null) {
+            sender.sendMessage(ls.text(ls.resolveOrDefault(sender), "cmd.growth.no_item", growthId));
+            return Command.SINGLE_SUCCESS;
+        }
+
+        int replaced = replaceAllInInventory(target, growthId, customItem, alpha);
+
+        if (replaced == 0) {
+            sender.sendMessage(ls.text(ls.resolveOrDefault(sender), "cmd.growth.not_in_inventory",
+                    alpha.getPseudo(), growthId));
+            return Command.SINGLE_SUCCESS;
+        }
+
+        sender.sendMessage(ls.text(ls.resolveOrDefault(sender), "cmd.growth.replace_admin",
+                growthId, replaced, alpha.getPseudo()));
+
+        boolean senderIsTarget = sender instanceof Player sp && sp.getUniqueId().equals(target.getUniqueId());
+        if (!senderIsTarget)
+            target.sendMessage(ls.text(target, "cmd.growth.replace_player", growthId, replaced));
+
+        return Command.SINGLE_SUCCESS;
+    }
+
+    // ─── replaceall ────────────────────────────────────────────────────────────
+
+    private static int replaceAll(CommandContext<CommandSourceStack> ctx) {
+        String growthId = GrowthItemArgument.getId(ctx, "growthId");
+        var sender = ctx.getSource().getSender();
+        LangService ls = GameManager.getInstance().getLangService();
+
+        ECustomItem customItem = ECustomItem.fromString(growthId.toLowerCase());
+        if (customItem == null) {
+            sender.sendMessage(ls.text(ls.resolveOrDefault(sender), "cmd.growth.no_item", growthId));
+            return Command.SINGLE_SUCCESS;
+        }
+
+        sender.sendMessage(ls.text(ls.resolveOrDefault(sender), "cmd.growth.replaceall_header", growthId));
+
+        int totalReplaced = 0;
+        int playersAffected = 0;
+        for (Player online : Bukkit.getOnlinePlayers()) {
+            try {
+                AlphaPlayer alpha = AlphaPlayer.get(online.getUniqueId());
+                int replaced = replaceAllInInventory(online, growthId, customItem, alpha);
+                if (replaced > 0) {
+                    sender.sendMessage(ls.text(ls.resolveOrDefault(sender), "cmd.growth.replaceall_entry",
+                            online.getName(), replaced));
+                    totalReplaced += replaced;
+                    playersAffected++;
+                }
+            } catch (AlphaPlayerNotFoundException ignored) {}
+        }
+
+        sender.sendMessage(ls.text(ls.resolveOrDefault(sender), "cmd.growth.replaceall_done",
+                totalReplaced, playersAffected));
+
+        return Command.SINGLE_SUCCESS;
+    }
+
+    /**
+     * Remplace tous les exemplaires de {@code growthId} dans l'inventaire complet du joueur
+     * (main, offhand, armure) par un item fraîchement cloné depuis {@code customItem},
+     * en préservant uses, tier, biomes visités et types de mobs tués.
+     *
+     * @return le nombre d'items effectivement remplacés
+     */
+    private static int replaceAllInInventory(Player player, String growthId, ECustomItem customItem, AlphaPlayer alpha) {
+        PlayerInventory inv = player.getInventory();
+        int replaced = 0;
+
+        for (int slot = 0; slot < 36; slot++) {
+            ItemStack old = inv.getItem(slot);
+            if (old == null || old.getType().isAir()) continue;
+            if (!growthId.equals(GrowthItems.getGrowthId(old))) continue;
+            inv.setItem(slot, migrateGrowthItem(old, customItem, alpha));
+            replaced++;
+        }
+
+        ItemStack offHand = inv.getItemInOffHand();
+        if (!offHand.getType().isAir() && growthId.equals(GrowthItems.getGrowthId(offHand))) {
+            inv.setItemInOffHand(migrateGrowthItem(offHand, customItem, alpha));
+            replaced++;
+        }
+
+        ItemStack[] armor = inv.getArmorContents();
+        boolean armorChanged = false;
+        for (int i = 0; i < armor.length; i++) {
+            if (armor[i] == null || armor[i].getType().isAir()) continue;
+            if (!growthId.equals(GrowthItems.getGrowthId(armor[i]))) continue;
+            armor[i] = migrateGrowthItem(armor[i], customItem, alpha);
+            armorChanged = true;
+            replaced++;
+        }
+        if (armorChanged) inv.setArmorContents(armor);
+
+        return replaced;
+    }
+
+    /**
+     * Clone {@code customItem} et transfère les données de progression de l'ancien item :
+     * uses, tier, biomes visités ({@link GrowthItems#VISITED_BIOMES_KEY}) et types de mobs
+     * tués ({@link GrowthItems#KILLED_MOB_TYPES_KEY}). Appelle ensuite {@link GrowthItems#reapplyAll}
+     * pour réappliquer tous les effets persistants du palier atteint sur le nouvel item.
+     */
+    private static ItemStack migrateGrowthItem(ItemStack old, ECustomItem customItem, AlphaPlayer alpha) {
+        PersistentDataContainer oldPdc = old.getItemMeta().getPersistentDataContainer();
+
+        int uses = oldPdc.getOrDefault(GrowthItems.USES_KEY, PersistentDataType.INTEGER, 0);
+        int tier = oldPdc.getOrDefault(GrowthItems.TIER_KEY, PersistentDataType.INTEGER, 0);
+
+        ItemStack fresh = customItem.getItemStack().clone();
+        ItemMeta freshMeta = fresh.getItemMeta();
+        PersistentDataContainer freshPdc = freshMeta.getPersistentDataContainer();
+
+        freshPdc.set(GrowthItems.USES_KEY, PersistentDataType.INTEGER, uses);
+        freshPdc.set(GrowthItems.TIER_KEY, PersistentDataType.INTEGER, tier);
+
+        if (oldPdc.has(GrowthItems.VISITED_BIOMES_KEY, PersistentDataType.STRING))
+            freshPdc.set(GrowthItems.VISITED_BIOMES_KEY, PersistentDataType.STRING,
+                    oldPdc.get(GrowthItems.VISITED_BIOMES_KEY, PersistentDataType.STRING));
+
+        if (oldPdc.has(GrowthItems.KILLED_MOB_TYPES_KEY, PersistentDataType.STRING))
+            freshPdc.set(GrowthItems.KILLED_MOB_TYPES_KEY, PersistentDataType.STRING,
+                    oldPdc.get(GrowthItems.KILLED_MOB_TYPES_KEY, PersistentDataType.STRING));
+
+        fresh.setItemMeta(freshMeta);
+        GrowthItems.reapplyAll(fresh, alpha);
+
+        String growthId = GrowthItems.getGrowthId(fresh);
+        GrowthConfig config = GrowthItemRegistry.get(growthId);
+        int maxTier = config != null ? config.tiers().size() : -1;
+        MLLogManager.getInstance().log(Level.INFO, ELogTag.ITEM,
+                "[GrowthItems] Migrate " + alpha.getPseudo() + " : " + growthId
+                        + " uses=" + uses + " tier=" + tier + "/" + maxTier);
+
+        return fresh;
     }
 
     // ─── Utilitaires internes ──────────────────────────────────────────────────
