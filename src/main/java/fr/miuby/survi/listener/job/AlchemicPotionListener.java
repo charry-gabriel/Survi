@@ -3,8 +3,7 @@ package fr.miuby.survi.listener.job;
 import fr.miuby.survi.GameManager;
 import fr.miuby.survi.job.alchemic.CustomPotionManager;
 import fr.miuby.survi.job.alchemic.ECustomPotion;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.NamedTextColor;
+import fr.miuby.survi.system.lang.LangService;
 import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -20,25 +19,27 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.PotionSplashEvent;
 import org.bukkit.event.player.PlayerItemConsumeEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.Collection;
 
 /**
- * Interception des potions inédites du Pêcheur :
+ * Interception des 5 potions inédites du Pêcheur.
  *
  * <ul>
- *   <li>{@link PlayerItemConsumeEvent} — BOUCLIER, SYMBIOSE, FISSURE (potions buvables).</li>
- *   <li>{@link PotionSplashEvent} — DEFLAGRATION, MIASME (splash).</li>
- *   <li>{@link EntityDamageByEntityEvent} — absorption Bouclier + blocage attaque Symbiose.</li>
- *   <li>{@link PlayerQuitEvent} — nettoyage du {@link CustomPotionManager}.</li>
+ *   <li>{@link PlayerItemConsumeEvent}       — BOUCLIER, SYMBIOSE, FISSURE.</li>
+ *   <li>{@link PotionSplashEvent}             — DEFLAGRATION (dégâts AOE), MIASME (nuage).</li>
+ *   <li>{@link EntityDamageByEntityEvent}     — absorption Bouclier + blocage attaque Symbiose.</li>
+ *   <li>{@link PlayerQuitEvent}               — nettoyage {@link CustomPotionManager}.</li>
  * </ul>
+ *
+ * <p>Tous les messages passent par {@link LangService}.</p>
  */
 public final class AlchemicPotionListener implements Listener {
 
-    // ─── Potions buvables ─────────────────────────────────────────────────────────
+    // ─── Potions buvables ─────────────────────────────────────────────────────
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onDrinkCustomPotion(PlayerItemConsumeEvent event) {
@@ -48,19 +49,16 @@ public final class AlchemicPotionListener implements Listener {
         Player player = event.getPlayer();
         CustomPotionManager mgr = GameManager.getInstance().getCustomPotionManager();
 
-        // Annuler la consommation vanilla (la potion n'a pas d'effet vanilla)
-        // On laisse quand même l'animation se jouer — setCancelled(false) = normal
-
         switch (potion) {
-            case BOUCLIER  -> mgr.applyBouclier(player);
-            case SYMBIOSE  -> mgr.applySymbiose(player);
-            case FISSURE   -> mgr.applyFissure(player);
-            // DEFLAGRATION et MIASME sont des splash, gérés dans onSplash
-            default        -> { /* rien */ }
+            case BOUCLIER     -> mgr.applyBouclier(player);
+            case SYMBIOSE     -> mgr.applySymbiose(player);
+            case FISSURE      -> mgr.applyFissure(player);
+            case DEFLAGRATION -> applyDeflagration(player.getLocation(), player.getWorld(), player);
+            default           -> { /* MIASME est splash */ }
         }
     }
 
-    // ─── Splash ───────────────────────────────────────────────────────────────────
+    // ─── Splash ───────────────────────────────────────────────────────────────
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onSplash(PotionSplashEvent event) {
@@ -68,25 +66,23 @@ public final class AlchemicPotionListener implements Listener {
         ECustomPotion potion = ECustomPotion.fromItem(thrown.getItem());
         if (potion == null) return;
 
-        // Bloquer les effets vanilla (la potion n'en a pas, mais par sécurité)
+        // Bloquer les effets vanilla (la potion n'en a aucun, précaution)
         event.getAffectedEntities().forEach(e -> event.setIntensity(e, 0));
 
         Location loc = thrown.getLocation();
         World world   = thrown.getWorld();
 
         switch (potion) {
-            case DEFLAGRATION -> applyDeflagration(loc, world, thrown.getShooter());
-            case MIASME       -> applyMiasme(loc, world);
-            default           -> { /* rien */ }
+            case MIASME -> applyMiasme(loc, world, thrown.getShooter());
+            default     -> { }
         }
     }
 
-    // ─── DÉFLAGRATION ─────────────────────────────────────────────────────────────
+    // ─── DÉFLAGRATION — dégâts AOE directs ───────────────────────────────────
 
     /**
-     * Inflige 8 dégâts (4 cœurs) à tous les mobs dans un rayon de 6 blocs autour du point d'impact.
-     * Utilise {@code entity.damage()} directement — pas de foudre, pas de transformation de creeper.
-     * Un effet de particules et de son simule l'impact.
+     * 8 dégâts directs (4 cœurs) sur tous les mobs dans un rayon de 6 blocs autour du joueur.
+     * Déclenché quand le joueur boit la potion — pas de foudre, pas de transformation de mob.
      */
     private static void applyDeflagration(Location loc, World world, Object shooter) {
         final double DAMAGE = 8.0;
@@ -103,52 +99,80 @@ public final class AlchemicPotionListener implements Listener {
             }
         }
 
-        // Effet visuel : explosion de particules sans dégâts de bloc
-        world.createExplosion(loc, 0f, false, false); // power=0 → visuel pur, aucun dégât de bloc
-        world.spawnParticle(org.bukkit.Particle.EXPLOSION, loc, 8, 1.5, 1.5, 1.5, 0.1);
+        // Visuel d'impact sans dégâts de blocs
+        world.createExplosion(loc, 0f, false, false);
 
         if (shooter instanceof Player player) {
-            player.sendMessage(Component.text(
-                    "✦ Déflagration ! " + count + " créature(s) touchée(s).",
-                    NamedTextColor.GOLD));
+            LangService ls = GameManager.getInstance().getLangService();
+            player.sendMessage(ls.text(player, "job.fisherman.potion.deflagration.strike", count));
         }
     }
 
-    // ─── MIASME ───────────────────────────────────────────────────────────────────
-
-    private static void applyMiasme(Location loc, World world) {
-        AreaEffectCloud cloud = world.spawn(loc, AreaEffectCloud.class);
-        cloud.setDuration(300);                      // 15 s
-        cloud.setRadius(3.0f);
-        cloud.setRadiusOnUse(0f);
-        cloud.setRadiusPerTick(0f);                  // rayon constant
-        cloud.setWaitTime(0);
-        cloud.setColor(Color.fromRGB(0x2E8B00));     // vert sombre
-        cloud.addCustomEffect(
-                new PotionEffect(PotionEffectType.POISON, 100, 2, false, false), // Poison III
-                true
-        );
-    }
-
-    // ─── Bouclier & Symbiose (dégâts) ────────────────────────────────────────────
+    // ─── MIASME — dégâts et ralentissement programmés ────────────────────────
 
     /**
-     * Bouclier : absorbe le prochain coup reçu.
-     * Priorité LOW → on annule avant le calcul des dégâts normaux.
+     * Crée un nuage visuel pendant 15 s.
+     * Une tâche périodique (toutes les 20 ticks = 1 s) gère manuellement :
+     * <ul>
+     *   <li><b>2.0 dégâts</b> directs via {@code entity.damage()} — valeur exacte, indépendante de l'armure.</li>
+     *   <li><b>Lenteur I</b> appliquée 2 s, rafraîchie chaque seconde tant que l'entité reste dans la zone.</li>
+     * </ul>
+     * Aucun effet de potion vanilla dans l'AEC — contrôle total sur les valeurs.
      */
+    private static void applyMiasme(Location loc, World world, Object shooter) {
+        final double DAMAGE        = 2.0;   // dégâts par seconde (1 cœur)
+        final double RADIUS        = 3.0;   // blocs
+        final int    SLOW_AMP      = 0;     // Lenteur I (0 = I, 1 = II…)
+        final int    SLOW_DURATION = 40;    // 2 s — se rafraîchit chaque tick de tâche
+        final int    DURATION_SEC  = 15;    // durée totale du nuage en secondes
+
+        // Nuage visuel uniquement (couleur verte, pas d'effets vanilla)
+        AreaEffectCloud cloud = world.spawn(loc, AreaEffectCloud.class);
+        cloud.setDuration(DURATION_SEC * 20);
+        cloud.setRadius((float) RADIUS);
+        cloud.setRadiusOnUse(0f);
+        cloud.setRadiusPerTick(0f);
+        cloud.setWaitTime(0);
+        cloud.setColor(Color.fromRGB(0x2E8B00));
+
+        // Tâche : 1 fois par seconde, s'annule quand le nuage expire ou est retiré
+        var plugin = GameManager.getInstance().getPlugin();
+        new BukkitRunnable() {
+            int remaining = DURATION_SEC;
+
+            @Override
+            public void run() {
+                if (remaining-- <= 0 || !cloud.isValid()) {
+                    this.cancel();
+                    return;
+                }
+                for (Entity entity : world.getNearbyEntities(loc, RADIUS, RADIUS, RADIUS)) {
+                    if (!(entity instanceof LivingEntity le) || entity instanceof Player) continue;
+                    le.damage(DAMAGE);
+                    le.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, SLOW_DURATION, SLOW_AMP, false, false));
+                }
+            }
+        }.runTaskTimer(plugin, 20L, 20L);
+
+        if (shooter instanceof Player player) {
+            LangService ls = GameManager.getInstance().getLangService();
+            player.sendMessage(ls.text(player, "job.fisherman.potion.miasme.active"));
+        }
+    }
+
+    // ─── Bouclier — absorption d'un coup ─────────────────────────────────────
+
+    /** Absorbe le prochain coup reçu si le Bouclier est actif. Priorité LOW. */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onShieldAbsorb(EntityDamageByEntityEvent event) {
         if (!(event.getEntity() instanceof Player player)) return;
-        CustomPotionManager mgr = GameManager.getInstance().getCustomPotionManager();
-        if (mgr.consumeShieldHit(player)) {
+        if (GameManager.getInstance().getCustomPotionManager().consumeShieldHit(player))
             event.setCancelled(true);
-        }
     }
 
-    /**
-     * Symbiose : bloque toutes les attaques sortantes du joueur pendant la durée.
-     * Priorité HIGHEST → s'assure que les dégâts restent à 0.
-     */
+    // ─── Symbiose — blocage des attaques sortantes ────────────────────────────
+
+    /** Annule toute attaque sortante du joueur pendant la Symbiose. Priorité HIGHEST. */
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onSymbiosisAttack(EntityDamageByEntityEvent event) {
         if (!(event.getDamager() instanceof Player player)) return;
@@ -156,11 +180,11 @@ public final class AlchemicPotionListener implements Listener {
         if (!mgr.isSymbiosisActive(player.getUniqueId())) return;
 
         event.setCancelled(true);
-        player.sendActionBar(Component.text(
-                "✦ La Symbiose vous empêche d'attaquer.", NamedTextColor.LIGHT_PURPLE));
+        LangService ls = GameManager.getInstance().getLangService();
+        player.sendActionBar(ls.text(player, "job.fisherman.potion.symbiose.blocked"));
     }
 
-    // ─── Nettoyage déconnexion ────────────────────────────────────────────────────
+    // ─── Nettoyage déconnexion ────────────────────────────────────────────────
 
     @EventHandler
     public void onQuit(PlayerQuitEvent event) {

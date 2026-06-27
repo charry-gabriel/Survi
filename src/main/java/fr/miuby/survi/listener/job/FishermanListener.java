@@ -5,9 +5,8 @@ import fr.miuby.survi.job.EJob;
 import fr.miuby.survi.job.alchemic.AlchemicLootEntry;
 import fr.miuby.survi.job.config.JobsConfig;
 import fr.miuby.survi.player.AlphaPlayer;
+import fr.miuby.survi.system.lang.LangService;
 import io.papermc.paper.event.entity.EntityEquipmentChangedEvent;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Material;
 import org.bukkit.entity.FishHook;
 import org.bukkit.entity.Item;
@@ -112,8 +111,8 @@ public class FishermanListener implements Listener {
             ItemStack alchemicItem = pickAlchemic(level, cfg.getAlchemicLoot());
             if (alchemicItem != null) {
                 caughtItem.setItemStack(alchemicItem);
-                event.getPlayer().sendActionBar(Component.text(
-                        "✦ Votre ligne a ramené quelque chose d'alchimique…", NamedTextColor.AQUA));
+                LangService ls = GameManager.getInstance().getLangService();
+                event.getPlayer().sendActionBar(ls.text(event.getPlayer(), "job.fisherman.alchemic.catch"));
                 return;
             }
         }

@@ -1,8 +1,7 @@
 package fr.miuby.survi.job.alchemic;
 
 import fr.miuby.survi.GameManager;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.NamedTextColor;
+import fr.miuby.survi.system.lang.LangService;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
@@ -13,114 +12,97 @@ import java.util.Map;
 import java.util.UUID;
 
 /**
- * Suit l'état actif des potions inédites qui nécessitent un suivi programmatique :
+ * Suit l'état actif des potions inédites à suivi programmatique :
+ *
  * <ul>
- *   <li><b>Bouclier</b>  — compteur de coups restants + tâche d'expiration.</li>
- *   <li><b>Symbiose</b>  — horodatage d'expiration (30 s).</li>
- *   <li><b>Fissure</b>   — tâche planifiée pour l'application du recoil (Fatigue).</li>
+ *   <li><b>Bouclier</b>  — absorbe 1 coup, puis expire automatiquement après 60 s.</li>
+ *   <li><b>Symbiose</b>  — horodatage d'expiration (30 s), bloque les attaques sortantes.</li>
+ *   <li><b>Fissure</b>   — applique la fatigue (1 min) après 8 s de haste extrême.</li>
  * </ul>
  *
- * <p>Initialisé dans {@link fr.miuby.survi.GameManager#initAfterWorldsLoad()}.
- * Nettoyé à la déconnexion via {@link #cleanup(UUID)}.</p>
+ * <p>Toutes les messages joueur passent par {@link LangService}.</p>
  */
 public final class CustomPotionManager {
 
-    /** Hits restants du Bouclier par joueur. */
-    private final Map<UUID, Integer>    shieldHits  = new HashMap<>();
-    /** Tâches d'expiration du Bouclier (60 s sans hit). */
-    private final Map<UUID, BukkitTask> shieldTasks = new HashMap<>();
+    // ─── Bouclier ─────────────────────────────────────────────────────────────
 
-    /** Timestamp d'expiration de la Symbiose (millis). */
+    /** {@code true} si le joueur a un Bouclier actif. */
+    private final Map<UUID, Boolean>    shieldActive = new HashMap<>();
+    /** Tâches d'expiration automatique du Bouclier (60 s sans coup reçu). */
+    private final Map<UUID, BukkitTask> shieldTasks  = new HashMap<>();
+
+    // ─── Symbiose ─────────────────────────────────────────────────────────────
+
+    /** Timestamp d'expiration de la Symbiose (millis système). */
     private final Map<UUID, Long>       symbiosisExpiry = new HashMap<>();
-    /** Tâches de fin de Symbiose (pour envoyer le message). */
+    /** Tâches de fin de Symbiose (message d'expiration). */
     private final Map<UUID, BukkitTask> symbiosisTasks  = new HashMap<>();
 
-    /** Tâches de recoil de la Fissure (applique Fatigue après 8 s). */
+    // ─── Fissure ──────────────────────────────────────────────────────────────
+
+    /** Tâches de recoil (applique Fatigue IV après 8 s de Haste XV). */
     private final Map<UUID, BukkitTask> fissureTasks = new HashMap<>();
 
-    // ─── BOUCLIER ────────────────────────────────────────────────────────────────
+    // ─── BOUCLIER ─────────────────────────────────────────────────────────────
 
-    /**
-     * Applique le Bouclier : 3 coups absorbés, expire automatiquement après 60 s.
-     * Si un Bouclier est déjà actif, il est réinitialisé.
-     */
+    /** Active le Bouclier Éphémère : absorbe le prochain coup, expire après 60 s. */
     public void applyBouclier(Player player) {
         UUID uuid = player.getUniqueId();
+        cancelAndRemove(shieldTasks, uuid);
+        shieldActive.put(uuid, true);
 
-        // Annuler l'ancienne tâche si déjà actif
-        BukkitTask old = shieldTasks.remove(uuid);
-        if (old != null) old.cancel();
+        LangService ls = GameManager.getInstance().getLangService();
+        player.sendMessage(ls.text(player, "job.fisherman.potion.bouclier.active"));
 
-        shieldHits.put(uuid, 3);
-
-        player.sendMessage(Component.text(
-                "✦ Bouclier Éphémère activé ! Vos 3 prochains coups seront absorbés.",
-                NamedTextColor.BLUE));
-
-        // Expiration automatique après 60 s sans hit
         var plugin = GameManager.getInstance().getPlugin();
         BukkitTask task = plugin.getServer().getScheduler().runTaskLater(plugin, () -> {
             shieldTasks.remove(uuid);
-            if (shieldHits.remove(uuid) != null && player.isOnline())
-                player.sendMessage(Component.text("✦ Votre Bouclier Éphémère s'est dissipé.", NamedTextColor.GRAY));
+            if (shieldActive.remove(uuid) != null && player.isOnline())
+                player.sendMessage(ls.text(player, "job.fisherman.potion.bouclier.broken"));
         }, 1200L); // 60 s
         shieldTasks.put(uuid, task);
     }
 
     /**
      * Tente d'absorber un coup avec le Bouclier.
-     *
-     * @return {@code true} si le coup a été absorbé (bouclier actif), {@code false} sinon.
+     * @return {@code true} si le coup a été absorbé.
      */
     public boolean consumeShieldHit(Player player) {
         UUID uuid = player.getUniqueId();
-        Integer remaining = shieldHits.get(uuid);
-        if (remaining == null) return false;
+        if (!shieldActive.containsKey(uuid)) return false;
 
-        int next = remaining - 1;
-        if (next <= 0) {
-            shieldHits.remove(uuid);
-            BukkitTask t = shieldTasks.remove(uuid);
-            if (t != null) t.cancel();
-            player.sendMessage(Component.text("✦ Votre Bouclier Éphémère s'est brisé !", NamedTextColor.GRAY));
-        } else {
-            shieldHits.put(uuid, next);
-            player.sendActionBar(Component.text(
-                    "✦ Bouclier absorbé — " + next + " coup(s) restant(s)", NamedTextColor.BLUE));
-        }
+        shieldActive.remove(uuid);
+        cancelAndRemove(shieldTasks, uuid);
+
+        LangService ls = GameManager.getInstance().getLangService();
+        player.sendMessage(ls.text(player, "job.fisherman.potion.bouclier.hit"));
         return true;
     }
 
-    // ─── SYMBIOSE ────────────────────────────────────────────────────────────────
+    // ─── SYMBIOSE ─────────────────────────────────────────────────────────────
 
-    /**
-     * Applique la Symbiose : régénération I pendant 30 s + blocage des attaques sortantes.
-     */
+    /** Active la Symbiose : Régénération I 30 s + blocage des attaques sortantes. */
     public void applySymbiose(Player player) {
         UUID uuid = player.getUniqueId();
+        cancelAndRemove(symbiosisTasks, uuid);
 
-        BukkitTask old = symbiosisTasks.remove(uuid);
-        if (old != null) old.cancel();
-
-        long expiry = System.currentTimeMillis() + 30_000L;
-        symbiosisExpiry.put(uuid, expiry);
-
+        symbiosisExpiry.put(uuid, System.currentTimeMillis() + 30_000L);
         player.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, 600, 0, false, true));
-        player.sendMessage(Component.text(
-                "✦ Symbiose active 30 s — régénération, mais vous ne pouvez plus attaquer !",
-                NamedTextColor.LIGHT_PURPLE));
+
+        LangService ls = GameManager.getInstance().getLangService();
+        player.sendMessage(ls.text(player, "job.fisherman.potion.symbiose.active"));
 
         var plugin = GameManager.getInstance().getPlugin();
         BukkitTask task = plugin.getServer().getScheduler().runTaskLater(plugin, () -> {
             symbiosisTasks.remove(uuid);
             symbiosisExpiry.remove(uuid);
             if (player.isOnline())
-                player.sendMessage(Component.text("✦ La Symbiose s'est terminée.", NamedTextColor.GRAY));
-        }, 600L); // 30 s
+                player.sendMessage(ls.text(player, "job.fisherman.potion.symbiose.expired"));
+        }, 600L);
         symbiosisTasks.put(uuid, task);
     }
 
-    /** Retourne {@code true} si le joueur est actuellement sous Symbiose. */
+    /** @return {@code true} si le joueur est actuellement sous l'effet Symbiose. */
     public boolean isSymbiosisActive(UUID uuid) {
         Long expiry = symbiosisExpiry.get(uuid);
         if (expiry == null) return false;
@@ -131,44 +113,36 @@ public final class CustomPotionManager {
         return true;
     }
 
-    // ─── FISSURE ─────────────────────────────────────────────────────────────────
+    // ─── FISSURE ──────────────────────────────────────────────────────────────
 
     /**
-     * Applique la Fissure : Haste XV pendant 8 s,
-     * puis Fatigue IV pendant 2 minutes (recoil planifié).
+     * Active la Fissure : Haste XV pendant 8 s,
+     * puis Fatigue IV pendant <b>1 minute</b> (recoil planifié).
      */
     public void applyFissure(Player player) {
         UUID uuid = player.getUniqueId();
-
-        // Annuler un recoil en attente si la potion est reprise avant la fin
-        BukkitTask old = fissureTasks.remove(uuid);
-        if (old != null) old.cancel();
+        cancelAndRemove(fissureTasks, uuid);
 
         player.addPotionEffect(new PotionEffect(PotionEffectType.HASTE, 160, 14, false, true)); // Haste XV, 8 s
-        player.sendMessage(Component.text(
-                "✦ Fissure ! Vos mains déchirent la roche… mais à quel prix !",
-                NamedTextColor.GOLD));
+
+        LangService ls = GameManager.getInstance().getLangService();
+        player.sendMessage(ls.text(player, "job.fisherman.potion.fissure.active"));
 
         var plugin = GameManager.getInstance().getPlugin();
         BukkitTask task = plugin.getServer().getScheduler().runTaskLater(plugin, () -> {
             fissureTasks.remove(uuid);
             if (!player.isOnline()) return;
-            player.addPotionEffect(new PotionEffect(PotionEffectType.MINING_FATIGUE, 2400, 3, false, true)); // Fatigue IV, 2 min
-            player.sendMessage(Component.text(
-                    "✦ La Fissure vous épuise ! Vous ne pouvez plus miner pendant 2 minutes.",
-                    NamedTextColor.DARK_RED));
-        }, 160L); // 8 s
+            player.addPotionEffect(new PotionEffect(PotionEffectType.MINING_FATIGUE, 1200, 3, false, true)); // Fatigue IV, 1 min
+            player.sendMessage(ls.text(player, "job.fisherman.potion.fissure.recoil"));
+        }, 160L); // déclenché après 8 s
         fissureTasks.put(uuid, task);
     }
 
-    // ─── Nettoyage ───────────────────────────────────────────────────────────────
+    // ─── Nettoyage ────────────────────────────────────────────────────────────
 
-    /**
-     * Libère toutes les ressources d'un joueur (déconnexion, mort…).
-     * Annule les tâches planifiées et supprime les entrées des maps.
-     */
+    /** Libère toutes les ressources d'un joueur (déconnexion, etc.). */
     public void cleanup(UUID uuid) {
-        shieldHits.remove(uuid);
+        shieldActive.remove(uuid);
         cancelAndRemove(shieldTasks, uuid);
         symbiosisExpiry.remove(uuid);
         cancelAndRemove(symbiosisTasks, uuid);
@@ -176,7 +150,7 @@ public final class CustomPotionManager {
     }
 
     private static void cancelAndRemove(Map<UUID, BukkitTask> map, UUID uuid) {
-        BukkitTask task = map.remove(uuid);
-        if (task != null) task.cancel();
+        BukkitTask t = map.remove(uuid);
+        if (t != null) t.cancel();
     }
 }

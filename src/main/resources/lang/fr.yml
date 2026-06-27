@@ -429,15 +429,15 @@ cmd.reload.all.done: |-
   <gray>  villagers/*.yml + traders/*.yml ✔ (entités en jeu mises à jour, inventaires recalculés)
   <gray>  jobs/*.yml ✔ (drops, multiplicateurs, matériaux de remplacement actifs immédiatement)
   <yellow>  ⚠ recipes.yml et config.yml nécessitent un redémarrage.
-
 # ─── Pêcheur — Potions alchimiques ───────────────────────────────────────────
 job.fisherman.alchemic.catch: "<aqua>✦ Votre ligne a ramené quelque chose d'alchimique…</aqua>"
-job.fisherman.potion.bouclier.active: "<blue>✦ Bouclier Éphémère activé ! Vos 3 prochains coups seront absorbés.</blue>"
+job.fisherman.potion.bouclier.active: "<blue>✦ Bouclier Éphémère activé — le prochain coup sera absorbé.</blue>"
+job.fisherman.potion.bouclier.hit: "<blue>✦ Le Bouclier a absorbé le coup !</blue>"
 job.fisherman.potion.bouclier.broken: "<gray>✦ Votre Bouclier Éphémère s'est dissipé.</gray>"
-job.fisherman.potion.foudre.strike: "<yellow>✦ Foudre ! {0} créature(s) frappée(s).</yellow>"
-job.fisherman.potion.miasme.active: "<dark_green>✦ Nuage de Miasme créé !</dark_green>"
+job.fisherman.potion.deflagration.strike: "<gold>✦ Déflagration ! {0} créature(s) touchée(s).</gold>"
+job.fisherman.potion.miasme.active: "<dark_green>✦ Nuage de Miasme créé — dégâts et ralentissement dans la zone !</dark_green>"
 job.fisherman.potion.symbiose.active: "<light_purple>✦ Symbiose active 30 s — régénération, mais vous ne pouvez plus attaquer !</light_purple>"
 job.fisherman.potion.symbiose.expired: "<gray>✦ La Symbiose s'est terminée.</gray>"
 job.fisherman.potion.symbiose.blocked: "<light_purple>✦ La Symbiose vous empêche d'attaquer.</light_purple>"
 job.fisherman.potion.fissure.active: "<gold>✦ Fissure ! Vos mains déchirent la roche… mais à quel prix !</gold>"
-job.fisherman.potion.fissure.recoil: "<dark_red>✦ La Fissure vous épuise ! Vous ne pouvez plus miner pendant 2 minutes.</dark_red>"
+job.fisherman.potion.fissure.recoil: "<dark_red>✦ La Fissure vous épuise ! Vous ne pouvez plus miner pendant 1 minute.</dark_red>"

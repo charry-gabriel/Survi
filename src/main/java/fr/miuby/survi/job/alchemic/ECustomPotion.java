@@ -38,7 +38,7 @@ public enum ECustomPotion {
     DEFLAGRATION(
             "Potion de Déflagration",
             Color.fromRGB(0xFF4500),   // orange-rouge
-            Material.SPLASH_POTION
+            Material.POTION
     ),
     MIASME(
             "Potion de Miasme",
