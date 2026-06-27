@@ -43,7 +43,7 @@ quests:
   - id: "sugar_cane"
     name: "Production Sucrée"
     description: "Récoltez {value} cannes à sucre."
-    type: HARVEST_CROP
+    type: MINE
     difficulty: 2
     jobs:
       - FARMER

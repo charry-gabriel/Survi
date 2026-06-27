@@ -29,7 +29,7 @@ quests:
       - { type: REPUTATION, job: ENCHANTER, value: 1}
       - { type: REPUTATION, job: MINER, value: 4 }
 
-  - id: "enchant_books"
+  - id: "enchant_books30"
     name: "Bibliothèque Mystique"
     description: "Enchantez {value} livres."
     type: ENCHANT
@@ -67,7 +67,7 @@ quests:
     rewards:
       - { type: REPUTATION, job: ENCHANTER, value: 5}
 
-  - id: "enchant_books"
+  - id: "enchant_books31"
     name: "Bibliothèque Mystique"
     description: "Enchantez {value} livres."
     type: ENCHANT
