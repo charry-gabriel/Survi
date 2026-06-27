@@ -249,6 +249,17 @@ public class PlayerListener implements Listener {
 
         // ─── Logique de respawn : spawn perso (lit/ancre) vs spawn village ────────
         Location customSpawn = alphaPlayer.getCustomSpawnLocation();
+        if (customSpawn != null) {
+            Block spawnBlock = customSpawn.getBlock();
+            if (!Tag.BEDS.isTagged(spawnBlock.getType()) && spawnBlock.getType() != Material.RESPAWN_ANCHOR) {
+                MLLogManager.getInstance().log(Level.WARNING, ELogTag.PLAYER,
+                        "[PlayerRespawn] " + player.getName() + " — bloc spawn invalide (" + spawnBlock.getType()
+                                + " à " + spawnBlock.getX() + " " + spawnBlock.getY() + " " + spawnBlock.getZ() + "), spawn effacé");
+                alphaPlayer.setCustomSpawnLocation(null);
+                gm.getDatabase().players().clearSpawnLocation(player.getUniqueId());
+                customSpawn = null;
+            }
+        }
         long now = System.currentTimeMillis();
         Long expiryTs = respawnCooldownExpiry.get(player.getUniqueId());
         boolean onCooldown = expiryTs != null && now < expiryTs;
