@@ -1,14 +1,18 @@
 package fr.miuby.survi.job.config;
 
 import fr.miuby.lib.log.MLLogManager;
+import fr.miuby.survi.job.alchemic.AlchemicLootEntry;
+import fr.miuby.survi.job.alchemic.ECustomPotion;
 import fr.miuby.survi.system.log.ELogTag;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.potion.PotionEffectType;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 
 /**
@@ -144,7 +148,10 @@ public final class JobsLoader {
                 readDouble(fishermanCfg, "submerged-mining-speed-modifier",
                         new double[]{0.000, 0.000, 0.000, 0.000, 0.000, 0.100, 0.200, 0.350, 0.500, 0.650, 0.800}),
                 fishermanCfg.getDouble("acid-rain-damage", 1.0),
-                fishermanCfg.getInt("acid-rain-fisherman-level-threshold", 5)
+                fishermanCfg.getInt("acid-rain-fisherman-level-threshold", 5),
+                readDouble(fishermanCfg, "alchemic-catch-chance",
+                        new double[]{0.00, 0.03, 0.06, 0.10, 0.15, 0.22, 0.30, 0.38, 0.45, 0.52, 0.60}),
+                readAlchemicLoot(fishermanCfg)
         );
 
         JobsConfig.ExplorerCfg explorer = new JobsConfig.ExplorerCfg(
@@ -234,5 +241,66 @@ public final class JobsLoader {
             return defaults;
         }
         return result.toArray(new Material[0]);
+    }
+
+    /**
+     * Lit la table de loot alchimique depuis fisherman.yml.
+     */
+    private static List<AlchemicLootEntry> readAlchemicLoot(YamlConfiguration cfg) {
+        List<?> rawList = cfg.getList("alchemic-loot");
+        List<AlchemicLootEntry> result = new ArrayList<>();
+        if (rawList == null || rawList.isEmpty()) {
+            MLLogManager.getInstance().log(Level.WARNING, ELogTag.JOB,
+                    "[JobsLoader] alchemic-loot absent — table de loot alchimique vide.");
+            return result;
+        }
+        for (Object raw : rawList) {
+            if (!(raw instanceof Map<?, ?> map)) continue;
+            String type  = getStr(map, "type", "");
+            int levelMin = getNum(map, "level-min", 0);
+            int weight   = getNum(map, "weight", 1);
+
+            switch (type) {
+                case "ingredient" -> {
+                    Material mat = Material.matchMaterial(getStr(map, "item", ""));
+                    if (mat == null) { warn("matériau inconnu", map, "item"); continue; }
+                    result.add(new AlchemicLootEntry.IngredientEntry(mat, levelMin, weight));
+                }
+                case "vanilla_potion" -> {
+                    PotionEffectType fx = PotionEffectType.getByName(getStr(map, "effect", ""));
+                    if (fx == null) { warn("effet inconnu", map, "effect"); continue; }
+                    result.add(new AlchemicLootEntry.VanillaPotionEntry(
+                            fx, getNum(map, "duration", 600), getNum(map, "amplifier", 0),
+                            getBool(map, "splash", false), levelMin, weight));
+                }
+                case "custom_potion" -> {
+                    String id = getStr(map, "id", "");
+                    try {
+                        result.add(new AlchemicLootEntry.CustomPotionEntry(
+                                ECustomPotion.valueOf(id), levelMin, weight));
+                    } catch (IllegalArgumentException e) {
+                        warn("potion custom inconnue", map, "id");
+                    }
+                }
+                default -> MLLogManager.getInstance().log(Level.WARNING, ELogTag.JOB,
+                        "[JobsLoader] alchemic-loot: type inconnu « " + type + " ».");
+            }
+        }
+        return result;
+    }
+
+    private static void warn(String msg, Map<?, ?> map, String key) {
+        MLLogManager.getInstance().log(Level.WARNING, ELogTag.JOB,
+                "[JobsLoader] alchemic-loot: " + msg + " — valeur: « " + map.get(key) + " ».");
+    }
+
+    private static String getStr(Map<?, ?> map, String key, String def) {
+        Object v = map.get(key); return v instanceof String s ? s : def;
+    }
+    private static int getNum(Map<?, ?> map, String key, int def) {
+        Object v = map.get(key); return v instanceof Number n ? n.intValue() : def;
+    }
+    private static boolean getBool(Map<?, ?> map, String key, boolean def) {
+        Object v = map.get(key); return v instanceof Boolean b ? b : def;
     }
 }

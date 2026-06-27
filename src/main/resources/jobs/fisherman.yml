@@ -148,3 +148,409 @@ acid-rain-damage: 1
 
 # Niveau Pêcheur minimum pour être immunisé à la pluie acide.
 acid-rain-fisherman-level-threshold: 6
+# ─── Loot alchimique ──────────────────────────────────────────────────────────
+# Probabilité qu'une pêche soit alchimique (remplace le drop normal)
+alchemic-catch-chance:
+  - 0.00   # niveau  0  — jamais
+  - 0.03   # niveau  1
+  - 0.06   # niveau  2
+  - 0.10   # niveau  3
+  - 0.15   # niveau  4
+  - 0.22   # niveau  5
+  - 0.30   # niveau  6
+  - 0.38   # niveau  7
+  - 0.45   # niveau  8
+  - 0.52   # niveau  9
+  - 0.60   # niveau 10
+
+# Table de loot alchimique
+# Hiérarchie de poids : Nether Wart >> Tier1 régulier > Tier1 splash > Tier1 longue > Tier2 > Custom
+alchemic-loot:
+
+  # ── Seul ingrédient pêchable ─────────────────────────────────────────────────
+  - type: ingredient
+    item: NETHER_WART
+    level-min: 1
+    weight: 200
+
+  # ═══════════════════════════════════════════════════════════════════════
+  # TIER 1 — Potions régulières (communes, dès niveau 2)
+  # ═══════════════════════════════════════════════════════════════════════
+
+  - type: vanilla_potion
+    effect: FIRE_RESISTANCE
+    duration: 3600
+    amplifier: 0
+    splash: false
+    level-min: 2
+    weight: 65
+
+  - type: vanilla_potion
+    effect: WATER_BREATHING
+    duration: 3600
+    amplifier: 0
+    splash: false
+    level-min: 2
+    weight: 60
+
+  - type: vanilla_potion
+    effect: NIGHT_VISION
+    duration: 3600
+    amplifier: 0
+    splash: false
+    level-min: 2
+    weight: 60
+
+  - type: vanilla_potion
+    effect: SLOW_FALLING
+    duration: 1800
+    amplifier: 0
+    splash: false
+    level-min: 2
+    weight: 55
+
+  - type: vanilla_potion
+    effect: REGENERATION
+    duration: 900
+    amplifier: 0
+    splash: false
+    level-min: 2
+    weight: 55
+
+  - type: vanilla_potion
+    effect: INSTANT_HEALTH
+    duration: 1
+    amplifier: 0
+    splash: false
+    level-min: 2
+    weight: 55
+
+  - type: vanilla_potion
+    effect: SPEED
+    duration: 3600
+    amplifier: 0
+    splash: false
+    level-min: 3
+    weight: 50
+
+  - type: vanilla_potion
+    effect: JUMP_BOOST
+    duration: 3600
+    amplifier: 0
+    splash: false
+    level-min: 3
+    weight: 48
+
+  - type: vanilla_potion
+    effect: STRENGTH
+    duration: 3600
+    amplifier: 0
+    splash: false
+    level-min: 3
+    weight: 45
+
+  - type: vanilla_potion
+    effect: INVISIBILITY
+    duration: 3600
+    amplifier: 0
+    splash: false
+    level-min: 3
+    weight: 40
+
+  # ═══════════════════════════════════════════════════════════════════════
+  # TIER 1 — Versions Splash (dès niveau 3)
+  # ═══════════════════════════════════════════════════════════════════════
+
+  - type: vanilla_potion
+    effect: INSTANT_HEALTH
+    duration: 1
+    amplifier: 0
+    splash: true
+    level-min: 3
+    weight: 42
+
+  - type: vanilla_potion
+    effect: REGENERATION
+    duration: 900
+    amplifier: 0
+    splash: true
+    level-min: 3
+    weight: 38
+
+  - type: vanilla_potion
+    effect: FIRE_RESISTANCE
+    duration: 3600
+    amplifier: 0
+    splash: true
+    level-min: 3
+    weight: 36
+
+  - type: vanilla_potion
+    effect: SPEED
+    duration: 3600
+    amplifier: 0
+    splash: true
+    level-min: 4
+    weight: 30
+
+  - type: vanilla_potion
+    effect: STRENGTH
+    duration: 3600
+    amplifier: 0
+    splash: true
+    level-min: 4
+    weight: 28
+
+  - type: vanilla_potion
+    effect: SLOW_FALLING
+    duration: 1800
+    amplifier: 0
+    splash: true
+    level-min: 4
+    weight: 25
+
+  - type: vanilla_potion
+    effect: WEAKNESS
+    duration: 1800
+    amplifier: 0
+    splash: true
+    level-min: 4
+    weight: 25
+
+  - type: vanilla_potion
+    effect: SLOWNESS
+    duration: 1800
+    amplifier: 0
+    splash: true
+    level-min: 4
+    weight: 22
+
+  - type: vanilla_potion
+    effect: POISON
+    duration: 900
+    amplifier: 0
+    splash: true
+    level-min: 4
+    weight: 20
+
+  - type: vanilla_potion
+    effect: INSTANT_DAMAGE
+    duration: 1
+    amplifier: 0
+    splash: true
+    level-min: 4
+    weight: 18
+
+  # ═══════════════════════════════════════════════════════════════════════
+  # TIER 1 — Versions Longue Durée (dès niveau 4)
+  # ═══════════════════════════════════════════════════════════════════════
+
+  - type: vanilla_potion
+    effect: FIRE_RESISTANCE
+    duration: 9600
+    amplifier: 0
+    splash: false
+    level-min: 4
+    weight: 32
+
+  - type: vanilla_potion
+    effect: WATER_BREATHING
+    duration: 9600
+    amplifier: 0
+    splash: false
+    level-min: 4
+    weight: 30
+
+  - type: vanilla_potion
+    effect: NIGHT_VISION
+    duration: 9600
+    amplifier: 0
+    splash: false
+    level-min: 4
+    weight: 30
+
+  - type: vanilla_potion
+    effect: SLOW_FALLING
+    duration: 4800
+    amplifier: 0
+    splash: false
+    level-min: 4
+    weight: 28
+
+  - type: vanilla_potion
+    effect: STRENGTH
+    duration: 9600
+    amplifier: 0
+    splash: false
+    level-min: 4
+    weight: 26
+
+  - type: vanilla_potion
+    effect: SPEED
+    duration: 9600
+    amplifier: 0
+    splash: false
+    level-min: 4
+    weight: 26
+
+  - type: vanilla_potion
+    effect: REGENERATION
+    duration: 1800
+    amplifier: 0
+    splash: false
+    level-min: 4
+    weight: 25
+
+  - type: vanilla_potion
+    effect: INVISIBILITY
+    duration: 9600
+    amplifier: 0
+    splash: false
+    level-min: 5
+    weight: 22
+
+  - type: vanilla_potion
+    effect: JUMP_BOOST
+    duration: 9600
+    amplifier: 0
+    splash: false
+    level-min: 5
+    weight: 20
+
+  # ═══════════════════════════════════════════════════════════════════════
+  # TIER 2 — Potions amplifiées (dès niveau 5)
+  # ═══════════════════════════════════════════════════════════════════════
+
+  - type: vanilla_potion
+    effect: REGENERATION
+    duration: 450
+    amplifier: 1
+    splash: false
+    level-min: 5
+    weight: 20
+
+  - type: vanilla_potion
+    effect: INSTANT_HEALTH
+    duration: 1
+    amplifier: 1
+    splash: false
+    level-min: 5
+    weight: 18
+
+  - type: vanilla_potion
+    effect: STRENGTH
+    duration: 1800
+    amplifier: 1
+    splash: false
+    level-min: 5
+    weight: 16
+
+  - type: vanilla_potion
+    effect: SPEED
+    duration: 1800
+    amplifier: 1
+    splash: false
+    level-min: 5
+    weight: 15
+
+  - type: vanilla_potion
+    effect: JUMP_BOOST
+    duration: 1800
+    amplifier: 1
+    splash: false
+    level-min: 5
+    weight: 13
+
+  - type: vanilla_potion
+    effect: POISON
+    duration: 432
+    amplifier: 1
+    splash: false
+    level-min: 5
+    weight: 12
+
+  # ═══════════════════════════════════════════════════════════════════════
+  # TIER 2 — Splash amplifiées (dès niveau 6)
+  # ═══════════════════════════════════════════════════════════════════════
+
+  - type: vanilla_potion
+    effect: INSTANT_HEALTH
+    duration: 1
+    amplifier: 1
+    splash: true
+    level-min: 6
+    weight: 14
+
+  - type: vanilla_potion
+    effect: REGENERATION
+    duration: 450
+    amplifier: 1
+    splash: true
+    level-min: 6
+    weight: 13
+
+  - type: vanilla_potion
+    effect: STRENGTH
+    duration: 1800
+    amplifier: 1
+    splash: true
+    level-min: 6
+    weight: 11
+
+  - type: vanilla_potion
+    effect: SPEED
+    duration: 1800
+    amplifier: 1
+    splash: true
+    level-min: 6
+    weight: 10
+
+  - type: vanilla_potion
+    effect: INSTANT_DAMAGE
+    duration: 1
+    amplifier: 1
+    splash: true
+    level-min: 6
+    weight: 8
+
+  - type: vanilla_potion
+    effect: POISON
+    duration: 432
+    amplifier: 1
+    splash: true
+    level-min: 6
+    weight: 7
+
+  # ═══════════════════════════════════════════════════════════════════════
+  # Potions inédites — uniquement pêchables, rares, niveaux élevés
+  # ═══════════════════════════════════════════════════════════════════════
+
+  # Bouclier Éphémère — absorbe 1 coup
+  - type: custom_potion
+    id: BOUCLIER
+    level-min: 5
+    weight: 15
+
+  # Miasme — nuage qui inflige 3 dégâts/sec + ralentit dans la zone (splash)
+  - type: custom_potion
+    id: MIASME
+    level-min: 5
+    weight: 13
+
+  # Déflagration — 8 dégâts AOE sur 6 blocs autour du point d'impact (splash)
+  - type: custom_potion
+    id: DEFLAGRATION
+    level-min: 6
+    weight: 10
+
+  # Symbiose — régénération mais 0 dégâts en attaque pendant 30 s
+  - type: custom_potion
+    id: SYMBIOSE
+    level-min: 7
+    weight: 7
+
+  # Fissure — Haste XV/8 s puis Fatigue IV/1 min
+  - type: custom_potion
+    id: FISSURE
+    level-min: 8
+    weight: 4

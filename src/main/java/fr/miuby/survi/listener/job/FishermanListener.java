@@ -2,8 +2,10 @@ package fr.miuby.survi.listener.job;
 
 import fr.miuby.survi.GameManager;
 import fr.miuby.survi.job.EJob;
+import fr.miuby.survi.job.alchemic.AlchemicLootEntry;
 import fr.miuby.survi.job.config.JobsConfig;
 import fr.miuby.survi.player.AlphaPlayer;
+import fr.miuby.survi.system.lang.LangService;
 import io.papermc.paper.event.entity.EntityEquipmentChangedEvent;
 import org.bukkit.Material;
 import org.bukkit.entity.FishHook;
@@ -19,6 +21,7 @@ import org.bukkit.inventory.meta.EnchantmentStorageMeta;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.EnumSet;
+import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
@@ -103,6 +106,17 @@ public class FishermanListener implements Listener {
         ItemStack stack = caughtItem.getItemStack();
         JobsConfig.FishermanCfg cfg = JobsConfig.getInstance().getFisherman();
 
+        // Étape 0 : chance de pêche alchimique — remplace l'item normal
+        if (RANDOM.nextDouble() < cfg.getAlchemicCatchChance()[level]) {
+            ItemStack alchemicItem = pickAlchemic(level, cfg.getAlchemicLoot());
+            if (alchemicItem != null) {
+                caughtItem.setItemStack(alchemicItem);
+                LangService ls = GameManager.getInstance().getLangService();
+                event.getPlayer().sendActionBar(ls.text(event.getPlayer(), "job.fisherman.alchemic.catch"));
+                return;
+            }
+        }
+
         // Étape 1 : chance globale de remplacer tout item pêché par un matériau de la liste
         if (RANDOM.nextDouble() < cfg.getDirtChance()[level]) {
             caughtItem.setItemStack(new ItemStack(pickRandom(cfg.getDirtReplacementMaterials())));
@@ -140,5 +154,26 @@ public class FishermanListener implements Listener {
     /** Tire un matériau aléatoire parmi le tableau fourni. */
     private static Material pickRandom(Material[] materials) {
         return materials[RANDOM.nextInt(materials.length)];
+    }
+
+    /**
+     * Sélectionne un item alchimique dans la table de loot par tirage au sort pondéré,
+     * en ne considérant que les entrées dont {@code levelMin <= level}.
+     * Retourne {@code null} si la table est vide ou aucune entrée éligible.
+     */
+    private static ItemStack pickAlchemic(int level, List<AlchemicLootEntry> loot) {
+        List<AlchemicLootEntry> eligible = loot.stream()
+                .filter(e -> e.levelMin() <= level)
+                .toList();
+        if (eligible.isEmpty()) return null;
+
+        int totalWeight = eligible.stream().mapToInt(AlchemicLootEntry::weight).sum();
+        int roll = RANDOM.nextInt(totalWeight);
+        int cumul = 0;
+        for (AlchemicLootEntry entry : eligible) {
+            cumul += entry.weight();
+            if (roll < cumul) return entry.createItem();
+        }
+        return eligible.getLast().createItem();
     }
 }
