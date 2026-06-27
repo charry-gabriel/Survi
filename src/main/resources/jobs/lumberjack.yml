@@ -139,7 +139,7 @@ sapling-bone-meal-chance:
 # Nombre de slots du sac à dos (ECustomItem.BACKPACK) selon le niveau. Doit rester un multiple de 9 (lignes de coffre).
 backpack-slots:
   - 9    # niveau  0  — 1 ligne
-  - 18   # niveau  1  — 2 lignes
+  - 9   # niveau  1  — 2 lignes
   - 18   # niveau  2
   - 18   # niveau  3
   - 18   # niveau  4

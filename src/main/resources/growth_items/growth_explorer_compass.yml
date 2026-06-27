@@ -62,7 +62,7 @@ tiers:
       - { type: message,       value: "Tu as tout vu. Légende vivante." }
 
 periodicEffects:
-  - everyUses: 8
+  - everyUses: 4
     effects:
       - { type: potion,  effect: speed,  seconds: 30, amplifier: 1 }
       - { type: message, value: "L'instinct de l'explorateur s'éveille en toi !" }

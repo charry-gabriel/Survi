@@ -8,40 +8,41 @@ eventType: FishCatchEvent
 # indexés par niveau de job) : l'item débloque la capacité, le métier en augmente la portée.
 
 tiers:
-  - requiredUses: 50
+  - requiredUses: 100
     effects:
       - { type: name,           value: "Pantalon du Pêcheur II" }
-      - { type: set_attribute,  attribute: luck, attributeValue: 0.5, operation: ADD_NUMBER, slot: LEGS }
+      - { type: set_attribute,  attribute: luck, attributeValue: 1.0, operation: ADD_NUMBER, slot: LEGS }
       - { type: unlock_ability, value: underwater_kit }
       - { type: message,        value: "Ton pantalon grandit, tu nages plus vite, respires plus longtemps et mines mieux sous l'eau !" }
 
-  - requiredUses: 100
+  - requiredUses: 1000
     effects:
       - { type: name,          value: "Pantalon du Pêcheur III" }
-      - { type: set_attribute, attribute: luck, attributeValue: 1.0, operation: ADD_NUMBER, slot: LEGS }
+      - { type: set_attribute, attribute: luck, attributeValue: 5.0, operation: ADD_NUMBER, slot: LEGS }
       - { type: message,       value: "Les poissons te sourient un peu plus." }
 
-  - requiredUses: 4500
+  - requiredUses: 3000
     effects:
       - { type: name,          value: "Pantalon du Pêcheur IV" }
-      - { type: set_attribute, attribute: luck, attributeValue: 1.5, operation: ADD_NUMBER, slot: LEGS }
+      - { type: set_attribute, attribute: luck, attributeValue: 10.0, operation: ADD_NUMBER, slot: LEGS }
       - { type: message,       value: "Tu sens les bancs de poissons avant même de lancer ta ligne." }
 
-  - requiredUses: 8000
+  - requiredUses: 5000
     effects:
       - { type: name,          value: "Pantalon du Pêcheur V" }
-      - { type: set_attribute, attribute: luck, attributeValue: 2.0, operation: ADD_NUMBER, slot: LEGS }
+      - { type: set_attribute, attribute: luck, attributeValue: 20.0, operation: ADD_NUMBER, slot: LEGS }
       - { type: message,       value: "L'océan n'a plus de secret pour toi." }
 
-  - requiredUses: 13000
+  - requiredUses: 10000
     effects:
       - { type: name,          value: "Pantalon du Maître Pêcheur" }
-      - { type: set_attribute, attribute: luck, attributeValue: 3.0, operation: ADD_NUMBER, slot: LEGS }
+      - { type: set_attribute, attribute: luck, attributeValue: 30.0, operation: ADD_NUMBER, slot: LEGS }
       - { type: message,       value: "Pantalon de légende. Les profondeurs t'appartiennent." }
 
 periodicEffects:
-  - everyUses: 30
+  - everyUses: 10
     effects:
-      - { type: potion, effect: saturation, seconds: 600 }
-      - { type: potion, effect: jump_boost, seconds: 600 }
-      - { type: message, value: "Tu n'as plus besoin de manger et tu sautes plus haut !" }
+      - { type: potion, effect: speed, seconds: 30 }
+      - { type: potion, effect: regeneration, seconds: 30 }
+      - { type: potion, effect: dolphins_grace, seconds: 30 }
+      - { type: message, value: "Un coup de canne et ça repart !" }

@@ -41,7 +41,7 @@ public enum ECustomItem {
         list.add(Component.empty());
         list.add(Component.text("Night_vison : x minerais", NamedTextColor.GRAY));
         new CustomItemBuilder(item, "growthMiner")
-                .name("Casque du Mineur 1", NamedTextColor.GRAY)
+                .name("Casque du Mineur I", NamedTextColor.GRAY)
                 .lore(list)
                 .leatherArmor(TrimMaterial.GOLD, TrimPattern.TIDE, Color.fromRGB(11184810))
                 .addAttribute(Attribute.MINING_EFFICIENCY, 0, ADD_NUMBER, EquipmentSlotGroup.HEAD) //évolutif
@@ -64,7 +64,7 @@ public enum ECustomItem {
         list.add(Component.empty());
         list.add(Component.text("Speed : x bûches.", NamedTextColor.GRAY));
         new CustomItemBuilder(item, "growthLumberjack")
-                .name("Plastron du Bûcheron 1", NamedTextColor.DARK_GREEN)
+                .name("Plastron du Bûcheron I", NamedTextColor.DARK_GREEN)
                 .lore(list)
                 .leatherArmor(TrimMaterial.EMERALD, TrimPattern.DUNE, Color.fromRGB(43520))
                 .addAttribute(Attribute.MINING_EFFICIENCY, 0, ADD_NUMBER, EquipmentSlotGroup.CHEST) //évolutif
@@ -87,7 +87,7 @@ public enum ECustomItem {
         list.add(Component.empty());
         list.add(Component.text("Saturation : x cultures", NamedTextColor.GRAY));
         new CustomItemBuilder(item, "growthFarmer")
-                .name("Jambière du Fermier 1", NamedTextColor.YELLOW)
+                .name("Jambière du Fermier I", NamedTextColor.YELLOW)
                 .lore(list)
                 .leatherArmor(TrimMaterial.GOLD, TrimPattern.SILENCE, Color.fromRGB(16777045))
                 .addAttribute(Attribute.ARMOR, -20, ADD_NUMBER, EquipmentSlotGroup.LEGS)
@@ -107,7 +107,7 @@ public enum ECustomItem {
         list.add(Component.empty());
         list.add(Component.text("Saturation : x cultures", NamedTextColor.GRAY));
         new CustomItemBuilder(item, "growthEnchanter")
-                .name("Chapeau de l'enchanteur 1", NamedTextColor.DARK_PURPLE)
+                .name("Chapeau de l'enchanteur I", NamedTextColor.DARK_PURPLE)
                 .lore(list)
                 .leatherArmor(TrimMaterial.GOLD, TrimPattern.SILENCE, Color.fromRGB(11141290))
                 .addAttribute(Attribute.ARMOR, -20, ADD_NUMBER, EquipmentSlotGroup.HEAD)
@@ -127,13 +127,16 @@ public enum ECustomItem {
         list.add(Component.empty());
         list.add(Component.text("Saturation : x cultures", NamedTextColor.GRAY));
         new CustomItemBuilder(item, "growthFisherman")
-            .name("Pantalon du pêcheur 1", NamedTextColor.DARK_PURPLE)
-            .lore(list)
-            .leatherArmor(TrimMaterial.DIAMOND, TrimPattern.SILENCE, Color.fromRGB(5592575))
-            .addAttribute(Attribute.LUCK, 0, ADD_NUMBER, EquipmentSlotGroup.LEGS) //évolutif
-            .unbreakable()
-            .addItemFlag(ItemFlag.HIDE_DYE)
-            .addItemFlag(ItemFlag.HIDE_ARMOR_TRIM);
+                .name("Pantalon du pêcheur I", NamedTextColor.DARK_PURPLE)
+                .lore(list)
+                .leatherArmor(TrimMaterial.DIAMOND, TrimPattern.SILENCE, Color.fromRGB(5592575))
+                .addAttribute(Attribute.LUCK, 0, ADD_NUMBER, EquipmentSlotGroup.LEGS) //évolutif
+                .addAttribute(Attribute.ARMOR, -100, ADD_NUMBER, EquipmentSlotGroup.LEGS)
+                .addAttribute(Attribute.ATTACK_DAMAGE, -100, ADD_NUMBER, EquipmentSlotGroup.LEGS)
+                .addAttribute(Attribute.SCALE, 0.5, ADD_NUMBER, EquipmentSlotGroup.LEGS)
+                .unbreakable()
+                .addItemFlag(ItemFlag.HIDE_DYE)
+                .addItemFlag(ItemFlag.HIDE_ARMOR_TRIM);
     }),
 
     GROWTH_EXPLORER_COMPASS(Material.COMPASS, item -> {
