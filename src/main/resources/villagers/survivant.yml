@@ -228,13 +228,6 @@ levels:
         amount: 64
       - material: STRIPPED_BIRCH_LOG
         amount: 64
-    blessings:
-      - { type: MAX_HEALTH, value: 10}
-
-  - name: "Survivant"
-    message: "Un peu de vie pour vous !"
-    recap: "Outils et armure en diamant/netherite et vie en plus débloqué !"
-    tribute:
       - material: JUNGLE_SAPLING
         amount: 64
       - material: JUNGLE_LOG
@@ -253,13 +246,6 @@ levels:
         amount: 64
       - material: STRIPPED_DARK_OAK_LOG
         amount: 64
-    blessings:
-      - { type: MAX_HEALTH, value: 12}
-
-  - name: "Survivant"
-    message: "Un peu de vie pour vous !"
-    recap: "Outils et armure en diamant/netherite et vie en plus débloqué !"
-    tribute:
       - material: MANGROVE_PROPAGULE
         amount: 64
       - material: MANGROVE_LOG
@@ -278,6 +264,50 @@ levels:
         amount: 64
       - material: STRIPPED_PALE_OAK_LOG
         amount: 64
+    blessings:
+      - { type: MAX_HEALTH, value: 10}
+
+  - name: "Survivant"
+    message: "Un peu de vie pour vous !"
+    recap: "Outils et armure en diamant/netherite et vie en plus débloqué !"
+    tribute:
+      - material: MUSIC_DISC_BOUNCE
+        amount: 1
+      - material: MUSIC_DISC_LAVA_CHICKEN
+        amount: 1
+      - material: MUSIC_DISC_13
+        amount: 1
+      - material: MUSIC_DISC_CAT
+        amount: 1
+      - material: MUSIC_DISC_PIGSTEP
+        amount: 1
+      - material: MUSIC_DISC_OTHERSIDE
+        amount: 1
+      - material: MUSIC_DISC_5
+        amount: 1
+      - material: MUSIC_DISC_RELIC
+        amount: 1
+      - material: MUSIC_DISC_PRECIPICE
+        amount: 1
+      - material: MUSIC_DISC_CREATOR
+        amount: 1
+      - material: MUSIC_DISC_CREATOR_MUSIC_BOX
+        amount: 1
+    blessings:
+      - { type: MAX_HEALTH, value: 12}
+
+  - name: "Survivant"
+    message: "Un peu de vie pour vous !"
+    recap: "Outils et armure en diamant/netherite et vie en plus débloqué !"
+    tribute:
+      - material: APPLE
+        amount: 256
+      - material: GOLDEN_APPLE
+        amount: 256
+      - material: ENCHANTED_GOLDEN_APPLE
+        amount: 256
+      - material: TOTEM_OF_UNDYING
+        amount: 6
     blessings:
       - { type: MAX_HEALTH, value: 14}
 
