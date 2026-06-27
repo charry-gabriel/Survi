@@ -327,8 +327,8 @@ public class QuestManager extends AbstractQuestManager<Quest> {
      * <ul>
      *   <li>Difficulté 0 — niveau de métier 0 (aucune réputation).</li>
      *   <li>Difficulté 1 — niveau de métier 1 à 5.</li>
-     *   <li>Difficulté 2 — niveau de métier 6 à 8.</li>
-     *   <li>Difficulté 3 — niveau de métier 9 ou 10.</li>
+     *   <li>Difficulté 2 — niveau de métier 6 à 7.</li>
+     *   <li>Difficulté 3 — niveau de métier 8 à 10.</li>
      * </ul>
      * Si le trader n'a pas de métier, le niveau du monde sert de difficulté.
      */
@@ -337,8 +337,8 @@ public class QuestManager extends AbstractQuestManager<Quest> {
 
         int jobLevel = player.getJobLevel(trader.getJob());
         if (jobLevel <= 0) return 0;
-        if (jobLevel <= 5) return 1;
-        if (jobLevel <= 8) return 2;
+        if (jobLevel < 6) return 1;
+        if (jobLevel < 8) return 2;
         return 3;
     }
 
