@@ -75,6 +75,11 @@ public class AlphaPlayer extends MLPlayer implements Serializable {
     @Getter
     private Role role;
 
+    /** Spawn personnalisé du joueur (lit ou ancre de respawn) — {@code null} si non défini. */
+    @Getter
+    @Setter
+    private Location customSpawnLocation = null;
+
     /** Métier responsable des derniers dégâts liés à un mécanisme de métier (null si aucun).
      *  Positionné par les tâches/listeners de métier avant d'appliquer des dégâts custom,
      *  consommé puis réinitialisé par {@link fr.miuby.survi.player.service.DeathMessageService}. */

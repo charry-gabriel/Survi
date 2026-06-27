@@ -124,11 +124,17 @@ public final class JobsConfig {
         private final double   saplingThirdTickChanceAtMax;
         /** Probabilité que la farine d'os fonctionne sur un sapling planté par un bûcheron. Index = niveau. */
         private final double[] saplingBoneMealChance;
+        /**
+         * Cooldown en secondes avant de pouvoir réutiliser le spawn personnalisé (lit / ancre de respawn)
+         * après un respawn. Un niveau plus élevé donne un cooldown plus court. Index = niveau.
+         */
+        private final int[]    respawnCooldownSeconds;
 
         LumberjackCfg(double[] dropMultiplier, double[] charcoalChance, double[] appleLeafChance,
                       double[] fireDamageMultiplier, int[] treeFellerExtraLogs, int[] fireResistanceTicks,
                       double[] saplingGrowthAllowChance, double[] saplingExtraGrowthChance,
-                      double saplingThirdTickChanceAtMax, double[] saplingBoneMealChance) {
+                      double saplingThirdTickChanceAtMax, double[] saplingBoneMealChance,
+                      int[] respawnCooldownSeconds) {
             this.dropMultiplier             = dropMultiplier;
             this.charcoalChance             = charcoalChance;
             this.appleLeafChance            = appleLeafChance;
@@ -139,6 +145,7 @@ public final class JobsConfig {
             this.saplingExtraGrowthChance   = saplingExtraGrowthChance;
             this.saplingThirdTickChanceAtMax = saplingThirdTickChanceAtMax;
             this.saplingBoneMealChance      = saplingBoneMealChance;
+            this.respawnCooldownSeconds     = respawnCooldownSeconds;
         }
     }
 

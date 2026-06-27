@@ -167,6 +167,7 @@ class JobsConfigTest {
     @Test void lumberjackSaplingGrowthAllowChanceValid() { assertProbabilityArray(lumberjackRoot, "sapling-growth-allow-chance"); }
     @Test void lumberjackSaplingExtraGrowthChanceValid() { assertProbabilityArray(lumberjackRoot, "sapling-extra-growth-chance"); }
     @Test void lumberjackSaplingBoneMealChanceValid()    { assertProbabilityArray(lumberjackRoot, "sapling-bone-meal-chance"); }
+    @Test void lumberjackRespawnCooldownSecondsValid()   { assertNonNegativeIntArray(lumberjackRoot, "respawn-cooldown-seconds"); }
 
     @Test
     void lumberjackSaplingThirdTickChanceAtMaxValid() {

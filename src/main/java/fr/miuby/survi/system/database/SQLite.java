@@ -8,7 +8,7 @@ import java.sql.*;
 import java.util.logging.Level;
 
 public class SQLite extends Database {
-    private static final int CURRENT_DB_VERSION = 16;
+    private static final int CURRENT_DB_VERSION = 17;
 
     public SQLite() {
         super(GameManager.getInstance().getPlugin().getConfig().getString("SQLite.Filename", "minecraft"));
@@ -71,6 +71,12 @@ public class SQLite extends Database {
                 "`pseudo` varchar(255) NOT NULL," +
                 "`role` varchar(255) NOT NULL," +
                 "`subroles` varchar(255)," +
+                "`spawn_world` VARCHAR(255) DEFAULT NULL," +
+                "`spawn_x` REAL DEFAULT NULL," +
+                "`spawn_y` REAL DEFAULT NULL," +
+                "`spawn_z` REAL DEFAULT NULL," +
+                "`spawn_yaw` REAL DEFAULT NULL," +
+                "`spawn_pitch` REAL DEFAULT NULL," +
                 "PRIMARY KEY (`uuid`)" +
                 ");";
     }
@@ -285,6 +291,14 @@ public class SQLite extends Database {
             }
             if (currentVersion < 16) {
                 s.executeUpdate(createGraveLostNotificationTable());
+            }
+            if (currentVersion < 17) {
+                s.executeUpdate("ALTER TABLE player ADD COLUMN spawn_world VARCHAR(255) DEFAULT NULL");
+                s.executeUpdate("ALTER TABLE player ADD COLUMN spawn_x REAL DEFAULT NULL");
+                s.executeUpdate("ALTER TABLE player ADD COLUMN spawn_y REAL DEFAULT NULL");
+                s.executeUpdate("ALTER TABLE player ADD COLUMN spawn_z REAL DEFAULT NULL");
+                s.executeUpdate("ALTER TABLE player ADD COLUMN spawn_yaw REAL DEFAULT NULL");
+                s.executeUpdate("ALTER TABLE player ADD COLUMN spawn_pitch REAL DEFAULT NULL");
             }
         }
     }

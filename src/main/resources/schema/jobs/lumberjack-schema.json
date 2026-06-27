@@ -7,7 +7,8 @@
     "drop-multiplier", "charcoal-chance", "apple-leaf-chance", "fire-damage-multiplier",
     "tree-feller-extra-logs", "fire-resistance-ticks",
     "sapling-growth-allow-chance", "sapling-extra-growth-chance",
-    "sapling-third-tick-chance-at-max", "sapling-bone-meal-chance"
+    "sapling-third-tick-chance-at-max", "sapling-bone-meal-chance",
+    "respawn-cooldown-seconds"
   ],
   "additionalProperties": false,
   "properties": {
@@ -20,7 +21,8 @@
     "sapling-growth-allow-chance":    { "$ref": "#/definitions/probability-array",         "description": "Probabilité d'autoriser un tick de croissance sur un sapling planté (niv.0–4 = ralentissement)." },
     "sapling-extra-growth-chance":    { "$ref": "#/definitions/probability-array",         "description": "Probabilité d'un tick de croissance bonus après un tick normal (niv.6–10)." },
     "sapling-third-tick-chance-at-max": { "type": "number", "minimum": 0, "maximum": 1,   "description": "Probabilité d'un 3e tick bonus au niveau maximum." },
-    "sapling-bone-meal-chance":       { "$ref": "#/definitions/probability-array",         "description": "Probabilité que la farine d'os fonctionne sur un sapling planté par un bûcheron." }
+    "sapling-bone-meal-chance":       { "$ref": "#/definitions/probability-array",         "description": "Probabilité que la farine d'os fonctionne sur un sapling planté par un bûcheron." },
+    "respawn-cooldown-seconds":       { "$ref": "#/definitions/non-negative-int-array",    "description": "Cooldown en secondes avant de réutiliser le spawn personnalisé (lit/ancre) après un respawn. Index = niveau Bûcheron." }
   },
   "definitions": {
     "non-negative-number-array": {
