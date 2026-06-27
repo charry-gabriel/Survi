@@ -1,6 +1,7 @@
 package fr.miuby.survi.listener;
 
 import com.destroystokyo.paper.event.player.PlayerArmorChangeEvent;
+import com.destroystokyo.paper.event.player.PlayerSetSpawnEvent;
 import fr.miuby.lib.utils.Cooldown;
 import fr.miuby.lib.utils.Rect;
 import fr.miuby.lib.world.MLWorld;
@@ -11,6 +12,7 @@ import fr.miuby.survi.job.EJob;
 import fr.miuby.survi.job.config.JobsConfig;
 import fr.miuby.survi.player.AlphaPlayer;
 import fr.miuby.survi.role.RoleAttribute;
+import fr.miuby.survi.system.lang.LangService;
 import fr.miuby.survi.system.log.ELogTag;
 import fr.miuby.survi.system.perf.PerfTimer;
 import fr.miuby.survi.world.EWorld;
@@ -59,6 +61,14 @@ public class PlayerListener implements Listener {
 
     /** Armure sauvegardée à la mort, restituée après le respawn (pas pendant l'écran de mort). */
     private final Map<UUID, ItemStack[]> pendingArmorRestore = new HashMap<>();
+
+    /**
+     * Timestamp d'expiration du cooldown de respawn par joueur (ms depuis epoch).
+     * Absent = pas de cooldown actif.
+     * Persiste en mémoire le temps de la session serveur — pas nettoyé au quit intentionnellement
+     * pour empêcher le bypass par reconnexion rapide.
+     */
+    private final Map<UUID, Long> respawnCooldownExpiry = new HashMap<>();
 
     public PlayerListener() {
         this.gm = GameManager.getInstance();
@@ -191,15 +201,76 @@ public class PlayerListener implements Listener {
     }
 
     @EventHandler
+    public void onPlayerSetSpawn(PlayerSetSpawnEvent event) {
+        Location loc = event.getLocation();
+        Player player = event.getPlayer();
+        AlphaPlayer ap = AlphaPlayer.get(player.getUniqueId());
+        LangService ls = gm.getLangService();
+
+        if (loc == null) {
+            // Spawn effacé (lit détruit, etc.)
+            ap.setCustomSpawnLocation(null);
+            gm.getDatabase().players().clearSpawnLocation(player.getUniqueId());
+            MLLogManager.getInstance().log(Level.FINE, ELogTag.PLAYER,
+                    "[SetSpawn] " + player.getName() + " spawn effacé (cause=" + event.getCause() + ")");
+            return;
+        }
+
+        PlayerSetSpawnEvent.Cause cause = event.getCause();
+        if (cause != PlayerSetSpawnEvent.Cause.BED && cause != PlayerSetSpawnEvent.Cause.RESPAWN_ANCHOR) return;
+
+        ap.setCustomSpawnLocation(loc.clone());
+        gm.getDatabase().players().saveSpawnLocation(player.getUniqueId(), loc);
+
+        if (cause == PlayerSetSpawnEvent.Cause.BED) {
+            player.sendMessage(ls.text(player, "spawn.set.bed"));
+        } else {
+            player.sendMessage(ls.text(player, "spawn.set.anchor"));
+        }
+        MLLogManager.getInstance().log(Level.FINE, ELogTag.PLAYER,
+                "[SetSpawn] " + player.getName() + " → " + loc.getWorld().getName()
+                        + " " + loc.getBlockX() + " " + loc.getBlockY() + " " + loc.getBlockZ()
+                        + " (cause=" + cause + ")");
+    }
+
+    @EventHandler
     public void onPlayerRespawn(PlayerRespawnEvent event) {
         Player player = event.getPlayer();
-        MLLogManager.getInstance().log(Level.FINE, ELogTag.PLAYER,
-                "[PlayerRespawn] " + player.getName());
         AlphaPlayer alphaPlayer = AlphaPlayer.get(player.getUniqueId());
         alphaPlayer.getAlphaLife().actualizeDeath();
         gm.getScheduler().scheduleSyncDelayedTask(gm.getPlugin(), () -> { if (player.isOnline()) alphaPlayer.getAlphaLife().restoreFood(); });
 
-        event.setRespawnLocation(GameManager.getInstance().getVillageZoneManager().getCurrentSpawnLocation());
+        // ─── Logique de respawn : spawn perso (lit/ancre) vs spawn village ────────
+        Location customSpawn = alphaPlayer.getCustomSpawnLocation();
+        long now = System.currentTimeMillis();
+        Long expiryTs = respawnCooldownExpiry.get(player.getUniqueId());
+        boolean onCooldown = expiryTs != null && now < expiryTs;
+
+        if (customSpawn != null && !onCooldown) {
+            event.setRespawnLocation(customSpawn);
+            int lumberjackLevel = alphaPlayer.getJobLevel(EJob.LUMBERJACK);
+            long cooldownMs = JobsConfig.getInstance().getLumberjack().getRespawnCooldownSeconds()[lumberjackLevel] * 1000L;
+            respawnCooldownExpiry.put(player.getUniqueId(), now + cooldownMs);
+            MLLogManager.getInstance().log(Level.INFO, ELogTag.PLAYER,
+                    "[PlayerRespawn] " + player.getName() + " → spawn perso ("
+                            + customSpawn.getWorld().getName() + " " + customSpawn.getBlockX()
+                            + " " + customSpawn.getBlockY() + " " + customSpawn.getBlockZ()
+                            + ") cooldown=" + (cooldownMs / 1000) + "s (bucheron niv." + lumberjackLevel + ")");
+        } else {
+            event.setRespawnLocation(GameManager.getInstance().getVillageZoneManager().getCurrentSpawnLocation());
+            if (onCooldown && customSpawn != null) {
+                long remaining = expiryTs - now;
+                gm.getScheduler().runTaskLater(gm.getPlugin(), () -> {
+                    if (player.isOnline()) player.sendMessage(gm.getLangService().text(player, "respawn.cooldown.village", formatDuration(remaining)));
+                }, 1L);
+                MLLogManager.getInstance().log(Level.INFO, ELogTag.PLAYER,
+                        "[PlayerRespawn] " + player.getName() + " → spawn village (cooldown actif, restant=" + (remaining / 1000) + "s)");
+            } else {
+                MLLogManager.getInstance().log(Level.FINE, ELogTag.PLAYER,
+                        "[PlayerRespawn] " + player.getName() + " → spawn village (pas de spawn personnalisé)");
+            }
+        }
+        // ─────────────────────────────────────────────────────────────────────────
 
         for (RoleAttribute roleAttribute : alphaPlayer.getRole().attributes()) {
             if (roleAttribute.getAttributeType() == Attribute.MAX_ABSORPTION) {
@@ -269,5 +340,18 @@ public class PlayerListener implements Listener {
         }
         if (gm.getLockedItemsFactory().isLocked(event.getRecipe()))
             event.setCancelled(true);
+    }
+
+    // ─── Helpers ─────────────────────────────────────────────────────────────────
+
+    /** Formate une durée en ms en chaîne lisible : « 1h 23m », « 45m 10s » ou « 30s ». */
+    private static String formatDuration(long ms) {
+        long s = ms / 1000;
+        long h = s / 3600;
+        long m = (s % 3600) / 60;
+        long sec = s % 60;
+        if (h > 0) return h + "h " + m + "m";
+        if (m > 0) return m + "m " + sec + "s";
+        return sec + "s";
     }
 }

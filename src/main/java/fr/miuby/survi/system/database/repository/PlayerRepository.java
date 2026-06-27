@@ -10,6 +10,9 @@ import fr.miuby.survi.role.Role;
 import fr.miuby.survi.system.database.EPlayerColumn;
 import fr.miuby.survi.system.database.EPlayerLoadResult;
 import fr.miuby.survi.system.log.ELogTag;
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.entity.Player;
 
 import java.sql.Connection;
@@ -48,6 +51,7 @@ public class PlayerRepository extends MLRepository {
                     }
 
                     alphaPlayer.loadReputation();
+                    alphaPlayer.setCustomSpawnLocation(loadSpawnLocation(rs));
                 } catch (IllegalArgumentException ex) {
                     // Ligne corrompue (rôle/UUID invalide) — on l'ignore et on continue plutôt que
                     // d'interrompre le chargement de tous les joueurs restants dans le ResultSet.
@@ -91,6 +95,7 @@ public class PlayerRepository extends MLRepository {
                         }
                     }
                     alphaPlayer.loadReputation();
+                    alphaPlayer.setCustomSpawnLocation(loadSpawnLocation(rs));
                     return EPlayerLoadResult.FOUND;
                 } catch (IllegalArgumentException ex) {
                     MLLogManager.getInstance().log(Level.SEVERE, ELogTag.PLAYER,
@@ -123,5 +128,54 @@ public class PlayerRepository extends MLRepository {
                 ps.executeUpdate();
             }
         }, ELogTag.PLAYER, "Failed to update player");
+    }
+
+    /** Sauvegarde le spawn personnalisé du joueur en base de données (async). */
+    public void saveSpawnLocation(UUID uuid, Location location) {
+        runAsync(conn -> {
+            try (PreparedStatement ps = conn.prepareStatement(
+                    "UPDATE player SET spawn_world = ?, spawn_x = ?, spawn_y = ?, spawn_z = ?, spawn_yaw = ?, spawn_pitch = ? WHERE uuid = ?")) {
+                ps.setString(1, location.getWorld().getName());
+                ps.setDouble(2, location.getX());
+                ps.setDouble(3, location.getY());
+                ps.setDouble(4, location.getZ());
+                ps.setDouble(5, location.getYaw());
+                ps.setDouble(6, location.getPitch());
+                ps.setString(7, uuid.toString());
+                ps.executeUpdate();
+            }
+        }, ELogTag.PLAYER, "Failed to save spawn location for " + uuid);
+    }
+
+    /** Efface le spawn personnalisé du joueur en base de données (async). */
+    public void clearSpawnLocation(UUID uuid) {
+        runAsync(conn -> {
+            try (PreparedStatement ps = conn.prepareStatement(
+                    "UPDATE player SET spawn_world = NULL, spawn_x = NULL, spawn_y = NULL, spawn_z = NULL, spawn_yaw = NULL, spawn_pitch = NULL WHERE uuid = ?")) {
+                ps.setString(1, uuid.toString());
+                ps.executeUpdate();
+            }
+        }, ELogTag.PLAYER, "Failed to clear spawn location for " + uuid);
+    }
+
+    /**
+     * Lit les colonnes spawn_* du ResultSet courant et retourne la Location correspondante.
+     * Retourne {@code null} si aucun spawn n'est défini ou si le monde n'est pas chargé.
+     */
+    private Location loadSpawnLocation(java.sql.ResultSet rs) throws java.sql.SQLException {
+        String spawnWorld = rs.getString("spawn_world");
+        if (spawnWorld == null) return null;
+        World world = Bukkit.getWorld(spawnWorld);
+        if (world == null) {
+            MLLogManager.getInstance().log(Level.WARNING, ELogTag.PLAYER,
+                    "[loadSpawnLocation] Monde introuvable pour spawn : " + spawnWorld + " — spawn ignoré");
+            return null;
+        }
+        return new Location(world,
+                rs.getDouble("spawn_x"),
+                rs.getDouble("spawn_y"),
+                rs.getDouble("spawn_z"),
+                (float) rs.getDouble("spawn_yaw"),
+                (float) rs.getDouble("spawn_pitch"));
     }
 }

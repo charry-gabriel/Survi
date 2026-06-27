@@ -134,3 +134,18 @@ sapling-bone-meal-chance:
   - 0.70   # niveau  8
   - 0.80   # niveau  9
   - 1.00   # niveau 10
+
+# Cooldown en secondes avant de pouvoir réutiliser son spawn personnalisé (lit / ancre) après un respawn.
+# Un niveau de Bûcheron plus élevé réduit le cooldown.
+respawn-cooldown-seconds:
+  - 3600   # niveau  0  — 1h
+  - 3000   # niveau  1
+  - 2400   # niveau  2
+  - 1800   # niveau  3  — 30min
+  - 1500   # niveau  4
+  - 1200   # niveau  5  — 20min
+  - 900    # niveau  6  — 15min
+  - 600    # niveau  7  — 10min
+  - 300    # niveau  8  — 5min
+  - 180    # niveau  9  — 3min
+  - 60     # niveau 10  — 1min
