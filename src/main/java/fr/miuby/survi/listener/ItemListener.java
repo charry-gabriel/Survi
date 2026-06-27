@@ -1,5 +1,6 @@
 package fr.miuby.survi.listener;
 
+import fr.miuby.lib.MiubyLib;
 import fr.miuby.lib.log.MLLogManager;
 import fr.miuby.survi.GameManager;
 import fr.miuby.survi.item.ArmorTierService;
@@ -10,28 +11,52 @@ import fr.miuby.survi.player.AlphaPlayer;
 import fr.miuby.survi.role.Role;
 import fr.miuby.survi.system.log.ELogTag;
 import fr.miuby.survi.villager.villagerlevel.VillagerTributeHolder;
-import fr.miuby.lib.MiubyLib;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.CrafterCraftEvent;
+import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.event.inventory.InventoryType;
-import org.bukkit.event.EventHandler;
 import org.bukkit.event.inventory.PrepareItemCraftEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemBreakEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.Arrays;
+import java.util.EnumMap;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
 import java.util.logging.Level;
 
 public class ItemListener implements Listener {
+
+    /**
+     * Remplacements de tier inférieur en attente, indexés par UUID joueur et slot.
+     * Présent dès le {@link PlayerItemBreakEvent} ; retiré soit par le {@code runLater} si le joueur survit,
+     * soit par {@link #onPlayerRespawn} si le joueur est mort ce même tick.
+     */
+    private final Map<UUID, Map<EquipmentSlot, ItemStack>> pendingDowngrades = new HashMap<>();
+
+    /**
+     * UUID des joueurs morts avec au moins un downgrade en attente.
+     * Ajouté dans {@link #onPlayerDeathDowngrade}, retiré dans {@link #onPlayerRespawn} / {@link #onPlayerQuitDowngrade}.
+     */
+    private final Set<UUID> pendingDeaths = new HashSet<>();
+
+    // ─── Craft / recettes ────────────────────────────────────────────────────────
 
     @EventHandler
     public void onPrepareItemCraft(PrepareItemCraftEvent event) {
@@ -93,6 +118,15 @@ public class ItemListener implements Listener {
         }
     }
 
+    // ─── Downgrade d'armure ───────────────────────────────────────────────────────
+
+    /**
+     * Quand une armure casse, on stocke le remplacement et on planifie un {@code runLater}.
+     * <p>
+     * Si le joueur survit au tick courant : le {@code runLater} pose l'item directement (comportement nominal).
+     * Si le joueur meurt ce tick : {@link #onPlayerDeathDowngrade} marquera l'UUID et le {@code runLater}
+     * ne posera pas l'item — c'est {@link #onPlayerRespawn} qui le donnera.
+     */
     @EventHandler
     public void onPlayerItemBreak(PlayerItemBreakEvent event) {
         Material broken = event.getBrokenItem().getType();
@@ -103,10 +137,84 @@ public class ItemListener implements Listener {
         if (replacement == null) return;
 
         Player player = event.getPlayer();
-        MiubyLib.runLater(() -> player.getEquipment().setItem(slot, replacement), 1L);
+        UUID uuid = player.getUniqueId();
+
+        pendingDowngrades.computeIfAbsent(uuid, k -> new EnumMap<>(EquipmentSlot.class)).put(slot, replacement);
+
+        MiubyLib.runLater(() -> {
+            if (pendingDeaths.contains(uuid)) {
+                // Le joueur est mort ce même tick — le downgrade sera remis au respawn
+                MLLogManager.getInstance().log(Level.FINE, ELogTag.PLAYER,
+                        "[Item] " + player.getName() + " — Broke " + broken.name() + " (mort) → downgrade différé au respawn");
+                return;
+            }
+            // Joueur vivant — downgrade immédiat (comportement nominal)
+            Map<EquipmentSlot, ItemStack> pending = pendingDowngrades.get(uuid);
+            if (pending == null) return;
+            ItemStack item = pending.remove(slot);
+            if (pending.isEmpty()) pendingDowngrades.remove(uuid);
+            if (item == null) return;
+            player.getEquipment().setItem(slot, item);
+            MLLogManager.getInstance().log(Level.FINE, ELogTag.PLAYER,
+                    "[Item] " + player.getName() + " — Broke " + broken.name() + " → downgrade " + item.getType().name());
+        }, 1L);
+
         MLLogManager.getInstance().log(Level.FINE, ELogTag.PLAYER,
                 "[Item] " + player.getName() + " — Broke " + broken.name());
     }
+
+    /**
+     * Si le joueur meurt avec un downgrade en attente, on l'inscrit dans {@code pendingDeaths}
+     * pour que le {@code runLater} d'onPlayerItemBreak ne pose pas l'item sur un joueur mort.
+     */
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void onPlayerDeathDowngrade(PlayerDeathEvent event) {
+        UUID uuid = event.getPlayer().getUniqueId();
+        if (!pendingDowngrades.containsKey(uuid)) return;
+        pendingDeaths.add(uuid);
+        MLLogManager.getInstance().log(Level.FINE, ELogTag.PLAYER,
+                "[Item] " + event.getPlayer().getName() + " — mort avec downgrade(s) en attente → remise au respawn");
+    }
+
+    /**
+     * Au respawn, donne les downgrades en attente dans le slot approprié.
+     * Si le slot est déjà occupé (edge case), l'item est ajouté à l'inventaire.
+     */
+    @EventHandler
+    public void onPlayerRespawn(PlayerRespawnEvent event) {
+        UUID uuid = event.getPlayer().getUniqueId();
+        pendingDeaths.remove(uuid);
+        Map<EquipmentSlot, ItemStack> pending = pendingDowngrades.remove(uuid);
+        if (pending == null || pending.isEmpty()) return;
+
+        Player player = event.getPlayer();
+        MiubyLib.runLater(() -> {
+            for (Map.Entry<EquipmentSlot, ItemStack> entry : pending.entrySet()) {
+                EquipmentSlot s = entry.getKey();
+                ItemStack item = entry.getValue();
+                ItemStack current = player.getEquipment().getItem(s);
+                if (current == null || current.getType() == Material.AIR) {
+                    player.getEquipment().setItem(s, item);
+                    MLLogManager.getInstance().log(Level.INFO, ELogTag.PLAYER,
+                            "[Item] " + player.getName() + " — downgrade au respawn : " + item.getType().name() + " slot=" + s.name());
+                } else {
+                    player.getInventory().addItem(item);
+                    MLLogManager.getInstance().log(Level.WARNING, ELogTag.PLAYER,
+                            "[Item] " + player.getName() + " — downgrade respawn slot=" + s.name() + " occupé → ajout inventaire : " + item.getType().name());
+                }
+            }
+        }, 1L);
+    }
+
+    /** Nettoyage si le joueur se déconnecte avant le respawn. */
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void onPlayerQuitDowngrade(PlayerQuitEvent event) {
+        UUID uuid = event.getPlayer().getUniqueId();
+        pendingDeaths.remove(uuid);
+        pendingDowngrades.remove(uuid);
+    }
+
+    // ─── Inventaires ─────────────────────────────────────────────────────────────
 
     @EventHandler(ignoreCancelled = true)
     public void onInventoryClick(InventoryClickEvent event) {
@@ -127,9 +235,7 @@ public class ItemListener implements Listener {
         }
     }
 
-    // =========================================================================
-    // Sac à dos (BackpackMenuHolder)
-    // =========================================================================
+    // ─── Sac à dos (BackpackMenuHolder) ──────────────────────────────────────────
 
     @EventHandler
     public void onPlayerInteract(PlayerInteractEvent event) {
