@@ -92,7 +92,7 @@ public enum ECustomItem {
                 .leatherArmor(TrimMaterial.GOLD, TrimPattern.SILENCE, Color.fromRGB(16777045))
                 .addAttribute(Attribute.ARMOR, -20, ADD_NUMBER, EquipmentSlotGroup.LEGS)
                 .addAttribute(Attribute.MAX_HEALTH, 10, ADD_NUMBER, EquipmentSlotGroup.LEGS)
-                .addAttribute(Attribute.MOVEMENT_SPEED, 0, ADD_NUMBER, EquipmentSlotGroup.LEGS) //évolutif
+                .addAttribute(Attribute.MOVEMENT_SPEED, 0.3, ADD_NUMBER, EquipmentSlotGroup.LEGS) //évolutif
                 .unbreakable()
                 .addItemFlag(ItemFlag.HIDE_DYE)
                 .addItemFlag(ItemFlag.HIDE_ARMOR_TRIM);

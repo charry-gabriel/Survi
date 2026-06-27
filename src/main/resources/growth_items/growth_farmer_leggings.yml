@@ -16,56 +16,56 @@ tiers:
     effects:
       - { type: name,          value: "Houe du Fermier III" }
       - { type: fire_enemies,  seconds: 2 }
-      - { type: set_attribute, attribute: movement_speed, attributeValue: 0.01, operation: ADD_NUMBER, slot: HAND }
+      - { type: set_attribute, attribute: movement_speed, attributeValue: 0.04, operation: ADD_NUMBER, slot: HAND }
       - { type: message,       value: "Tu cours plus vite et tes ennemis brûlent plus longtemps !" }
 
   - requiredUses: 100000
     effects:
       - { type: name,          value: "Houe du Fermier IV" }
       - { type: fire_enemies,  seconds: 3 }
-      - { type: set_attribute, attribute: movement_speed, attributeValue: 0.02, operation: ADD_NUMBER, slot: HAND }
+      - { type: set_attribute, attribute: movement_speed, attributeValue: 0.05, operation: ADD_NUMBER, slot: HAND }
       - { type: message,       value: "Tu cours plus vite et tes ennemis brûlent plus longtemps !" }
 
   - requiredUses: 200000
     effects:
       - { type: name,          value: "Houe du Fermier V" }
       - { type: fire_enemies,  seconds: 4 }
-      - { type: set_attribute, attribute: movement_speed, attributeValue: 0.03, operation: ADD_NUMBER, slot: HAND }
+      - { type: set_attribute, attribute: movement_speed, attributeValue: 0.06, operation: ADD_NUMBER, slot: HAND }
       - { type: message,       value: "Tu cours plus vite et tes ennemis brûlent plus longtemps !" }
 
   - requiredUses: 350000
     effects:
       - { type: name,          value: "Houe du Fermier VI" }
       - { type: fire_enemies,  seconds: 5 }
-      - { type: set_attribute, attribute: movement_speed, attributeValue: 0.04, operation: ADD_NUMBER, slot: HAND }
+      - { type: set_attribute, attribute: movement_speed, attributeValue: 0.07, operation: ADD_NUMBER, slot: HAND }
       - { type: message,       value: "Tu cours plus vite et tes ennemis brûlent plus longtemps !" }
 
   - requiredUses: 600000
     effects:
       - { type: name,          value: "Houe du Fermier VII" }
       - { type: fire_enemies,  seconds: 10 }
-      - { type: set_attribute, attribute: movement_speed, attributeValue: 0.05, operation: ADD_NUMBER, slot: HAND }
+      - { type: set_attribute, attribute: movement_speed, attributeValue: 0.09, operation: ADD_NUMBER, slot: HAND }
       - { type: message,       value: "Tu cours plus vite et tes ennemis brûlent plus longtemps !" }
 
   - requiredUses: 950000
     effects:
       - { type: name,          value: "Houe du Fermier VIII" }
       - { type: fire_enemies,  seconds: 15 }
-      - { type: set_attribute, attribute: movement_speed, attributeValue: 0.06, operation: ADD_NUMBER, slot: HAND }
+      - { type: set_attribute, attribute: movement_speed, attributeValue: 0.11, operation: ADD_NUMBER, slot: HAND }
       - { type: message,       value: "Tu cours plus vite et tes ennemis brûlent plus longtemps !" }
 
   - requiredUses: 1400000
     effects:
       - { type: name,          value: "Houe du Fermier IX" }
       - { type: fire_enemies,  seconds: 30 }
-      - { type: set_attribute, attribute: movement_speed, attributeValue: 0.08, operation: ADD_NUMBER, slot: HAND }
+      - { type: set_attribute, attribute: movement_speed, attributeValue: 0.13, operation: ADD_NUMBER, slot: HAND }
       - { type: message,       value: "Tu cours plus vite et tes ennemis brûlent plus longtemps !" }
 
   - requiredUses: 2000000
     effects:
       - { type: name,          value: "Houe du Maître Fermier" }
       - { type: fire_enemies,  seconds: 60 }
-      - { type: set_attribute, attribute: movement_speed, attributeValue: 0.1, operation: ADD_NUMBER, slot: HAND }
+      - { type: set_attribute, attribute: movement_speed, attributeValue: 0.15, operation: ADD_NUMBER, slot: HAND }
       - { type: message,       value: "Houe de légende. Tes ennemis fuient les flammes de tes champs." }
 
 
