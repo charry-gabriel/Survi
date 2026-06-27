@@ -101,7 +101,9 @@ roles:
   NOVICE:
     roleId: novice
     attributes:
-      - { world: ALL,        attribute: LUCK, value: 0.1, operation: ADD_NUMBER }
+      - { world: ALL,        attribute: ARMOR, value: 0.5}
+      - { world: ALL,        attribute: MAX_HEALTH, value: 0.5}
+      - { world: ALL,        attribute: ATTACK_DAMAGE, value: 0.5}
 
   COMBATANT:
     roleId: metier
