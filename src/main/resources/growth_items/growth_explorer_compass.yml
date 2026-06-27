@@ -28,37 +28,37 @@ tiers:
   - requiredUses: 30
     effects:
       - { type: name,          value: "Boussole de l'Explorateur V" }
-      - { type: set_attribute, attribute: movement_speed, attributeValue: 0.06, operation: ADD_NUMBER, slot: HAND }
+      - { type: set_attribute, attribute: movement_speed, attributeValue: 0.05, operation: ADD_NUMBER, slot: HAND }
       - { type: message,       value: "Tu es devenu un vrai globe-trotteur." }
 
   - requiredUses: 35
     effects:
       - { type: name,          value: "Boussole de l'Explorateur VI" }
-      - { type: set_attribute, attribute: movement_speed, attributeValue: 0.10, operation: ADD_NUMBER, slot: HAND }
+      - { type: set_attribute, attribute: movement_speed, attributeValue: 0.06, operation: ADD_NUMBER, slot: HAND }
       - { type: message,       value: "Tu es devenu un vrai globe-trotteur." }
 
   - requiredUses: 45
     effects:
       - { type: name,          value: "Boussole de l'Explorateur VII" }
-      - { type: set_attribute, attribute: movement_speed, attributeValue: 0.12, operation: ADD_NUMBER, slot: HAND }
+      - { type: set_attribute, attribute: movement_speed, attributeValue: 0.07, operation: ADD_NUMBER, slot: HAND }
       - { type: message,       value: "Tu es devenu un vrai globe-trotteur." }
 
   - requiredUses: 55
     effects:
       - { type: name,          value: "Boussole de l'Explorateur VIII" }
-      - { type: set_attribute, attribute: movement_speed, attributeValue: 0.15, operation: ADD_NUMBER, slot: HAND }
+      - { type: set_attribute, attribute: movement_speed, attributeValue: 0.08, operation: ADD_NUMBER, slot: HAND }
       - { type: message,       value: "Tu es devenu un vrai globe-trotteur." }
 
   - requiredUses: 60
     effects:
       - { type: name,          value: "Boussole de l'Explorateur IX" }
-      - { type: set_attribute, attribute: movement_speed, attributeValue: 0.2, operation: ADD_NUMBER, slot: HAND }
+      - { type: set_attribute, attribute: movement_speed, attributeValue: 0.09, operation: ADD_NUMBER, slot: HAND }
       - { type: message,       value: "Tu es devenu un vrai globe-trotteur." }
 
   - requiredUses: 64
     effects:
       - { type: name,          value: "Boussole du Grand Explorateur" }
-      - { type: set_attribute, attribute: movement_speed, attributeValue: 0.25, operation: ADD_NUMBER, slot: HAND }
+      - { type: set_attribute, attribute: movement_speed, attributeValue: 0.1, operation: ADD_NUMBER, slot: HAND }
       - { type: message,       value: "Tu as tout vu. Légende vivante." }
 
 periodicEffects:
