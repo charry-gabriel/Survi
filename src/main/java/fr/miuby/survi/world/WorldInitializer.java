@@ -93,6 +93,7 @@ public class WorldInitializer {
         MLWorld mvWild = new MLWorld(wilderness, "Wilderness", NamedTextColor.GOLD, EWorld.WILDERNESS);
         WorldRegistry.register(mvWild);
         wilderness.setGameRule(GameRules.NATURAL_HEALTH_REGENERATION, false);
+        wilderness.setGameRule(GameRules.PLAYERS_SLEEPING_PERCENTAGE, 45);
         wilderness.setViewDistance(8);
         wilderness.setDifficulty(Difficulty.HARD);
 
@@ -195,6 +196,7 @@ public class WorldInitializer {
             throw new IllegalStateException("Échec de la création du monde : " + name + " (" + env + ")");
         }
         created.setGameRule(GameRules.NATURAL_HEALTH_REGENERATION, false);
+        created.setGameRule(GameRules.PLAYERS_SLEEPING_PERCENTAGE, 45);
         created.setDifficulty(Difficulty.HARD);
         created.setViewDistance(8);
         return created;

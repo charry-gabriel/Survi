@@ -28,15 +28,20 @@ import fr.miuby.lib.log.MLLogManager;
 import java.util.logging.Level;
 
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
+import org.bukkit.Tag;
 import org.bukkit.advancement.Advancement;
 import org.bukkit.advancement.AdvancementProgress;
 import org.bukkit.attribute.Attribute;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.*;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
@@ -309,6 +314,39 @@ public class PlayerListener implements Listener {
                             "[PlayerRespawn] " + player.getName() + " — armure restaurée");
                 }
             }, 1L);
+        }
+    }
+
+    /**
+     * Affiche le temps restant de cooldown de respawn quand le joueur fait un clic droit
+     * sur un lit ou une ancre de respawn — uniquement s'il a un spawn personnalisé défini.
+     */
+    @EventHandler(ignoreCancelled = true)
+    public void onPlayerInteractRespawnBlock(PlayerInteractEvent event) {
+        if (event.getAction() != Action.RIGHT_CLICK_BLOCK) return;
+        if (event.getHand() != EquipmentSlot.HAND) return;
+        Block block = event.getClickedBlock();
+        if (block == null) return;
+        Material type = block.getType();
+        if (!Tag.BEDS.isTagged(type) && type != Material.RESPAWN_ANCHOR) return;
+
+        Player player = event.getPlayer();
+        AlphaPlayer ap = AlphaPlayer.get(player.getUniqueId());
+        if (ap.getCustomSpawnLocation() == null) return;
+
+        long now = System.currentTimeMillis();
+        Long expiryTs = respawnCooldownExpiry.get(player.getUniqueId());
+        boolean onCooldown = expiryTs != null && now < expiryTs;
+
+        if (onCooldown) {
+            long remaining = expiryTs - now;
+            player.sendActionBar(gm.getLangService().text(player, "respawn.cooldown.actionbar", formatDuration(remaining)));
+            MLLogManager.getInstance().log(Level.FINE, ELogTag.PLAYER,
+                    "[RespawnBlock] " + player.getName() + " inspecte bloc respawn — cooldown restant=" + (remaining / 1000) + "s");
+        } else {
+            player.sendActionBar(gm.getLangService().text(player, "respawn.cooldown.ready"));
+            MLLogManager.getInstance().log(Level.FINE, ELogTag.PLAYER,
+                    "[RespawnBlock] " + player.getName() + " inspecte bloc respawn — prêt");
         }
     }
 

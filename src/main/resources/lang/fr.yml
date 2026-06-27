@@ -432,6 +432,8 @@ globalquest.rewards.message: "<gold><bold>[Quête Globale] <green>Récompenses r
 spawn.set.bed: "<green>✔ Spawn défini à ton lit."
 spawn.set.anchor: "<green>✔ Spawn défini à l'ancre de respawn."
 respawn.cooldown.village: "<yellow>⚠ Cooldown de respawn ({0}). Tu réapparais au village."
+respawn.cooldown.actionbar: "<red>⏳ Spawn disponible dans {0}"
+respawn.cooldown.ready: "<green>✔ Spawn disponible"
 
 # ─── Reload all — résultat complet (message unique multi-ligne) ───────────────
 cmd.reload.all.done: |-
