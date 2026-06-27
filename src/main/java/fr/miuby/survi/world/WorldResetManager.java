@@ -3,10 +3,9 @@ package fr.miuby.survi.world;
 import fr.miuby.lib.world.WorldRegistry;
 import fr.miuby.survi.GameManager;
 import fr.miuby.lib.log.MLLogManager;
+import fr.miuby.survi.player.AlphaPlayer;
 import fr.miuby.survi.system.SurviConfig;
 import fr.miuby.survi.system.log.ELogTag;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -71,23 +70,26 @@ public class WorldResetManager {
         clearGravesForWorld(currentNetherName);
         clearGravesForWorld(currentEndName);
 
-        // 3. Désenregistrer le portail Wilderness avant unload
+        // 3. Effacer les spawns personnalisés (lit / ancre) situés dans les mondes réinitialisés
+        clearSpawnsForResetWorlds(currentWildName, currentNetherName, currentEndName);
+
+        // 4. Désenregistrer le portail Wilderness avant unload
         GameManager.getInstance().getWorldPortalManager().unregisterWildernessPortal(currentWildName);
 
-        // 4. Unload sans sauvegarde
+        // 5. Unload sans sauvegarde
         unloadWorld(currentWildName);
         unloadWorld(currentNetherName);
         unloadWorld(currentEndName);
 
-        // 5. Créer les 3 nouveaux mondes
+        // 6. Créer les 3 nouveaux mondes
         WorldInitializer.loadOrCreate(newWildName,   World.Environment.NORMAL);
         WorldInitializer.loadOrCreate(newNetherName, World.Environment.NETHER);
         WorldInitializer.loadOrCreate(newEndName,    World.Environment.THE_END);
 
-        // 6. Mettre à jour WorldInitializer (mémoire + DB + WorldRegistry)
+        // 7. Mettre à jour WorldInitializer (mémoire + DB + WorldRegistry)
         WorldInitializer.updateWorldNames(newWildName);
 
-        // 7. Post-init après génération des spawn chunks (5 s)
+        // 8. Post-init après génération des spawn chunks (5 s)
         Bukkit.getScheduler().runTaskLater(GameManager.getInstance().getPlugin(), () -> {
             setLastResetDate(LocalDate.now());
             buildWorldPortal(newWildName);
@@ -142,6 +144,23 @@ public class WorldResetManager {
         World world = Bukkit.getWorld(worldName);
         if (world == null) return;
         GameManager.getInstance().getGraveManager().clearGravesInWorld(world.getUID());
+    }
+
+    private void clearSpawnsForResetWorlds(String wildName, String netherName, String endName) {
+        int count = 0;
+        for (AlphaPlayer ap : GameManager.getInstance().getAlphaPlayerFactory().getAlphaPlayers()) {
+            Location spawn = ap.getCustomSpawnLocation();
+            if (spawn == null || spawn.getWorld() == null) continue;
+            String spawnWorld = spawn.getWorld().getName();
+            if (!spawnWorld.equals(wildName) && !spawnWorld.equals(netherName) && !spawnWorld.equals(endName)) continue;
+            ap.setCustomSpawnLocation(null);
+            GameManager.getInstance().getDatabase().players().clearSpawnLocation(ap.getUuid());
+            count++;
+            MLLogManager.getInstance().log(Level.FINE, ELogTag.WORLD,
+                    "[WorldReset] Spawn de " + ap.getPseudo() + " effacé (monde=" + spawnWorld + ")");
+        }
+        MLLogManager.getInstance().log(Level.INFO, ELogTag.WORLD,
+                "[WorldReset] " + count + " spawn(s) personnalisé(s) effacé(s) dans les mondes réinitialisés");
     }
 
     private void teleportPlayersToVillage(String worldName, Location destination) {

@@ -174,8 +174,11 @@ public enum ECustomItem {
         ItemMeta preMeta = item.getItemMeta();
         preMeta.getPersistentDataContainer().set(BackpackService.BACKPACK_MARKER_KEY, PersistentDataType.BOOLEAN, true);
         item.setItemMeta(preMeta);
+        List<Component> list = new ArrayList<>();
+        list.add(Component.text("Unique", NamedTextColor.YELLOW));
         new CustomItemBuilder(item, "backpack")
                 .name("Sac du bûcheron", NamedTextColor.DARK_GREEN)
+                .lore(list)
                 .itemModel(new NamespacedKey("survi", "backpack"))
                 .maxStackSize(1)
                 .unbreakable();

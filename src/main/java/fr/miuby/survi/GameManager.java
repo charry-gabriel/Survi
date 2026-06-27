@@ -203,6 +203,7 @@ public class GameManager {
         this.roleLoader = new RoleLoader();
         this.alphaPlayerFactory = new AlphaPlayerFactory();
         this.database.players().createAlphaPlayers();
+        this.database.players().purgeOrphanSpawns();
 
         this.tabDisplayManager = new TabDisplayManager();
         this.roleManagementService = new RoleManagementService(alphaPlayerFactory.getPersistenceService(), alphaPlayerFactory);

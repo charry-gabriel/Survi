@@ -159,6 +159,44 @@ public class PlayerRepository extends MLRepository {
     }
 
     /**
+     * Efface en DB les spawns personnalisés dont le monde n'est plus chargé.
+     * À appeler au démarrage, après le chargement des mondes, pour nettoyer les entrées
+     * laissées par un arrêt serveur survenu avant que les writes async du reset aient commité.
+     */
+    public void purgeOrphanSpawns() {
+        try (PreparedStatement ps = connection.prepareStatement("SELECT uuid, spawn_world FROM player WHERE spawn_world IS NOT NULL");
+             ResultSet rs = ps.executeQuery()) {
+
+            int count = 0;
+            while (rs.next()) {
+                String spawnWorld = rs.getString("spawn_world");
+                if (Bukkit.getWorld(spawnWorld) != null) continue;
+
+                String rawUuid = rs.getString("uuid");
+                runAsync(conn -> {
+                    try (PreparedStatement del = conn.prepareStatement(
+                            "UPDATE player SET spawn_world = NULL, spawn_x = NULL, spawn_y = NULL, spawn_z = NULL, spawn_yaw = NULL, spawn_pitch = NULL WHERE uuid = ?")) {
+                        del.setString(1, rawUuid);
+                        del.executeUpdate();
+                    }
+                }, ELogTag.PLAYER, "Failed to purge orphan spawn for " + rawUuid);
+                count++;
+                MLLogManager.getInstance().log(Level.WARNING, ELogTag.PLAYER,
+                        "[purgeOrphanSpawns] Spawn orphelin supprimé : uuid=" + rawUuid + " monde=" + spawnWorld);
+            }
+
+            if (count > 0) {
+                MLLogManager.getInstance().log(Level.INFO, ELogTag.PLAYER,
+                        "[purgeOrphanSpawns] " + count + " spawn(s) orphelin(s) supprimé(s)");
+            } else {
+                MLLogManager.getInstance().log(Level.FINE, ELogTag.PLAYER, "[purgeOrphanSpawns] Aucun spawn orphelin");
+            }
+        } catch (SQLException ex) {
+            MLLogManager.getInstance().log(Level.SEVERE, ELogTag.PLAYER, "Failed to purge orphan spawns", ex);
+        }
+    }
+
+    /**
      * Lit les colonnes spawn_* du ResultSet courant et retourne la Location correspondante.
      * Retourne {@code null} si aucun spawn n'est défini ou si le monde n'est pas chargé.
      */
