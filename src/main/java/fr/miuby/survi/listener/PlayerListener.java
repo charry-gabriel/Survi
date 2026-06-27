@@ -219,6 +219,8 @@ public class PlayerListener implements Listener {
         PlayerSetSpawnEvent.Cause cause = event.getCause();
         if (cause != PlayerSetSpawnEvent.Cause.BED && cause != PlayerSetSpawnEvent.Cause.RESPAWN_ANCHOR) return;
 
+        event.setNotifyPlayer(false);
+
         ap.setCustomSpawnLocation(loc.clone());
         gm.getDatabase().players().saveSpawnLocation(player.getUniqueId(), loc);
 
