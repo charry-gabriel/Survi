@@ -3,8 +3,7 @@ package fr.miuby.survi.job.alchemic;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.PotionMeta;
-import org.bukkit.potion.PotionEffect;
-import org.bukkit.potion.PotionEffectType;
+import org.bukkit.potion.PotionType;
 
 /**
  * Entrée de la table de loot alchimique du Pêcheur.
@@ -21,8 +20,8 @@ import org.bukkit.potion.PotionEffectType;
  */
 public sealed interface AlchemicLootEntry
         permits AlchemicLootEntry.IngredientEntry,
-                AlchemicLootEntry.VanillaPotionEntry,
-                AlchemicLootEntry.CustomPotionEntry {
+        AlchemicLootEntry.VanillaPotionEntry,
+        AlchemicLootEntry.CustomPotionEntry {
 
     int levelMin();
     int weight();
@@ -40,24 +39,20 @@ public sealed interface AlchemicLootEntry
         @Override public ItemStack createItem() { return new ItemStack(material); }
     }
 
-    // ─── Potion vanilla (nerfée) ─────────────────────────────────────────────────
+    // ─── Potion vanilla ──────────────────────────────────────────────────────────
 
     record VanillaPotionEntry(
-            PotionEffectType effect,
-            int duration,
-            int amplifier,
+            PotionType potionType,
             boolean splash,
             int levelMin,
             int weight
     ) implements AlchemicLootEntry {
         @Override
         public ItemStack createItem() {
-            Material mat = splash
-                    ? Material.SPLASH_POTION
-                    : Material.POTION;
+            Material mat = splash ? Material.SPLASH_POTION : Material.POTION;
             ItemStack item = new ItemStack(mat);
             PotionMeta meta = (PotionMeta) item.getItemMeta();
-            meta.addCustomEffect(new PotionEffect(effect, duration, amplifier, false, true), true);
+            meta.setBasePotionType(potionType);
             item.setItemMeta(meta);
             return item;
         }

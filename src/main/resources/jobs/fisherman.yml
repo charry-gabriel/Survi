@@ -175,85 +175,65 @@ alchemic-loot:
     weight: 400
 
   # ═══════════════════════════════════════════════════════════════════════
-  # TIER 1 — Potions régulières (communes, dès niveau 2)
+  # TIER 1 — Potions régulières (dès niveau 2)
   # ═══════════════════════════════════════════════════════════════════════
 
   - type: vanilla_potion
-    effect: JUMP_BOOST
-    duration: 3600
-    amplifier: 0
+    item: leaping
     splash: false
     level-min: 3
     weight: 65
 
   - type: vanilla_potion
-    effect: WATER_BREATHING
-    duration: 3600
-    amplifier: 0
+    item: water_breathing
     splash: false
     level-min: 2
     weight: 60
 
   - type: vanilla_potion
-    effect: NIGHT_VISION
-    duration: 3600
-    amplifier: 0
+    item: night_vision
     splash: false
     level-min: 2
     weight: 40
 
   - type: vanilla_potion
-    effect: SLOW_FALLING
-    duration: 1800
-    amplifier: 0
+    item: slow_falling
     splash: false
     level-min: 2
     weight: 40
 
   - type: vanilla_potion
-    effect: FIRE_RESISTANCE
-    duration: 3600
-    amplifier: 0
+    item: fire_resistance
     splash: false
     level-min: 2
     weight: 30
 
   - type: vanilla_potion
-    effect: REGENERATION
-    duration: 900
-    amplifier: 0
+    item: regeneration
     splash: false
     level-min: 2
     weight: 30
 
   - type: vanilla_potion
-    effect: INSTANT_HEALTH
-    duration: 1
-    amplifier: 0
+    item: healing
     splash: false
     level-min: 2
     weight: 30
 
   - type: vanilla_potion
-    effect: SPEED
-    duration: 3600
-    amplifier: 0
+    item: swiftness
     splash: false
     level-min: 3
     weight: 30
 
   - type: vanilla_potion
-    effect: STRENGTH
-    duration: 3600
-    amplifier: 0
+    item: strength
     splash: false
     level-min: 3
     weight: 30
 
   - type: vanilla_potion
-    effect: INVISIBILITY
-    duration: 3600
-    amplifier: 0
+    item: invisibility
     splash: false
     level-min: 3
     weight: 20
@@ -263,81 +243,61 @@ alchemic-loot:
   # ═══════════════════════════════════════════════════════════════════════
 
   - type: vanilla_potion
-    effect: WEAKNESS
-    duration: 1800
-    amplifier: 0
+    item: weakness
     splash: true
     level-min: 4
     weight: 40
 
   - type: vanilla_potion
-    effect: SLOWNESS
-    duration: 1800
-    amplifier: 0
+    item: slowness
     splash: true
     level-min: 4
     weight: 40
 
   - type: vanilla_potion
-    effect: POISON
-    duration: 900
-    amplifier: 0
+    item: poison
     splash: true
     level-min: 4
     weight: 40
 
   - type: vanilla_potion
-    effect: INSTANT_DAMAGE
-    duration: 1
-    amplifier: 0
+    item: harming
     splash: true
     level-min: 4
     weight: 30
 
   - type: vanilla_potion
-    effect: INSTANT_HEALTH
-    duration: 1
-    amplifier: 0
+    item: healing
     splash: true
     level-min: 3
     weight: 20
 
   - type: vanilla_potion
-    effect: REGENERATION
-    duration: 900
-    amplifier: 0
+    item: regeneration
     splash: true
     level-min: 3
     weight: 20
 
   - type: vanilla_potion
-    effect: FIRE_RESISTANCE
-    duration: 3600
-    amplifier: 0
+    item: fire_resistance
     splash: true
     level-min: 3
     weight: 20
 
   - type: vanilla_potion
-    effect: SPEED
-    duration: 3600
-    amplifier: 0
+    item: swiftness
     splash: true
     level-min: 4
     weight: 20
 
   - type: vanilla_potion
-    effect: STRENGTH
-    duration: 3600
-    amplifier: 0
+    item: strength
     splash: true
     level-min: 4
     weight: 20
 
   - type: vanilla_potion
-    effect: SLOW_FALLING
-    duration: 1800
-    amplifier: 0
+    item: slow_falling
     splash: true
     level-min: 4
     weight: 20
@@ -347,73 +307,55 @@ alchemic-loot:
   # ═══════════════════════════════════════════════════════════════════════
 
   - type: vanilla_potion
-    effect: WATER_BREATHING
-    duration: 9600
-    amplifier: 0
+    item: long_water_breathing
     splash: false
     level-min: 4
     weight: 40
 
   - type: vanilla_potion
-    effect: JUMP_BOOST
-    duration: 9600
-    amplifier: 0
+    item: long_leaping
     splash: false
     level-min: 5
     weight: 30
 
   - type: vanilla_potion
-    effect: FIRE_RESISTANCE
-    duration: 9600
-    amplifier: 0
+    item: long_fire_resistance
     splash: false
     level-min: 4
     weight: 20
 
   - type: vanilla_potion
-    effect: NIGHT_VISION
-    duration: 9600
-    amplifier: 0
+    item: long_night_vision
     splash: false
     level-min: 4
     weight: 20
 
   - type: vanilla_potion
-    effect: SLOW_FALLING
-    duration: 4800
-    amplifier: 0
+    item: long_slow_falling
     splash: false
     level-min: 4
     weight: 20
 
   - type: vanilla_potion
-    effect: STRENGTH
-    duration: 9600
-    amplifier: 0
+    item: long_strength
     splash: false
     level-min: 4
     weight: 20
 
   - type: vanilla_potion
-    effect: SPEED
-    duration: 9600
-    amplifier: 0
+    item: long_swiftness
     splash: false
     level-min: 4
     weight: 20
 
   - type: vanilla_potion
-    effect: REGENERATION
-    duration: 1800
-    amplifier: 0
+    item: long_regeneration
     splash: false
     level-min: 4
     weight: 20
 
   - type: vanilla_potion
-    effect: INVISIBILITY
-    duration: 9600
-    amplifier: 0
+    item: long_invisibility
     splash: false
     level-min: 5
     weight: 15
@@ -423,49 +365,37 @@ alchemic-loot:
   # ═══════════════════════════════════════════════════════════════════════
 
   - type: vanilla_potion
-    effect: JUMP_BOOST
-    duration: 1800
-    amplifier: 1
+    item: strong_leaping
     splash: false
     level-min: 5
     weight: 25
 
   - type: vanilla_potion
-    effect: POISON
-    duration: 432
-    amplifier: 1
+    item: strong_poison
     splash: false
     level-min: 5
     weight: 20
 
   - type: vanilla_potion
-    effect: REGENERATION
-    duration: 450
-    amplifier: 1
+    item: strong_regeneration
     splash: false
     level-min: 5
     weight: 15
 
   - type: vanilla_potion
-    effect: INSTANT_HEALTH
-    duration: 1
-    amplifier: 1
+    item: strong_healing
     splash: false
     level-min: 5
     weight: 15
 
   - type: vanilla_potion
-    effect: STRENGTH
-    duration: 1800
-    amplifier: 1
+    item: strong_strength
     splash: false
     level-min: 5
     weight: 15
 
   - type: vanilla_potion
-    effect: SPEED
-    duration: 1800
-    amplifier: 1
+    item: strong_swiftness
     splash: false
     level-min: 5
     weight: 15
@@ -475,49 +405,37 @@ alchemic-loot:
   # ═══════════════════════════════════════════════════════════════════════
 
   - type: vanilla_potion
-    effect: INSTANT_HEALTH
-    duration: 1
-    amplifier: 1
+    item: strong_healing
     splash: true
     level-min: 6
     weight: 10
 
   - type: vanilla_potion
-    effect: REGENERATION
-    duration: 450
-    amplifier: 1
+    item: strong_regeneration
     splash: true
     level-min: 6
     weight: 10
 
   - type: vanilla_potion
-    effect: STRENGTH
-    duration: 1800
-    amplifier: 1
+    item: strong_strength
     splash: true
     level-min: 6
     weight: 10
 
   - type: vanilla_potion
-    effect: SPEED
-    duration: 1800
-    amplifier: 1
+    item: strong_swiftness
     splash: true
     level-min: 6
     weight: 10
 
   - type: vanilla_potion
-    effect: INSTANT_DAMAGE
-    duration: 1
-    amplifier: 1
+    item: strong_harming
     splash: true
     level-min: 6
     weight: 10
 
   - type: vanilla_potion
-    effect: POISON
-    duration: 432
-    amplifier: 1
+    item: strong_poison
     splash: true
     level-min: 6
     weight: 10

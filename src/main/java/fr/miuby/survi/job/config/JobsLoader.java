@@ -5,13 +5,16 @@ import fr.miuby.survi.job.alchemic.AlchemicLootEntry;
 import fr.miuby.survi.job.alchemic.ECustomPotion;
 import fr.miuby.survi.system.log.ELogTag;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
+import org.bukkit.Registry;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.potion.PotionEffectType;
+import org.bukkit.potion.PotionType;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.logging.Level;
 
@@ -271,11 +274,11 @@ public final class JobsLoader {
                     result.add(new AlchemicLootEntry.IngredientEntry(mat, levelMin, weight));
                 }
                 case "vanilla_potion" -> {
-                    PotionEffectType fx = PotionEffectType.getByName(getStr(map, "effect", ""));
-                    if (fx == null) { warn("effet inconnu", map, "effect"); continue; }
+                    String key = getStr(map, "item", "").toLowerCase(Locale.ROOT);
+                    PotionType pt = Registry.POTION.get(NamespacedKey.minecraft(key));
+                    if (pt == null) { warn("PotionType inconnu", map, "item"); continue; }
                     result.add(new AlchemicLootEntry.VanillaPotionEntry(
-                            fx, getNum(map, "duration", 600), getNum(map, "amplifier", 0),
-                            getBool(map, "splash", false), levelMin, weight));
+                            pt, getBool(map, "splash", false), levelMin, weight));
                 }
                 case "custom_potion" -> {
                     String id = getStr(map, "id", "");
