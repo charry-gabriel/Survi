@@ -95,6 +95,8 @@ public final class JobsLoader {
                 lumberjackCfg.getDouble("sapling-third-tick-chance-at-max", 0.50),
                 readDouble(lumberjackCfg, "sapling-bone-meal-chance",
                         new double[]{0.01, 0.02, 0.10, 0.20, 0.30, 0.40, 0.50, 0.60, 0.70, 0.80, 1.00}),
+                readInt(lumberjackCfg, "backpack-slots",
+                        new int[]{9, 18, 18, 18, 18, 18, 27, 27, 27, 36, 36}),
                 readInt(lumberjackCfg, "respawn-cooldown-seconds",
                         new int[]{3600, 3000, 2400, 1800, 1500, 1200, 900, 600, 300, 180, 60})
         );

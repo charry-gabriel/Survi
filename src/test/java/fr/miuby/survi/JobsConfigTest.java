@@ -170,6 +170,21 @@ class JobsConfigTest {
     @Test void lumberjackRespawnCooldownSecondsValid()   { assertNonNegativeIntArray(lumberjackRoot, "respawn-cooldown-seconds"); }
 
     @Test
+    void lumberjackBackpackSlotsValid() {
+        List<Number> list = getNumberList(lumberjackRoot, "backpack-slots");
+        assertSize(list, "lumberjack.backpack-slots");
+        int previous = 0;
+        for (int i = 0; i < LEVEL_COUNT; i++) {
+            int slots = list.get(i).intValue();
+            assertTrue(slots >= 9 && slots % 9 == 0,
+                    "lumberjack.backpack-slots[" + i + "] doit être un multiple de 9 (lignes de coffre), valeur : " + slots);
+            assertTrue(slots >= previous,
+                    "lumberjack.backpack-slots[" + i + "] (" + slots + ") ne doit pas être inférieur à l'index précédent (" + previous + ")");
+            previous = slots;
+        }
+    }
+
+    @Test
     void lumberjackSaplingThirdTickChanceAtMaxValid() {
         assertTrue(lumberjackRoot.containsKey("sapling-third-tick-chance-at-max"),
                 "lumberjack: sapling-third-tick-chance-at-max manquant");

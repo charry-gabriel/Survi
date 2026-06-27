@@ -3,6 +3,8 @@ package fr.miuby.survi.listener;
 import fr.miuby.lib.log.MLLogManager;
 import fr.miuby.survi.GameManager;
 import fr.miuby.survi.item.ArmorTierService;
+import fr.miuby.survi.item.BackpackMenuHolder;
+import fr.miuby.survi.item.BackpackService;
 import fr.miuby.survi.item.CustomRecipe;
 import fr.miuby.survi.player.AlphaPlayer;
 import fr.miuby.survi.role.Role;
@@ -12,11 +14,15 @@ import fr.miuby.lib.MiubyLib;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.Action;
 import org.bukkit.event.block.CrafterCraftEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.inventory.PrepareItemCraftEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemBreakEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
@@ -118,5 +124,66 @@ public class ItemListener implements Listener {
         } else if (event.getClickedInventory().getHolder() instanceof VillagerTributeHolder) {
             event.setCancelled(true);
         }
+    }
+
+    // =========================================================================
+    // Sac à dos (BackpackMenuHolder)
+    // =========================================================================
+
+    @EventHandler
+    public void onPlayerInteract(PlayerInteractEvent event) {
+        if (event.getHand() != EquipmentSlot.HAND) return;
+        if (event.getAction() != Action.RIGHT_CLICK_AIR && event.getAction() != Action.RIGHT_CLICK_BLOCK) return;
+
+        ItemStack item = event.getItem();
+        if (!BackpackService.isBackpack(item)) return;
+
+        event.setCancelled(true);
+        BackpackService.open(event.getPlayer(), item);
+    }
+
+    @EventHandler(ignoreCancelled = true)
+    public void onBackpackInventoryClick(InventoryClickEvent event) {
+        if (!(event.getInventory().getHolder() instanceof BackpackMenuHolder)) return;
+        if (!(event.getWhoClicked() instanceof Player player)) return;
+
+        boolean movingIntoBackpack =
+                (event.getClickedInventory() != null
+                        && event.getClickedInventory().getHolder() instanceof BackpackMenuHolder
+                        && BackpackService.isBackpack(event.getCursor()))
+                        || (event.isShiftClick()
+                        && event.getClickedInventory() != null
+                        && event.getClickedInventory().getHolder() instanceof Player
+                        && BackpackService.isBackpack(event.getCurrentItem()));
+
+        if (movingIntoBackpack) {
+            event.setCancelled(true);
+            player.sendMessage(GameManager.getInstance().getLangService().text(player, "backpack.no_self_insert"));
+            MLLogManager.getInstance().log(Level.FINE, ELogTag.ITEM,
+                    "[Backpack] " + player.getName() + " — tentative bloquée de mise d'un sac à dos dans un sac à dos.");
+        }
+    }
+
+    @EventHandler(ignoreCancelled = true)
+    public void onBackpackInventoryDrag(InventoryDragEvent event) {
+        if (!(event.getInventory().getHolder() instanceof BackpackMenuHolder)) return;
+        if (!BackpackService.isBackpack(event.getOldCursor())) return;
+
+        int topSize = event.getView().getTopInventory().getSize();
+        boolean targetsBackpack = event.getRawSlots().stream().anyMatch(slot -> slot < topSize);
+        if (targetsBackpack) {
+            event.setCancelled(true);
+            if (event.getWhoClicked() instanceof Player player) {
+                player.sendMessage(GameManager.getInstance().getLangService().text(player, "backpack.no_self_insert"));
+            }
+        }
+    }
+
+    @EventHandler
+    public void onBackpackInventoryClose(InventoryCloseEvent event) {
+        if (!(event.getInventory().getHolder() instanceof BackpackMenuHolder holder)) return;
+        if (!(event.getPlayer() instanceof Player player)) return;
+
+        BackpackService.save(player, holder);
     }
 }

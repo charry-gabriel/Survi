@@ -135,6 +135,21 @@ sapling-bone-meal-chance:
   - 0.80   # niveau  9
   - 1.00   # niveau 10
 
+# ─── Sac à dos ────────────────────────────────────────────────────────────────
+# Nombre de slots du sac à dos (ECustomItem.BACKPACK) selon le niveau. Doit rester un multiple de 9 (lignes de coffre).
+backpack-slots:
+  - 9    # niveau  0  — 1 ligne
+  - 18   # niveau  1  — 2 lignes
+  - 18   # niveau  2
+  - 18   # niveau  3
+  - 18   # niveau  4
+  - 18   # niveau  5
+  - 27   # niveau  6  — 3 lignes
+  - 27   # niveau  7
+  - 27   # niveau  8
+  - 36   # niveau  9  — 4 lignes
+  - 36   # niveau 10
+
 # Cooldown en secondes avant de pouvoir réutiliser son spawn personnalisé (lit / ancre) après un respawn.
 # Un niveau de Bûcheron plus élevé réduit le cooldown.
 respawn-cooldown-seconds:

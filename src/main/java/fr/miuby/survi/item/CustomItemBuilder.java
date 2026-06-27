@@ -78,6 +78,21 @@ public class CustomItemBuilder {
         return this;
     }
 
+    /** Modèle/texture custom (composant {@code minecraft:item_model}) — défini dans le resource pack côté client. */
+    public CustomItemBuilder itemModel(NamespacedKey model) {
+        ItemMeta meta = itemStack.getItemMeta();
+        meta.setItemModel(model);
+        itemStack.setItemMeta(meta);
+        return this;
+    }
+
+    public CustomItemBuilder maxStackSize(int maxStackSize) {
+        ItemMeta meta = itemStack.getItemMeta();
+        meta.setMaxStackSize(maxStackSize);
+        itemStack.setItemMeta(meta);
+        return this;
+    }
+
     public CustomItemBuilder maxDurability(int durability) {
         ItemMeta meta = itemStack.getItemMeta();
         if (meta instanceof Damageable damageable) {

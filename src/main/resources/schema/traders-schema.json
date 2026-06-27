@@ -88,6 +88,7 @@
         "AZALEA",
         "AZALEA_LEAVES",
         "AZURE_BLUET",
+        "BACKPACK",
         "BAKED_POTATO",
         "BAMBOO",
         "BAMBOO_BLOCK",
@@ -1786,6 +1787,7 @@
           "type": "string",
           "description": "L'identifiant de l'item personnalisé défini dans ECustomItem.java",
           "enum": [
+        "BACKPACK",
         "CHANGER_ROLE",
         "GROWTH_ENCHANTER_HELMET",
         "GROWTH_EXPLORER_COMPASS",

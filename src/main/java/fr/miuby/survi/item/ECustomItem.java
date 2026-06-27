@@ -168,6 +168,22 @@ public enum ECustomItem {
         PersistentDataContainer pdc = meta.getPersistentDataContainer();
         pdc.set(new NamespacedKey(GameManager.getInstance().getPlugin(), "edible"), PersistentDataType.BOOLEAN, true);
         item.setItemMeta(meta);
+    }),
+
+    BACKPACK(Material.LEATHER, item -> {
+        ItemMeta preMeta = item.getItemMeta();
+        preMeta.getPersistentDataContainer().set(BackpackService.BACKPACK_MARKER_KEY, PersistentDataType.BOOLEAN, true);
+        item.setItemMeta(preMeta);
+        List<Component> list = new ArrayList<>();
+        list.add(Component.text("Clic droit pour ouvrir.", NamedTextColor.GRAY));
+        list.add(Component.empty());
+        list.add(Component.text("Nombre de slots selon ton niveau de Bûcheron.", NamedTextColor.DARK_GREEN));
+        new CustomItemBuilder(item, "backpack")
+                .name("Sac à dos", NamedTextColor.GOLD)
+                .lore(list)
+                .itemModel(new NamespacedKey("survi", "backpack"))
+                .maxStackSize(1)
+                .unbreakable();
     });
 
     // ─── Infrastructure enum ──────────────────────────────────────────────────

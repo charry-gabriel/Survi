@@ -8,6 +8,7 @@
     "tree-feller-extra-logs", "fire-resistance-ticks",
     "sapling-growth-allow-chance", "sapling-extra-growth-chance",
     "sapling-third-tick-chance-at-max", "sapling-bone-meal-chance",
+    "backpack-slots",
     "respawn-cooldown-seconds"
   ],
   "additionalProperties": false,
@@ -22,6 +23,7 @@
     "sapling-extra-growth-chance":    { "$ref": "#/definitions/probability-array",         "description": "Probabilité d'un tick de croissance bonus après un tick normal (niv.6–10)." },
     "sapling-third-tick-chance-at-max": { "type": "number", "minimum": 0, "maximum": 1,   "description": "Probabilité d'un 3e tick bonus au niveau maximum." },
     "sapling-bone-meal-chance":       { "$ref": "#/definitions/probability-array",         "description": "Probabilité que la farine d'os fonctionne sur un sapling planté par un bûcheron." },
+    "backpack-slots":                 { "$ref": "#/definitions/chest-slots-array",         "description": "Nombre de slots du sac à dos (ECustomItem.BACKPACK) selon le niveau." },
     "respawn-cooldown-seconds":       { "$ref": "#/definitions/non-negative-int-array",    "description": "Cooldown en secondes avant de réutiliser le spawn personnalisé (lit/ancre) après un respawn. Index = niveau Bûcheron." }
   },
   "definitions": {
@@ -36,6 +38,10 @@
     "non-negative-int-array": {
       "type": "array", "minItems": 11, "maxItems": 11,
       "items": { "type": "integer", "minimum": 0 }
+    },
+    "chest-slots-array": {
+      "type": "array", "minItems": 11, "maxItems": 11,
+      "items": { "type": "integer", "minimum": 9, "maximum": 54, "multipleOf": 9 }
     }
   }
 }

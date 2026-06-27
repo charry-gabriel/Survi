@@ -124,6 +124,8 @@ public final class JobsConfig {
         private final double   saplingThirdTickChanceAtMax;
         /** Probabilité que la farine d'os fonctionne sur un sapling planté par un bûcheron. Index = niveau. */
         private final double[] saplingBoneMealChance;
+        /** Nombre de slots du sac à dos ({@code ECustomItem.BACKPACK}) selon le niveau. Index = niveau. */
+        private final int[]    backpackSlots;
         /**
          * Cooldown en secondes avant de pouvoir réutiliser le spawn personnalisé (lit / ancre de respawn)
          * après un respawn. Un niveau plus élevé donne un cooldown plus court. Index = niveau.
@@ -134,7 +136,7 @@ public final class JobsConfig {
                       double[] fireDamageMultiplier, int[] treeFellerExtraLogs, int[] fireResistanceTicks,
                       double[] saplingGrowthAllowChance, double[] saplingExtraGrowthChance,
                       double saplingThirdTickChanceAtMax, double[] saplingBoneMealChance,
-                      int[] respawnCooldownSeconds) {
+                      int[] backpackSlots, int[] respawnCooldownSeconds) {
             this.dropMultiplier             = dropMultiplier;
             this.charcoalChance             = charcoalChance;
             this.appleLeafChance            = appleLeafChance;
@@ -145,6 +147,7 @@ public final class JobsConfig {
             this.saplingExtraGrowthChance   = saplingExtraGrowthChance;
             this.saplingThirdTickChanceAtMax = saplingThirdTickChanceAtMax;
             this.saplingBoneMealChance      = saplingBoneMealChance;
+            this.backpackSlots              = backpackSlots;
             this.respawnCooldownSeconds     = respawnCooldownSeconds;
         }
     }

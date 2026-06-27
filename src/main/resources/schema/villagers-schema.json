@@ -73,6 +73,7 @@
           "type": "string",
           "description": "L'identifiant de l'item personnalisé défini dans ECustomItem.java",
           "enum": [
+        "BACKPACK",
         "CHANGER_ROLE",
         "GROWTH_ENCHANTER_HELMET",
         "GROWTH_EXPLORER_COMPASS",
