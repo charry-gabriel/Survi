@@ -27,6 +27,7 @@ import org.bukkit.event.player.PlayerItemBreakEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
 
@@ -139,7 +140,19 @@ public class ItemListener implements Listener {
         if (!BackpackService.isBackpack(item)) return;
 
         event.setCancelled(true);
-        BackpackService.open(event.getPlayer(), item);
+
+        Player player = event.getPlayer();
+        long backpackCount = Arrays.stream(player.getInventory().getContents())
+                .filter(BackpackService::isBackpack)
+                .count();
+        if (backpackCount > 1) {
+            player.sendMessage(GameManager.getInstance().getLangService().text(player, "backpack.too_many"));
+            MLLogManager.getInstance().log(Level.FINE, ELogTag.ITEM,
+                    "[Backpack] " + player.getName() + " bloqué à l'ouverture — " + backpackCount + " sacs en inventaire.");
+            return;
+        }
+
+        BackpackService.open(player, item);
     }
 
     @EventHandler(ignoreCancelled = true)

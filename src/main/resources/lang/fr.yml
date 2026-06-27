@@ -452,7 +452,8 @@ job.fisherman.potion.fissure.active: "<gold>✦ Fissure ! Vos mains déchirent l
 job.fisherman.potion.fissure.recoil: "<dark_red>✦ La Fissure vous épuise ! Vous ne pouvez plus miner pendant 1 minute.</dark_red>"
 
 # ─── Sac à dos (ECustomItem.BACKPACK) ──────────────────────────────────────────
-backpack.title: "<dark_green>Sac à dos <gray>(Niv. {0})"
+backpack.title: "<dark_green>Sac du bûcheron <gray>(Niv. {0})"
 backpack.no_self_insert: "<red>Tu ne peux pas mettre un sac à dos dans un sac à dos !"
+backpack.too_many: "<red>Tu ne peux utiliser qu'un seul sac du bûcheron."
 backpack.overflow_returned: "<gold>⚠ Ton sac à dos a rétréci : {0} objet(s) replacés dans ton inventaire."
 backpack.overflow_dropped: "<red>⚠ Ton inventaire est plein : {0} objet(s) de ton sac à dos ont été lâchés au sol."
