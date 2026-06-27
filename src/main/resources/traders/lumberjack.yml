@@ -18,11 +18,11 @@ recipes:
     requiredReputation: 0
 
   - result:
-      material: JUNGLE_WOOD
+      customItem: BACKPACK
       amount: 1
     ingredient:
-      material: IRON_INGOT
-      amount: 32
+      material: OAK_LOG
+      amount: 64
     message: "Un super achat."
     requiredReputation: 15
 
@@ -39,7 +39,7 @@ recipes:
       material: GOLDEN_APPLE
       amount: 1
     ingredient:
-      material: OAK_LOG
-      amount: 32
+      material: CHERRY_LOG
+      amount: 64
     message: "Un super achat."
     requiredReputation: 110
