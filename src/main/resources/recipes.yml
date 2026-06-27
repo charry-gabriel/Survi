@@ -365,23 +365,6 @@ new_recipes:
       - AIR
       - DIAMOND_BLOCK
 
-  backpack:
-    category: MISC
-    result: BACKPACK
-    roles: []
-    tiers: []
-    categories: [MISC]
-    ingredients:
-      - LEATHER
-      - LEATHER
-      - LEATHER
-      - LEATHER
-      - CHEST
-      - LEATHER
-      - LEATHER
-      - LEATHER
-      - LEATHER
-
 old_recipes:
   - minecraft:copper_helmet
   - minecraft:copper_chestplate
