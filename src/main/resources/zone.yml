@@ -130,15 +130,15 @@ stages:
     half-width: 512
     half-depth: 512
     spawn:
-      x: 282.5
-      y: 68
-      z: 530.5
-      yaw: -90.0
+      x: 358.5
+      y: 82
+      z: 538.5
+      yaw: 90.0
       pitch: 0.0
     portal:
-      min-x: 269
-      min-y: 68
-      min-z: 531
-      max-x: 269
-      max-y: 73
-      max-z: 529
+      min-x: 361
+      min-y: 83
+      min-z: 537
+      max-x: 361
+      max-y: 86
+      max-z: 539
