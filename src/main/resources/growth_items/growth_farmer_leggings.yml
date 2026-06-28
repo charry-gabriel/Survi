@@ -8,7 +8,7 @@ eventType: CropBreakEvent
 
 
 tiers:
-  - requiredUses: 2000
+  - requiredUses: 1000
     effects:
       - { type: name,          value: "Jambière du Fermier II" }
       - { type: fire_enemies,  seconds: 1 }
@@ -21,49 +21,49 @@ tiers:
       - { type: set_attribute, attribute: movement_speed, attributeValue: 0.04, operation: ADD_NUMBER, slot: LEGS }
       - { type: message,       value: "Tu cours plus vite et les mobs brûlent plus longtemps !" }
 
-  - requiredUses: 100000
+  - requiredUses: 10000
     effects:
       - { type: name,          value: "Jambière du Fermier IV" }
       - { type: fire_enemies,  seconds: 3 }
       - { type: set_attribute, attribute: movement_speed, attributeValue: 0.05, operation: ADD_NUMBER, slot: LEGS }
       - { type: message,       value: "Tu cours plus vite et les mobs brûlent plus longtemps !" }
 
-  - requiredUses: 200000
+  - requiredUses: 20000
     effects:
       - { type: name,          value: "Jambière du Fermier V" }
       - { type: fire_enemies,  seconds: 4 }
       - { type: set_attribute, attribute: movement_speed, attributeValue: 0.06, operation: ADD_NUMBER, slot: LEGS }
       - { type: message,       value: "Tu cours plus vite et les mobs brûlent plus longtemps !" }
 
-  - requiredUses: 350000
+  - requiredUses: 35000
     effects:
       - { type: name,          value: "Jambière du Fermier VI" }
       - { type: fire_enemies,  seconds: 5 }
       - { type: set_attribute, attribute: movement_speed, attributeValue: 0.07, operation: ADD_NUMBER, slot: LEGS }
       - { type: message,       value: "Tu cours plus vite et les mobs brûlent plus longtemps !" }
 
-  - requiredUses: 600000
+  - requiredUses: 60000
     effects:
       - { type: name,          value: "Jambière du Fermier VII" }
       - { type: fire_enemies,  seconds: 10 }
       - { type: set_attribute, attribute: movement_speed, attributeValue: 0.09, operation: ADD_NUMBER, slot: LEGS }
       - { type: message,       value: "Tu cours plus vite et les mobs brûlent plus longtemps !" }
 
-  - requiredUses: 950000
+  - requiredUses: 95000
     effects:
       - { type: name,          value: "Jambière du Fermier VIII" }
       - { type: fire_enemies,  seconds: 15 }
       - { type: set_attribute, attribute: movement_speed, attributeValue: 0.11, operation: ADD_NUMBER, slot: LEGS }
       - { type: message,       value: "Tu cours plus vite et les mobs brûlent plus longtemps !" }
 
-  - requiredUses: 1400000
+  - requiredUses: 140000
     effects:
       - { type: name,          value: "Jambière du Fermier IX" }
       - { type: fire_enemies,  seconds: 30 }
       - { type: set_attribute, attribute: movement_speed, attributeValue: 0.13, operation: ADD_NUMBER, slot: LEGS }
       - { type: message,       value: "Tu cours plus vite et les mobs brûlent plus longtemps !" }
 
-  - requiredUses: 2000000
+  - requiredUses: 200000
     effects:
       - { type: name,          value: "Jambière du Maître Fermier" }
       - { type: fire_enemies,  seconds: 60 }

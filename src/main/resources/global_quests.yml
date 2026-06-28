@@ -109,4 +109,18 @@ global_quests:
       - { type: POTION, potion: luck, duration: 72000, amplifier: 0 }
       - { type: POTION, potion: speed, duration: 72000, amplifier: 0 }
 
+  - id: "global_collect_mob_nether"
+    name: "Chasseur de mobs du nether"
+    description: "Tuez {value} monstres dans le nether."
+    type: KILL
+    targets: [BLAZE, ENDERMAN, GHAST, HOGLIN, MAGMA_CUBE, PIGLIN, PIGLIN_BRUTE, WITHER_SKELETON, ZOMBIFIED_PIGLIN]
+    goal: 3500
+    time_limit: 5400
+    rewards:
+      - {type: REPUTATION, job: EXPLORER, value: 1}
+      - { type: ITEM, item: GHAST_TEAR, amount: 1}
+      - { type: ITEM, item: BLAZE_POWDER, amount: 2}
+      - { type: ITEM, item: TRIAL_KEY, amount: 1}
+      - { type: ITEM, item: OMINOUS_TRIAL_KEY, amount: 1}
+      - { type: POTION, potion: strength, duration: 72000, amplifier: 1 }
 

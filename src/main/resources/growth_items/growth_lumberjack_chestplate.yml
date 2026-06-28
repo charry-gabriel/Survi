@@ -68,7 +68,7 @@ tiers:
       - { type: message,       value: "Plastron de légende. Les arbres tremblent à ton approche." }
 
 periodicEffects:
-  - everyUses: 30
+  - everyUses: 300
     effects:
       - { type: potion, effect: haste, seconds: 300 }
       - { type: potion, effect: speed, seconds: 300 }
