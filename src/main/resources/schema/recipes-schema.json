@@ -3518,6 +3518,12 @@
         "GROWTH_LUMBERJACK_CHESTPLATE",
         "GROWTH_MINER_HELMET",
         "MENDING",
+        "RARE_ENCHANTER",
+        "RARE_EXPLORER",
+        "RARE_FARMER",
+        "RARE_FISHERMAN",
+        "RARE_LUMBERJACK",
+        "RARE_MINER",
         "UNBREAKING3"
       ]
     }
