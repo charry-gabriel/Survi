@@ -32,25 +32,25 @@ tiers:
       - { type: name,          value: "Pantalon du Pêcheur V" }
       - { type: set_attribute, attribute: luck, attributeValue: 10.0, operation: ADD_NUMBER, slot: LEGS }
       - { type: message,       value: "L'océan n'a plus de secret pour toi." }
-      -
+
   - requiredUses: 3000
     effects:
       - { type: name,          value: "Pantalon du Pêcheur VI" }
       - { type: set_attribute, attribute: luck, attributeValue: 15.0, operation: ADD_NUMBER, slot: LEGS }
       - { type: message,       value: "L'océan n'a plus de secret pour toi." }
-      -
+
   - requiredUses: 7000
     effects:
       - { type: name,          value: "Pantalon du Pêcheur VII" }
       - { type: set_attribute, attribute: luck, attributeValue: 20.0, operation: ADD_NUMBER, slot: LEGS }
       - { type: message,       value: "L'océan n'a plus de secret pour toi." }
-      -
+
   - requiredUses: 8000
     effects:
       - { type: name,          value: "Pantalon du Pêcheur VIII" }
       - { type: set_attribute, attribute: luck, attributeValue: 25.0, operation: ADD_NUMBER, slot: LEGS }
       - { type: message,       value: "L'océan n'a plus de secret pour toi." }
-      -
+
   - requiredUses: 9000
     effects:
       - { type: name,          value: "Pantalon du Pêcheur IX" }
