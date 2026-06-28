@@ -114,7 +114,7 @@ global_quests:
     description: "Tuez {value} monstres dans le nether."
     type: KILL
     targets: [BLAZE, ENDERMAN, GHAST, HOGLIN, MAGMA_CUBE, PIGLIN, PIGLIN_BRUTE, WITHER_SKELETON, ZOMBIFIED_PIGLIN]
-    goal: 3500
+    goal: 3000
     time_limit: 5400
     rewards:
       - {type: REPUTATION, job: EXPLORER, value: 1}
