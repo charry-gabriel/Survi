@@ -6,6 +6,7 @@ import fr.miuby.survi.item.growth_item.GrowthItems;
 import fr.miuby.survi.job.EJob;
 import fr.miuby.survi.job.config.JobsConfig;
 import fr.miuby.survi.listener.PlacedBlockTracker;
+import fr.miuby.survi.system.block.MaterialUtils;
 import fr.miuby.survi.player.AlphaPlayer;
 import fr.miuby.survi.system.log.ELogTag;
 import fr.miuby.survi.system.perf.PerfTimer;
@@ -53,91 +54,6 @@ import java.util.logging.Level;
  */
 public class LumberjackListener implements Listener {
 
-    // ─── Blocs ───────────────────────────────────────────────────────────────────
-
-    /** Tous les logs susceptibles de passer dans le système bucheron (naturels + stripped). */
-    private static final Set<Material> LOG_BLOCKS = EnumSet.of(
-            Material.OAK_LOG,               Material.OAK_WOOD,
-            Material.SPRUCE_LOG,            Material.SPRUCE_WOOD,
-            Material.BIRCH_LOG,             Material.BIRCH_WOOD,
-            Material.JUNGLE_LOG,            Material.JUNGLE_WOOD,
-            Material.ACACIA_LOG,            Material.ACACIA_WOOD,
-            Material.DARK_OAK_LOG,          Material.DARK_OAK_WOOD,
-            Material.CHERRY_LOG,            Material.CHERRY_WOOD,
-            Material.MANGROVE_LOG,          Material.MANGROVE_WOOD,
-            Material.PALE_OAK_LOG,          Material.PALE_OAK_WOOD,
-            // stripped — traités comme les logs normaux
-            Material.STRIPPED_OAK_LOG,      Material.STRIPPED_OAK_WOOD,
-            Material.STRIPPED_SPRUCE_LOG,   Material.STRIPPED_SPRUCE_WOOD,
-            Material.STRIPPED_BIRCH_LOG,    Material.STRIPPED_BIRCH_WOOD,
-            Material.STRIPPED_JUNGLE_LOG,   Material.STRIPPED_JUNGLE_WOOD,
-            Material.STRIPPED_ACACIA_LOG,   Material.STRIPPED_ACACIA_WOOD,
-            Material.STRIPPED_DARK_OAK_LOG, Material.STRIPPED_DARK_OAK_WOOD,
-            Material.STRIPPED_CHERRY_LOG,   Material.STRIPPED_CHERRY_WOOD,
-            Material.STRIPPED_MANGROVE_LOG, Material.STRIPPED_MANGROVE_WOOD,
-            Material.STRIPPED_PALE_OAK_LOG, Material.STRIPPED_PALE_OAK_WOOD
-    );
-
-    /** Logs strippables (non-stripped uniquement) — utilisé pour bloquer le stripping avant niv.4. */
-    private static final Set<Material> STRIPPABLE_LOG_BLOCKS = EnumSet.of(
-            Material.OAK_LOG,      Material.OAK_WOOD,
-            Material.SPRUCE_LOG,   Material.SPRUCE_WOOD,
-            Material.BIRCH_LOG,    Material.BIRCH_WOOD,
-            Material.JUNGLE_LOG,   Material.JUNGLE_WOOD,
-            Material.ACACIA_LOG,   Material.ACACIA_WOOD,
-            Material.DARK_OAK_LOG, Material.DARK_OAK_WOOD,
-            Material.CHERRY_LOG,   Material.CHERRY_WOOD,
-            Material.MANGROVE_LOG, Material.MANGROVE_WOOD,
-            Material.PALE_OAK_LOG, Material.PALE_OAK_WOOD
-    );
-
-    private static final Set<Material> APPLE_LEAF_BLOCKS = EnumSet.of(
-            Material.OAK_LEAVES, Material.AZALEA_LEAVES, Material.FLOWERING_AZALEA_LEAVES
-    );
-
-    private static final Set<Material> AXE_MATERIALS = EnumSet.of(
-            Material.WOODEN_AXE, Material.STONE_AXE, Material.IRON_AXE,
-            Material.GOLDEN_AXE, Material.DIAMOND_AXE, Material.NETHERITE_AXE
-    );
-
-    private static final Set<Material> SOIL_BLOCKS = EnumSet.of(
-            Material.GRASS_BLOCK, Material.DIRT, Material.COARSE_DIRT,
-            Material.PODZOL, Material.FARMLAND, Material.ROOTED_DIRT,
-            Material.MUD, Material.MUDDY_MANGROVE_ROOTS
-    );
-
-    private static final Map<Material, Material> LOG_TO_SAPLING;
-    static {
-        Map<Material, Material> m = new EnumMap<>(Material.class);
-        // logs naturels
-        m.put(Material.OAK_LOG,             Material.OAK_SAPLING);
-        m.put(Material.SPRUCE_LOG,          Material.SPRUCE_SAPLING);
-        m.put(Material.BIRCH_LOG,           Material.BIRCH_SAPLING);
-        m.put(Material.JUNGLE_LOG,          Material.JUNGLE_SAPLING);
-        m.put(Material.ACACIA_LOG,          Material.ACACIA_SAPLING);
-        m.put(Material.DARK_OAK_LOG,        Material.DARK_OAK_SAPLING);
-        m.put(Material.CHERRY_LOG,          Material.CHERRY_SAPLING);
-        m.put(Material.MANGROVE_LOG,        Material.MANGROVE_PROPAGULE);
-        m.put(Material.PALE_OAK_LOG,        Material.PALE_OAK_SAPLING);
-        // stripped logs — même sapling que leur homologue naturel
-        m.put(Material.STRIPPED_OAK_LOG,    Material.OAK_SAPLING);
-        m.put(Material.STRIPPED_SPRUCE_LOG, Material.SPRUCE_SAPLING);
-        m.put(Material.STRIPPED_BIRCH_LOG,  Material.BIRCH_SAPLING);
-        m.put(Material.STRIPPED_JUNGLE_LOG, Material.JUNGLE_SAPLING);
-        m.put(Material.STRIPPED_ACACIA_LOG, Material.ACACIA_SAPLING);
-        m.put(Material.STRIPPED_DARK_OAK_LOG, Material.DARK_OAK_SAPLING);
-        m.put(Material.STRIPPED_CHERRY_LOG, Material.CHERRY_SAPLING);
-        m.put(Material.STRIPPED_MANGROVE_LOG, Material.MANGROVE_PROPAGULE);
-        m.put(Material.STRIPPED_PALE_OAK_LOG, Material.PALE_OAK_SAPLING);
-        LOG_TO_SAPLING = Collections.unmodifiableMap(m);
-    }
-
-    private static final BlockFace[] ORTHO_FACES = {
-            BlockFace.UP, BlockFace.DOWN, BlockFace.NORTH, BlockFace.SOUTH, BlockFace.EAST, BlockFace.WEST
-    };
-
-    // ─── État ────────────────────────────────────────────────────────────────────
-
     private final PlacedBlockTracker placedBlockTracker;
 
     public LumberjackListener(PlacedBlockTracker placedBlockTracker) {
@@ -152,9 +68,9 @@ public class LumberjackListener implements Listener {
     public void onStripLog(PlayerInteractEvent event) {
         if (event.getAction() != Action.RIGHT_CLICK_BLOCK) return;
         Block block = event.getClickedBlock();
-        if (block == null || !STRIPPABLE_LOG_BLOCKS.contains(block.getType())) return;
+        if (block == null || !MaterialUtils.STRIPPABLE_LOG_BLOCKS.contains(block.getType())) return;
         ItemStack item = event.getItem();
-        if (item == null || !AXE_MATERIALS.contains(item.getType())) return;
+        if (item == null || !MaterialUtils.AXE_MATERIALS.contains(item.getType())) return;
         AlphaPlayer alpha = AlphaPlayer.get(event.getPlayer().getUniqueId());
         int level = alpha != null ? alpha.getJobLevel(EJob.LUMBERJACK) : 0;
         if (level >= 4) return;
@@ -176,7 +92,7 @@ public class LumberjackListener implements Listener {
         Material type = block.getType();
         JobsConfig.LumberjackCfg lj = JobsConfig.getInstance().getLumberjack();
 
-        if (LOG_BLOCKS.contains(type)) {
+        if (MaterialUtils.LOG_BLOCKS.contains(type)) {
             // Bloc posé par le joueur : drops vanilla sans multiplicateur ni bonus
             if (placedBlockTracker.isPlaced(block)) {
                 MLLogManager.getInstance().log(Level.FINE, ELogTag.JOB,
@@ -193,7 +109,7 @@ public class LumberjackListener implements Listener {
             }
             if (lj.getTreeFellerExtraLogs()[level] > 0
                     && GrowthItems.hasAbilityEquipped(player, GrowthItems.ABILITY_TREE_FELLER, EquipmentSlot.CHEST)
-                    && AXE_MATERIALS.contains(player.getInventory().getItemInMainHand().getType())) {
+                    && MaterialUtils.AXE_MATERIALS.contains(player.getInventory().getItemInMainHand().getType())) {
                 try (var t = PerfTimer.start("LumberjackListener.treeFeller")) {
                     treeFeller(block, player, level, lj);
                 }
@@ -201,7 +117,7 @@ public class LumberjackListener implements Listener {
             return;
         }
 
-        if (APPLE_LEAF_BLOCKS.contains(type)) {
+        if (MaterialUtils.APPLE_LEAF_BLOCKS.contains(type)) {
             handleAppleLeaves(event, alpha != null ? alpha.getJobLevel(EJob.LUMBERJACK) : 0, lj);
         }
     }
@@ -230,9 +146,9 @@ public class LumberjackListener implements Listener {
     // ─── Auto-replant ─────────────────────────────────────────────────────────────
 
     private static void autoReplant(Block brokenLog) {
-        Material sapling = LOG_TO_SAPLING.get(brokenLog.getType());
+        Material sapling = MaterialUtils.LOG_TO_SAPLING.get(brokenLog.getType());
         if (sapling == null) return;
-        if (!SOIL_BLOCKS.contains(brokenLog.getRelative(BlockFace.DOWN).getType())) return;
+        if (!MaterialUtils.SOIL_BLOCKS.contains(brokenLog.getRelative(BlockFace.DOWN).getType())) return;
         Location loc = brokenLog.getLocation().clone();
         MiubyLib.runLater(() -> {
             Block t = loc.getBlock();
@@ -257,10 +173,10 @@ public class LumberjackListener implements Listener {
         outer:
         while (!queue.isEmpty()) {
             Block cur = queue.poll();
-            for (BlockFace face : ORTHO_FACES) {
+            for (BlockFace face : MaterialUtils.ORTHO_FACES) {
                 Block nb = cur.getRelative(face);
                 if (!visited.add(nb)) continue;
-                if (!LOG_BLOCKS.contains(nb.getType())) continue;
+                if (!MaterialUtils.LOG_BLOCKS.contains(nb.getType())) continue;
                 toBreak.add(nb);
                 if (toBreak.size() >= extra) break outer;
                 queue.add(nb);
