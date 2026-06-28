@@ -2,6 +2,7 @@ package fr.miuby.survi.listener;
 
 import fr.miuby.survi.GameManager;
 import fr.miuby.survi.item.growth_item.GrowthItems;
+import fr.miuby.survi.system.block.MaterialUtils;
 import fr.miuby.survi.system.exception.AlphaPlayerNotFoundException;
 import io.papermc.paper.event.entity.EntityEquipmentChangedEvent;
 import org.bukkit.block.Biome;
@@ -43,50 +44,6 @@ public class GrowthItemListener implements Listener {
     public GrowthItemListener(PlacedBlockTracker placedBlockTracker) {
         this.placedBlockTracker = placedBlockTracker;
     }
-
-    // ─── Blocs minerais ──────────────────────────────────────────────────────
-    private static final Set<org.bukkit.Material> ORE_BLOCKS = EnumSet.of(
-            org.bukkit.Material.COAL_ORE,              org.bukkit.Material.DEEPSLATE_COAL_ORE,
-            org.bukkit.Material.IRON_ORE,              org.bukkit.Material.DEEPSLATE_IRON_ORE,
-            org.bukkit.Material.GOLD_ORE,              org.bukkit.Material.DEEPSLATE_GOLD_ORE,
-            org.bukkit.Material.NETHER_GOLD_ORE,
-            org.bukkit.Material.DIAMOND_ORE,           org.bukkit.Material.DEEPSLATE_DIAMOND_ORE,
-            org.bukkit.Material.EMERALD_ORE,           org.bukkit.Material.DEEPSLATE_EMERALD_ORE,
-            org.bukkit.Material.LAPIS_ORE,             org.bukkit.Material.DEEPSLATE_LAPIS_ORE,
-            org.bukkit.Material.REDSTONE_ORE,          org.bukkit.Material.DEEPSLATE_REDSTONE_ORE,
-            org.bukkit.Material.COPPER_ORE,            org.bukkit.Material.DEEPSLATE_COPPER_ORE,
-            org.bukkit.Material.NETHER_QUARTZ_ORE,
-            org.bukkit.Material.ANCIENT_DEBRIS
-    );
-
-    // ─── Blocs cultures ───────────────────────────────────────────────────────
-    private static final Set<org.bukkit.Material> CROP_BLOCKS = EnumSet.of(
-            org.bukkit.Material.WHEAT,
-            org.bukkit.Material.CARROTS,
-            org.bukkit.Material.POTATOES,
-            org.bukkit.Material.BEETROOTS,
-            org.bukkit.Material.NETHER_WART,
-            org.bukkit.Material.SWEET_BERRY_BUSH,
-            org.bukkit.Material.MELON,
-            org.bukkit.Material.PUMPKIN,
-            org.bukkit.Material.COCOA,
-            org.bukkit.Material.PITCHER_CROP,
-            org.bukkit.Material.TORCHFLOWER_CROP
-    );
-
-    // ─── Blocs bûches naturelles (10 types, sans stripped/wood/bamboo) ────────
-    private static final Set<org.bukkit.Material> LOG_BLOCKS = EnumSet.of(
-            org.bukkit.Material.OAK_LOG,
-            org.bukkit.Material.SPRUCE_LOG,
-            org.bukkit.Material.BIRCH_LOG,
-            org.bukkit.Material.JUNGLE_LOG,
-            org.bukkit.Material.ACACIA_LOG,
-            org.bukkit.Material.DARK_OAK_LOG,
-            org.bukkit.Material.MANGROVE_LOG,
-            org.bukkit.Material.CHERRY_LOG,
-            org.bukkit.Material.CRIMSON_STEM,
-            org.bukkit.Material.WARPED_STEM
-    );
 
     // ═════════════════════════════════════════════════════════════════════════
     //  Détection reload — mise à jour paresseuse des items stale
@@ -201,7 +158,7 @@ public class GrowthItemListener implements Listener {
 
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onOreBreak(BlockBreakEvent event) {
-        if (!ORE_BLOCKS.contains(event.getBlock().getType())) return;
+        if (!MaterialUtils.ORE_BLOCKS.contains(event.getBlock().getType())) return;
         if (placedBlockTracker.isPlaced(event.getBlock())) return;
         Player player = event.getPlayer();
         GrowthItems.IncrementUses(player, "OreBreakEvent", EquipmentSlot.HEAD);
@@ -219,7 +176,7 @@ public class GrowthItemListener implements Listener {
      */
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onLogBreak(BlockBreakEvent event) {
-        if (!LOG_BLOCKS.contains(event.getBlock().getType())) return;
+        if (!MaterialUtils.LOG_BLOCKS.contains(event.getBlock().getType())) return;
         if (placedBlockTracker.isPlaced(event.getBlock())) return;
         Player player = event.getPlayer();
         GrowthItems.IncrementUses(player, "LogBreakEvent", EquipmentSlot.HAND, EquipmentSlot.OFF_HAND);
@@ -264,67 +221,44 @@ public class GrowthItemListener implements Listener {
     }
 
     // ═════════════════════════════════════════════════════════════════════════
-    //  GROWTH_BATON_FERMIER — croît sur les cultures + bonus drops
+    //  GROWTH_FARMER_LEGGINGS — croît sur les cultures récoltées (slot LEGS)
     // ═════════════════════════════════════════════════════════════════════════
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onCropBreak(BlockBreakEvent event) {
         Block block = event.getBlock();
-        if (!CROP_BLOCKS.contains(block.getType())) return;
-        if (placedBlockTracker.isPlaced(block)) return;
+        if (!MaterialUtils.HARVEST_CROPS.contains(block.getType())) return;
+        if (!MaterialUtils.isFullyGrown(block)) return;
 
         Player player = event.getPlayer();
-        ItemStack baton = GrowthItems.findGrowthItemInHands(player, "GROWTH_BATON_FERMIER");
-        if (baton != null) {
-            int tier = baton.getItemMeta().getPersistentDataContainer()
-                    .getOrDefault(GrowthItems.TIER_KEY, org.bukkit.persistence.PersistentDataType.INTEGER, 0);
-            if (tier > 0) applyBatonCropBonus(event, tier);
-        }
-
-        GrowthItems.IncrementUses(player, "CropBreakEvent", EquipmentSlot.HAND, EquipmentSlot.OFF_HAND);
         GrowthItems.IncrementUses(player, "CropBreakEvent", EquipmentSlot.LEGS);
     }
 
-    private void applyBatonCropBonus(BlockBreakEvent event, int tier) {
-        Block block = event.getBlock();
-        ItemStack tool = event.getPlayer().getInventory().getItemInMainHand();
-        Collection<ItemStack> vanillaDrops = block.getDrops(tool);
-        if (vanillaDrops.isEmpty()) return;
-
-        double bonusMultiplier = tier * 0.5;
-        List<ItemStack> bonusDrops = new ArrayList<>();
-        for (ItemStack drop : vanillaDrops) {
-            double totalBonus = drop.getAmount() * bonusMultiplier;
-            int bonus = (int) totalBonus;
-            if (totalBonus - bonus > 0 && RANDOM.nextDouble() < (totalBonus - bonus)) bonus++;
-            if (bonus > 0) {
-                ItemStack b = drop.clone();
-                b.setAmount(bonus);
-                bonusDrops.add(b);
-            }
-        }
-        bonusDrops.forEach(d -> block.getWorld().dropItemNaturally(block.getLocation(), d));
-    }
-
     // ═════════════════════════════════════════════════════════════════════════
-    //  GROWTH_HOUE_FERMIER — met les ennemis en feu au corps à corps
+    //  GROWTH_FARMER_LEGGINGS — met le feu aux mobs passifs au corps à corps (porté en LEGS)
     // ═════════════════════════════════════════════════════════════════════════
 
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onEntityDamageByEntity(EntityDamageByEntityEvent event) {
         if (!(event.getDamager() instanceof Player player)) return;
         if (!(event.getEntity() instanceof LivingEntity target)) return;
+        if (!MaterialUtils.PASSIVE_MOBS.contains(target.getType())) return;
 
-        ItemStack hand = player.getInventory().getItemInMainHand();
-        if (hand.getType().isAir()) return;
-        ItemMeta meta = hand.getItemMeta();
-        if (meta == null) return;
-
-        Integer fireSeconds = meta.getPersistentDataContainer()
-                .get(GrowthItems.FIRE_SECONDS_KEY, PersistentDataType.INTEGER);
-        if (fireSeconds == null || fireSeconds <= 0) return;
+        int fireSeconds = Math.max(
+                getFireSeconds(player.getInventory().getItemInMainHand()),
+                getFireSeconds(player.getInventory().getLeggings()));
+        if (fireSeconds <= 0) return;
 
         target.setFireTicks(fireSeconds * 20);
+    }
+
+    /** Lit {@link GrowthItems#FIRE_SECONDS_KEY} sur {@code item} ; {@code 0} si absent/air. */
+    private static int getFireSeconds(ItemStack item) {
+        if (item == null || item.getType().isAir()) return 0;
+        ItemMeta meta = item.getItemMeta();
+        if (meta == null) return 0;
+        Integer seconds = meta.getPersistentDataContainer().get(GrowthItems.FIRE_SECONDS_KEY, PersistentDataType.INTEGER);
+        return seconds == null ? 0 : seconds;
     }
 
     // ═════════════════════════════════════════════════════════════════════════

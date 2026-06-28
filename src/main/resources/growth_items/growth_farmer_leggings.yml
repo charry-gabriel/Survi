@@ -2,71 +2,73 @@
 id: GROWTH_FARMER_LEGGINGS
 eventType: CropBreakEvent
 
-# Stats de base : speed+, défense- et vie- actives tant que la houe est tenue en main.
+# Stats de base : vitesse+, défense- et vie+ actives tant que la jambière est portée (slot LEGS).
+# Les paliers ajoutent un effet de mise en feu au corps à corps (fire_enemies, lu sur le slot LEGS
+# par GrowthItemListener.onEntityDamageByEntity) en plus du bonus de vitesse (set_attribute, slot LEGS).
 
 
 tiers:
   - requiredUses: 2000
     effects:
-      - { type: name,          value: "Houe du Fermier II" }
+      - { type: name,          value: "Jambière du Fermier II" }
       - { type: fire_enemies,  seconds: 1 }
-      - { type: message,       value: "Ton pentalon s'embrase, tes ennemis vont brûler !" }
+      - { type: message,       value: "Ton pantalon s'embrase, tes attaques brûlent les mobs !" }
 
   - requiredUses: 5000
     effects:
-      - { type: name,          value: "Houe du Fermier III" }
+      - { type: name,          value: "Jambière du Fermier III" }
       - { type: fire_enemies,  seconds: 2 }
-      - { type: set_attribute, attribute: movement_speed, attributeValue: 0.04, operation: ADD_NUMBER, slot: HAND }
-      - { type: message,       value: "Tu cours plus vite et tes ennemis brûlent plus longtemps !" }
+      - { type: set_attribute, attribute: movement_speed, attributeValue: 0.04, operation: ADD_NUMBER, slot: LEGS }
+      - { type: message,       value: "Tu cours plus vite et les mobs brûlent plus longtemps !" }
 
   - requiredUses: 100000
     effects:
-      - { type: name,          value: "Houe du Fermier IV" }
+      - { type: name,          value: "Jambière du Fermier IV" }
       - { type: fire_enemies,  seconds: 3 }
-      - { type: set_attribute, attribute: movement_speed, attributeValue: 0.05, operation: ADD_NUMBER, slot: HAND }
-      - { type: message,       value: "Tu cours plus vite et tes ennemis brûlent plus longtemps !" }
+      - { type: set_attribute, attribute: movement_speed, attributeValue: 0.05, operation: ADD_NUMBER, slot: LEGS }
+      - { type: message,       value: "Tu cours plus vite et les mobs brûlent plus longtemps !" }
 
   - requiredUses: 200000
     effects:
-      - { type: name,          value: "Houe du Fermier V" }
+      - { type: name,          value: "Jambière du Fermier V" }
       - { type: fire_enemies,  seconds: 4 }
-      - { type: set_attribute, attribute: movement_speed, attributeValue: 0.06, operation: ADD_NUMBER, slot: HAND }
-      - { type: message,       value: "Tu cours plus vite et tes ennemis brûlent plus longtemps !" }
+      - { type: set_attribute, attribute: movement_speed, attributeValue: 0.06, operation: ADD_NUMBER, slot: LEGS }
+      - { type: message,       value: "Tu cours plus vite et les mobs brûlent plus longtemps !" }
 
   - requiredUses: 350000
     effects:
-      - { type: name,          value: "Houe du Fermier VI" }
+      - { type: name,          value: "Jambière du Fermier VI" }
       - { type: fire_enemies,  seconds: 5 }
-      - { type: set_attribute, attribute: movement_speed, attributeValue: 0.07, operation: ADD_NUMBER, slot: HAND }
-      - { type: message,       value: "Tu cours plus vite et tes ennemis brûlent plus longtemps !" }
+      - { type: set_attribute, attribute: movement_speed, attributeValue: 0.07, operation: ADD_NUMBER, slot: LEGS }
+      - { type: message,       value: "Tu cours plus vite et les mobs brûlent plus longtemps !" }
 
   - requiredUses: 600000
     effects:
-      - { type: name,          value: "Houe du Fermier VII" }
+      - { type: name,          value: "Jambière du Fermier VII" }
       - { type: fire_enemies,  seconds: 10 }
-      - { type: set_attribute, attribute: movement_speed, attributeValue: 0.09, operation: ADD_NUMBER, slot: HAND }
-      - { type: message,       value: "Tu cours plus vite et tes ennemis brûlent plus longtemps !" }
+      - { type: set_attribute, attribute: movement_speed, attributeValue: 0.09, operation: ADD_NUMBER, slot: LEGS }
+      - { type: message,       value: "Tu cours plus vite et les mobs brûlent plus longtemps !" }
 
   - requiredUses: 950000
     effects:
-      - { type: name,          value: "Houe du Fermier VIII" }
+      - { type: name,          value: "Jambière du Fermier VIII" }
       - { type: fire_enemies,  seconds: 15 }
-      - { type: set_attribute, attribute: movement_speed, attributeValue: 0.11, operation: ADD_NUMBER, slot: HAND }
-      - { type: message,       value: "Tu cours plus vite et tes ennemis brûlent plus longtemps !" }
+      - { type: set_attribute, attribute: movement_speed, attributeValue: 0.11, operation: ADD_NUMBER, slot: LEGS }
+      - { type: message,       value: "Tu cours plus vite et les mobs brûlent plus longtemps !" }
 
   - requiredUses: 1400000
     effects:
-      - { type: name,          value: "Houe du Fermier IX" }
+      - { type: name,          value: "Jambière du Fermier IX" }
       - { type: fire_enemies,  seconds: 30 }
-      - { type: set_attribute, attribute: movement_speed, attributeValue: 0.13, operation: ADD_NUMBER, slot: HAND }
-      - { type: message,       value: "Tu cours plus vite et tes ennemis brûlent plus longtemps !" }
+      - { type: set_attribute, attribute: movement_speed, attributeValue: 0.13, operation: ADD_NUMBER, slot: LEGS }
+      - { type: message,       value: "Tu cours plus vite et les mobs brûlent plus longtemps !" }
 
   - requiredUses: 2000000
     effects:
-      - { type: name,          value: "Houe du Maître Fermier" }
+      - { type: name,          value: "Jambière du Maître Fermier" }
       - { type: fire_enemies,  seconds: 60 }
-      - { type: set_attribute, attribute: movement_speed, attributeValue: 0.15, operation: ADD_NUMBER, slot: HAND }
-      - { type: message,       value: "Houe de légende. Tes ennemis fuient les flammes de tes champs." }
+      - { type: set_attribute, attribute: movement_speed, attributeValue: 0.15, operation: ADD_NUMBER, slot: LEGS }
+      - { type: message,       value: "Jambière de légende." }
 
 
 periodicEffects:

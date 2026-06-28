@@ -1,7 +1,9 @@
 package fr.miuby.survi.system.block;
 
 import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.block.data.Ageable;
 import org.bukkit.entity.EntityType;
 
 import java.util.Collections;
@@ -120,6 +122,17 @@ public final class MaterialUtils {
         }
         HARVEST_CROPS = Collections.unmodifiableSet(crops);
         CROP_SEED     = Collections.unmodifiableMap(toSeed);
+    }
+
+    /**
+     * {@code true} si {@code block} est à maturité — une graine fraîchement plantée ne doit pas compter.
+     *
+     * <p>Les blocs non {@code Ageable} (ex. {@code MELON}, {@code PUMPKIN} — le fruit formé, pas la tige)
+     * sont considérés mûrs par nature : il n'existe pas de version "graine" de ces blocs eux-mêmes.</p>
+     */
+    public static boolean isFullyGrown(Block block) {
+        if (!(block.getBlockData() instanceof Ageable ageable)) return true;
+        return ageable.getAge() >= ageable.getMaximumAge();
     }
 
     // ═══════════════════════════════════════════════════════════════════════════

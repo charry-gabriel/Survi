@@ -11,7 +11,9 @@ import org.bukkit.persistence.PersistentDataType;
  *
  * <p>Stocke la durée de feu (en secondes) dans la clé PDC {@link GrowthItems#FIRE_SECONDS_KEY}.
  * La mise en feu effective est déclenchée par {@code GrowthItemListener.onEntityDamageByEntity}
- * qui lit cette clé sur l'item en main principale du joueur.</p>
+ * qui lit cette clé sur l'item en main principale du joueur, ainsi que sur ses jambières
+ * équipées (slot LEGS — voir {@code GROWTH_FARMER_LEGGINGS}). Restreint aux mobs passifs
+ * ({@code MaterialUtils.PASSIVE_MOBS}).</p>
  *
  * <p>Usage YAML (dans un palier) :
  * <pre>
