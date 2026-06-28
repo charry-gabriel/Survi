@@ -1,11 +1,13 @@
 package fr.miuby.survi.listener.job;
 
+import fr.miuby.lib.log.MLLogManager;
 import fr.miuby.survi.item.growth_item.GrowthItems;
 import fr.miuby.survi.job.EJob;
 import fr.miuby.survi.job.config.JobsConfig;
 import fr.miuby.survi.system.block.EOreFamily;
 import fr.miuby.survi.system.block.MaterialUtils;
 import fr.miuby.survi.player.AlphaPlayer;
+import fr.miuby.survi.system.log.ELogTag;
 import fr.miuby.survi.system.perf.PerfTimer;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -19,6 +21,7 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.*;
+import java.util.logging.Level;
 
 /**
  * Gère les effets du métier {@link EJob#MINER} :
@@ -49,8 +52,13 @@ public class MinerListener implements Listener {
         if (miner.getVeinMinerExtraOres()[level] > 0
                 && GrowthItems.hasAbilityEquipped(player, GrowthItems.ABILITY_VEIN_MINER, EquipmentSlot.HEAD)
                 && MaterialUtils.PICKAXE_MATERIALS.contains(player.getInventory().getItemInMainHand().getType())) {
-            try (var t = PerfTimer.start("MinerListener.veinMiner")) {
-                veinMiner(event.getBlock(), player, level, miner);
+            if (player.isSneaking()) {
+                MLLogManager.getInstance().log(Level.FINE, ELogTag.JOB,
+                        "[Miner] Vein miner ignoré (sneak) pour " + player.getName() + " @ " + event.getBlock().getLocation());
+            } else {
+                try (var t = PerfTimer.start("MinerListener.veinMiner")) {
+                    veinMiner(event.getBlock(), player, level, miner);
+                }
             }
         }
     }

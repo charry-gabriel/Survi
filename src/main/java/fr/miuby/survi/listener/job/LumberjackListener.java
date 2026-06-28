@@ -110,8 +110,13 @@ public class LumberjackListener implements Listener {
             if (lj.getTreeFellerExtraLogs()[level] > 0
                     && GrowthItems.hasAbilityEquipped(player, GrowthItems.ABILITY_TREE_FELLER, EquipmentSlot.CHEST)
                     && MaterialUtils.AXE_MATERIALS.contains(player.getInventory().getItemInMainHand().getType())) {
-                try (var t = PerfTimer.start("LumberjackListener.treeFeller")) {
-                    treeFeller(block, player, level, lj);
+                if (player.isSneaking()) {
+                    MLLogManager.getInstance().log(Level.FINE, ELogTag.JOB,
+                            "[Lumberjack] Tree feller ignoré (sneak) pour " + player.getName() + " @ " + block.getLocation());
+                } else {
+                    try (var t = PerfTimer.start("LumberjackListener.treeFeller")) {
+                        treeFeller(block, player, level, lj);
+                    }
                 }
             }
             return;
