@@ -1,6 +1,7 @@
 package fr.miuby.survi.system.database;
 
 import fr.miuby.lib.sqlite.MLSQLite;
+import fr.miuby.survi.job.rare.RareJobItemRepository;
 import fr.miuby.survi.system.database.repository.*;
 
 import java.sql.Connection;
@@ -26,6 +27,7 @@ public abstract class Database extends MLSQLite {
     protected QuestHistoryRepository questHistoryRepository;
     protected TradeHistoryRepository tradeHistoryRepository;
     protected TributeHistoryRepository tributeHistoryRepository;
+    protected RareJobItemRepository rareJobItemRepository;
 
     protected Database(String dbName) {
         super(dbName);
@@ -54,6 +56,7 @@ public abstract class Database extends MLSQLite {
         questHistoryRepository           = new QuestHistoryRepository(conn, this);
         tradeHistoryRepository  = new TradeHistoryRepository(conn, this);
         tributeHistoryRepository = new TributeHistoryRepository(conn, this);
+        rareJobItemRepository    = new RareJobItemRepository(conn, this);
     }
 
     // =========================================================================
@@ -70,4 +73,5 @@ public abstract class Database extends MLSQLite {
     public QuestHistoryRepository questHistory()                           { return questHistoryRepository; }
     public TradeHistoryRepository tradeHistory()       { return tradeHistoryRepository; }
     public TributeHistoryRepository tributeHistory()   { return tributeHistoryRepository; }
+    public RareJobItemRepository rareJobItems()        { return rareJobItemRepository; }
 }

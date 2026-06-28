@@ -62,6 +62,7 @@ public class Survi extends JavaPlugin {
         pluginManager.registerEvents(new FishermanListener(), this);
         pluginManager.registerEvents(new AlchemicPotionListener(), this);
         pluginManager.registerEvents(new FoodListener(), this);
+        pluginManager.registerEvents(new RareJobItemListener(placedBlockTracker), this);
 
         pluginManager.registerEvents(placedBlockTracker, this);
 

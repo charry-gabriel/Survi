@@ -8,7 +8,7 @@ import java.sql.*;
 import java.util.logging.Level;
 
 public class SQLite extends Database {
-    private static final int CURRENT_DB_VERSION = 17;
+    private static final int CURRENT_DB_VERSION = 18;
 
     public SQLite() {
         super(GameManager.getInstance().getPlugin().getConfig().getString("SQLite.Filename", "minecraft"));
@@ -60,6 +60,7 @@ public class SQLite extends Database {
             s.executeUpdate("CREATE INDEX IF NOT EXISTS idx_th_player ON player_trade_history (player_uuid)");
             s.executeUpdate(createTributeHistoryTable());
             s.executeUpdate("CREATE INDEX IF NOT EXISTS idx_tth_player ON player_tribute_history (player_uuid)");
+            s.executeUpdate(createRareJobItemTable());
         }
     }
 
@@ -300,6 +301,19 @@ public class SQLite extends Database {
                 s.executeUpdate("ALTER TABLE player ADD COLUMN spawn_yaw REAL DEFAULT NULL");
                 s.executeUpdate("ALTER TABLE player ADD COLUMN spawn_pitch REAL DEFAULT NULL");
             }
+            if (currentVersion < 18) {
+                s.executeUpdate(createRareJobItemTable());
+            }
         }
+    }
+
+    private String createRareJobItemTable() {
+        return "CREATE TABLE IF NOT EXISTS player_rare_job_item (" +
+                "`player_uuid` VARCHAR(36) NOT NULL," +
+                "`job`         VARCHAR(50) NOT NULL," +
+                "`action_count` INTEGER    NOT NULL DEFAULT 0," +
+                "`has_item`     INTEGER    NOT NULL DEFAULT 0," +
+                "PRIMARY KEY (`player_uuid`, `job`)" +
+                ");";
     }
 }

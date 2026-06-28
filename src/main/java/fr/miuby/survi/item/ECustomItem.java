@@ -185,7 +185,75 @@ public enum ECustomItem {
                 .itemModel(new NamespacedKey("survi", "backpack"))
                 .maxStackSize(1)
                 .unbreakable();
-    });
+    }),
+
+    // ─── Objets rares de collection (un par métier) ──────────────────────────
+
+    RARE_MINER(Material.AMETHYST_SHARD, item -> {
+        List<Component> lore = new ArrayList<>();
+        lore.add(Component.text("Collection · Mineur", NamedTextColor.GRAY).decoration(TextDecoration.ITALIC, false));
+        lore.add(Component.text("Unique", NamedTextColor.YELLOW).decoration(TextDecoration.ITALIC, false));
+        new CustomItemBuilder(item, "rareMiner")
+                .name("Fragment du Mineur Légendaire", NamedTextColor.GRAY)
+                .lore(lore)
+                .itemModel(new NamespacedKey("survi", "rare_miner"))
+                .maxStackSize(1);
+    }, "rareMiner"),
+
+    RARE_LUMBERJACK(Material.PRISMARINE_SHARD, item -> {
+        List<Component> lore = new ArrayList<>();
+        lore.add(Component.text("Collection · Bûcheron", NamedTextColor.GRAY).decoration(TextDecoration.ITALIC, false));
+        lore.add(Component.text("Unique", NamedTextColor.YELLOW).decoration(TextDecoration.ITALIC, false));
+        new CustomItemBuilder(item, "rareLumberjack")
+                .name("Éclat du Bûcheron Légendaire", NamedTextColor.DARK_GREEN)
+                .lore(lore)
+                .itemModel(new NamespacedKey("survi", "rare_lumberjack"))
+                .maxStackSize(1);
+    }, "rareLumberjack"),
+
+    RARE_FARMER(Material.GOLDEN_CARROT, item -> {
+        List<Component> lore = new ArrayList<>();
+        lore.add(Component.text("Collection · Fermier", NamedTextColor.GRAY).decoration(TextDecoration.ITALIC, false));
+        lore.add(Component.text("Unique", NamedTextColor.YELLOW).decoration(TextDecoration.ITALIC, false));
+        new CustomItemBuilder(item, "rareFarmer")
+                .name("Graine du Fermier Légendaire", NamedTextColor.YELLOW)
+                .lore(lore)
+                .itemModel(new NamespacedKey("survi", "rare_farmer"))
+                .maxStackSize(1);
+    }, "rareFarmer"),
+
+    RARE_ENCHANTER(Material.GHAST_TEAR, item -> {
+        List<Component> lore = new ArrayList<>();
+        lore.add(Component.text("Collection · Enchanteur", NamedTextColor.GRAY).decoration(TextDecoration.ITALIC, false));
+        lore.add(Component.text("Unique", NamedTextColor.YELLOW).decoration(TextDecoration.ITALIC, false));
+        new CustomItemBuilder(item, "rareEnchanter")
+                .name("Larme de l'Enchanteur Légendaire", NamedTextColor.DARK_PURPLE)
+                .lore(lore)
+                .itemModel(new NamespacedKey("survi", "rare_enchanter"))
+                .maxStackSize(1);
+    }, "rareEnchanter"),
+
+    RARE_FISHERMAN(Material.NAUTILUS_SHELL, item -> {
+        List<Component> lore = new ArrayList<>();
+        lore.add(Component.text("Collection · Pêcheur", NamedTextColor.GRAY).decoration(TextDecoration.ITALIC, false));
+        lore.add(Component.text("Unique", NamedTextColor.YELLOW).decoration(TextDecoration.ITALIC, false));
+        new CustomItemBuilder(item, "rareFisherman")
+                .name("Coquille du Pêcheur Légendaire", NamedTextColor.AQUA)
+                .lore(lore)
+                .itemModel(new NamespacedKey("survi", "rare_fisherman"))
+                .maxStackSize(1);
+    }, "rareFisherman"),
+
+    RARE_EXPLORER(Material.ECHO_SHARD, item -> {
+        List<Component> lore = new ArrayList<>();
+        lore.add(Component.text("Collection · Explorateur", NamedTextColor.GRAY).decoration(TextDecoration.ITALIC, false));
+        lore.add(Component.text("Unique", NamedTextColor.YELLOW).decoration(TextDecoration.ITALIC, false));
+        new CustomItemBuilder(item, "rareExplorer")
+                .name("Fragment de l'Explorateur Légendaire", NamedTextColor.RED)
+                .lore(lore)
+                .itemModel(new NamespacedKey("survi", "rare_explorer"))
+                .maxStackSize(1);
+    }, "rareExplorer");
 
     // ─── Infrastructure enum ──────────────────────────────────────────────────
 
