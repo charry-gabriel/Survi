@@ -94,7 +94,7 @@ public class WorldInitializer {
         WorldRegistry.register(mvWild);
         wilderness.setGameRule(GameRules.NATURAL_HEALTH_REGENERATION, false);
         wilderness.setGameRule(GameRules.PLAYERS_SLEEPING_PERCENTAGE, 45);
-        wilderness.setViewDistance(8);
+        wilderness.setViewDistance(10);
         wilderness.setDifficulty(Difficulty.HARD);
 
         // --- Nether (NETHER, réinitialisable, verrouillé par défaut) ---
@@ -198,7 +198,7 @@ public class WorldInitializer {
         created.setGameRule(GameRules.NATURAL_HEALTH_REGENERATION, false);
         created.setGameRule(GameRules.PLAYERS_SLEEPING_PERCENTAGE, 45);
         created.setDifficulty(Difficulty.HARD);
-        created.setViewDistance(8);
+        created.setViewDistance(10);
         return created;
     }
 
