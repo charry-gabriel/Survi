@@ -211,13 +211,48 @@ public class RareJobItemService {
         }
     }
 
+    // ─── API publique (commandes admin) ──────────────────────────────────────────
+
+    /** Retourne un snapshot immutable des données en mémoire. Null si le joueur n'est pas chargé. */
+    public Map<EJob, long[]> getMemorySnapshot(UUID uuid) {
+        PlayerRareData data = playerData.get(uuid);
+        if (data == null || !data.ready) return null;
+        Map<EJob, long[]> snap = new EnumMap<>(EJob.class);
+        for (Map.Entry<EJob, long[]> e : data.jobData.entrySet()) {
+            long[] jd = e.getValue();
+            snap.put(e.getKey(), new long[]{jd[0], jd[1]});
+        }
+        return snap;
+    }
+
+    /** Seuil d'actions minimal avant que la chance ne s'active pour ce métier. */
+    public static long getThreshold(EJob job) {
+        return THRESHOLDS.get(job);
+    }
+
+    /**
+     * Remet à zéro le compteur et l'état has_item d'un joueur pour un métier,
+     * en mémoire (si connecté) et en DB (async).
+     */
+    public void resetJobData(UUID uuid, EJob job) {
+        PlayerRareData data = playerData.get(uuid);
+        if (data != null && data.ready) {
+            long[] jd = data.jobData.computeIfAbsent(job, k -> new long[]{0L, 0L});
+            jd[0] = 0L;
+            jd[1] = 0L;
+        }
+        repo.forceReset(uuid, job);
+        MLLogManager.getInstance().log(Level.INFO, ELogTag.ITEM,
+                "[RareJobItem] resetJobData : " + uuid + " / " + job.name());
+    }
+
     // ─── Privé ───────────────────────────────────────────────────────────────────
 
     /**
      * Calcule la chance (probabilité entre 0 et MAX_CHANCE) d'obtenir l'objet rare.
      * Retourne 0 si le seuil n'est pas encore atteint.
      */
-    private static double computeChance(EJob job, long actionCount) {
+    public static double computeChance(EJob job, long actionCount) {
         long threshold   = THRESHOLDS.get(job);
         long growthRange = GROWTH_RANGES.get(job);
         long effective   = actionCount - threshold;

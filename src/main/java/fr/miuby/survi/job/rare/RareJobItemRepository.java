@@ -67,4 +67,20 @@ public class RareJobItemRepository extends MLRepository {
             }
         }, ELogTag.ITEM, "[RareJobItem] Failed to save for " + playerUuid + " / " + job);
     }
+
+    /**
+     * Remet à zéro action_count et has_item pour un joueur/métier, en écrasant sans MAX.
+     * Réservé à la commande admin de reset.
+     */
+    public void forceReset(UUID playerUuid, EJob job) {
+        runAsync(conn -> {
+            try (PreparedStatement ps = conn.prepareStatement(
+                    "INSERT INTO player_rare_job_item (player_uuid, job, action_count, has_item) VALUES (?, ?, 0, 0)" +
+                            " ON CONFLICT(player_uuid, job) DO UPDATE SET action_count = 0, has_item = 0")) {
+                ps.setString(1, playerUuid.toString());
+                ps.setString(2, job.name());
+                ps.executeUpdate();
+            }
+        }, ELogTag.ITEM, "[RareJobItem] Failed to force-reset for " + playerUuid + " / " + job);
+    }
 }

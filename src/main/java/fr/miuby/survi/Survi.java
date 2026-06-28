@@ -3,6 +3,7 @@ package fr.miuby.survi;
 import fr.miuby.lib.resource.MLResourceManager;
 import fr.miuby.survi.display.TabSkins;
 import fr.miuby.survi.job.JobCommand;
+import fr.miuby.survi.job.rare.RareJobItemCommand;
 import fr.miuby.survi.listener.job.*;
 import fr.miuby.survi.mob.MobCommand;
 import fr.miuby.survi.system.database.SqlCommand;
@@ -83,6 +84,7 @@ public class Survi extends JavaPlugin {
             commands.registrar().register(QuestCommand.createCommand().build());
             commands.registrar().register(GlobalQuestCommand.createCommand().build());
             commands.registrar().register(JobCommand.createReputationCommand().build());
+            commands.registrar().register(RareJobItemCommand.createCommand().build());
             commands.registrar().register(SystemCommand.createCommand().build());
             commands.registrar().register(BlessingCommand.createCommand().build());
             commands.registrar().register(WorldCommand.createWorldResetCommand().build());
