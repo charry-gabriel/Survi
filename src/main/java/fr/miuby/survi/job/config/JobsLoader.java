@@ -101,7 +101,8 @@ public final class JobsLoader {
                 readInt(lumberjackCfg, "backpack-slots",
                         new int[]{9, 18, 18, 18, 18, 18, 27, 27, 27, 36, 36}),
                 readInt(lumberjackCfg, "respawn-cooldown-seconds",
-                        new int[]{3600, 3000, 2400, 1800, 1500, 1200, 900, 600, 300, 180, 60})
+                        new int[]{3600, 3000, 2400, 1800, 1500, 1200, 900, 600, 300, 180, 60}),
+                lumberjackCfg.getInt("strip-log-min-level", 4)
         );
 
         JobsConfig.FarmerCfg farmer = new JobsConfig.FarmerCfg(

@@ -193,6 +193,15 @@ class JobsConfigTest {
                 "lumberjack.sapling-third-tick-chance-at-max doit être dans [0,1], valeur : " + v);
     }
 
+    @Test
+    void lumberjackStripLogMinLevelValid() {
+        assertTrue(lumberjackRoot.containsKey("strip-log-min-level"),
+                "lumberjack: strip-log-min-level manquant");
+        int v = ((Number) lumberjackRoot.get("strip-log-min-level")).intValue();
+        assertTrue(v >= 0 && v <= 10,
+                "lumberjack.strip-log-min-level doit être entre 0 et 10, valeur : " + v);
+    }
+
     // ─── farmer ──────────────────────────────────────────────────────────────────
 
     @Test void farmerDropMultiplierValid()        { assertNonNegativeDoubleArray(farmerRoot, "drop-multiplier"); }

@@ -9,7 +9,8 @@
     "sapling-growth-allow-chance", "sapling-extra-growth-chance",
     "sapling-third-tick-chance-at-max", "sapling-bone-meal-chance",
     "backpack-slots",
-    "respawn-cooldown-seconds"
+    "respawn-cooldown-seconds",
+    "strip-log-min-level"
   ],
   "additionalProperties": false,
   "properties": {
@@ -24,7 +25,8 @@
     "sapling-third-tick-chance-at-max": { "type": "number", "minimum": 0, "maximum": 1,   "description": "Probabilité d'un 3e tick bonus au niveau maximum." },
     "sapling-bone-meal-chance":       { "$ref": "#/definitions/probability-array",         "description": "Probabilité que la farine d'os fonctionne sur un sapling planté par un bûcheron." },
     "backpack-slots":                 { "$ref": "#/definitions/chest-slots-array",         "description": "Nombre de slots du sac à dos (ECustomItem.BACKPACK) selon le niveau." },
-    "respawn-cooldown-seconds":       { "$ref": "#/definitions/non-negative-int-array",    "description": "Cooldown en secondes avant de réutiliser le spawn personnalisé (lit/ancre) après un respawn. Index = niveau Bûcheron." }
+    "respawn-cooldown-seconds":       { "$ref": "#/definitions/non-negative-int-array",    "description": "Cooldown en secondes avant de réutiliser le spawn personnalisé (lit/ancre) après un respawn. Index = niveau Bûcheron." },
+    "strip-log-min-level":            { "type": "integer", "minimum": 0, "maximum": 10, "description": "Niveau Bûcheron minimum requis pour décortiquer un rondin (clic droit + hache)." }
   },
   "definitions": {
     "non-negative-number-array": {

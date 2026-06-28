@@ -131,12 +131,14 @@ public final class JobsConfig {
          * après un respawn. Un niveau plus élevé donne un cooldown plus court. Index = niveau.
          */
         private final int[]    respawnCooldownSeconds;
+        /** Niveau Bûcheron minimum requis pour décortiquer un rondin (clic droit + hache). */
+        private final int      stripLogMinLevel;
 
         LumberjackCfg(double[] dropMultiplier, double[] charcoalChance, double[] appleLeafChance,
                       double[] fireDamageMultiplier, int[] treeFellerExtraLogs, int[] fireResistanceTicks,
                       double[] saplingGrowthAllowChance, double[] saplingExtraGrowthChance,
                       double saplingThirdTickChanceAtMax, double[] saplingBoneMealChance,
-                      int[] backpackSlots, int[] respawnCooldownSeconds) {
+                      int[] backpackSlots, int[] respawnCooldownSeconds, int stripLogMinLevel) {
             this.dropMultiplier             = dropMultiplier;
             this.charcoalChance             = charcoalChance;
             this.appleLeafChance            = appleLeafChance;
@@ -149,6 +151,7 @@ public final class JobsConfig {
             this.saplingBoneMealChance      = saplingBoneMealChance;
             this.backpackSlots              = backpackSlots;
             this.respawnCooldownSeconds     = respawnCooldownSeconds;
+            this.stripLogMinLevel           = stripLogMinLevel;
         }
     }
 

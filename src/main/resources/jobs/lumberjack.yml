@@ -88,6 +88,10 @@ fire-resistance-ticks:
   - 160  # niveau  9
   - 240  # niveau 10
 
+# ─── Interaction (clic droit) ─────────────────────────────────────────────────
+# Niveau Bûcheron minimum requis pour décortiquer un rondin (clic droit + hache).
+strip-log-min-level: 3
+
 # ─── Croissance des pousses d'arbres ──────────────────────────────────────────
 
 # Probabilité d'autoriser un tick de croissance des saplings (niveaux 0–4 = ralentissement)

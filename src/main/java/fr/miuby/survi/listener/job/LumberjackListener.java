@@ -48,7 +48,8 @@ import java.util.logging.Level;
  * du multiplicateur et des bonus : le drop vanilla exact est conservé (100 %).</p>
  *
  * <p>Les stripped logs sont traités à l'identique des logs normaux (multiplicateur, charbon,
- * auto-replant, tree feller). Le stripping par clic droit est bloqué avant le niveau 4.</p>
+ * auto-replant, tree feller). Le stripping par clic droit est bloqué avant {@code strip-log-min-level}
+ * (défaut : niveau 4, voir {@code jobs/lumberjack.yml}).</p>
  *
  * <p>Tous les paramètres numériques sont lus depuis {@link JobsConfig} ({@code jobs/lumberjack.yml}).</p>
  */
@@ -61,7 +62,7 @@ public class LumberjackListener implements Listener {
     }
 
     // ════════════════════════════════════════════════════════════════════════════
-    //  Stripping — bloqué avant niveau 4
+    //  Stripping — bloqué avant strip-log-min-level (config)
     // ════════════════════════════════════════════════════════════════════════════
 
     @EventHandler(ignoreCancelled = true)
@@ -73,10 +74,11 @@ public class LumberjackListener implements Listener {
         if (item == null || !MaterialUtils.AXE_MATERIALS.contains(item.getType())) return;
         AlphaPlayer alpha = AlphaPlayer.get(event.getPlayer().getUniqueId());
         int level = alpha != null ? alpha.getJobLevel(EJob.LUMBERJACK) : 0;
-        if (level >= 4) return;
+        int minLevel = JobsConfig.getInstance().getLumberjack().getStripLogMinLevel();
+        if (level >= minLevel) return;
         event.setUseInteractedBlock(Event.Result.DENY);
         MLLogManager.getInstance().log(Level.FINE, ELogTag.JOB,
-                "[Lumberjack] Stripping bloqué pour " + event.getPlayer().getName() + " (niv." + level + " < 4) @ " + block.getLocation());
+                "[Lumberjack] Stripping bloqué pour " + event.getPlayer().getName() + " (niv." + level + " < " + minLevel + ") @ " + block.getLocation());
     }
 
     // ════════════════════════════════════════════════════════════════════════════
