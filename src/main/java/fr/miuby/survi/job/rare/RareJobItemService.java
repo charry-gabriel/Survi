@@ -9,6 +9,7 @@ import fr.miuby.survi.player.AlphaPlayer;
 import fr.miuby.survi.system.lang.LangService;
 import fr.miuby.survi.system.log.ELogTag;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -156,12 +157,25 @@ public class RareJobItemService {
         PlayerRareData data = playerData.remove(uuid);
         if (data == null || !data.ready) return;
 
+        boolean shuttingDown = Bukkit.isStopping();
+
         for (Map.Entry<EJob, long[]> entry : data.jobData.entrySet()) {
             long[] jd = entry.getValue();
-            repo.save(uuid, entry.getKey(), jd[0], jd[1] == 1L);
+            if (shuttingDown) {
+                try {
+                    repo.saveSync(uuid, entry.getKey(), jd[0], jd[1] == 1L);
+                } catch (Exception ex) {
+                    MLLogManager.getInstance().log(Level.SEVERE, ELogTag.ITEM,
+                            "[RareJobItem] Échec saveSync (arrêt serveur) pour " + uuid + " / " + entry.getKey()
+                                    + " (action_count=" + jd[0] + ")", ex);
+                }
+            } else {
+                repo.save(uuid, entry.getKey(), jd[0], jd[1] == 1L);
+            }
         }
         MLLogManager.getInstance().log(Level.FINE, ELogTag.ITEM,
-                "[RareJobItem] Données déchargées et sauvegardées pour " + uuid);
+                "[RareJobItem] Données déchargées et sauvegardées pour " + uuid
+                        + (shuttingDown ? " (sync — arrêt serveur)" : " (async)"));
     }
 
     // ─── Logique métier ──────────────────────────────────────────────────────────

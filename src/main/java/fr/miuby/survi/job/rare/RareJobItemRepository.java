@@ -69,6 +69,28 @@ public class RareJobItemRepository extends MLRepository {
     }
 
     /**
+     * Sauvegarde synchrone (exécutée sur le thread appelant, sans passer par {@code runAsync}).
+     * Réservée à l'arrêt du serveur : les tâches planifiées via {@code runAsync} peuvent être
+     * annulées par le scheduler avant exécution lorsqu'elles sont planifiées pendant le
+     * {@code PlayerQuitEvent} déclenché par le kick de tous les joueurs au shutdown.
+     */
+    public void saveSync(UUID playerUuid, EJob job, long actionCount, boolean hasItem) {
+        try (PreparedStatement ps = connection.prepareStatement(
+                "INSERT INTO player_rare_job_item (player_uuid, job, action_count, has_item) VALUES (?, ?, ?, ?)" +
+                        " ON CONFLICT(player_uuid, job) DO UPDATE SET" +
+                        " action_count = excluded.action_count," +
+                        " has_item = MAX(has_item, excluded.has_item)")) {
+            ps.setString(1, playerUuid.toString());
+            ps.setString(2, job.name());
+            ps.setLong(3, actionCount);
+            ps.setInt(4, hasItem ? 1 : 0);
+            ps.executeUpdate();
+        } catch (SQLException ex) {
+            throw new RuntimeException("[RareJobItem] saveSync SQL failed for " + playerUuid + " / " + job, ex);
+        }
+    }
+
+    /**
      * Remet à zéro action_count et has_item pour un joueur/métier, en écrasant sans MAX.
      * Réservé à la commande admin de reset.
      */
