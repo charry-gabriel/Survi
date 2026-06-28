@@ -5,6 +5,7 @@ import fr.miuby.survi.job.EJob;
 import fr.miuby.survi.job.rare.RareJobItemService;
 import fr.miuby.survi.listener.PlacedBlockTracker;
 import fr.miuby.survi.system.block.MaterialUtils;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Mob;
 import org.bukkit.entity.Player;
@@ -90,9 +91,8 @@ public class RareJobItemListener implements Listener {
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onCropHarvested(BlockBreakEvent event) {
-        if (!MaterialUtils.HARVEST_CROPS.contains(event.getBlock().getType())) return;
-        // Exclure les cultures re-plantées artificiellement sur des blocs tracés
-        if (placedBlockTracker.isPlaced(event.getBlock())) return;
+        Block block = event.getBlock();
+        if (!MaterialUtils.isLegitimateHarvest(block, placedBlockTracker.isPlaced(block))) return;
         gm.getRareJobItemService().onJobAction(event.getPlayer(), EJob.FARMER);
     }
 

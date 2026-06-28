@@ -60,9 +60,11 @@ public enum EPlantFamily {
     WARPED_FUNGUS    (Material.WARPED_FUNGUS,  null, Material.WARPED_FUNGUS,  null),
 
     // ─── Plantes en croissance libre ─────────────────────────────────────────────────
-    SUGAR_CANE       (Material.SUGAR_CANE,      null, Material.SUGAR_CANE,      Material.SUGAR_CANE),
-    CACTUS           (Material.CACTUS,          null, Material.CACTUS,          Material.CACTUS),
-    BAMBOO           (Material.BAMBOO,          null, Material.BAMBOO,          null),
+    // columnGrowth = true : la base est posée par le joueur (BlockPlaceEvent → tracée),
+    // seuls les blocs qui ont poussé au-dessus ne le sont pas → isPlaced() suffit comme garde.
+    SUGAR_CANE       (Material.SUGAR_CANE,      Material.SUGAR_CANE, Material.SUGAR_CANE, Material.SUGAR_CANE, true),
+    CACTUS           (Material.CACTUS,          Material.CACTUS,     Material.CACTUS,     Material.CACTUS,     true),
+    BAMBOO           (Material.BAMBOO,          Material.BAMBOO,     Material.BAMBOO,     null,                true),
     KELP             (Material.KELP,            null, Material.KELP,            null),
     KELP_PLANT       (Material.KELP_PLANT,      null, null,               null),
     TWISTING_VINES   (Material.TWISTING_VINES,  null, Material.TWISTING_VINES,  null),
@@ -82,17 +84,30 @@ public enum EPlantFamily {
      * normalisations (ex. {@code CAVE_VINES_PLANT → CAVE_VINES}).
      */
     public final Material questTarget;
+    /**
+     * {@code true} pour les plantes posées directement par le joueur et qui poussent en colonne
+     * (canne à sucre, cactus, bambou). La base est tracée par {@code PlacedBlockTracker} ;
+     * seuls les blocs ayant poussé au-dessus ne le sont pas.
+     * Ces plantes utilisent {@code isPlaced()} comme garde anti-exploit à la place de {@code isFullyGrown()}.
+     */
+    public final boolean columnGrowth;
 
-    /** Constructeur standard : {@code questTarget = crop} (self-mapping). */
+    /** Constructeur standard : {@code questTarget = crop}, {@code columnGrowth = false}. */
     EPlantFamily(Material crop, Material seed, Material plant) {
-        this(crop, seed, plant, crop);
+        this(crop, seed, plant, crop, false);
     }
 
-    /** Constructeur explicite pour les normalisations ou les entrées sans cible quête. */
+    /** Constructeur avec questTarget explicite, {@code columnGrowth = false}. */
     EPlantFamily(Material crop, Material seed, Material plant, Material questTarget) {
+        this(crop, seed, plant, questTarget, false);
+    }
+
+    /** Constructeur complet. */
+    EPlantFamily(Material crop, Material seed, Material plant, Material questTarget, boolean columnGrowth) {
         this.crop        = crop;
         this.seed        = seed;
         this.plant       = plant;
         this.questTarget = questTarget;
+        this.columnGrowth = columnGrowth;
     }
 }

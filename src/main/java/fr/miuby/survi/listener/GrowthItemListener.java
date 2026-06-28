@@ -227,11 +227,8 @@ public class GrowthItemListener implements Listener {
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onCropBreak(BlockBreakEvent event) {
         Block block = event.getBlock();
-        if (!MaterialUtils.HARVEST_CROPS.contains(block.getType())) return;
-        if (!MaterialUtils.isFullyGrown(block)) return;
-
-        Player player = event.getPlayer();
-        GrowthItems.IncrementUses(player, "CropBreakEvent", EquipmentSlot.LEGS);
+        if (!MaterialUtils.isLegitimateHarvest(block, placedBlockTracker.isPlaced(block))) return;
+        GrowthItems.IncrementUses(event.getPlayer(), "CropBreakEvent", EquipmentSlot.LEGS);
     }
 
     // ═════════════════════════════════════════════════════════════════════════

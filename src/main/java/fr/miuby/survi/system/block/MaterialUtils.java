@@ -113,6 +113,13 @@ public final class MaterialUtils {
     /** Blocs de culture récoltables par FarmerListener (matures ou semi-matures). */
     public static final Set<Material> HARVEST_CROPS;
     /**
+     * Sous-ensemble de {@link #HARVEST_CROPS} pour les plantes posées directement par le joueur
+     * et qui poussent en colonne (canne à sucre, cactus, bambou).
+     * La base est tracée par {@code PlacedBlockTracker} ; les blocs ayant poussé au-dessus ne le sont pas.
+     * Ces blocs utilisent {@code isPlaced()} comme garde dans les listeners, à la place de {@code isFullyGrown()}.
+     */
+    public static final Set<Material> COLUMN_HARVEST_CROPS;
+    /**
      * Culture récoltable → item minimum garanti lors d'une récolte.
      * Évite de perdre ce qu'on a planté quand le multiplicateur aboutit à 0 drop.
      */
@@ -137,11 +144,12 @@ public final class MaterialUtils {
     public static final Map<Material, Material> QUEST_CROP_TARGET;
 
     static {
-        EnumSet<Material> harvestCrops   = EnumSet.noneOf(Material.class);
-        EnumSet<Material> cropBlocks     = EnumSet.noneOf(Material.class);
-        EnumSet<Material> seedItems      = EnumSet.noneOf(Material.class);
-        Map<Material, Material> cropSeed = new EnumMap<>(Material.class);
-        Map<Material, Material> questMap = new EnumMap<>(Material.class);
+        EnumSet<Material> harvestCrops       = EnumSet.noneOf(Material.class);
+        EnumSet<Material> columnHarvestCrops = EnumSet.noneOf(Material.class);
+        EnumSet<Material> cropBlocks         = EnumSet.noneOf(Material.class);
+        EnumSet<Material> seedItems          = EnumSet.noneOf(Material.class);
+        Map<Material, Material> cropSeed     = new EnumMap<>(Material.class);
+        Map<Material, Material> questMap     = new EnumMap<>(Material.class);
 
         for (EPlantFamily f : EPlantFamily.values()) {
             if (f.crop != null) {
@@ -149,6 +157,7 @@ public final class MaterialUtils {
                 if (f.seed != null) {
                     harvestCrops.add(f.crop);
                     cropSeed.put(f.crop, f.seed);
+                    if (f.columnGrowth) columnHarvestCrops.add(f.crop);
                 }
                 if (f.questTarget != null) {
                     questMap.put(f.crop, f.questTarget);
@@ -161,11 +170,12 @@ public final class MaterialUtils {
         cropBlocks.addAll(SAPLING_MATERIALS);
         seedItems.addAll(SAPLING_MATERIALS);
 
-        HARVEST_CROPS     = Collections.unmodifiableSet(harvestCrops);
-        CROP_SEED         = Collections.unmodifiableMap(cropSeed);
-        CROP_BLOCKS       = Collections.unmodifiableSet(cropBlocks);
-        SEED_ITEMS        = Collections.unmodifiableSet(seedItems);
-        QUEST_CROP_TARGET = Collections.unmodifiableMap(questMap);
+        HARVEST_CROPS        = Collections.unmodifiableSet(harvestCrops);
+        COLUMN_HARVEST_CROPS = Collections.unmodifiableSet(columnHarvestCrops);
+        CROP_SEED            = Collections.unmodifiableMap(cropSeed);
+        CROP_BLOCKS          = Collections.unmodifiableSet(cropBlocks);
+        SEED_ITEMS           = Collections.unmodifiableSet(seedItems);
+        QUEST_CROP_TARGET    = Collections.unmodifiableMap(questMap);
     }
 
     // ─── Méthodes utilitaires cultures (anciennement PlantedCropUtils) ───────
@@ -197,6 +207,25 @@ public final class MaterialUtils {
     public static boolean isFullyGrown(Block block) {
         if (!(block.getBlockData() instanceof Ageable ageable)) return true;
         return ageable.getAge() >= ageable.getMaximumAge();
+    }
+
+    /**
+     * {@code true} si casser ce bloc compte comme une récolte légitime du Fermier.
+     *
+     * <ul>
+     *   <li>Cultures {@code Ageable} (blé, carotte…) : le bloc doit être à maturité complète.</li>
+     *   <li>Plantes en colonne (canne à sucre, cactus, bambou) : le bloc ne doit pas avoir été
+     *       posé par le joueur — la base placée est tracée par {@code PlacedBlockTracker},
+     *       seuls les blocs ayant poussé au-dessus ne le sont pas.</li>
+     * </ul>
+     *
+     * @param block    le bloc cassé
+     * @param isPlaced résultat de {@code PlacedBlockTracker.isPlaced(block)} pour ce bloc
+     */
+    public static boolean isLegitimateHarvest(Block block, boolean isPlaced) {
+        if (!HARVEST_CROPS.contains(block.getType())) return false;
+        if (COLUMN_HARVEST_CROPS.contains(block.getType())) return !isPlaced;
+        return isFullyGrown(block);
     }
 
     // ═══════════════════════════════════════════════════════════════════════════
