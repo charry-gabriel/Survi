@@ -1,7 +1,10 @@
 package fr.miuby.survi.listener.job;
 
+import fr.miuby.lib.log.MLLogManager;
 import fr.miuby.survi.job.EJob;
 import fr.miuby.survi.job.config.JobsConfig;
+import fr.miuby.survi.system.log.ELogTag;
+import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.inventory.ItemStack;
@@ -9,6 +12,7 @@ import org.bukkit.inventory.ItemStack;
 import java.util.Collection;
 import java.util.List;
 import java.util.Random;
+import java.util.logging.Level;
 
 /**
  * Utilitaires statiques partagés entre les listeners de métiers.
@@ -52,11 +56,27 @@ final class JobUtils {
             if (amount > 0) {
                 ItemStack toDrop = drop.clone();
                 toDrop.setAmount(amount);
-                block.getWorld().dropItemNaturally(block.getLocation(), toDrop);
+                dropAtBlock(block, toDrop);
                 dropped = true;
             }
         }
         return dropped;
+    }
+
+    /**
+     * Drop un item exactement au centre du bloc cassé, sans offset aléatoire ni vélocité
+     * (contrairement à {@code dropItemNaturally}, qui fait "sauter" l'item autour du bloc).
+     */
+    static void dropAtBlock(Block block, ItemStack item) {
+        if (item == null || item.getType().isAir() || item.getAmount() <= 0) {
+            MLLogManager.getInstance().log(Level.WARNING, ELogTag.ITEM,
+                    "[DropAtBlock] Item invalide ignoré @ " + block.getLocation());
+            return;
+        }
+        Location loc = block.getLocation().add(0.5, 0.5, 0.5);
+        block.getWorld().dropItem(loc, item);
+        MLLogManager.getInstance().log(Level.FINE, ELogTag.ITEM,
+                "[DropAtBlock] " + item.getAmount() + "x " + item.getType() + " @ " + loc);
     }
 
     /**

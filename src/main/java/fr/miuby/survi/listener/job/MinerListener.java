@@ -101,7 +101,7 @@ public class MinerListener implements Listener {
                 if (JobUtils.RANDOM.nextDouble() < total - amt) amt++;
                 if (amt > 0) {
                     ItemStack d = drop.clone(); d.setAmount(amt);
-                    ore.getWorld().dropItemNaturally(ore.getLocation(), d);
+                    JobUtils.dropAtBlock(ore, d);
                 }
             }
             player.damageItemStack(EquipmentSlot.HAND, 1);

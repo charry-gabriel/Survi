@@ -133,7 +133,7 @@ public class LumberjackListener implements Listener {
 
     private static void dropBonusCharcoal(Block block, int level, JobsConfig.LumberjackCfg lj) {
         if (JobUtils.RANDOM.nextDouble() < lj.getCharcoalChance()[level])
-            block.getWorld().dropItemNaturally(block.getLocation(), new ItemStack(Material.CHARCOAL));
+            JobUtils.dropAtBlock(block, new ItemStack(Material.CHARCOAL));
     }
 
     // ─── Pommes (courbe complète, remplace la chance vanilla) ─────────────────────
@@ -144,10 +144,10 @@ public class LumberjackListener implements Listener {
         event.setDropItems(false);
         for (ItemStack drop : vanilla) {
             if (drop.getType() == Material.APPLE) continue;
-            block.getWorld().dropItemNaturally(block.getLocation(), drop);
+            JobUtils.dropAtBlock(block, drop);
         }
         if (JobUtils.RANDOM.nextDouble() < lj.getAppleLeafChance()[level])
-            block.getWorld().dropItemNaturally(block.getLocation(), new ItemStack(Material.APPLE));
+            JobUtils.dropAtBlock(block, new ItemStack(Material.APPLE));
     }
 
     // ─── Auto-replant ─────────────────────────────────────────────────────────────
@@ -199,7 +199,7 @@ public class LumberjackListener implements Listener {
                 if (JobUtils.RANDOM.nextDouble() < total - amt) amt++;
                 if (amt > 0) {
                     ItemStack d = drop.clone(); d.setAmount(amt);
-                    log.getWorld().dropItemNaturally(log.getLocation(), d);
+                    JobUtils.dropAtBlock(log, d);
                 }
             }
             player.damageItemStack(EquipmentSlot.HAND, 1);

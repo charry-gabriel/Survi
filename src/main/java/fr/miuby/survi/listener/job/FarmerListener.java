@@ -29,7 +29,7 @@ public class FarmerListener implements Listener {
             boolean dropped = JobUtils.dropWithMultiplier(event, JobUtils.getMultiplier(EJob.FARMER, level));
             if (!dropped) {
                 Material seed = MaterialUtils.CROP_SEED.get(event.getBlock().getType());
-                if (seed != null) event.getBlock().getWorld().dropItemNaturally(event.getBlock().getLocation(), new ItemStack(seed));
+                if (seed != null) JobUtils.dropAtBlock(event.getBlock(), new ItemStack(seed));
             }
         }
     }
