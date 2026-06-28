@@ -158,8 +158,8 @@ public class GrowthItemListener implements Listener {
 
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onOreBreak(BlockBreakEvent event) {
-        if (!MaterialUtils.ORE_BLOCKS.contains(event.getBlock().getType())) return;
-        if (placedBlockTracker.isPlaced(event.getBlock())) return;
+        Block block = event.getBlock();
+        if (!MaterialUtils.isLegitimateMineBreak(block, placedBlockTracker.isPlaced(block))) return;
         Player player = event.getPlayer();
         GrowthItems.IncrementUses(player, "OreBreakEvent", EquipmentSlot.HEAD);
         GrowthItems.IncrementUses(player, "OreBreakEvent", EquipmentSlot.LEGS);
@@ -176,8 +176,8 @@ public class GrowthItemListener implements Listener {
      */
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onLogBreak(BlockBreakEvent event) {
-        if (!MaterialUtils.LOG_BLOCKS.contains(event.getBlock().getType())) return;
-        if (placedBlockTracker.isPlaced(event.getBlock())) return;
+        Block block = event.getBlock();
+        if (!MaterialUtils.isLegitimateLumberBreak(block, placedBlockTracker.isPlaced(block))) return;
         Player player = event.getPlayer();
         GrowthItems.IncrementUses(player, "LogBreakEvent", EquipmentSlot.HAND, EquipmentSlot.OFF_HAND);
         GrowthItems.IncrementUses(player, "LogBreakEvent", EquipmentSlot.HEAD);

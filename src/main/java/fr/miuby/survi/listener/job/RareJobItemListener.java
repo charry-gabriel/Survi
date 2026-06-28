@@ -72,9 +72,8 @@ public class RareJobItemListener implements Listener {
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onOreBroken(BlockBreakEvent event) {
-        if (!MaterialUtils.ORE_BLOCKS.contains(event.getBlock().getType())) return;
-        // Exclure les minerais replacés manuellement par des joueurs
-        if (placedBlockTracker.isPlaced(event.getBlock())) return;
+        Block block = event.getBlock();
+        if (!MaterialUtils.isLegitimateMineBreak(block, placedBlockTracker.isPlaced(block))) return;
         gm.getRareJobItemService().onJobAction(event.getPlayer(), EJob.MINER);
     }
 
@@ -82,8 +81,8 @@ public class RareJobItemListener implements Listener {
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onLogBroken(BlockBreakEvent event) {
-        if (!MaterialUtils.LOG_BLOCKS.contains(event.getBlock().getType())) return;
-        if (placedBlockTracker.isPlaced(event.getBlock())) return;
+        Block block = event.getBlock();
+        if (!MaterialUtils.isLegitimateLumberBreak(block, placedBlockTracker.isPlaced(block))) return;
         gm.getRareJobItemService().onJobAction(event.getPlayer(), EJob.LUMBERJACK);
     }
 

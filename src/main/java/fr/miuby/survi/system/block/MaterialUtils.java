@@ -210,6 +210,28 @@ public final class MaterialUtils {
     }
 
     /**
+     * {@code true} si casser ce bloc compte comme un cassage de minerai légitime pour le Mineur.
+     * Exclut les minerais posés manuellement par un joueur.
+     *
+     * @param block    le bloc cassé
+     * @param isPlaced résultat de {@code PlacedBlockTracker.isPlaced(block)} pour ce bloc
+     */
+    public static boolean isLegitimateMineBreak(Block block, boolean isPlaced) {
+        return ORE_BLOCKS.contains(block.getType()) && !isPlaced;
+    }
+
+    /**
+     * {@code true} si casser ce bloc compte comme un cassage de bûche légitime pour le Bûcheron.
+     * Exclut les bûches posées manuellement par un joueur.
+     *
+     * @param block    le bloc cassé
+     * @param isPlaced résultat de {@code PlacedBlockTracker.isPlaced(block)} pour ce bloc
+     */
+    public static boolean isLegitimateLumberBreak(Block block, boolean isPlaced) {
+        return LOG_BLOCKS.contains(block.getType()) && !isPlaced;
+    }
+
+    /**
      * {@code true} si casser ce bloc compte comme une récolte légitime du Fermier.
      *
      * <ul>
