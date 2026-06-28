@@ -1,0 +1,93 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "rare_items.yml",
+  "description": "Configuration des items rares de collection liés aux métiers. Rechargeable à chaud via /survi reload rare_items.",
+  "type": "object",
+  "required": ["max-chance", "save-every", "min-job-level", "suspicious-window-ms", "jobs"],
+  "additionalProperties": false,
+  "properties": {
+    "max-chance": {
+      "type": "number",
+      "description": "Probabilité maximale d'obtenir un objet rare (0.0001 = 0.01 %).",
+      "exclusiveMinimum": 0,
+      "maximum": 1
+    },
+    "save-every": {
+      "type": "integer",
+      "description": "Flush en DB toutes les N actions.",
+      "minimum": 1
+    },
+    "min-job-level": {
+      "type": "integer",
+      "description": "Niveau de métier minimum avant que la chance ne s'active.",
+      "minimum": 0
+    },
+    "suspicious-window-ms": {
+      "type": "integer",
+      "description": "Fenêtre glissante de détection d'activité suspecte en millisecondes.",
+      "minimum": 1000
+    },
+    "jobs": {
+      "type": "object",
+      "description": "Configuration par métier.",
+      "required": ["MINER", "LUMBERJACK", "FARMER", "ENCHANTER", "FISHERMAN", "EXPLORER"],
+      "additionalProperties": false,
+      "properties": {
+        "MINER":      { "$ref": "#/$defs/jobEntry" },
+        "LUMBERJACK": { "$ref": "#/$defs/jobEntry" },
+        "FARMER":     { "$ref": "#/$defs/jobEntry" },
+        "ENCHANTER":  { "$ref": "#/$defs/jobEntry" },
+        "FISHERMAN":  { "$ref": "#/$defs/jobEntry" },
+        "EXPLORER":   { "$ref": "#/$defs/explorerEntry" }
+      }
+    }
+  },
+  "$defs": {
+    "jobEntry": {
+      "type": "object",
+      "required": ["threshold", "growth-range", "suspicious-threshold"],
+      "additionalProperties": false,
+      "properties": {
+        "threshold": {
+          "type": "integer",
+          "description": "Nombre d'actions avant que la chance ne débute.",
+          "minimum": 0
+        },
+        "growth-range": {
+          "type": "integer",
+          "description": "Nombre d'actions supplémentaires pour atteindre max-chance.",
+          "minimum": 1
+        },
+        "suspicious-threshold": {
+          "type": "integer",
+          "description": "Actions dans la fenêtre avant qu'un WARNING anti-cheat soit loggué.",
+          "minimum": 1
+        }
+      }
+    },
+    "explorerEntry": {
+      "type": "object",
+      "required": ["threshold", "growth-range", "suspicious-threshold", "min-distance"],
+      "additionalProperties": false,
+      "properties": {
+        "threshold": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "growth-range": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "suspicious-threshold": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "min-distance": {
+          "type": "number",
+          "description": "Distance minimale du point 0,0 (en blocs) pour que le kill de l'explorateur compte.",
+          "minimum": 0
+        }
+      }
+    }
+  }
+}

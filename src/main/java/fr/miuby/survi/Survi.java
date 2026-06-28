@@ -122,5 +122,6 @@ public class Survi extends JavaPlugin {
         MLResourceManager.deploy(this, "recipes.yml");
         MLResourceManager.deploy(this, "monsters.yml");
         MLResourceManager.deploy(this, "roles.yml");
+        MLResourceManager.deploy(this, "rare_items.yml");
     }
 }

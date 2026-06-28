@@ -303,6 +303,9 @@ cmd.reload.zone.start: "<gray>Rechargement de zone.yml..."
 cmd.reload.zone.done: "<green>✔ zone.yml rechargé. Palier courant ré-appliqué (limite, spawn, portail)."
 cmd.reload.lang.start: "<gray>Rechargement de lang/fr.yml..."
 cmd.reload.lang.done: "<green>✔ lang/fr.yml rechargé."
+cmd.reload.rare_items.start: "<gray>Rechargement de rare_items.yml..."
+cmd.reload.rare_items.done: "<green>✔ rare_items.yml rechargé. Seuils, chances et distance explorateur actifs immédiatement."
+
 # ─── Rôle — notification joueur ───────────────────────────────────────────────
 player.role.applied: "<yellow>Le role <role> a ete appliqué !"
 
@@ -443,6 +446,7 @@ cmd.reload.all.done: |-
   <gray>  monsters.yml ✔ — roles.yml ✔ (joueurs connectés mis à jour) — growth_items/*.yml ✔
   <gray>  villagers/*.yml + traders/*.yml ✔ (entités en jeu mises à jour, inventaires recalculés)
   <gray>  jobs/*.yml ✔ (drops, multiplicateurs, matériaux de remplacement actifs immédiatement)
+  <gray>  rare_items.yml ✔ (seuils, chances et distance explorateur actifs immédiatement)
   <yellow>  ⚠ recipes.yml et config.yml nécessitent un redémarrage.
 
 # ─── Pêcheur — Potions alchimiques ───────────────────────────────────────────

@@ -33,7 +33,8 @@ public class ReloadCommand {
                 .then(Commands.literal("jobs").executes(ReloadCommand::reloadJobs))
                 .then(Commands.literal("recipes").executes(ReloadCommand::reloadRecipes))
                 .then(Commands.literal("zone").executes(ReloadCommand::reloadZone))
-                .then(Commands.literal("lang").executes(ReloadCommand::reloadLang));
+                .then(Commands.literal("lang").executes(ReloadCommand::reloadLang))
+                .then(Commands.literal("rare_items").executes(ReloadCommand::reloadRareItems));
     }
 
     private static int reloadAll(CommandContext<CommandSourceStack> ctx) {
@@ -54,6 +55,7 @@ public class ReloadCommand {
         GameManager.getInstance().getCustomRecipeFactory().reload();
         GameManager.getInstance().getVillageZoneManager().reloadConfig();
         GameManager.getInstance().getLangService().reload();
+        GameManager.getInstance().getRareJobItemService().reload();
 
         sender.sendMessage(ls.text(lang, "cmd.reload.all.done", quests, globalQuests));
         return Command.SINGLE_SUCCESS;
@@ -157,6 +159,16 @@ public class ReloadCommand {
         sender.sendMessage(ls.text(lang, "cmd.reload.lang.start"));
         GameManager.getInstance().getLangService().reload();
         sender.sendMessage(ls.text(lang, "cmd.reload.lang.done"));
+        return Command.SINGLE_SUCCESS;
+    }
+
+    private static int reloadRareItems(CommandContext<CommandSourceStack> ctx) {
+        CommandSender sender = ctx.getSource().getSender();
+        LangService   ls     = ls();
+        ELang         lang   = lang(sender);
+        sender.sendMessage(ls.text(lang, "cmd.reload.rare_items.start"));
+        GameManager.getInstance().getRareJobItemService().reload();
+        sender.sendMessage(ls.text(lang, "cmd.reload.rare_items.done"));
         return Command.SINGLE_SUCCESS;
     }
 

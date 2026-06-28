@@ -26,66 +26,27 @@ import java.util.logging.Level;
  * <p>Chaque métier possède un objet unique qu'un joueur ne peut obtenir qu'une seule fois.
  * La chance de l'obtenir est débloquée à partir d'un certain nombre d'actions métier
  * (minerais cassés, bûches, récoltes, enchantements, poissons, monstres tués loin).
- * Elle augmente linéairement jusqu'à un plafond de 0,01 % (1 chance sur 10 000).</p>
+ * Elle augmente linéairement jusqu'à un plafond configurable (par défaut 0,01 %).</p>
  *
  * <h3>Formule</h3>
  * <pre>
  *   effectiveActions = max(0, actionCount − threshold[job])
- *   chance = min(0,0001 ; effectiveActions × 0,0001 / growthRange[job])
+ *   chance = min(max-chance ; effectiveActions × max-chance / growthRange[job])
  * </pre>
  *
- * Pour l'Explorateur le seuil est positionnel (≥ 600 blocs du 0,0), vérifié par
- * {@link fr.miuby.survi.listener.job.RareJobItemListener}, donc threshold=0 ici.
+ * <p>Tous les seuils et paramètres sont lus depuis {@link RareItemConfig} ({@code rare_items.yml})
+ * et rechargés à chaud via {@link #reload()}.</p>
+ *
+ * Pour l'Explorateur le seuil est positionnel (distance configurable du 0,0), vérifié par
+ * {@link fr.miuby.survi.listener.job.RareJobItemListener}, donc threshold=0 dans le YAML.
  */
 public class RareJobItemService {
 
-    // ─── Constantes ──────────────────────────────────────────────────────────────
+    // ─── Objet rare par métier (ne change pas au reload) ─────────────────────────
 
-    private static final double MAX_CHANCE  = 0.0001; // 0,01 %
-    private static final int    SAVE_EVERY  = 25;     // flush DB toutes les 25 actions
-
-    /** Niveau métier minimum requis avant que la chance ne commence à s'activer. */
-    private static final int MIN_JOB_LEVEL = 5;
-
-    /**
-     * Fenêtre de détection des activités suspectes (10 minutes).
-     * Si un joueur dépasse {@link #SUSPICIOUS_THRESHOLDS} dans cette fenêtre, un WARNING est loggé.
-     */
-    private static final long SUSPICIOUS_WINDOW_MS = 10 * 60 * 1_000L;
-
-    /** Seuils au-delà desquels l'activité est considérée suspecte (par fenêtre de 10 min). */
-    private static final Map<EJob, Long> SUSPICIOUS_THRESHOLDS = new EnumMap<>(EJob.class);
-
-    /** Nombre d'actions minimum avant que la chance ne soit débloquée. */
-    private static final Map<EJob, Long> THRESHOLDS = new EnumMap<>(EJob.class);
-    /** Nombre d'actions au-delà du seuil pour atteindre MAX_CHANCE. */
-    private static final Map<EJob, Long> GROWTH_RANGES = new EnumMap<>(EJob.class);
-    /** Objet rare associé à chaque métier. */
     private static final Map<EJob, ECustomItem> RARE_ITEMS = new EnumMap<>(EJob.class);
 
     static {
-        THRESHOLDS.put(EJob.MINER,       5_000L);
-        THRESHOLDS.put(EJob.LUMBERJACK,  3_000L);
-        THRESHOLDS.put(EJob.FARMER,     10_000L);
-        THRESHOLDS.put(EJob.ENCHANTER,     500L);
-        THRESHOLDS.put(EJob.FISHERMAN,     500L);
-        THRESHOLDS.put(EJob.EXPLORER,        0L);
-
-        GROWTH_RANGES.put(EJob.MINER,       50_000L);  // ×10 — minage régulier
-        GROWTH_RANGES.put(EJob.LUMBERJACK,  30_000L);  // ×10
-        GROWTH_RANGES.put(EJob.FARMER,     200_000L);  // ×100 — actions très rapides
-        GROWTH_RANGES.put(EJob.ENCHANTER,    2_000L);  // ×10
-        GROWTH_RANGES.put(EJob.FISHERMAN,    5_000L);  // ×10
-        GROWTH_RANGES.put(EJob.EXPLORER,     5_000L);  // ×10
-
-        // Seuils suspects (10 min) — clairement anormaux, pas de faux positifs sur AFK farms raisonnables
-        SUSPICIOUS_THRESHOLDS.put(EJob.MINER,        100L); // >800 vrais minerais/10min = hack évident
-        SUSPICIOUS_THRESHOLDS.put(EJob.LUMBERJACK,   500L); // >1000 bûches/10min
-        SUSPICIOUS_THRESHOLDS.put(EJob.FARMER,     1_000L); // >5000 récoltes/10min
-        SUSPICIOUS_THRESHOLDS.put(EJob.ENCHANTER,     50L); // >100 enchantements/10min = exploit XP
-        SUSPICIOUS_THRESHOLDS.put(EJob.FISHERMAN,     50L); // >500 poissons/10min = plusieurs farms simultanés
-        SUSPICIOUS_THRESHOLDS.put(EJob.EXPLORER,      50L); // >500 kills/10min au-delà de 600 blocs
-
         RARE_ITEMS.put(EJob.MINER,      ECustomItem.RARE_MINER);
         RARE_ITEMS.put(EJob.LUMBERJACK, ECustomItem.RARE_LUMBERJACK);
         RARE_ITEMS.put(EJob.FARMER,     ECustomItem.RARE_FARMER);
@@ -198,7 +159,7 @@ public class RareJobItemService {
 
         // ── Garde : niveau métier minimum ────────────────────────────────────
         AlphaPlayer alpha = AlphaPlayer.get(uuid);
-        if (alpha.getJobLevel(job) < MIN_JOB_LEVEL) return;
+        if (alpha.getJobLevel(job) < RareItemConfig.getInstance().getMinJobLevel()) return;
 
         // ── Détection d'activité suspecte (loggue un WARNING, ne bloque pas) ─
         checkSuspiciousActivity(player, job, data);
@@ -211,7 +172,8 @@ public class RareJobItemService {
         long actionCount = jd[0];
 
         // Flush périodique en DB
-        if (actionCount % SAVE_EVERY == 0) {
+        int saveEvery = RareItemConfig.getInstance().getSaveEvery();
+        if (actionCount % saveEvery == 0) {
             repo.save(uuid, job, actionCount, false);
             MLLogManager.getInstance().log(Level.FINE, ELogTag.ITEM,
                     "[RareJobItem] Flush action_count=" + actionCount + " pour " + player.getName() + " / " + job);
@@ -241,7 +203,7 @@ public class RareJobItemService {
 
     /** Seuil d'actions minimal avant que la chance ne s'active pour ce métier. */
     public static long getThreshold(EJob job) {
-        return THRESHOLDS.get(job);
+        return RareItemConfig.getInstance().getThreshold(job);
     }
 
     /**
@@ -260,31 +222,43 @@ public class RareJobItemService {
                 "[RareJobItem] resetJobData : " + uuid + " / " + job.name());
     }
 
+    /**
+     * Recharge la configuration depuis {@code rare_items.yml}.
+     * Les joueurs connectés bénéficient immédiatement des nouveaux seuils et chances.
+     */
+    public void reload() {
+        RareItemConfig.getInstance().reload(GameManager.getInstance().getPlugin());
+        MLLogManager.getInstance().log(Level.INFO, ELogTag.ITEM,
+                "[RareJobItem] Config rechargée depuis rare_items.yml");
+    }
+
     // ─── Privé ───────────────────────────────────────────────────────────────────
 
     /**
-     * Calcule la chance (probabilité entre 0 et MAX_CHANCE) d'obtenir l'objet rare.
+     * Calcule la chance (probabilité entre 0 et max-chance) d'obtenir l'objet rare.
      * Retourne 0 si le seuil n'est pas encore atteint.
      */
     public static double computeChance(EJob job, long actionCount) {
-        long threshold   = THRESHOLDS.get(job);
-        long growthRange = GROWTH_RANGES.get(job);
-        long effective   = actionCount - threshold;
+        RareItemConfig cfg       = RareItemConfig.getInstance();
+        long           threshold  = cfg.getThreshold(job);
+        long           growthRange = cfg.getGrowthRange(job);
+        long           effective  = actionCount - threshold;
         if (effective <= 0) return 0;
-        return Math.min(MAX_CHANCE, effective * MAX_CHANCE / growthRange);
+        double maxChance = cfg.getMaxChance();
+        return Math.min(maxChance, effective * maxChance / growthRange);
     }
 
     /**
      * Détecte une activité anormalement rapide et loggue un WARNING.
      * N'empêche pas les actions de compter — sert uniquement d'alerte admin.
-     * Le WARNING n'est émis qu'une seule fois par fenêtre de 10 minutes.
+     * Le WARNING n'est émis qu'une seule fois par fenêtre.
      */
     private void checkSuspiciousActivity(Player player, EJob job, PlayerRareData data) {
+        RareItemConfig cfg = RareItemConfig.getInstance();
         long now = System.currentTimeMillis();
         long[] w = data.suspectWindow.computeIfAbsent(job, k -> new long[]{0L, now, 0L});
 
-        // Réinitialiser la fenêtre si expirée
-        if (now - w[1] > SUSPICIOUS_WINDOW_MS) {
+        if (now - w[1] > cfg.getSuspiciousWindowMs()) {
             w[0] = 0L;
             w[1] = now;
             w[2] = 0L;
@@ -292,13 +266,13 @@ public class RareJobItemService {
 
         w[0]++;
 
-        // Logguer une seule fois par fenêtre quand le seuil est dépassé
-        if (w[2] == 0L && w[0] >= SUSPICIOUS_THRESHOLDS.get(job)) {
+        long suspiciousThreshold = cfg.getSuspiciousThreshold(job);
+        if (w[2] == 0L && w[0] >= suspiciousThreshold) {
             w[2] = 1L;
             MLLogManager.getInstance().log(Level.WARNING, ELogTag.ITEM,
                     "[RareJobItem] ⚠ Activité SUSPECTE — " + player.getName()
                             + " a accumulé " + w[0] + " actions [" + job.name()
-                            + "] en moins de 10 minutes (seuil=" + SUSPICIOUS_THRESHOLDS.get(job) + ").");
+                            + "] en moins de " + (cfg.getSuspiciousWindowMs() / 60_000L) + " minutes (seuil=" + suspiciousThreshold + ").");
         }
     }
 

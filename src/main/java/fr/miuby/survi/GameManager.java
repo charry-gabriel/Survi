@@ -5,6 +5,7 @@ import fr.miuby.lib.log.MLLogManager;
 import fr.miuby.survi.grave.GraveManager;
 import fr.miuby.survi.food.FoodOfTheDayManager;
 import fr.miuby.survi.job.alchemic.CustomPotionManager;
+import fr.miuby.survi.job.rare.RareItemConfig;
 import fr.miuby.survi.job.rare.RareJobItemService;
 import fr.miuby.survi.mob.MobLevelManager;
 import fr.miuby.survi.player.service.OfflineNotificationService;
@@ -224,6 +225,7 @@ public class GameManager {
 
         this.foodOfTheDayManager = new FoodOfTheDayManager();
 
+        RareItemConfig.getInstance().load(plugin);
         this.rareJobItemService = new RareJobItemService(database.rareJobItems());
     }
 

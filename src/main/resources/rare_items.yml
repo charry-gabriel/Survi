@@ -1,0 +1,50 @@
+# yaml-language-server: $schema=./schema/rare-items-schema.json
+# Configuration des items rares de collection liés aux métiers
+# Rechargeable à chaud via /survi reload rare_items
+
+# ── Paramètres globaux ───────────────────────────────────────────────────────
+
+# Probabilité maximale d'obtenir un objet rare (0.0001 = 0.01 %)
+max-chance: 0.0001
+
+# Sauvegarde en DB toutes les N actions (flush périodique)
+save-every: 25
+
+# Niveau de métier minimum avant que la chance ne commence à s'activer
+min-job-level: 5
+
+# Fenêtre de détection d'activité suspecte en millisecondes (600 000 = 10 minutes)
+suspicious-window-ms: 600000
+
+# ── Configuration par métier ─────────────────────────────────────────────────
+# threshold            : nombre d'actions avant que la chance ne débute
+# growth-range         : nombre d'actions supplémentaires pour atteindre max-chance
+# suspicious-threshold : actions dans la fenêtre avant qu'un WARNING soit loggué
+# (EXPLORER uniquement) min-distance : distance minimale du 0,0 en blocs
+jobs:
+  MINER:
+    threshold: 5000
+    growth-range: 50000
+    suspicious-threshold: 100
+  LUMBERJACK:
+    threshold: 3000
+    growth-range: 30000
+    suspicious-threshold: 500
+  FARMER:
+    threshold: 10000
+    growth-range: 200000
+    suspicious-threshold: 1000
+  ENCHANTER:
+    threshold: 500
+    growth-range: 2000
+    suspicious-threshold: 50
+  FISHERMAN:
+    threshold: 500
+    growth-range: 5000
+    suspicious-threshold: 50
+  EXPLORER:
+    threshold: 0
+    growth-range: 5000
+    suspicious-threshold: 50
+    # Distance minimale du point 0,0 (en blocs) pour que le kill compte
+    min-distance: 600

@@ -2,6 +2,7 @@ package fr.miuby.survi.listener.job;
 
 import fr.miuby.survi.GameManager;
 import fr.miuby.survi.job.EJob;
+import fr.miuby.survi.job.rare.RareItemConfig;
 import fr.miuby.survi.job.rare.RareJobItemService;
 import fr.miuby.survi.listener.PlacedBlockTracker;
 import fr.miuby.survi.system.block.MaterialUtils;
@@ -30,14 +31,13 @@ import org.bukkit.event.player.PlayerQuitEvent;
  *   <li><b>Fermier</b>  — récolte de culture (BlockBreakEvent)</li>
  *   <li><b>Enchanteur</b> — enchantement appliqué (EnchantItemEvent)</li>
  *   <li><b>Pêcheur</b>  — poisson attrapé (PlayerFishEvent CAUGHT_FISH)</li>
- *   <li><b>Explorateur</b> — monstre tué à plus de 600 blocs du 0,0 (EntityDeathEvent)</li>
+ *   <li><b>Explorateur</b> — monstre tué à une distance configurable du 0,0 (EntityDeathEvent)</li>
  * </ul>
+ *
+ * La distance minimale de l'Explorateur est lue depuis {@link RareItemConfig} et mise à jour
+ * à chaque reload sans redémarrage.
  */
 public class RareJobItemListener implements Listener {
-
-
-    /** Distance horizontale au carré depuis laquelle l'Explorateur peut obtenir son objet. */
-    private static final double EXPLORER_DIST_SQ = 600.0 * 600.0;
 
     // ─── Références ──────────────────────────────────────────────────────────────
 
@@ -110,7 +110,7 @@ public class RareJobItemListener implements Listener {
         gm.getRareJobItemService().onJobAction(event.getPlayer(), EJob.FISHERMAN);
     }
 
-    // ─── Explorateur — monstre tué à plus de 600 blocs du 0,0 ───────────────────
+    // ─── Explorateur — monstre tué à la distance configurée du 0,0 ──────────────
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onMobKill(EntityDeathEvent event) {
@@ -121,7 +121,7 @@ public class RareJobItemListener implements Listener {
 
         double x = killer.getLocation().getX();
         double z = killer.getLocation().getZ();
-        if (x * x + z * z < EXPLORER_DIST_SQ) return;
+        if (x * x + z * z < RareItemConfig.getInstance().getExplorerMinDistanceSq()) return;
 
         gm.getRareJobItemService().onJobAction(killer, EJob.EXPLORER);
     }
