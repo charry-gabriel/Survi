@@ -351,13 +351,13 @@ public class PlayerListener implements Listener {
 
         if (onCooldown) {
             long remaining = expiryTs - now;
-            player.sendActionBar(gm.getLangService().text(player, "respawn.cooldown.actionbar", formatDuration(remaining)));
+            player.sendMessage(gm.getLangService().text(player, "respawn.cooldown.actionbar", formatDuration(remaining)));
             MLLogManager.getInstance().log(Level.FINE, ELogTag.PLAYER,
-                    "[RespawnBlock] " + player.getName() + " inspecte bloc respawn — cooldown restant=" + (remaining / 1000) + "s");
+                    "[RespawnBlock] " + player.getName() + " inspecte bloc respawn — cooldown restant=" + (remaining / 1000) + "s (chat, evite ecrasement action bar vanilla sommeil)");
         } else {
-            player.sendActionBar(gm.getLangService().text(player, "respawn.cooldown.ready"));
+            player.sendMessage(gm.getLangService().text(player, "respawn.cooldown.ready"));
             MLLogManager.getInstance().log(Level.FINE, ELogTag.PLAYER,
-                    "[RespawnBlock] " + player.getName() + " inspecte bloc respawn — prêt");
+                    "[RespawnBlock] " + player.getName() + " inspecte bloc respawn — prêt (chat, evite ecrasement action bar vanilla sommeil)");
         }
     }
 
