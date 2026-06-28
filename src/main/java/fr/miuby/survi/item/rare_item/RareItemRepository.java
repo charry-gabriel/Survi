@@ -1,4 +1,4 @@
-package fr.miuby.survi.job.rare;
+package fr.miuby.survi.item.rare_item;
 
 import fr.miuby.lib.sqlite.MLRepository;
 import fr.miuby.lib.sqlite.MLSQLite;
@@ -13,15 +13,15 @@ import java.util.EnumMap;
 import java.util.Map;
 import java.util.UUID;
 
-public class RareJobItemRepository extends MLRepository {
+public class RareItemRepository extends MLRepository {
 
-    public RareJobItemRepository(Connection connection, MLSQLite db) {
+    public RareItemRepository(Connection connection, MLSQLite db) {
         super(connection, db);
     }
 
     /**
      * Charge toutes les entrées rare-item d'un joueur depuis la DB.
-     * Appelé en thread async par {@link RareJobItemService}.
+     * Appelé en thread async par {@link RareItemService}.
      * Retourne un EnumMap vide si le joueur n'a aucune entrée.
      *
      * @return map job → long[]{actionCount, hasItem (0 ou 1)}

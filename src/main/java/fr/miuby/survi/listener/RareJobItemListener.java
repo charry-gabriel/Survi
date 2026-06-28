@@ -1,10 +1,9 @@
-package fr.miuby.survi.listener.job;
+package fr.miuby.survi.listener;
 
 import fr.miuby.survi.GameManager;
 import fr.miuby.survi.job.EJob;
-import fr.miuby.survi.job.rare.RareItemConfig;
-import fr.miuby.survi.job.rare.RareJobItemService;
-import fr.miuby.survi.listener.PlacedBlockTracker;
+import fr.miuby.survi.item.rare_item.RareItemConfig;
+import fr.miuby.survi.item.rare_item.RareItemService;
 import fr.miuby.survi.system.block.MaterialUtils;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
@@ -23,7 +22,7 @@ import org.bukkit.event.player.PlayerQuitEvent;
 /**
  * Écoute les events liés aux métiers pour alimenter le système d'objets rares de collection.
  *
- * <p>Chaque action qualifiante délègue à {@link RareJobItemService#onJobAction}.</p>
+ * <p>Chaque action qualifiante délègue à {@link RareItemService#onJobAction}.</p>
  *
  * <ul>
  *   <li><b>Mineur</b>   — cassage de minerai (BlockBreakEvent)</li>
@@ -58,13 +57,13 @@ public class RareJobItemListener implements Listener {
 
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
-        RareJobItemService svc = gm.getRareJobItemService();
+        RareItemService svc = gm.getRareItemService();
         if (svc != null) svc.loadPlayer(event.getPlayer().getUniqueId());
     }
 
     @EventHandler
     public void onPlayerQuit(PlayerQuitEvent event) {
-        RareJobItemService svc = gm.getRareJobItemService();
+        RareItemService svc = gm.getRareItemService();
         if (svc != null) svc.unloadPlayer(event.getPlayer().getUniqueId());
     }
 
@@ -74,7 +73,7 @@ public class RareJobItemListener implements Listener {
     public void onOreBroken(BlockBreakEvent event) {
         Block block = event.getBlock();
         if (!MaterialUtils.isLegitimateMineBreak(block, placedBlockTracker.isPlaced(block))) return;
-        gm.getRareJobItemService().onJobAction(event.getPlayer(), EJob.MINER);
+        gm.getRareItemService().onJobAction(event.getPlayer(), EJob.MINER);
     }
 
     // ─── Bûcheron ────────────────────────────────────────────────────────────────
@@ -83,7 +82,7 @@ public class RareJobItemListener implements Listener {
     public void onLogBroken(BlockBreakEvent event) {
         Block block = event.getBlock();
         if (!MaterialUtils.isLegitimateLumberBreak(block, placedBlockTracker.isPlaced(block))) return;
-        gm.getRareJobItemService().onJobAction(event.getPlayer(), EJob.LUMBERJACK);
+        gm.getRareItemService().onJobAction(event.getPlayer(), EJob.LUMBERJACK);
     }
 
     // ─── Fermier ─────────────────────────────────────────────────────────────────
@@ -92,14 +91,14 @@ public class RareJobItemListener implements Listener {
     public void onCropHarvested(BlockBreakEvent event) {
         Block block = event.getBlock();
         if (!MaterialUtils.isLegitimateHarvest(block, placedBlockTracker.isPlaced(block))) return;
-        gm.getRareJobItemService().onJobAction(event.getPlayer(), EJob.FARMER);
+        gm.getRareItemService().onJobAction(event.getPlayer(), EJob.FARMER);
     }
 
     // ─── Enchanteur ──────────────────────────────────────────────────────────────
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onEnchant(EnchantItemEvent event) {
-        gm.getRareJobItemService().onJobAction(event.getEnchanter(), EJob.ENCHANTER);
+        gm.getRareItemService().onJobAction(event.getEnchanter(), EJob.ENCHANTER);
     }
 
     // ─── Pêcheur ─────────────────────────────────────────────────────────────────
@@ -107,7 +106,7 @@ public class RareJobItemListener implements Listener {
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onFish(PlayerFishEvent event) {
         if (event.getState() != PlayerFishEvent.State.CAUGHT_FISH) return;
-        gm.getRareJobItemService().onJobAction(event.getPlayer(), EJob.FISHERMAN);
+        gm.getRareItemService().onJobAction(event.getPlayer(), EJob.FISHERMAN);
     }
 
     // ─── Explorateur — monstre tué à la distance configurée du 0,0 ──────────────
@@ -123,6 +122,6 @@ public class RareJobItemListener implements Listener {
         double z = killer.getLocation().getZ();
         if (x * x + z * z < RareItemConfig.getInstance().getExplorerMinDistanceSq()) return;
 
-        gm.getRareJobItemService().onJobAction(killer, EJob.EXPLORER);
+        gm.getRareItemService().onJobAction(killer, EJob.EXPLORER);
     }
 }

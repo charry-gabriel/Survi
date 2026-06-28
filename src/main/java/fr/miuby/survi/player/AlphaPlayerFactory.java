@@ -9,7 +9,7 @@ import fr.miuby.survi.job.FishermanAttributeService;
 import fr.miuby.survi.player.service.PlayerAttributeService;
 import fr.miuby.survi.player.service.PlayerPersistenceService;
 import fr.miuby.survi.player.service.PlayerEffectRestoreService;
-import fr.miuby.survi.role.Role;
+import fr.miuby.survi.player.role.Role;
 import fr.miuby.survi.system.database.EPlayerLoadResult;
 import fr.miuby.survi.system.exception.AlphaPlayerNotFoundException;
 import fr.miuby.survi.system.log.ELogTag;

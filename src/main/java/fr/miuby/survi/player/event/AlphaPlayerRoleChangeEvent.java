@@ -1,7 +1,7 @@
 package fr.miuby.survi.player.event;
 
 import fr.miuby.survi.player.AlphaPlayer;
-import fr.miuby.survi.role.Role;
+import fr.miuby.survi.player.role.Role;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;

@@ -1,4 +1,4 @@
-package fr.miuby.survi.role;
+package fr.miuby.survi.player.role;
 
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;

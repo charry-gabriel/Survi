@@ -7,7 +7,7 @@ import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 import fr.miuby.lib.command.MLStringArgument;
 import fr.miuby.survi.GameManager;
 import fr.miuby.survi.player.AlphaPlayer;
-import fr.miuby.survi.role.Role;
+import fr.miuby.survi.player.role.Role;
 import fr.miuby.survi.system.command.CommandErrors;
 import org.jspecify.annotations.NonNull;
 

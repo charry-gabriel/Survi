@@ -8,7 +8,7 @@ import fr.miuby.survi.quest.globalquest.GlobalQuest;
 import fr.miuby.survi.quest.globalquest.GlobalQuestManager;
 import fr.miuby.survi.quest.quest.PlayerQuestData;
 import fr.miuby.survi.quest.quest.Quest;
-import fr.miuby.survi.role.Role;
+import fr.miuby.survi.player.role.Role;
 import io.papermc.paper.adventure.PaperAdventure;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;

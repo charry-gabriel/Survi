@@ -1,4 +1,4 @@
-package fr.miuby.survi.job.rare;
+package fr.miuby.survi.item.rare_item;
 
 import fr.miuby.lib.log.MLLogManager;
 import fr.miuby.survi.job.EJob;
@@ -17,7 +17,7 @@ import java.util.logging.Level;
  * Rechargeable à chaud via {@link #reload(JavaPlugin)}.
  *
  * <p>Doit être initialisé via {@link #load(JavaPlugin)} avant la création de
- * {@link RareJobItemService} — donc dans {@code GameManager.initItems()}.</p>
+ * {@link RareItemService} — donc dans {@code GameManager.initItems()}.</p>
  */
 public class RareItemConfig {
 

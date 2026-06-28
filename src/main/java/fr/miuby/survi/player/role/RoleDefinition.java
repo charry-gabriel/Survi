@@ -1,4 +1,4 @@
-package fr.miuby.survi.role;
+package fr.miuby.survi.player.role;
 
 import lombok.Getter;
 import net.kyori.adventure.text.Component;

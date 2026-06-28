@@ -5,8 +5,8 @@ import fr.miuby.lib.log.MLLogManager;
 import fr.miuby.survi.grave.GraveManager;
 import fr.miuby.survi.food.FoodOfTheDayManager;
 import fr.miuby.survi.job.alchemic.CustomPotionManager;
-import fr.miuby.survi.job.rare.RareItemConfig;
-import fr.miuby.survi.job.rare.RareJobItemService;
+import fr.miuby.survi.item.rare_item.RareItemConfig;
+import fr.miuby.survi.item.rare_item.RareItemService;
 import fr.miuby.survi.mob.MobLevelManager;
 import fr.miuby.survi.player.service.OfflineNotificationService;
 import fr.miuby.survi.quest.quest.QuestGlowService;
@@ -19,7 +19,7 @@ import fr.miuby.survi.quest.globalquest.GlobalQuestManager;
 import fr.miuby.survi.quest.quest.QuestManager;
 import fr.miuby.survi.quest.quest.QuestActionBarService;
 import fr.miuby.survi.quest.globalquest.GlobalQuestBossBarService;
-import fr.miuby.survi.role.RoleManagementService;
+import fr.miuby.survi.player.role.RoleManagementService;
 import fr.miuby.survi.system.database.Database;
 import fr.miuby.survi.system.database.SQLite;
 import fr.miuby.survi.item.CustomRecipeFactory;
@@ -27,7 +27,7 @@ import fr.miuby.survi.item.CustomRecipe;
 import fr.miuby.survi.item.growth_item.GrowthItems;
 import fr.miuby.survi.item.locked_item.LockedItemsFactory;
 import fr.miuby.survi.player.AlphaPlayerFactory;
-import fr.miuby.survi.role.RoleLoader;
+import fr.miuby.survi.player.role.RoleLoader;
 import fr.miuby.survi.system.time.TimeManager;
 import fr.miuby.survi.villager.VillagerFactory;
 import fr.miuby.survi.world.WorldLevelManager;
@@ -78,7 +78,7 @@ public class GameManager {
     @Getter private RainManager rainManager;
     @Getter private LangService langService;
     @Getter private CustomPotionManager customPotionManager;
-    @Getter private RareJobItemService rareJobItemService;
+    @Getter private RareItemService rareItemService;
 
     @Setter @Getter private int dispel = 0;
     @Setter @Getter private boolean isNight;
@@ -226,7 +226,7 @@ public class GameManager {
         this.foodOfTheDayManager = new FoodOfTheDayManager();
 
         RareItemConfig.getInstance().load(plugin);
-        this.rareJobItemService = new RareJobItemService(database.rareJobItems());
+        this.rareItemService = new RareItemService(database.rareJobItems());
     }
 
     public void callEvent(Event event) {

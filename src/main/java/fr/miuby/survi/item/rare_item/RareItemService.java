@@ -1,10 +1,11 @@
-package fr.miuby.survi.job.rare;
+package fr.miuby.survi.item.rare_item;
 
 import fr.miuby.lib.MiubyLib;
 import fr.miuby.lib.log.MLLogManager;
 import fr.miuby.survi.GameManager;
 import fr.miuby.survi.item.ECustomItem;
 import fr.miuby.survi.job.EJob;
+import fr.miuby.survi.listener.RareJobItemListener;
 import fr.miuby.survi.player.AlphaPlayer;
 import fr.miuby.survi.system.lang.LangService;
 import fr.miuby.survi.system.log.ELogTag;
@@ -38,9 +39,9 @@ import java.util.logging.Level;
  * et rechargés à chaud via {@link #reload()}.</p>
  *
  * Pour l'Explorateur le seuil est positionnel (distance configurable du 0,0), vérifié par
- * {@link fr.miuby.survi.listener.job.RareJobItemListener}, donc threshold=0 dans le YAML.
+ * {@link RareJobItemListener}, donc threshold=0 dans le YAML.
  */
-public class RareJobItemService {
+public class RareItemService {
 
     // ─── Objet rare par métier (ne change pas au reload) ─────────────────────────
 
@@ -76,9 +77,9 @@ public class RareJobItemService {
     }
 
     private final ConcurrentHashMap<UUID, PlayerRareData> playerData = new ConcurrentHashMap<>();
-    private final RareJobItemRepository repo;
+    private final RareItemRepository repo;
 
-    public RareJobItemService(RareJobItemRepository repo) {
+    public RareItemService(RareItemRepository repo) {
         this.repo = repo;
     }
 

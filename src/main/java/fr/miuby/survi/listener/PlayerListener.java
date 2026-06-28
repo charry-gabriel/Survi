@@ -11,7 +11,7 @@ import fr.miuby.survi.GameManager;
 import fr.miuby.survi.job.EJob;
 import fr.miuby.survi.job.config.JobsConfig;
 import fr.miuby.survi.player.AlphaPlayer;
-import fr.miuby.survi.role.RoleAttribute;
+import fr.miuby.survi.player.role.RoleAttribute;
 import fr.miuby.survi.system.lang.LangService;
 import fr.miuby.survi.system.log.ELogTag;
 import fr.miuby.survi.system.perf.PerfTimer;

@@ -1,4 +1,4 @@
-package fr.miuby.survi.job.rare;
+package fr.miuby.survi.item.rare_item;
 
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
@@ -28,13 +28,13 @@ import java.util.logging.Level;
  *
  * Fonctionne pour les joueurs connectés (données en mémoire) et hors ligne (lecture DB async).
  */
-public class RareJobItemCommand {
+public class RareItemCommand {
 
     private static final String PLAYER_ARG = "player";
     private static final String JOB_ARG    = "job";
     private static final Locale FR         = Locale.FRANCE;
 
-    private RareJobItemCommand() {}
+    private RareItemCommand() {}
 
     public static LiteralArgumentBuilder<CommandSourceStack> createCommand() {
         return Commands.literal("rare")
@@ -73,7 +73,7 @@ public class RareJobItemCommand {
     // ─── Handlers ────────────────────────────────────────────────────────────────
 
     private static void executeOverview(CommandSender sender, AlphaPlayer target) {
-        RareJobItemService svc = GameManager.getInstance().getRareJobItemService();
+        RareItemService svc = GameManager.getInstance().getRareItemService();
         if (svc == null) { sender.sendMessage(Component.text("Service non initialisé.", NamedTextColor.RED)); return; }
 
         Map<EJob, long[]> snapshot = svc.getMemorySnapshot(target.getUuid());
@@ -90,7 +90,7 @@ public class RareJobItemCommand {
     }
 
     private static void executeDetail(CommandSender sender, AlphaPlayer target, EJob job) {
-        RareJobItemService svc = GameManager.getInstance().getRareJobItemService();
+        RareItemService svc = GameManager.getInstance().getRareItemService();
         if (svc == null) { sender.sendMessage(Component.text("Service non initialisé.", NamedTextColor.RED)); return; }
 
         Map<EJob, long[]> snapshot = svc.getMemorySnapshot(target.getUuid());
@@ -106,7 +106,7 @@ public class RareJobItemCommand {
     }
 
     private static void executeReset(CommandSender sender, AlphaPlayer target, EJob job) {
-        RareJobItemService svc = GameManager.getInstance().getRareJobItemService();
+        RareItemService svc = GameManager.getInstance().getRareItemService();
         if (svc == null) { sender.sendMessage(Component.text("Service non initialisé.", NamedTextColor.RED)); return; }
 
         svc.resetJobData(target.getUuid(), job);
@@ -136,7 +136,7 @@ public class RareJobItemCommand {
             long[]  jd          = data.getOrDefault(job, new long[]{0L, 0L});
             long    actionCount = jd[0];
             boolean hasItem     = jd[1] == 1L;
-            double  chance      = RareJobItemService.computeChance(job, actionCount);
+            double  chance      = RareItemService.computeChance(job, actionCount);
 
             sender.sendMessage(
                     Component.text("  ")
@@ -157,9 +157,9 @@ public class RareJobItemCommand {
     private static void sendDetail(CommandSender sender, String pseudo, boolean offline, EJob job, long[] jd) {
         long    actionCount = jd != null ? jd[0] : 0L;
         boolean hasItem     = jd != null && jd[1] == 1L;
-        long    threshold   = RareJobItemService.getThreshold(job);
+        long    threshold   = RareItemService.getThreshold(job);
         long    effective   = Math.max(0L, actionCount - threshold);
-        double  chance      = RareJobItemService.computeChance(job, actionCount);
+        double  chance      = RareItemService.computeChance(job, actionCount);
 
         sender.sendMessage(sep());
         sender.sendMessage(

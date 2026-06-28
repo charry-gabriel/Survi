@@ -1,4 +1,4 @@
-package fr.miuby.survi.sound;
+package fr.miuby.survi.system.sound;
 
 import net.kyori.adventure.sound.Sound;
 import net.kyori.adventure.sound.SoundStop;

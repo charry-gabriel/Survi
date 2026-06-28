@@ -1,4 +1,4 @@
-package fr.miuby.survi.role;
+package fr.miuby.survi.player.role;
 
 import fr.miuby.lib.utils.MultiKeyRegistry;
 import fr.miuby.survi.GameManager;

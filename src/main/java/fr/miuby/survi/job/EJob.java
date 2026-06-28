@@ -1,5 +1,6 @@
 package fr.miuby.survi.job;
 
+import fr.miuby.survi.player.role.ERole;
 import lombok.Getter;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
@@ -8,7 +9,7 @@ import net.kyori.adventure.text.format.NamedTextColor;
 /**
  * Enumération de tous les métiers disponibles dans le jeu.
  *
- * Contrairement au {@link fr.miuby.survi.role.ERole} (attribué manuellement par un admin),
+ * Contrairement au {@link ERole} (attribué manuellement par un admin),
  * chaque joueur possède TOUS les métiers simultanément avec un niveau individuel.
  * Le niveau d'un métier évolue grâce à la réputation accumulée auprès du Trader associé.
  *

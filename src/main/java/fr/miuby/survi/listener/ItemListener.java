@@ -8,7 +8,7 @@ import fr.miuby.survi.item.BackpackMenuHolder;
 import fr.miuby.survi.item.BackpackService;
 import fr.miuby.survi.item.CustomRecipe;
 import fr.miuby.survi.player.AlphaPlayer;
-import fr.miuby.survi.role.Role;
+import fr.miuby.survi.player.role.Role;
 import fr.miuby.survi.system.log.ELogTag;
 import fr.miuby.survi.villager.villagerlevel.VillagerTributeHolder;
 import org.bukkit.Material;

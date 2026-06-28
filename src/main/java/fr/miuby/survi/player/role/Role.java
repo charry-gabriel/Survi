@@ -1,4 +1,4 @@
-package fr.miuby.survi.role;
+package fr.miuby.survi.player.role;
 
 import net.kyori.adventure.text.TextComponent;
 

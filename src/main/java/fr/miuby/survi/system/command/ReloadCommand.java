@@ -55,7 +55,7 @@ public class ReloadCommand {
         GameManager.getInstance().getCustomRecipeFactory().reload();
         GameManager.getInstance().getVillageZoneManager().reloadConfig();
         GameManager.getInstance().getLangService().reload();
-        GameManager.getInstance().getRareJobItemService().reload();
+        GameManager.getInstance().getRareItemService().reload();
 
         sender.sendMessage(ls.text(lang, "cmd.reload.all.done", quests, globalQuests));
         return Command.SINGLE_SUCCESS;
@@ -167,7 +167,7 @@ public class ReloadCommand {
         LangService   ls     = ls();
         ELang         lang   = lang(sender);
         sender.sendMessage(ls.text(lang, "cmd.reload.rare_items.start"));
-        GameManager.getInstance().getRareJobItemService().reload();
+        GameManager.getInstance().getRareItemService().reload();
         sender.sendMessage(ls.text(lang, "cmd.reload.rare_items.done"));
         return Command.SINGLE_SUCCESS;
     }

@@ -1,7 +1,7 @@
 package fr.miuby.survi.listener;
 
-import fr.miuby.survi.sound.ESound;
-import fr.miuby.survi.sound.SoundService;
+import fr.miuby.survi.system.sound.ESound;
+import fr.miuby.survi.system.sound.SoundService;
 import fr.miuby.survi.world.event.WorldLevelUpEvent;
 import fr.miuby.survi.GameManager;
 import fr.miuby.survi.system.lang.LangService;

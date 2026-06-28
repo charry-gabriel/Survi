@@ -1,4 +1,4 @@
-package fr.miuby.survi.sound;
+package fr.miuby.survi.system.sound;
 
 import lombok.Getter;
 import net.kyori.adventure.key.Key;
