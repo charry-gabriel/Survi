@@ -13,11 +13,11 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * Constantes {@link Material} partagées entre les listeners de métier,
- * intégralement dérivées de {@link ELogFamily}, {@link EOreFamily} et {@link ECropFamily}.
+ * Constantes {@link Material} et méthodes utilitaires partagées entre les listeners de métier,
+ * intégralement dérivées de {@link ELogFamily}, {@link EOreFamily} et {@link EPlantFamily}.
  *
  * <p>Pour ajouter un nouveau type de bois, minerai ou culture : modifier uniquement
- * l'enum correspondant — toutes les constantes ci-dessous se mettent à jour automatiquement.</p>
+ * l'enum correspondant — toutes les constantes et méthodes ci-dessous se mettent à jour automatiquement.</p>
  */
 public final class MaterialUtils {
     private MaterialUtils() {}
@@ -36,21 +36,26 @@ public final class MaterialUtils {
     public static final Set<Material> STRIPPABLE_LOG_BLOCKS;
     /** Log ou stripped log → sapling correspondant pour l'auto-replant. */
     public static final Map<Material, Material> LOG_TO_SAPLING;
+    /** Tous les saplings et propagules (un par famille {@link ELogFamily}). */
+    public static final Set<Material> SAPLING_MATERIALS;
 
     static {
-        EnumSet<Material> all     = EnumSet.noneOf(Material.class);
-        EnumSet<Material> natural = EnumSet.noneOf(Material.class);
+        EnumSet<Material> all      = EnumSet.noneOf(Material.class);
+        EnumSet<Material> natural  = EnumSet.noneOf(Material.class);
+        EnumSet<Material> saplings = EnumSet.noneOf(Material.class);
         Map<Material, Material> toSapling = new EnumMap<>(Material.class);
         for (ELogFamily f : ELogFamily.values()) {
-            all.add(f.log);        all.add(f.wood);
-            all.add(f.strippedLog); all.add(f.strippedWood);
-            natural.add(f.log);    natural.add(f.wood);
-            toSapling.put(f.log,        f.sapling);
+            all.add(f.log);          all.add(f.wood);
+            all.add(f.strippedLog);  all.add(f.strippedWood);
+            natural.add(f.log);      natural.add(f.wood);
+            saplings.add(f.sapling);
+            toSapling.put(f.log,         f.sapling);
             toSapling.put(f.strippedLog, f.sapling);
         }
         LOG_BLOCKS            = Collections.unmodifiableSet(all);
         STRIPPABLE_LOG_BLOCKS = Collections.unmodifiableSet(natural);
         LOG_TO_SAPLING        = Collections.unmodifiableMap(toSapling);
+        SAPLING_MATERIALS     = Collections.unmodifiableSet(saplings);
     }
 
     public static final Set<Material> APPLE_LEAF_BLOCKS = EnumSet.of(
@@ -102,27 +107,86 @@ public final class MaterialUtils {
     );
 
     // ═══════════════════════════════════════════════════════════════════════════
-    //  Cultures — dérivées de ECropFamily
+    //  Cultures — dérivées de ECropFamily + ELogFamily
     // ═══════════════════════════════════════════════════════════════════════════
 
-    /** Blocs de culture récoltables (matures ou semi-matures). */
+    /** Blocs de culture récoltables par FarmerListener (matures ou semi-matures). */
     public static final Set<Material> HARVEST_CROPS;
     /**
-     * Culture → item minimum garanti lors d'une récolte.
+     * Culture récoltable → item minimum garanti lors d'une récolte.
      * Évite de perdre ce qu'on a planté quand le multiplicateur aboutit à 0 drop.
      */
     public static final Map<Material, Material> CROP_SEED;
+    /**
+     * Tous les blocs qui peuvent pousser ou être plantés dans le monde
+     * (cultures, tiges, champignons, arbustes, plantes libres, saplings).
+     * Utilisé par CropGrowthListener pour tracker la croissance.
+     */
+    public static final Set<Material> CROP_BLOCKS;
+    /**
+     * Tous les items qu'un joueur peut tenir pour planter quelque chose
+     * (graines, tubercules, boutures, saplings, spores, etc.).
+     * Inclut les saplings de {@link ELogFamily}.
+     */
+    public static final Set<Material> SEED_ITEMS;
+    /**
+     * Bloc de culture → cible {@link Material} pour les quêtes {@code HARVEST_CROP}.
+     * {@code CAVE_VINES_PLANT} est normalisé sur {@code CAVE_VINES} (encodé dans {@link EPlantFamily}).
+     * N'inclut pas les blocs dont {@link EPlantFamily#questTarget} est {@code null}.
+     */
+    public static final Map<Material, Material> QUEST_CROP_TARGET;
 
     static {
-        EnumSet<Material> crops = EnumSet.noneOf(Material.class);
-        Map<Material, Material> toSeed = new EnumMap<>(Material.class);
-        for (ECropFamily f : ECropFamily.values()) {
-            crops.add(f.crop);
-            toSeed.put(f.crop, f.seed);
+        EnumSet<Material> harvestCrops   = EnumSet.noneOf(Material.class);
+        EnumSet<Material> cropBlocks     = EnumSet.noneOf(Material.class);
+        EnumSet<Material> seedItems      = EnumSet.noneOf(Material.class);
+        Map<Material, Material> cropSeed = new EnumMap<>(Material.class);
+        Map<Material, Material> questMap = new EnumMap<>(Material.class);
+
+        for (EPlantFamily f : EPlantFamily.values()) {
+            if (f.crop != null) {
+                cropBlocks.add(f.crop);
+                if (f.seed != null) {
+                    harvestCrops.add(f.crop);
+                    cropSeed.put(f.crop, f.seed);
+                }
+                if (f.questTarget != null) {
+                    questMap.put(f.crop, f.questTarget);
+                }
+            }
+            if (f.plant != null) seedItems.add(f.plant);
         }
-        HARVEST_CROPS = Collections.unmodifiableSet(crops);
-        CROP_SEED     = Collections.unmodifiableMap(toSeed);
+
+        // Les saplings (ELogFamily) sont à la fois des blocs en croissance et des items plantables
+        cropBlocks.addAll(SAPLING_MATERIALS);
+        seedItems.addAll(SAPLING_MATERIALS);
+
+        HARVEST_CROPS     = Collections.unmodifiableSet(harvestCrops);
+        CROP_SEED         = Collections.unmodifiableMap(cropSeed);
+        CROP_BLOCKS       = Collections.unmodifiableSet(cropBlocks);
+        SEED_ITEMS        = Collections.unmodifiableSet(seedItems);
+        QUEST_CROP_TARGET = Collections.unmodifiableMap(questMap);
     }
+
+    // ─── Méthodes utilitaires cultures (anciennement PlantedCropUtils) ───────
+
+    /** {@code true} si {@code m} est un bloc qui pousse ou a été planté dans le monde. */
+    public static boolean isCrop(Material m)      { return CROP_BLOCKS.contains(m); }
+
+    /** {@code true} si {@code m} est un item qu'un joueur peut tenir pour planter. */
+    public static boolean isSeed(Material m)      { return SEED_ITEMS.contains(m); }
+
+    /** {@code true} si {@code m} est un sapling ou propagule d'arbre (dérivé de {@link ELogFamily}). */
+    public static boolean isSapling(Material m)   { return SAPLING_MATERIALS.contains(m); }
+
+    /**
+     * {@code true} si {@code m} peut être planté par un joueur.
+     * Couvre graines, tubercules, saplings, boutures, champignons, plantes libres et algues.
+     * Équivalent à {@link #isSeed} — toutes les choses plantables sont dans {@code SEED_ITEMS}.
+     */
+    public static boolean isPlantable(Material m) { return SEED_ITEMS.contains(m); }
+
+    // ─── Maturité ─────────────────────────────────────────────────────────────
 
     /**
      * {@code true} si {@code block} est à maturité — une graine fraîchement plantée ne doit pas compter.

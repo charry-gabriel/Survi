@@ -5,7 +5,7 @@ import fr.miuby.lib.log.MLLogManager;
 import fr.miuby.survi.GameManager;
 import fr.miuby.survi.job.EJob;
 import fr.miuby.survi.job.config.JobsConfig;
-import fr.miuby.survi.world.crops.PlantedCropUtils;
+import fr.miuby.survi.system.block.MaterialUtils;
 import fr.miuby.survi.world.crops.PlantedCropsManager;
 import fr.miuby.survi.player.AlphaPlayer;
 import fr.miuby.survi.system.log.ELogTag;
@@ -55,7 +55,7 @@ public class CropGrowthListener implements Listener {
 
         Block targetBlock = GameManager.getInstance().getPlantedCropsManager().getTargetBlockForPlanting(event);
         if (targetBlock != null) {
-            boolean isSapling = PlantedCropUtils.isSapling(event.getItem().getType());
+            boolean isSapling = MaterialUtils.isSapling(event.getItem().getType());
             int level = isSapling ? alpha.getJobLevel(EJob.LUMBERJACK) : alpha.getJobLevel(EJob.FARMER);
             GameManager.getInstance().getPlantedCropsManager().addPlantedCrop(targetBlock.getLocation(), level);
         }
@@ -63,7 +63,7 @@ public class CropGrowthListener implements Listener {
 
     private static boolean isValidPlantingAttempt(PlayerInteractEvent event, AlphaPlayer alpha) {
         if (event.getAction() != Action.RIGHT_CLICK_BLOCK || event.getItem() == null) return false;
-        return PlantedCropUtils.isPlantable(event.getItem().getType());
+        return MaterialUtils.isPlantable(event.getItem().getType());
     }
 
     // ════════════════════════════════════════════════════════════════════════════
@@ -73,7 +73,7 @@ public class CropGrowthListener implements Listener {
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onCropGrow(BlockGrowEvent event) {
         Material type = event.getBlock().getType();
-        if (!PlantedCropUtils.isCrop(type)) return;
+        if (!MaterialUtils.isCrop(type)) return;
 
         PlantedCropsManager mgr = GameManager.getInstance().getPlantedCropsManager();
         Integer storedLevel = mgr.getFarmLevel(event.getBlock().getLocation());
@@ -81,7 +81,7 @@ public class CropGrowthListener implements Listener {
         // Non planté par un joueur → croissance vanilla
         if (storedLevel == null) return;
 
-        if (PlantedCropUtils.isSapling(type)) {
+        if (MaterialUtils.isSapling(type)) {
             handleSaplingGrow(event, storedLevel);
         } else {
             handleCropGrow(event, storedLevel);
@@ -158,7 +158,7 @@ public class CropGrowthListener implements Listener {
      */
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onFertilize(BlockFertilizeEvent event) {
-        if (!PlantedCropUtils.isCrop(event.getBlock().getType())) return;
+        if (!MaterialUtils.isCrop(event.getBlock().getType())) return;
 
         Player player = event.getPlayer();
         PlantedCropsManager mgr = GameManager.getInstance().getPlantedCropsManager();
@@ -171,7 +171,7 @@ public class CropGrowthListener implements Listener {
             return;
         }
 
-        boolean isSapling = PlantedCropUtils.isSapling(event.getBlock().getType());
+        boolean isSapling = MaterialUtils.isSapling(event.getBlock().getType());
         AlphaPlayer alpha = AlphaPlayer.get(player.getUniqueId());
 
         double chance;
@@ -217,7 +217,7 @@ public class CropGrowthListener implements Listener {
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onBlockBreak(BlockBreakEvent event) {
-        if (PlantedCropUtils.isCrop(event.getBlock().getType()))
+        if (MaterialUtils.isCrop(event.getBlock().getType()))
             GameManager.getInstance().getPlantedCropsManager().removePlantedCrop(event.getBlock().getLocation());
     }
 }

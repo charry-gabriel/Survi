@@ -1,5 +1,6 @@
 package fr.miuby.survi.world.crops;
 
+import fr.miuby.survi.system.block.MaterialUtils;
 import fr.miuby.survi.system.database.Database;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -62,7 +63,7 @@ public class PlantedCropsManager {
         Material itemType = event.getItem().getType();
         BlockFace face = event.getBlockFace();
 
-        if (PlantedCropUtils.isSapling(itemType)) {
+        if (MaterialUtils.isSapling(itemType)) {
             return handleSaplingPlanting(clicked, face);
         }
 
