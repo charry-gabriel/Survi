@@ -101,9 +101,10 @@ roles:
   NOVICE:
     roleId: novice
     attributes:
-      - { world: ALL,        attribute: ARMOR, value: 0.5}
-      - { world: ALL,        attribute: MAX_HEALTH, value: 0.5}
-      - { world: ALL,        attribute: ATTACK_DAMAGE, value: 0.5}
+      - { world: ALL,        attribute: ARMOR, value: 1}
+      - { world: ALL,        attribute: MAX_HEALTH, value: 1}
+      - { world: ALL,        attribute: ATTACK_DAMAGE, value: 1}
+      - { world: ALL,        attribute: SAFE_FALL_DISTANCE, value: 1 }
 
   COMBATANT:
     roleId: metier
