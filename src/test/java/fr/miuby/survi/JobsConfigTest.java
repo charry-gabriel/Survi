@@ -316,6 +316,23 @@ class JobsConfigTest {
     }
 
     @Test void fishermanSubmergedMiningSpeedModifierValid() { assertNonNegativeDoubleArray(fishermanRoot, "submerged-mining-speed-modifier"); }
+    @Test void fishermanAlchemicCatchChanceValid()          { assertProbabilityArray(fishermanRoot, "alchemic-catch-chance"); }
+
+    @Test
+    void fishermanAlchemicLuckScaleValid() {
+        Object raw = fishermanRoot.get("alchemic-luck-scale");
+        assertNotNull(raw, "fisherman.alchemic-luck-scale est absent");
+        double v = ((Number) raw).doubleValue();
+        assertTrue(v >= 0, "fisherman.alchemic-luck-scale doit être ≥ 0, valeur : " + v);
+    }
+
+    @Test
+    void fishermanAlchemicLuckWeightBonusValid() {
+        Object raw = fishermanRoot.get("alchemic-luck-weight-bonus");
+        assertNotNull(raw, "fisherman.alchemic-luck-weight-bonus est absent");
+        int v = ((Number) raw).intValue();
+        assertTrue(v >= 0, "fisherman.alchemic-luck-weight-bonus doit être ≥ 0, valeur : " + v);
+    }
 
     // ─── explorer ────────────────────────────────────────────────────────────────
 

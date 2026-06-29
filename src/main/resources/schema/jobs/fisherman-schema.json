@@ -18,7 +18,10 @@
     "oxygen-bonus",
     "submerged-mining-speed-modifier",
     "acid-rain-damage",
-    "acid-rain-fisherman-level-threshold"
+    "acid-rain-fisherman-level-threshold",
+    "alchemic-catch-chance",
+    "alchemic-luck-scale",
+    "alchemic-luck-weight-bonus"
   ],
   "additionalProperties": false,
   "properties": {
@@ -93,6 +96,28 @@
       "minimum": 0,
       "maximum": 10,
       "description": "Niveau Pêcheur minimum pour être immunisé à la pluie acide."
+    },
+    "alchemic-catch-chance": {
+      "$ref": "#/definitions/probability-array",
+      "description": "Probabilité de base de remplacer un item pêché non-trésor par un loot alchimique (par niveau). Les trésors sont exclus : ils ne peuvent pas être convertis en potions."
+    },
+    "alchemic-luck-scale": {
+      "type": "number",
+      "minimum": 0,
+      "description": "Bonus de chance alchimique par point de luck vanilla (Chance de la Mer + effet Luck). Chance effective = min(1, alchemic-catch-chance[level] + alchemic-luck-scale × vanillaLuck)."
+    },
+    "alchemic-luck-weight-bonus": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Bonus de poids ajouté à chaque entrée éligible de la table alchimique par point de luck vanilla. Aplatit la distribution : les potions rares (petit poids) deviennent proportionnellement plus probables avec une luck élevée."
+    },
+    "alchemic-loot": {
+      "type": "array",
+      "minItems": 1,
+      "description": "Table de loot alchimique : ingrédients, potions vanilla et potions inédites.",
+      "items": {
+        "type": "object"
+      }
     }
   },
   "definitions": {

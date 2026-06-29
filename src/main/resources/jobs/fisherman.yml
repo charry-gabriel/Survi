@@ -150,19 +150,44 @@ acid-rain-damage: 1
 acid-rain-fisherman-level-threshold: 3
 
 # ─── Loot alchimique ──────────────────────────────────────────────────────────
-# Probabilité qu'une pêche soit alchimique (remplace le drop normal)
+
+# Probabilité de base qu'une pêche non-trésor donne un item alchimique.
+# Les trésors (livres enchantés, arcs, cannes enchantées, selles…) sont
+# explicitement exclus : ils sont déjà boostés par la luck vanilla (Chance de la
+# Mer) et ne doivent pas être convertis en potions.
+#
+# Chance effective = min(1.0, alchemic-catch-chance[level] + alchemic-luck-scale × vanillaLuck)
+# vanillaLuck = niveau Chance de la Mer + amplificateur de l'effet Luck.
 alchemic-catch-chance:
   - 0.00   # niveau  0  — jamais
   - 0.01   # niveau  1
   - 0.02   # niveau  2
-  - 0.04   # niveau  3
-  - 0.06   # niveau  4
-  - 0.08   # niveau  5
-  - 0.10   # niveau  6
-  - 0.15   # niveau  7
-  - 0.20   # niveau  8
-  - 0.25   # niveau  9
-  - 0.30   # niveau 10
+  - 0.03   # niveau  3
+  - 0.04   # niveau  4
+  - 0.06   # niveau  5
+  - 0.08   # niveau  6
+  - 0.11   # niveau  7
+  - 0.14   # niveau  8
+  - 0.17   # niveau  9
+  - 0.20   # niveau 10
+
+# Bonus de chance alchimique par point de luck vanilla.
+# Exemples (niveau 10) :
+#   Sans luck            : 20 %
+#   Chance de la Mer I   : 20 % + 1 × 2 % = 22 %
+#   Chance de la Mer III : 20 % + 3 × 2 % = 26 %
+# La luck améliore ainsi simultanément les trésors (via la loot table vanilla)
+# et les potions alchimiques, sans que les deux se concurrencent.
+alchemic-luck-scale: 0.02
+
+# Bonus de poids ajouté à chaque entrée éligible de la table alchimique par
+# point de luck vanilla. Aplatit la distribution :
+#   Sans luck          : Nether Wart (400) vs DEFLAGRATION (10) → ratio 40:1
+#   Chance de la Mer I : (400+80) vs (10+80) = 480 vs 90      → ratio  5.3:1
+#   Chance de la Mer III: (400+240) vs (10+240) = 640 vs 250  → ratio  2.6:1
+# Les potions rares (petit poids) se comportent ainsi comme des "trésors de
+# potions" : peu probables sans luck, mais accessibles avec une bonne canne.
+alchemic-luck-weight-bonus: 80
 
 # Table de loot alchimique
 # Hiérarchie de poids : Nether Wart >> Tier1 régulier > Tier1 splash > Tier1 longue > Tier2 > Custom

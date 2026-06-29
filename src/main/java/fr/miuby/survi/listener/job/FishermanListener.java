@@ -1,13 +1,16 @@
 package fr.miuby.survi.listener.job;
 
+import fr.miuby.lib.log.MLLogManager;
 import fr.miuby.survi.GameManager;
 import fr.miuby.survi.job.EJob;
 import fr.miuby.survi.job.alchemic.AlchemicLootEntry;
 import fr.miuby.survi.job.config.JobsConfig;
 import fr.miuby.survi.player.AlphaPlayer;
 import fr.miuby.survi.system.lang.LangService;
+import fr.miuby.survi.system.log.ELogTag;
 import io.papermc.paper.event.entity.EntityEquipmentChangedEvent;
 import org.bukkit.Material;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.FishHook;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
@@ -19,31 +22,39 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.EnchantmentStorageMeta;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
+import java.util.logging.Level;
 
 /**
- * Gère les effets du métier {@link EJob#FISHERMAN} liés à la pêche :
+ * Gère les effets du métier {@link EJob#FISHERMAN} liés à la pêche.
  *
- * <ul>
- *   <li>Temps d'attente modulé par le niveau (2× plus long au niv.0, 4× plus rapide au niv.10).</li>
- *   <li>Chance de remplacer l'item pêché par un matériau de {@code dirt-replacement-materials}
- *       (forte aux bas niveaux, 0 à partir du niv.7).</li>
- *   <li>Malus supplémentaire sur les trésors (livres enchantés, arcs, cannes…) jusqu'au niv.6 ;
- *       remplacement par {@code treasure-replacement-materials}.</li>
- *   <li>Multiplicateur de quantité sur les items non remplacés.</li>
- * </ul>
+ * <h3>Pipeline de loot ({@code CAUGHT_FISH})</h3>
+ * <ol>
+ *   <li><b>Malus global</b> — {@code dirt-chance[level]} : remplace tout item par un matériau de
+ *       {@code dirt-replacement-materials}. Tombe à 0 au niv.7.</li>
+ *   <li><b>Malus trésor</b> — {@code treasure-penalty[level]} : si l'item est un trésor
+ *       (livre enchanté, arc, canne enchantée, selle, name tag…), probabilité de le remplacer
+ *       par {@code treasure-replacement-materials}. Tombe à 0 au niv.6.</li>
+ *   <li><b>Pêche alchimique</b> — uniquement sur les <em>non-trésors</em> survivants ; chance =
+ *       {@code min(1, alchemic-catch-chance[level] + alchemic-luck-scale × vanillaLuck)}, où
+ *       {@code vanillaLuck = Luck of the Sea + amplificateur de l'effet Luck}.
+ *       Les trésors sont ainsi protégés de toute conversion en potion, et la luck vanilla
+ *       booste simultanément les trésors (via la loot table vanilla) et les potions.</li>
+ *   <li><b>Multiplicateur de quantité</b> — {@code loot-multiplier[level]} sur l'item restant.</li>
+ * </ol>
  *
  * <p>Les effets aquatiques passifs (pression, vitesse, respiration) sont gérés par
- * {@link fr.miuby.survi.job.task.FishermanEffectsTask} et {@link fr.miuby.survi.job.FishermanAttributeService} ;
- * cette classe se contente de réagir instantanément à un changement de jambières
- * ({@code onLeggingsChanged}) pour ne pas attendre le cycle de 3s de la tâche périodique.</p>
+ * {@link fr.miuby.survi.job.task.FishermanEffectsTask} et
+ * {@link fr.miuby.survi.job.FishermanAttributeService} ; cette classe réagit instantanément
+ * à un changement de jambières ({@code onLeggingsChanged}) pour éviter la latence du cycle 3s.</p>
  *
- * <p>Tous les paramètres numériques et les listes de matériaux sont lus depuis
- * {@link JobsConfig} ({@code jobs/fisherman.yml}).</p>
+ * <p>Tous les paramètres sont lus depuis {@link JobsConfig} ({@code jobs/fisherman.yml}).</p>
  */
 public class FishermanListener implements Listener {
 
@@ -105,37 +116,74 @@ public class FishermanListener implements Listener {
         if (!(event.getCaught() instanceof Item caughtItem)) return;
         ItemStack stack = caughtItem.getItemStack();
         JobsConfig.FishermanCfg cfg = JobsConfig.getInstance().getFisherman();
+        Player player = event.getPlayer();
 
-        // Étape 0 : chance de pêche alchimique — remplace l'item normal
-        if (RANDOM.nextDouble() < cfg.getAlchemicCatchChance()[level]) {
-            ItemStack alchemicItem = pickAlchemic(level, cfg.getAlchemicLoot());
-            if (alchemicItem != null) {
-                caughtItem.setItemStack(alchemicItem);
-                LangService ls = GameManager.getInstance().getLangService();
-                event.getPlayer().sendActionBar(ls.text(event.getPlayer(), "job.fisherman.alchemic.catch"));
-                return;
-            }
-        }
-
-        // Étape 1 : chance globale de remplacer tout item pêché par un matériau de la liste
+        // Étape 1 : malus global — remplace tout item par un matériau de dirt-replacement-materials
         if (RANDOM.nextDouble() < cfg.getDirtChance()[level]) {
             caughtItem.setItemStack(new ItemStack(pickRandom(cfg.getDirtReplacementMaterials())));
             return;
         }
 
-        // Étape 2 : malus supplémentaire si l'item est un trésor (livre enchanté, arc, canne, selle…)
+        // Étape 2 : malus trésor — pénalise les trésors survivants (livres enchantés, arcs, cannes, selles…)
         if (isTreasure(stack) && RANDOM.nextDouble() < cfg.getTreasurePenalty()[level]) {
             caughtItem.setItemStack(new ItemStack(pickRandom(cfg.getTreasureReplacementMaterials())));
             return;
         }
 
-        // Étape 3 : multiplicateur de quantité sur l'item normal
+        // Étape 3 : pêche alchimique — uniquement sur les non-trésors.
+        //   Les trésors sont volontairement exclus : la luck vanilla (Luck of the Sea + effet Luck)
+        //   les booste déjà via la loot table vanilla ; leur ajouter une chance de conversion en
+        //   potion les pénaliserait inutilement.
+        //   Chance effective = alchemic-catch-chance[level] + alchemic-luck-scale × vanillaLuck.
+        if (!isTreasure(stack)) {
+            int luck = getVanillaLuck(player);
+            double alchemicChance = Math.min(1.0,
+                    cfg.getAlchemicCatchChance()[level] + cfg.getAlchemicLuckScale() * luck);
+            if (RANDOM.nextDouble() < alchemicChance) {
+                ItemStack alchemicItem = pickAlchemic(level, luck, cfg.getAlchemicLuckWeightBonus(), cfg.getAlchemicLoot());
+                if (alchemicItem != null) {
+                    caughtItem.setItemStack(alchemicItem);
+                    LangService ls = GameManager.getInstance().getLangService();
+                    player.sendActionBar(ls.text(player, "job.fisherman.alchemic.catch"));
+                    MLLogManager.getInstance().log(Level.FINE, ELogTag.JOB,
+                            "[FishermanListener] " + player.getName()
+                                    + " niv." + level + " luck=" + luck
+                                    + " chance=" + String.format("%.3f", alchemicChance)
+                                    + " → alchimique (" + alchemicItem.getType() + ")");
+                    return;
+                }
+            }
+        }
+
+        // Étape 4 : multiplicateur de quantité sur l'item restant (poisson ou trésor)
         double multiplier = cfg.getLootMultiplier()[level];
         double totalAmount = stack.getAmount() * multiplier;
         int amount = (int) totalAmount;
         if (RANDOM.nextDouble() < totalAmount - amount)
             amount++;
         stack.setAmount(Math.clamp(amount, 0, stack.getMaxStackSize()));
+    }
+
+    // ─── Luck vanilla ─────────────────────────────────────────────────────────────
+
+    /**
+     * Calcule la luck vanilla du joueur pour la pêche :
+     * niveau de Chance de la Mer sur la canne tenue + amplificateur de l'effet Luck actif (si présent).
+     * Correspond exactement à la valeur que Minecraft utilise en interne pour sa loot table de pêche.
+     */
+    private static int getVanillaLuck(Player player) {
+        int lotS = 0;
+        ItemStack main = player.getInventory().getItemInMainHand();
+        if (main.getType() == Material.FISHING_ROD) {
+            lotS = main.getEnchantmentLevel(Enchantment.LUCK_OF_THE_SEA);
+        } else {
+            ItemStack off = player.getInventory().getItemInOffHand();
+            if (off.getType() == Material.FISHING_ROD)
+                lotS = off.getEnchantmentLevel(Enchantment.LUCK_OF_THE_SEA);
+        }
+        PotionEffect luckEffect = player.getPotionEffect(PotionEffectType.LUCK);
+        int luckPotion = luckEffect != null ? luckEffect.getAmplifier() + 1 : 0;
+        return lotS + luckPotion;
     }
 
     /**
@@ -157,21 +205,36 @@ public class FishermanListener implements Listener {
     }
 
     /**
-     * Sélectionne un item alchimique dans la table de loot par tirage au sort pondéré,
-     * en ne considérant que les entrées dont {@code levelMin <= level}.
-     * Retourne {@code null} si la table est vide ou aucune entrée éligible.
+     * Sélectionne un item alchimique dans la table de loot par tirage au sort pondéré.
+     *
+     * <p>Seules les entrées dont {@code levelMin <= level} sont éligibles.</p>
+     *
+     * <p><b>Effet luck :</b> un bonus de {@code luck × luckWeightBonus} est ajouté au poids de
+     * <em>chaque</em> entrée éligible. Cela aplatit la distribution : les items communs
+     * (gros poids de base) dominent sans luck, tandis que les items rares (petit poids de base)
+     * deviennent proportionnellement bien plus probables avec une luck élevée — ils se comportent
+     * ainsi comme des "trésors de potions". Exemple : Nether Wart (400) vs DEFLAGRATION (10) ;
+     * avec luck=3 et bonus=80, le ratio passe de 40:1 à 2,6:1.</p>
+     *
+     * @param level           niveau du pêcheur (filtre les entrées par {@code level-min})
+     * @param luck            luck vanilla du joueur (Luck of the Sea + amplificateur effet Luck)
+     * @param luckWeightBonus bonus ajouté à chaque entrée éligible par point de luck
+     * @param loot            table de loot alchimique
+     * @return item sélectionné, ou {@code null} si aucune entrée éligible
      */
-    private static ItemStack pickAlchemic(int level, List<AlchemicLootEntry> loot) {
+    private static ItemStack pickAlchemic(int level, int luck, int luckWeightBonus,
+                                          List<AlchemicLootEntry> loot) {
         List<AlchemicLootEntry> eligible = loot.stream()
                 .filter(e -> e.levelMin() <= level)
                 .toList();
         if (eligible.isEmpty()) return null;
 
-        int totalWeight = eligible.stream().mapToInt(AlchemicLootEntry::weight).sum();
+        int bonus = luck * luckWeightBonus;
+        int totalWeight = eligible.stream().mapToInt(e -> e.weight() + bonus).sum();
         int roll = RANDOM.nextInt(totalWeight);
         int cumul = 0;
         for (AlchemicLootEntry entry : eligible) {
-            cumul += entry.weight();
+            cumul += entry.weight() + bonus;
             if (roll < cumul) return entry.createItem();
         }
         return eligible.getLast().createItem();

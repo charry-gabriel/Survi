@@ -232,8 +232,19 @@ public final class JobsConfig {
         private final double   acidRainDamage;
         /** Niveau Pêcheur minimum pour être immunisé à la pluie acide. */
         private final int      acidRainFishermanLevelThreshold;
-        /** Probabilité de remplacer un item pêché par un loot alchimique. Index = niveau. */
+        /** Probabilité de base de remplacer un item pêché (non-trésor) par un loot alchimique. Index = niveau. */
         private final double[] alchemicCatchChance;
+        /**
+         * Bonus de chance alchimique par point de luck vanilla.
+         * Chance effective = {@code min(1, alchemicCatchChance[level] + alchemicLuckScale × vanillaLuck)}.
+         */
+        private final double   alchemicLuckScale;
+        /**
+         * Bonus de poids ajouté à <em>chaque</em> entrée éligible de la table alchimique par
+         * point de luck vanilla. Aplatit la distribution : les items rares (petit poids de base)
+         * deviennent proportionnellement bien plus probables avec une luck élevée.
+         */
+        private final int      alchemicLuckWeightBonus;
         /** Table de loot alchimique (ingrédients, potions vanilla nerfées, potions inédites). */
         private final List<AlchemicLootEntry> alchemicLoot;
 
@@ -245,7 +256,8 @@ public final class JobsConfig {
                      double[] underwaterSpeedModifier, double[] oxygenBonus,
                      double[] submergedMiningSpeedModifier,
                      double acidRainDamage, int acidRainFishermanLevelThreshold,
-                     double[] alchemicCatchChance, List<AlchemicLootEntry> alchemicLoot) {
+                     double[] alchemicCatchChance, double alchemicLuckScale,
+                     int alchemicLuckWeightBonus, List<AlchemicLootEntry> alchemicLoot) {
             this.vanillaMinWaitTicks              = vanillaMinWaitTicks;
             this.vanillaMaxWaitTicks              = vanillaMaxWaitTicks;
             this.fishingWaitMultiplier            = fishingWaitMultiplier;
@@ -262,6 +274,8 @@ public final class JobsConfig {
             this.acidRainDamage                   = acidRainDamage;
             this.acidRainFishermanLevelThreshold  = acidRainFishermanLevelThreshold;
             this.alchemicCatchChance              = alchemicCatchChance;
+            this.alchemicLuckScale                = alchemicLuckScale;
+            this.alchemicLuckWeightBonus          = alchemicLuckWeightBonus;
             this.alchemicLoot                     = alchemicLoot;
         }
     }
