@@ -43,7 +43,7 @@ public record SetAttributeItemEffect(Attribute attribute, double value, Attribut
         // Clé stable et unique par attribut dans l'espace du plugin
         NamespacedKey key = new NamespacedKey(
                 GameManager.getInstance().getPlugin(),
-                "growth_" + attribute.getKey().getKey());
+                "growth_" + item.getType().name() + "_" + attribute.getKey().getKey());
 
         meta.addAttributeModifier(attribute, new AttributeModifier(key, value, operation, slotGroup));
         item.setItemMeta(meta);
