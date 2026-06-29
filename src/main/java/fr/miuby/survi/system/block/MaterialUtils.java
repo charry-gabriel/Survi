@@ -36,8 +36,20 @@ public final class MaterialUtils {
     public static final Set<Material> STRIPPABLE_LOG_BLOCKS;
     /** Log ou stripped log → sapling correspondant pour l'auto-replant. */
     public static final Map<Material, Material> LOG_TO_SAPLING;
-    /** Tous les saplings et propagules (un par famille {@link ELogFamily}). */
+    /** Tous les saplings et propagules (un par famille {@link ELogFamily}) + {@link #AZALEA_SAPLINGS}. */
     public static final Set<Material> SAPLING_MATERIALS;
+
+    /**
+     * Azalée et azalée fleurie : se plantent et se font pousser à la farine d'os comme un sapling,
+     * mais l'arbre obtenu utilise le chêne ({@code OAK_LOG}) et leurs propres feuilles
+     * ({@code AZALEA_LEAVES} / {@code FLOWERING_AZALEA_LEAVES}, déjà dans {@link #APPLE_LEAF_BLOCKS}).
+     * Pas de log dédié → pas de famille {@link ELogFamily} ; ajoutées directement à
+     * {@link #SAPLING_MATERIALS} (donc {@link #CROP_BLOCKS} et {@link #SEED_ITEMS}) pour que la
+     * plantation, la croissance et la farine d'os soient gérées comme un sapling (niveau Bûcheron).
+     */
+    public static final Set<Material> AZALEA_SAPLINGS = EnumSet.of(
+            Material.AZALEA, Material.FLOWERING_AZALEA
+    );
 
     static {
         EnumSet<Material> all      = EnumSet.noneOf(Material.class);
@@ -52,6 +64,7 @@ public final class MaterialUtils {
             toSapling.put(f.log,         f.sapling);
             toSapling.put(f.strippedLog, f.sapling);
         }
+        saplings.addAll(AZALEA_SAPLINGS);
         LOG_BLOCKS            = Collections.unmodifiableSet(all);
         STRIPPABLE_LOG_BLOCKS = Collections.unmodifiableSet(natural);
         LOG_TO_SAPLING        = Collections.unmodifiableMap(toSapling);
@@ -149,7 +162,7 @@ public final class MaterialUtils {
     /**
      * Tous les items qu'un joueur peut tenir pour planter quelque chose
      * (graines, tubercules, boutures, saplings, spores, etc.).
-     * Inclut les saplings de {@link ELogFamily}.
+     * Inclut les saplings de {@link ELogFamily} et {@link #AZALEA_SAPLINGS}.
      */
     public static final Set<Material> SEED_ITEMS;
     /**
@@ -182,7 +195,7 @@ public final class MaterialUtils {
             if (f.plant != null) seedItems.add(f.plant);
         }
 
-        // Les saplings (ELogFamily) sont à la fois des blocs en croissance et des items plantables
+        // Les saplings (ELogFamily + AZALEA_SAPLINGS) sont à la fois des blocs en croissance et des items plantables
         cropBlocks.addAll(SAPLING_MATERIALS);
         seedItems.addAll(SAPLING_MATERIALS);
 
@@ -202,7 +215,7 @@ public final class MaterialUtils {
     /** {@code true} si {@code m} est un item qu'un joueur peut tenir pour planter. */
     public static boolean isSeed(Material m)      { return SEED_ITEMS.contains(m); }
 
-    /** {@code true} si {@code m} est un sapling ou propagule d'arbre (dérivé de {@link ELogFamily}). */
+    /** {@code true} si {@code m} est un sapling, propagule ou azalée (voir {@link #SAPLING_MATERIALS}). */
     public static boolean isSapling(Material m)   { return SAPLING_MATERIALS.contains(m); }
 
     /**

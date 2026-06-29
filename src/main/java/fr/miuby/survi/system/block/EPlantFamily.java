@@ -18,7 +18,8 @@ import org.bukkit.Material;
  *                             {@code CAVE_VINES_PLANT → CAVE_VINES} est encodée ici.</li>
  * </ul>
  *
- * <p>Les saplings sont gérés par {@link ELogFamily#sapling} et non par cet enum.</p>
+ * <p>Les saplings sont gérés par {@link ELogFamily#sapling} et {@link MaterialUtils#AZALEA_SAPLINGS},
+ * pas par cet enum.</p>
  */
 public enum EPlantFamily {
 
