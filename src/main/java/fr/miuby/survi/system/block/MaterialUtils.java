@@ -85,10 +85,24 @@ public final class MaterialUtils {
      * Les ores nether-only ont leur propre famille (ex. {@code NETHER_GOLD} ≠ {@code GOLD}).
      */
     public static final Map<Material, EOreFamily> ORE_TO_FAMILY;
+    /**
+     * Item droppé normalement → {@link EOreFamily}.
+     * Clé = {@link EOreFamily#drop} de chaque famille (ex. {@code DIAMOND}, {@code RAW_IRON}…).
+     *
+     * <p>Utilisé par {@code JobUtils.dropMineWithMultiplier} pour distinguer un drop légitime
+     * (à multiplier) d'un drop Silk Touch (le bloc lui-même, absent de cette map) ou d'un drop
+     * non-minerai (à laisser passer à 1×).</p>
+     *
+     * <p>Exception notable : {@code ANCIENT_DEBRIS} est à la fois le bloc et son propre drop —
+     * il figure donc dans cette map et reçoit le multiplicateur Mineur lors d'un cassage naturel.
+     * Les blocs posés par un joueur sont exclus en amont via {@code PlacedBlockTracker}.</p>
+     */
+    public static final Map<Material, EOreFamily> ORE_DROP_TO_FAMILY;
 
     static {
         EnumSet<Material> ores = EnumSet.noneOf(Material.class);
-        Map<Material, EOreFamily> toFamily = new EnumMap<>(Material.class);
+        Map<Material, EOreFamily> toFamily   = new EnumMap<>(Material.class);
+        Map<Material, EOreFamily> dropToFamily = new EnumMap<>(Material.class);
         for (EOreFamily f : EOreFamily.values()) {
             ores.add(f.ore);
             toFamily.put(f.ore, f);
@@ -96,9 +110,11 @@ public final class MaterialUtils {
                 ores.add(f.deepslate);
                 toFamily.put(f.deepslate, f);
             }
+            dropToFamily.put(f.drop, f);
         }
-        ORE_BLOCKS    = Collections.unmodifiableSet(ores);
-        ORE_TO_FAMILY = Collections.unmodifiableMap(toFamily);
+        ORE_BLOCKS        = Collections.unmodifiableSet(ores);
+        ORE_TO_FAMILY     = Collections.unmodifiableMap(toFamily);
+        ORE_DROP_TO_FAMILY = Collections.unmodifiableMap(dropToFamily);
     }
 
     public static final Set<Material> PICKAXE_MATERIALS = EnumSet.of(

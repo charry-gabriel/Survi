@@ -49,7 +49,7 @@ public class Survi extends JavaPlugin {
         pluginManager.registerEvents(new CropGrowthListener(), this);
         pluginManager.registerEvents(new VillagerListener(), this);
         pluginManager.registerEvents(new GraveListener(), this);
-        pluginManager.registerEvents(new MinerListener(), this);
+        pluginManager.registerEvents(new MinerListener(placedBlockTracker), this);
         pluginManager.registerEvents(new LumberjackListener(placedBlockTracker), this);
         pluginManager.registerEvents(new FarmerListener(), this);
         pluginManager.registerEvents(new EnchanterListener(), this);

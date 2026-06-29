@@ -4,6 +4,7 @@ import fr.miuby.lib.log.MLLogManager;
 import fr.miuby.survi.item.growth_item.GrowthItems;
 import fr.miuby.survi.job.EJob;
 import fr.miuby.survi.job.config.JobsConfig;
+import fr.miuby.survi.listener.PlacedBlockTracker;
 import fr.miuby.survi.system.block.EOreFamily;
 import fr.miuby.survi.system.block.MaterialUtils;
 import fr.miuby.survi.player.AlphaPlayer;
@@ -34,13 +35,29 @@ import java.util.logging.Level;
  *       l'item débloque la capacité, le job en augmente la portée — même principe que le tree feller
  *       du Bûcheron ({@link LumberjackListener}).</li>
  * </ul>
+ *
+ * <p>Les blocs posés par les joueurs (détectés via {@link PlacedBlockTracker}) sont exclus
+ * du multiplicateur et du vein miner : le drop vanilla exact est conservé (100 %).</p>
  */
 public class MinerListener implements Listener {
+
+    private final PlacedBlockTracker placedBlockTracker;
+
+    public MinerListener(PlacedBlockTracker placedBlockTracker) {
+        this.placedBlockTracker = placedBlockTracker;
+    }
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onBlockBreak(BlockBreakEvent event) {
         if (!MaterialUtils.ORE_BLOCKS.contains(event.getBlock().getType())) return;
         if (!(event.getPlayer() instanceof Player player)) return;
+        Block block = event.getBlock();
+
+        if (placedBlockTracker.isPlaced(block)) {
+            MLLogManager.getInstance().log(Level.FINE, ELogTag.JOB, "[Miner] Bloc posé ignoré (drops vanilla 100%) pour " + player.getName() + " @ " + block.getLocation());
+            return;
+        }
+
         AlphaPlayer alpha = AlphaPlayer.get(player.getUniqueId());
         int level = alpha != null ? alpha.getJobLevel(EJob.MINER) : 0;
 
@@ -54,10 +71,10 @@ public class MinerListener implements Listener {
                 && MaterialUtils.PICKAXE_MATERIALS.contains(player.getInventory().getItemInMainHand().getType())) {
             if (player.isSneaking()) {
                 MLLogManager.getInstance().log(Level.FINE, ELogTag.JOB,
-                        "[Miner] Vein miner ignoré (sneak) pour " + player.getName() + " @ " + event.getBlock().getLocation());
+                        "[Miner] Vein miner ignoré (sneak) pour " + player.getName() + " @ " + block.getLocation());
             } else {
                 try (var t = PerfTimer.start("MinerListener.veinMiner")) {
-                    veinMiner(event.getBlock(), player, level, miner);
+                    veinMiner(block, player, level, miner);
                 }
             }
         }
@@ -91,6 +108,8 @@ public class MinerListener implements Listener {
                 queue.add(nb);
             }
         }
+
+        MLLogManager.getInstance().log(Level.FINE, ELogTag.JOB, "[Miner] Vein miner pour " + player.getName() + " @ " + origin.getLocation() + " — " + toBreak.size() + " blocs supplémentaires");
 
         for (Block ore : toBreak) {
             Collection<ItemStack> drops = ore.getDrops(tool);
