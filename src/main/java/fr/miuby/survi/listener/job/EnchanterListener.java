@@ -101,6 +101,8 @@ public class EnchanterListener implements Listener {
     //  Enclume
     // ════════════════════════════════════════════════════════════════════════════
 
+    private static final int ANVIL_MAX_COST = 30;
+
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onPrepareAnvil(PrepareAnvilEvent event) {
         if (!(event.getView().getPlayer() instanceof Player player)) return;
@@ -109,16 +111,25 @@ public class EnchanterListener implements Listener {
         int jobLevel = alpha.getJobLevel(EJob.ENCHANTER);
         JobsConfig.EnchanterCfg enc = JobsConfig.getInstance().getEnchanter();
         int maxEnchLevel = enc.getEnchantMaxLevel()[jobLevel];
-        AnvilInventory anvil = event.getInventory();
-        AnvilView anvilView  = (AnvilView) event.getView();
+        int maxCost      = enc.getAnvilMaxXpCost()[jobLevel];
+        AnvilInventory anvil    = event.getInventory();
+        AnvilView      anvilView = (AnvilView) event.getView();
         ItemStack first  = anvil.getItem(0);
         ItemStack second = anvil.getItem(1);
 
-        // Résultat nul → niv.10 : reconstruction pour bypasser "Too Expensive"
+        // Bypass "Too Expensive" vanilla (cost ≥ 40) → reconstruction + cap à ANVIL_MAX_COST
+        // Applicable dès que le joueur peut se permettre ANVIL_MAX_COST niveaux
         if (event.getResult() == null || event.getResult().getType() == Material.AIR) {
-            if (enc.getAnvilMaxXpCost()[jobLevel] < 0 && first != null && !first.getType().isAir()) {
+            boolean canAffordCap = maxCost < 0 || maxCost >= ANVIL_MAX_COST;
+            if (canAffordCap && first != null && !first.getType().isAir()) {
                 ItemStack rebuilt = constructAnvilResult(first, second, anvilView.getRenameText(), maxEnchLevel);
-                if (rebuilt != null) { event.setResult(rebuilt); anvilView.setRepairCost(39); }
+                if (rebuilt != null) {
+                    event.setResult(rebuilt);
+                    anvilView.setRepairCost(ANVIL_MAX_COST);
+                    MLLogManager.getInstance().log(Level.FINE, ELogTag.JOB,
+                            "[EnchanterListener] Bypass Too Expensive pour " + player.getName()
+                                    + " (jobLevel=" + jobLevel + ", maxCost=" + maxCost + ") → cost=" + ANVIL_MAX_COST);
+                }
             }
             return;
         }
@@ -150,16 +161,15 @@ public class EnchanterListener implements Listener {
             }
         }
 
-        // Vérification du cap XP (-1 = illimité)
-        int maxCost = enc.getAnvilMaxXpCost()[jobLevel];
+        // Vérification du cap XP du niveau de métier (-1 = illimité)
         if (maxCost >= 0 && anvilView.getRepairCost() > maxCost) { event.setResult(null); return; }
 
-        // Réinitialisation du RepairCost → plus jamais "Too Expensive"
-        ItemStack finalResult = event.getResult().clone();
-        if (finalResult.getItemMeta() instanceof Repairable r) {
-            r.setRepairCost(0);
-            finalResult.setItemMeta(r);
-            event.setResult(finalResult);
+        // Cap global à ANVIL_MAX_COST — le RepairCost de l'item reste intact (doubling vanilla)
+        if (anvilView.getRepairCost() > ANVIL_MAX_COST) {
+            MLLogManager.getInstance().log(Level.FINE, ELogTag.JOB,
+                    "[EnchanterListener] Cost cappé pour " + player.getName()
+                            + " : " + anvilView.getRepairCost() + " → " + ANVIL_MAX_COST + " (jobLevel=" + jobLevel + ")");
+            anvilView.setRepairCost(ANVIL_MAX_COST);
         }
     }
 
@@ -180,7 +190,11 @@ public class EnchanterListener implements Listener {
             if (addition.getType() == base.getType() && meta instanceof Damageable d && d.getDamage() > 0)
                 d.setDamage(Math.max(0, d.getDamage() - d.getMaxDamage() / 2));
         }
-        if (meta instanceof Repairable r) r.setRepairCost(0);
+        // Vanilla repair cost doubling : max(base, addition) * 2 + 1
+        if (meta instanceof Repairable r) {
+            int addRepairCost = (addition != null && addition.getItemMeta() instanceof Repairable ra) ? ra.getRepairCost() : 0;
+            r.setRepairCost(Math.max(r.getRepairCost(), addRepairCost) * 2 + 1);
+        }
         result.setItemMeta(meta);
         return result;
     }
