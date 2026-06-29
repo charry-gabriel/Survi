@@ -245,7 +245,7 @@ public class RareItemService {
         long           growthRange = cfg.getGrowthRange(job);
         long           effective  = actionCount - threshold;
         if (effective <= 0) return 0;
-        double maxChance = cfg.getMaxChance();
+        double maxChance = cfg.getMaxChance(job);
         return Math.min(maxChance, effective * maxChance / growthRange);
     }
 

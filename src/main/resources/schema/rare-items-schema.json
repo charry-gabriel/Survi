@@ -3,15 +3,9 @@
   "title": "rare_items.yml",
   "description": "Configuration des items rares de collection liés aux métiers. Rechargeable à chaud via /survi reload rare_items.",
   "type": "object",
-  "required": ["max-chance", "save-every", "min-job-level", "suspicious-window-ms", "jobs"],
+  "required": ["save-every", "min-job-level", "suspicious-window-ms", "jobs"],
   "additionalProperties": false,
   "properties": {
-    "max-chance": {
-      "type": "number",
-      "description": "Probabilité maximale d'obtenir un objet rare (0.0001 = 0.01 %).",
-      "exclusiveMinimum": 0,
-      "maximum": 1
-    },
     "save-every": {
       "type": "integer",
       "description": "Flush en DB toutes les N actions.",
@@ -45,7 +39,7 @@
   "$defs": {
     "jobEntry": {
       "type": "object",
-      "required": ["threshold", "growth-range", "suspicious-threshold"],
+      "required": ["threshold", "growth-range", "suspicious-threshold", "max-chance"],
       "additionalProperties": false,
       "properties": {
         "threshold": {
@@ -62,12 +56,18 @@
           "type": "integer",
           "description": "Actions dans la fenêtre avant qu'un WARNING anti-cheat soit loggué.",
           "minimum": 1
+        },
+        "max-chance": {
+          "type": "number",
+          "description": "Chance maximale propre à ce métier.",
+          "exclusiveMinimum": 0,
+          "maximum": 1
         }
       }
     },
     "explorerEntry": {
       "type": "object",
-      "required": ["threshold", "growth-range", "suspicious-threshold", "min-distance"],
+      "required": ["threshold", "growth-range", "suspicious-threshold", "max-chance", "min-distance"],
       "additionalProperties": false,
       "properties": {
         "threshold": {
@@ -81,6 +81,12 @@
         "suspicious-threshold": {
           "type": "integer",
           "minimum": 1
+        },
+        "max-chance": {
+          "type": "number",
+          "description": "Chance maximale propre à ce métier.",
+          "exclusiveMinimum": 0,
+          "maximum": 1
         },
         "min-distance": {
           "type": "number",

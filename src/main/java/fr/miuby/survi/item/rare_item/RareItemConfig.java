@@ -32,7 +32,6 @@ public class RareItemConfig {
 
     // ─── Paramètres globaux ───────────────────────────────────────────────────────
 
-    @Getter private double maxChance;
     @Getter private int    saveEvery;
     @Getter private int    minJobLevel;
     @Getter private long   suspiciousWindowMs;
@@ -40,13 +39,15 @@ public class RareItemConfig {
 
     // ─── Paramètres par métier ────────────────────────────────────────────────────
 
-    private final EnumMap<EJob, Long> thresholds           = new EnumMap<>(EJob.class);
-    private final EnumMap<EJob, Long> growthRanges         = new EnumMap<>(EJob.class);
-    private final EnumMap<EJob, Long> suspiciousThresholds = new EnumMap<>(EJob.class);
+    private final EnumMap<EJob, Long>   thresholds           = new EnumMap<>(EJob.class);
+    private final EnumMap<EJob, Long>   growthRanges         = new EnumMap<>(EJob.class);
+    private final EnumMap<EJob, Long>   suspiciousThresholds = new EnumMap<>(EJob.class);
+    private final EnumMap<EJob, Double> maxChances           = new EnumMap<>(EJob.class);
 
-    public long getThreshold(EJob job)           { return thresholds.getOrDefault(job, 0L); }
-    public long getGrowthRange(EJob job)         { return growthRanges.getOrDefault(job, 5_000L); }
-    public long getSuspiciousThreshold(EJob job) { return suspiciousThresholds.getOrDefault(job, 100L); }
+    public long   getThreshold(EJob job)           { return thresholds.getOrDefault(job, 0L); }
+    public long   getGrowthRange(EJob job)         { return growthRanges.getOrDefault(job, 5_000L); }
+    public long   getSuspiciousThreshold(EJob job) { return suspiciousThresholds.getOrDefault(job, 100L); }
+    public double getMaxChance(EJob job)           { return maxChances.getOrDefault(job, 0.0001); }
 
     // ─── Chargement ──────────────────────────────────────────────────────────────
 
@@ -54,7 +55,6 @@ public class RareItemConfig {
         File file = new File(plugin.getDataFolder(), "rare_items.yml");
         FileConfiguration cfg = YamlConfiguration.loadConfiguration(file);
 
-        maxChance          = cfg.getDouble("max-chance",           0.0001);
         saveEvery          = cfg.getInt   ("save-every",           25);
         minJobLevel        = cfg.getInt   ("min-job-level",        5);
         suspiciousWindowMs = cfg.getLong  ("suspicious-window-ms", 600_000L);
@@ -62,19 +62,23 @@ public class RareItemConfig {
         thresholds.clear();
         growthRanges.clear();
         suspiciousThresholds.clear();
+        maxChances.clear();
 
         for (EJob job : EJob.values()) {
             String key = "jobs." + job.name();
-            thresholds          .put(job, cfg.getLong(key + ".threshold",             0L));
-            growthRanges        .put(job, cfg.getLong(key + ".growth-range",      5_000L));
-            suspiciousThresholds.put(job, cfg.getLong(key + ".suspicious-threshold",  50L));
+            thresholds          .put(job, cfg.getLong  (key + ".threshold",             0L));
+            growthRanges        .put(job, cfg.getLong  (key + ".growth-range",      5_000L));
+            suspiciousThresholds.put(job, cfg.getLong  (key + ".suspicious-threshold",  50L));
+            if (cfg.contains(key + ".max-chance")) {
+                maxChances.put(job, cfg.getDouble(key + ".max-chance"));
+            }
         }
 
         double explorerMinDist = cfg.getDouble("jobs.EXPLORER.min-distance", 600.0);
         explorerMinDistanceSq  = explorerMinDist * explorerMinDist;
 
         MLLogManager.getInstance().log(Level.INFO, ELogTag.ITEM,
-                "[RareItemConfig] Chargé — max-chance=" + maxChance
+                "[RareItemConfig] Chargé — max-chance-par-job=" + maxChances.size()
                         + " save-every=" + saveEvery
                         + " min-job-level=" + minJobLevel
                         + " explorer-min-dist=" + explorerMinDist

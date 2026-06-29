@@ -4,9 +4,6 @@
 
 # ── Paramètres globaux ───────────────────────────────────────────────────────
 
-# Probabilité maximale d'obtenir un objet rare (0.0001 = 0.01 %)
-max-chance: 0.0001
-
 # Sauvegarde en DB toutes les N actions (flush périodique)
 save-every: 25
 
@@ -26,25 +23,31 @@ jobs:
     threshold: 5000
     growth-range: 50000
     suspicious-threshold: 100
+    max-chance: 0.0001
   LUMBERJACK:
     threshold: 3000
     growth-range: 30000
     suspicious-threshold: 500
+    max-chance: 0.0001
   FARMER:
     threshold: 10000
     growth-range: 200000
     suspicious-threshold: 1000
+    max-chance: 0.0001
   ENCHANTER:
     threshold: 500
     growth-range: 2000
     suspicious-threshold: 50
+    max-chance: 0.0001
   FISHERMAN:
     threshold: 500
     growth-range: 5000
     suspicious-threshold: 50
+    max-chance: 0.0001
   EXPLORER:
     threshold: 0
     growth-range: 5000
     suspicious-threshold: 50
+    max-chance: 0.0001
     # Distance minimale du point 0,0 (en blocs) pour que le kill compte
     min-distance: 600

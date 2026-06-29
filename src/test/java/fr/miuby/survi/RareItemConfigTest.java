@@ -55,15 +55,6 @@ class RareItemConfigTest {
     // ─── Paramètres globaux ───────────────────────────────────────────────────────
 
     @Test
-    void maxChanceValid() {
-        Object v = root.get("max-chance");
-        assertNotNull(v, "max-chance absent");
-        double val = ((Number) v).doubleValue();
-        assertTrue(val > 0 && val <= 1.0,
-                "max-chance doit être dans ]0 ; 1], obtenu : " + val);
-    }
-
-    @Test
     void saveEveryValid() {
         Object v = root.get("save-every");
         assertNotNull(v, "save-every absent");
@@ -142,5 +133,18 @@ class RareItemConfigTest {
         assertNotNull(v, "EXPLORER.min-distance absent");
         double val = ((Number) v).doubleValue();
         assertTrue(val >= 0, "EXPLORER.min-distance doit être ≥ 0, obtenu : " + val);
+    }
+
+    @Test
+    void jobMaxChanceValid() {
+        Map<String, Object> jobs = (Map<String, Object>) root.get("jobs");
+        for (String name : JOB_NAMES) {
+            Map<String, Object> job = (Map<String, Object>) jobs.get(name);
+            Object v = job.get("max-chance");
+            assertNotNull(v, name + ".max-chance absent");
+            double val = ((Number) v).doubleValue();
+            assertTrue(val > 0 && val <= 1.0,
+                    name + ".max-chance doit être dans ]0 ; 1], obtenu : " + val);
+        }
     }
 }
