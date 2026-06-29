@@ -158,9 +158,9 @@ public final class JobsLoader {
                 fishermanCfg.getDouble("acid-rain-damage", 1.0),
                 fishermanCfg.getInt("acid-rain-fisherman-level-threshold", 5),
                 readDouble(fishermanCfg, "alchemic-catch-chance",
-                        new double[]{0.00, 0.01, 0.02, 0.03, 0.04, 0.06, 0.08, 0.11, 0.14, 0.17, 0.20}),
-                fishermanCfg.getDouble("alchemic-luck-scale", 0.02),
-                fishermanCfg.getInt("alchemic-luck-weight-bonus", 80),
+                        new double[]{0.00, 0.01, 0.02, 0.03, 0.04, 0.05, 0.06, 0.07, 0.08, 0.09, 0.10}),
+                fishermanCfg.getDouble("alchemic-luck-scale", 0.94),
+                fishermanCfg.getInt("alchemic-luck-weight-bonus", 8),
                 readAlchemicLoot(fishermanCfg)
         );
 

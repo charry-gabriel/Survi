@@ -6,61 +6,69 @@ eventType: FishCatchEvent
 # palier II — voir FishermanAttributeService. La MAGNITUDE de chaque bonus reste pilotée par
 # jobs/fisherman.yml (underwater-speed-modifier / oxygen-bonus / submerged-mining-speed-modifier,
 # indexés par niveau de job) : l'item débloque la capacité, le métier en augmente la portée.
+#
+# La luck (attribut LUCK de Minecraft) pilote simultanément :
+#   • la fréquence des trésors vanilla (formule interne : treasure_w = 5 + 7×luck)
+#   • l'amplification de la chance alchimique (formule multiplicative dans FishermanListener)
+#   • l'aplatissement de la table alchimique (potions rares → "trésors de potions")
+#
+# Plage : 0.5 (Pantalon II) → 7.0 (Maître Pêcheur X).
+# Cible à niveau 10 de métier + luck=7 : ~39 % trésors / ~40 % potions / ~21 % poissons.
 
 tiers:
   - requiredUses: 100
     effects:
       - { type: name,           value: "Pantalon du Pêcheur II" }
-      - { type: set_attribute,  attribute: luck, attributeValue: 1.0, operation: ADD_NUMBER, slot: LEGS }
+      - { type: set_attribute,  attribute: luck, attributeValue: 0.5, operation: ADD_NUMBER, slot: LEGS }
       - { type: unlock_ability, value: underwater_kit }
       - { type: message,        value: "Ton pantalon grandit, tu nages plus vite, respires plus longtemps et mines mieux sous l'eau !" }
 
   - requiredUses: 500
     effects:
       - { type: name,          value: "Pantalon du Pêcheur III" }
-      - { type: set_attribute, attribute: luck, attributeValue: 3.0, operation: ADD_NUMBER, slot: LEGS }
+      - { type: set_attribute, attribute: luck, attributeValue: 1.0, operation: ADD_NUMBER, slot: LEGS }
       - { type: message,       value: "Les poissons te sourient un peu plus." }
 
   - requiredUses: 1000
     effects:
       - { type: name,          value: "Pantalon du Pêcheur IV" }
-      - { type: set_attribute, attribute: luck, attributeValue: 5.0, operation: ADD_NUMBER, slot: LEGS }
+      - { type: set_attribute, attribute: luck, attributeValue: 2.0, operation: ADD_NUMBER, slot: LEGS }
       - { type: message,       value: "Tu sens les bancs de poissons avant même de lancer ta ligne." }
 
   - requiredUses: 2000
     effects:
       - { type: name,          value: "Pantalon du Pêcheur V" }
-      - { type: set_attribute, attribute: luck, attributeValue: 10.0, operation: ADD_NUMBER, slot: LEGS }
-      - { type: message,       value: "L'océan n'a plus de secret pour toi." }
+      - { type: set_attribute, attribute: luck, attributeValue: 3.0, operation: ADD_NUMBER, slot: LEGS }
+      - { type: message,       value: "Les trésors des fonds commencent à répondre à ton appel." }
 
   - requiredUses: 3000
     effects:
       - { type: name,          value: "Pantalon du Pêcheur VI" }
-      - { type: set_attribute, attribute: luck, attributeValue: 15.0, operation: ADD_NUMBER, slot: LEGS }
-      - { type: message,       value: "L'océan n'a plus de secret pour toi." }
+      - { type: set_attribute, attribute: luck, attributeValue: 4.0, operation: ADD_NUMBER, slot: LEGS }
+      - { type: message,       value: "Les courants t'obéissent. Les épaves n'ont plus de secrets." }
 
   - requiredUses: 7000
     effects:
       - { type: name,          value: "Pantalon du Pêcheur VII" }
-      - { type: set_attribute, attribute: luck, attributeValue: 20.0, operation: ADD_NUMBER, slot: LEGS }
-      - { type: message,       value: "L'océan n'a plus de secret pour toi." }
+      - { type: set_attribute, attribute: luck, attributeValue: 5.0, operation: ADD_NUMBER, slot: LEGS }
+      - { type: message,       value: "Les abysses murmurent en ta présence." }
 
   - requiredUses: 8000
     effects:
       - { type: name,          value: "Pantalon du Pêcheur VIII" }
-      - { type: set_attribute, attribute: luck, attributeValue: 25.0, operation: ADD_NUMBER, slot: LEGS }
-      - { type: message,       value: "L'océan n'a plus de secret pour toi." }
+      - { type: set_attribute, attribute: luck, attributeValue: 5.5, operation: ADD_NUMBER, slot: LEGS }
+      - { type: message,       value: "Chaque lancer est une certitude." }
 
   - requiredUses: 9000
     effects:
       - { type: name,          value: "Pantalon du Pêcheur IX" }
-      - { type: set_attribute, attribute: luck, attributeValue: 30.0, operation: ADD_NUMBER, slot: LEGS }
-      - { type: message,       value: "L'océan n'a plus de secret pour toi." }
+      - { type: set_attribute, attribute: luck, attributeValue: 6.0, operation: ADD_NUMBER, slot: LEGS }
+      - { type: message,       value: "L'océan partage ses plus grands secrets avec toi." }
 
   - requiredUses: 10000
     effects:
       - { type: name,          value: "Pantalon du Maître Pêcheur" }
-      - { type: set_attribute, attribute: luck, attributeValue: 35.0, operation: ADD_NUMBER, slot: LEGS }
+      - { type: set_attribute, attribute: luck, attributeValue: 7.0, operation: ADD_NUMBER, slot: LEGS }
       - { type: message,       value: "Pantalon de légende. Les profondeurs t'appartiennent." }
 
 periodicEffects:

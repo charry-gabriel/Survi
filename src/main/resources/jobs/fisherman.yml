@@ -151,43 +151,43 @@ acid-rain-fisherman-level-threshold: 3
 
 # ─── Loot alchimique ──────────────────────────────────────────────────────────
 
-# Probabilité de base qu'une pêche non-trésor donne un item alchimique.
-# Les trésors (livres enchantés, arcs, cannes enchantées, selles…) sont
-# explicitement exclus : ils sont déjà boostés par la luck vanilla (Chance de la
-# Mer) et ne doivent pas être convertis en potions.
+# Probabilité DE BASE qu'une pêche non-trésor donne un item alchimique (par niveau).
+# La luck vient AMPLIFIER cette base via alchemic-luck-scale — formule multiplicative :
+#   chance = min(1, base[level] × (1 + alchemic-luck-scale × vanillaLuck))
 #
-# Chance effective = min(1.0, alchemic-catch-chance[level] + alchemic-luck-scale × vanillaLuck)
-# vanillaLuck = niveau Chance de la Mer + amplificateur de l'effet Luck.
+# Conséquence clé : au niveau 0 (base=0.00), les potions sont à 0 % quelle que soit
+# la luck du pantalon. La luck ne sert qu'à amplifier ce que le niveau a déjà ouvert.
+#
+# Exemples niveau 10 (base = 0.10) :
+#   luck=0 (sans pantalon)      : 0.10 × (1+0.0) = 10 % de non-trésors → ~9.5 % total
+#   luck=3 (Pantalon V)         : 0.10 × (1+2.4) = 34 % de non-trésors → ~26 % total
+#   luck=7 (Maître Pêcheur X)   : 0.10 × (1+5.6) = 66 % de non-trésors → ~40 % total
 alchemic-catch-chance:
-  - 0.00   # niveau  0  — jamais
+  - 0.00   # niveau  0  — jamais (base nulle → luck sans effet)
   - 0.01   # niveau  1
   - 0.02   # niveau  2
   - 0.03   # niveau  3
   - 0.04   # niveau  4
-  - 0.06   # niveau  5
-  - 0.08   # niveau  6
-  - 0.11   # niveau  7
-  - 0.14   # niveau  8
-  - 0.17   # niveau  9
-  - 0.20   # niveau 10
+  - 0.05   # niveau  5
+  - 0.06   # niveau  6
+  - 0.07   # niveau  7
+  - 0.08   # niveau  8
+  - 0.09   # niveau  9
+  - 0.10   # niveau 10
 
-# Bonus de chance alchimique par point de luck vanilla.
-# Exemples (niveau 10) :
-#   Sans luck            : 20 %
-#   Chance de la Mer I   : 20 % + 1 × 2 % = 22 %
-#   Chance de la Mer III : 20 % + 3 × 2 % = 26 %
-# La luck améliore ainsi simultanément les trésors (via la loot table vanilla)
-# et les potions alchimiques, sans que les deux se concurrencent.
-alchemic-luck-scale: 0.02
+# Facteur multiplicatif par point de luck (voir formule ci-dessus).
+# chance effective = base[level] × alchemic-luck-scale × vanillaLuck
+# À luck=7 (Maître) : 0.10 × 0.94 × 7 = 0.658 → ~65 % de non-trésors → ~40 % total.
+alchemic-luck-scale: 0.94
 
-# Bonus de poids ajouté à chaque entrée éligible de la table alchimique par
-# point de luck vanilla. Aplatit la distribution :
-#   Sans luck          : Nether Wart (400) vs DEFLAGRATION (10) → ratio 40:1
-#   Chance de la Mer I : (400+80) vs (10+80) = 480 vs 90      → ratio  5.3:1
-#   Chance de la Mer III: (400+240) vs (10+240) = 640 vs 250  → ratio  2.6:1
-# Les potions rares (petit poids) se comportent ainsi comme des "trésors de
-# potions" : peu probables sans luck, mais accessibles avec une bonne canne.
-alchemic-luck-weight-bonus: 80
+# Bonus de poids ajouté à chaque entrée alchimique éligible selon une formule
+# QUADRATIQUE : bonus = round(luck² × alchemic-luck-weight-bonus).
+# Convergence lente au début, progressive en fin de progression :
+#   luck=0.5 (Pan.II)  : bonus=2  → Nether Wart / DEFLAGRATION = 33.5:1
+#   luck=1.0 (Pan.III) : bonus=8  →                              22.7:1
+#   luck=3.0 (Pan.V)   : bonus=72 →                               5.8:1
+#   luck=7.0 (Maître)  : bonus=392→                               2.0:1
+alchemic-luck-weight-bonus: 8
 
 # Table de loot alchimique
 # Hiérarchie de poids : Nether Wart >> Tier1 régulier > Tier1 splash > Tier1 longue > Tier2 > Custom
