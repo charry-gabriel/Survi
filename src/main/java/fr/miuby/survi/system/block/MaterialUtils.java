@@ -83,7 +83,8 @@ public final class MaterialUtils {
     public static final Set<Material> SOIL_BLOCKS = EnumSet.of(
             Material.GRASS_BLOCK, Material.DIRT, Material.COARSE_DIRT,
             Material.PODZOL, Material.FARMLAND, Material.ROOTED_DIRT,
-            Material.MUD, Material.MUDDY_MANGROVE_ROOTS
+            Material.MUD, Material.MUDDY_MANGROVE_ROOTS,
+            Material.CRIMSON_NYLIUM, Material.WARPED_NYLIUM
     );
 
     // ═══════════════════════════════════════════════════════════════════════════
