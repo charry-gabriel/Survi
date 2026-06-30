@@ -22,7 +22,7 @@ jobs:
   MINER:
     threshold: 5000
     growth-range: 50000
-    suspicious-threshold: 100
+    suspicious-threshold: 500
     max-chance: 0.0001
   LUMBERJACK:
     threshold: 3000

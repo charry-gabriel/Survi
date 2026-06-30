@@ -49,6 +49,7 @@ public class RainManager {
     // ─── Pluie acide ─────────────────────────────────────────────────────────────
 
     public void setAcidRainActive(boolean active) {
+        if (active == this.acidRainActive) return;
         this.acidRainActive = active;
         MLLogManager.getInstance().log(Level.INFO, ELogTag.WORLD, "[RainManager] Pluie acide " + (active ? "activée" : "désactivée") + ".");
     }

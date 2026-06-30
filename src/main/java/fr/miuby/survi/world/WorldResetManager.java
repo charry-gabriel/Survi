@@ -192,9 +192,21 @@ public class WorldResetManager {
         return cachedResetFrequency;
     }
 
-    public void setResetFrequency(int days) {
+    /**
+     * @return {@code true} si la fréquence a réellement changé (et donc été persistée + logguée),
+     *         {@code false} si {@code days} est déjà la valeur courante (no-op silencieux).
+     */
+    public boolean setResetFrequency(int days) {
+        if (days == cachedResetFrequency) return false;
+
+        int previous = cachedResetFrequency;
         cachedResetFrequency = days;
         GameManager.getInstance().getDatabase().system().saveServerData("reset_freq", String.valueOf(days));
+
+        MLLogManager.getInstance().log(Level.INFO, ELogTag.WORLD, previous == -1
+                ? "Fréquence de reset des mondes initialisée à " + days + " jour(s)."
+                : "Fréquence de reset des mondes mise à jour : " + previous + " → " + days + " jour(s).");
+        return true;
     }
 
     /**
