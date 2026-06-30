@@ -2,15 +2,92 @@
 quests:
 
 # ─────────────────── DIFFICULTÉ 3 (0/7) ───────────────────
-  - id: "fish_common30"
+
+  - id: "fish_common31"
     name: "Pêcheur du Dimanche"
-    description: "Pêchez {value} poissons."
+    description: "Pêchez {value} fois."
     type: FISH
     difficulty: 3
     jobs:
       - FISHERMAN
-    targets: [TROPICAL_FISH]
-    goal: 10
+    targets: null
+    goal: 64
     rewards:
-      - {type: REPUTATION, job: FISHERMAN, value: 12}
-      - {type: POTION, potion: luck, duration: 1728000, amplifier: 0}
+      - { type: REPUTATION, job: FISHERMAN, value: 1}
+
+  - id: "fish_common32"
+    name: "Pêcheur de Morue"
+    description: "Faire cuire {value} poisson."
+    type: SMELT
+    difficulty: 3
+    jobs:
+      - FISHERMAN
+    targets: [COOKED_COD, COOKED_SALMON]
+    goal: 256
+    rewards:
+      - { type: REPUTATION, job: FISHERMAN, value: 1 }
+
+  - id: "enchant_trident33"
+    name: "Maître des Océans"
+    description: "Enchantez {value} trident."
+    type: ENCHANT
+    difficulty: 3
+    jobs:
+      - ENCHANTER
+    targets: [TRIDENT]
+    goal: 1
+    rewards:
+      - { type: REPUTATION, job: FISHERMAN, value: 1 }
+      - {type: REPUTATION, job: ENCHANTER, value: 1}
+
+  - id: "breed_turtles34"
+    name: "Protection des Océans"
+    description: "Faites se reproduire {value} tortues."
+    type: BREED
+    difficulty: 3
+    jobs:
+      - EXPLORER
+    targets: [TURTLE]
+    goal: 2
+    rewards:
+      - {type: REPUTATION, job: FISHERMAN, value: 1}
+      - { type: REPUTATION, job: EXPLORER, value: 1}
+      - { type: REPUTATION, job: FARMER, value: 1}
+
+  - id: "tame_cat35"
+    name: "Compagnon Félin"
+    description: "Apprivoisez {value} chat."
+    type: TAME
+    difficulty: 3
+    jobs:
+      - EXPLORER
+    targets: [CAT]
+    goal: 5
+    rewards:
+      - { type: REPUTATION, job: FISHERMAN, value: 1}
+      - { type: REPUTATION, job: EXPLORER, value: 3}
+
+  - id: "fish_common36"
+    name: "Usine de la pêche"
+    description: "Pêchez {value} fois."
+    type: FISH
+    difficulty: 3
+    jobs:
+      - FISHERMAN
+    targets:
+    goal: 500
+    rewards:
+      - {type: REPUTATION, job: FISHERMAN, value: 5}
+
+  - id: "kill_elder_guardian37"
+    name: "Fléau des Profondeurs"
+    description: "Tuez {value} Elder Guardian."
+    type: KILL
+    difficulty: 3
+    jobs:
+      - EXPLORER
+    targets: [ ELDER_GUARDIAN ]
+    goal: 1
+    rewards:
+      - { type: REPUTATION, job: EXPLORER, value: 4}
+      - { type: REPUTATION, job: FISHERMAN, value: 1}

@@ -3,7 +3,7 @@ quests:
 
 # ─────────────────── DIFFICULTÉ 3 (7/7) ───────────────────
 
-  - id: "nether_stem_master"
+  - id: "nether_stem_master31"
     name: "Bois du Nether Ancien"
     description: "Coupez {value} tiges du Nether (carmin et biscornues)."
     type: MINE
@@ -15,7 +15,7 @@ quests:
     rewards:
       - { type: REPUTATION, job: LUMBERJACK, value: 1 }
 
-  - id: "pale_oak_harvest"
+  - id: "pale_oak_harvest32"
     name: "Le Bois Fantomatique"
     description: "Coupez {value} bûches de chêne pâle."
     type: MINE
@@ -27,8 +27,7 @@ quests:
     rewards:
       - { type: REPUTATION, job: LUMBERJACK, value: 1}
 
-
-  - id: "chop_bamboo_master"
+  - id: "chop_bamboo_master33"
     name: "Forêt de Bambou"
     description: "Craftez {value} blocs de bambou."
     type: CRAFT
@@ -41,7 +40,7 @@ quests:
       - {type: REPUTATION, job: LUMBERJACK, value: 1}
       - { type: REPUTATION, job: EXPLORER, value: 1 }
 
-  - id: "overworld_fungus"
+  - id: "overworld_fungus34"
     name: "Forêt Mycologique"
     description: "Récoltez {value} champignons (rouges et bruns)."
     type: MINE
@@ -54,7 +53,7 @@ quests:
       - { type: REPUTATION, job: LUMBERJACK, value: 2}
       - { type: REPUTATION, job: EXPLORER, value: 1 }
 
-  - id: "bee_master"
+  - id: "bee_master35"
     name: "Maître des Abeilles"
     description: "Récoltez {value} produits liés aux abeilles sans détruire les ruches."
     type: SMELT
@@ -68,7 +67,7 @@ quests:
       - { type: REPUTATION, job: FARMER, value: 3}
 
 
-  - id: "end_explorer_wood"
+  - id: "end_explorer_wood36"
     name: "Bois de l’End"
     description: "Coupez {value} blocs de matériaux trouvés dans l’End."
     type: MINE
@@ -82,9 +81,9 @@ quests:
       - { type: REPUTATION, job: FARMER, value: 2}
       - { type: REPUTATION, job: EXPLORER, value: 1 }
 
-  - id: "strip_acacia_logs"
+  - id: "strip_acacia_logs37"
     name: "Menuisier d'Acacia"
-    description: "Écorcez {value} bûches d'acacia avec une hache."
+    description: "Écorcez et récoltez {value} bûches d'acacia avec une hache."
     type: MINE
     difficulty: 3
     jobs:

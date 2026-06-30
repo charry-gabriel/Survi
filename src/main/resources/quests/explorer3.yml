@@ -3,19 +3,19 @@ quests:
 
 # ─────────────────── DIFFICULTÉ 3 (7/7) ───────────────────
 
-  - id: "kill_evoker"
+  - id: "kill_evoker31"
     name: "Inquisiteur des Illusions"
-    description: "Tuez {value} évocateurs."
+    description: "Tuez {value} évocateurs ou Vex."
     type: KILL
     difficulty: 3
     jobs:
       - EXPLORER
-    targets: [EVOKER]
+    targets: [EVOKER, VEX]
     goal: 5
     rewards:
-      - {type: REPUTATION, job: EXPLORER, value: 15}
+      - {type: REPUTATION, job: EXPLORER, value: 1}
 
-  - id: "kill_piglin_brutes"
+  - id: "kill_piglin_brutes32"
     name: "Briseur de Bastion"
     description: "Tuez {value} piglins brutes."
     type: KILL
@@ -23,6 +23,66 @@ quests:
     jobs:
       - EXPLORER
     targets: [ PIGLIN_BRUTE ]
-    goal: 20
+    goal: 10
     rewards:
-      - { type: REPUTATION, job: EXPLORER, value: 18 }
+      - { type: REPUTATION, job: EXPLORER, value: 1}
+
+  - id: "kill_zombified_piglins33"
+    name: "Colère du Nether"
+    description: "Tuez {value} piglins zombifiés."
+    type: KILL
+    difficulty: 3
+    jobs:
+      - EXPLORER
+    targets: [ ZOMBIFIED_PIGLIN ]
+    goal: 30
+    rewards:
+      - { type: REPUTATION, job: EXPLORER, value: 2 }
+
+  - id: "kill_endermen_elite34"
+    name: "Chasseur du Néant"
+    description: "Tuez {value} endermen."
+    type: KILL
+    difficulty: 3
+    jobs:
+      - EXPLORER
+    targets: [ ENDERMAN ]
+    goal: 64
+    rewards:
+      - { type: REPUTATION, job: EXPLORER, value: 3}
+
+  - id: "kill_shulkers35"
+    name: "Ascension du Vide"
+    description: "Tuez {value} shulkers."
+    type: KILL
+    difficulty: 3
+    jobs:
+      - EXPLORER
+    targets: [ SHULKER ]
+    goal: 15
+    rewards:
+      - { type: REPUTATION, job: EXPLORER, value: 4}
+
+  - id: "kill_ender_dragon36"
+    name: "Héros de l'End"
+    description: "Tuez {value} Ender Dragon."
+    type: KILL
+    difficulty: 3
+    jobs:
+      - EXPLORER
+    targets: [ ENDER_DRAGON ]
+    goal: 1
+    rewards:
+      - { type: REPUTATION, job: EXPLORER, value: 5 }
+
+  - id: "kill_wither37"
+    name: "Fléau du Nether"
+    description: "Tuez {value} Wither."
+    type: KILL
+    difficulty: 3
+    jobs:
+      - EXPLORER
+    targets: [ WITHER ]
+    goal: 1
+    rewards:
+      - { type: REPUTATION, job: EXPLORER, value: 5}

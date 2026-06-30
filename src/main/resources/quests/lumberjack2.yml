@@ -87,7 +87,7 @@ quests:
     jobs:
       - LUMBERJACK
     targets: [DIAMOND_AXE]
-    goal: 1
+    goal: 4
     rewards:
       - { type: REPUTATION, job: LUMBERJACK, value: 1}
       - { type: REPUTATION, job: MINER, value: 4}

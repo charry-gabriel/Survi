@@ -1,7 +1,7 @@
 # yaml-language-server: $schema=../schema/quests-schema.json
 quests:
 
-# ─────────────────── DIFFICULTÉ 2 (1/7) ───────────────────
+# ─────────────────── DIFFICULTÉ 2 (7/7) ───────────────────
 
   - id: "stone_tools_enchant"
     name: "Premiers Outils Magiques"
@@ -73,7 +73,7 @@ quests:
     jobs:
       - ENCHANTER
     targets: [ NETHER_QUARTZ_ORE ]
-    goal: 200
+    goal: 48
     rewards:
       - { type: REPUTATION, job: ENCHANTER, value: 3}
       - { type: REPUTATION, job: MINER, value: 2 }

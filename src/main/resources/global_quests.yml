@@ -122,5 +122,20 @@ global_quests:
       - { type: ITEM, item: BLAZE_POWDER, amount: 2}
       - { type: ITEM, item: TRIAL_KEY, amount: 1}
       - { type: ITEM, item: OMINOUS_TRIAL_KEY, amount: 1}
-      - { type: POTION, potion: strength, duration: 72000, amplifier: 1 }
+      - { type: POTION, potion: strength, duration: 72000, amplifier: 0}
+
+  - id: "global_enchant_items_niveau2"
+    name: "On monte de niveau."
+    description: "Gagnez {value} niveau d'XP"
+    type: GAIN_XP_LEVELS
+    goal: 250 #On a réussi en 30 minutes
+    time_limit: 5400
+    rewards:
+      - { type: REPUTATION, job: ENCHANTER, value: 1 }
+      - { type: ITEM, item: LAPIS_LAZULI, amount: 64 }
+      - { type: ITEM, item: EXPERIENCE_BOTTLE, amount: 64 }
+      - { type: ITEM, item: BOOKSHELF, amount: 8 }
+      - { type: ITEM, item: ANVIL, amount: 1}
+      - { type: ITEM, item: ENCHANTING_TABLE, amount: 1 }
+      - { type: POTION, potion: luck, duration: 72000, amplifier: 0 }
 

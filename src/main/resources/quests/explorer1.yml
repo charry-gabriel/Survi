@@ -59,7 +59,7 @@ quests:
     jobs:
       - EXPLORER
     targets: [WITCH]
-    goal: 2
+    goal: 1
     rewards:
       - {type: REPUTATION, job: ENCHANTER, value: 4}
 
@@ -71,7 +71,7 @@ quests:
     jobs:
       - EXPLORER
     targets: [ ENDERMAN ]
-    goal: 10
+    goal: 5
     rewards:
       - { type: REPUTATION, job: EXPLORER, value: 5 }
 

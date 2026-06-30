@@ -12,7 +12,7 @@ quests:
     jobs:
       - EXPLORER
     targets: [PILLAGER]
-    goal: 30
+    goal: 25
     rewards:
       - {type: REPUTATION, job: EXPLORER, value: 1}
 
@@ -48,7 +48,7 @@ quests:
     jobs:
       - EXPLORER
     targets: [GUARDIAN]
-    goal: 20
+    goal: 10
     rewards:
       - {type: REPUTATION, job: EXPLORER, value: 3}
 

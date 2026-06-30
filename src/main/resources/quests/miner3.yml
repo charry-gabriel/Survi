@@ -3,7 +3,7 @@ quests:
 
   # ─────────────────── DIFFICULTÉ 3 (6/7) ───────────────────
 
-  - id: "mine_end_stone_mass"
+  - id: "mine_end_stone_mass31"
     name: "Colonisation de l'End"
     description: "Minez {value} blocs d'End Stone dans l'End."
     type: MINE
@@ -15,19 +15,8 @@ quests:
     rewards:
       - {type: REPUTATION, job: MINER, value: 1}
 
-  - id: "mine_chorus_plants"
-    name: "Écho de l'End"
-    description: "Récoltez {value} Chorus dans l'End."
-    type: MINE
-    difficulty: 3
-    jobs:
-      - MINER
-    targets: [CHORUS_PLANT]
-    goal: 64
-    rewards:
-      - {type: REPUTATION, job: FARMER, value: 1}
 
-  - id: "mine_obsidian"
+  - id: "mine_obsidian32"
     name: "Briseur d'Obsidienne"
     description: "Minez {value} obsidiennes."
     type: MINE
@@ -37,23 +26,21 @@ quests:
     targets: [OBSIDIAN]
     goal: 150
     rewards:
-      - {type: REPUTATION, job: MINER, value: 2}
-      - {type: POTION, potion: haste, duration: 1728000, amplifier: 2}
+      - {type: REPUTATION, job: MINER, value: 1}
 
-  - id: "maj"
-    name: "maj"
-    description: "maj"
+  - id: "mine_sulfur_cinnabar33"
+    name: "Prospection Chimique"
+    description: "Minez {value} minerais de soufre ou de cinabre."
     type: MINE
     difficulty: 3
     jobs:
       - MINER
-    targets:
-    goal: 1
+    targets: [SULFUR, CINNABAR]
+    goal: 500
     rewards:
-      - {type: REPUTATION, job: MINER, value: 3}
-      - {type: POTION, potion: haste, duration: 1728000, amplifier: 2}
+      - {type: REPUTATION, job: MINER, value: 2}
 
-  - id: "mine_gold_block"
+  - id: "mine_gold_block34"
     name: "Les yeux plus gros que le ventre"
     description: "Minez {value} block d'or."
     type: MINE
@@ -63,11 +50,11 @@ quests:
     targets: [GOLD_BLOCK]
     goal: 12
     rewards:
-      - {type: REPUTATION, job: MINER, value: 2}
+      - {type: REPUTATION, job: MINER, value: 1}
       - {type: REPUTATION, job: EXPLORER, value: 2}
 
 
-  - id: "mine_ancient_debris"
+  - id: "mine_ancient_debris35"
     name: "Trésor du Nether"
     description: "Minez {value} débris antiques."
     type: MINE
@@ -75,14 +62,14 @@ quests:
     jobs:
       - MINER
     targets: [ANCIENT_DEBRIS]
-    goal: 6
+    goal: 4
     rewards:
       - {type: REPUTATION, job: MINER, value: 3}
-      - {type: REPUTATION, job: EXPLORER, value: 2}
+      - {type: REPUTATION, job: EXPLORER, value: 1}
 
-  - id: "mine_emerald"
+  - id: "mine_emerald36"
     name: "Richesse des Montagnes"
-    description: "Minez {value} minerais d'émeraude dans les biomes de montagne"
+    description: "Minez {value} minerais d'émeraude."
     type: MINE
     difficulty: 3
     jobs:
@@ -91,3 +78,16 @@ quests:
     goal: 2
     rewards:
       - {type: REPUTATION, job: MINER, value: 5}
+
+  - id: "discover_ancient_cities37"
+    name: "Vestiges du Silence"
+    description: "Tuez {value} Warden."
+    type: KILL
+    difficulty: 3
+    jobs:
+      - EXPLORER
+    targets: [WARDEN]
+    goal: 1
+    rewards:
+      - { type: REPUTATION, job: EXPLORER, value: 4}
+      - { type: REPUTATION, job: MINER, value: 5 }

@@ -4,7 +4,7 @@ quests:
   # ─────────────────── DIFFICULTÉ 3 (7/7) ───────────────────
 
   - id: "cocoa"
-    name: "Plantation Tropicale"
+    name: "Plantation Tropicale31"
     description: "Récoltez {value} fèves de cacao."
     type: HARVEST_CROP
     difficulty: 3
@@ -15,7 +15,7 @@ quests:
     rewards:
       - { type: REPUTATION, job: FARMER, value: 1}
 
-  - id: "cactus_industry"
+  - id: "cactus_industry32"
     name: "Ferme du Désert"
     description: "Récoltez {value} cactus."
     type: HARVEST_CROP
@@ -27,7 +27,7 @@ quests:
     rewards:
       - { type: REPUTATION, job: FARMER, value: 1}
 
-  - id: "cookie_factory"
+  - id: "cookie_factory33"
     name: "Usine à Cookies"
     description: "Craftez {value} cookies."
     type: CRAFT
@@ -39,7 +39,7 @@ quests:
     rewards:
       - { type: REPUTATION, job: FARMER, value: 2}
 
-  - id: "end_farming"
+  - id: "end_farming34"
     name: "Agriculteur Dimensionnel"
     description: "Récoltez {value} cultures dans l'End."
     type: MINE
@@ -52,7 +52,7 @@ quests:
       - {type: REPUTATION, job: FARMER, value: 2}
       - {type: REPUTATION, job: EXPLORER, value: 1}
 
-  - id: "mushroom_harvest"
+  - id: "mushroom_harvest35"
     name: "Cueilleur Mycologique"
     description: "Récoltez {value} champignons (rouges et bruns)."
     type: HARVEST_CROP
@@ -62,23 +62,23 @@ quests:
     targets: [ RED_MUSHROOM, BROWN_MUSHROOM ]
     goal: 256
     rewards:
-      - { type: REPUTATION, job: FARMER, value: 3}
-      - { type: REPUTATION, job: EXPLORER, value: 1 }
+      - { type: REPUTATION, job: FARMER, value: 1}
+      - { type: REPUTATION, job: EXPLORER, value: 3 }
 
-  - id: "enchant_diamond_hoe"
+  - id: "enchant_diamond_hoe36"
     name: "Terre Bénie"
-    description: "Enchantez {value} houe en diamant."
+    description: "Enchantez {value} houe en diamant ou en netherite."
     type: ENCHANT
     difficulty: 3
     jobs:
       - FARMER
-    targets: [ DIAMOND_HOE ]
+    targets: [ DIAMOND_HOE, NETHERITE_HOE]
     goal: 1
     rewards:
       - { type: REPUTATION, job: FARMER, value: 3}
       - { type: REPUTATION, job: ENCHANTER, value: 2}
 
-  - id: "ultimate_farm_variety"
+  - id: "ultimate_farm_variety37"
     name: "Maître Agriculteur"
     description: "Récoltez {value} cultures variées."
     type: HARVEST_CROP

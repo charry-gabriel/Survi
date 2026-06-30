@@ -22,7 +22,7 @@ quests:
     difficulty: 1
     jobs:
       - MINER
-    targets: [COPPER_ORE]
+    targets: [COPPER_ORE, DEEPSLATE_COPPER_ORE]
     goal: 16
     rewards:
       - {type: REPUTATION, job: MINER, value: 1}
@@ -34,7 +34,7 @@ quests:
     difficulty: 1
     jobs:
       - MINER
-    targets: [COAL_ORE]
+    targets: [COAL_ORE, DEEPSLATE_COAL_ORE]
     goal: 12
     rewards:
       - {type: REPUTATION, job: MINER, value: 1}
@@ -47,7 +47,7 @@ quests:
     difficulty: 1
     jobs:
       - MINER
-    targets: [IRON_ORE]
+    targets: [IRON_ORE, DEEPSLATE_IRON_ORE]
     goal: 10
     rewards:
       - {type: REPUTATION, job: MINER, value: 3}
@@ -59,7 +59,7 @@ quests:
     difficulty: 1
     jobs:
       - MINER
-    targets: [REDSTONE_ORE]
+    targets: [REDSTONE_ORE, DEEPSLATE_REDSTONE_ORE]
     goal: 24
     rewards:
       - {type: REPUTATION, job: MINER, value: 3}
@@ -79,7 +79,7 @@ quests:
 
   - id: "mine_mixed_ores"
     name: "Veine Prometteuse"
-    description: "Minez {value} minerais au total."
+    description: "Minez {value} minerais au dessus de la couche 0."
     type: MINE
     difficulty: 1
     jobs:
