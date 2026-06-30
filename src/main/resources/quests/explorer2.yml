@@ -14,7 +14,7 @@ quests:
     targets: [PILLAGER]
     goal: 25
     rewards:
-      - {type: REPUTATION, job: EXPLORER, value: 1}
+      - {type: REPUTATION, job: EXPLORER, value: 11}
 
   - id: "kill_phantom"
     name: "Le fantôme perdu"
@@ -26,7 +26,7 @@ quests:
     targets: [PHANTOM]
     goal: 5
     rewards:
-      - {type: REPUTATION, job: EXPLORER, value: 1}
+      - {type: REPUTATION, job: EXPLORER, value: 11}
 
   - id: "kill_husks"
     name: "Fléau du Désert"
@@ -38,7 +38,7 @@ quests:
     targets: [HUSK]
     goal: 25
     rewards:
-      - {type: REPUTATION, job: EXPLORER, value: 2}
+      - {type: REPUTATION, job: EXPLORER, value: 12}
 
   - id: "kill_guardians"
     name: "Conquérant des Océans"
@@ -50,7 +50,7 @@ quests:
     targets: [GUARDIAN]
     goal: 10
     rewards:
-      - {type: REPUTATION, job: EXPLORER, value: 3}
+      - {type: REPUTATION, job: EXPLORER, value: 13}
 
   - id: "kill_blazes"
     name: "Marcheur des Flammes"
@@ -62,7 +62,7 @@ quests:
     targets: [BLAZE]
     goal: 25
     rewards:
-      - {type: REPUTATION, job: EXPLORER, value: 4}
+      - {type: REPUTATION, job: EXPLORER, value: 14}
 
   - id: "kill_piglins"
     name: "Raider du Nether"
@@ -74,7 +74,7 @@ quests:
     targets: [PIGLIN]
     goal: 50
     rewards:
-      - {type: REPUTATION, job: EXPLORER, value: 5}
+      - {type: REPUTATION, job: EXPLORER, value: 15}
 
   - id: "kill_slim_cubes"
     name: "Écraseur de Slim"
@@ -86,4 +86,4 @@ quests:
     targets: [MAGMA_CUBE, SLIME]
     goal: 30
     rewards:
-      - {type: REPUTATION, job: EXPLORER, value: 5}
+      - {type: REPUTATION, job: EXPLORER, value: 15}

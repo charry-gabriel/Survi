@@ -45,8 +45,6 @@ public class SurviConfig {
     @Getter private float endResistanceModifier;
     @Getter private int deathLifeDivisor;
 
-    @Getter private int questCompletionReputation;
-
     @Getter private List<RankEntry> rankEntries;
     @Getter private List<JobLevelEntry> jobLevelEntries;
 
@@ -83,7 +81,6 @@ public class SurviConfig {
         deathLifeDivisor         = cfg.getInt("combat.death-life-divisor", 10);
 
         rankEntries = new ArrayList<>();
-        questCompletionReputation = cfg.getInt("reputation.quest-completion-reputation", 10);
         List<?> rawRanks = cfg.getList("reputation.ranks");
         if (rawRanks != null) {
             for (Object obj : rawRanks) {

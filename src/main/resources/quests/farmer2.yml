@@ -14,7 +14,7 @@ quests:
     targets: [PUMPKIN, MELON]
     goal: 128
     rewards:
-      - {type: REPUTATION, job: FARMER, value: 1}
+      - {type: REPUTATION, job: FARMER, value: 11}
 
   - id: "bread_craft"
     name: "Boulanger Amateur"
@@ -26,7 +26,7 @@ quests:
     targets: [ BREAD ]
     goal: 64
     rewards:
-      - { type: REPUTATION, job: FARMER, value: 1}
+      - { type: REPUTATION, job: FARMER, value: 11}
 
   - id: "cake_craft"
     name: "Premiers Desserts"
@@ -38,7 +38,7 @@ quests:
     targets: [ CAKE ]
     goal: 16
     rewards:
-      - { type: REPUTATION, job: FARMER, value: 2}
+      - { type: REPUTATION, job: FARMER, value: 12}
 
   - id: "sugar_cane"
     name: "Production Sucrée"
@@ -50,7 +50,7 @@ quests:
     targets: [ SUGAR_CANE ]
     goal: 136
     rewards:
-      - { type: REPUTATION, job: FARMER, value: 3}
+      - { type: REPUTATION, job: FARMER, value: 13}
 
   - id: "nether_wart_d2"
     name: "Premier Pas en Alchimie"
@@ -62,7 +62,7 @@ quests:
     targets: [ NETHER_WART ]
     goal: 128
     rewards:
-      - { type: REPUTATION, job: FARMER, value: 2}
+      - { type: REPUTATION, job: FARMER, value: 12}
       - { type: REPUTATION, job: EXPLORER, value: 2 }
 
   - id: "animal_breeding"
@@ -75,7 +75,7 @@ quests:
     targets: [ COW, SHEEP, PIG, CHICKEN ]
     goal: 100
     rewards:
-      - { type: REPUTATION, job: FARMER, value: 5}
+      - { type: REPUTATION, job: FARMER, value: 15}
 
   - id: "ultimate_farmland"
     name: "Magnat de l'Agriculture"
@@ -87,4 +87,4 @@ quests:
     targets: [ WHEAT, CARROTS, POTATOES, BEETROOTS, PUMPKIN, MELON, SUGAR_CANE, COCOA, NETHER_WART ]
     goal: 1000
     rewards:
-      - { type: REPUTATION, job: FARMER, value: 5 }
+      - { type: REPUTATION, job: FARMER, value: 15 }

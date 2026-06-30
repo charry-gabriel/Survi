@@ -14,7 +14,7 @@ quests:
     targets: [WHEAT]
     goal: 32
     rewards:
-      - {type: REPUTATION, job: FARMER, value: 1}
+      - {type: REPUTATION, job: FARMER, value: 11}
 
   - id: "harvest_carrots_potatoes"
     name: "Potager de Carottes et champ de Pommes de Terre"
@@ -26,7 +26,7 @@ quests:
     targets: [CARROTS, POTATOES]
     goal: 64
     rewards:
-      - { type: REPUTATION, job: FARMER, value: 1 }
+      - { type: REPUTATION, job: FARMER, value: 11 }
 
   - id: "harvest_beetroot"
     name: "Cultivateur de Betteraves"
@@ -38,7 +38,7 @@ quests:
     targets: [ BEETROOTS ]
     goal: 10
     rewards:
-      - { type: REPUTATION, job: FARMER, value: 2 }
+      - { type: REPUTATION, job: FARMER, value: 12 }
 
   - id: "shear_sheep"
     name: "Tonte de Printemps"
@@ -50,7 +50,7 @@ quests:
     targets: [ SHEEP ]
     goal: 32
     rewards:
-      - { type: REPUTATION, job: FARMER, value: 2}
+      - { type: REPUTATION, job: FARMER, value: 12}
       - { type: REPUTATION, job: EXPLORER, value: 1 }
 
   - id: "breed_chickens"
@@ -63,7 +63,7 @@ quests:
     targets: [ CHICKEN ]
     goal: 32
     rewards:
-      - { type: REPUTATION, job: FARMER, value: 4}
+      - { type: REPUTATION, job: FARMER, value: 14}
 
   - id: "breed_cows"
     name: "Éleveur de Bovins et berger Débutant"
@@ -75,7 +75,7 @@ quests:
     targets: [ COW, SHEEP ]
     goal: 32
     rewards:
-      - { type: REPUTATION, job: FARMER, value: 5}
+      - { type: REPUTATION, job: FARMER, value: 15}
 
   - id: "tame_horse"
     name: "Premier Compagnon"
@@ -87,5 +87,5 @@ quests:
     targets: [ HORSE ]
     goal: 1
     rewards:
-      - { type: REPUTATION, job: FARMER, value: 4 }
+      - { type: REPUTATION, job: FARMER, value: 14 }
       - { type: REPUTATION, job: EXPLORER, value: 1 }

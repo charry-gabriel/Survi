@@ -156,28 +156,6 @@ public class QuestHistoryRepository extends MLRepository {
     }
 
     /**
-     * Nombre de quêtes journalières complétées par métier, pour tous les joueurs en une seule requête.
-     * Clé externe : UUID joueur ; clé interne : nom {@link fr.miuby.survi.job.EJob#name()}.
-     * Utilisé pour reconstruire {@code player_reputation} depuis l'historique (réparation après corruption).
-     */
-    public Map<UUID, Map<String, Integer>> countDailyByPlayerAndJob() {
-        Map<UUID, Map<String, Integer>> result = new HashMap<>();
-        try (PreparedStatement ps = connection.prepareStatement(
-                "SELECT player_uuid, job, COUNT(*) as cnt FROM quest_history " +
-                        "WHERE quest_type = 'daily' AND job IS NOT NULL GROUP BY player_uuid, job")) {
-            try (ResultSet rs = ps.executeQuery()) {
-                while (rs.next()) {
-                    UUID uuid = UUID.fromString(rs.getString("player_uuid"));
-                    result.computeIfAbsent(uuid, k -> new HashMap<>()).put(rs.getString("job"), rs.getInt("cnt"));
-                }
-            }
-        } catch (SQLException ex) {
-            MLLogManager.getInstance().log(Level.SEVERE, ELogTag.QUEST, "Failed to count daily quests by player and job", ex);
-        }
-        return result;
-    }
-
-    /**
      * Nombre de quêtes journalières complétées par identifiant de quête, pour tous les joueurs.
      * Clé externe : UUID joueur ; clé interne : {@code quest_id}.
      * Utilisé pour reconstruire les récompenses de réputation propres à chaque quête

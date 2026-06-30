@@ -13,7 +13,7 @@ quests:
     targets: [STONE]
     goal: 128
     rewards:
-      - {type: REPUTATION, job: MINER, value: 1}
+      - {type: REPUTATION, job: MINER, value: 11}
 
   - id: "mine_copper"
     name: "Collecteur de Cuivre"
@@ -25,7 +25,7 @@ quests:
     targets: [COPPER_ORE, DEEPSLATE_COPPER_ORE]
     goal: 16
     rewards:
-      - {type: REPUTATION, job: MINER, value: 1}
+      - {type: REPUTATION, job: MINER, value: 11}
 
   - id: "mine_coal"
     name: "Chercheur de Charbon"
@@ -37,7 +37,7 @@ quests:
     targets: [COAL_ORE, DEEPSLATE_COAL_ORE]
     goal: 12
     rewards:
-      - {type: REPUTATION, job: MINER, value: 1}
+      - {type: REPUTATION, job: MINER, value: 11}
       - { type: REPUTATION, job: LUMBERJACK, value: 1 }
 
   - id: "mine_iron"
@@ -50,7 +50,7 @@ quests:
     targets: [IRON_ORE, DEEPSLATE_IRON_ORE]
     goal: 10
     rewards:
-      - {type: REPUTATION, job: MINER, value: 3}
+      - {type: REPUTATION, job: MINER, value: 13}
 
   - id: "mine_redstone"
     name: "Ingénieur Débutant"
@@ -62,7 +62,7 @@ quests:
     targets: [REDSTONE_ORE, DEEPSLATE_REDSTONE_ORE]
     goal: 24
     rewards:
-      - {type: REPUTATION, job: MINER, value: 3}
+      - {type: REPUTATION, job: MINER, value: 13}
       - { type: REPUTATION, job: EXPLORER, value: 1}
 
   - id: "mine_deepslate"
@@ -75,7 +75,7 @@ quests:
     targets: [DEEPSLATE]
     goal: 96
     rewards:
-      - {type: REPUTATION, job: MINER, value: 5}
+      - {type: REPUTATION, job: MINER, value: 15}
 
   - id: "mine_mixed_ores"
     name: "Veine Prometteuse"
@@ -87,4 +87,4 @@ quests:
     targets: [GOLD_ORE, COAL_ORE, COPPER_ORE, DIAMOND_ORE, IRON_ORE, LAPIS_ORE, REDSTONE_ORE]
     goal: 64
     rewards:
-      - {type: REPUTATION, job: MINER, value: 5}
+      - {type: REPUTATION, job: MINER, value: 15}

@@ -13,7 +13,7 @@ quests:
     targets: [COW]
     goal: 20
     rewards:
-      - { type: REPUTATION, job: FARMER, value: 1 }
+      - { type: REPUTATION, job: FARMER, value: 11 }
 
   - id: "paper_production"
     name: "Fabricant de Papier"
@@ -25,7 +25,7 @@ quests:
     targets: [PAPER]
     goal: 32
     rewards:
-      - { type: REPUTATION, job: ENCHANTER, value: 1 }
+      - { type: REPUTATION, job: ENCHANTER, value: 11 }
 
   - id: "sugar_cane_start"
     name: "Premiers Écrits"
@@ -37,7 +37,7 @@ quests:
     targets: [SUGAR_CANE]
     goal: 64
     rewards:
-      - {type: REPUTATION, job: ENCHANTER, value: 1}
+      - {type: REPUTATION, job: ENCHANTER, value: 11}
       - {type: REPUTATION, job: FARMER, value: 1 }
 
   - id: "book_basic"
@@ -50,7 +50,7 @@ quests:
     targets: [ BOOK ]
     goal: 48
     rewards:
-      - { type: REPUTATION, job: ENCHANTER, value: 2}
+      - { type: REPUTATION, job: ENCHANTER, value: 12}
       - { type: REPUTATION, job: FARMER, value: 1 }
 
   - id: "first_bookshelf"
@@ -63,7 +63,7 @@ quests:
     targets: [ BOOKSHELF ]
     goal: 15
     rewards:
-      - { type: REPUTATION, job: ENCHANTER, value: 3 }
+      - { type: REPUTATION, job: ENCHANTER, value: 13 }
       - { type: REPUTATION, job: FARMER, value: 1 }
 
   - id: "lapis_intro"
@@ -76,7 +76,7 @@ quests:
     targets: [ LAPIS_ORE, DEEPSLATE_LAPIS_ORE ]
     goal: 16
     rewards:
-      - { type: REPUTATION, job: ENCHANTER, value: 1}
+      - { type: REPUTATION, job: ENCHANTER, value: 11}
       - { type: REPUTATION, job: MINER, value: 4 }
 
   - id: "diams_intro"
@@ -89,7 +89,7 @@ quests:
     targets: [DIAMOND_ORE, DEEPSLATE_DIAMOND_ORE]
     goal: 2
     rewards:
-      - {type: REPUTATION, job: ENCHANTER, value: 1}
+      - {type: REPUTATION, job: ENCHANTER, value: 11}
       - {type: REPUTATION, job: MINER, value: 4}
 
 

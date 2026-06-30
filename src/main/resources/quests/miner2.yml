@@ -13,7 +13,7 @@ quests:
     targets: [DEEPSLATE_IRON_ORE]
     goal: 64
     rewards:
-      - {type: REPUTATION, job: MINER, value: 1}
+      - {type: REPUTATION, job: MINER, value: 11}
 
 
   - id: "mine_deepslate_gold"
@@ -26,7 +26,7 @@ quests:
     targets: [DEEPSLATE_GOLD_ORE]
     goal: 64
     rewards:
-      - {type: REPUTATION, job: MINER, value: 1}
+      - {type: REPUTATION, job: MINER, value: 11}
 
 
   - id: "mine_diamond_hunt"
@@ -39,7 +39,7 @@ quests:
     targets: [DEEPSLATE_DIAMOND_ORE, DIAMOND_ORE]
     goal: 10
     rewards:
-      - {type: REPUTATION, job: MINER, value: 2}
+      - {type: REPUTATION, job: MINER, value: 12}
 
   - id: "mine_nether_quartz"
     name: "Cristaux du Nether"
@@ -51,7 +51,7 @@ quests:
     targets: [NETHER_QUARTZ_ORE]
     goal: 128
     rewards:
-      - {type: REPUTATION, job: MINER, value: 1}
+      - {type: REPUTATION, job: MINER, value: 11}
       - { type: REPUTATION, job: EXPLORER, value: 1}
       - { type: REPUTATION, job: ENCHANTER, value: 1}
 
@@ -65,7 +65,7 @@ quests:
     targets: [NETHER_GOLD_ORE]
     goal: 64
     rewards:
-      - {type: REPUTATION, job: MINER, value: 2}
+      - {type: REPUTATION, job: MINER, value: 12}
       - {type: REPUTATION, job: EXPLORER, value: 2}
 
 
@@ -79,7 +79,7 @@ quests:
     targets: [AMETHYST_BLOCK]
     goal: 48
     rewards:
-      - {type: REPUTATION, job: MINER, value: 3}
+      - {type: REPUTATION, job: MINER, value: 13}
       - {type: REPUTATION, job: EXPLORER, value: 2}
 
 
@@ -94,5 +94,5 @@ quests:
     targets: [SCULK]
     goal: 128
     rewards:
-      - {type: REPUTATION, job: MINER, value: 3}
+      - {type: REPUTATION, job: MINER, value: 13}
       - {type: REPUTATION, job: EXPLORER, value: 2}

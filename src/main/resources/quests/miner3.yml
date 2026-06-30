@@ -13,7 +13,7 @@ quests:
     targets: [END_STONE]
     goal: 512
     rewards:
-      - {type: REPUTATION, job: MINER, value: 1}
+      - {type: REPUTATION, job: MINER, value: 11}
 
 
   - id: "mine_obsidian32"
@@ -26,7 +26,7 @@ quests:
     targets: [OBSIDIAN]
     goal: 150
     rewards:
-      - {type: REPUTATION, job: MINER, value: 1}
+      - {type: REPUTATION, job: MINER, value: 11}
 
   - id: "mine_sulfur_cinnabar33"
     name: "Prospection Chimique"
@@ -38,7 +38,7 @@ quests:
     targets: [SULFUR, CINNABAR]
     goal: 500
     rewards:
-      - {type: REPUTATION, job: MINER, value: 2}
+      - {type: REPUTATION, job: MINER, value: 12}
 
   - id: "mine_gold_block34"
     name: "Les yeux plus gros que le ventre"
@@ -50,7 +50,7 @@ quests:
     targets: [GOLD_BLOCK]
     goal: 12
     rewards:
-      - {type: REPUTATION, job: MINER, value: 1}
+      - {type: REPUTATION, job: MINER, value: 11}
       - {type: REPUTATION, job: EXPLORER, value: 2}
 
 
@@ -64,7 +64,7 @@ quests:
     targets: [ANCIENT_DEBRIS]
     goal: 4
     rewards:
-      - {type: REPUTATION, job: MINER, value: 3}
+      - {type: REPUTATION, job: MINER, value: 13}
       - {type: REPUTATION, job: EXPLORER, value: 1}
 
   - id: "mine_emerald36"
@@ -77,7 +77,7 @@ quests:
     targets: [EMERALD_ORE,DEEPSLATE_EMERALD_ORE]
     goal: 2
     rewards:
-      - {type: REPUTATION, job: MINER, value: 5}
+      - {type: REPUTATION, job: MINER, value: 15}
 
   - id: "discover_ancient_cities37"
     name: "Vestiges du Silence"
@@ -90,4 +90,4 @@ quests:
     goal: 1
     rewards:
       - { type: REPUTATION, job: EXPLORER, value: 4}
-      - { type: REPUTATION, job: MINER, value: 5 }
+      - { type: REPUTATION, job: MINER, value: 15 }

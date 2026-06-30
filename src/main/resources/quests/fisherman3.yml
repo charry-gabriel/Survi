@@ -13,7 +13,7 @@ quests:
     targets: null
     goal: 64
     rewards:
-      - { type: REPUTATION, job: FISHERMAN, value: 1}
+      - { type: REPUTATION, job: FISHERMAN, value: 11}
 
   - id: "fish_common32"
     name: "Pêcheur de Morue"
@@ -25,7 +25,7 @@ quests:
     targets: [COOKED_COD, COOKED_SALMON]
     goal: 256
     rewards:
-      - { type: REPUTATION, job: FISHERMAN, value: 1 }
+      - { type: REPUTATION, job: FISHERMAN, value: 11 }
 
   - id: "enchant_trident33"
     name: "Maître des Océans"
@@ -37,7 +37,7 @@ quests:
     targets: [TRIDENT]
     goal: 1
     rewards:
-      - { type: REPUTATION, job: FISHERMAN, value: 1 }
+      - { type: REPUTATION, job: FISHERMAN, value: 11 }
       - {type: REPUTATION, job: ENCHANTER, value: 1}
 
   - id: "breed_turtles34"
@@ -50,7 +50,7 @@ quests:
     targets: [TURTLE]
     goal: 2
     rewards:
-      - {type: REPUTATION, job: FISHERMAN, value: 1}
+      - {type: REPUTATION, job: FISHERMAN, value: 11}
       - { type: REPUTATION, job: EXPLORER, value: 1}
       - { type: REPUTATION, job: FARMER, value: 1}
 
@@ -64,7 +64,7 @@ quests:
     targets: [CAT]
     goal: 5
     rewards:
-      - { type: REPUTATION, job: FISHERMAN, value: 1}
+      - { type: REPUTATION, job: FISHERMAN, value: 11}
       - { type: REPUTATION, job: EXPLORER, value: 3}
 
   - id: "fish_common36"
@@ -77,7 +77,7 @@ quests:
     targets:
     goal: 500
     rewards:
-      - {type: REPUTATION, job: FISHERMAN, value: 5}
+      - {type: REPUTATION, job: FISHERMAN, value: 15}
 
   - id: "kill_elder_guardian37"
     name: "Fléau des Profondeurs"
@@ -90,4 +90,4 @@ quests:
     goal: 1
     rewards:
       - { type: REPUTATION, job: EXPLORER, value: 4}
-      - { type: REPUTATION, job: FISHERMAN, value: 1}
+      - { type: REPUTATION, job: FISHERMAN, value: 11}

@@ -14,7 +14,7 @@ quests:
     targets: [MANGROVE_LOG]
     goal: 64
     rewards:
-      - {type: REPUTATION, job: LUMBERJACK, value: 1}
+      - {type: REPUTATION, job: LUMBERJACK, value: 11}
 
   - id: "chop_jungle"
     name: "Cœur de la Jungle"
@@ -26,7 +26,7 @@ quests:
     targets: [ JUNGLE_LOG ]
     goal: 64
     rewards:
-      - { type: REPUTATION, job: LUMBERJACK, value: 1}
+      - { type: REPUTATION, job: LUMBERJACK, value: 11}
 
   - id: "nether_crimson_wood"
     name: "Bois Carmes"
@@ -38,7 +38,7 @@ quests:
     targets: [ CRIMSON_STEM ]
     goal: 32
     rewards:
-      - { type: REPUTATION, job: LUMBERJACK, value: 1}
+      - { type: REPUTATION, job: LUMBERJACK, value: 11}
       - { type: REPUTATION, job: EXPLORER, value: 1}
 
   - id: "nether_warped_wood"
@@ -51,7 +51,7 @@ quests:
     targets: [ WARPED_STEM ]
     goal: 32
     rewards:
-      - { type: REPUTATION, job: LUMBERJACK, value: 2}
+      - { type: REPUTATION, job: LUMBERJACK, value: 12}
       - { type: REPUTATION, job: EXPLORER, value: 1}
 
   - id: "collect_logs_2"
@@ -64,7 +64,7 @@ quests:
     targets: [ OAK_LOG, BIRCH_LOG, SPRUCE_LOG, JUNGLE_LOG, ACACIA_LOG, DARK_OAK_LOG, CHERRY_LOG, PALE_OAK_LOG, MANGROVE_LOG ]
     goal: 640
     rewards:
-      - { type: REPUTATION, job: LUMBERJACK, value: 4}
+      - { type: REPUTATION, job: LUMBERJACK, value: 14}
 
   - id: "bee_harvest"
     name: "Récolte Douce"
@@ -76,7 +76,7 @@ quests:
     targets: [ HONEYCOMB, HONEY_BOTTLE ]
     goal: 12
     rewards:
-      - { type: REPUTATION, job: LUMBERJACK, value: 2}
+      - { type: REPUTATION, job: LUMBERJACK, value: 12}
       - { type: REPUTATION, job: FARMER, value: 3}
 
   - id: "craft_diamond_axe"
@@ -89,5 +89,5 @@ quests:
     targets: [DIAMOND_AXE]
     goal: 4
     rewards:
-      - { type: REPUTATION, job: LUMBERJACK, value: 1}
+      - { type: REPUTATION, job: LUMBERJACK, value: 11}
       - { type: REPUTATION, job: MINER, value: 4}

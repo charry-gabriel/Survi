@@ -10,7 +10,6 @@ import fr.miuby.survi.blessing.BlessingEffect;
 import fr.miuby.survi.blessing.ReputationEffect;
 import fr.miuby.survi.player.AlphaPlayer;
 import fr.miuby.survi.quest.BaseQuest;
-import fr.miuby.survi.system.SurviConfig;
 import fr.miuby.survi.system.command.argument.AlphaPlayerArgument;
 import fr.miuby.survi.system.command.argument.JobArgument;
 import fr.miuby.survi.system.lang.ELang;
@@ -77,12 +76,8 @@ public class JobCommand {
     /**
      * Recalcule la réputation de métier de tous les joueurs à partir de {@code quest_history}
      * (quêtes journalières et globales), en écrasant la valeur actuelle. Pour chaque joueur,
-     * additionne :
-     * <ul>
-     *   <li>la réputation de base par quête journalière complétée ({@code repPerQuest}, par métier) ;</li>
-     *   <li>les {@link ReputationEffect} présents dans les récompenses ({@code rewards}) de chaque
-     *       quête journalière ou globale complétée, multipliés par le nombre de complétions.</li>
-     * </ul>
+     * additionne les {@link ReputationEffect} présents dans les récompenses ({@code rewards}) de
+     * chaque quête journalière ou globale complétée, multipliés par le nombre de complétions.
      * Seule la réputation est reconstruite — les autres effets de récompense (objets, potions...)
      * ne sont pas rejoués. Réservé à la réparation après corruption de {@code player_reputation}/{@code jobs}.
      * Utilise {@link AlphaPlayer#setJobReputationSilently} pour éviter un spam de
@@ -93,9 +88,6 @@ public class JobCommand {
         LangService   ls     = GameManager.getInstance().getLangService();
         ELang         lang   = sender instanceof Player p ? ls.resolveLanguage(p) : ls.getServerDefault();
 
-        int repPerQuest = SurviConfig.getInstance().getQuestCompletionReputation();
-
-        Map<UUID, Map<String, Integer>> jobCounts          = GameManager.getInstance().getDatabase().questHistory().countDailyByPlayerAndJob();
         Map<UUID, Map<String, Integer>> dailyQuestCounts   = GameManager.getInstance().getDatabase().questHistory().countDailyByPlayerAndQuestId();
         Map<UUID, Map<String, Integer>> globalQuestCounts  = GameManager.getInstance().getDatabase().questHistory().countGlobalByPlayerAndQuestId();
 
@@ -106,13 +98,6 @@ public class JobCommand {
         for (AlphaPlayer player : GameManager.getInstance().getAlphaPlayerFactory().getAlphaPlayers()) {
             Map<EJob, Integer> newRep = new EnumMap<>(EJob.class);
             for (EJob job : EJob.values()) newRep.put(job, 0);
-
-            Map<String, Integer> playerJobCounts = jobCounts.get(player.getUuid());
-            if (playerJobCounts != null) {
-                for (Map.Entry<String, Integer> entry : playerJobCounts.entrySet()) {
-                    newRep.merge(EJob.valueOf(entry.getKey()), entry.getValue() * repPerQuest, Integer::sum);
-                }
-            }
 
             addRewardReputation(newRep, dailyQuestCounts.get(player.getUuid()), dailyQuestLookup);
             addRewardReputation(newRep, globalQuestCounts.get(player.getUuid()), globalQuestLookup);
@@ -131,8 +116,8 @@ public class JobCommand {
 
         sender.sendMessage(ls.text(lang, "cmd.job.recompute.done", playersUpdated));
         MLLogManager.getInstance().log(Level.INFO, ELogTag.JOB,
-                "[Recompute] Réputation de métier recalculée depuis quest_history (base + récompenses + quêtes globales) pour "
-                        + playersUpdated + " joueur(s) (rep/quête=" + repPerQuest + ").");
+                "[Recompute] Réputation de métier recalculée depuis quest_history (récompenses + quêtes globales) pour "
+                        + playersUpdated + " joueur(s).");
         return Command.SINGLE_SUCCESS;
     }
 

@@ -26,9 +26,6 @@ combat:
 
 # ─── Réputation & Rangs globaux ─────────────────────────────────────────────────
 reputation:
-  # Réputation de métier accordée au joueur pour chaque quête complétée auprès d'un trader.
-  quest-completion-reputation: 10
-
   # Rangs débloqués selon la réputation totale (toutes guildes confondues).
   # L'id doit correspondre exactement au nom de l'entrée dans l'enum GlobalRank.
   # Doit rester trié du seuil le plus bas au plus haut.

@@ -13,7 +13,7 @@ quests:
     targets: [COD]
     goal: 6
     rewards:
-      - { type: REPUTATION, job: FISHERMAN, value: 1}
+      - { type: REPUTATION, job: FISHERMAN, value: 11}
 
   - id: "fish_common2"
     name: "Pêcheur de Morue"
@@ -25,7 +25,7 @@ quests:
     targets: [COOKED_COD]
     goal: 8
     rewards:
-      - { type: REPUTATION, job: FISHERMAN, value: 1 }
+      - { type: REPUTATION, job: FISHERMAN, value: 11 }
 
   - id: "fish_common3"
     name: "Pêcheur de Saumon"
@@ -37,7 +37,7 @@ quests:
     targets: [COOKED_SALMON]
     goal: 8
     rewards:
-      - { type: REPUTATION, job: FISHERMAN, value: 2}
+      - { type: REPUTATION, job: FISHERMAN, value: 12}
 
   - id: "fish_common4"
     name: "Pêcheur de Morue expert"
@@ -49,7 +49,7 @@ quests:
     targets: [COOKED_COD]
     goal: 24
     rewards:
-      - { type: REPUTATION, job: FISHERMAN, value: 2}
+      - { type: REPUTATION, job: FISHERMAN, value: 12}
       - { type: REPUTATION, job: FARMER, value: 1 }
 
   - id: "fish_common5"
@@ -62,7 +62,7 @@ quests:
     targets: [COOKED_SALMON]
     goal: 24
     rewards:
-      - { type: REPUTATION, job: FISHERMAN, value: 3}
+      - { type: REPUTATION, job: FISHERMAN, value: 13}
       - { type: REPUTATION, job: FARMER, value: 1 }
 
   - id: "fish_common6"
@@ -75,7 +75,7 @@ quests:
     targets: [FISHING_ROD]
     goal: 10
     rewards:
-      - { type: REPUTATION, job: FISHERMAN, value: 5}
+      - { type: REPUTATION, job: FISHERMAN, value: 15}
 
   - id: "fish_common7"
     name: "Usine de la pêche"
@@ -87,6 +87,6 @@ quests:
     targets: [COD]
     goal: 64
     rewards:
-      - {type: REPUTATION, job: FISHERMAN, value: 5}
+      - {type: REPUTATION, job: FISHERMAN, value: 15}
 
 

@@ -13,7 +13,7 @@ quests:
     targets: [ COCOA ]
     goal: 128
     rewards:
-      - { type: REPUTATION, job: FARMER, value: 1}
+      - { type: REPUTATION, job: FARMER, value: 11}
 
   - id: "cactus_industry32"
     name: "Ferme du Désert"
@@ -25,7 +25,7 @@ quests:
     targets: [ CACTUS ]
     goal: 128
     rewards:
-      - { type: REPUTATION, job: FARMER, value: 1}
+      - { type: REPUTATION, job: FARMER, value: 11}
 
   - id: "cookie_factory33"
     name: "Usine à Cookies"
@@ -37,7 +37,7 @@ quests:
     targets: [ COOKIE ]
     goal: 256
     rewards:
-      - { type: REPUTATION, job: FARMER, value: 2}
+      - { type: REPUTATION, job: FARMER, value: 12}
 
   - id: "end_farming34"
     name: "Agriculteur Dimensionnel"
@@ -49,7 +49,7 @@ quests:
     targets: [CHORUS_PLANT, CHORUS_FRUIT]
     goal: 256
     rewards:
-      - {type: REPUTATION, job: FARMER, value: 2}
+      - {type: REPUTATION, job: FARMER, value: 12}
       - {type: REPUTATION, job: EXPLORER, value: 1}
 
   - id: "mushroom_harvest35"
@@ -62,7 +62,7 @@ quests:
     targets: [ RED_MUSHROOM, BROWN_MUSHROOM ]
     goal: 256
     rewards:
-      - { type: REPUTATION, job: FARMER, value: 1}
+      - { type: REPUTATION, job: FARMER, value: 11}
       - { type: REPUTATION, job: EXPLORER, value: 3 }
 
   - id: "enchant_diamond_hoe36"
@@ -75,7 +75,7 @@ quests:
     targets: [ DIAMOND_HOE, NETHERITE_HOE]
     goal: 1
     rewards:
-      - { type: REPUTATION, job: FARMER, value: 3}
+      - { type: REPUTATION, job: FARMER, value: 13}
       - { type: REPUTATION, job: ENCHANTER, value: 2}
 
   - id: "ultimate_farm_variety37"
@@ -88,4 +88,4 @@ quests:
     targets: [ WHEAT, CARROTS, POTATOES, BEETROOTS, PUMPKIN, MELON, SUGAR_CANE, COCOA, NETHER_WART, CHORUS_PLANT ]
     goal: 5000
     rewards:
-      - { type: REPUTATION, job: FARMER, value: 5 }
+      - { type: REPUTATION, job: FARMER, value: 15 }

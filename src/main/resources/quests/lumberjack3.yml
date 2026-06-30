@@ -13,7 +13,7 @@ quests:
     targets: [ CRIMSON_STEM, WARPED_STEM ]
     goal: 200
     rewards:
-      - { type: REPUTATION, job: LUMBERJACK, value: 1 }
+      - { type: REPUTATION, job: LUMBERJACK, value: 11 }
 
   - id: "pale_oak_harvest32"
     name: "Le Bois Fantomatique"
@@ -25,7 +25,7 @@ quests:
     targets: [ PALE_OAK_LOG ]
     goal: 128
     rewards:
-      - { type: REPUTATION, job: LUMBERJACK, value: 1}
+      - { type: REPUTATION, job: LUMBERJACK, value: 11}
 
   - id: "chop_bamboo_master33"
     name: "Forêt de Bambou"
@@ -37,7 +37,7 @@ quests:
     targets: [BAMBOO]
     goal: 640
     rewards:
-      - {type: REPUTATION, job: LUMBERJACK, value: 1}
+      - {type: REPUTATION, job: LUMBERJACK, value: 11}
       - { type: REPUTATION, job: EXPLORER, value: 1 }
 
   - id: "overworld_fungus34"
@@ -50,7 +50,7 @@ quests:
     targets: [ RED_MUSHROOM_BLOCK, BROWN_MUSHROOM_BLOCK ]
     goal: 100
     rewards:
-      - { type: REPUTATION, job: LUMBERJACK, value: 2}
+      - { type: REPUTATION, job: LUMBERJACK, value: 12}
       - { type: REPUTATION, job: EXPLORER, value: 1 }
 
   - id: "bee_master35"
@@ -63,7 +63,7 @@ quests:
     targets: [ HONEYCOMB, HONEY_BOTTLE ]
     goal: 32
     rewards:
-      - { type: REPUTATION, job: LUMBERJACK, value: 1}
+      - { type: REPUTATION, job: LUMBERJACK, value: 11}
       - { type: REPUTATION, job: FARMER, value: 3}
 
 
@@ -77,7 +77,7 @@ quests:
     targets: [ CHORUS_PLANT, CHORUS_FLOWER ]
     goal: 128
     rewards:
-      - { type: REPUTATION, job: LUMBERJACK, value: 2}
+      - { type: REPUTATION, job: LUMBERJACK, value: 12}
       - { type: REPUTATION, job: FARMER, value: 2}
       - { type: REPUTATION, job: EXPLORER, value: 1 }
 
@@ -91,4 +91,4 @@ quests:
     targets: [ STRIPPED_ACACIA_LOG ]
     goal: 200
     rewards:
-      - { type: REPUTATION, job: LUMBERJACK, value: 5}
+      - { type: REPUTATION, job: LUMBERJACK, value: 15}

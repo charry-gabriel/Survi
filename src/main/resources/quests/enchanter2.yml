@@ -13,7 +13,7 @@ quests:
     targets: [ IRON_SWORD, IRON_PICKAXE, IRON_AXE, IRON_SHOVEL, IRON_HOE ]
     goal: 10
     rewards:
-      - { type: REPUTATION, job: ENCHANTER, value: 1 }
+      - { type: REPUTATION, job: ENCHANTER, value: 11 }
 
   - id: "golden_experience"
     name: "Pouvoir Grandissant"
@@ -25,7 +25,7 @@ quests:
     targets: null
     goal: 30
     rewards:
-      - { type: REPUTATION, job: ENCHANTER, value: 1}
+      - { type: REPUTATION, job: ENCHANTER, value: 11 }
 
   - id: "enchanted_books"
     name: "Connaissance Préservée"
@@ -37,7 +37,7 @@ quests:
     targets: [ BOOK ]
     goal: 16
     rewards:
-      - { type: REPUTATION, job: ENCHANTER, value: 1}
+      - { type: REPUTATION, job: ENCHANTER, value: 11 }
       - { type: REPUTATION, job: FARMER, value: 1 }
 
   - id: "craft_anvil"
@@ -50,7 +50,7 @@ quests:
     targets: [ ANVIL ]
     goal: 1
     rewards:
-      - { type: REPUTATION, job: ENCHANTER, value: 1}
+      - { type: REPUTATION, job: ENCHANTER, value: 11 }
       - { type: REPUTATION, job: MINER, value: 2 }
 
   - id: "enchant_weapons"
@@ -63,7 +63,7 @@ quests:
     targets: [ DIAMOND_SWORD, DIAMOND_PICKAXE, DIAMOND_AXE, DIAMOND_SHOVEL, DIAMOND_HOE ]
     goal: 10
     rewards:
-      - { type: REPUTATION, job: ENCHANTER, value: 4}
+      - { type: REPUTATION, job: ENCHANTER, value: 14 }
 
   - id: "mine_nether_quartz2"
     name: "Cristaux Magiques"
@@ -75,7 +75,7 @@ quests:
     targets: [ NETHER_QUARTZ_ORE ]
     goal: 48
     rewards:
-      - { type: REPUTATION, job: ENCHANTER, value: 3}
+      - { type: REPUTATION, job: ENCHANTER, value: 13 }
       - { type: REPUTATION, job: MINER, value: 2 }
 
   - id: "forge_anvil"
@@ -88,5 +88,5 @@ quests:
     targets: null
     goal: 16
     rewards:
-      - { type: REPUTATION, job: ENCHANTER, value: 4 }
+      - { type: REPUTATION, job: ENCHANTER, value: 14 }
       - { type: REPUTATION, job: EXPLORER, value: 1 }

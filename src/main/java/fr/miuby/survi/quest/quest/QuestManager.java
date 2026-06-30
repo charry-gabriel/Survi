@@ -284,14 +284,6 @@ public class QuestManager extends AbstractQuestManager<Quest> {
             effect.applyEffect(player);
         }
 
-        if (data.getTraderId() != null) {
-            MLVillager villager = VillagerRegistry.get(data.getTraderId());
-            if (villager instanceof Trader trader && trader.getJob() != null
-                    && SurviConfig.getInstance().getQuestCompletionReputation() > 0) {
-                player.addJobReputation(trader.getJob(), SurviConfig.getInstance().getQuestCompletionReputation());
-            }
-        }
-
         // Marque claimed=true — le reset de 6h se chargera de supprimer la quête et d'annuler les effets
         data.setClaimed(true);
         GameManager.getInstance().getDatabase().quests().updatePlayerQuest(player.getUuid(), data);
@@ -643,9 +635,6 @@ public class QuestManager extends AbstractQuestManager<Quest> {
 
         for (BlessingEffect effect : quest.getRewards().blessingEffects()) {
             effect.applyEffect(player);
-        }
-        if (trader.getJob() != null && SurviConfig.getInstance().getQuestCompletionReputation() > 0) {
-            player.addJobReputation(trader.getJob(), SurviConfig.getInstance().getQuestCompletionReputation());
         }
 
         // Marque claimed=true en DB — la quête reste dans player_quest jusqu'au reset de 6h
