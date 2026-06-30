@@ -41,25 +41,25 @@ tiers:
       - { type: set_attribute, attribute: luck, attributeValue: 3.0, operation: ADD_NUMBER, slot: LEGS }
       - { type: message,       value: "Les trésors des fonds commencent à répondre à ton appel." }
 
-  - requiredUses: 3000
+  - requiredUses: 4000
     effects:
       - { type: name,          value: "Pantalon du Pêcheur VI" }
       - { type: set_attribute, attribute: luck, attributeValue: 4.0, operation: ADD_NUMBER, slot: LEGS }
       - { type: message,       value: "Les courants t'obéissent. Les épaves n'ont plus de secrets." }
 
-  - requiredUses: 7000
+  - requiredUses: 5500
     effects:
       - { type: name,          value: "Pantalon du Pêcheur VII" }
       - { type: set_attribute, attribute: luck, attributeValue: 5.0, operation: ADD_NUMBER, slot: LEGS }
       - { type: message,       value: "Les abysses murmurent en ta présence." }
 
-  - requiredUses: 8000
+  - requiredUses: 7000
     effects:
       - { type: name,          value: "Pantalon du Pêcheur VIII" }
       - { type: set_attribute, attribute: luck, attributeValue: 5.5, operation: ADD_NUMBER, slot: LEGS }
       - { type: message,       value: "Chaque lancer est une certitude." }
 
-  - requiredUses: 9000
+  - requiredUses: 8500
     effects:
       - { type: name,          value: "Pantalon du Pêcheur IX" }
       - { type: set_attribute, attribute: luck, attributeValue: 6.0, operation: ADD_NUMBER, slot: LEGS }
