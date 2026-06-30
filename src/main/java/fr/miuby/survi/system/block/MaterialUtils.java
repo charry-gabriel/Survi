@@ -95,7 +95,7 @@ public final class MaterialUtils {
     public static final Set<Material> ORE_BLOCKS;
     /**
      * Bloc de minerai → {@link EOreFamily}.
-     * Utilisé par le vein miner pour regrouper les variants pierre/deepslate d'un même filon.
+     * Regroupe les variants pierre/deepslate d'un même filon sous une famille commune.
      * Les ores nether-only ont leur propre famille (ex. {@code NETHER_GOLD} ≠ {@code GOLD}).
      */
     public static final Map<Material, EOreFamily> ORE_TO_FAMILY;

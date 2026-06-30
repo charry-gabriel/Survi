@@ -12,9 +12,9 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Débloque une capacité de gameplay (ex. {@code tree_feller}, {@code vein_miner},
- * {@code underwater_kit} — voir les constantes {@code GrowthItems.ABILITY_*}) tant que ce growth
- * item est porté/tenu, indépendamment de toute autre condition.
+ * Débloque une capacité de gameplay (ex. {@code tree_feller}, {@code underwater_kit} — voir les
+ * constantes {@code GrowthItems.ABILITY_*}) tant que ce growth item est porté/tenu, indépendamment
+ * de toute autre condition.
  *
  * <p>Stocke {@code abilityId} dans un ensemble CSV en PDC ({@link GrowthItems#UNLOCKED_ABILITIES_KEY}).
  * Les listeners de métiers consultent cette capacité via {@link GrowthItems#hasAbilityEquipped} pour

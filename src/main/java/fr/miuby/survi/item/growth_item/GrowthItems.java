@@ -101,9 +101,6 @@ public final class GrowthItems {
     /** Bûcheron (GROWTH_LUMBERJACK_CHESPLATE) — casse les bûches connectées (BFS), nombre piloté par le niveau. */
     public static final String ABILITY_TREE_FELLER = "tree_feller";
 
-    /** Mineur (GROWTH_MINER_HELMET) — casse le filon connecté (BFS), nombre piloté par le niveau. */
-    public static final String ABILITY_VEIN_MINER = "vein_miner";
-
     /** Pêcheur (GROWTH_FISHERMAN_LEGGINGS) — active vitesse/respiration/minage sous l'eau, magnitude pilotée par le niveau. */
     public static final String ABILITY_UNDERWATER_KIT = "underwater_kit";
 

@@ -211,7 +211,7 @@ class GrowthItemConfigTest {
 
             case "unlock_ability" ->
                     assertStringNotEmpty(effect.value,
-                            ctx + " : 'value' requis pour type=unlock_ability (identifiant d'ability, ex. tree_feller, vein_miner, underwater_kit)");
+                            ctx + " : 'value' requis pour type=unlock_ability (identifiant d'ability, ex. tree_feller, underwater_kit)");
 
             case "set_attribute" -> {
                 assertStringNotEmpty(effect.attribute, ctx + " : 'attribute' requis");

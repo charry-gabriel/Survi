@@ -124,7 +124,7 @@
             "fire_enemies", "add_enchantment", "set_attribute", "unlock_ability"
           ]
         },
-        "value":          { "type": "string",  "description": "[name / message / unlock_ability] pour unlock_ability : identifiant d'ability (ex. tree_feller, vein_miner, underwater_kit — voir GrowthItems.ABILITY_*)" },
+        "value":          { "type": "string",  "description": "[name / message / unlock_ability] pour unlock_ability : identifiant d'ability (ex. tree_feller, underwater_kit — voir GrowthItems.ABILITY_*)" },
         "seconds":        { "type": "integer", "minimum": 1,  "description": "[potion / fire_enemies]" },
         "effect": {
           "type": "string",
