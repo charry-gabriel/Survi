@@ -145,7 +145,7 @@ global_quests:
     description: "Minez {value} ancients débrits"
     type: MINE
     targets: [ ANCIENT_DEBRIS]
-    goal: 30
+    goal: 30 #On a réussi en 30 minutes
     time_limit: 5400
     rewards:
       - { type: REPUTATION, job: MINER, value: 1 }
