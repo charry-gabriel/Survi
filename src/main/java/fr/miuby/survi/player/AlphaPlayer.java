@@ -361,8 +361,12 @@ public class AlphaPlayer extends MLPlayer implements Serializable {
         int newRep = Math.max(0, getJobReputation(job) + amount);
         reputationByJob.put(job, newRep);
 
-        // Persistance : on utilise job.name() comme clé dans la colonne trader_id de la DB
-        GameManager.getInstance().getDatabase().quests().updateReputation(this.getUuid(), job.name(), newRep);
+        // Persistance : increment atomique côté SQL plutôt que d'écraser avec le total recalculé
+        // en mémoire — deux gains rapprochés pour le même joueur+métier (ex : plusieurs quêtes
+        // orphelines récompensées d'un coup dans QuestManager#reload) convergent alors vers le
+        // même total quel que soit l'ordre d'exécution de leurs tâches async respectives.
+        // job.name() sert de clé dans la colonne trader_id de la DB.
+        GameManager.getInstance().getDatabase().quests().incrementReputation(this.getUuid(), job.name(), amount);
 
         updateJobLevel(job, newRep);
 

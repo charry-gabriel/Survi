@@ -52,6 +52,15 @@ public class QuestRepository extends MLRepository {
         return reputations;
     }
 
+    /**
+     * Écrase la réputation d'un joueur/métier avec une valeur absolue déjà calculée par l'appelant.
+     * Réservé aux outils qui reconstruisent l'état complet depuis la source de vérité
+     * ({@code /job recompute}, {@code /job set} — voir {@code setJobReputationSilently}) : deux
+     * appels rapprochés à cette méthode pour le même joueur+métier ne convergent PAS forcément
+     * vers le bon résultat si leurs tâches {@code runAsync} respectives s'exécutent dans le
+     * désordre (non garanti par {@code BukkitScheduler.runTaskAsynchronously}). Pour tout gain/perte
+     * de réputation en jeu, utiliser {@link #incrementReputation} à la place.
+     */
     public void updateReputation(UUID playerUuid, String traderId, int reputation) {
         runAsync(conn -> {
             try (PreparedStatement ps = conn.prepareStatement("INSERT OR REPLACE INTO player_reputation (player_uuid, trader_id, reputation) VALUES (?, ?, ?)")) {
@@ -61,6 +70,28 @@ public class QuestRepository extends MLRepository {
                 ps.executeUpdate();
             }
         }, ELogTag.REPUTATION, "Failed to update reputation");
+    }
+
+    /**
+     * Ajoute (ou retire, si {@code delta} est négatif) de la réputation de façon atomique côté SQL,
+     * bornée à 0 minimum — équivalent DB du {@code Math.max(0, ...)} déjà fait en mémoire dans
+     * {@code AlphaPlayer.addJobReputation}. Contrairement à {@link #updateReputation}, l'opération
+     * ne dépend d'aucune valeur lue au préalable : deux tâches {@code runAsync} pour le même
+     * joueur+métier convergent toujours vers le même total final, quel que soit leur ordre
+     * d'exécution réel. C'est la méthode à utiliser pour tout gain/perte de réputation en jeu.
+     */
+    public void incrementReputation(UUID playerUuid, String traderId, int delta) {
+        runAsync(conn -> {
+            try (PreparedStatement ps = conn.prepareStatement(
+                    "INSERT INTO player_reputation (player_uuid, trader_id, reputation) VALUES (?, ?, MAX(0, ?)) " +
+                            "ON CONFLICT(player_uuid, trader_id) DO UPDATE SET reputation = MAX(0, reputation + ?)")) {
+                ps.setString(1, playerUuid.toString());
+                ps.setString(2, traderId);
+                ps.setInt(3, delta);
+                ps.setInt(4, delta);
+                ps.executeUpdate();
+            }
+        }, ELogTag.REPUTATION, "Failed to increment reputation");
     }
 
     // =========================================================================
