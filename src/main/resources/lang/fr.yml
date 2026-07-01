@@ -315,7 +315,6 @@ world.reset_warning: "<gold>[Monde] <yellow>Le monde est en cours de réinitiali
 
 # ─── Quête globale — broadcasts ───────────────────────────────────────────────
 globalquest.cancelled: "<red><bold>⚔ Quête Globale </bold><yellow>« {0} » annulée par un administrateur. Aucune récompense."
-globalquest.timeout: "<red><bold>⏰ Quête Globale </bold><yellow>« {0} »</yellow><red> non complétée dans les temps ! Aucune récompense."
 
 # ─── Commandes — quest (admin) ────────────────────────────────────────────────
 cmd.quest.exists: "<red>Une quête existe déjà pour {0}"
@@ -428,8 +427,19 @@ globalquest.complete: |-
   <dark_gray>  ─ Top contributeurs ─<top>
   <green>━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
+# ─── Quête globale — broadcast timeout (message unique multi-ligne) ──────────
+globalquest.timeout: |-
+
+  <red>━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  <red><bold>  ⏰  QUÊTE GLOBALE ÉCHOUÉE  ⏰</bold>
+  <yellow>  <name>
+  <white>  Non complétée dans les temps. Aucune récompense.
+  <dark_gray>  ─ Top contributeurs ─<top>
+  <red>━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
 # ─── Quête globale — entrée récompense & message personnel ────────────────────
 globalquest.rewards.message: "<gold><bold>[Quête Globale] <green>Récompenses reçues !"
+globalquest.timeout.rank: "<gray>  Ton classement : <white>#{0}<gray> (<aqua>{1}<gray> actions)."
 
 # ─── Spawn personnalisé & Respawn ─────────────────────────────────────────────
 spawn.set.bed: "<green>✔ Spawn défini à ton lit."

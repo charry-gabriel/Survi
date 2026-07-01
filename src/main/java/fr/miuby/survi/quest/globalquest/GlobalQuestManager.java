@@ -36,6 +36,10 @@ public class GlobalQuestManager extends AbstractQuestManager<GlobalQuest> {
     private BukkitTask timerTask = null;
     private long endTime = 0L;
 
+    /** Taille du classement mis en avant (médailles) dans les annonces de fin de quête globale. */
+    private static final int TOP_SIZE = 3;
+    private static final String[] TOP_MEDALS = {"🥇", "🥈", "🥉"};
+
     public GlobalQuestManager() {
         loadQuests();
     }
@@ -250,7 +254,10 @@ public class GlobalQuestManager extends AbstractQuestManager<GlobalQuest> {
 
     private void onTimeout() {
         if (activeQuest == null) return;
-        String name = activeQuest.getName();
+
+        GlobalQuest quest = activeQuest;
+        Map<UUID, Integer> snapshot = new HashMap<>(contributions);
+        List<Map.Entry<UUID, Integer>> ranked = rankContributions(snapshot);
 
         activeQuest = null;
         progress    = 0;
@@ -258,11 +265,14 @@ public class GlobalQuestManager extends AbstractQuestManager<GlobalQuest> {
         contributions.clear();
         timerTask   = null;
 
-        broadcastLocalized("globalquest.timeout", name);
+        Component announcement = buildQuestTimeoutComponent(quest, ranked);
+        broadcastMessage(announcement);
         GameManager.getInstance().getGlobalQuestBossBarService().onQuestEnded();
 
+        notifyParticipantsOfTimeout(ranked, announcement);
+
         MLLogManager.getInstance().log(Level.INFO, ELogTag.QUEST,
-                "[GlobalQuest] Quête expirée : " + name);
+                "[GlobalQuest] Quête expirée : " + quest.getId() + " | participants=" + snapshot.size());
     }
 
     // =========================================================================
@@ -294,36 +304,94 @@ public class GlobalQuestManager extends AbstractQuestManager<GlobalQuest> {
     }
 
     private Component buildQuestFinishedComponent(GlobalQuest quest, Map<UUID, Integer> snapshot) {
-        LangService ls             = GameManager.getInstance().getLangService();
-        ELang       lang           = ls.getServerDefault();
-        int         participantCount  = snapshot.size();
-        int         totalContribution = snapshot.values().stream().mapToInt(Integer::intValue).sum();
-
-        List<Map.Entry<UUID, Integer>> top3 = snapshot.entrySet().stream()
-                .sorted(Map.Entry.<UUID, Integer>comparingByValue().reversed())
-                .limit(3)
-                .toList();
-
-        AlphaPlayerFactory factory = GameManager.getInstance().getAlphaPlayerFactory();
-        String[] medals = {"🥇", "🥈", "🥉"};
-
-        // Construit le bloc top contributeurs (composant pré-assemblé)
-        Component top = Component.empty();
-        for (int i = 0; i < top3.size(); i++) {
-            Map.Entry<UUID, Integer> entry = top3.get(i);
-            String pseudo = factory.getAlphaPlayer(entry.getKey()).getPseudo();
-            int pct = totalContribution > 0 ? (int) ((long) entry.getValue() * 100 / totalContribution) : 0;
-            top = top.appendNewline()
-                    .append(Component.text("  " + medals[i] + " ", NamedTextColor.YELLOW))
-                    .append(Component.text(pseudo,                   NamedTextColor.WHITE))
-                    .append(Component.text("  " + pct + "%",         NamedTextColor.AQUA))
-                    .append(Component.text("  (" + entry.getValue() + " actions)", NamedTextColor.DARK_GRAY));
-        }
+        LangService ls               = GameManager.getInstance().getLangService();
+        ELang       lang             = ls.getServerDefault();
+        int         participantCount = snapshot.size();
+        List<Map.Entry<UUID, Integer>> ranked = rankContributions(snapshot);
+        Component   top              = buildTopContributorsComponent(ranked);
 
         return ls.text(lang, "globalquest.complete",
                 Placeholder.unparsed("name",         quest.getName()),
                 Placeholder.unparsed("participants",  String.valueOf(participantCount)),
                 Placeholder.component("top",          top));
+    }
+
+    private Component buildQuestTimeoutComponent(GlobalQuest quest, List<Map.Entry<UUID, Integer>> ranked) {
+        LangService ls   = GameManager.getInstance().getLangService();
+        ELang       lang = ls.getServerDefault();
+        Component   top  = buildTopContributorsComponent(ranked);
+
+        return ls.text(lang, "globalquest.timeout",
+                Placeholder.unparsed("name", quest.getName()),
+                Placeholder.component("top", top));
+    }
+
+    /** Classe les contributions par nombre d'actions décroissant. */
+    private List<Map.Entry<UUID, Integer>> rankContributions(Map<UUID, Integer> snapshot) {
+        return snapshot.entrySet().stream()
+                .sorted(Map.Entry.<UUID, Integer>comparingByValue().reversed())
+                .toList();
+    }
+
+    /** Construit le bloc « top contributeurs » (médailles + % + actions), réutilisé par complétion et timeout. */
+    private Component buildTopContributorsComponent(List<Map.Entry<UUID, Integer>> rankedEntries) {
+        int totalContribution = rankedEntries.stream().mapToInt(Map.Entry::getValue).sum();
+        AlphaPlayerFactory factory = GameManager.getInstance().getAlphaPlayerFactory();
+        int limit = Math.min(TOP_SIZE, rankedEntries.size());
+
+        Component top = Component.empty();
+        for (int i = 0; i < limit; i++) {
+            Map.Entry<UUID, Integer> entry = rankedEntries.get(i);
+            String pseudo = factory.getAlphaPlayer(entry.getKey()).getPseudo();
+            int pct = totalContribution > 0 ? (int) ((long) entry.getValue() * 100 / totalContribution) : 0;
+            top = top.appendNewline()
+                    .append(Component.text("  " + TOP_MEDALS[i] + " ", NamedTextColor.YELLOW))
+                    .append(Component.text(pseudo,                   NamedTextColor.WHITE))
+                    .append(Component.text("  " + pct + "%",         NamedTextColor.AQUA))
+                    .append(Component.text("  (" + entry.getValue() + " actions)", NamedTextColor.DARK_GRAY));
+        }
+        return top;
+    }
+
+    /**
+     * Notifie chaque participant du résultat de la quête après un timeout.
+     * <ul>
+     *   <li>En ligne, dans le top {@value #TOP_SIZE} : déjà visible dans le broadcast général ci-dessus,
+     *       rien de plus à envoyer.</li>
+     *   <li>En ligne, hors du top : reçoit en plus un message personnel avec son rang et son nombre
+     *       d'actions.</li>
+     *   <li>Hors ligne (top ou non) : reçoit à la reconnexion l'annonce complète (où son nom apparaît
+     *       déjà s'il est dans le top), avec son rang/actions ajouté s'il est hors du top.
+     *       Voir {@link OfflineNotificationService#deliverPending}.</li>
+     * </ul>
+     */
+    private void notifyParticipantsOfTimeout(List<Map.Entry<UUID, Integer>> ranked, Component announcement) {
+        AlphaPlayerFactory factory = GameManager.getInstance().getAlphaPlayerFactory();
+        OfflineNotificationService offlineNotif = GameManager.getInstance().getOfflineNotificationService();
+        LangService ls = GameManager.getInstance().getLangService();
+
+        for (int i = 0; i < ranked.size(); i++) {
+            Map.Entry<UUID, Integer> entry = ranked.get(i);
+            boolean isTop = i < TOP_SIZE;
+
+            Player p = factory.getAlphaPlayer(entry.getKey()).getPlayer();
+            boolean online = p != null && p.isOnline();
+
+            if (isTop && online) continue; // déjà visible dans le broadcast général
+
+            int rank  = i + 1;
+            int value = entry.getValue();
+
+            if (isTop) {
+                // Hors ligne + dans le top : l'annonce (où il apparaît déjà) suffit, différée à la reconnexion.
+                offlineNotif.queueQuestReward(entry.getKey(), List.of(), announcement);
+            } else if (online) {
+                p.sendMessage(ls.text(p, "globalquest.timeout.rank", rank, value));
+            } else {
+                Component rankLine = ls.text(ls.getServerDefault(), "globalquest.timeout.rank", rank, value);
+                offlineNotif.queueQuestReward(entry.getKey(), List.of(), announcement.append(rankLine));
+            }
+        }
     }
 
     private Component buildRewardMessage() {
