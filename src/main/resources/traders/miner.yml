@@ -43,3 +43,12 @@ recipes:
       amount: 32
     message: "Un super achat."
     requiredReputation: 110
+
+  - result:
+      customItem: HINT_BOOK_MINER
+      amount: 1
+    ingredient:
+      material: DIAMOND_BLOCK
+      amount: 1
+    message: "Un super achat."
+    requiredReputation: 190

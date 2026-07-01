@@ -43,3 +43,12 @@ recipes:
       amount: 16
     message: "Un super achat."
     requiredReputation: 110
+
+  - result:
+      customItem: HINT_BOOK_FARMER
+      amount: 1
+    ingredient:
+      material: HAY_BLOCK
+      amount: 64
+    message: "Un super achat."
+    requiredReputation: 190

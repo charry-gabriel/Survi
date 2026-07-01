@@ -43,3 +43,12 @@ recipes:
       amount: 1
     message: "Un super achat."
     requiredReputation: 110
+
+  - result:
+      customItem: HINT_BOOK_ENCHANTER
+      amount: 1
+    ingredient:
+      material: BEDROCK
+      amount: 64
+    message: "Un super achat."
+    requiredReputation: 190

@@ -43,3 +43,12 @@ recipes:
       amount: 32
     message: "Un super achat."
     requiredReputation: 110
+
+  - result:
+      customItem: HINT_BOOK_FISHERMAN
+      amount: 1
+    ingredient:
+      material: COD
+      amount: 48
+    message: "Un super achat."
+    requiredReputation: 190

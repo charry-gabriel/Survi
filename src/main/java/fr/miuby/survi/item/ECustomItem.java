@@ -253,7 +253,99 @@ public enum ECustomItem {
                 .lore(lore)
                 .itemModel(new NamespacedKey("survi", "rare_explorer"))
                 .maxStackSize(1);
-    }, "rareExplorer");
+    }, "rareExplorer"),
+
+    // ─── Indices vers les objets rares (un livre par métier) ──────────────
+
+    HINT_BOOK_MINER(Material.WRITTEN_BOOK, item -> {
+        BookMeta meta = (BookMeta) item.getItemMeta();
+        meta.title(Component.text("Le Secret du Mineur"));
+        meta.author(Component.text("Team Alpha"));
+        List<Component> lore = new ArrayList<>();
+        lore.add(Component.text("Indice", NamedTextColor.GRAY).decoration(TextDecoration.ITALIC, false));
+        lore.add(Component.text("Un trésor légendaire attend d'être découvert...", NamedTextColor.YELLOW).decoration(TextDecoration.ITALIC, false));
+        meta.lore(lore);
+        meta.addPages(
+                Component.text("Il existe, dit-on, un trésor que nulle forge n'a jamais façonné. Une rareté que seuls les plus tenaces croisent, une fois dans leur vie."),
+                Component.text("Le secret ne se trouve pas dans un coffre. Il se gagne coup de pioche après coup de pioche, au plus profond de la roche, sans jamais relâcher l'effort.")
+        );
+        item.setItemMeta(meta);
+    }),
+
+    HINT_BOOK_LUMBERJACK(Material.WRITTEN_BOOK, item -> {
+        BookMeta meta = (BookMeta) item.getItemMeta();
+        meta.title(Component.text("Le Secret du Bûcheron"));
+        meta.author(Component.text("Team Alpha"));
+        List<Component> lore = new ArrayList<>();
+        lore.add(Component.text("Indice", NamedTextColor.GRAY).decoration(TextDecoration.ITALIC, false));
+        lore.add(Component.text("Un trésor légendaire attend d'être découvert...", NamedTextColor.YELLOW).decoration(TextDecoration.ITALIC, false));
+        meta.lore(lore);
+        meta.addPages(
+                Component.text("Au cœur des forêts les plus anciennes, une légende circule : un trésor unique attendrait le bûcheron le plus obstiné. Peu y croient. Moins encore le trouvent."),
+                Component.text("Ce n'est pas la hache qui choisit, mais la constance. Tronc après tronc, abattus sans relâche, le bois finit parfois par livrer un secret bien plus précieux.")
+        );
+        item.setItemMeta(meta);
+    }),
+
+    HINT_BOOK_FARMER(Material.WRITTEN_BOOK, item -> {
+        BookMeta meta = (BookMeta) item.getItemMeta();
+        meta.title(Component.text("Le Secret du Fermier"));
+        meta.author(Component.text("Team Alpha"));
+        List<Component> lore = new ArrayList<>();
+        lore.add(Component.text("Indice", NamedTextColor.GRAY).decoration(TextDecoration.ITALIC, false));
+        lore.add(Component.text("Un trésor légendaire attend d'être découvert...", NamedTextColor.YELLOW).decoration(TextDecoration.ITALIC, false));
+        meta.lore(lore);
+        meta.addPages(
+                Component.text("Chaque récolte semble ordinaire... jusqu'au jour où elle ne l'est plus. On raconte qu'un trésor unique se cache dans les champs des plus patients."),
+                Component.text("Sème, entretiens, récolte — encore et encore. La terre ne se presse jamais, mais elle se souvient de ceux qui ne renoncent pas.")
+        );
+        item.setItemMeta(meta);
+    }),
+
+    HINT_BOOK_ENCHANTER(Material.WRITTEN_BOOK, item -> {
+        BookMeta meta = (BookMeta) item.getItemMeta();
+        meta.title(Component.text("Le Secret de l'Enchanteur"));
+        meta.author(Component.text("Team Alpha"));
+        List<Component> lore = new ArrayList<>();
+        lore.add(Component.text("Indice", NamedTextColor.GRAY).decoration(TextDecoration.ITALIC, false));
+        lore.add(Component.text("Un trésor légendaire attend d'être découvert...", NamedTextColor.YELLOW).decoration(TextDecoration.ITALIC, false));
+        meta.lore(lore);
+        meta.addPages(
+                Component.text("Entre les pages des grimoires circule une rumeur : un objet d'exception, que nulle table d'enchantement n'a jamais vu deux fois."),
+                Component.text("Chaque sort tissé sur ta table tisse aussi autre chose, d'invisible. Continue d'enchanter, encore et encore, et peut-être le voile se lèvera.")
+        );
+        item.setItemMeta(meta);
+    }),
+
+    HINT_BOOK_FISHERMAN(Material.WRITTEN_BOOK, item -> {
+        BookMeta meta = (BookMeta) item.getItemMeta();
+        meta.title(Component.text("Le Secret du Pêcheur"));
+        meta.author(Component.text("Team Alpha"));
+        List<Component> lore = new ArrayList<>();
+        lore.add(Component.text("Indice", NamedTextColor.GRAY).decoration(TextDecoration.ITALIC, false));
+        lore.add(Component.text("Un trésor légendaire attend d'être découvert...", NamedTextColor.YELLOW).decoration(TextDecoration.ITALIC, false));
+        meta.lore(lore);
+        meta.addPages(
+                Component.text("Dans les tavernes du port, les vieux pêcheurs murmurent qu'une prise unique au monde attend celui qui ne remontera jamais sa ligne."),
+                Component.text("Lance ta ligne, encore et encore, par tous les temps. Ce n'est jamais le même poisson qui mord deux fois... et parfois, ce n'est pas un poisson du tout.")
+        );
+        item.setItemMeta(meta);
+    }),
+
+    HINT_BOOK_EXPLORER(Material.WRITTEN_BOOK, item -> {
+        BookMeta meta = (BookMeta) item.getItemMeta();
+        meta.title(Component.text("Le Secret de l'Explorateur"));
+        meta.author(Component.text("Team Alpha"));
+        List<Component> lore = new ArrayList<>();
+        lore.add(Component.text("Indice", NamedTextColor.GRAY).decoration(TextDecoration.ITALIC, false));
+        lore.add(Component.text("Un trésor légendaire attend d'être découvert...", NamedTextColor.YELLOW).decoration(TextDecoration.ITALIC, false));
+        meta.lore(lore);
+        meta.addPages(
+                Component.text("Loin, très loin du village, au-delà de ce que la plupart osent explorer, une rumeur circule : un trophée que nul autre n'a jamais ramené."),
+                Component.text("Il ne se trouve pas sur une carte. Il se gagne en repoussant les limites, en affrontant l'inconnu loin de tout, encore et encore.")
+        );
+        item.setItemMeta(meta);
+    });
 
     // ─── Infrastructure enum ──────────────────────────────────────────────────
 

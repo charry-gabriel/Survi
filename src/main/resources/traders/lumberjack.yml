@@ -43,3 +43,12 @@ recipes:
       amount: 64
     message: "Un super achat."
     requiredReputation: 110
+
+  - result:
+      customItem: HINT_BOOK_LUMBERJACK
+      amount: 1
+    ingredient:
+      material: OAK_LOG
+      amount: 64
+    message: "Un super achat."
+    requiredReputation: 190
