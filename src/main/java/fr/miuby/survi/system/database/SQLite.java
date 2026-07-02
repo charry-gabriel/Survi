@@ -294,12 +294,24 @@ public class SQLite extends Database {
                 s.executeUpdate(createGraveLostNotificationTable());
             }
             if (currentVersion < 17) {
-                s.executeUpdate("ALTER TABLE player ADD COLUMN spawn_world VARCHAR(255) DEFAULT NULL");
-                s.executeUpdate("ALTER TABLE player ADD COLUMN spawn_x REAL DEFAULT NULL");
-                s.executeUpdate("ALTER TABLE player ADD COLUMN spawn_y REAL DEFAULT NULL");
-                s.executeUpdate("ALTER TABLE player ADD COLUMN spawn_z REAL DEFAULT NULL");
-                s.executeUpdate("ALTER TABLE player ADD COLUMN spawn_yaw REAL DEFAULT NULL");
-                s.executeUpdate("ALTER TABLE player ADD COLUMN spawn_pitch REAL DEFAULT NULL");
+                if (!hasColumn("player", "spawn_world")) {
+                    s.executeUpdate("ALTER TABLE player ADD COLUMN spawn_world VARCHAR(255) DEFAULT NULL");
+                }
+                if (!hasColumn("player", "spawn_x")) {
+                    s.executeUpdate("ALTER TABLE player ADD COLUMN spawn_x REAL DEFAULT NULL");
+                }
+                if (!hasColumn("player", "spawn_y")) {
+                    s.executeUpdate("ALTER TABLE player ADD COLUMN spawn_y REAL DEFAULT NULL");
+                }
+                if (!hasColumn("player", "spawn_z")) {
+                    s.executeUpdate("ALTER TABLE player ADD COLUMN spawn_z REAL DEFAULT NULL");
+                }
+                if (!hasColumn("player", "spawn_yaw")) {
+                    s.executeUpdate("ALTER TABLE player ADD COLUMN spawn_yaw REAL DEFAULT NULL");
+                }
+                if (!hasColumn("player", "spawn_pitch")) {
+                    s.executeUpdate("ALTER TABLE player ADD COLUMN spawn_pitch REAL DEFAULT NULL");
+                }
             }
             if (currentVersion < 18) {
                 s.executeUpdate(createRareJobItemTable());
