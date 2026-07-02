@@ -155,3 +155,20 @@ global_quests:
       - { type: ITEM, item: GOLD_BLOCK, amount: 8 }
       - { type: POTION, potion: haste, duration: 72000, amplifier: 0 }
 
+  - id: "global_harvest_every_crop"
+    name: "Moisson du Royaume"
+    description: "Récoltez {value} cultures à travers le royaume."
+    type: HARVEST_CROP
+    targets:
+      [WHEAT,CARROTS,POTATOES,BEETROOTS,NETHER_WART,COCOA,SWEET_BERRY_BUSH,GLOW_BERRIES,MELON,PUMPKIN,SUGAR_CANE,BAMBOO,CACTUS]
+    goal: 20000
+    time_limit: 5400
+    rewards:
+      - { type: REPUTATION, job: FARMER, value: 1 }
+      - { type: POTION, potion: saturation, duration: 72000, amplifier: 0}
+      - { type: ITEM, item: CAKE, amount: 1}
+      - { type: ITEM, item: COOKED_RABBIT, amount: 64}
+      - { type: ITEM, item: GOLDEN_CARROT, amount: 64 }
+      - { type: ITEM, item: GOLDEN_APPLE, amount: 16}
+      - { type: ITEM, item: ENCHANTED_GOLDEN_APPLE, amount: 1}
+

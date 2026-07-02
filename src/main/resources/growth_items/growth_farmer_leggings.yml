@@ -72,7 +72,7 @@ tiers:
 
 
 periodicEffects:
-  - everyUses: 400
+  - everyUses: 250
     effects:
       - { type: potion, effect: saturation, seconds: 300 }
       - { type: potion, effect: speed, seconds: 300 }
