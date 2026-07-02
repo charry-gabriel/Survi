@@ -52,26 +52,6 @@ public class ServerListener implements Listener {
         alphaPlayer.resetPlayer();
     }
 
-    @EventHandler(ignoreCancelled = true)
-    public void onEntitySpawn(EntitySpawnEvent event) {
-        if (event.getEntity() instanceof EnderDragon dragon) {
-            try {
-                var attr = Objects.requireNonNull(dragon.getAttribute(Attribute.MAX_HEALTH));
-                attr.setBaseValue(1024);
-                attr.addModifier(new AttributeModifier(
-                        new NamespacedKey("survi", "dragon_hp_bonus"),
-                        1024,
-                        AttributeModifier.Operation.ADD_NUMBER,
-                        EquipmentSlotGroup.ANY
-                ));
-                dragon.setHealth(attr.getValue());
-            } catch (Exception exception) {
-                MLLogManager.getInstance().log(Level.SEVERE, ELogTag.WORLD,
-                        Errors.nullException + " (EnderDragon)", exception);
-            }
-        }
-    }
-
     @EventHandler
     public void onDailyReset(DailyResetEvent event) {
         GameManager.getInstance().getWorldResetManager().checkAndPerformResets();
