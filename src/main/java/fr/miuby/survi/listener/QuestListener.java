@@ -32,6 +32,9 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.EnchantmentStorageMeta;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 
@@ -277,19 +280,16 @@ public class QuestListener implements Listener {
     }
 
     private static int countNewEnchants(ItemStack before, ItemStack after) {
-        Map<Enchantment, Integer> beforeEnchants = getEnchants(before);
-        int added = 0;
-        for (Enchantment e : getEnchants(after).keySet()) {
-            if (!beforeEnchants.containsKey(e)) added++;
-        }
-        return added;
+        int beforeLevels = getEnchants(before).stream().mapToInt(Integer::intValue).sum();
+        int afterLevels = getEnchants(after).stream().mapToInt(Integer::intValue).sum();
+        return afterLevels - beforeLevels;
     }
 
     // Les livres enchantés stockent leurs enchantements via EnchantmentStorageMeta, pas ItemMeta#getEnchants().
-    private static Map<Enchantment, Integer> getEnchants(ItemStack item) {
+    private static Collection<Integer> getEnchants(ItemStack item) {
         ItemMeta meta = item.getItemMeta();
-        if (meta == null) return Map.of();
-        if (meta instanceof EnchantmentStorageMeta esm) return esm.getStoredEnchants();
-        return meta.getEnchants();
+        if (meta == null) return Collections.emptyList();
+        if (meta instanceof EnchantmentStorageMeta esm) return esm.getStoredEnchants().values();
+        return meta.getEnchants().values();
     }
 }
