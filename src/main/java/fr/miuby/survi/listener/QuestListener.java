@@ -170,20 +170,29 @@ public class QuestListener implements Listener {
      * Progresse la quête HARVEST_CROP sur la casse d'un bloc culture.
      * Ne vérifie PAS le PlacedBlockTracker : les cultures plantées par les joueurs
      * doivent compter (contrairement aux quêtes MINE où les blocs posés sont exclus).
-     * Si le bloc est {@link Ageable} (wheat, carrots, beetroots, cocoa...), il doit être
-     * à maturité (age == maximumAge) : une culture juste plantée et cassée aussitôt ne compte pas.
-     * Les blocs non-Ageable (melon, pumpkin, sugar cane, cactus, champignons...) n'ont pas
-     * d'état de croissance sur le bloc posé et comptent donc sans condition.
+     * Si le bloc est {@link Ageable} et n'est pas une plante en colonne (wheat, carrots,
+     * beetroots, cocoa...), il doit être à maturité (age == maximumAge) : une culture juste
+     * plantée et cassée aussitôt ne compte pas.
+     * Les plantes en colonne ({@link MaterialUtils#COLUMN_HARVEST_CROPS} : sugar cane, cactus)
+     * sont exemptées de ce contrôle même si leur BlockData est {@link Ageable} : leur 'age' est
+     * un minuteur de pousse interne (déclenche l'apparition du bloc suivant dans la colonne),
+     * pas un indicateur de maturité du bloc cassé — il compte donc sans condition, comme melon,
+     * pumpkin ou les champignons (non-Ageable).
      * La cible transmise est {@link EPlantFamily#questTarget} — {@code CAVE_VINES_PLANT}
      * est ainsi normalisé automatiquement sur {@code CAVE_VINES}.
      */
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onHarvestCrop(BlockBreakEvent event) {
-        Material target = MaterialUtils.QUEST_CROP_TARGET.get(event.getBlock().getType());
+        Material blockType = event.getBlock().getType();
+        Material target = MaterialUtils.QUEST_CROP_TARGET.get(blockType);
         if (target == null) return;
-        if (event.getBlock().getBlockData() instanceof Ageable ageable && ageable.getAge() < ageable.getMaximumAge()) return;
+        if (!MaterialUtils.COLUMN_HARVEST_CROPS.contains(blockType)
+                && event.getBlock().getBlockData() instanceof Ageable ageable
+                && ageable.getAge() < ageable.getMaximumAge()) return;
         AlphaPlayer player = AlphaPlayer.get(event.getPlayer().getUniqueId());
         if (player != null) {
+            MLLogManager.getInstance().log(Level.FINE, ELogTag.QUEST,
+                    "[HarvestCrop] " + event.getPlayer().getName() + " — " + target);
             GameManager.getInstance().getQuestManager().progressQuest(player, EQuestType.HARVEST_CROP, target, 1);
             GameManager.getInstance().getGlobalQuestManager().progressGlobalQuest(player, EQuestType.HARVEST_CROP, target, 1);
         }

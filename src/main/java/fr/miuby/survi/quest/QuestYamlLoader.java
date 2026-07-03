@@ -8,6 +8,7 @@ import fr.miuby.survi.blessing.BlessingLoader;
 import fr.miuby.survi.job.EJob;
 import fr.miuby.survi.quest.globalquest.GlobalQuest;
 import fr.miuby.survi.quest.quest.Quest;
+import fr.miuby.survi.system.block.MaterialUtils;
 import fr.miuby.survi.system.log.ELogTag;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -18,9 +19,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.logging.Level;
+import java.util.stream.Stream;
 
 /**
  * Chargement YAML des quêtes journalières et globales.
@@ -188,6 +190,21 @@ public final class QuestYamlLoader {
     }
 
     /**
+     * Groupes de cibles pour {@code targets} — évite d'énumérer manuellement tous les
+     * Materials d'une famille dans le YAML. Un groupe s'étend en plusieurs cibles.
+     * <ul>
+     *   <li>{@code ALL_CROPS} → {@link MaterialUtils#QUEST_CROP_TARGET} (valeurs, dédupliquées) — HARVEST_CROP</li>
+     *   <li>{@code ALL_ORES}  → {@link MaterialUtils#ORE_BLOCKS} — MINE</li>
+     *   <li>{@code ALL_LOGS}  → {@link MaterialUtils#LOG_BLOCKS} — MINE</li>
+     * </ul>
+     */
+    private static final Map<String, Set<Material>> TARGET_GROUPS = Map.of(
+            "ALL_CROPS", Set.copyOf(MaterialUtils.QUEST_CROP_TARGET.values()),
+            "ALL_ORES",  MaterialUtils.ORE_BLOCKS,
+            "ALL_LOGS",  MaterialUtils.LOG_BLOCKS
+    );
+
+    /**
      * Parse la liste de cibles selon le type de quête.
      *
      * <p>Formats YAML acceptés :</p>
@@ -195,11 +212,13 @@ public final class QuestYamlLoader {
      *   <li>{@code targets: null} — aucune cible spécifique (toute cible acceptée)</li>
      *   <li>{@code targets: [IRON_ORE]} — cible unique</li>
      *   <li>{@code targets: [IRON_ORE, DEEPSLATE_IRON_ORE]} — cibles multiples</li>
+     *   <li>{@code targets: [ALL_ORES]} — groupe ({@link #TARGET_GROUPS}), s'étend en plusieurs cibles ;
+     *       mélangeable avec des cibles littérales, ex. {@code [ALL_CROPS, BAMBOO]}</li>
      * </ul>
      *
      * <p>Correspondance type → classe de target :</p>
      * <ul>
-     *   <li>MINE, CRAFT, SMELT, ENCHANT, HARVEST_BEEHIVE, ANVIL_ENCHANT → {@link Material}</li>
+     *   <li>MINE, CRAFT, SMELT, ENCHANT, HARVEST_BEEHIVE, ANVIL_ENCHANT, HARVEST_CROP → {@link Material}</li>
      *   <li>KILL, SHEAR, BREED, TAME → {@link EntityType}</li>
      *   <li>FISH, GAIN_XP_LEVELS → pas de target (targets doit être null)</li>
      * </ul>
@@ -221,16 +240,36 @@ public final class QuestYamlLoader {
             return null;
         }
 
+        String questId = String.valueOf(map.get("id"));
         List<Object> parsed = targetStrings.stream()
                 .filter(s -> s != null && !s.isBlank())
-                .map(s -> (Object) switch (type) {
-                    case MINE, CRAFT, SMELT, ENCHANT, HARVEST_BEEHIVE, ANVIL_ENCHANT, HARVEST_CROP -> Material.valueOf(s);
-                    case KILL, SHEAR, BREED, TAME -> EntityType.valueOf(s);
-                    default -> null;
-                })
-                .filter(Objects::nonNull)
+                .map(String::toUpperCase)
+                .flatMap(s -> resolveTarget(s, type, questId))
+                .distinct()
                 .toList();
 
         return parsed.isEmpty() ? null : parsed;
+    }
+
+    /**
+     * Résout une entrée de {@code targets} en une ou plusieurs cibles.
+     * Un token présent dans {@link #TARGET_GROUPS} s'étend en tous les {@link Material} du
+     * groupe ; sinon la chaîne est interprétée comme une cible littérale ({@link Material}
+     * ou {@link EntityType} selon {@code type}).
+     */
+    private static Stream<Object> resolveTarget(String s, EQuestType type, String questId) {
+        Set<Material> group = TARGET_GROUPS.get(s);
+        if (group != null) {
+            MLLogManager.getInstance().log(Level.INFO, ELogTag.QUEST,
+                    "[QuestYamlLoader] " + questId + " — groupe '" + s + "' résolu en " + group.size() + " cible(s)");
+            return group.stream().map(m -> (Object) m);
+        }
+
+        Object resolved = switch (type) {
+            case MINE, CRAFT, SMELT, ENCHANT, HARVEST_BEEHIVE, ANVIL_ENCHANT, HARVEST_CROP -> Material.valueOf(s);
+            case KILL, SHEAR, BREED, TAME -> EntityType.valueOf(s);
+            default -> null;
+        };
+        return resolved == null ? Stream.empty() : Stream.of(resolved);
     }
 }
