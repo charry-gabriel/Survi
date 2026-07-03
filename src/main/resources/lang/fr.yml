@@ -439,6 +439,7 @@ globalquest.timeout: |-
 
 # ─── Quête globale — entrée récompense & message personnel ────────────────────
 globalquest.rewards.message: "<gold><bold>[Quête Globale] <green>Récompenses reçues !"
+globalquest.rewards.rank: "<gray>  Ton classement : <white>#{0}<gray> (<aqua>{1}<gray> actions)."
 globalquest.timeout.rank: "<gray>  Ton classement : <white>#{0}<gray> (<aqua>{1}<gray> actions)."
 
 # ─── Spawn personnalisé & Respawn ─────────────────────────────────────────────

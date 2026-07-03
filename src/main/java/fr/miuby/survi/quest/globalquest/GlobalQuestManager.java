@@ -205,6 +205,7 @@ public class GlobalQuestManager extends AbstractQuestManager<GlobalQuest> {
 
         GlobalQuest quest = activeQuest;
         Map<UUID, Integer> snapshot = new HashMap<>(contributions);
+        List<Map.Entry<UUID, Integer>> ranked = rankContributions(snapshot);
         int worldLevel = GameManager.getInstance().getWorldLevelManager().getLevel();
 
         activeQuest = null;
@@ -212,14 +213,22 @@ public class GlobalQuestManager extends AbstractQuestManager<GlobalQuest> {
         endTime     = 0L;
         contributions.clear();
 
-        Component announcement = buildQuestFinishedComponent(quest, snapshot);
+        Component announcement = buildQuestFinishedComponent(quest, ranked);
         broadcastQuestFinished(announcement);
         GameManager.getInstance().getGlobalQuestBossBarService().onQuestFinished(quest);
 
         AlphaPlayerFactory factory = GameManager.getInstance().getAlphaPlayerFactory();
         OfflineNotificationService offlineNotif = GameManager.getInstance().getOfflineNotificationService();
+        LangService ls = GameManager.getInstance().getLangService();
 
-        for (Map.Entry<UUID, Integer> entry : snapshot.entrySet()) {
+        // Hors du top (TOP_SIZE) : le classement + nombre d'actions n'apparaît pas dans
+        // l'annonce générale (qui ne montre que le top) -> message personnel dédié en plus des récompenses.
+        for (int i = 0; i < ranked.size(); i++) {
+            Map.Entry<UUID, Integer> entry = ranked.get(i);
+            boolean isTop = i < TOP_SIZE;
+            int rank      = i + 1;
+            int actions   = entry.getValue();
+
             AlphaPlayer ap = factory.getAlphaPlayer(entry.getKey());
             Player p       = ap.getPlayer();
             boolean online = p != null && p.isOnline();
@@ -235,16 +244,26 @@ public class GlobalQuestManager extends AbstractQuestManager<GlobalQuest> {
 
             if (online) {
                 p.sendMessage(buildRewardMessage());
+                if (!isTop) {
+                    p.sendMessage(ls.text(p, "globalquest.rewards.rank", rank, actions));
+                }
             } else {
                 // Le joueur hors ligne reçoit à la reconnexion l'annonce du classement + ses récompenses
                 Component offlineMsg = announcement.append(buildRewardMessage());
+                if (!isTop) {
+                    offlineMsg = offlineMsg.append(ls.text(ls.getServerDefault(), "globalquest.rewards.rank", rank, actions));
+                }
                 offlineNotif.queueQuestReward(entry.getKey(), deferred, offlineMsg);
             }
+
+            MLLogManager.getInstance().log(Level.FINE, ELogTag.QUEST,
+                    "[GlobalQuest] Récompense -> " + ap.getPseudo() + " (" + ap.getUuid() + ") rang=" + rank
+                            + " actions=" + actions + " top=" + isTop + " online=" + online);
 
             // Historique persistant
             GameManager.getInstance().getDatabase().questHistory().insert(
                     ap.getUuid(), ap.getPseudo(), quest.getId(), LocalDate.now(),
-                    worldLevel, null, "global", entry.getValue()
+                    worldLevel, null, "global", actions
             );
         }
 
@@ -303,11 +322,10 @@ public class GlobalQuestManager extends AbstractQuestManager<GlobalQuest> {
         }
     }
 
-    private Component buildQuestFinishedComponent(GlobalQuest quest, Map<UUID, Integer> snapshot) {
+    private Component buildQuestFinishedComponent(GlobalQuest quest, List<Map.Entry<UUID, Integer>> ranked) {
         LangService ls               = GameManager.getInstance().getLangService();
         ELang       lang             = ls.getServerDefault();
-        int         participantCount = snapshot.size();
-        List<Map.Entry<UUID, Integer>> ranked = rankContributions(snapshot);
+        int         participantCount = ranked.size();
         Component   top              = buildTopContributorsComponent(ranked);
 
         return ls.text(lang, "globalquest.complete",
