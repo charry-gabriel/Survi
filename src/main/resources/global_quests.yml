@@ -161,7 +161,7 @@ global_quests:
     type: HARVEST_CROP
     targets:
       [WHEAT,CARROTS,POTATOES,BEETROOTS,NETHER_WART,COCOA,SWEET_BERRY_BUSH,GLOW_BERRIES,MELON,PUMPKIN,SUGAR_CANE,BAMBOO,CACTUS]
-    goal: 20000
+    goal: 20000 #Tout pile
     time_limit: 5400
     rewards:
       - { type: REPUTATION, job: FARMER, value: 1 }
@@ -171,4 +171,24 @@ global_quests:
       - { type: ITEM, item: GOLDEN_CARROT, amount: 64 }
       - { type: ITEM, item: GOLDEN_APPLE, amount: 16}
       - { type: ITEM, item: ENCHANTED_GOLDEN_APPLE, amount: 1}
+
+  - id: "global_tete_wither"
+    name: "Le têtes tombent"
+    description: "Tuez {value} wither squelette."
+    type: KILL
+    targets:
+      [ WITHER_SKELETON ]
+    goal: 30
+    time_limit: 7200
+    rewards:
+      - { type: REPUTATION, job: FARMER, value: 2}
+      - { type: REPUTATION, job: EXPLORER, value: 2}
+      - { type: REPUTATION, job: FISHERMAN, value: 2}
+      - { type: REPUTATION, job: LUMBERJACK, value: 2}
+      - { type: REPUTATION, job: MINER, value: 2}
+      - { type: REPUTATION, job: ENCHANTER, value: 2}
+      - { type: POTION, potion: regeneration, duration: 72000, amplifier: 0 }
+      - { type: ITEM, item: GOLDEN_APPLE, amount: 1}
+      - { type: ITEM, item: COOKIE, amount: 64}
+      - { type: ITEM, item: WITHER_SKELETON_SKULL, amount: 1}
 
