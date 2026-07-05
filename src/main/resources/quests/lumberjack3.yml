@@ -34,7 +34,7 @@ quests:
     difficulty: 3
     jobs:
       - LUMBERJACK
-    targets: [BAMBOO]
+    targets: [BAMBOO_BLOCK]
     goal: 640
     rewards:
       - {type: REPUTATION, job: LUMBERJACK, value: 11}
