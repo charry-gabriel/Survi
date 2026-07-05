@@ -192,3 +192,45 @@ global_quests:
       - { type: ITEM, item: COOKIE, amount: 64}
       - { type: ITEM, item: WITHER_SKELETON_SKULL, amount: 1}
 
+  - id: "global_global_flower_harvest"
+    name: "Un Bouquet pour le Royaume"
+    description: "Récoltez {value} fleurs et plantes décoratives."
+    type: MINE
+    targets:
+      - DANDELION
+      - POPPY
+      - BLUE_ORCHID
+      - ALLIUM
+      - AZURE_BLUET
+      - RED_TULIP
+      - ORANGE_TULIP
+      - WHITE_TULIP
+      - PINK_TULIP
+      - OXEYE_DAISY
+      - CORNFLOWER
+      - LILY_OF_THE_VALLEY
+      - WITHER_ROSE
+      - SUNFLOWER
+      - LILAC
+      - ROSE_BUSH
+      - PEONY
+      - TORCHFLOWER
+      - PITCHER_PLANT
+      - PINK_PETALS
+      - WILDFLOWERS
+      - CLOSED_EYEBLOSSOM
+      - OPEN_EYEBLOSSOM
+    goal: 6767
+    time_limit: 28800
+    rewards:
+      - { type: REPUTATION, job: FARMER, value: 2}
+      - { type: REPUTATION, job: EXPLORER, value: 2}
+      - { type: REPUTATION, job: FISHERMAN, value: 2}
+      - { type: REPUTATION, job: LUMBERJACK, value: 2}
+      - { type: REPUTATION, job: MINER, value: 2}
+      - { type: REPUTATION, job: ENCHANTER, value: 2}
+      - { type: ITEM, item: BONE_BLOCK, amount: 32 }
+      - { type: POTION, potion: speed, duration: 72000, amplifier: 0 }
+      - { type: POTION, potion: saturation, duration: 72000, amplifier: 0 }
+      - { type: POTION, potion: regeneration, duration: 36000, amplifier: 0 }
+
