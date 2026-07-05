@@ -42,13 +42,13 @@ quests:
 
   - id: "breed_turtles34"
     name: "Protection des Océans"
-    description: "Faites se reproduire {value} tortues."
-    type: BREED
+    description: "Récuperer {value} oeufs de tortues."
+    type: MINE
     difficulty: 3
     jobs:
       - FISHERMAN
-    targets: [TURTLE]
-    goal: 2
+    targets: [TURTLE_EGG]
+    goal: 5
     rewards:
       - {type: REPUTATION, job: FISHERMAN, value: 11}
       - { type: REPUTATION, job: EXPLORER, value: 1}
