@@ -33,7 +33,7 @@ quests:
     type: ENCHANT
     difficulty: 3
     jobs:
-      - ENCHANTER
+      - FISHERMAN
     targets: [TRIDENT]
     goal: 1
     rewards:
@@ -46,7 +46,7 @@ quests:
     type: BREED
     difficulty: 3
     jobs:
-      - EXPLORER
+      - FISHERMAN
     targets: [TURTLE]
     goal: 2
     rewards:
@@ -60,7 +60,7 @@ quests:
     type: TAME
     difficulty: 3
     jobs:
-      - EXPLORER
+      - FISHERMAN
     targets: [CAT]
     goal: 5
     rewards:
@@ -85,7 +85,7 @@ quests:
     type: KILL
     difficulty: 3
     jobs:
-      - EXPLORER
+      - FISHERMAN
     targets: [ ELDER_GUARDIAN ]
     goal: 1
     rewards:

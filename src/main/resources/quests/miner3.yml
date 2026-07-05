@@ -85,7 +85,7 @@ quests:
     type: KILL
     difficulty: 3
     jobs:
-      - EXPLORER
+      - MINER
     targets: [WARDEN]
     goal: 1
     rewards:
