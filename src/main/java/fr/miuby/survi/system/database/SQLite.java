@@ -8,7 +8,7 @@ import java.sql.*;
 import java.util.logging.Level;
 
 public class SQLite extends Database {
-    private static final int CURRENT_DB_VERSION = 18;
+    private static final int CURRENT_DB_VERSION = 19;
 
     public SQLite() {
         super(GameManager.getInstance().getPlugin().getConfig().getString("SQLite.Filename", "minecraft"));
@@ -49,6 +49,7 @@ public class SQLite extends Database {
             s.executeUpdate(createReputationTable());
             s.executeUpdate(createPlayerQuestTable());
             s.executeUpdate(createPlayerQuestMetaTable());
+            s.executeUpdate(createPlayerQuestRerollTable());
             s.executeUpdate(createServerDataTable());
             s.executeUpdate(createDelayedEffectsTable());
             s.executeUpdate(createGraveTable());
@@ -316,6 +317,9 @@ public class SQLite extends Database {
             if (currentVersion < 18) {
                 s.executeUpdate(createRareJobItemTable());
             }
+            if (currentVersion < 19) {
+                s.executeUpdate(createPlayerQuestRerollTable());
+            }
         }
     }
 
@@ -326,6 +330,15 @@ public class SQLite extends Database {
                 "`action_count` INTEGER    NOT NULL DEFAULT 0," +
                 "`has_item`     INTEGER    NOT NULL DEFAULT 0," +
                 "PRIMARY KEY (`player_uuid`, `job`)" +
+                ");";
+    }
+
+    /** Limite quotidienne du consommable {@code QUEST_REROLL} — voir {@code QuestManager#rerollQuest}. */
+    private String createPlayerQuestRerollTable() {
+        return "CREATE TABLE IF NOT EXISTS player_quest_reroll (" +
+                "`player_uuid` VARCHAR(36) NOT NULL," +
+                "`last_reroll_day` INTEGER NOT NULL DEFAULT -1," +
+                "PRIMARY KEY (`player_uuid`)" +
                 ");";
     }
 }

@@ -60,6 +60,14 @@ public class AlphaPlayer extends MLPlayer implements Serializable {
     @Setter
     private int totalDailyQuestsClaimed = 0;
 
+    /**
+     * Jour de reset (voir {@code TimeManager#getLastResetDay}) auquel ce joueur a utilisé son dernier
+     * reroll de quête. -1 si jamais utilisé. Chargé depuis {@code player_quest_reroll} à la connexion.
+     */
+    @Getter
+    @Setter
+    private int lastQuestRerollDay = -1;
+
     @Getter
     @Setter
     private MLWorld world;
@@ -157,22 +165,12 @@ public class AlphaPlayer extends MLPlayer implements Serializable {
         this.player.discoverRecipes(GameManager.getInstance().getCustomRecipeFactory().getNewRecipes().keySet());
         GameManager.getInstance().getLockedItemsFactory().applyLockState(this);
 
-        // Ne recharge depuis la BDD qu'une seule fois par instance (premier join de cette session
-        // serveur). Sur une reconnexion rapide, l'instance AlphaPlayer reste enregistrée dans le
-        // registre (resetPlayer() au quit ne fait que détacher le Player Bukkit) et reputationByJob
-        // est déjà à jour en mémoire. Recharger systématiquement ici écrase cet état avec la valeur
-        // BDD au moment du join : si un gain de réputation juste avant la déconnexion est encore dans
-        // la file d'écriture asynchrone (updateReputation -> INSERT OR REPLACE) et n'a pas encore été
-        // committé, ce gain est silencieusement perdu de la mémoire, et toute réputation ajoutée
-        // ensuite dans la nouvelle session écrase la BDD avec une base obsolète (plus basse) — perte
-        // de niveau de métier sans aucune erreur logguée.
         if (!reputationDataReady) {
             loadReputationFromDatabase(0);
         }
 
-        // Charge TOUTES les quêtes actives (non réclamées) — le système cumulatif ne les expire pas par date.
-        // Les quêtes réclamées sont déjà en quest_history ; on les déduit du total via countDailyCompleted.
         this.totalDailyQuestsClaimed = GameManager.getInstance().getDatabase().questHistory().countDailyCompleted(this.getUuid());
+        this.lastQuestRerollDay = GameManager.getInstance().getDatabase().quests().getLastRerollDay(this.getUuid());
         List<PlayerQuestData> loaded = GameManager.getInstance().getDatabase().quests().getPlayerQuests(this.getUuid());
         GameManager.getInstance().getQuestManager().restoreQuestsOnJoin(this, loaded);
     }

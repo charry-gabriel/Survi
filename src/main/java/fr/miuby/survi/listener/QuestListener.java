@@ -3,6 +3,7 @@ package fr.miuby.survi.listener;
 import fr.miuby.survi.GameManager;
 import fr.miuby.survi.player.AlphaPlayer;
 import fr.miuby.survi.quest.EQuestType;
+import fr.miuby.survi.quest.quest.QuestManager;
 import fr.miuby.survi.system.block.EPlantFamily;
 import fr.miuby.survi.system.block.MaterialUtils;
 import fr.miuby.survi.system.log.ELogTag;
@@ -10,7 +11,6 @@ import fr.miuby.lib.log.MLLogManager;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.Ageable;
-import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -25,6 +25,7 @@ import org.bukkit.event.inventory.FurnaceExtractEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerFishEvent;
 import org.bukkit.event.player.PlayerHarvestBlockEvent;
+import org.bukkit.event.player.PlayerItemConsumeEvent;
 import org.bukkit.event.player.PlayerLevelChangeEvent;
 import org.bukkit.event.player.PlayerShearEntityEvent;
 import org.bukkit.inventory.AnvilInventory;
@@ -34,8 +35,6 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
-import java.util.Map;
 import java.util.logging.Level;
 
 public class QuestListener implements Listener {
@@ -44,6 +43,24 @@ public class QuestListener implements Listener {
 
     public QuestListener(PlacedBlockTracker placedBlockTracker) {
         this.placedBlockTracker = placedBlockTracker;
+    }
+
+    // ─── Item de reroll de quête ─────────────────────────────────────────────────
+
+    /**
+     * Consommation de {@link fr.miuby.survi.item.ECustomItem#QUEST_REROLL}. Délègue à
+     * {@link QuestManager#rerollQuest} ; si refusé (aucune quête active, déjà terminée, ou
+     * limite quotidienne atteinte), l'event est annulé pour ne pas consommer l'item.
+     */
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
+    public void onDrinkQuestReroll(PlayerItemConsumeEvent event) {
+        if (!QuestManager.isQuestRerollItem(event.getItem())) return;
+
+        AlphaPlayer player = AlphaPlayer.get(event.getPlayer().getUniqueId());
+        if (player == null) return;
+
+        boolean success = GameManager.getInstance().getQuestManager().rerollQuest(player);
+        if (!success) event.setCancelled(true);
     }
 
     /**

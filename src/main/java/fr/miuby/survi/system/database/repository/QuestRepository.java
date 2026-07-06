@@ -248,6 +248,39 @@ public class QuestRepository extends MLRepository {
     }
 
     // =========================================================================
+    // REROLL — limite quotidienne (item consommable)
+    // =========================================================================
+
+    /**
+     * Jour de reset (voir {@code TimeManager#getLastResetDay}) auquel le joueur a utilisé son
+     * dernier reroll de quête. -1 si jamais utilisé ou si aucune ligne n'existe encore.
+     */
+    public int getLastRerollDay(UUID playerUuid) {
+        try (PreparedStatement ps = connection.prepareStatement(
+                "SELECT last_reroll_day FROM player_quest_reroll WHERE player_uuid = ?")) {
+            ps.setString(1, playerUuid.toString());
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) return rs.getInt("last_reroll_day");
+            }
+        } catch (SQLException ex) {
+            MLLogManager.getInstance().log(Level.SEVERE, ELogTag.QUEST, "Failed to get last reroll day", ex);
+        }
+        return -1;
+    }
+
+    /** Mémorise le jour de reset auquel le reroll de quête vient d'être utilisé. */
+    public void setLastRerollDay(UUID playerUuid, int day) {
+        runAsync(conn -> {
+            try (PreparedStatement ps = conn.prepareStatement(
+                    "INSERT OR REPLACE INTO player_quest_reroll (player_uuid, last_reroll_day) VALUES (?, ?)")) {
+                ps.setString(1, playerUuid.toString());
+                ps.setInt(2, day);
+                ps.executeUpdate();
+            }
+        }, ELogTag.QUEST, "Failed to set last reroll day");
+    }
+
+    // =========================================================================
     // CLASSEMENTS — réputation
     // =========================================================================
 

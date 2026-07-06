@@ -18,6 +18,15 @@ recipes:
     requiredReputation: 0
 
   - result:
+      customItem: QUEST_REROLL
+      amount: 1
+    ingredient:
+      material: DIAMOND
+      amount: 4
+    message: "Un super achat."
+    requiredReputation: 0
+
+  - result:
       material: BOOKSHELF
       amount: 1
     ingredient:
@@ -48,7 +57,7 @@ recipes:
       customItem: HINT_BOOK_ENCHANTER
       amount: 1
     ingredient:
-      material: BEDROCK
+      material: LAPIS_LAZULI
       amount: 64
     message: "Un super achat."
     requiredReputation: 190

@@ -18,6 +18,15 @@ recipes:
     requiredReputation: 0
 
   - result:
+      customItem: QUEST_REROLL
+      amount: 1
+    ingredient:
+      material: DIAMOND
+      amount: 4
+    message: "Un super achat."
+    requiredReputation: 0
+
+  - result:
       material: HAY_BLOCK
       amount: 1
     ingredient:
