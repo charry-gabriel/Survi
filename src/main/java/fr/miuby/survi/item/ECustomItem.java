@@ -189,7 +189,7 @@ public enum ECustomItem {
 
     // ─── Objets rares de collection (un par métier) ──────────────────────────
 
-    RARE_MINER(Material.AMETHYST_SHARD, item -> {
+    RARE_MINER(Material.LEATHER, item -> {
         List<Component> lore = new ArrayList<>();
         lore.add(Component.text("Collection · Mineur", NamedTextColor.GRAY).decoration(TextDecoration.ITALIC, false));
         lore.add(Component.text("Unique", NamedTextColor.YELLOW).decoration(TextDecoration.ITALIC, false));
@@ -200,7 +200,7 @@ public enum ECustomItem {
                 .maxStackSize(1);
     }, "rareMiner"),
 
-    RARE_LUMBERJACK(Material.PRISMARINE_SHARD, item -> {
+    RARE_LUMBERJACK(Material.LEATHER, item -> {
         List<Component> lore = new ArrayList<>();
         lore.add(Component.text("Collection · Bûcheron", NamedTextColor.GRAY).decoration(TextDecoration.ITALIC, false));
         lore.add(Component.text("Unique", NamedTextColor.YELLOW).decoration(TextDecoration.ITALIC, false));
@@ -211,7 +211,7 @@ public enum ECustomItem {
                 .maxStackSize(1);
     }, "rareLumberjack"),
 
-    RARE_FARMER(Material.GOLDEN_CARROT, item -> {
+    RARE_FARMER(Material.LEATHER, item -> {
         List<Component> lore = new ArrayList<>();
         lore.add(Component.text("Collection · Fermier", NamedTextColor.GRAY).decoration(TextDecoration.ITALIC, false));
         lore.add(Component.text("Unique", NamedTextColor.YELLOW).decoration(TextDecoration.ITALIC, false));
@@ -222,7 +222,7 @@ public enum ECustomItem {
                 .maxStackSize(1);
     }, "rareFarmer"),
 
-    RARE_ENCHANTER(Material.GHAST_TEAR, item -> {
+    RARE_ENCHANTER(Material.LEATHER, item -> {
         List<Component> lore = new ArrayList<>();
         lore.add(Component.text("Collection · Enchanteur", NamedTextColor.GRAY).decoration(TextDecoration.ITALIC, false));
         lore.add(Component.text("Unique", NamedTextColor.YELLOW).decoration(TextDecoration.ITALIC, false));
@@ -233,7 +233,7 @@ public enum ECustomItem {
                 .maxStackSize(1);
     }, "rareEnchanter"),
 
-    RARE_FISHERMAN(Material.NAUTILUS_SHELL, item -> {
+    RARE_FISHERMAN(Material.LEATHER, item -> {
         List<Component> lore = new ArrayList<>();
         lore.add(Component.text("Collection · Pêcheur", NamedTextColor.GRAY).decoration(TextDecoration.ITALIC, false));
         lore.add(Component.text("Unique", NamedTextColor.YELLOW).decoration(TextDecoration.ITALIC, false));
@@ -244,7 +244,7 @@ public enum ECustomItem {
                 .maxStackSize(1);
     }, "rareFisherman"),
 
-    RARE_EXPLORER(Material.ECHO_SHARD, item -> {
+    RARE_EXPLORER(Material.LEATHER, item -> {
         List<Component> lore = new ArrayList<>();
         lore.add(Component.text("Collection · Explorateur", NamedTextColor.GRAY).decoration(TextDecoration.ITALIC, false));
         lore.add(Component.text("Unique", NamedTextColor.YELLOW).decoration(TextDecoration.ITALIC, false));
