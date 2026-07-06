@@ -234,3 +234,19 @@ global_quests:
       - { type: POTION, potion: saturation, duration: 72000, amplifier: 0 }
       - { type: POTION, potion: regeneration, duration: 36000, amplifier: 0 }
 
+
+  - id: "global_cut_exotic_wood"
+    name: "Bois d'un autre monde"
+    description: "Coupez {value} bois de Crimson, de Warped ou des plantes de Chorus !"
+    type: MINE
+    targets: [ CRIMSON_STEM, WARPED_STEM, CHORUS_PLANT ]
+    goal: 10067
+    time_limit: 5400
+    rewards:
+      - { type: REPUTATION, job: LUMBERJACK, value: 1 }
+      - { type: POTION, potion: slow_falling, duration: 72000, amplifier: 0 }
+      - { type: ITEM, item: OAK_LOG, amount: 16 }
+      - { type: ITEM, item: CRIMSON_STEM, amount: 16 }
+      - { type: ITEM, item: WARPED_STEM, amount: 16 }
+      - { type: ITEM, item: CHORUS_FRUIT, amount: 16 }
+
