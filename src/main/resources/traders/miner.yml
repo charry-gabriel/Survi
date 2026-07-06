@@ -24,7 +24,7 @@ recipes:
       material: SAND
       amount: 64
     message: "Un super achat."
-    requiredReputation: 0
+    requiredReputation: 5
 
   - result:
       material: IRON_INGOT
