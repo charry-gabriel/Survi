@@ -21,8 +21,8 @@ recipes:
       customItem: QUEST_REROLL
       amount: 1
     ingredient:
-      material: DIAMOND
-      amount: 4
+      material: SAND
+      amount: 64
     message: "Un super achat."
     requiredReputation: 0
 
