@@ -20,34 +20,34 @@ suspicious-window-ms: 600000
 # (EXPLORER uniquement) min-distance : distance minimale du 0,0 en blocs
 jobs:
   MINER:
-    threshold: 5000
-    growth-range: 50000
-    suspicious-threshold: 500
-    max-chance: 0.0001
+    threshold: 8000
+    growth-range: 16000
+    suspicious-threshold: 200
+    max-chance: 0.000125
   LUMBERJACK:
-    threshold: 3000
-    growth-range: 30000
-    suspicious-threshold: 500
-    max-chance: 0.0001
+    threshold: 13000
+    growth-range: 26000
+    suspicious-threshold: 400
+    max-chance: 0.0000769
   FARMER:
-    threshold: 10000
-    growth-range: 200000
+    threshold: 30000
+    growth-range: 60000
     suspicious-threshold: 1000
-    max-chance: 0.0001
+    max-chance: 0.0000333
   ENCHANTER:
-    threshold: 500
-    growth-range: 2000
-    suspicious-threshold: 50
-    max-chance: 0.0001
+    threshold: 400
+    growth-range: 800
+    suspicious-threshold: 40
+    max-chance: 0.002778
   FISHERMAN:
-    threshold: 500
-    growth-range: 5000
-    suspicious-threshold: 50
-    max-chance: 0.0001
+    threshold: 1200
+    growth-range: 2400
+    suspicious-threshold: 40
+    max-chance: 0.0008333
   EXPLORER:
-    threshold: 0
-    growth-range: 5000
+    threshold: 1200
+    growth-range: 2400
     suspicious-threshold: 50
-    max-chance: 0.0001
+    max-chance: 0.0008333
     # Distance minimale du point 0,0 (en blocs) pour que le kill compte
     min-distance: 600

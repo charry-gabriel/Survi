@@ -266,8 +266,8 @@ public enum ECustomItem {
         lore.add(Component.text("Un trésor légendaire attend d'être découvert...", NamedTextColor.YELLOW).decoration(TextDecoration.ITALIC, false));
         meta.lore(lore);
         meta.addPages(
-                Component.text("Il existe, dit-on, un trésor que nulle forge n'a jamais façonné. Une rareté que seuls les plus tenaces croisent, une fois dans leur vie."),
-                Component.text("Le secret ne se trouve pas dans un coffre. Il se gagne coup de pioche après coup de pioche, au plus profond de la roche, sans jamais relâcher l'effort.")
+                Component.text("Il existe, dit-on, un trésor que nulle forge n'a jamais façonné — et ce n'est pas le seul de son espèce. Chaque métier cache le sien, une rareté que la plupart ne croiseront jamais, même après une vie entière."),
+                Component.text("Le secret se gagne minerai après minerai, veine après veine, sans jamais reposer la pioche. Seule la constance compte, où que tu frappes la roche.")
         );
         item.setItemMeta(meta);
     }),
@@ -281,7 +281,7 @@ public enum ECustomItem {
         lore.add(Component.text("Un trésor légendaire attend d'être découvert...", NamedTextColor.YELLOW).decoration(TextDecoration.ITALIC, false));
         meta.lore(lore);
         meta.addPages(
-                Component.text("Au cœur des forêts les plus anciennes, une légende circule : un trésor unique attendrait le bûcheron le plus obstiné. Peu y croient. Moins encore le trouvent."),
+                Component.text("Au cœur des forêts les plus anciennes, une légende circule : chaque métier cacherait un trésor qui lui est propre, et celui du bûcheron attendrait quelque part, sous l'écorce la plus ancienne. Peu y croient. Moins encore le trouvent."),
                 Component.text("Ce n'est pas la hache qui choisit, mais la constance. Tronc après tronc, abattus sans relâche, le bois finit parfois par livrer un secret bien plus précieux.")
         );
         item.setItemMeta(meta);
@@ -296,7 +296,7 @@ public enum ECustomItem {
         lore.add(Component.text("Un trésor légendaire attend d'être découvert...", NamedTextColor.YELLOW).decoration(TextDecoration.ITALIC, false));
         meta.lore(lore);
         meta.addPages(
-                Component.text("Chaque récolte semble ordinaire... jusqu'au jour où elle ne l'est plus. On raconte qu'un trésor unique se cache dans les champs des plus patients."),
+                Component.text("Chaque récolte semble ordinaire... jusqu'au jour où elle ne l'est plus. On raconte que chaque métier cache un trésor qui lui est propre, et que celui des champs n'attend que les plus patients."),
                 Component.text("Sème, entretiens, récolte — encore et encore. La terre ne se presse jamais, mais elle se souvient de ceux qui ne renoncent pas.")
         );
         item.setItemMeta(meta);
@@ -311,7 +311,7 @@ public enum ECustomItem {
         lore.add(Component.text("Un trésor légendaire attend d'être découvert...", NamedTextColor.YELLOW).decoration(TextDecoration.ITALIC, false));
         meta.lore(lore);
         meta.addPages(
-                Component.text("Entre les pages des grimoires circule une rumeur : un objet d'exception, que nulle table d'enchantement n'a jamais vu deux fois."),
+                Component.text("Entre les pages des grimoires circule une rumeur : chaque métier cache un objet d'exception qui lui est propre. Celui de l'enchanteur est une rareté que nulle table n'a jamais vue deux fois."),
                 Component.text("Chaque sort tissé sur ta table tisse aussi autre chose, d'invisible. Continue d'enchanter, encore et encore, et peut-être le voile se lèvera.")
         );
         item.setItemMeta(meta);
@@ -326,7 +326,7 @@ public enum ECustomItem {
         lore.add(Component.text("Un trésor légendaire attend d'être découvert...", NamedTextColor.YELLOW).decoration(TextDecoration.ITALIC, false));
         meta.lore(lore);
         meta.addPages(
-                Component.text("Dans les tavernes du port, les vieux pêcheurs murmurent qu'une prise unique au monde attend celui qui ne remontera jamais sa ligne."),
+                Component.text("Dans les tavernes du port, les vieux pêcheurs murmurent que chaque métier cache un trésor qui lui est propre. Celui du pêcheur : une prise unique au monde, pour celui qui ne remontera jamais sa ligne."),
                 Component.text("Lance ta ligne, encore et encore, par tous les temps. Ce n'est jamais le même poisson qui mord deux fois... et parfois, ce n'est pas un poisson du tout.")
         );
         item.setItemMeta(meta);
@@ -341,8 +341,8 @@ public enum ECustomItem {
         lore.add(Component.text("Un trésor légendaire attend d'être découvert...", NamedTextColor.YELLOW).decoration(TextDecoration.ITALIC, false));
         meta.lore(lore);
         meta.addPages(
-                Component.text("Loin, très loin du village, au-delà de ce que la plupart osent explorer, une rumeur circule : un trophée que nul autre n'a jamais ramené."),
-                Component.text("Il ne se trouve pas sur une carte. Il se gagne en repoussant les limites, en affrontant l'inconnu loin de tout, encore et encore.")
+                Component.text("Au-delà du portail, dans la Wilderness où peu osent s'aventurer, une rumeur circule : chaque métier cache un trésor qui lui est propre, et celui de l'explorateur y attend, plus légendaire qu'aucun trophée de chasse."),
+                Component.text("Il se gagne l'épée à la main, loin dans le Wilderness, en terrassant ses créatures les plus féroces, encore et encore, jusqu'à ce que la légende cède enfin son secret.")
         );
         item.setItemMeta(meta);
     });
