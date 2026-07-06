@@ -15,6 +15,7 @@ import fr.miuby.survi.system.sound.ESound;
 import fr.miuby.survi.system.sound.SoundService;
 import fr.miuby.survi.system.SurviConfig;
 import fr.miuby.survi.system.log.ELogTag;
+import fr.miuby.survi.system.time.TimeManager;
 import fr.miuby.survi.villager.trader.Trader;
 import fr.miuby.survi.system.lang.LangService;
 import fr.miuby.survi.world.zone.VillageZoneManager;
@@ -22,6 +23,9 @@ import lombok.Getter;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
+import org.bukkit.NamespacedKey;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.persistence.PersistentDataType;
 
 import java.time.Instant;
 import java.time.LocalDate;
@@ -513,6 +517,84 @@ public class QuestManager extends AbstractQuestManager<Quest> {
         if (player.getPlayer() != null) {
             player.getPlayer().sendMessage(GameManager.getInstance().getLangService().text(player.getPlayer(), "quest.reset_by_admin"));
         }
+        return true;
+    }
+
+    // =========================================================================
+    // Reroll — item consommable
+    // =========================================================================
+
+    /** Marqueur PDC posé sur {@link fr.miuby.survi.item.ECustomItem#QUEST_REROLL}. */
+    public static final NamespacedKey QUEST_REROLL_KEY =
+            new NamespacedKey(GameManager.getInstance().getPlugin(), "quest_reroll_item");
+
+    /** {@code true} si l'item est le consommable de reroll de quête. */
+    public static boolean isQuestRerollItem(ItemStack item) {
+        if (item == null || !item.hasItemMeta()) return false;
+        return item.getItemMeta().getPersistentDataContainer().has(QUEST_REROLL_KEY, PersistentDataType.BOOLEAN);
+    }
+
+    /**
+     * Consomme l'item de reroll de quête : annule la quête active non terminée du joueur pour
+     * lui permettre d'en accepter une nouvelle auprès d'un Trader. Bloqué à une utilisation par
+     * jour, alignée sur {@link TimeManager#getLastResetDay()} (même notion de "jour" que le reset
+     * quotidien des quêtes).
+     *
+     * @return {@code true} si la quête a été annulée — l'appelant doit alors laisser l'item se
+     *         consommer normalement. {@code false} sinon — l'appelant doit annuler l'event de
+     *         consommation pour ne pas faire perdre l'item au joueur.
+     */
+    public boolean rerollQuest(AlphaPlayer player) {
+        LangService langService = GameManager.getInstance().getLangService();
+        PlayerQuestData current = player.getCurrentActiveQuest();
+
+        if (current == null) {
+            MLLogManager.getInstance().log(Level.FINE, ELogTag.QUEST,
+                    "[QuestReroll] " + player.getPseudo() + " refusé — aucune quête active.");
+            player.getPlayer().sendMessage(langService.text(player.getPlayer(), "quest.reroll.none_active"));
+            SoundService.play(player.getPlayer(), ESound.ERROR);
+            return false;
+        }
+
+        if (current.isCompleted()) {
+            MLLogManager.getInstance().log(Level.FINE, ELogTag.QUEST,
+                    "[QuestReroll] " + player.getPseudo() + " refusé — quête " + current.getQuestId() + " déjà terminée (non réclamée).");
+            player.getPlayer().sendMessage(langService.text(player.getPlayer(), "quest.reroll.already_completed"));
+            SoundService.play(player.getPlayer(), ESound.ERROR);
+            return false;
+        }
+
+        TimeManager timeManager = GameManager.getInstance().getTimeManager();
+        int resetDay = (timeManager != null) ? timeManager.getLastResetDay() : -1;
+
+        if (timeManager == null) {
+            MLLogManager.getInstance().log(Level.WARNING, ELogTag.QUEST,
+                    "[QuestReroll] TimeManager indisponible pour " + player.getPseudo() + " — limite quotidienne ignorée.");
+        } else if (player.getLastQuestRerollDay() >= resetDay) {
+            MLLogManager.getInstance().log(Level.FINE, ELogTag.QUEST,
+                    "[QuestReroll] " + player.getPseudo() + " refusé — déjà utilisé aujourd'hui (jour reset=" + resetDay + ").");
+            player.getPlayer().sendMessage(langService.text(player.getPlayer(), "quest.reroll.already_used_today"));
+            SoundService.play(player.getPlayer(), ESound.ERROR);
+            return false;
+        }
+
+        player.removeQuest(current.getSlot());
+        GameManager.getInstance().getDatabase().quests().deletePlayerQuestSlot(player.getUuid(), current.getSlot());
+
+        QuestGlowService glowService = GameManager.getInstance().getQuestGlowService();
+        if (glowService != null) glowService.disableGlow(player);
+        GameManager.getInstance().getQuestActionBarService().stopRefresh(player.getUuid());
+
+        if (timeManager != null) {
+            player.setLastQuestRerollDay(resetDay);
+            GameManager.getInstance().getDatabase().quests().setLastRerollDay(player.getUuid(), resetDay);
+        }
+
+        MLLogManager.getInstance().log(Level.INFO, ELogTag.QUEST,
+                "[QuestReroll] " + player.getPseudo() + " a annulé la quête " + current.getQuestId() + " (jour reset=" + resetDay + ").");
+
+        SoundService.play(player.getPlayer(), ESound.UNLOCK);
+        player.getPlayer().sendMessage(langService.text(player.getPlayer(), "quest.reroll.success"));
         return true;
     }
 

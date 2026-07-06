@@ -69,6 +69,10 @@ quest.test.assigned: "<yellow>[TEST] Quête de test assignée : <gold>{0}"
 quest.test.details: "<dark_gray>Objectif : {0} | Difficulté : {1} | Métiers : {2}"
 quest.new_slots: "<gold>[Quêtes] <green>{0} nouveau slot de quête journalière disponible ! <dark_gray>({1}/{2} utilisés)"
 quest.locked_world_level: "<gray>Va voir quelqu'un d'autre, je n'ai pas de quête pour toi pour l'instant."
+quest.reroll.none_active: "<red>Vous n'avez aucune quête en cours à annuler."
+quest.reroll.already_completed: "<red>Votre quête est déjà terminée : allez réclamer votre récompense avant d'en redemander une nouvelle !"
+quest.reroll.already_used_today: "<red>Vous avez déjà utilisé votre reroll de quête aujourd'hui. Revenez demain !"
+quest.reroll.success: "<green>Votre quête a été annulée. Vous pouvez en accepter une nouvelle auprès d'un Marchand !"
 
 # ─── ActionBar quête journalière ─────────────────────────────────────────────
 quest.actionbar.progress: "<aqua>⚔ <yellow>{0}<dark_gray> — <white>{1}<dark_gray>"

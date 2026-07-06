@@ -2,6 +2,7 @@ package fr.miuby.survi.item;
 
 import fr.miuby.survi.GameManager;
 import fr.miuby.survi.item.growth_item.GrowthItems;
+import fr.miuby.survi.quest.quest.QuestManager;
 import lombok.Getter;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
@@ -171,6 +172,20 @@ public enum ECustomItem {
         PersistentDataContainer pdc = meta.getPersistentDataContainer();
         pdc.set(new NamespacedKey(GameManager.getInstance().getPlugin(), "edible"), PersistentDataType.BOOLEAN, true);
         item.setItemMeta(meta);
+    }),
+
+    QUEST_REROLL(Material.POTION, item -> {
+        PotionMeta meta = (PotionMeta) item.getItemMeta();
+        meta.setColor(Color.fromRGB(0xE8A33D));
+        meta.getPersistentDataContainer().set(QuestManager.QUEST_REROLL_KEY, PersistentDataType.BOOLEAN, true);
+        item.setItemMeta(meta);
+        List<Component> lore = new ArrayList<>();
+        lore.add(Component.text("Annule votre quête en cours pour en accepter une nouvelle.", NamedTextColor.GRAY).decoration(TextDecoration.ITALIC, false));
+        lore.add(Component.empty());
+        lore.add(Component.text("Limite : 1 par jour", NamedTextColor.DARK_GRAY).decoration(TextDecoration.ITALIC, false));
+        new CustomItemBuilder(item, "questReroll")
+                .name("Fiole de Reroll", NamedTextColor.GOLD)
+                .lore(lore);
     }),
 
     BACKPACK(Material.LEATHER, item -> {
