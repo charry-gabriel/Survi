@@ -61,12 +61,14 @@ public class AlphaPlayer extends MLPlayer implements Serializable {
     private int totalDailyQuestsClaimed = 0;
 
     /**
-     * Jour de reset (voir {@code TimeManager#getLastResetDay}) auquel ce joueur a utilisé son dernier
-     * reroll de quête. -1 si jamais utilisé. Chargé depuis {@code player_quest_reroll} à la connexion.
+     * Timestamp (epoch ms, voir {@code TimeManager#getLastResetTimestamp}) du reset au cours duquel
+     * ce joueur a utilisé son dernier reroll de quête. -1 si jamais utilisé. Chargé depuis
+     * {@code player_quest_reroll} à la connexion. Basé sur le timestamp (et non le jour calendaire)
+     * pour que {@code /survi time reset} débloque bien un nouveau reroll, y compris en test.
      */
     @Getter
     @Setter
-    private int lastQuestRerollDay = -1;
+    private long lastQuestRerollResetTimestamp = -1L;
 
     @Getter
     @Setter
@@ -170,7 +172,7 @@ public class AlphaPlayer extends MLPlayer implements Serializable {
         }
 
         this.totalDailyQuestsClaimed = GameManager.getInstance().getDatabase().questHistory().countDailyCompleted(this.getUuid());
-        this.lastQuestRerollDay = GameManager.getInstance().getDatabase().quests().getLastRerollDay(this.getUuid());
+        this.lastQuestRerollResetTimestamp = GameManager.getInstance().getDatabase().quests().getLastRerollResetTimestamp(this.getUuid());
         List<PlayerQuestData> loaded = GameManager.getInstance().getDatabase().quests().getPlayerQuests(this.getUuid());
         GameManager.getInstance().getQuestManager().restoreQuestsOnJoin(this, loaded);
     }

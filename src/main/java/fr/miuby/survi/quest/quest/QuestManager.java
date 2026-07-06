@@ -537,8 +537,9 @@ public class QuestManager extends AbstractQuestManager<Quest> {
     /**
      * Consomme l'item de reroll de quête : annule la quête active non terminée du joueur pour
      * lui permettre d'en accepter une nouvelle auprès d'un Trader. Bloqué à une utilisation par
-     * jour, alignée sur {@link TimeManager#getLastResetDay()} (même notion de "jour" que le reset
-     * quotidien des quêtes).
+     * reset, basé sur {@link TimeManager#getLastResetTimestamp()} — et non sur le jour calendaire —
+     * afin que {@code /survi time reset} débloque bien un nouveau reroll (y compris appelé
+     * plusieurs fois le même jour, en test).
      *
      * @return {@code true} si la quête a été annulée — l'appelant doit alors laisser l'item se
      *         consommer normalement. {@code false} sinon — l'appelant doit annuler l'event de
@@ -565,14 +566,14 @@ public class QuestManager extends AbstractQuestManager<Quest> {
         }
 
         TimeManager timeManager = GameManager.getInstance().getTimeManager();
-        int resetDay = (timeManager != null) ? timeManager.getLastResetDay() : -1;
+        long resetTimestamp = (timeManager != null) ? timeManager.getLastResetTimestamp() : -1L;
 
         if (timeManager == null) {
             MLLogManager.getInstance().log(Level.WARNING, ELogTag.QUEST,
                     "[QuestReroll] TimeManager indisponible pour " + player.getPseudo() + " — limite quotidienne ignorée.");
-        } else if (player.getLastQuestRerollDay() >= resetDay) {
+        } else if (player.getLastQuestRerollResetTimestamp() >= resetTimestamp) {
             MLLogManager.getInstance().log(Level.FINE, ELogTag.QUEST,
-                    "[QuestReroll] " + player.getPseudo() + " refusé — déjà utilisé aujourd'hui (jour reset=" + resetDay + ").");
+                    "[QuestReroll] " + player.getPseudo() + " refusé — déjà utilisé depuis le dernier reset (resetTimestamp=" + resetTimestamp + ").");
             player.getPlayer().sendMessage(langService.text(player.getPlayer(), "quest.reroll.already_used_today"));
             SoundService.play(player.getPlayer(), ESound.ERROR);
             return false;
@@ -586,12 +587,12 @@ public class QuestManager extends AbstractQuestManager<Quest> {
         GameManager.getInstance().getQuestActionBarService().stopRefresh(player.getUuid());
 
         if (timeManager != null) {
-            player.setLastQuestRerollDay(resetDay);
-            GameManager.getInstance().getDatabase().quests().setLastRerollDay(player.getUuid(), resetDay);
+            player.setLastQuestRerollResetTimestamp(resetTimestamp);
+            GameManager.getInstance().getDatabase().quests().setLastRerollResetTimestamp(player.getUuid(), resetTimestamp);
         }
 
         MLLogManager.getInstance().log(Level.INFO, ELogTag.QUEST,
-                "[QuestReroll] " + player.getPseudo() + " a annulé la quête " + current.getQuestId() + " (jour reset=" + resetDay + ").");
+                "[QuestReroll] " + player.getPseudo() + " a annulé la quête " + current.getQuestId() + " (resetTimestamp=" + resetTimestamp + ").");
 
         SoundService.play(player.getPlayer(), ESound.UNLOCK);
         player.getPlayer().sendMessage(langService.text(player.getPlayer(), "quest.reroll.success"));

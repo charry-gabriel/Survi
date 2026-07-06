@@ -337,7 +337,7 @@ public class SQLite extends Database {
     private String createPlayerQuestRerollTable() {
         return "CREATE TABLE IF NOT EXISTS player_quest_reroll (" +
                 "`player_uuid` VARCHAR(36) NOT NULL," +
-                "`last_reroll_day` INTEGER NOT NULL DEFAULT -1," +
+                "`last_reroll_reset_timestamp` INTEGER NOT NULL DEFAULT -1," +
                 "PRIMARY KEY (`player_uuid`)" +
                 ");";
     }

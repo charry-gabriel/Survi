@@ -252,32 +252,35 @@ public class QuestRepository extends MLRepository {
     // =========================================================================
 
     /**
-     * Jour de reset (voir {@code TimeManager#getLastResetDay}) auquel le joueur a utilisé son
-     * dernier reroll de quête. -1 si jamais utilisé ou si aucune ligne n'existe encore.
+     * Timestamp (epoch ms, voir {@code TimeManager#getLastResetTimestamp}) du reset au cours
+     * duquel le joueur a utilisé son dernier reroll de quête. -1 si jamais utilisé ou si aucune
+     * ligne n'existe encore. Basé sur le timestamp (et non le jour calendaire) pour que
+     * {@code /survi time reset} — utilisé en test — débloque bien un nouveau reroll même si
+     * appelé plusieurs fois le même jour.
      */
-    public int getLastRerollDay(UUID playerUuid) {
+    public long getLastRerollResetTimestamp(UUID playerUuid) {
         try (PreparedStatement ps = connection.prepareStatement(
-                "SELECT last_reroll_day FROM player_quest_reroll WHERE player_uuid = ?")) {
+                "SELECT last_reroll_reset_timestamp FROM player_quest_reroll WHERE player_uuid = ?")) {
             ps.setString(1, playerUuid.toString());
             try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) return rs.getInt("last_reroll_day");
+                if (rs.next()) return rs.getLong("last_reroll_reset_timestamp");
             }
         } catch (SQLException ex) {
-            MLLogManager.getInstance().log(Level.SEVERE, ELogTag.QUEST, "Failed to get last reroll day", ex);
+            MLLogManager.getInstance().log(Level.SEVERE, ELogTag.QUEST, "Failed to get last reroll reset timestamp", ex);
         }
-        return -1;
+        return -1L;
     }
 
-    /** Mémorise le jour de reset auquel le reroll de quête vient d'être utilisé. */
-    public void setLastRerollDay(UUID playerUuid, int day) {
+    /** Mémorise le timestamp de reset au cours duquel le reroll de quête vient d'être utilisé. */
+    public void setLastRerollResetTimestamp(UUID playerUuid, long resetTimestamp) {
         runAsync(conn -> {
             try (PreparedStatement ps = conn.prepareStatement(
-                    "INSERT OR REPLACE INTO player_quest_reroll (player_uuid, last_reroll_day) VALUES (?, ?)")) {
+                    "INSERT OR REPLACE INTO player_quest_reroll (player_uuid, last_reroll_reset_timestamp) VALUES (?, ?)")) {
                 ps.setString(1, playerUuid.toString());
-                ps.setInt(2, day);
+                ps.setLong(2, resetTimestamp);
                 ps.executeUpdate();
             }
-        }, ELogTag.QUEST, "Failed to set last reroll day");
+        }, ELogTag.QUEST, "Failed to set last reroll reset timestamp");
     }
 
     // =========================================================================
