@@ -250,3 +250,18 @@ global_quests:
       - { type: ITEM, item: WARPED_STEM, amount: 16 }
       - { type: ITEM, item: CHORUS_FRUIT, amount: 16 }
 
+  - id: "global_enchant_items_niveau3"
+    name: "Un niveau au dessus."
+    description: "Gagnez {value} niveau d'XP"
+    type: GAIN_XP_LEVELS
+    goal: 2500 #On a réussi en 30 minutes
+    time_limit: 5400
+    rewards:
+      - { type: REPUTATION, job: ENCHANTER, value: 1 }
+      - { type: ITEM, item: LAPIS_BLOCK, amount: 64 }
+      - { type: ITEM, item: EXPERIENCE_BOTTLE, amount: 64 }
+      - { type: ITEM, item: BOOKSHELF, amount: 8 }
+      - { type: ITEM, item: ANVIL, amount: 3}
+      - { type: POTION, potion: glowing, duration: 72000, amplifier: 0 }
+      - { type: POTION, potion: invisibility, duration: 72000, amplifier: 0 }
+      - { type: POTION, potion: absorption, duration: 72000, amplifier: 9}
