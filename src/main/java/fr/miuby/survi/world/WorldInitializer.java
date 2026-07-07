@@ -75,7 +75,7 @@ public class WorldInitializer {
         // --- Village (NORMAL, permanent) ---
         World village = loadOrCreate("Village", World.Environment.NORMAL);
         MLWorld mvVillage = new MLWorld(village, "Village", NamedTextColor.AQUA, EWorld.VILLAGE);
-        mvVillage.setLimit(new Rect(1024,0,512,50,1024,0));
+        mvVillage.setLimit(new Rect(1024,0,512,0,1024,0));
         WorldRegistry.register(mvVillage);
         village.setSpawnLocation(new Location(mvVillage.getWorld(), -24, 158, -30));
         village.setGameRule(GameRules.ADVANCE_TIME, false);
