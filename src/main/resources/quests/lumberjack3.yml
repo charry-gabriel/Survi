@@ -56,7 +56,7 @@ quests:
   - id: "bee_master35"
     name: "Maître des Abeilles"
     description: "Récoltez {value} produits liés aux abeilles sans détruire les ruches."
-    type: SMELT
+    type: HARVEST_BEEHIVE
     difficulty: 3
     jobs:
       - LUMBERJACK
