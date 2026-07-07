@@ -89,20 +89,20 @@ levels:
     tribute:
       - material: END_STONE
         amount: 640
-    lock: 6
+    lock: 7
     blessings:
       - { type: WORLD_RESET, frequency: 7 }
-    message: "Niveau VII réussi ! Reviens me voir dans 6 jours."
+    message: "Niveau VII réussi ! Reviens me voir dans 7 jours pour le dernier reset des mondes !"
     recap: "Les mondes se détruisent tous les 4 matins !"
 
   - name: "Thomas Pesquet"
     tribute:
       - material: OBSIDIAN
         amount: 640
-    lock: 6
+    lock: 7
     blessings:
       - { type: WORLD_RESET, frequency: 100 }
-    message: "Niveau VIII réussi ! Reviens me voir dans 6 jours."
+    message: "Niveau VIII réussi ! Reviens me voir dans 7 jours, j'ai une belle surprise pour toi sur mon dernier niveau."
     recap: "Les mondes se détruisent tous les 7 matins !"
 
   - name: "Thomas Pesquet"
@@ -111,8 +111,8 @@ levels:
         amount: 320
       - material: GOLDEN_CARROT
         amount: 320
-    lock: 6
-    message: "Niveau IX réussi ! Reviens me voir dans 6 jours."
+    lock: 7
+    message: "Niveau IX réussi ! Reviens me voir dans 7 jours pour une belle surprise."
     recap: "Les mondes se détruisent tous les 100 matins !"
 
   - name: "Thomas Pesquet"
