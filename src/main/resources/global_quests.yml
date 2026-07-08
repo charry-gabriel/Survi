@@ -265,3 +265,21 @@ global_quests:
       - { type: POTION, potion: glowing, duration: 72000, amplifier: 0 }
       - { type: POTION, potion: invisibility, duration: 72000, amplifier: 0 }
       - { type: POTION, potion: absorption, duration: 72000, amplifier: 9}
+
+  - id: "global_collect_mob_end"
+    name: "Chasseur de mobs de l'End'"
+    description: "Tuez {value} endermans !"
+    type: KILL
+    targets: [ ENDERMAN ]
+    goal: 1000
+    time_limit: 5400
+    rewards:
+      - { type: REPUTATION, job: EXPLORER, value: 1 }
+      - { type: ITEM, item: ENDER_PEARL, amount: 16}
+      - { type: ITEM, item: ENDER_EYE, amount: 16}
+      - { type: ITEM, item: TRIAL_KEY, amount: 1 }
+      - { type: ITEM, item: OMINOUS_TRIAL_KEY, amount: 1 }
+      - { type: ITEM, item: GUNPOWDER, amount: 256}
+      - { type: ITEM, item: ECHO_SHARD, amount: 2}
+      - { type: POTION, potion: strength, duration: 72000, amplifier: 0 }
+      - { type: POTION, potion: absorption, duration: 72000, amplifier: 9}
