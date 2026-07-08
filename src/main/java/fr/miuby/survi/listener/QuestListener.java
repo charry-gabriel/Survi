@@ -9,6 +9,7 @@ import fr.miuby.survi.system.block.MaterialUtils;
 import fr.miuby.survi.system.log.ELogTag;
 import fr.miuby.lib.log.MLLogManager;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.Ageable;
 import org.bukkit.entity.Player;
@@ -32,6 +33,8 @@ import org.bukkit.inventory.AnvilInventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.EnchantmentStorageMeta;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.persistence.PersistentDataContainer;
+import org.bukkit.persistence.PersistentDataType;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -44,6 +47,8 @@ public class QuestListener implements Listener {
     public QuestListener(PlacedBlockTracker placedBlockTracker) {
         this.placedBlockTracker = placedBlockTracker;
     }
+
+    public static final NamespacedKey ENCHANT_MARKER_KEY = new NamespacedKey("survi", "enchanted");
 
     // ─── Item de reroll de quête ─────────────────────────────────────────────────
 
@@ -259,11 +264,19 @@ public class QuestListener implements Listener {
      */
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onEnchant(EnchantItemEvent event) {
-        AlphaPlayer player = AlphaPlayer.get(event.getEnchanter().getUniqueId());;
-        if (player != null) {
-            GameManager.getInstance().getQuestManager().progressQuest(player, EQuestType.ENCHANT, event.getItem().getType(), 1);
-            GameManager.getInstance().getGlobalQuestManager().progressGlobalQuest(player, EQuestType.ENCHANT, event.getItem().getType(), 1);
-        }
+        ItemMeta meta = event.getItem().getItemMeta();
+        PersistentDataContainer pdc = meta.getPersistentDataContainer();
+
+        if (pdc.has(ENCHANT_MARKER_KEY, PersistentDataType.BOOLEAN))
+            return;
+
+        AlphaPlayer player = AlphaPlayer.get(event.getEnchanter().getUniqueId());
+
+        pdc.set(ENCHANT_MARKER_KEY, PersistentDataType.BOOLEAN, true);
+        event.getItem().setItemMeta(meta);
+
+        GameManager.getInstance().getQuestManager().progressQuest(player, EQuestType.ENCHANT, event.getItem().getType(), 1);
+        GameManager.getInstance().getGlobalQuestManager().progressGlobalQuest(player, EQuestType.ENCHANT, event.getItem().getType(), 1);
     }
 
     /**
