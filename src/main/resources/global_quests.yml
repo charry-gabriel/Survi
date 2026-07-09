@@ -285,8 +285,8 @@ global_quests:
       - { type: POTION, potion: absorption, duration: 72000, amplifier: 9}
 
   - id: "global_mine_obsi_niveau_3"
-    name: "On mine dans la lave."
-    description: "Minez {value} ancients débrits"
+    name: "La fin de tout."
+    description: "Minez {value} obsidiennes."
     type: MINE
     targets: [ OBSIDIAN ]
     goal: 750
