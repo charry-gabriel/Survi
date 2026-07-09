@@ -62,7 +62,7 @@ quests:
     jobs:
       - FISHERMAN
     targets: [CAT]
-    goal: 5
+    goal: 2
     rewards:
       - { type: REPUTATION, job: FISHERMAN, value: 11}
       - { type: REPUTATION, job: EXPLORER, value: 3}
