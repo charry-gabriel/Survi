@@ -4,8 +4,11 @@ import com.mojang.brigadier.Command;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import fr.miuby.lib.world.MLWorld;
 import fr.miuby.survi.GameManager;
+import fr.miuby.survi.system.command.DangerousCommandGuard;
 import fr.miuby.survi.system.command.argument.AlphaPlayerArgument;
 import fr.miuby.survi.system.command.argument.WorldArgument;
+import fr.miuby.survi.system.lang.ELang;
+import fr.miuby.survi.system.lang.LangService;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
 import io.papermc.paper.command.brigadier.Commands;
 import io.papermc.paper.command.brigadier.argument.ArgumentTypes;
@@ -24,6 +27,11 @@ public class WorldCommand {
         return Commands.literal("worldreset")
                 .requires(source -> source.getSender().isOp())
                 .executes(ctx -> {
+                    LangService ls = GameManager.getInstance().getLangService();
+                    ELang lang = ls.resolveOrDefault(ctx.getSource().getSender());
+                    if (!DangerousCommandGuard.confirm(ctx, "worldreset", ls.text(lang, "cmd.worldreset.confirm_desc"))) {
+                        return Command.SINGLE_SUCCESS;
+                    }
                     GameManager.getInstance().getWorldResetManager().performReset();
                     return Command.SINGLE_SUCCESS;
                 });

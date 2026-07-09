@@ -10,8 +10,10 @@ import fr.miuby.survi.GameManager;
 import fr.miuby.survi.item.locked_item.ELockedArmorType;
 import fr.miuby.survi.item.locked_item.ELockedToolType;
 import fr.miuby.survi.player.AlphaPlayer;
+import fr.miuby.survi.system.command.DangerousCommandGuard;
 import fr.miuby.survi.system.command.argument.AlphaPlayerArgument;
 import fr.miuby.survi.system.command.argument.WorldArgument;
+import fr.miuby.survi.system.lang.ELang;
 import fr.miuby.survi.system.lang.LangService;
 import fr.miuby.survi.world.EWorld;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
@@ -219,6 +221,11 @@ public class BlessingCommand {
                         .then(Commands.literal("world_reset")
                                 .executes(ctx -> {
                                     AlphaPlayer target = AlphaPlayerArgument.getAlphaPlayer(ctx, playerArgument);
+                                    LangService ls = GameManager.getInstance().getLangService();
+                                    ELang lang = ls.resolveOrDefault(ctx.getSource().getSender());
+                                    if (!DangerousCommandGuard.confirm(ctx, "blessing.world_reset", ls.text(lang, "cmd.blessing.world_reset.confirm_desc"))) {
+                                        return Command.SINGLE_SUCCESS;
+                                    }
                                     new WorldResetEffect(1).applyEffect(target);
                                     return Command.SINGLE_SUCCESS;
                                 })
@@ -237,6 +244,11 @@ public class BlessingCommand {
                         // ── world_level_reset ────────────────────────────
                         .then(Commands.literal("world_level_reset")
                                 .executes(ctx -> {
+                                    LangService ls = GameManager.getInstance().getLangService();
+                                    ELang lang = ls.resolveOrDefault(ctx.getSource().getSender());
+                                    if (!DangerousCommandGuard.confirm(ctx, "blessing.world_level_reset", ls.text(lang, "cmd.blessing.world_level_reset.confirm_desc"))) {
+                                        return Command.SINGLE_SUCCESS;
+                                    }
                                     GameManager.getInstance().getWorldLevelManager().reset();
                                     AlphaPlayer target = AlphaPlayerArgument.getAlphaPlayer(ctx, playerArgument);
                                     feedback(ctx, target, "World level remis à 0");

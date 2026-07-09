@@ -5,6 +5,9 @@ import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import fr.miuby.survi.GameManager;
+import fr.miuby.survi.system.command.DangerousCommandGuard;
+import fr.miuby.survi.system.lang.ELang;
+import fr.miuby.survi.system.lang.LangService;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
 import io.papermc.paper.command.brigadier.Commands;
 import net.kyori.adventure.text.Component;
@@ -64,6 +67,12 @@ public class SqlCommand {
     }
 
     private static int sqlExecuteQuery(CommandContext<CommandSourceStack> ctx) {
+        LangService ls = GameManager.getInstance().getLangService();
+        ELang lang = ls.resolveOrDefault(ctx.getSource().getSender());
+        if (!DangerousCommandGuard.confirm(ctx, "sql.query", ls.text(lang, "cmd.sql.confirm_desc"))) {
+            return Command.SINGLE_SUCCESS;
+        }
+
         String sql = StringArgumentType.getString(ctx, "sql");
 
         ctx.getSource().getSender().sendMessage(Component.text("Executing: ", NamedTextColor.YELLOW).append(Component.text(sql, NamedTextColor.WHITE)));

@@ -133,6 +133,10 @@ public class SystemCommand {
                             return Command.SINGLE_SUCCESS;
                         }))
                         .then(Commands.literal("reset").executes(ctx -> {
+                            if (!DangerousCommandGuard.confirm(ctx, "system.zone.reset",
+                                    ls(ctx).text(lang(ctx), "cmd.system.zone.confirm_desc"))) {
+                                return Command.SINGLE_SUCCESS;
+                            }
                             VillageZoneManager vzm = GameManager.getInstance().getVillageZoneManager();
                             vzm.reset();
                             ctx.getSource().getSender().sendMessage(ls(ctx).text(lang(ctx), "cmd.system.zone.reset", vzm.getCurrentHalfWidth(), vzm.getCurrentHalfDepth()));
@@ -207,6 +211,10 @@ public class SystemCommand {
                 // === CONTAINERS ===
                 .then(Commands.literal("containers")
                         .then(Commands.literal("clear").executes(ctx -> {
+                            if (!DangerousCommandGuard.confirm(ctx, "system.containers.clear",
+                                    ls(ctx).text(lang(ctx), "cmd.system.containers.confirm_desc"))) {
+                                return Command.SINGLE_SUCCESS;
+                            }
                             clearVillageContainers(ctx.getSource().getSender());
                             return Command.SINGLE_SUCCESS;
                         }))

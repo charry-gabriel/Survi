@@ -486,3 +486,15 @@ backpack.overflow_dropped: "<red>⚠ Ton inventaire est plein : {0} objet(s) de 
 
 # ─── Objets rares de collection (un par métier) ───────────────────────────────
 job.rare_item.broadcast: "<gold>✦ <white><player> <gold>a découvert <white><job> <gold>légendaire pour son métier !"
+
+# ─── Commandes — confirmation actions dangereuses ─────────────────────────────
+cmd.confirm.warning: "<red>⚠ <white><desc></white> <gray>— retape <yellow><command></yellow> sous <yellow><seconds>s</yellow> pour confirmer."
+cmd.confirm.button: "<green><bold>[✔ Clique ici pour confirmer]</bold></green>"
+cmd.confirm.button_hover: "<gray>Relance la commande pour confirmer l'action."
+cmd.sql.confirm_desc: "Exécution SQL arbitraire sur la base de données"
+cmd.worldreset.confirm_desc: "Réinitialisation complète du monde Wilderness (+ Nether/End associés)"
+cmd.system.containers.confirm_desc: "Vide TOUS les coffres/conteneurs du village"
+cmd.system.zone.confirm_desc: "Réinitialise la zone du village au palier 0"
+cmd.blessing.world_reset.confirm_desc: "Réinitialise un monde (Wilderness/Nether/End) via Blessing"
+cmd.blessing.world_level_reset.confirm_desc: "Réinitialise le niveau de monde global à 0"
+cmd.quest.reset.confirm_desc: "Supprime définitivement les quêtes actives non réclamées de <white>{0}</white>"

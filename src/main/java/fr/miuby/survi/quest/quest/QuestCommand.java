@@ -6,6 +6,7 @@ import com.mojang.brigadier.context.CommandContext;
 import fr.miuby.lib.log.MLLogManager;
 import fr.miuby.survi.player.AlphaPlayer;
 import fr.miuby.survi.quest.globalquest.GlobalQuest;
+import fr.miuby.survi.system.command.DangerousCommandGuard;
 import fr.miuby.survi.system.command.argument.AlphaPlayerArgument;
 import fr.miuby.survi.system.command.argument.QuestArgument;
 import fr.miuby.survi.system.command.argument.TraderArgument;
@@ -187,6 +188,11 @@ public class QuestCommand {
 
         if (alphaPlayer.getActiveQuests().isEmpty()) {
             sender.sendMessage(ls.text(ls.resolveOrDefault(sender), "cmd.quest.reset_empty", alphaPlayer.getPseudo()));
+            return Command.SINGLE_SUCCESS;
+        }
+
+        Component confirmDesc = ls.text(ls.resolveOrDefault(sender), "cmd.quest.reset.confirm_desc", alphaPlayer.getPseudo());
+        if (!DangerousCommandGuard.confirm(ctx, "quest.reset", confirmDesc)) {
             return Command.SINGLE_SUCCESS;
         }
 
