@@ -3,6 +3,7 @@ package fr.miuby.survi.listener.job;
 import fr.miuby.lib.log.MLLogManager;
 import fr.miuby.survi.job.EJob;
 import fr.miuby.survi.system.log.ELogTag;
+import io.papermc.paper.datacomponent.DataComponentTypes;
 
 import java.util.Arrays;
 import java.util.logging.Level;
@@ -187,8 +188,18 @@ public class EnchanterListener implements Listener {
                 int newLvl = (existLvl == addLvl) ? existLvl + 1 : Math.max(existLvl, addLvl);
                 if (entry.getKey().canEnchantItem(result)) meta.addEnchant(entry.getKey(), newLvl, true);
             }
-            if (addition.getType() == base.getType() && meta instanceof Damageable d && d.getDamage() > 0)
-                d.setDamage(Math.max(0, d.getDamage() - d.getMaxDamage() / 2));
+            if (addition.getType() == base.getType() && meta instanceof Damageable d && d.getDamage() > 0) {
+                Integer maxDamage = d.hasMaxDamage()
+                        ? d.getMaxDamage()
+                        : base.getType().asItemType().getDefaultData(DataComponentTypes.MAX_DAMAGE);
+                if (maxDamage != null && maxDamage > 0) {
+                    d.setDamage(Math.max(0, d.getDamage() - maxDamage / 2));
+                } else {
+                    MLLogManager.getInstance().log(Level.WARNING, ELogTag.JOB,
+                            "[EnchanterListener] constructAnvilResult : max_damage introuvable pour " + base.getType()
+                                    + " (ni composant explicite, ni defaut Material) - halving durabilite ignore");
+                }
+            }
         }
         // Vanilla repair cost doubling : max(base, addition) * 2 + 1
         if (meta instanceof Repairable r) {
