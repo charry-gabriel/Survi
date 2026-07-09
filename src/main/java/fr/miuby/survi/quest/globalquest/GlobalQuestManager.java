@@ -233,12 +233,9 @@ public class GlobalQuestManager extends AbstractQuestManager<GlobalQuest> {
             Player p       = ap.getPlayer();
             boolean online = p != null && p.isOnline();
 
-            List<BlessingEffect> deferred = new ArrayList<>();
             for (BlessingEffect effect : quest.getRewards().blessingEffects()) {
                 if (!effect.requiresOnlinePlayer() || online) {
                     effect.applyEffect(ap);
-                } else {
-                    deferred.add(effect);
                 }
             }
 
@@ -248,12 +245,11 @@ public class GlobalQuestManager extends AbstractQuestManager<GlobalQuest> {
                     p.sendMessage(ls.text(p, "globalquest.rewards.rank", rank, actions));
                 }
             } else {
-                // Le joueur hors ligne reçoit à la reconnexion l'annonce du classement + ses récompenses
                 Component offlineMsg = announcement.append(buildRewardMessage());
                 if (!isTop) {
                     offlineMsg = offlineMsg.append(ls.text(ls.getServerDefault(), "globalquest.rewards.rank", rank, actions));
                 }
-                offlineNotif.queueQuestReward(entry.getKey(), deferred, offlineMsg);
+                offlineNotif.queueQuestReward(entry.getKey(), quest.getId(), true, offlineMsg);
             }
 
             MLLogManager.getInstance().log(Level.FINE, ELogTag.QUEST,
@@ -288,7 +284,7 @@ public class GlobalQuestManager extends AbstractQuestManager<GlobalQuest> {
         broadcastMessage(announcement);
         GameManager.getInstance().getGlobalQuestBossBarService().onQuestEnded();
 
-        notifyParticipantsOfTimeout(ranked, announcement);
+        notifyParticipantsOfTimeout(quest.getId(), ranked, announcement);
 
         MLLogManager.getInstance().log(Level.INFO, ELogTag.QUEST,
                 "[GlobalQuest] Quête expirée : " + quest.getId() + " | participants=" + snapshot.size());
@@ -382,8 +378,10 @@ public class GlobalQuestManager extends AbstractQuestManager<GlobalQuest> {
      *       déjà s'il est dans le top), avec son rang/actions ajouté s'il est hors du top.
      *       Voir {@link OfflineNotificationService#deliverPending}.</li>
      * </ul>
+     *
+     * @param questId id de la quête qui vient d'expirer (persisté avec les annonces différées)
      */
-    private void notifyParticipantsOfTimeout(List<Map.Entry<UUID, Integer>> ranked, Component announcement) {
+    private void notifyParticipantsOfTimeout(String questId, List<Map.Entry<UUID, Integer>> ranked, Component announcement) {
         AlphaPlayerFactory factory = GameManager.getInstance().getAlphaPlayerFactory();
         OfflineNotificationService offlineNotif = GameManager.getInstance().getOfflineNotificationService();
         LangService ls = GameManager.getInstance().getLangService();
@@ -402,12 +400,12 @@ public class GlobalQuestManager extends AbstractQuestManager<GlobalQuest> {
 
             if (isTop) {
                 // Hors ligne + dans le top : l'annonce (où il apparaît déjà) suffit, différée à la reconnexion.
-                offlineNotif.queueQuestReward(entry.getKey(), List.of(), announcement);
+                offlineNotif.queueQuestReward(entry.getKey(), questId, false, announcement);
             } else if (online) {
                 p.sendMessage(ls.text(p, "globalquest.timeout.rank", rank, value));
             } else {
                 Component rankLine = ls.text(ls.getServerDefault(), "globalquest.timeout.rank", rank, value);
-                offlineNotif.queueQuestReward(entry.getKey(), List.of(), announcement.append(rankLine));
+                offlineNotif.queueQuestReward(entry.getKey(), questId, false, announcement.append(rankLine));
             }
         }
     }

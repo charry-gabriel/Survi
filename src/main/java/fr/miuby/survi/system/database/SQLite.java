@@ -8,7 +8,7 @@ import java.sql.*;
 import java.util.logging.Level;
 
 public class SQLite extends Database {
-    private static final int CURRENT_DB_VERSION = 19;
+    private static final int CURRENT_DB_VERSION = 20;
 
     public SQLite() {
         super(GameManager.getInstance().getPlugin().getConfig().getString("SQLite.Filename", "minecraft"));
@@ -62,6 +62,10 @@ public class SQLite extends Database {
             s.executeUpdate(createTributeHistoryTable());
             s.executeUpdate("CREATE INDEX IF NOT EXISTS idx_tth_player ON player_tribute_history (player_uuid)");
             s.executeUpdate(createRareJobItemTable());
+            s.executeUpdate(createGlobalQuestPendingRewardTable());
+            s.executeUpdate(createPendingJobLevelUpTable());
+            s.executeUpdate(createPendingWorldLevelUpTable());
+            s.executeUpdate(createPendingVillagerLevelUpTable());
         }
     }
 
@@ -182,6 +186,44 @@ public class SQLite extends Database {
                 ");";
     }
 
+    private String createGlobalQuestPendingRewardTable() {
+        return "CREATE TABLE IF NOT EXISTS global_quest_pending_reward (" +
+                "`id` INTEGER PRIMARY KEY AUTOINCREMENT," +
+                "`player_uuid` VARCHAR(36) NOT NULL," +
+                "`quest_id` VARCHAR(255) NOT NULL," +
+                "`apply_rewards` INTEGER NOT NULL DEFAULT 0," +
+                "`message` TEXT NOT NULL" +
+                ");";
+    }
+
+    private String createPendingJobLevelUpTable() {
+        return "CREATE TABLE IF NOT EXISTS player_pending_job_levelup (" +
+                "`id` INTEGER PRIMARY KEY AUTOINCREMENT," +
+                "`player_uuid` VARCHAR(36) NOT NULL," +
+                "`job` VARCHAR(50) NOT NULL," +
+                "`old_level` INTEGER NOT NULL," +
+                "`new_level` INTEGER NOT NULL" +
+                ");";
+    }
+
+    private String createPendingWorldLevelUpTable() {
+        return "CREATE TABLE IF NOT EXISTS player_pending_world_levelup (" +
+                "`player_uuid` VARCHAR(36) NOT NULL," +
+                "`old_level` INTEGER NOT NULL," +
+                "PRIMARY KEY (`player_uuid`)" +
+                ");";
+    }
+
+    private String createPendingVillagerLevelUpTable() {
+        return "CREATE TABLE IF NOT EXISTS player_pending_villager_levelup (" +
+                "`id` INTEGER PRIMARY KEY AUTOINCREMENT," +
+                "`player_uuid` VARCHAR(36) NOT NULL," +
+                "`name_id` VARCHAR(255) NOT NULL," +
+                "`old_level` INTEGER NOT NULL," +
+                "`new_level` INTEGER NOT NULL" +
+                ");";
+    }
+
     private String createQuestHistoryTable() {
         return "CREATE TABLE IF NOT EXISTS quest_history (" +
                 "`id` INTEGER PRIMARY KEY AUTOINCREMENT," +
@@ -217,6 +259,25 @@ public class SQLite extends Database {
                 "`item_material` VARCHAR(255) NOT NULL," +
                 "`quantity` INT NOT NULL DEFAULT 1," +
                 "`given_at` TEXT NOT NULL" +
+                ");";
+    }
+
+    private String createRareJobItemTable() {
+        return "CREATE TABLE IF NOT EXISTS player_rare_job_item (" +
+                "`player_uuid` VARCHAR(36) NOT NULL," +
+                "`job`         VARCHAR(50) NOT NULL," +
+                "`action_count` INTEGER    NOT NULL DEFAULT 0," +
+                "`has_item`     INTEGER    NOT NULL DEFAULT 0," +
+                "PRIMARY KEY (`player_uuid`, `job`)" +
+                ");";
+    }
+
+    /** Limite quotidienne du consommable {@code QUEST_REROLL} — voir {@code QuestManager#rerollQuest}. */
+    private String createPlayerQuestRerollTable() {
+        return "CREATE TABLE IF NOT EXISTS player_quest_reroll (" +
+                "`player_uuid` VARCHAR(36) NOT NULL," +
+                "`last_reroll_reset_timestamp` INTEGER NOT NULL DEFAULT -1," +
+                "PRIMARY KEY (`player_uuid`)" +
                 ");";
     }
 
@@ -320,25 +381,12 @@ public class SQLite extends Database {
             if (currentVersion < 19) {
                 s.executeUpdate(createPlayerQuestRerollTable());
             }
+            if (currentVersion < 20) {
+                s.executeUpdate(createGlobalQuestPendingRewardTable());
+                s.executeUpdate(createPendingJobLevelUpTable());
+                s.executeUpdate(createPendingWorldLevelUpTable());
+                s.executeUpdate(createPendingVillagerLevelUpTable());
+            }
         }
-    }
-
-    private String createRareJobItemTable() {
-        return "CREATE TABLE IF NOT EXISTS player_rare_job_item (" +
-                "`player_uuid` VARCHAR(36) NOT NULL," +
-                "`job`         VARCHAR(50) NOT NULL," +
-                "`action_count` INTEGER    NOT NULL DEFAULT 0," +
-                "`has_item`     INTEGER    NOT NULL DEFAULT 0," +
-                "PRIMARY KEY (`player_uuid`, `job`)" +
-                ");";
-    }
-
-    /** Limite quotidienne du consommable {@code QUEST_REROLL} — voir {@code QuestManager#rerollQuest}. */
-    private String createPlayerQuestRerollTable() {
-        return "CREATE TABLE IF NOT EXISTS player_quest_reroll (" +
-                "`player_uuid` VARCHAR(36) NOT NULL," +
-                "`last_reroll_reset_timestamp` INTEGER NOT NULL DEFAULT -1," +
-                "PRIMARY KEY (`player_uuid`)" +
-                ");";
     }
 }

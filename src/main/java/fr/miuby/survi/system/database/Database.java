@@ -28,6 +28,10 @@ public abstract class Database extends MLSQLite {
     protected TradeHistoryRepository tradeHistoryRepository;
     protected TributeHistoryRepository tributeHistoryRepository;
     protected RareItemRepository rareItemRepository;
+    protected GlobalQuestPendingRewardRepository globalQuestPendingRewardRepository;
+    protected PendingJobLevelUpRepository pendingJobLevelUpRepository;
+    protected PendingWorldLevelUpRepository pendingWorldLevelUpRepository;
+    protected PendingVillagerLevelUpRepository pendingVillagerLevelUpRepository;
 
     protected Database(String dbName) {
         super(dbName);
@@ -57,6 +61,10 @@ public abstract class Database extends MLSQLite {
         tradeHistoryRepository  = new TradeHistoryRepository(conn, this);
         tributeHistoryRepository = new TributeHistoryRepository(conn, this);
         rareItemRepository = new RareItemRepository(conn, this);
+        globalQuestPendingRewardRepository = new GlobalQuestPendingRewardRepository(conn, this);
+        pendingJobLevelUpRepository = new PendingJobLevelUpRepository(conn, this);
+        pendingWorldLevelUpRepository = new PendingWorldLevelUpRepository(conn, this);
+        pendingVillagerLevelUpRepository = new PendingVillagerLevelUpRepository(conn, this);
     }
 
     // =========================================================================
@@ -74,4 +82,8 @@ public abstract class Database extends MLSQLite {
     public TradeHistoryRepository tradeHistory()       { return tradeHistoryRepository; }
     public TributeHistoryRepository tributeHistory()   { return tributeHistoryRepository; }
     public RareItemRepository rareJobItems()        { return rareItemRepository; }
+    public GlobalQuestPendingRewardRepository globalQuestPendingRewards()  { return globalQuestPendingRewardRepository; }
+    public PendingJobLevelUpRepository pendingJobLevelUps()                { return pendingJobLevelUpRepository; }
+    public PendingWorldLevelUpRepository pendingWorldLevelUps()            { return pendingWorldLevelUpRepository; }
+    public PendingVillagerLevelUpRepository pendingVillagerLevelUps()      { return pendingVillagerLevelUpRepository; }
 }
