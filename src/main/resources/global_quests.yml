@@ -333,3 +333,10 @@ global_quests:
       - { type: ITEM, item: CHICKEN_SPAWN_EGG, amount: 1}
       - { type: ITEM, item: ENCHANTED_GOLDEN_APPLE, amount: 1 }
       - { type: ITEM, item: GHAST_TEAR, amount: 2 }
+      - { type: POTION, potion: saturation, duration: 72000, amplifier: 0 }
+      - { type: POTION, potion: haste, duration: 72000, amplifier: 0 }
+      - { type: POTION, potion: absorption, duration: 72000, amplifier: 9 }
+      - { type: POTION, potion: glowing, duration: 72000, amplifier: 0 }
+      - { type: POTION, potion: resistance, duration: 72000, amplifier: 0 }
+      - { type: POTION, potion: fire_resistance, duration: 72000, amplifier: 0 }
+      - { type: POTION, potion: strength, duration: 72000, amplifier: 0 }
