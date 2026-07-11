@@ -183,10 +183,21 @@ public class EnchanterListener implements Listener {
         if (addition != null && !addition.getType().isAir()) {
             for (var entry : getEnchants(addition).entrySet()) {
                 int addLvl = entry.getValue();
-                if (maxEnchLevel >= 0 && addLvl > maxEnchLevel) continue;
-                int existLvl = meta.getEnchantLevel(entry.getKey());
+                if (maxEnchLevel >= 0 && addLvl > maxEnchLevel)
+                    continue;
+
+                Enchantment ench = entry.getKey();
+                if (!ench.canEnchantItem(result))
+                    continue;
+
+                if (meta.getEnchants().keySet().stream().anyMatch(
+                        e -> !e.equals(ench) && (e.conflictsWith(ench) || ench.conflictsWith(e))))
+                    continue;
+
+                int existLvl = meta.getEnchantLevel(ench);
                 int newLvl = (existLvl == addLvl) ? existLvl + 1 : Math.max(existLvl, addLvl);
-                if (entry.getKey().canEnchantItem(result)) meta.addEnchant(entry.getKey(), newLvl, true);
+                newLvl = Math.min(newLvl, ench.getMaxLevel());
+                meta.addEnchant(ench, newLvl, true);
             }
             if (addition.getType() == base.getType() && meta instanceof Damageable d && d.getDamage() > 0) {
                 Integer maxDamage = d.hasMaxDamage()
