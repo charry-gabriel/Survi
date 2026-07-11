@@ -298,3 +298,19 @@ global_quests:
       - { type: ITEM, item: IRON_BLOCK, amount: 16}
       - { type: ITEM, item: GOLD_BLOCK, amount: 16}
       - { type: POTION, potion: haste, duration: 72000, amplifier: 0 }
+
+  - id: "global_cook_feast_niveau_3"
+    name: "Le Grand Banquet"
+    description: "Cuisez {value} morues, saumons ou pommes de terre."
+    type: SMELT
+    targets: [ COOKED_COD, COOKED_SALMON, BAKED_POTATO ]
+    goal: 320
+    time_limit: 5400
+    rewards:
+      - { type: REPUTATION, job: FARMER, value: 1 }
+      - { type: REPUTATION, job: FISHERMAN, value: 1 }
+      - { type: ITEM, item: GOLDEN_CARROT, amount: 64 }
+      - { type: ITEM, item: GOLDEN_APPLE, amount: 16}
+      - { type: ITEM, item: ENCHANTED_GOLDEN_APPLE, amount: 2}
+      - { type: POTION, potion: saturation, duration: 72000, amplifier: 0 }
+      - { type: POTION, potion: dolphins_grace, duration: 72000, amplifier: 0 }

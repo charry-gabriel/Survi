@@ -61,3 +61,12 @@ recipes:
       amount: 64
     message: "Un super achat."
     requiredReputation: 190
+
+  - result:
+      customItem: MENDING
+      amount: 1
+    ingredient:
+      material: CHICKEN_SPAWN_EGG
+      amount: 1
+    message: "Un super achat."
+    requiredReputation: 300

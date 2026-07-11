@@ -49,19 +49,19 @@ tiers:
       - { type: set_attribute, attribute: mining_efficiency, attributeValue: 0.6, operation: ADD_NUMBER, slot: CHEST }
       - { type: message,       value: "Chaque coup de hache abat un peu plus vite." }
 
-  - requiredUses: 20000
+  - requiredUses: 15000
     effects:
       - { type: name,          value: "Plastron de Bûcheron VIII" }
       - { type: set_attribute, attribute: mining_efficiency, attributeValue: 0.7, operation: ADD_NUMBER, slot: CHEST }
       - { type: message,       value: "Les arbres tombent presque d'eux-mêmes." }
 
-  - requiredUses: 50000
+  - requiredUses: 25000
     effects:
       - { type: name,          value: "Plastron de Bûcheron IX" }
       - { type: set_attribute, attribute: mining_efficiency, attributeValue: 0.8, operation: ADD_NUMBER, slot: CHEST }
       - { type: message,       value: "Plus aucune forêt ne te résiste." }
 
-  - requiredUses: 100000
+  - requiredUses: 50000
     effects:
       - { type: name,          value: "Plastron du Maître Bûcheron" }
       - { type: set_attribute, attribute: mining_efficiency, attributeValue: 1.0, operation: ADD_NUMBER, slot: CHEST }

@@ -61,3 +61,12 @@ recipes:
       amount: 48
     message: "Un super achat."
     requiredReputation: 190
+
+  - result:
+      material: GUNPOWDER
+      amount: 3
+    ingredient:
+      material: ROTTEN_FLESH
+      amount: 1
+    message: "Un super achat."
+    requiredReputation: 300
