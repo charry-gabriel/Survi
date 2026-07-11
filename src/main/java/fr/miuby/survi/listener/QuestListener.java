@@ -12,10 +12,12 @@ import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.Ageable;
+import org.bukkit.block.data.type.Beehive;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.enchantment.EnchantItemEvent;
 import org.bukkit.event.entity.EntityBreedEvent;
@@ -26,6 +28,7 @@ import org.bukkit.event.inventory.FurnaceExtractEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerFishEvent;
 import org.bukkit.event.player.PlayerHarvestBlockEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemConsumeEvent;
 import org.bukkit.event.player.PlayerLevelChangeEvent;
 import org.bukkit.event.player.PlayerShearEntityEvent;
@@ -240,18 +243,37 @@ public class QuestListener implements Listener {
     }
 
     /**
-     * Récolter une ruche ou un nid d'abeilles.
-     * Target : Material du drop (HONEY_BOTTLE si bouteille, HONEYCOMB si cisailles).
-     * L'event se déclenche uniquement si le bloc est BEEHIVE ou BEE_NEST.
+     * Récolter le miel ou la cire d'une ruche/nid d'abeilles.
+     * La récolte du miel se détecte via {@link PlayerInteractEvent} (clic droit) en vérifiant
+     * que le honey_level du bloc est au maximum avant traitement de l'event — {@link Beehive#getHoneyLevel()}
+     * reflète encore l'état pré-récolte à ce stade, la remise à zéro n'intervenant qu'après.
+     * Target : HONEY_BOTTLE si bouteille en verre, HONEYCOMB si cisailles.
+     * Pas de filtrage sur la main : Minecraft n'essaie la main secondaire que si l'interaction de la
+     * main principale ne produit rien (item non pertinent) ; dès qu'une main récolte effectivement,
+     * l'autre n'est jamais tentée — aucun risque de double comptage.
      */
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-    public void onHarvestBeehive(PlayerHarvestBlockEvent event) {
-        Block block = event.getHarvestedBlock();
-        if (block.getType() != Material.BEEHIVE && block.getType() != Material.BEE_NEST) return;
-        if (event.getItemsHarvested().isEmpty()) return;
-        Material drop = event.getItemsHarvested().getFirst().getType();
+    public void onHarvestBeehive(PlayerInteractEvent event) {
+        if (event.getAction() != Action.RIGHT_CLICK_BLOCK) return;
+        Block block = event.getClickedBlock();
+        if (block == null || (block.getType() != Material.BEEHIVE && block.getType() != Material.BEE_NEST)) return;
+        if (!(block.getBlockData() instanceof Beehive beehive) || beehive.getHoneyLevel() < beehive.getMaximumHoneyLevel()) return;
+
+        ItemStack item = event.getItem();
+        Material drop;
+        if (item != null && item.getType() == Material.GLASS_BOTTLE) {
+            drop = Material.HONEY_BOTTLE;
+        } else if (item != null && item.getType() == Material.SHEARS) {
+            drop = Material.HONEYCOMB;
+        } else {
+            return;
+        }
+
         AlphaPlayer player = AlphaPlayer.get(event.getPlayer().getUniqueId());
         if (player != null) {
+            MLLogManager.getInstance().log(Level.FINE, ELogTag.QUEST,
+                    "[HarvestBeehive] " + event.getPlayer().getName() + " — " + drop
+                            + " (honeyLevel=" + beehive.getHoneyLevel() + "/" + beehive.getMaximumHoneyLevel() + ")");
             GameManager.getInstance().getQuestManager().progressQuest(player, EQuestType.HARVEST_BEEHIVE, drop, 1);
             GameManager.getInstance().getGlobalQuestManager().progressGlobalQuest(player, EQuestType.HARVEST_BEEHIVE, drop, 1);
         }
