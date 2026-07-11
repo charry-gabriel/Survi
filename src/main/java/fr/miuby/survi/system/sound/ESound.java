@@ -30,6 +30,10 @@ public enum ESound {
     VILLAGER_LEVEL_UP(Key.key("ui.toast.challenge_complete"), Sound.Source.MASTER, 1f, 1.1f),
     GROWTH_ITEM_LEVEL_UP(Key.key("ui.toast.challenge_complete"), Sound.Source.MASTER, 1f, 1.4f),
 
+    // ─── Objets rares ────────────────────────────────────────────────────────
+    RARE_ITEM_FOUND(Key.key("block.beacon.activate"), Sound.Source.MASTER, 1f, 1.0f),
+    RARE_ITEM_FOUND_OTHER(Key.key("block.beacon.activate"), Sound.Source.MASTER, 0.5f, 1.0f),
+
     // ─── Combat ──────────────────────────────────────────────────────────────
     FEE_DAMAGE(Key.key("entity.slime.attack"), Sound.Source.MASTER, 1f, 1.1f),
 

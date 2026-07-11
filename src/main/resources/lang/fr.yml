@@ -485,6 +485,8 @@ backpack.overflow_returned: "<gold>⚠ Ton sac à dos a rétréci : {0} objet(s)
 backpack.overflow_dropped: "<red>⚠ Ton inventaire est plein : {0} objet(s) de ton sac à dos ont été lâchés au sol."
 
 # ─── Objets rares de collection (un par métier) ───────────────────────────────
+job.rare_item.title: "<gold>★ Trouvaille légendaire !"
+job.rare_item.subtitle: "<job><yellow> · objet rarissime obtenu"
 job.rare_item.broadcast: "<gold>✦ <white><player> <gold>a découvert <white><job> <gold>légendaire pour son métier !"
 
 # ─── Commandes — confirmation actions dangereuses ─────────────────────────────

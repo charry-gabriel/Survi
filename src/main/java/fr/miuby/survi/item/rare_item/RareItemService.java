@@ -9,11 +9,15 @@ import fr.miuby.survi.listener.RareJobItemListener;
 import fr.miuby.survi.player.AlphaPlayer;
 import fr.miuby.survi.system.lang.LangService;
 import fr.miuby.survi.system.log.ELogTag;
+import fr.miuby.survi.system.sound.ESound;
+import fr.miuby.survi.system.sound.SoundService;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
+import net.kyori.adventure.title.Title;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+import java.time.Duration;
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.Random;
@@ -57,6 +61,12 @@ public class RareItemService {
     }
 
     private static final Random RANDOM = new Random();
+
+    private static final Title.Times RARE_ITEM_TITLE_TIMES = Title.Times.times(
+            Duration.ofMillis(300),
+            Duration.ofMillis(2500),
+            Duration.ofMillis(500)
+    );
 
     // ─── État en mémoire ─────────────────────────────────────────────────────────
 
@@ -277,7 +287,12 @@ public class RareItemService {
         }
     }
 
-    /** Attribue l'objet rare au joueur, marque l'état en mémoire et en DB, et broadcast. */
+    /**
+     * Attribue l'objet rare au joueur, marque l'état en mémoire et en DB, et célèbre
+     * l'évènement : title pour le découvreur, son (découvreur + écho broadcast) et
+     * annonce en chat global. Événement volontairement voyant — ne survient qu'une
+     * fois par joueur et par métier.
+     */
     private void grantItem(Player player, EJob job, long[] jd, long actionCount, double chance) {
         jd[1] = 1L;
         repo.save(player.getUniqueId(), job, actionCount, true);
@@ -291,6 +306,20 @@ public class RareItemService {
         }
 
         LangService ls = GameManager.getInstance().getLangService();
+
+        // ── Effet visuel — title affiché uniquement au joueur découvreur ────────
+        player.showTitle(Title.title(
+                ls.text(player, "job.rare_item.title"),
+                ls.text(player, "job.rare_item.subtitle",
+                        Placeholder.component("job", job.toComponent())),
+                RARE_ITEM_TITLE_TIMES
+        ));
+
+        // ── Son — découvreur puis écho pour tous les autres joueurs en ligne ────
+        SoundService.play(player, ESound.RARE_ITEM_FOUND);
+        SoundService.broadcastExcept(player, ESound.RARE_ITEM_FOUND_OTHER);
+
+        // ── Annonce — chat global, tous les joueurs en ligne ─────────────────────
         ls.broadcast("job.rare_item.broadcast",
                 Placeholder.unparsed("player", player.getName()),
                 Placeholder.component("job", job.toComponent()));
