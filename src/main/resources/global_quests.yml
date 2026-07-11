@@ -317,7 +317,7 @@ global_quests:
 
   - id: "global_craft_masterpiece"
     name: "Le Grand Artisanat"
-    description: "Fabriquez {value} objets d'exception (Pommes en or / Enclumes / Gâteaux / Cristaux de l'End)."
+    description: "Fabriquez {value} objets de la liste suivant : Pommes en or / Enclumes / Gâteaux / Cristaux de l'End / Oeuf de spawn de poulet."
     type: CRAFT
     targets: [ GOLDEN_APPLE, ANVIL, CAKE, END_CRYSTAL, CHICKEN_SPAWN_EGG ]
     goal: 1000
