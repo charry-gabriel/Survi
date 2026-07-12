@@ -314,3 +314,29 @@ global_quests:
       - { type: ITEM, item: ENCHANTED_GOLDEN_APPLE, amount: 2}
       - { type: POTION, potion: saturation, duration: 72000, amplifier: 0 }
       - { type: POTION, potion: dolphins_grace, duration: 72000, amplifier: 0 }
+
+  - id: "global_craft_masterpiece"
+    name: "Le Grand Artisanat"
+    description: "Fabriquez {value} objets de la liste suivant : Pommes en or / Enclumes / Gâteaux / Cristaux de l'End / Oeuf de spawn de poulet."
+    type: CRAFT
+    targets: [ GOLDEN_APPLE, ANVIL, CAKE, END_CRYSTAL, CHICKEN_SPAWN_EGG ]
+    goal: 1000
+    time_limit: 28800
+    rewards:
+      - { type: REPUTATION, job: ENCHANTER, value: 5 }
+      - { type: REPUTATION, job: FARMER, value: 5 }
+      - { type: REPUTATION, job: MINER, value: 5 }
+      - { type: REPUTATION, job: FISHERMAN, value: 5 }
+      - { type: REPUTATION, job: EXPLORER, value: 5 }
+      - { type: REPUTATION, job: LUMBERJACK, value: 5 }
+      - { type: ITEM, item: EXPERIENCE_BOTTLE, amount: 64}
+      - { type: ITEM, item: CHICKEN_SPAWN_EGG, amount: 1}
+      - { type: ITEM, item: ENCHANTED_GOLDEN_APPLE, amount: 1 }
+      - { type: ITEM, item: GHAST_TEAR, amount: 2 }
+      - { type: POTION, potion: saturation, duration: 72000, amplifier: 0 }
+      - { type: POTION, potion: haste, duration: 72000, amplifier: 0 }
+      - { type: POTION, potion: absorption, duration: 72000, amplifier: 9 }
+      - { type: POTION, potion: glowing, duration: 72000, amplifier: 0 }
+      - { type: POTION, potion: resistance, duration: 72000, amplifier: 0 }
+      - { type: POTION, potion: fire_resistance, duration: 72000, amplifier: 0 }
+      - { type: POTION, potion: strength, duration: 72000, amplifier: 0 }
