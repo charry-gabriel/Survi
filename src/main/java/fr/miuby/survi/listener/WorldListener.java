@@ -15,6 +15,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityPortalEvent;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
 import io.papermc.paper.event.packet.PlayerChunkLoadEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
@@ -72,6 +73,39 @@ public class WorldListener implements Listener {
 
         Location to = event.getTo();
         event.setTo(new Location(destination, to.getX(), to.getY(), to.getZ()));
+    }
+
+    /**
+     * Gère les portails Nether pour les entités non-joueurs (Wilderness ↔ Nether).
+     * Sans ce handler, EntityPortalEvent n'est jamais intercepté : la résolution vanilla
+     * du monde lié échoue avec le renommage dynamique des mondes Wilderness_N, donc aucune
+     * entité (hors joueurs, gérés par {@link #onPlayerPortal}) n'est téléportée.
+     */
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
+    public void onEntityPortal(EntityPortalEvent event) {
+
+        if (WorldRegistry.get(EWorld.NETHER).isLocked()) {
+            event.setCancelled(true);
+            MLLogManager.getInstance().log(Level.WARNING, ELogTag.WORLD,
+                    "onEntityPortal : annulé (Nether verrouillé) pour " + event.getEntityType() + " " + event.getEntity().getUniqueId());
+            return;
+        }
+
+        World destination = getPortalDestination(event.getEntity().getWorld().getName());
+
+        if (destination == null) {
+            MLLogManager.getInstance().log(Level.SEVERE, ELogTag.WORLD,
+                    "onEntityPortal : destination inconnue pour " + event.getEntityType() + " " + event.getEntity().getUniqueId());
+            event.setCancelled(true);
+            return;
+        }
+
+        Location to = event.getTo();
+        event.setTo(new Location(destination, to.getX(), to.getY(), to.getZ()));
+
+        MLLogManager.getInstance().log(Level.FINE, ELogTag.WORLD,
+                "onEntityPortal : " + event.getEntityType() + " " + event.getEntity().getUniqueId()
+                        + " " + event.getEntity().getWorld().getName() + " → " + destination.getName());
     }
 
     private @Nullable World getPortalDestination(String currentWorld) {
