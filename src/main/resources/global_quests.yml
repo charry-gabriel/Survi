@@ -315,28 +315,53 @@ global_quests:
       - { type: POTION, potion: saturation, duration: 72000, amplifier: 0 }
       - { type: POTION, potion: dolphins_grace, duration: 72000, amplifier: 0 }
 
-  - id: "global_craft_masterpiece"
-    name: "Le Grand Artisanat"
-    description: "Fabriquez {value} objets de la liste suivant : Pommes en or / Enclumes / Gâteaux / Cristaux de l'End / Oeuf de spawn de poulet."
+  - id: "global_craft_firework"
+    name: "Le Grand Feu d'Artifice"
+    description: "Fabriquez {value} fusées de feu d'artifice."
     type: CRAFT
-    targets: [ GOLDEN_APPLE, ANVIL, CAKE, END_CRYSTAL, CHICKEN_SPAWN_EGG ]
+    targets: [ FIREWORK_ROCKET ]
     goal: 1000
-    time_limit: 28800
+    time_limit: 5400
     rewards:
-      - { type: REPUTATION, job: ENCHANTER, value: 5 }
-      - { type: REPUTATION, job: FARMER, value: 5 }
-      - { type: REPUTATION, job: MINER, value: 5 }
-      - { type: REPUTATION, job: FISHERMAN, value: 5 }
-      - { type: REPUTATION, job: EXPLORER, value: 5 }
-      - { type: REPUTATION, job: LUMBERJACK, value: 5 }
-      - { type: ITEM, item: EXPERIENCE_BOTTLE, amount: 64}
-      - { type: ITEM, item: CHICKEN_SPAWN_EGG, amount: 1}
+      - { type: REPUTATION, job: ENCHANTER, value: 2}
+      - { type: REPUTATION, job: FARMER, value: 2}
+      - { type: REPUTATION, job: MINER, value: 2}
+      - { type: REPUTATION, job: FISHERMAN, value: 2}
+      - { type: REPUTATION, job: EXPLORER, value: 2}
+      - { type: REPUTATION, job: LUMBERJACK, value: 2}
+      - { type: ITEM, item: FIREWORK_ROCKET, amount: 64 }
       - { type: ITEM, item: ENCHANTED_GOLDEN_APPLE, amount: 1 }
-      - { type: ITEM, item: GHAST_TEAR, amount: 2 }
+      - { type: ITEM, item: NETHERITE_INGOT, amount: 2}
+      - { type: ITEM, item: NETHERITE_HORSE_ARMOR, amount: 1}
       - { type: POTION, potion: saturation, duration: 72000, amplifier: 0 }
       - { type: POTION, potion: haste, duration: 72000, amplifier: 0 }
       - { type: POTION, potion: absorption, duration: 72000, amplifier: 9 }
       - { type: POTION, potion: glowing, duration: 72000, amplifier: 0 }
+      - { type: POTION, potion: resistance, duration: 72000, amplifier: 0 }
+      - { type: POTION, potion: fire_resistance, duration: 72000, amplifier: 0 }
+      - { type: POTION, potion: strength, duration: 72000, amplifier: 0 }
+
+  - id: "global_craft_golden_apples"
+    name: "La Réserve Royale"
+    description: "Fabriquez {value} pommes en or."
+    type: CRAFT
+    targets: [ GOLDEN_APPLE ]
+    goal: 666
+    time_limit: 10800
+    rewards:
+      - { type: REPUTATION, job: ENCHANTER, value: 2}
+      - { type: REPUTATION, job: FARMER, value: 2}
+      - { type: REPUTATION, job: MINER, value: 2}
+      - { type: REPUTATION, job: FISHERMAN, value: 2}
+      - { type: REPUTATION, job: EXPLORER, value: 2}
+      - { type: REPUTATION, job: LUMBERJACK, value: 2}
+      - { type: ITEM, item: GOLDEN_APPLE, amount: 16 }
+      - { type: ITEM, item: ENCHANTED_GOLDEN_APPLE, amount: 1 }
+      - { type: ITEM, item: NETHERITE_INGOT, amount: 2}
+      - { type: ITEM, item: NETHERITE_HORSE_ARMOR, amount: 1}
+      - { type: POTION, potion: saturation, duration: 72000, amplifier: 0 }
+      - { type: POTION, potion: haste, duration: 72000, amplifier: 0 }
+      - { type: POTION, potion: absorption, duration: 72000, amplifier: 9 }
       - { type: POTION, potion: resistance, duration: 72000, amplifier: 0 }
       - { type: POTION, potion: fire_resistance, duration: 72000, amplifier: 0 }
       - { type: POTION, potion: strength, duration: 72000, amplifier: 0 }
