@@ -19,6 +19,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.CrafterCraftEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
@@ -266,14 +267,16 @@ public class ItemListener implements Listener {
         if (!(event.getInventory().getHolder() instanceof BackpackMenuHolder)) return;
         if (!(event.getWhoClicked() instanceof Player player)) return;
 
+        boolean clickedBackpackInventory = event.getClickedInventory() != null
+                && event.getClickedInventory().getHolder() instanceof BackpackMenuHolder;
+
         boolean movingIntoBackpack =
-                (event.getClickedInventory() != null
-                        && event.getClickedInventory().getHolder() instanceof BackpackMenuHolder
-                        && BackpackService.isBackpack(event.getCursor()))
+                (clickedBackpackInventory && BackpackService.isBackpack(event.getCursor()))
                         || (event.isShiftClick()
                         && event.getClickedInventory() != null
                         && event.getClickedInventory().getHolder() instanceof Player
-                        && BackpackService.isBackpack(event.getCurrentItem()));
+                        && BackpackService.isBackpack(event.getCurrentItem()))
+                        || (clickedBackpackInventory && BackpackService.isBackpack(resolveHotbarSwapItem(event, player)));
 
         if (movingIntoBackpack) {
             event.setCancelled(true);
@@ -281,6 +284,22 @@ public class ItemListener implements Listener {
             MLLogManager.getInstance().log(Level.FINE, ELogTag.ITEM,
                     "[Backpack] " + player.getName() + " — tentative bloquée de mise d'un sac à dos dans un sac à dos.");
         }
+    }
+
+    /**
+     * Item hotbar (touche 1-9, {@link ClickType#NUMBER_KEY}) ou offhand (touche F, {@link ClickType#SWAP_OFFHAND})
+     * qui serait échangé dans le slot cliqué. Ce mouvement ne passe pas par le curseur — non couvert par les
+     * autres branches de {@link #onBackpackInventoryClick} — d'où la vérification dédiée.
+     * Retourne {@code null} si le clic n'est ni l'un ni l'autre.
+     */
+    private ItemStack resolveHotbarSwapItem(InventoryClickEvent event, Player player) {
+        if (event.getClick() == ClickType.SWAP_OFFHAND) return player.getInventory().getItemInOffHand();
+
+        int hotbarButton = event.getHotbarButton();
+        if (event.getClick() == ClickType.NUMBER_KEY && hotbarButton >= 0 && hotbarButton <= 8) {
+            return player.getInventory().getItem(hotbarButton);
+        }
+        return null;
     }
 
     @EventHandler(ignoreCancelled = true)
