@@ -2,6 +2,7 @@ package fr.miuby.survi.quest.quest;
 
 import fr.miuby.survi.GameManager;
 import fr.miuby.survi.player.AlphaPlayer;
+import fr.miuby.survi.quest.ETargetsMode;
 import fr.miuby.survi.system.lang.LangService;
 import net.kyori.adventure.text.Component;
 import org.bukkit.scheduler.BukkitTask;
@@ -87,9 +88,12 @@ public class QuestActionBarService {
 
     private Component buildProgressMessage(AlphaPlayer player, Quest quest, PlayerQuestData data) {
         LangService ls = GameManager.getInstance().getLangService();
+        String progressText = (quest.getTargetsMode() == ETargetsMode.ALL)
+                ? quest.formatTargetProgressBreakdown(data.getTargetProgress())
+                : data.getProgress() + "/" + quest.getGoal();
         return ls.text(player.getPlayer(), "quest.actionbar.progress",
                 quest.getFormattedDescription(),
-                data.getProgress() + "/" + quest.getGoal());
+                progressText);
     }
 
     private Component buildFinishedMessage(AlphaPlayer player, Quest quest) {

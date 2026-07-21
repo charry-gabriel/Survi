@@ -105,7 +105,7 @@ public class QuestRepository extends MLRepository {
     public List<PlayerQuestData> getActivePlayerQuests(UUID playerUuid, LocalDate date) {
         List<PlayerQuestData> quests = new ArrayList<>();
         try (PreparedStatement ps = connection.prepareStatement(
-                "SELECT slot, quest_id, progress, last_accepted, is_completed, trader_id, claimed " +
+                "SELECT slot, quest_id, progress, last_accepted, is_completed, trader_id, claimed, target_progress " +
                         "FROM player_quest WHERE player_uuid = ? AND last_accepted = ? ORDER BY slot ASC")) {
             ps.setString(1, playerUuid.toString());
             ps.setString(2, date.toString());
@@ -118,7 +118,8 @@ public class QuestRepository extends MLRepository {
                             LocalDate.parse(rs.getString("last_accepted")),
                             rs.getBoolean("is_completed"),
                             rs.getString("trader_id"),
-                            rs.getBoolean("claimed")
+                            rs.getBoolean("claimed"),
+                            deserializeTargetProgress(rs.getString("target_progress"))
                     ));
                 }
             }
@@ -150,7 +151,7 @@ public class QuestRepository extends MLRepository {
     public List<PlayerQuestData> getPlayerQuests(UUID playerUuid) {
         List<PlayerQuestData> quests = new ArrayList<>();
         try (PreparedStatement ps = connection.prepareStatement(
-                "SELECT slot, quest_id, progress, last_accepted, is_completed, trader_id, claimed " +
+                "SELECT slot, quest_id, progress, last_accepted, is_completed, trader_id, claimed, target_progress " +
                         "FROM player_quest WHERE player_uuid = ? ORDER BY slot ASC")) {
 
             ps.setString(1, playerUuid.toString());
@@ -163,7 +164,8 @@ public class QuestRepository extends MLRepository {
                             LocalDate.parse(rs.getString("last_accepted")),
                             rs.getBoolean("is_completed"),
                             rs.getString("trader_id"),
-                            rs.getBoolean("claimed")
+                            rs.getBoolean("claimed"),
+                            deserializeTargetProgress(rs.getString("target_progress"))
                     ));
                 }
             }
@@ -182,8 +184,8 @@ public class QuestRepository extends MLRepository {
         runAsync(conn -> {
             try (PreparedStatement ps = conn.prepareStatement(
                     "INSERT OR REPLACE INTO player_quest " +
-                            "(player_uuid, slot, quest_id, progress, last_accepted, is_completed, trader_id, claimed) " +
-                            "VALUES (?, ?, ?, ?, ?, ?, ?, ?)")) {
+                            "(player_uuid, slot, quest_id, progress, last_accepted, is_completed, trader_id, claimed, target_progress) " +
+                            "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
 
                 ps.setString(1, playerUuid.toString());
                 ps.setInt(2, questData.getSlot());
@@ -193,6 +195,7 @@ public class QuestRepository extends MLRepository {
                 ps.setBoolean(6, questData.isCompleted());
                 ps.setString(7, questData.getTraderId());
                 ps.setBoolean(8, questData.isClaimed());
+                ps.setString(9, serializeTargetProgress(questData.getTargetProgress()));
                 ps.executeUpdate();
             }
         }, ELogTag.QUEST, "Failed to update player quest");
@@ -326,6 +329,37 @@ public class QuestRepository extends MLRepository {
             MLLogManager.getInstance().log(Level.SEVERE, ELogTag.REPUTATION, "Failed to get job reputation leaderboard for " + jobName, ex);
         }
         return list;
+    }
+
+    /**
+     * Sérialise la progression par cible pour stockage dans la colonne {@code target_progress}
+     * (format {@code CLE1:VAL1,CLE2:VAL2}, cohérent avec les autres champs "map en texte" du projet).
+     * Retourne {@code null} (→ SQL NULL) si la map est vide, pour ne rien stocker en mode ANY.
+     */
+    private static String serializeTargetProgress(Map<String, Integer> targetProgress) {
+        if (targetProgress == null || targetProgress.isEmpty()) return null;
+        StringBuilder sb = new StringBuilder();
+        for (Map.Entry<String, Integer> entry : targetProgress.entrySet()) {
+            if (sb.length() > 0) sb.append(',');
+            sb.append(entry.getKey()).append(':').append(entry.getValue());
+        }
+        return sb.toString();
+    }
+
+    /** Désérialise la colonne {@code target_progress}. Toujours non-null (map vide si NULL/vide/corrompu). */
+    private static Map<String, Integer> deserializeTargetProgress(String raw) {
+        Map<String, Integer> result = new HashMap<>();
+        if (raw == null || raw.isBlank()) return result;
+        for (String entry : raw.split(",")) {
+            String[] kv = entry.split(":");
+            if (kv.length != 2) continue;
+            try {
+                result.put(kv[0], Integer.parseInt(kv[1]));
+            } catch (NumberFormatException ex) {
+                MLLogManager.getInstance().log(Level.WARNING, ELogTag.QUEST, "Entrée target_progress corrompue ignorée : " + entry);
+            }
+        }
+        return result;
     }
 
     public record ReputationRankEntry(String pseudo, long value) {}

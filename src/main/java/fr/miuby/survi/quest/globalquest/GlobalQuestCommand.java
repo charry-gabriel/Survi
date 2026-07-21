@@ -4,6 +4,7 @@ import com.mojang.brigadier.Command;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import fr.miuby.survi.GameManager;
+import fr.miuby.survi.quest.ETargetsMode;
 import fr.miuby.survi.system.command.argument.GlobalQuestArgument;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
 import io.papermc.paper.command.brigadier.Commands;
@@ -131,7 +132,11 @@ public class GlobalQuestCommand {
 
         sender.sendMessage(ls.text(lang, "cmd.globalquest.status_header"));
         sender.sendMessage(ls.text(lang, "cmd.globalquest.status_name",        q.getName()));
-        sender.sendMessage(ls.text(lang, "cmd.globalquest.status_progress",    manager.getProgress(), q.getGoal()));
+        if (q.getTargetsMode() == ETargetsMode.ALL) {
+            sender.sendMessage(ls.text(lang, "cmd.globalquest.status_progress_targets", q.formatTargetProgressBreakdown(manager.getTargetProgress())));
+        } else {
+            sender.sendMessage(ls.text(lang, "cmd.globalquest.status_progress",    manager.getProgress(), q.getGoal()));
+        }
         sender.sendMessage(ls.text(lang, "cmd.globalquest.status_time",        timeLeft));
         sender.sendMessage(ls.text(lang, "cmd.globalquest.status_participants",manager.getParticipants().size()));
         return Command.SINGLE_SUCCESS;

@@ -135,6 +135,7 @@ public final class QuestYamlLoader {
         return Quest.builder()
                 .id(base.id()).name(base.name()).description(base.description())
                 .type(base.type()).targets(base.targets()).goal(base.goal()).rewards(base.rewards())
+                .targetsMode(base.targetsMode())
                 .difficulty(difficulty).jobs(jobs)
                 .build();
     }
@@ -146,6 +147,7 @@ public final class QuestYamlLoader {
         return GlobalQuest.builder()
                 .id(base.id()).name(base.name()).description(base.description())
                 .type(base.type()).targets(base.targets()).goal(base.goal()).rewards(base.rewards())
+                .targetsMode(base.targetsMode())
                 .timeLimitSeconds(timeLimit)
                 .build();
     }
@@ -165,7 +167,8 @@ public final class QuestYamlLoader {
             EQuestType type,
             List<Object> targets,
             int goal,
-            Blessing rewards
+            Blessing rewards,
+            ETargetsMode targetsMode
     ) {}
 
     @SuppressWarnings("unchecked")
@@ -178,6 +181,13 @@ public final class QuestYamlLoader {
 
         List<Object> targets = parseTargets(map, type);
 
+        ETargetsMode targetsMode = ETargetsMode.valueOf(
+                String.valueOf(map.getOrDefault("targets_mode", "ANY")).toUpperCase());
+        if (targetsMode == ETargetsMode.ALL && (targets == null || targets.size() < 2)) {
+            MLLogManager.getInstance().log(Level.WARNING, ELogTag.QUEST,
+                    "[QuestYamlLoader] targets_mode=ALL sur '" + id + "' avec moins de 2 targets — identique à ANY, probable erreur de config");
+        }
+
         List<Map<String, Object>> rawRewards = (List<Map<String, Object>>) map.get("rewards");
         Blessing rewards = BlessingLoader.loadFromList(id, rawRewards);
         if (rewards == null) {
@@ -186,7 +196,7 @@ public final class QuestYamlLoader {
             rewards = new Blessing(new BlessingEffect[0]);
         }
 
-        return new BaseFields(id, name, description, type, targets, goal, rewards);
+        return new BaseFields(id, name, description, type, targets, goal, rewards, targetsMode);
     }
 
     /**

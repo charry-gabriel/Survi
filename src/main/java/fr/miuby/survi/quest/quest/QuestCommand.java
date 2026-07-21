@@ -5,6 +5,7 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import fr.miuby.lib.log.MLLogManager;
 import fr.miuby.survi.player.AlphaPlayer;
+import fr.miuby.survi.quest.ETargetsMode;
 import fr.miuby.survi.quest.globalquest.GlobalQuest;
 import fr.miuby.survi.system.command.DangerousCommandGuard;
 import fr.miuby.survi.system.command.argument.AlphaPlayerArgument;
@@ -169,7 +170,11 @@ public class QuestCommand {
         sender.sendMessage(ls.text(lang, "cmd.quest.info_title", alphaPlayer.getPseudo()));
         sender.sendMessage(ls.text(lang, "cmd.quest.info_separator"));
         sender.sendMessage(ls.text(lang, "cmd.quest.info_name", quest.getName(), quest.getId()));
-        sender.sendMessage(ls.text(lang, "cmd.quest.info_progress", data.getProgress(), quest.getGoal()));
+        if (quest.getTargetsMode() == ETargetsMode.ALL) {
+            sender.sendMessage(ls.text(lang, "cmd.quest.info_progress_targets", quest.formatTargetProgressBreakdown(data.getTargetProgress())));
+        } else {
+            sender.sendMessage(ls.text(lang, "cmd.quest.info_progress", data.getProgress(), quest.getGoal()));
+        }
         sender.sendMessage(ls.text(lang, "cmd.quest.info_difficulty", quest.getDifficulty()));
         sender.sendMessage(ls.text(lang, "cmd.quest.info_trader", data.getTraderId() != null ? data.getTraderId() : "—"));
         sender.sendMessage(ls.text(lang, "cmd.quest.info_accepted", data.getLastAccepted().format(fmt)));

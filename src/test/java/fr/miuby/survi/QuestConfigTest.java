@@ -33,6 +33,7 @@ import static org.junit.jupiter.api.Assertions.*;
  *   <li>{@code difficulty} : entier ≥ 1.</li>
  *   <li>{@code goal} : entier ≥ 1.</li>
  *   <li>{@code targets} : null ou liste non vide de strings non vides.</li>
+ *   <li>{@code targets_mode} : optionnel, ANY (défaut) ou ALL — logique OU/ET des targets.</li>
  *   <li>{@code jobs} : si présent, liste non vide de noms EJob valides.</li>
  *   <li>{@code rewards} : non vide — chaque récompense validée par type
  *       (REPUTATION, POTION, MAX_HEALTH, RESISTANCE, DAMAGE, DISPEL, UNLOCK_TOOL,
@@ -149,6 +150,13 @@ class QuestConfigTest {
                     assertNotNull(tRaw, ctx + ".targets[" + t + "] est null");
                     assertFalse(String.valueOf(tRaw).isBlank(), ctx + ".targets[" + t + "] ne doit pas être vide");
                 }
+            }
+
+            // targets_mode (optionnel, défaut ANY si absent — logique OU/ET des targets)
+            if (quest.containsKey("targets_mode") && quest.get("targets_mode") != null) {
+                String targetsMode = String.valueOf(quest.get("targets_mode")).toUpperCase();
+                assertTrue(Set.of("ANY", "ALL").contains(targetsMode),
+                        ctx + " : 'targets_mode' invalide '" + targetsMode + "'. Valides : ANY, ALL");
             }
 
             // goal

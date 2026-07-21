@@ -7,7 +7,9 @@ import fr.miuby.survi.player.AlphaPlayer;
 import fr.miuby.survi.player.AlphaPlayerFactory;
 import fr.miuby.survi.player.service.OfflineNotificationService;
 import fr.miuby.survi.quest.AbstractQuestManager;
+import fr.miuby.survi.quest.BaseQuest;
 import fr.miuby.survi.quest.EQuestType;
+import fr.miuby.survi.quest.ETargetsMode;
 import fr.miuby.survi.quest.QuestYamlLoader;
 import fr.miuby.survi.system.sound.ESound;
 import fr.miuby.survi.system.sound.SoundService;
@@ -32,6 +34,12 @@ public class GlobalQuestManager extends AbstractQuestManager<GlobalQuest> {
     @Getter private int progress = 0;
     /** Contribution individuelle de chaque participant : UUID → nombre d'actions effectuées. */
     private final Map<UUID, Integer> contributions = new HashMap<>();
+
+    /**
+     * Progression par cible de la quête active, utilisée uniquement en mode
+     * {@link ETargetsMode#ALL} (clé = {@code BaseQuest.targetKey(target)}). Vide en mode ANY.
+     */
+    private final Map<String, Integer> targetProgress = new HashMap<>();
 
     private BukkitTask timerTask = null;
     private long endTime = 0L;
@@ -96,6 +104,9 @@ public class GlobalQuestManager extends AbstractQuestManager<GlobalQuest> {
     /** Snapshot en lecture seule des contributions individuelles (UUID → actions). */
     public Map<UUID, Integer> getContributions() { return Collections.unmodifiableMap(contributions); }
 
+    /** Snapshot en lecture seule de la progression par cible (mode {@link ETargetsMode#ALL} uniquement). */
+    public Map<String, Integer> getTargetProgress() { return Collections.unmodifiableMap(targetProgress); }
+
     public boolean startQuest(String questId) {
         if (activeQuest != null) return false;
 
@@ -105,6 +116,7 @@ public class GlobalQuestManager extends AbstractQuestManager<GlobalQuest> {
         activeQuest = quest;
         progress    = 0;
         contributions.clear();
+        targetProgress.clear();
         endTime = System.currentTimeMillis() + quest.getTimeLimitSeconds() * 1000L;
 
         broadcastQuestStart(quest);
@@ -130,6 +142,7 @@ public class GlobalQuestManager extends AbstractQuestManager<GlobalQuest> {
         progress    = 0;
         endTime     = 0L;
         contributions.clear();
+        targetProgress.clear();
 
         broadcastLocalized("globalquest.cancelled", name);
         GameManager.getInstance().getGlobalQuestBossBarService().onQuestEnded();
@@ -144,17 +157,21 @@ public class GlobalQuestManager extends AbstractQuestManager<GlobalQuest> {
 
         contributions.merge(player.getUuid(), amount, Integer::sum);
         progress = Math.min(progress + amount, activeQuest.getGoal() + amount);
+        if (activeQuest.getTargetsMode() == ETargetsMode.ALL) {
+            targetProgress.merge(BaseQuest.targetKey(target), amount, Integer::sum);
+        }
 
-        if (progress >= activeQuest.getGoal()) {
+        if (isActiveQuestComplete()) {
             onFinished();
         } else {
-            GameManager.getInstance().getGlobalQuestBossBarService().onProgressUpdate(activeQuest, progress);
+            notifyProgressUpdate();
         }
     }
 
     /**
      * Ajuste manuellement la progression de la quête active (admin/debug).
-     * Ne modifie aucune contribution individuelle — uniquement le total. Clampée à 0 minimum.
+     * Ne modifie aucune contribution individuelle — uniquement le(s) total(aux). Clampée à 0 minimum.
+     * En mode {@link ETargetsMode#ALL}, le delta est appliqué uniformément à chaque cible.
      * Termine la quête (récompenses incluses) si l'objectif est atteint.
      *
      * @return false si aucune quête n'est active
@@ -163,17 +180,23 @@ public class GlobalQuestManager extends AbstractQuestManager<GlobalQuest> {
         if (activeQuest == null) return false;
 
         progress = Math.max(0, progress + delta);
+        if (activeQuest.getTargetsMode() == ETargetsMode.ALL && activeQuest.getTargets() != null) {
+            for (Object t : activeQuest.getTargets()) {
+                targetProgress.compute(BaseQuest.targetKey(t), (k, v) -> Math.max(0, (v == null ? 0 : v) + delta));
+            }
+        }
 
-        if (progress >= activeQuest.getGoal()) {
+        if (isActiveQuestComplete()) {
             onFinished();
         } else {
-            GameManager.getInstance().getGlobalQuestBossBarService().onProgressUpdate(activeQuest, progress);
+            notifyProgressUpdate();
         }
         return true;
     }
 
     /**
      * Force la progression de la quête active à une valeur précise (admin/debug).
+     * En mode {@link ETargetsMode#ALL}, la valeur est appliquée à chaque cible.
      * Termine la quête (récompenses incluses) si la valeur atteint l'objectif.
      *
      * @return false si aucune quête n'est active
@@ -182,13 +205,34 @@ public class GlobalQuestManager extends AbstractQuestManager<GlobalQuest> {
         if (activeQuest == null) return false;
 
         progress = Math.max(0, value);
+        if (activeQuest.getTargetsMode() == ETargetsMode.ALL && activeQuest.getTargets() != null) {
+            for (Object t : activeQuest.getTargets()) {
+                targetProgress.put(BaseQuest.targetKey(t), progress);
+            }
+        }
 
-        if (progress >= activeQuest.getGoal()) {
+        if (isActiveQuestComplete()) {
             onFinished();
+        } else {
+            notifyProgressUpdate();
+        }
+        return true;
+    }
+
+    /** Vrai si la quête active a atteint son objectif, selon son {@link ETargetsMode}. */
+    private boolean isActiveQuestComplete() {
+        return activeQuest.getTargetsMode() == ETargetsMode.ALL
+                ? activeQuest.isTargetProgressComplete(targetProgress)
+                : progress >= activeQuest.getGoal();
+    }
+
+    /** Notifie la BossBar de la progression courante, selon le {@link ETargetsMode} de la quête active. */
+    private void notifyProgressUpdate() {
+        if (activeQuest.getTargetsMode() == ETargetsMode.ALL) {
+            GameManager.getInstance().getGlobalQuestBossBarService().onProgressUpdate(activeQuest, targetProgress);
         } else {
             GameManager.getInstance().getGlobalQuestBossBarService().onProgressUpdate(activeQuest, progress);
         }
-        return true;
     }
 
     public long getRemainingSeconds() {
@@ -212,6 +256,7 @@ public class GlobalQuestManager extends AbstractQuestManager<GlobalQuest> {
         progress    = 0;
         endTime     = 0L;
         contributions.clear();
+        targetProgress.clear();
 
         Component announcement = buildQuestFinishedComponent(quest, ranked);
         broadcastQuestFinished(announcement);
@@ -278,6 +323,7 @@ public class GlobalQuestManager extends AbstractQuestManager<GlobalQuest> {
         progress    = 0;
         endTime     = 0L;
         contributions.clear();
+        targetProgress.clear();
         timerTask   = null;
 
         Component announcement = buildQuestTimeoutComponent(quest, ranked);

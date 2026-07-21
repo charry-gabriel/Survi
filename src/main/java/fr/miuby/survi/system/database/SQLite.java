@@ -8,7 +8,7 @@ import java.sql.*;
 import java.util.logging.Level;
 
 public class SQLite extends Database {
-    private static final int CURRENT_DB_VERSION = 20;
+    private static final int CURRENT_DB_VERSION = 21;
 
     public SQLite() {
         super(GameManager.getInstance().getPlugin().getConfig().getString("SQLite.Filename", "minecraft"));
@@ -133,6 +133,7 @@ public class SQLite extends Database {
                 "`is_completed` boolean NOT NULL," +
                 "`trader_id` varchar(255) NOT NULL DEFAULT ''," +
                 "`claimed` boolean NOT NULL DEFAULT 0," +
+                "`target_progress` TEXT DEFAULT NULL," +
                 "PRIMARY KEY (`player_uuid`, `slot`)" +
                 ");";
     }
@@ -386,6 +387,11 @@ public class SQLite extends Database {
                 s.executeUpdate(createPendingJobLevelUpTable());
                 s.executeUpdate(createPendingWorldLevelUpTable());
                 s.executeUpdate(createPendingVillagerLevelUpTable());
+            }
+            if (currentVersion < 21) {
+                if (!hasColumn("player_quest", "target_progress")) {
+                    s.executeUpdate("ALTER TABLE player_quest ADD COLUMN target_progress TEXT DEFAULT NULL");
+                }
             }
         }
     }

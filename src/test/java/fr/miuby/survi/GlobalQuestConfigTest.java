@@ -20,6 +20,7 @@ import java.util.regex.Pattern;
  *  - unicité des ids
  *  - type ∈ {MINE, KILL, BREED, FISH, SHEAR, CRAFT, SMELT}
  *  - targets : null ou liste de strings non vides
+ *  - targets_mode : optionnel, ANY (défaut) ou ALL — logique OU/ET des targets
  *  - goal ≥ 1
  *  - time_limit ≥ 60
  *  - rewards non vide : chaque entrée a un type ∈ {REPUTATION, POTION, ITEM, ...}
@@ -72,6 +73,14 @@ class GlobalQuestConfigTest {
                 Assertions.assertTrue(VALID_QUEST_TYPES.contains(type),
                         "Type de quête invalide : " + type + " — doit être l'un de " + VALID_QUEST_TYPES);
             }
+        }
+
+        // ── targets_mode (optionnel, défaut ANY — logique OU/ET des targets) ──
+        List<String> targetsModes = extractValues(content, "targets_mode");
+        for (String tm : targetsModes) {
+            String upper = tm.toUpperCase();
+            Assertions.assertTrue(Set.of("ANY", "ALL").contains(upper),
+                    "targets_mode invalide : " + tm + " — doit être ANY ou ALL");
         }
 
         // ── Goal ─────────────────────────────────────────────────────────────

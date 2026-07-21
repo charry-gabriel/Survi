@@ -9,7 +9,9 @@ import fr.miuby.survi.blessing.PotionsEffect;
 import fr.miuby.survi.job.EJob;
 import fr.miuby.survi.player.AlphaPlayer;
 import fr.miuby.survi.quest.AbstractQuestManager;
+import fr.miuby.survi.quest.BaseQuest;
 import fr.miuby.survi.quest.EQuestType;
+import fr.miuby.survi.quest.ETargetsMode;
 import fr.miuby.survi.quest.QuestYamlLoader;
 import fr.miuby.survi.system.sound.ESound;
 import fr.miuby.survi.system.sound.SoundService;
@@ -644,7 +646,7 @@ public class QuestManager extends AbstractQuestManager<Quest> {
         if (quest == null) return;
 
         int nextSlot = usedSlots; // slot global unique, croissant
-        PlayerQuestData data = new PlayerQuestData(nextSlot, quest.getId(), 0, LocalDate.now(), false, trader.getNameId(), false);
+        PlayerQuestData data = new PlayerQuestData(nextSlot, quest.getId(), 0, LocalDate.now(), false, trader.getNameId(), false, new HashMap<>());
         player.putQuest(data);
         GameManager.getInstance().getDatabase().quests().updatePlayerQuest(player.getUuid(), data);
         GameManager.getInstance().getDatabase().quests().setLastQuestId(player.getUuid(), quest.getId());
@@ -673,7 +675,7 @@ public class QuestManager extends AbstractQuestManager<Quest> {
         }
 
         int nextSlot = player.getTotalDailyQuestsClaimed() + player.countActiveUnclaimedQuests();
-        PlayerQuestData data = new PlayerQuestData(nextSlot, quest.getId(), 0, LocalDate.now(), false, null, false);
+        PlayerQuestData data = new PlayerQuestData(nextSlot, quest.getId(), 0, LocalDate.now(), false, null, false, new HashMap<>());
         player.putQuest(data);
         GameManager.getInstance().getDatabase().quests().updatePlayerQuest(player.getUuid(), data);
         GameManager.getInstance().getDatabase().quests().setLastQuestId(player.getUuid(), quest.getId());
@@ -760,6 +762,21 @@ public class QuestManager extends AbstractQuestManager<Quest> {
         Quest quest = getQuest(data.getQuestId());
         if (quest == null || !quest.matchesAction(type, target)) return;
 
+        if (quest.getTargetsMode() == ETargetsMode.ALL) {
+            String key = BaseQuest.targetKey(target);
+            int updated = data.getTargetProgress().merge(key, amount, Integer::sum);
+            MLLogManager.getInstance().log(Level.FINE, ELogTag.QUEST,
+                    "[QuestProgress:ALL] " + player.getPseudo() + " — " + data.getQuestId() + " : " + key + "=" + updated + "/" + quest.getGoal());
+
+            if (quest.isTargetProgressComplete(data.getTargetProgress())) {
+                finishQuest(player, quest);
+            } else {
+                GameManager.getInstance().getDatabase().quests().updatePlayerQuest(player.getUuid(), data);
+                GameManager.getInstance().getQuestActionBarService().showProgress(player, quest, data);
+            }
+            return;
+        }
+
         data.setProgress(data.getProgress() + amount);
         MLLogManager.getInstance().log(Level.FINE, ELogTag.QUEST,
                 "[QuestProgress] " + player.getPseudo() + " — " + data.getQuestId() + " : " + data.getProgress() + "/" + quest.getGoal());
@@ -777,6 +794,11 @@ public class QuestManager extends AbstractQuestManager<Quest> {
         if (data == null) return;
 
         data.setProgress(quest.getGoal());
+        if (quest.getTargetsMode() == ETargetsMode.ALL && quest.getTargets() != null) {
+            for (Object t : quest.getTargets()) {
+                data.getTargetProgress().put(BaseQuest.targetKey(t), quest.getGoal());
+            }
+        }
         data.setCompleted(true);
         MLLogManager.getInstance().log(Level.INFO, ELogTag.QUEST,
                 "[QuestFinished] " + player.getPseudo() + " — " + quest.getId());

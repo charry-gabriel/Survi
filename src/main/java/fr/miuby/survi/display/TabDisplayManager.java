@@ -9,6 +9,7 @@ import fr.miuby.survi.quest.globalquest.GlobalQuestManager;
 import fr.miuby.survi.quest.quest.PlayerQuestData;
 import fr.miuby.survi.quest.quest.Quest;
 import fr.miuby.survi.player.role.Role;
+import fr.miuby.survi.quest.ETargetsMode;
 import io.papermc.paper.adventure.PaperAdventure;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -363,12 +364,15 @@ public class TabDisplayManager {
             Quest quest = GameManager.getInstance().getQuestManager().getQuest(questData.getQuestId());
             if (quest != null) {
                 String description = quest.getDescription().replace("{value}", String.valueOf(quest.getGoal()));
+                String progressText = (quest.getTargetsMode() == ETargetsMode.ALL)
+                        ? quest.formatTargetProgressBreakdown(questData.getTargetProgress())
+                        : questData.getProgress() + "/" + quest.getGoal();
                 footer = footer
                         .appendNewline()
                         .appendNewline()
                         .append(ls.text(lang, "tab.footer.quest_label"))
                         .append(Component.text(quest.getName() + "  ", NamedTextColor.WHITE))
-                        .append(Component.text(questData.getProgress() + "/" + quest.getGoal(), NamedTextColor.DARK_GRAY))
+                        .append(Component.text(progressText, NamedTextColor.DARK_GRAY))
                         .appendNewline()
                         .append(Component.text(description, NamedTextColor.GRAY));
                 if (questData.isCompleted()) {
@@ -382,12 +386,15 @@ public class TabDisplayManager {
         GlobalQuest activeGlobalQuest = gqm.getActiveQuest();
         if (activeGlobalQuest != null) {
             String description = activeGlobalQuest.getDescription().replace("{value}", String.valueOf(activeGlobalQuest.getGoal()));
+            String progressText = (activeGlobalQuest.getTargetsMode() == ETargetsMode.ALL)
+                    ? activeGlobalQuest.formatTargetProgressBreakdown(gqm.getTargetProgress())
+                    : gqm.getProgress() + "/" + activeGlobalQuest.getGoal();
             footer = footer
                     .appendNewline()
                     .appendNewline()
                     .append(ls.text(lang, "tab.footer.global_quest_label"))
                     .append(Component.text(activeGlobalQuest.getName(), NamedTextColor.WHITE))
-                    .append(Component.text(gqm.getProgress() + "/" + activeGlobalQuest.getGoal(), NamedTextColor.DARK_GRAY))
+                    .append(Component.text(progressText, NamedTextColor.DARK_GRAY))
                     .append(ls.text(lang, "tab.footer.global_quest_timer", GlobalQuestManager.formatSeconds(gqm.getRemainingSeconds())))
                     .appendNewline()
                     .append(Component.text(description, NamedTextColor.GRAY));

@@ -1864,6 +1864,15 @@
               ]
             }
           },
+          "targets_mode": {
+            "type": "string",
+            "description": "ANY (défaut) : une seule cible de targets suffit, progression cumulée dans un compteur unique (logique OU). ALL : chaque cible de targets doit individuellement atteindre goal, progression suivie séparément par cible (logique ET).",
+            "enum": [
+              "ANY",
+              "ALL"
+            ],
+            "default": "ANY"
+          },
           "goal": {
             "type": "integer",
             "minimum": 1
